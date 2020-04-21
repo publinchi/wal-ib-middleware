@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_consulta_preguntarespuesta</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_pregunta" dataType="smallint" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="PR_PREGUNTA" />
+        <column name="PR_DESCRIPTION" />
+        <column name="PR_CATEGORIA" />
+      </columns>
+      <queryText>SELECT  "RE_PREGUNTA" = re_pregunta,"RE_RESPUESTA" = re_respuesta,"RE_DESCRIPCION" = re_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="RE_PREGUNTA" />
+        <column name="RE_RESPUESTA" />
+        <column name="RE_DESCRIPCION" />
+      </columns>
+      <queryText>SELECT  "PR_PREGUNTA" = pr_pregunta,"PR_DESCRIPTION" = descripcion,"PR_CATEGORIA" = pr_categoria </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="PR_PREGUNTA" />
+        <column name="PR_DESCRIPTION" />
+        <column name="PR_CATEGORIA" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

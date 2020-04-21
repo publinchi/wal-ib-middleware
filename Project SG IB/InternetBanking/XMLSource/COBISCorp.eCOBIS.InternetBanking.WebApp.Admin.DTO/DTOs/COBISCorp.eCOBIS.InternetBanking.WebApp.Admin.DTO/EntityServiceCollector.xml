@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" productVersion="4.6.1.0">
+  <name>EntityServiceCollector</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.admin.dto</javaPackage>
+  <ns>http://dto.admin.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="entityId" propertyNet="EntityId" propertyJava="entityId" setterJavaMethod="setEntityId" getterJavaMethod="getEntityId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="serviceId" propertyNet="ServiceId" propertyJava="serviceId" setterJavaMethod="setServiceId" getterJavaMethod="getServiceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="collectorId" propertyNet="CollectorId" propertyJava="collectorId" setterJavaMethod="setCollectorId" getterJavaMethod="getCollectorId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="status" propertyNet="Status" propertyJava="status" setterJavaMethod="setStatus" getterJavaMethod="getStatus" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="clientIdentification" propertyNet="ClientIdentification" propertyJava="clientIdentification" setterJavaMethod="setClientIdentification" getterJavaMethod="getClientIdentification" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="description" propertyNet="Description" propertyJava="description" setterJavaMethod="setDescription" getterJavaMethod="getDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="authorized" propertyNet="Authorized" propertyJava="authorized" setterJavaMethod="setAuthorized" getterJavaMethod="getAuthorized" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

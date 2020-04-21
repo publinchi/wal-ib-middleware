@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" productVersion="4.6.1.0">
+  <name>NotificationsCollection</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.admin.dto</javaPackage>
+  <ns>http://dto.admin.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="notification1" propertyNet="Notification1" propertyJava="notification1" setterJavaMethod="setNotification1" getterJavaMethod="getNotification1" xsdType="Array" netType="Notification[]" javaType="Notification[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Notification" netElementType="Notification" javaElementType="Notification" />
+    <property name="notification2" propertyNet="Notification2" propertyJava="notification2" setterJavaMethod="setNotification2" getterJavaMethod="getNotification2" xsdType="Array" netType="Notification[]" javaType="Notification[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Notification" netElementType="Notification" javaElementType="Notification" />
+    <property name="notification3" propertyNet="Notification3" propertyJava="notification3" setterJavaMethod="setNotification3" getterJavaMethod="getNotification3" xsdType="Array" netType="Notification[]" javaType="Notification[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Notification" netElementType="Notification" javaElementType="Notification" />
+  </properties>
+</DtoObject>

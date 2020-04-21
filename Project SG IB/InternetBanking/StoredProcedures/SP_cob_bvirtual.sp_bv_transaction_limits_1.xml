@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_transaction_limits</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_servicio" dataType="smallint" direction="in" />
+    <parameter name="@i_transaccion" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="MINIMO" />
+        <column name="MAXIMO" />
+      </columns>
+      <queryText />
+    </query>
+  </queries>
+</procedure>

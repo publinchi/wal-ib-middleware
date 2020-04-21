@@ -1,0 +1,1310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<general>
+		<pack>true</pack>
+		<!-- Example
+		<field type="B|C|D|J|M|N" length="2" position="P1-P64|S65-S128" default="default_value" name="field_name" pack="true|false" pack-content="true|false" pack-length="true|false" pattern="DDMMYYYY" include-length="true|false" encoding="A|E" />
+		type B -> Byte, C -> Character, D -> Date, J -> Special field (types L, K, LL), M -> Money, N -> Numeric
+		-->
+        <!-- length  indicates the length of the field it apply only for fields C, M, for D type the length is taken from pattern  -->
+        <!-- position indicates the name in the bitmap of the field-->
+        <!-- default -->
+        <!-- name this is the name which identifies the field in the map  -->
+        <!-- pack indicates that the content and the length will be packaged in the field, it overrides the parameters pack-content, pack-length   -->
+        <!-- pattern is used for types D it show the pattern in Java that will come in the ISO8583 message  -->           
+        <!-- pack-content indicates if the content of the field is packaged  -->
+        <!-- pack-length indicates if the length of the field is packaged  -->
+        <!-- include-length indicates if the length will be included in iso 8583 message  -->
+        <!-- bytes-length indicates the number of bytes that are used as length this parameters is used for L (2), K (4), LL (3)   -->
+        <!-- encode indicates the encode of the data  A = ASCII, E = EBCDIC  -->
+        <!-- Defaults:
+        default_value = null
+        pack = false
+        pack-content = false
+        pattern = null
+        pack-content = false
+        pack-length = false
+        include-length = false
+        bytes = 0
+        encoding = A
+         -->
+        <field type="C" length="3"  name="isoHeader" encoding="A"  />
+        <field type="C" length="2"  name="transactionTypeHeader" encoding="A"  />
+        <field type="C" length="7"  name="messageHeader" encoding="A"  />
+        <field type="C" length="4"  name="messageType" encoding="A"  />
+        <field type="B" length="16" name="primaryBitmap" encoding="A"  />       
+        
+        <!-- Campos primarios -->
+		<field type="B" length="16" position="1" name="P1-secondaryBitmap" encoding="A" />
+		<field type="J" position="2" name="P2-primaryAccountNumber" bytes-length="2" encoding="A" />
+		<field type="C" length="6" position="3" name="P3-processingCode" pattern="0" encoding="A" />
+		<field type="M" length="12" position="4" name="P4-transactionAmount" pattern="0" encoding="A" />
+		<field type="N" length="12" position="5" name="P5-amountSettlement" pattern="0" encoding="A" />
+		<field type="N" length="12" position="6" name="P6-cardholderBillingAmount" pattern="0"	encoding="A" />
+		<field type="C" length="10" position="7" name="P7-transmitionDateAndTime" pattern="MMDDhhmmss" encoding="A" />
+		<field type="N" length="8" position="8" name="P8-amountCardholderBillingFee" pattern="0"	encoding="A" />
+		<field type="N" length="8" position="9" name="P9-conversionRateSettlement" pattern="0"	encoding="A" />
+		<field type="N" length="8" position="10" name="P10-conversionRateCardholderBilling" encoding="A" />
+		<field type="N" length="6" position="11" name="P11-systemsTraceAuditNumber" encoding="A" />
+		<field type="C" length="6" position="12" name="P12-localTransactionTime" pattern="hhmmss" encoding="A" />
+		<field type="C" length="4" position="13" name="P13-localTransactionDate" pattern="MMDD" encoding="A" />
+		<field type="C" length="4" position="14" name="P14-expirationDate" pattern="YYYYMM" encoding="A" />
+		<field type="C" length="4" position="15" name="P15-settlementDate" pattern="MMDD" encoding="A" />
+		<field type="N" length="4" position="16" name="P16-dateConversion" encoding="A" />
+		<field type="C" length="4" position="17" name="P17-captureDate" pattern="MMDD" encoding="A" />
+		<field type="C" length="4" position="18" name="P18-merchantCategory" encoding="A" />
+		<field type="N" length="3" position="19" name="P19-acquiringInstitutionCountryCode" encoding="A" />
+		<field type="N" length="3" position="20" name="P20-PANExtendedCountryCode" encoding="A" />
+		<field type="N" length="3" position="21" name="P21-forwardingInstitutionCountryCode" encoding="A" />
+		<field type="N" length="3" position="22" name="P22-pointOfServiceEntryMode" encoding="A" />
+		<field type="N" length="3" position="23" name="P23-applicationPANnumber" encoding="A" />
+		<field type="N" length="3" position="24" name="P24-functionCodeNetworkInternationalIdentifier" encoding="A" />
+		<field type="N" length="2" position="25" name="P25-pointOfServiceConditionCode" encoding="A" />
+		<field type="N" length="2" position="26" name="P26-pointOfServiceCaptureCode" encoding="A" />
+		<field type="N" length="1" position="27" name="P27-authorizingIdentificationResponseLength" encoding="A" />
+		<field type="N" length="8" position="28" name="P28-amountTransactionFee" encoding="A" />
+		<field type="N" length="8" position="29" name="P29-amountSettlementFee" encoding="A" />
+		<field type="N" length="8" position="30" name="P30-amountTransactionProcessingFee" encoding="A" />
+		<field type="N" length="8" position="31" name="P31-amountSettlementProcessingFee" encoding="A" />
+		<field type="J" position="32" name="P32-acquiringInstitutionIdentificationCode" bytes-length="2" encoding="A" />
+		<field type="J" position="33" name="P33-forwardingInstitutionIdentificationCode" bytes-length="2" encoding="A" />
+		<field type="J" position="34" name="P34-primaryAccountNumberExtended" bytes-length="2" encoding="A" />
+		<field type="J" position="35" name="P35-track2Data" bytes-length="2" encoding="A" />
+		<field type="N" length="104" position="36" name="P36-track3Data" bytes-length="2" encoding="A" />
+		<field type="C" length="12" position="37" name="P37-retrievalReferenceNumber" encoding="A" />
+		<field type="C" default="000000" length="6" position="38" name="P38-authorizationIdentificationResponse" encoding="A" />
+		<field type="C" default="96" length="2" position="39" name="P39-responseCode" encoding="A" />
+		<field type="C" length="3" position="40" name="P40-serviceRestrictionCode" encoding="A" />
+		<field type="C" length="16" position="41" name="P41-cardAcceptorTerminalID" encoding="A" />
+		<field type="C" length="15" position="42" name="P42-cardAcceptorIdentificationCode" encoding="A" />
+		<field type="C" length="40" position="43" name="P43-cardAcceptorNameLocation" encoding="A" />
+		<field type="J" position="44" name="P44-additionalResponseData" bytes-length="2" encoding="A" />
+		<field type="J" position="45" name="P45-track1Data" bytes-length="2" encoding="A" />
+		<field type="J" position="46" name="P46-additionalData-ISO" bytes-length="2" encoding="A" />
+		<field type="J" position="47" name="P47-additionalData-National" bytes-length="2" encoding="A" />
+		<field type="J" position="48" name="P48-additionalDataATMData" bytes-length="3" encoding="A" />
+		<field type="N" length="3" position="49" name="P49-transactionCurrencyCode" encoding="A" />
+		<field type="C" length="3" position="50" name="P50-currencyCodeSettlement" encoding="A" />
+		<field type="N" length="3" position="51" name="P51-currencyCodeCardholderBilling" encoding="A" />
+		<field type="C" length="16" position="52" name="P52-personalIdentificationNumberPINData" encoding="A" />
+		<field type="N" length="18" position="53" name="P53-SecurityRelatedControlInformation" encoding="A" />
+		<field type="C" length="120" position="54" name="P54-additionalAmounts" encoding="A" />
+		<field type="J" position="55" name="P55-noName" bytes-length="2" encoding="A" />
+		<field type="J" position="56" name="P56-noName" bytes-length="2" encoding="A" />
+		<field type="J" position="57" name="P57-noName" bytes-length="2" encoding="A" />
+		<field type="J" position="58" name="P58-noName" bytes-length="2" encoding="A" />
+		<field type="J" position="59" name="P59-noName" bytes-length="2" encoding="A" />
+		<field type="J" position="60" name="P60-atmTerminalData" bytes-length="3" encoding="A" />
+		<field type="J" position="61" name="P61-atmCardIssuerAndAuthorizerData" bytes-length="3" encoding="A" />
+		<field type="J" position="62" name="P62-noName" bytes-length="2" encoding="A" />
+		<field type="J" position="63" name="P63-noName" bytes-length="2" encoding="A" />
+		<field type="B" length="16" position="64" name="P64-messageAuthenticationCode(MAC)" encoding="A" />
+		
+		<!-- Campos secundarios -->
+		<field type="B" length="16" position="65" name="S65-tertiaryBitmap" encoding="A" />
+		<field type="N" length="1" position="66" name="S66-settlementCode" encoding="A" />
+		<field type="N" length="2" position="67" name="S67-extendedPaymentCode" encoding="A" />
+		<field type="N" length="3" position="68" name="S68-receivingInstitutionCountryCode" encoding="A" />
+		<field type="N" length="3" position="69" name="S69-settlementInstitutionCountyCode" encoding="A" />
+		<field type="C" length="3" position="70" name="S70-networkManagementInformationCode" encoding="A" />
+		<field type="N" length="4" position="71" name="S71-MessageNumber" encoding="A" />
+		<field type="J" position="72" name="S72-dataRecord(ISO 8583:1993)4MessageNumber" bytes-length="2" encoding="A" />
+		<field type="N" length="6" position="73" name="S73-dateAction" encoding="A" />
+		<field type="N" length="10" position="74" name="S74-creditsNumber" encoding="A" />
+		<field type="N" length="10" position="75" name="S75-creditsReversalNumber" encoding="A" />
+		<field type="N" length="10" position="76" name="S76-debitsNumber" encoding="A" />
+		<field type="N" length="10" position="77" name="S77-debitsReversalNumber" encoding="A" />
+		<field type="N" length="10" position="78" name="S78-transferNumber" encoding="A" />
+		<field type="N" length="10" position="79" name="S79-transferReversalNumber" encoding="A" />
+		<field type="N" length="10" position="80" name="S80-inquiriesNumber" encoding="A" />
+		<field type="N" length="10" position="81" name="S81-authorizationsNumber" encoding="A" />
+		<field type="N" length="12" position="82" name="S82-creditsProcessingFeeAmount" encoding="A" />
+		<field type="N" length="12" position="83" name="S83-creditsTransactionFeeAmount" encoding="A" />
+		<field type="N" length="12" position="84" name="S84-debitsProcessingFeeAmount" encoding="A" />
+		<field type="N" length="12" position="85" name="S85-debitsTransactionFeeAmount" encoding="A" />
+		<field type="N" length="15" position="86" name="S86-creditsAmount" encoding="A" />
+		<field type="N" length="15" position="87" name="S87-creditsReversalAmount" encoding="A" />
+		<field type="N" length="15" position="88" name="S88-debitsAmount" encoding="A" />
+		<field type="N" length="15" position="89" name="S89-debitsReversalAmount" encoding="A" />
+		<field type="C" length="42" position="90" name="S90-originalDataElements" encoding="A" />
+		<field type="C" length="1" position="91" name="S91-fileUpdateCode" encoding="A" />
+		<field type="N" length="2" position="92" name="S92-fileSecurityCode" encoding="A" />
+		<field type="N" length="5" position="93" name="S93-responseIndicator" encoding="A" />
+		<field type="C" length="7" position="94" name="S94-serviceIndicator" encoding="A" />
+		<field type="C" length="42" position="95" name="S95-replacementAmounts" encoding="A" />
+		<field type="C" length="8" position="96" name="S96-messageSecurityCode" encoding="A" />
+		<field type="N" length="16" position="97" name="S97-amountNetSettlement" encoding="A" />
+		<field type="C" length="25" position="98" name="S98-payee" encoding="A" />
+		<field type="J" position="99" name="S99-settlementInstitutionIdentificationCode" bytes-length="2" encoding="A" />
+		<field type="J" position="100" name="S100-receivingInstitutionIdentificationCode" bytes-length="2" encoding="A" />
+		<field type="C" length="17" position="101" name="S101-fileName" encoding="A" />
+		<field type="J" position="102" name="S102-accountIdentification1" bytes-length="2" encoding="A" />
+		<field type="J" position="103" name="S103-accountIdentification2" bytes-length="2" encoding="A" />
+		<field type="J" position="104" name="S104-transactionDescription" bytes-length="2" encoding="A" />
+		<field type="J" position="105" name="S105-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="106" name="S106-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="107" name="S107-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="108" name="S108-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="109" name="S109-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="110" name="S110-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="111" name="S111-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="112" name="S112-reservedForISOUse" bytes-length="2" encoding="A" />
+		<field type="J" position="113" name="S113-authorizingAgentInstitutionIdCode" bytes-length="2" encoding="A" />
+		<field type="J" position="114" name="S114-reservedForNationalUse" bytes-length="2" encoding="A" />
+		<field type="J" position="115" name="S115-reservedForNationalUse" bytes-length="2" encoding="A" />
+		<field type="J" position="116" name="S116-reservedForNationalUse" bytes-length="2" encoding="A" />
+		<field type="J" position="117" name="S117-reservedForNationalUse" bytes-length="2" encoding="A" />
+		<field type="J" position="118" name="S118-reservedForNationalUse" bytes-length="2" encoding="A" />
+		<field type="J" position="119" name="S119-reservedForNationalUse" bytes-length="2" encoding="A" />
+		<field type="J" position="120" name="S120-atmTerminalAddressBranchRegion" bytes-length="3" encoding="A" />
+		<field type="J" position="121" name="S121-reservedForPrivateUse" bytes-length="2" encoding="A" />
+		<field type="J" position="122" name="S122-reservedForPrivateUse" bytes-length="2" encoding="A" />
+		<field type="J" position="123" name="S123-reservedForPrivateUse" bytes-length="2" encoding="A" />
+		<field type="J" position="124" name="S124-infoText" bytes-length="2" encoding="A" />
+		<field type="J" position="125" name="S125-networkManagementInformation" bytes-length="2" encoding="A" />
+		<field type="J" position="126" name="S126-base24ATMAdditionalData" bytes-length="3" encoding="A" />
+		<field type="J" position="127" name="S127-reservedForPrivateUse" bytes-length="2" encoding="A" />
+		<field type="B" length="16" position="128" name="S128-messageAuthenticationCode" encoding="A" />
+				
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-BalanceInquiry-Default" outbitmap="B23880012E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="310000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-BalanceInquiry-Savings" outbitmap="B23880012E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="311000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-BalanceInquiry-Checking" outbitmap="B23880012E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="312000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-BalanceInquiry-Default" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="310000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-BalanceInquiry-Savings" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="311000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-BalanceInquiry-Checking" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="312000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-Withdrawal-Savings" outbitmap="B23880012E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="011000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-Withdrawal-Checking" outbitmap="B23880012E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="012000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-Withdrawal-Default" outbitmap="B23880012E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="010000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-Withdrawal-Savings" outbitmap="B22000012A8080000000004000000000">	
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>		
+			<evaluate name="P3-processingCode" value="011000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-Withdrawal-Checking" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="012000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="ATM-Withdrawal-Default" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="transactionTypeHeader" value="01"></evaluate>
+			<evaluate name="P3-processingCode" value="010000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-Savings" outbitmap="B67884012ED0A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="001000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-Checking" outbitmap="B67884012ED0A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="002000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-Default" outbitmap="B67884012ED0A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="000000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-Savings" outbitmap="B66004012E80A0000000004000000000">	
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>			
+			<evaluate name="P3-processingCode" value="001000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-Checking" outbitmap="B66004012E80A0000000004000000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="002000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-Default" outbitmap="B66004012E80A0000000004000000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="000000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-CashAdvance-Savings" outbitmap="B67884012ED0A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="011000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-CashAdvance-Checking" outbitmap="B67884012ED0A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="012000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-CashAdvance-Default" outbitmap="B67884012ED0A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="010000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-CashAdvance-Savings" outbitmap="B66004012E80A0000000004000000000">	
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>			
+			<evaluate name="P3-processingCode" value="011000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-CashAdvance-Checking" outbitmap="B66004012E80A0000000004000000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="012000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-CashAdvance-Default" outbitmap="B66004012E80A0000000004000000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="010000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-BalanceInquiry-Savings" outbitmap="B23880010E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="311000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-BalanceInquiry-Checking" outbitmap="B23880010E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="312000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-BalanceInquiry-Default" outbitmap="B23880010E90A0100000000006000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="310000"></evaluate>
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-BalanceInquiry-Savings" outbitmap="B66004012E80A0000000004000000000">	
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>			
+			<evaluate name="P3-processingCode" value="311000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-BalanceInquiry-Checking" outbitmap="B66004012E80A0000000004000000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="312000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="TRN_IN" transaction="POS-BalanceInquiry-Default" outbitmap="B66004012E80A0000000004000000000">
+			<evaluate name="transactionTypeHeader" value="02"></evaluate>
+			<evaluate name="P3-processingCode" value="310000"></evaluate>
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+
+		<transaction-connector parser-output="TRN_OUT" parser-input="CONTROL_IN" transaction="control" outbitmap="82200000020000000400000000000000">
+			<evaluate name="messageType" value="0800"></evaluate>
+			<evaluate name="S70-networkManagementInformationCode" value="001"></evaluate>			
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="CONTROL_IN" transaction="control" outbitmap="82200000020000000400000000000000">
+			<evaluate name="messageType" value="0800"></evaluate>
+			<evaluate name="S70-networkManagementInformationCode" value="002"></evaluate>			
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="CONTROL_IN" transaction="control" outbitmap="82200000020000000400000000000000">
+			<evaluate name="messageType" value="0800"></evaluate>
+			<evaluate name="S70-networkManagementInformationCode" value="301"></evaluate>			
+		</transaction-connector>		
+		<transaction-connector parser-output="TRN_OUT" parser-input="NOTSUPPORTED_IN" outbitmap="B23880012E9080180000000006000000">
+			<evaluate name="messageType" value="0200"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="NOTSUPPORTED_IN" outbitmap="82200000020000000400000000000000">
+			<evaluate name="messageType" value="0800"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="NOTSUPPORTED_IN" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="messageType" value="0420"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="NOTSUPPORTED_IN" outbitmap="B22080012A8080000000000014000000">
+			<evaluate name="messageType" value="0220"></evaluate>
+		</transaction-connector>
+		<transaction-connector parser-output="TRN_OUT" parser-input="NOTSUPPORTED_IN" outbitmap="B22000012A8080000000004000000000">
+			<evaluate name="isoHeader" value="ISO"></evaluate>
+		</transaction-connector>
+	</general>
+	
+	<parsers>
+		<parser name="TRN_IN">
+			<custom-parsing><![CDATA[
+			
+					/* Dates */
+					fields.put("newTrnDate", fields.getActualYear().substring(2) + fields.getByPosition(13));
+					fields.put("newCntDate", fields.getActualYear().substring(2) + fields.getByPosition(13));
+					
+					/*Date : mmddyyyy hh:mm:ss*/
+					fields.put("dateTime", fields.getActualYear().substring(2) + fields.getByPosition(7).substring(0,4) + " " 
+					+ fields.getByPosition(7).substring(4,6) + ":" + fields.getByPosition(7).substring(6,8) + ":" 
+					+ fields.getByPosition(7).substring(8));
+					
+					/* Primary Account Number - Expiration Date*/
+					if (fields.getByPosition(22) != null) 
+						if("01".equals(fields.getByPosition(22).substring(0,2))) 
+						{
+							/* Primary Account Number -> field 2 data was entered Manually */
+							fields.put("card", fields.getByPosition(2));
+						
+							/* Expiration Date of the Card */	
+							fields.put("cardExpirationDate", fields.getByPosition(14).substring(17, 21));
+						}
+						else
+						{
+							/* Primary Account Number Track II -> field 35 */
+							fields.put("card", fields.getByPosition(35).substring(0,16));
+						
+							/* Expiration Date of the Card */	
+							fields.put("cardExpirationDate", fields.getByPosition(35).substring(17, 21));						
+						}
+					else
+					{
+						/* Primary Account Number Track II -> field 35 */
+						fields.put("card", fields.getByPosition(35).substring(0,16));
+						
+						/* Expiration Date of the Card */	
+						fields.put("cardExpirationDate", fields.getByPosition(35).substring(17, 21));						
+					}
+					
+					String codTran2 = fields.getByPosition(3).substring(2,4);
+					String codTran3 = fields.getByPosition(3).substring(4,6);
+					
+					String codTran2 = fields.getByPosition(3).substring(2,4);
+					String codTran3 = fields.getByPosition(3).substring(4,6);
+					
+					/* Product Type */
+					if("20".equals(codTran2))
+						fields.put("debProduct","3");
+					else if("10".equals(codTran2))
+						fields.put("debProduct","4");
+						
+					if("20".equals(codTran3))
+						fields.put("creProduct","3");
+					else if("10".equals(codTran3))
+						fields.put("creProduct","4");
+										
+					/* Reference Number */
+					fields.put("refNumber",fields.getByPosition(37));
+					
+					/* Country */
+					fields.put("country",fields.getByPosition(43).substring(fields.getByPosition(43).length() - 2));
+					
+                    /* Other Network */
+                    fields.put("otherNetwork", "N");
+
+					/* Terminal Type */
+					if("02".equals(fields.get("transactionTypeHeader")))
+					{
+						fields.put("terminalType","POS");
+						/* Origin : POS */
+						if (fields.getByPosition(43) != null) 
+						{
+							if("CR".equals(fields.getByPosition(43).substring(38, 40)))
+								fields.put("origin", "N");
+							else
+								fields.put("origin", "I");
+						} 
+					}
+					else
+					{
+						fields.put("terminalType","ATM");
+						/* Origin : ATM */
+						if (fields.getByPosition(48) != null) 						
+						{
+							if("188".equals(fields.getByPosition(48).substring(30, 33)))
+							{
+								fields.put("origin", "N");
+								if (fields.getByPosition(60) != null) 
+									if("CR".equals(fields.getByPosition(60).substring(0, 2)))
+										fields.put("otherNetwork", "N");
+									else
+										fields.put("otherNetwork", "S");
+							}
+							else
+								fields.put("origin", "I");
+						} 
+					}
+					
+					/* Replacement Amounts */
+					if (fields.getByPosition(95) != null) 
+					{
+						System.out.println("### Reverso Parcial ###" + fields.getByPosition(95).substring(0, 10) + "." + fields.getByPosition(95).substring(10, 12));
+						fields.put("replaceAmount", fields.getByPosition(95).substring(0, 10) + "." + fields.getByPosition(95).substring(10, 12));
+					}
+					
+					/* Conversion Rate */
+					fields.put("convRate",fields.getByPosition(10));
+					
+					/* Original Transaction Currency */
+					fields.put("origTrnCurrency",fields.getByPosition(51));
+					
+					/* Return value - duplicate Trn */
+					fields.put("returnDuplicateTrn","N");	
+					
+					/* Reversed Value */
+					if("0420".equals(fields.get("messageType")))
+						fields.put("newCorr","S");
+					else
+						fields.put("newCorr","N");
+						
+					/* Terminal */
+					fields.put("newTerminal",fields.getByPosition(41).trim());
+					
+					/* Location */
+					fields.put("newLocation",fields.getByPosition(43).trim());
+					
+					/* Keys */
+					fields.put("cmpKey","ATH"+fields.get("newTrnDate")+fields.getByPosition(35).substring(0, 16)+fields.get("newTerminal")+fields.getByPosition(11).substring(2)+"0"+fields.getByPosition(4));					
+					fields.put("trcKey","ATH"+fields.get("newTrnDate")+fields.get("newTerminal")+fields.getByPosition(11)+fields.get("card")+"00"+fields.getByPosition(4));					
+					fields.put("corrAut","N");
+					
+					if(fields.getByPosition(90) != null) {
+						fields.put("trnKey","ATH"+fields.get("newTrnDate")+fields.get("newTerminal")+fields.getByPosition(90).substring(4, 16).trim());	
+					}else
+						fields.put("trnKey","ATH"+fields.get("newTrnDate")+fields.get("newTerminal")+fields.getByPosition(37));
+					fields.put("trnData", fields.get("messageType") + fields.getByPosition(3) + "_/" +
+						fields.get("newTerminal") + "/" + fields.get("card") + fields.getByPosition(11) +
+						"_/00000000000+");
+						
+				
+				]]>
+			</custom-parsing>
+		</parser>
+		<parser name="TRN_OUT">
+			<custom-parsing><![CDATA[											
+					String newP44 = "4" + fields.fillParamsBefore(fields.formatMoneyValueToString(fields.get("T1001-o_ledgBalanceDebit")),12,'0') + fields.fillParamsBefore(fields.formatMoneyValueToString(fields.get("T1000-o_availableBalanceDebit")), 12,'0');
+					fields.putByPosition(44, newP44);
+					fields.putByPosition(17, fields.getActualMonth() + fields.getActualDay());
+					if("0200".equals(fields.get("messageType")))
+						fields.put("messageType", "0210");
+					else if("0800".equals(fields.get("messageType")))
+						fields.put("messageType", "0810");	
+					else if("0420".equals(fields.get("messageType")))
+						fields.put("messageType", "0430");	
+					else if("0220".equals(fields.get("messageType")))
+						fields.put("messageType", "0230");	
+					/**
+                     for not supported or Error Parsing 12
+                     **/
+					 if(Boolean.parseBoolean(fields.get("$notsupported")) || Boolean.parseBoolean(fields.get("$errorParsing"))){
+					    fields.put("P39-responseCode", "12");
+						fields.put("S102-accountIdentification1", null);
+						fields.put("S103-accountIdentification2", null);
+					}						
+					/**
+                     for timeout 19
+                     **/
+                     if(Boolean.parseBoolean(fields.get("$timeout"))==true) {
+                        fields.put("P39-responseCode", "19");
+                    }
+				]]>
+			</custom-parsing>
+		</parser>
+		<parser name="CONTROL_IN">
+			<custom-parsing><![CDATA[
+					if("001".equals(fields.getByPosition(70)))
+						fields.put("transactionCode", "ON");
+					else if("002".equals(fields.getByPosition(70)))
+						fields.put("transactionCode", "OFF");
+					else if("301".equals(fields.getByPosition(70)))
+						fields.put("transactionCode", "ECHO");					                   					
+				]]>
+			</custom-parsing>
+		</parser>
+		<parser name="NOTSUPPORTED_IN">
+			<custom-parsing><![CDATA[
+					fields.put("$notsupported", "true");					
+				]]>
+			</custom-parsing>
+		</parser>
+	</parsers>
+	
+	<transactions>
+		<transaction name="control">
+			<service-parameter name="serviceId" value="controlService"></service-parameter>
+			<service-parameter name="trn" value="16900"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=ControlTransaction)"></service-parameter>
+			<input>
+				<in-parameter field="transactionCode" name="@i_netcode" sql-type="39" />
+			</input>
+			<output>                     
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+			</output>
+		</transaction>
+		
+		<transaction name="ATM-BalanceInquiry-Savings">
+			<service-parameter name="serviceId" value="balanceService"></service-parameter>
+			<service-parameter name="trn" value="16901"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=BalanceInquiryTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+				
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="otherNetwork" name="@i_other_networks" sql-type="47" />
+
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+
+			</output>
+		</transaction>
+
+		<transaction name="ATM-BalanceInquiry-Checking">
+			<!-- Consulta corriente -->
+			<service-parameter name="serviceId" value="balanceService"></service-parameter>
+			<service-parameter name="trn" value="16902"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=BalanceInquiryTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="otherNetwork" name="@i_other_networks" sql-type="47" />
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+
+		<transaction name="ATM-BalanceInquiry-Default">
+			<service-parameter name="serviceId" value="balanceService"></service-parameter>
+			<service-parameter name="trn" value="16905"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=BalanceInquiryTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="otherNetwork" name="@i_other_networks" sql-type="47" />
+			</input>
+
+			<output>
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="ATM-Withdrawal-Savings">
+			<service-parameter name="serviceId" value="withdrawalService"></service-parameter>
+			<service-parameter name="trn" value="16911"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=WithdrawalTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+                                
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+				<in-parameter field="otherNetwork" name="@i_other_networks" sql-type="47" />
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="ATM-Withdrawal-Checking">
+			<service-parameter name="serviceId" value="withdrawalService"></service-parameter>
+			<service-parameter name="trn" value="16912"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=WithdrawalTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+				<in-parameter field="otherNetwork" name="@i_other_networks" sql-type="47" />
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="ATM-Withdrawal-Default">
+			<service-parameter name="serviceId" value="withdrawalService"></service-parameter>
+			<service-parameter name="trn" value="16915"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=WithdrawalTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+				<in-parameter field="otherNetwork" name="@i_other_networks" sql-type="47" />
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-Savings">
+			<service-parameter name="serviceId" value="purchaseService"></service-parameter>
+			<service-parameter name="trn" value="16921"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=PurchaseTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-Checking">
+			<service-parameter name="serviceId" value="purchaseService"></service-parameter>
+			<service-parameter name="trn" value="16922"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=PurchaseTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-Default">
+			<service-parameter name="serviceId" value="purchaseService"></service-parameter>
+			<service-parameter name="trn" value="16923"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=PurchaseTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-CashAdvance-Savings">
+			<service-parameter name="serviceId" value="withdrawalService"></service-parameter>
+			<service-parameter name="trn" value="16927"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=WithdrawalTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+                                
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-CashAdvance-Checking">
+			<service-parameter name="serviceId" value="withdrawalService"></service-parameter>
+			<service-parameter name="trn" value="16928"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=WithdrawalTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-CashAdvance-Default">
+			<service-parameter name="serviceId" value="withdrawalService"></service-parameter>
+			<service-parameter name="trn" value="16931"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=WithdrawalTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+				<in-parameter field="replaceAmount" name="@i_val_disp_final" sql-type="60"/>
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+		<transaction name="POS-BalanceInquiry-Savings">
+			<service-parameter name="serviceId" value="balanceService"></service-parameter>
+			<service-parameter name="trn" value="16933"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=BalanceInquiryTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+
+		<transaction name="POS-BalanceInquiry-Checking">
+			<!-- Consulta corriente -->
+			<service-parameter name="serviceId" value="balanceService"></service-parameter>
+			<service-parameter name="trn" value="16934"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=BalanceInquiryTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="debProduct" name="@i_prod_deb" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+			</input>
+
+			<output>                     
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+
+		<transaction name="POS-BalanceInquiry-Default">
+			<service-parameter name="serviceId" value="balanceService"></service-parameter>
+			<service-parameter name="trn" value="16937"></service-parameter>
+			<service-parameter name="serviceFilter" value="(service.impl=BalanceInquiryTransaction)"></service-parameter>
+
+			<!-- Define lo que sale de la trama -->
+			<input>
+				<in-parameter field="messageType" name="@i_msgtype" sql-type="39"/>
+				<in-parameter field="newTerminal" name="@i_terminal" sql-type="39"/>
+				<in-parameter field="P11-systemsTraceAuditNumber" name="@i_numtran" sql-type="56"/>
+				<in-parameter field="P3-processingCode" name="@i_op_code" sql-type="39"/>
+				<in-parameter field="newTrnDate" name="@i_fecha_trn" sql-type="39"/>
+				<in-parameter field="P12-localTransactionTime" name="@i_hora_trn" sql-type="39"/>
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_aba" sql-type="39"/>
+				<in-parameter field="refNumber" name="@i_numrefer" sql-type="39" />
+				<in-parameter field="country" name="@i_pais" sql-type="39" />
+				<in-parameter field="newLocation" name="@i_ubicacion" sql-type="39" posicion="15"/>				
+				<in-parameter field="P4-transactionAmount" name="@i_val_disp" sql-type="60" posicion="19"/>				
+				<in-parameter field="newCntDate" name="@i_fecha_cont" sql-type="39"/>
+				<in-parameter field="P35-track2Data" name="@i_track2" sql-type="39" posicion="30"/>
+				<in-parameter field="cardExpirationDate" name="@i_fecha_exp" sql-type="39" posicion="33"/>
+				<in-parameter field="cmpKey" name="@i_clave_cmp" sql-type="39" posicion="33"/>
+				<in-parameter field="trcKey" name="@i_clave_trace" sql-type="39" posicion="33"/>
+				<in-parameter field="trnKey" name="@i_clave_trn" sql-type="39" posicion="33"/>
+				<in-parameter field="corrAut" name="@i_corr_aut" sql-type="47" posicion="33"/>
+
+				<!-- Nuevos datos -->
+				<in-parameter field="card" name="@i_tarjeta" sql-type="39" />
+				<in-parameter field="dateTime" name="@i_fechahora" sql-type="39" />
+				<in-parameter field="P32-acquiringInstitutionIdentificationCode" name="@i_codinst" sql-type="39" />
+				<in-parameter field="terminalType" name="@i_tipo_terminal" sql-type="39" />
+				<in-parameter field="trnData" name="@i_datos_trn" sql-type="39" />
+				<in-parameter field="newCorr" name="@i_corr" sql-type="47" />
+				<in-parameter field="returnDuplicateTrn" name="@i_retorna_trn_duplicada" sql-type="47" />
+				<in-parameter field="P49-transactionCurrencyCode" name="@i_mon_disp" sql-type="39" />
+				<in-parameter field="origin" name="@i_origen" sql-type="47" />
+			</input>
+
+			<output>
+				<out-parameter field="T1000-o_availableBalanceDebit" name="@o_availableBalanceDebit" />
+				<out-parameter field="P39-responseCode" name="@o_replyResultCode" />
+				<out-parameter field="P38-authorizationIdentificationResponse" name="@o_transactionNum" />
+				<out-parameter field="T1001-o_ledgBalanceDebit" name="@o_ledgBalanceDebit" />
+				<out-parameter field="S102-accountIdentification1" name="@o_cuentaDeb" />
+				<out-parameter field="S103-accountIdentification2" name="@o_cuentaCre" />
+			</output>
+		</transaction>
+		
+	</transactions>	
+</config-connector>

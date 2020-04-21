@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_pago_recurrente_bv</name>
+  <type>SQLSERVER</type>
+  <version>2</version>
+  <parameters>
+    <parameter name="@i_anio_ini" dataType="smallint" direction="in" />
+    <parameter name="@i_bco_destino" dataType="varchar" direction="in" />
+    <parameter name="@i_beneficiario" dataType="varchar" direction="in" />
+    <parameter name="@i_categoria" dataType="varchar" direction="in" />
+    <parameter name="@i_clave_bv" dataType="int" direction="in" />
+    <parameter name="@i_cod_banco" dataType="int" direction="in" />
+    <parameter name="@i_codigo" dataType="int" direction="in" />
+    <parameter name="@i_concepto" dataType="varchar" direction="in" />
+    <parameter name="@i_convenio" dataType="int" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_cr" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_dst" dataType="varchar" direction="in" />
+    <parameter name="@i_dia_ini" dataType="tinyint" direction="in" />
+    <parameter name="@i_dias_notif" dataType="smallint" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_estado" dataType="varchar" direction="in" />
+    <parameter name="@i_fech_prox_cobr" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="tinyint" direction="in" />
+    <parameter name="@i_graba_log" dataType="char" direction="in" />
+    <parameter name="@i_id" dataType="int" direction="in" />
+    <parameter name="@i_identif_benef" dataType="varchar" direction="in" />
+    <parameter name="@i_item" dataType="char" direction="in" />
+    <parameter name="@i_item_nombre" dataType="varchar" direction="in" />
+    <parameter name="@i_llave" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_mes_ini" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_moneda_cr" dataType="smallint" direction="in" />
+    <parameter name="@i_nombre_cta_cr" dataType="varchar" direction="in" />
+    <parameter name="@i_notificar" dataType="char" direction="in" />
+    <parameter name="@i_num_dias" dataType="varchar" direction="in" />
+    <parameter name="@i_num_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_num_pagos" dataType="int" direction="in" />
+    <parameter name="@i_opcion" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_producto_cr" dataType="smallint" direction="in" />
+    <parameter name="@i_ref1" dataType="varchar" direction="in" />
+    <parameter name="@i_ref10" dataType="varchar" direction="in" />
+    <parameter name="@i_ref11" dataType="varchar" direction="in" />
+    <parameter name="@i_ref12" dataType="varchar" direction="in" />
+    <parameter name="@i_ref2" dataType="varchar" direction="in" />
+    <parameter name="@i_ref3" dataType="varchar" direction="in" />
+    <parameter name="@i_ref4" dataType="varchar" direction="in" />
+    <parameter name="@i_ref5" dataType="varchar" direction="in" />
+    <parameter name="@i_ref6" dataType="varchar" direction="in" />
+    <parameter name="@i_ref7" dataType="varchar" direction="in" />
+    <parameter name="@i_ref8" dataType="varchar" direction="in" />
+    <parameter name="@i_ref9" dataType="varchar" direction="in" />
+    <parameter name="@i_reint_cobro" dataType="char" direction="in" />
+    <parameter name="@i_ruta_transito" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_tipo_cta_des" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_doc" dataType="char" direction="in" />
+    <parameter name="@i_tipo_interfaz" dataType="char" direction="in" />
+    <parameter name="@i_tipo_pago" dataType="char" direction="in" />
+    <parameter name="@i_tlfno_benef" dataType="varchar" direction="in" />
+    <parameter name="@i_transf_ach" dataType="char" direction="in" />
+    <parameter name="@i_val" dataType="money" direction="in" />
+    <parameter name="@i_valor_trn" dataType="money" direction="in" />
+    <parameter name="@o_autorizacion" dataType="char" direction="out" />
+    <parameter name="@o_condicion" dataType="int" direction="out" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@o_retorno" dataType="int" direction="out" />
+    <parameter name="@o_ssn_branch" dataType="int" direction="out" />
+    <parameter name="@r_estado" dataType="char" direction="in" />
+    <parameter name="@r_fecha_host" dataType="datetime" direction="in" />
+    <parameter name="@r_monto_blq" dataType="money" direction="in" />
+    <parameter name="@r_monto_sob" dataType="money" direction="in" />
+    <parameter name="@r_num_bloq" dataType="int" direction="in" />
+    <parameter name="@r_num_blqmonto" dataType="int" direction="in" />
+    <parameter name="@r_ofi_cta" dataType="smallint" direction="in" />
+    <parameter name="@r_pro_ban" dataType="smallint" direction="in" />
+    <parameter name="@r_sld_12h" dataType="money" direction="in" />
+    <parameter name="@r_sld_24h" dataType="money" direction="in" />
+    <parameter name="@r_sld_cont" dataType="money" direction="in" />
+    <parameter name="@r_sld_disp" dataType="money" direction="in" />
+    <parameter name="@r_sld_girar" dataType="money" direction="in" />
+    <parameter name="@r_sld_rem" dataType="money" direction="in" />
+    <parameter name="@r_ssn_host" dataType="int" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="out" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@t_online" dataType="char" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@i_origen_fondos" dataType="varchar" direction="in" />
+    <parameter name="@i_dest_fondos" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT o_referencia</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT s_ssn_branch</queryText>
+    </query>
+  </queries>
+</procedure>

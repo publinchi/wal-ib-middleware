@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_adm_widget</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_show_version" dataType="int" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_widget_id" dataType="int" direction="in" />
+    <parameter name="@i_name" dataType="varchar" direction="in" />
+    <parameter name="@i_label" dataType="varchar" direction="in" />
+    <parameter name="@i_order" dataType="tinyint" direction="in" />
+    <parameter name="@i_url" dataType="varchar" direction="in" />
+    <parameter name="@i_visible" dataType="char" direction="in" />
+    <parameter name="@i_clase" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_ente" dataType="char" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="MENU" />
+        <column name="URL" />
+        <column name="LABEL" />
+        <column name="PUBLICIDAD" />
+        <column name="ENTIDAD" />
+        <column name="ATRIBUTO_1" />
+        <column name="ATRIBUTO_2" />
+        <column name="ATRIBUTO_3" />
+        <column name="ATRIBUTO_4" />
+      </columns>
+      <queryText>SELECT  "MENU" = wg_menu,"URL" = (SELECT  ar_archivo FROM cob_bvirtual..bv_archivo   WHERE ar_menu = x.wg_menu AND ar_tipo = "Y"     ),"LABEL" = (SELECT  bl_nombre FROM cob_bvirtual..bv_label  ,cob_bvirtual..bv_archivo   WHERE bl_codigo = ar_menu AND bl_tipo = "MENU" AND bl_subcodigo = ar_id AND ar_tipo = "F" AND bl_codigo = x.wg_menu AND bl_cultura = ?     ),"PUBLICIDAD" = wg_publicidad,"ENTIDAD" = wg_entidad,"ATRIBUTO_1" = wg_atrib1,"ATRIBUTO_2" = wg_atrib2,"ATRIBUTO_3" = wg_atrib3,"ATRIBUTO_4" = wg_atrib4 </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ID" />
+        <column name="NOMBRE" />
+        <column name="LABEL" />
+        <column name="ORDER" />
+        <column name="URL" />
+        <column name="VISIBLE" />
+        <column name="CLASE" />
+      </columns>
+      <queryText>SELECT  "ID" = wi_id,"NOMBRE" = wi_name,"LABEL" = wi_label,"ORDER" = wi_order,"URL" = wi_url,"VISIBLE" = wi_visible,"CLASE" = wi_clase </queryText>
+    </query>
+  </queries>
+</procedure>

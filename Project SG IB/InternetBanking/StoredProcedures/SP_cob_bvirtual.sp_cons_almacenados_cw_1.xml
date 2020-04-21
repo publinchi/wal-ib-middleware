@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_cons_almacenados_cw</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_id" dataType="int" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_estado_ejec" dataType="varchar" direction="in" />
+    <parameter name="@i_estado_auto" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini_aproc" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin_aproc" dataType="datetime" direction="in" />
+    <parameter name="@i_tipo_archivo" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_orden" dataType="int" direction="in" />
+    <parameter name="@i_total_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="LOGIN" />
+        <column name="NOMBRE" />
+        <column name="TIPO DE PAGO" />
+        <column name="MONEDA" />
+        <column name="FECHA A PROC." />
+        <column name="FECHA PROCESO" />
+        <column name="HORA" />
+        <column name="PROCESO" />
+        <column name="AUTORIZACION" />
+        <column name="TRN AUT" />
+        <column name="EJECUCION" />
+        <column name="MONTO TOTAL" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

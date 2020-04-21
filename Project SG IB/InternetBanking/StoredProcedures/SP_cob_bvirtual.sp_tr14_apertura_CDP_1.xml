@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr14_apertura_CDP</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_base_calculo" dataType="varchar" direction="in" />
+    <parameter name="@i_capitaliza" dataType="char" direction="in" />
+    <parameter name="@i_cedula1" dataType="varchar" direction="in" />
+    <parameter name="@i_cedula2" dataType="varchar" direction="in" />
+    <parameter name="@i_cedula3" dataType="varchar" direction="in" />
+    <parameter name="@i_cedula4" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_debito" dataType="varchar" direction="in" />
+    <parameter name="@i_dia_pago" dataType="tinyint" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_fecha_valor" dataType="datetime" direction="in" />
+    <parameter name="@i_forma_pago" dataType="char" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_mail" dataType="varchar" direction="in" />
+    <parameter name="@i_moneda" dataType="smallint" direction="in" />
+    <parameter name="@i_monto" dataType="float" direction="in" />
+    <parameter name="@i_nemonico" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre1" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre2" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre3" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre4" dataType="varchar" direction="in" />
+    <parameter name="@i_num_dias_gracia" dataType="int" direction="in" />
+    <parameter name="@i_oficina" dataType="smallint" direction="in" />
+    <parameter name="@i_p_apellido1" dataType="varchar" direction="in" />
+    <parameter name="@i_p_apellido2" dataType="varchar" direction="in" />
+    <parameter name="@i_p_apellido3" dataType="varchar" direction="in" />
+    <parameter name="@i_p_apellido4" dataType="varchar" direction="in" />
+    <parameter name="@i_parentesco1" dataType="varchar" direction="in" />
+    <parameter name="@i_parentesco2" dataType="varchar" direction="in" />
+    <parameter name="@i_parentesco3" dataType="varchar" direction="in" />
+    <parameter name="@i_parentesco4" dataType="varchar" direction="in" />
+    <parameter name="@i_periodicidad" dataType="varchar" direction="in" />
+    <parameter name="@i_plazo" dataType="int" direction="in" />
+    <parameter name="@i_porcentaje1" dataType="float" direction="in" />
+    <parameter name="@i_porcentaje2" dataType="float" direction="in" />
+    <parameter name="@i_porcentaje3" dataType="float" direction="in" />
+    <parameter name="@i_porcentaje4" dataType="float" direction="in" />
+    <parameter name="@i_pro_debito" dataType="int" direction="in" />
+    <parameter name="@i_prorroga_aut" dataType="varchar" direction="in" />
+    <parameter name="@i_retienimp" dataType="varchar" direction="in" />
+    <parameter name="@i_s_apellido1" dataType="varchar" direction="in" />
+    <parameter name="@i_s_apellido2" dataType="varchar" direction="in" />
+    <parameter name="@i_s_apellido3" dataType="varchar" direction="in" />
+    <parameter name="@i_s_apellido4" dataType="varchar" direction="in" />
+    <parameter name="@i_tasa" dataType="float" direction="in" />
+    <parameter name="@i_tcapitalizacion" dataType="varchar" direction="in" />
+    <parameter name="@o_body" dataType="varchar" direction="out" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@o_retorno" dataType="varchar" direction="out" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_org_err" dataType="char" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_servicio" dataType="int" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_sev" dataType="tinyint" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_mon" dataType="tinyint" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

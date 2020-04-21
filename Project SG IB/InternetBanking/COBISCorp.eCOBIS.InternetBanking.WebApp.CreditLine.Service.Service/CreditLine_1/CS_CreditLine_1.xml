@@ -1,0 +1,1 @@
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGClass" id="1"><field type="String" name="name" value="CreditLine" /><field type="String" name="version" value="1" /><field type="String" name="serviceMappingTypeName" value="STORED_PROCEDURE" /></class>

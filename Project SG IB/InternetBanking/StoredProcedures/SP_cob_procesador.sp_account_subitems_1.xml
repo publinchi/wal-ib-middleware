@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_account_subitems</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_id_operativo" dataType="varchar" direction="" />
+    <parameter name="@i_codmodulo" dataType="int" direction="" />
+    <parameter name="@i_nrooperacion" dataType="int" direction="" />
+    <parameter name="@i_fechaoperativa" dataType="int" direction="" />
+    <parameter name="@i_cuenta" dataType="varchar" direction="" />
+    <parameter name="@i_servicio" dataType="int" direction="" />
+    <parameter name="@i_nroitem" dataType="varchar" direction="" />
+    <parameter name="@i_cantidadmonto" dataType="decimal" direction="" />
+    <parameter name="@o_coderror" dataType="int" direction="out" />
+    <parameter name="@o_mensaje" dataType="varchar" direction="out" />
+    <parameter name="@o_totaltem" dataType="decimal" direction="out" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="DESCRIPCION" />
+        <column name=" MONTO" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

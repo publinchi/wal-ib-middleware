@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<langpack>
+	<str id="pack.modules" txt="módulos" />	
+	<str id="process.title" txt="Instalando configuraciones de CTS y CIS" />	
+	<str id="user.title" txt="Verificando la instalación" />
+	<str id="user.instructions" txt="Por favor, haga clic en Siguiente para verificar la instalación" />
+	<str id="user.core" txt="Core Instalado: " />
+	<str id="CheckSumValidator.errorMessage" txt="Error en la validacion de la instalación" />
+	<str id="IBCoreWithoutOffline" txt="IB con Core Cobis sin Offline" />	
+	<str id="IBCoreWithOffline" txt="IB con Core Cobis con Offline" />
+	<str id="IBOtheCore" txt="IB con otro Core" />
+	<str id="user.title2" txt="Tipo de instalación a realizar" />
+	<str id="General" txt="Componentes Generales" />
+	
+	<!-- EnviromentValidator Errors -->
+	<str id="EnvironmentValidator.errorMessage" txt="Error en la validacion de archivos requeridos" />
+	<str id="EnvironmentValidator.error_18000" txt="Error 18000: OTP no se encuentra instalado. Contacte al Administrador" />
+	<str id="EnvironmentValidator.error_18001" txt="Error 18001: Error en la validación de archivos requeridos. No se encuentra el archivo cts-ccm-plan-config.xml" />
+	<str id="EnvironmentValidator.error_18002" txt="Error 18002: Error en la validación de archivos requeridos. No se encuentra el archivo cts-ccm-config.xml" />
+	<str id="EnvironmentValidator.error_18003" txt="Error 18003: Error en la validación de archivos requeridos. No se encuentra el archivo cts-ccm-client-config.xml" />
+	<str id="EnvironmentValidator.error_18004" txt="Error 18004: Error en la validación de archivos requeridos. No se encuentra el archivo tr-logger-config.xml" />
+	<str id="EnvironmentValidator.error_18005" txt="Error 18005: Error en la validación de archivos requeridos. No se encuentra el archivo bv-services-authorization-service-config.xml" />
+	<str id="EnvironmentValidator.error_18006" txt="Error 18006: Error en la validación de archivos requeridos. No se encuentra el archivo cobisbv-authorization-service-config.xml" />
+	<str id="EnvironmentValidator.error_18007" txt="Error 18007: Error en la validación de archivos requeridos. No se encuentra el archivo master-orchestrator-config.xml" />
+	<str id="EnvironmentValidator.error_18008" txt="Error 18008: Error en la validación de archivos requeridos. No se encuentra el archivo csp-ccm-config.xml" />
+	<str id="EnvironmentValidator.error_18009" txt="Error 18009: Error en la validación de archivos requeridos. No se encuentra el archivo session-manager-service-config.xml" />
+	<str id="EnvironmentValidator.error_18010" txt="Error 18010: Error en la validación de archivos requeridos. No se encuentra el archivo spexecutor-service-config.xml" />
+	<str id="EnvironmentValidator.error_18011" txt="Error 18011: Error en la validación de archivos requeridos. No se encuentra el archivo spexecutor-service-light-config.xml" />
+	<str id="EnvironmentValidator.error_18012" txt="Error 18012: Error en la validación de archivos requeridos. No se encuentra el archivo spexecutor-service-object-config.xml" />
+	<str id="EnvironmentValidator.error_18013" txt="Error 18013: Error en la validación de archivos requeridos. No se encuentra el archivo csp-ctstransformation-service-config.xml" />
+	<str id="EnvironmentValidator.error_18014" txt="Error 18014: Error en la validación de archivos requeridos. No se encuentra el archivo csp-ccm-client-config.xml" />
+	<str id="EnvironmentValidator.error_18015" txt="Error 18015: Error en la validación de archivos requeridos. No se encuentra el archivo csp-ccm-client-config.xml" />
+	<str id="EnvironmentValidator.error_18016" txt="Error 18016: Error en la validación de archivos requeridos. No se encuentra el archivo services.xml" />
+	<str id="EnvironmentValidator.error_18017" txt="Error 18017: Error en la validación de archivos requeridos. No se encuentra el archivo reentry-immediate-service-config.xml" />
+	<str id="EnvironmentValidator.error_18018" txt="Error 18018: Error en la validación de archivos requeridos. No se encuentra el archivo cobisbv-session-manager-config.xml" />
+	<str id="EnvironmentValidator.error_18019" txt="Error 18019: Error en la validación de archivos requeridos. No se encuentra el archivo cobis-ssn-unique-config.xml" />
+	<str id="EnvironmentValidator.error_18020" txt="Error 18020: Error en la validación de archivos requeridos. No se encuentra el archivo cobisbv-ssn-unique-config.xml" />
+	<str id="EnvironmentValidator.error_18021" txt="Error 18021: Error en la validación de archivos requeridos. No se encuentra el archivo business-service-executor-config.xml" />
+	<str id="EnvironmentValidator.error_18022" txt="Error 18022: Error en la validación de archivos requeridos. No se encuentra el archivo service-executor-config.xml" />	
+	<str id="EnvironmentValidator.error_18030" txt="Error 18030: Verifique el tamaño del buffer" />
+	
+	<!-- XPathUpdate Errors -->
+	<str id="XPathUpdate.error_18040" txt="Error 18040: Error en archivo de configuración master-orchestrator-config.xml" />
+	<str id="XPathUpdate.error_18041" txt="Error 18041: No existe configuración del archivo csp-ccm-config.xml" />
+	<str id="XPathUpdate.error_18042" txt="Error 18042: No existe configuración del archivo cts-ccm-config.xml" />
+	<str id="XPathUpdate.error_18043" txt="Error 18043: No existe configuración del archivo integration-service-config.xml" />
+	<str id="XPathUpdate.error_18044" txt="Error 18044: No existe configuración del archivo socket-ssn-config.xml" />
+	<str id="XPathUpdate.error_18045" txt="Error 18045: No existe configuración del archivo csp-ccm-client-config.xml" />	
+	<str id="XPathUpdate.error_18046" txt="Error 18046: No existe configuración del archivo reentry-immediate-service-config.xml" />
+	<str id="XPathUpdate.error_18047" txt="Error 18047: Verifique los plugins en el archivo cts-ccm-plan-config.xml" />
+	<str id="XPathUpdate.error_18048" txt="Error 18048: No existe plan reentry en archivo cts-ccm-plan-config.xml" />
+	<str id="XPathUpdate.error_18049" txt="Error 18049: Verifique las configuraciones de los DBMS" />
+	<str id="XPathUpdate.error_18050" txt="Error 18050: No existe configuración del archivo master-cts-mf-as.xml" />
+	<str id="XPathUpdate.error_18051" txt="Error 18051: Verifique las configuraciones de Modo Dual" />
+	<str id="XPathUpdate.error_18052" txt="Error 18052: Verifique las configuraciones de los DBMS" />	
+	<str id="XPathUpdate.error_18100" txt="Error 18100: Error en la instalación de IB. Verifique el log y Contacte con el Administrador" />
+</langpack>

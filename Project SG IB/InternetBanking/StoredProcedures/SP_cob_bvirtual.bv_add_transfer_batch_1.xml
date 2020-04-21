@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>bv_add_transfer_batch</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_a_payment_type" dataType="varchar" direction="in" />
+    <parameter name="@i_a_acc_org" dataType="varchar" direction="in" />
+    <parameter name="@i_a_prod_org" dataType="tinyint" direction="in" />
+    <parameter name="@i_a_mon_org" dataType="smallint" direction="in" />
+    <parameter name="@i_a_acc_dest" dataType="varchar" direction="in" />
+    <parameter name="@i_a_prod_dest" dataType="tinyint" direction="in" />
+    <parameter name="@i_a_mon_dest" dataType="smallint" direction="in" />
+    <parameter name="@i_a_ammount" dataType="money" direction="in" />
+    <parameter name="@i_a_concepto" dataType="varchar" direction="in" />
+    <parameter name="@i_a_beneficiary" dataType="varchar" direction="in" />
+    <parameter name="@i_g_account" dataType="varchar" direction="in" />
+    <parameter name="@i_g_money" dataType="tinyint" direction="in" />
+    <parameter name="@i_g_product_type" dataType="tinyint" direction="in" />
+    <parameter name="@i_g_records_count" dataType="int" direction="in" />
+    <parameter name="@i_g_records_proceseed" dataType="int" direction="in" />
+    <parameter name="@i_g_ammount" dataType="money" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_mg_status" dataType="int" direction="in" />
+    <parameter name="@i_mg_type" dataType="int" direction="in" />
+    <parameter name="@i_mg_description" dataType="varchar" direction="in" />
+    <parameter name="@i_mg_planned_date" dataType="datetime" direction="in" />
+    <parameter name="@i_a_status" dataType="int" direction="in" />
+    <parameter name="@i_a_msg_error" dataType="varchar" direction="in" />
+    <parameter name="@i_g_ammount_proceseed" dataType="money" direction="in" />
+    <parameter name="@i_g_autorized" dataType="char" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="secuencial" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<serviceClass name="Agreement" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.service" ns="http://service.enrollment.webapp.internetbanking.ecobis.cobiscorp" module="InternetBanking.WebApp.Enrollment.Service" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" productVersion="4.6.1.0">
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="$(/product/@name)$" />
+    <property name="MavenVersion" value="$(/product/@version)$" />
+  </productProperties>
+  <partialClass name="Agreement">
+    <services>
+      <service id="InternetBanking.WebApp.Enrollment.Service.Agreement.GetAgreement" netName="GetAgreement" javaName="getAgreement" mappingType="STORED_PROCEDURE" mapId="2ba96b2e9b498eaa9fd604f7ef83a220">
+        <SRVMapping name="cob_bvirtual..sp_terms_cond" trnCode="1800271">
+          <DTOs>
+            <DTO direction="in" name="Agreement" alias="inAgreement" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+            <DTO direction="out" name="Agreement" alias="outAgreement" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="title" propertyNet="Title" propertyJava="title" setterJavaMethod="setTitle" getterJavaMethod="getTitle" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="body" propertyNet="Body" propertyJava="body" setterJavaMethod="setBody" getterJavaMethod="getBody" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="return" name="Agreement" alias="returnAgreement" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="title" propertyNet="Title" propertyJava="title" setterJavaMethod="setTitle" getterJavaMethod="getTitle" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="body" propertyNet="Body" propertyJava="body" setterJavaMethod="setBody" getterJavaMethod="getBody" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="CONSTANT" allowNull="false" contantValue="L" />
+            <parameter name="@i_termino" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inAgreement" DTOPropertyName="id" />
+            <parameter name="@o_titulo" direction="in out" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_titulo" direction="in out" mappingDirection="out" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="outAgreement" DTOPropertyName="title" />
+          </parameterMappings>
+          <resultMappings>
+            <result>
+              <DTOResult DTOAlias="returnAgreement" MapReturn="true">
+                <columnMapping position="0" name="CUERPO" DTOPropertyName="body" DataType="string" Format="" />
+              </DTOResult>
+            </result>
+          </resultMappings>
+          <MappingProperties>
+            <MappingProperty key="dbms" value="SQLCTS" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+    </services>
+  </partialClass>
+</serviceClass>

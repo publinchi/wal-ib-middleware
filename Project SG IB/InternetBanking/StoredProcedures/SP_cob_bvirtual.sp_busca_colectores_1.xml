@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_busca_colectores</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@i_tipo" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_colector" dataType="int" direction="in" />
+    <parameter name="@i_tipo_tercero" dataType="char" direction="in" />
+    <parameter name="@i_administrador" dataType="char" direction="in" />
+    <parameter name="@i_opcion" dataType="varchar" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_ciudad" dataType="int" direction="in" />
+    <parameter name="@i_todos" dataType="char" direction="in" />
+    <parameter name="@i_sec" dataType="int" direction="in" />
+    <parameter name="@i_cons_msg_al_cli" dataType="char" direction="in" />
+    <parameter name="@i_todas_ciudades" dataType="char" direction="in" />
+    <parameter name="@i_tipo_serv" dataType="varchar" direction="in" />
+    <parameter name="@i_es_recurrente" dataType="char" direction="in" />
+    <parameter name="@i_clavebv" dataType="char" direction="in" />
+    <parameter name="@i_identif_cont" dataType="varchar" direction="in" />
+    <parameter name="@i_colec" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_origen" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_uso_convenio</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="COD." />
+        <column name="NOMBRE" />
+        <column name="BANCO" />
+        <column name="CUENTA" />
+        <column name="PRODUCTO" />
+        <column name="MONEDA" />
+        <column name="DESC MONEDA" />
+        <column name="DESC PRODUCTO" />
+      </columns>
+      <queryText>SELECT  "COD." = te_tercero,"NOMBRE" = te_nombre,"BANCO" = te_descripcion,"CUENTA" = te_cuenta,"PRODUCTO" = te_producto,"MONEDA" = te_moneda,"DESC MONEDA" = mo_descripcion,"DESC PRODUCTO" = pd_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="NOMBRE BNF" />
+        <column name="BANCO BNF" />
+        <column name="CIUDAD BNF" />
+        <column name="PAIS BNF" />
+        <column name="COD SWIFT BNF" />
+        <column name="CUENTA BNF" />
+        <column name="BANCO ITM" />
+        <column name="CIUDAD ITM" />
+        <column name="PAIS ITM" />
+        <column name="COD SWIFT ITM" />
+        <column name="CUENTA ITM" />
+        <column name="ESTADO" />
+        <column name="COD NUM CAMB" />
+        <column name="OBS COMEXT" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = te_tercero,"NOMBRE BNF" = te_nombre,"BANCO BNF" = te_descripcion,"CIUDAD BNF" = te_ciudad_bnf,"PAIS BNF" = te_pais_bnf,"COD SWIFT BNF" = te_codswift_bnf,"CUENTA BNF" = te_cuenta,"BANCO ITM" = te_banco_itm,"CIUDAD ITM" = te_ciudad_itm,"PAIS ITM" = te_pais_itm,"COD SWIFT ITM" = te_codswift_itm,"CUENTA ITM" = te_cuenta_itm,"ESTADO" = te_estado,"COD NUM CAMB" = te_ncamb_cod,"OBS COMEXT" = te_adenda_ach </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="COD COLECT" />
+        <column name="COLECTOR" />
+        <column name="VALOR" />
+        <column name="ALIAS" />
+      </columns>
+      <queryText>SELECT  "COD COLECT" = ci_colector,"COLECTOR" = co_nombre,"VALOR" = ci_valor,"ALIAS" = ci_alias </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT 3</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT 1</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="NOMBREt" />
+        <column name="TIPO IDENT CONTRATO" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = co_colector,"NOMBREt" = co_nombre,"TIPO IDENT CONTRATO" = co_tipo_id_contrato </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT DISTINCT ci_ciudad,ci_descripcion </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_uso_convenio</queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_notifica_cuenta</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_producto" dataType="tinyint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="DESCRIPCION" />
+        <column name="CONDICION" />
+        <column name="VAR NUM" />
+        <column name="VAR DATE" />
+        <column name="VAR CHAR" />
+        <column name="PARAMETRO" />
+        <column name="VALOR" />
+        <column name="NOTIFICACION" />
+        <column name="EDITABLE" />
+        <column name="TYPE" />
+      </columns>
+      <queryText>select    'DESCRIPCION' = v_descripcion,    'CONDICION'   = condicion,    'VAR NUM'     = v_numerico,   'VAR DATE'    = convert(varchar(10), v_fecha, 101),   'VAR CHAR'    = v_varchar,   'PARAMETRO'   = parametro,   'VALOR'       = cat_valor,   'NOTIFICACION'= notificacion,   'EDITABLE'    = editable   from #bv_temp_notif_aso     select    'DESCRIPCION' = v_descripcion,    'CONDICION'   = condicion,   'VAR NUM'     = v_numerico,   'VAR DATE'    = convert(varchar(10), v_fecha, 101),   'VAR CHAR'    = v_varchar,   'PARAMETRO'   = parametro,   'VALOR'       = cat_valor,   'NOTIFICACION'= notificacion   from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="DESCRIPCION" />
+        <column name="CONDICION" />
+        <column name="VAR NUM" />
+        <column name="VAR DATE" />
+        <column name="VAR CHAR" />
+        <column name="PARAMETRO" />
+        <column name="VALOR" />
+        <column name="NOTIFICACION" />
+        <column name="TYPE" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="DESCRIPCION" />
+        <column name="CONDICION" />
+        <column name="VAR NUM" />
+        <column name="VAR DATE" />
+        <column name="VAR CHAR" />
+        <column name="PARAMETRO" />
+        <column name="VALOR" />
+        <column name="NOTIFICACION" />
+        <column name="EDITABLE" />
+      </columns>
+      <queryText />
+    </query>
+  </queries>
+</procedure>

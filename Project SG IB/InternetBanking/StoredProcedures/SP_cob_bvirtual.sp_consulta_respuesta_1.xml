@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_consulta_respuesta</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="LR_PREGUNTA" />
+        <column name="LR_PREGUNTA_PERSONAL" />
+        <column name="LR_RESPUESTA" />
+      </columns>
+      <queryText>SELECT  "LR_PREGUNTA" = lr_pregunta,"LR_PREGUNTA_PERSONAL" = lr_pregunta_personal,"LR_RESPUESTA" = lr_respuesta </queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<processing>
+	<!-- Installing JAR's -->
+	<job name="InstallJarsJob" id="process.title">	
+		<executeclass name="com.cobiscorp.cobis.ib.middleware.installer.jobs.impl.InstallJarsJob">
+				<arg>$INSTALL_PATH</arg>
+				<arg>$ISO3_LANG</arg>		
+		</executeclass>
+	</job>
+	<onFail previous="true" next="false" />
+  	<onSuccess previous="false" next="true" />
+</processing>

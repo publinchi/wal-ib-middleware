@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_almacenados_datos_cw</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_almacenado" dataType="int" direction="in" />
+    <parameter name="@i_cta_org" dataType="varchar" direction="in" />
+    <parameter name="@i_prod_org" dataType="tinyint" direction="in" />
+    <parameter name="@i_cta_dest" dataType="varchar" direction="in" />
+    <parameter name="@i_prod_dest" dataType="tinyint" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@i_referencia" dataType="varchar" direction="in" />
+    <parameter name="@i_codigo" dataType="int" direction="in" />
+    <parameter name="@o_monto_total" dataType="money" direction="out" />
+  </parameters>
+  <queries />
+</procedure>

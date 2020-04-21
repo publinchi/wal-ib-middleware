@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_reimpresion_rec</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_servicio" dataType="int" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo_pago" dataType="char" direction="in" />
+    <parameter name="@i_cta_debito" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_desde" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_hasta" dataType="datetime" direction="in" />
+    <parameter name="@i_cta_credito" dataType="varchar" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_referencia" dataType="int" direction="in" />
+    <parameter name="@i_convenio" dataType="int" direction="in" />
+    <parameter name="@i_nregistros" dataType="int" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name=" @i_num_doc" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="FECHA" />
+        <column name="TIPO DE PAGO" />
+        <column name="RECIBO" />
+        <column name="MONTO" />
+        <column name="MONEDA" />
+        <column name="HORA" />
+        <column name="IMPRIMIR" />
+        <column name="ID" />
+        <column name="DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+        <column name="FACTURA" />
+      </columns>
+      <queryText>SELECT  "FECHA" = CONVERT (VARCHAR,pa_fecha_reg ,?),"TIPO DE PAGO" = pa_tipo,"RECIBO" = pa_referencia,"MONTO" = pa_valor,"MONEDA" = pa_moneda_cr,"HORA" = CONVERT (VARCHAR,pa_fecha_reg ,108),"IMPRIMIR" = "IMPRIMIR" </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="PRESTAMO" />
+        <column name="CUENTA DEBITO" />
+        <column name="MONTO" />
+        <column name="MONEDA" />
+        <column name="CONCEPTO" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"PRESTAMO" = pa_cuenta_cr,"CUENTA DEBITO" = pa_cuenta,"MONTO" = pa_valor,"MONEDA" = pa_moneda_cr,"CONCEPTO" = ISNULL (pa_concepto, pa_notas),"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="TARJETA" />
+        <column name="CUENTA DEBITO" />
+        <column name="MONTO" />
+        <column name="MONEDA" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+        <column name=" PROPIETARIO" />
+        <column name=" DETALLE/BENEFICIARIO" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"TARJETA" = pa_cuenta_cr,"CUENTA DEBITO" = pa_cuenta,"MONTO" = pa_valor,"MONEDA" = pa_moneda_cr,"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="PROPIETARIO" />
+        <column name="CUENTA DEBITO" />
+        <column name="DETALLE/BENEFICIARIO" />
+        <column name="CUENTA DESTINO" />
+        <column name="BANCO BENEFICIARIO" />
+        <column name="MONTO" />
+        <column name="MONEDA" />
+        <column name="CONCEPTO" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+        <column name="FACTURA" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"PROPIETARIO" = pa_ente,"CUENTA DEBITO" = pa_cuenta,"DETALLE/BENEFICIARIO" = ISNULL (pa_beneficiario, ""),"CUENTA DESTINO" = pa_cuenta_cr,"BANCO BENEFICIARIO" = pa_bco_destino,"MONTO" = pa_valor,"MONEDA" = pa_moneda_cr,"CONCEPTO" = ISNULL (pa_concepto, pa_notas),"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="PROPIETARIO" />
+        <column name="CUENTA DEBITO" />
+        <column name="DETALLE/BENEFICIARIO" />
+        <column name="CUENTA DESTINO" />
+        <column name="MONTO" />
+        <column name="MONEDA" />
+        <column name="CONCEPTO" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"PROPIETARIO" = pa_ente,"CUENTA DEBITO" = pa_cuenta,"DETALLE/BENEFICIARIO" = ISNULL (pa_beneficiario, ""),"CUENTA DESTINO" = pa_cuenta_cr,"MONTO" = pa_valor,"MONEDA" = pa_moneda_cr,"CONCEPTO" = ISNULL (pa_concepto, pa_notas),"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="CHEQUE" />
+        <column name="PERTENECIENTE" />
+        <column name="CUENTA DEBITO" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+        <column name="MONEDA" />
+        <column name="DESCRIPCION CHEQUE" />
+        <column name="MOTIVO SUSPENCION" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"CHEQUE" = pa_cuenta_cr,"PERTENECIENTE" = (SELECT  en_nombre FROM cob_bvirtual..bv_ente   WHERE en_ente = p.pa_ente     ),"CUENTA DEBITO" = pa_cuenta,"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="MONTO1" />
+        <column name="CUENTA DEBITO" />
+        <column name="MONTO2" />
+        <column name="CUENTA CREDITO" />
+        <column name="TIPO CAMBIO" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="OPERACION" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"MONTO1" = pa_valor + " " + pa_moneda,"CUENTA DEBITO" = pa_cuenta,"MONTO2" = (pa_valor * pa_tasa) + " " + pa_moneda_cr,"CUENTA CREDITO" = pa_cuenta_cr,"TIPO CAMBIO" = pa_tasa,"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia,"OPERACION" = CASE pa_notas WHEN "C" THEN "COMPRA" WHEN "D" THEN "VENTA"  END </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TIPO DE PAGO" />
+        <column name="SERVICIO" />
+        <column name="CUENTA DEBITO" />
+        <column name="PROPIETARIO" />
+        <column name="MONTO" />
+        <column name="MONEDA" />
+        <column name="CONCEPTO" />
+        <column name="FECHA" />
+        <column name="REFERENCIA" />
+        <column name="TARJETA" />
+        <column name="ID MONEDA" />
+        <column name="ID MONEDA CREDITO" />
+      </columns>
+      <queryText>SELECT  "TIPO DE PAGO" = pa_tipo,"SERVICIO" = pa_concepto + "-" + pa_cuenta_cr + "-" + pa_notas,"CUENTA DEBITO" = pa_cuenta,"PROPIETARIO" = pa_ente,"MONTO" = pa_valor,"MONEDA" = pa_moneda_cr,"CONCEPTO" = ISNULL (pa_concepto, pa_notas),"FECHA" = pa_fecha_pago,"REFERENCIA" = pa_referencia </queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_cuentas</database>
+  <name>sp_tr03_cons_cuentas</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_valor_cuenta" dataType="varchar" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_tipo_cliente" dataType="char" direction="in" />
+    <parameter name="@i_producto" dataType="int" direction="in" />
+    <parameter name="@i_origen" dataType="int" direction="in" />
+    <parameter name="@i_login_bv" dataType="varchar" direction="in" />
+    <parameter name="@i_validar_mov" dataType="char" direction="in" />
+    <parameter name="@i_fecha_proceso" dataType="datetime" direction="in" />
+    <parameter name="@i_ssn_local" dataType="int" direction="in" />
+    <parameter name="@i_oficina_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_canal" dataType="tinyint" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@o_num_filas" dataType="tinyint" direction="out" />
+    <parameter name="@i_banca_movil" dataType="char" direction="in" />
+    <parameter name="@i_cultura" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT o_num_filas</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="NOMBRE CUENTA" />
+        <column name="OFICIAL" />
+        <column name="NOMBREPRODUCTO" />
+        <column name="ABREVIACIONPRODUCTO" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = ta_cliente,"CUENTA" = ta_codigo,"MONEDA" = tt_moneda,"NOMBRE CUENTA" = ta_nombre_tarjeta,"OFICIAL" = ta_oficial </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="NOMBRE CUENTA" />
+      </columns>
+      <queryText>SELECT  "CUENTA" = ta_codigo,"NOMBRE CUENTA" = ta_nombre_tarjeta </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="NOMBRE CUENTA" />
+        <column name="OFICIAL" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = ta_cliente,"CUENTA" = ta_codigo,"MONEDA" = 0,"NOMBRE CUENTA" = ta_nombre_tarjeta,"OFICIAL" = ta_oficial </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="NOMBRE CUENTA" />
+      </columns>
+      <queryText>SELECT  "CUENTA" = ta_codigo,"NOMBRE CUENTA" = ta_nombre_tarjeta </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="PRESTAMO" />
+        <column name="MONEDA" />
+        <column name="TIPO PRESTAMO" />
+        <column name="ALIAS" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = op_operacion,"PRESTAMO" = op_banco,"MONEDA" = op_moneda,"TIPO PRESTAMO" = SUBSTRING (valor, 1, 45),"ALIAS" = op_nombre </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="DEPOSITO" />
+        <column name="MONEDA" />
+        <column name="NOMBRE" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = op_operacion,"DEPOSITO" = op_num_banco,"MONEDA" = op_moneda,"NOMBRE" = op_descripcion </queryText>
+    </query>
+  </queries>
+</procedure>

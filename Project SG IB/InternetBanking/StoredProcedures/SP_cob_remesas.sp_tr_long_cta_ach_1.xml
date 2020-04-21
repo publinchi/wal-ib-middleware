@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_remesas</database>
+  <name>sp_tr_long_cta_ach</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_banco" dataType="int" direction="in" />
+    <parameter name="@i_tipo_cta" dataType="int" direction="in" />
+    <parameter name="@i_long_cta" dataType="tinyint" direction="in" />
+    <parameter name="@i_banco_ant" dataType="int" direction="in" />
+    <parameter name="@i_tipo_cta_ant" dataType="int" direction="in" />
+    <parameter name="@i_long_cta_ant" dataType="tinyint" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="BANCO" />
+        <column name="DESCRIPCION" />
+        <column name="FILIAL" />
+        <column name="ESTADO" />
+        <column name="TIPO DE CUENTA" />
+        <column name="DESC. CUENTA" />
+        <column name="LONGITUD CUENTA" />
+      </columns>
+      <queryText>select 'BANCO'            = br_banco,  'DESCRIPCION'      = substring(br_desc,1, 40),  'RUTA-TRANSITO'    = substring(br_ruta_trans, 1, 20),  'FILIAL'           = br_filial,  'ESTADO'           = br_estado,  'TIPO DE CUENTA'   = lc_tipo_cta_ach,  'DESC. CUENTA'     = substring(valor,1,20),  'LONGITUD CUENTA'  = lc_long_cta    from</queryText>
+    </query>
+  </queries>
+</procedure>

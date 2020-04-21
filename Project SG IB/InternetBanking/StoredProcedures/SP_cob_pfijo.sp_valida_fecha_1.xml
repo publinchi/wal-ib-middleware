@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_pfijo</database>
+  <name>sp_valida_fecha</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_fecha" dataType="datetime" direction="in" />
+    <parameter name="@i_toperacion" dataType="varchar" direction="in" />
+    <parameter name="@i_plazo" dataType="int" direction="in" />
+    <parameter name="@i_modo" dataType="smallint" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_flag_renovaut" dataType="char" direction="in" />
+    <parameter name="@i_flag_valfvdnl" dataType="char" direction="in" />
+    <parameter name="@i_tran_sabado" dataType="char" direction="in" />
+    <parameter name="@i_max_ttransito" dataType="tinyint" direction="in" />
+    <parameter name="@i_dias_reales" dataType="char" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_dia_pago" dataType="int" direction="in" />
+    <parameter name="@i_batch" dataType="int" direction="in" />
+    <parameter name="@o_num_dias_labor" dataType="tinyint" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT ctx.convertString(w_dias_360)</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT ctx.convertString(w_fecha_temp ,i_formato_fecha)</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT w_resul_validacion, w_dias, ctx.convertString(w_fecha_valor ,i_formato_fecha), ctx.convertString(w_fecha_vencimiento ,i_formato_fecha), ctx.convertString(w_fecha_valor_con_hold ,i_formato_fecha), ctx.convertString(w_fecha_vencimiento_con_hold ,i_formato_fecha), w_plazo_hold</queryText>
+    </query>
+  </queries>
+</procedure>

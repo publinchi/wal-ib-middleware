@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_extrae_preferencia</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_perfil" dataType="smallint" direction="in" />
+    <parameter name="@i_tipo_archivo" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ARCHIVO" />
+      </columns>
+      <queryText>select 'ARCHIVO' = pu_path    from</queryText>
+    </query>
+  </queries>
+</procedure>

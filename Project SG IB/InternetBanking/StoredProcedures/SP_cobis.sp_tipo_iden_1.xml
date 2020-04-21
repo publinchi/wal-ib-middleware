@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_tipo_iden</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_org_err" dataType="char" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_sev" dataType="tinyint" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_modo" dataType="int" direction="in" />
+    <parameter name="@i_valor1" dataType="char" direction="in" />
+    <parameter name="@i_valor2" dataType="char" direction="in" />
+    <parameter name="@i_tabla" dataType="varchar" direction="in" />
+    <parameter name="@i_codigo" dataType="char" direction="in" />
+    <parameter name="@i_descripcion" dataType="varchar" direction="in" />
+    <parameter name="@i_mascara" dataType="varchar" direction="in" />
+    <parameter name="@i_tipoper" dataType="char" direction="in" />
+    <parameter name="@i_provincia" dataType="char" direction="in" />
+    <parameter name="@i_aperrapida" dataType="char" direction="in" />
+    <parameter name="@i_bloquea" dataType="char" direction="in" />
+    <parameter name="@i_nacionalidad" dataType="varchar" direction="in" />
+    <parameter name="@i_digito" dataType="char" direction="in" />
+    <parameter name="@i_estado" dataType="char" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_tpersona" dataType="char" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Tipo Id." />
+        <column name="Nombre Tipo Id." />
+        <column name="Mascara" />
+        <column name="Tipo Persona" />
+        <column name="Valida Provincia" />
+        <column name="Permitir Apertura R�pida" />
+        <column name="Bloquea Ente" />
+        <column name="Nacionalidad" />
+        <column name="Maneja D�gito" />
+      </columns>
+      <queryText>SELECT  "Tipo Id." = td_codigo,"Nombre Tipo Id." = td_descripcion,"Mascara" = td_mascara,"Tipo Persona" = td_tipoper,"Valida Provincia" = td_provincia,"Permitir Apertura R�pida" = td_aperrapida,"Bloquea Ente" = td_bloquea,"Nacionalidad" = td_nacionalidad,"Maneja D�gito" = td_digito </queryText>
+    </query>
+  </queries>
+</procedure>

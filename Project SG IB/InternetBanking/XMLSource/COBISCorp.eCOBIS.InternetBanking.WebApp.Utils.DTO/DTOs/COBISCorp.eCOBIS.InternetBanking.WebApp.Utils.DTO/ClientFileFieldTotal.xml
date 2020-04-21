@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" productVersion="4.6.1.0">
+  <name>ClientFileFieldTotal</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.utils.dto</javaPackage>
+  <ns>http://dto.utils.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="fieldId" propertyNet="FieldId" propertyJava="fieldId" setterJavaMethod="setFieldId" getterJavaMethod="getFieldId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="value" propertyNet="Value" propertyJava="value" setterJavaMethod="setValue" getterJavaMethod="getValue" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="receivedFileId" propertyNet="ReceivedFileId" propertyJava="receivedFileId" setterJavaMethod="setReceivedFileId" getterJavaMethod="getReceivedFileId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="fieldName" propertyNet="FieldName" propertyJava="fieldName" setterJavaMethod="setFieldName" getterJavaMethod="getFieldName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

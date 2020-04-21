@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_get_publicity</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ofi" dataType="tinyint" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="char" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_codigo" dataType="varchar" direction="in" />
+    <parameter name="@i_ente_mis" dataType="int" direction="in" />
+    <parameter name="@i_tipo_solicitud" dataType="int" direction="in" />
+    <parameter name="@i_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_nombre" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_origen" dataType="varchar" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@i_mensaje" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_destino" dataType="varchar" direction="in" />
+    <parameter name="@i_telefono" dataType="varchar" direction="in" />
+    <parameter name="@i_plazo" dataType="smallint" direction="in" />
+    <parameter name="@i_numero" dataType="int" direction="in" />
+    <parameter name="@i_imoneda" dataType="char" direction="in" />
+    <parameter name="@i_masivo" dataType="char" direction="in" />
+    <parameter name="@i_ictadeb" dataType="char" direction="in" />
+    <parameter name="@i_ictacre" dataType="char" direction="in" />
+    <parameter name="@i_iplazo" dataType="char" direction="in" />
+    <parameter name="@i_itstkey" dataType="char" direction="in" />
+    <parameter name="@i_estado" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre_1" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_fordate" dataType="tinyint" direction="in" />
+    <parameter name="@i_departamento" dataType="int" direction="in" />
+    <parameter name="@i_tipo_gestion" dataType="int" direction="in" />
+    <parameter name="@i_solicitud" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_extra" dataType="char" direction="in" />
+    <parameter name="@i_informativa" dataType="char" direction="in" />
+    <parameter name="@i_multiple" dataType="char" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT  cc_campana,cc_nombre,ISNULL (cm_texto_bv_1, cc_descripcion_1),ISNULL (cm_texto_bv_2, cc_descripcion_2),ISNULL (cm_texto_bv_3, cc_descripcion_3),ISNULL (cm_texto_bv_4, cc_descripcion_4) </queryText>
+    </query>
+  </queries>
+</procedure>

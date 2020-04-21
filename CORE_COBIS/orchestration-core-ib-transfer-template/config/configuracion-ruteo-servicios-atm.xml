@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuracion ida a Corbanking -->
+<csp-config name="coreBanking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="configuracion-transaccion.xsd">
+	<!-- Configuracion para consulta consolidada de cuentas -->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para sp_exec_atm_mantenimiento 16064">
+		<conditions>
+			<condition param="trn">
+				<value>16064</value>
+				<!-- 1800001 Consulta Movimientos CTE-->
+			</condition>
+		</conditions>
+		<indicators>
+			<!--<indicator name="idTransaction" value="1"/>-->
+			<indicator name="externalProvider" value="0"/>
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/>-->
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=cob_procesador..sp_exec_atm_mantenimiento)"/>
+		</indicators>
+		<mappings keepMode="1">
+		</mappings>
+	</config>
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para sp_exec_atm_renovacion 16063">
+		<conditions>
+			<condition param="trn">
+				<value>16063</value>
+				<!-- 1800001 Consulta Movimientos CTE-->
+			</condition>
+		</conditions>
+		<indicators>
+			<!--<indicator name="idTransaction" value="1"/>-->
+			<indicator name="externalProvider" value="0"/>
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/>-->
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=cob_procesador..sp_exec_atm_renovacion)"/>
+		</indicators>
+		<mappings keepMode="1">
+		</mappings>
+	</config>
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para sp_exec_atm_solicitud 16062">
+		<conditions>
+			<condition param="trn">
+				<value>16062</value>
+				<!-- 1800001 Consulta Movimientos CTE-->
+			</condition>
+		</conditions>
+		<indicators>
+			<!--<indicator name="idTransaction" value="1"/>-->
+			<indicator name="externalProvider" value="0"/>
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/>-->
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=cob_procesador..sp_exec_atm_solicitud)"/>
+		</indicators>
+		<mappings keepMode="1">
+		</mappings>
+	</config>
+
+
+</csp-config>

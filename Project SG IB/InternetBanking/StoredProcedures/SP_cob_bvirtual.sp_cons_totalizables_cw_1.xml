@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_cons_totalizables_cw</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo_plantilla" dataType="char" direction="in" />
+    <parameter name="@i_plantilla" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ID" />
+        <column name="NOMBRE" />
+      </columns>
+      <queryText>select 'ID'= ac_id,   'NOMBRE' = cp_nombre   from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ID" />
+        <column name="NOMBRE" />
+      </columns>
+      <queryText>select 'ID'= ac_id,   'NOMBRE' = cp_nombre   from</queryText>
+    </query>
+  </queries>
+</procedure>

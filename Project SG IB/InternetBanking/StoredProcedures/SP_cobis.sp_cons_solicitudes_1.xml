@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_cons_solicitudes</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_tipo" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="varchar" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_nregistros" dataType="int" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_siguiente_aux" dataType="int" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ID" />
+        <column name=" FECHA" />
+        <column name=" CUENTA" />
+        <column name=" MONTO" />
+        <column name=" ESTADO" />
+        <column name=" BENEFICIARIO" />
+        <column name=" CANTIDAD" />
+        <column name=" ID_AUX" />
+        <column name=" ID_MONEDA" />
+        <column name=" TIPO_AVAL" />
+        <column name=" AVAL" />
+        <column name=" SUBTYPE" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_Default_Settings_Simulator</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="MinDPF" />
+        <column name="MaxDayDPF" />
+        <column name="MinDayDPF" />
+        <column name="MinLoan" />
+        <column name="MaxLoan" />
+        <column name="MaxTermLoan" />
+        <column name="MaxTermSaving" />
+      </columns>
+      <queryText>SELECT  "Tipo" = en_subtipo,"Filial" = en_filial,"Oficina" = en_oficina,"MinDPF" = ? </queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_autoriza_pendientes_cw_bv</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@t_online" dataType="char" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_trn_autorizador" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_motivo" dataType="varchar" direction="in" />
+    <parameter name="@r_fuera_linea" dataType="char" direction="in" />
+    <parameter name="@o_condicion" dataType="int" direction="out" />
+  </parameters>
+  <queries />
+</procedure>

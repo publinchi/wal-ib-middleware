@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_upload_archivos</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_aproc" dataType="datetime" direction="in" />
+    <parameter name="@i_origen" dataType="varchar" direction="in" />
+    <parameter name="@i_origen_nombre" dataType="varchar" direction="in" />
+    <parameter name="@i_tam_bytes" dataType="int" direction="in" />
+    <parameter name="@i_registros" dataType="int" direction="in" />
+    <parameter name="@i_descripcion" dataType="varchar" direction="in" />
+    <parameter name="@i_plantilla" dataType="int" direction="in" />
+    <parameter name="@i_nom_archivo" dataType="varchar" direction="in" />
+    <parameter name="@i_codigo" dataType="int" direction="in" />
+    <parameter name="@i_estado" dataType="varchar" direction="in" />
+    <parameter name="@i_resul_proc" dataType="varchar" direction="in" />
+    <parameter name="@i_suspender" dataType="varchar" direction="in" />
+    <parameter name="@i_moneda" dataType="smallint" direction="in" />
+    <parameter name="@i_enlinea" dataType="char" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@o_codigo" dataType="int" direction="out" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@o_retorno" dataType="int" direction="out" />
+    <parameter name="@o_condicion" dataType="int" direction="out" />
+    <parameter name="@o_cliente" dataType="int" direction="out" />
+    <parameter name="@o_nombre_proc" dataType="varchar" direction="out" />
+  </parameters>
+  <queries />
+</procedure>

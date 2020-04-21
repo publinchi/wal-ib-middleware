@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" productVersion="4.6.1.0">
+  <name>FormatCollection</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.utils.dto</javaPackage>
+  <ns>http://dto.utils.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="formats" propertyNet="Formats" propertyJava="formats" setterJavaMethod="setFormats" getterJavaMethod="getFormats" xsdType="Array" netType="Format[]" javaType="Format[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Format" netElementType="Format" javaElementType="Format" />
+  </properties>
+</DtoObject>

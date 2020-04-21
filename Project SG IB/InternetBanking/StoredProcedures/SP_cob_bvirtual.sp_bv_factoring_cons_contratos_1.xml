@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_factoring_cons_contratos</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_moneda" dataType="smallint" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="smallint" direction="in" />
+    <parameter name="@i_num_registro" dataType="smallint" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="SECUENCIAL" />
+        <column name="OPERACION BANCO" />
+        <column name="MONTO" />
+        <column name="TIPO OPERACION" />
+        <column name="FECHA INICIO" />
+        <column name="VENCIMIENTO OFICIAL" />
+        <column name="OFICINA" />
+        <column name="LINEA DE CREDITO" />
+        <column name="COD CLIENTE" />
+        <column name="OPERACION" />
+        <column name="CON MORA" />
+        <column name="ESTADO" />
+      </columns>
+      <queryText />
+    </query>
+  </queries>
+</procedure>

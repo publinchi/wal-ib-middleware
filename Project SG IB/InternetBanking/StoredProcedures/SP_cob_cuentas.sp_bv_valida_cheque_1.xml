@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_cuentas</database>
+  <name>sp_bv_valida_cheque</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="tinyint" direction="in" />
+    <parameter name="@i_cuenta" dataType="varchar" direction="in" />
+    <parameter name="@i_cheque_inicio" dataType="int" direction="in" />
+    <parameter name="@i_cheque_fin" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CHEQUE" />
+        <column name="VALOR" />
+        <column name="ESTADO" />
+      </columns>
+      <queryText>SELECT  "CHEQUE" = C.cq_cheque,"VALOR" = C.cq_valor,"ESTADO" = B.valor </queryText>
+    </query>
+  </queries>
+</procedure>

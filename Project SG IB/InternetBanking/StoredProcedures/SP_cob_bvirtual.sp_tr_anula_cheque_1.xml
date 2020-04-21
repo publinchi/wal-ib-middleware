@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr_anula_cheque</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@r_sld_disp" dataType="money" direction="in" />
+    <parameter name="@r_sld_cont" dataType="money" direction="in" />
+    <parameter name="@r_sld_girar" dataType="money" direction="in" />
+    <parameter name="@r_sld_12h" dataType="money" direction="in" />
+    <parameter name="@r_sld_24h" dataType="money" direction="in" />
+    <parameter name="@r_sld_rem" dataType="money" direction="in" />
+    <parameter name="@r_monto_blq" dataType="money" direction="in" />
+    <parameter name="@r_ofi_cta" dataType="smallint" direction="in" />
+    <parameter name="@r_pro_ban" dataType="smallint" direction="in" />
+    <parameter name="@r_estado" dataType="char" direction="in" />
+    <parameter name="@r_ssn_host" dataType="int" direction="in" />
+    <parameter name="@r_num_bloq" dataType="smallint" direction="in" />
+    <parameter name="@r_num_blqmonto" dataType="smallint" direction="in" />
+    <parameter name="@i_cambio_rty_est" dataType="char" direction="in" />
+    <parameter name="@i_tsn" dataType="int" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_prod" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_clave_bv" dataType="int" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_cheque_ini" dataType="int" direction="in" />
+    <parameter name="@i_num_cheque" dataType="int" direction="in" />
+    <parameter name="@i_causa" dataType="char" direction="in" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_producto" dataType="varchar" direction="in" />
+    <parameter name="@o_autorizacion" dataType="char" direction="out" />
+    <parameter name="@o_ssn_branch" dataType="int" direction="out" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo_notif" dataType="varchar" direction="in" />
+    <parameter name="@i_concepto" dataType="varchar" direction="in" />
+    <parameter name="@i_monto" dataType="int" direction="in" />
+    <parameter name="@i_proposito" dataType="varchar" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CHQ INICIAL" />
+        <column name="CHQ FINAL" />
+        <column name="CUENTA" />
+        <column name="CAUSA" />
+        <column name="FECHA" />
+        <column name="REF" />
+        <column name="COMISION" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="results_submit_rpc" />
+        <column name="r_sld_disp" />
+        <column name="r_sld_cont" />
+        <column name="r_sld_girar" />
+        <column name="r_sld_12h" />
+        <column name="r_sld_24h" />
+        <column name="r_sld_48h" />
+        <column name="r_sld_rem" />
+        <column name="r_monto_blq" />
+        <column name="r_pro_ban" />
+        <column name="r_ofi_cta" />
+        <column name="r_estado" />
+        <column name="r_nombre" />
+        <column name="r_monto_conf" />
+        <column name="r_monto_consumos" />
+        <column name="r_num_bloq" />
+        <column name="r_num_blqmonto" />
+        <column name="r_ssn_host" />
+        <column name="r_patente" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

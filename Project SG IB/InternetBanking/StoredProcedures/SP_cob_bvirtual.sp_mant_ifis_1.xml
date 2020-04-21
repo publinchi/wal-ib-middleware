@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_mant_ifis</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_nom_banco" dataType="varchar" direction="in" />
+    <parameter name="@i_rut_tran" dataType="varchar" direction="in" />
+    <parameter name="@i_cod_adq" dataType="int" direction="in" />
+    <parameter name="@i_cod_aut" dataType="int" direction="in" />
+    <parameter name="@i_aba_adq" dataType="varchar" direction="in" />
+    <parameter name="@i_aba_aut" dataType="varchar" direction="in" />
+    <parameter name="@i_estado_spi" dataType="char" direction="in" />
+    <parameter name="@i_estado_pgd" dataType="char" direction="in" />
+    <parameter name="@i_cod_ban" dataType="int" direction="in" />
+    <parameter name="@i_tip_tran" dataType="varchar" direction="in" />
+    <parameter name="@i_tip_inst" dataType="varchar" direction="in" />
+    <parameter name="@i_canal" dataType="tinyint" direction="in" />
+    <parameter name="@i_modo" dataType="int" direction="in" />
+    <parameter name="@i_grupo" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="NOMBRE BANCO" />
+        <column name="COD BANCARIO" />
+        <column name="RUT TRANSITO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="COD AUTORIZANTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="ABA AUTORIZANTE" />
+        <column name="TIPO INSTITUCION" />
+      </columns>
+      <queryText>SELECT  "NOMBRE BANCO" = ip_nom_banco,"COD BANCARIO" = ip_cod_banco,"RUT TRANSITO" = ip_ruta_transito,"COD ADQUIRIENTE" = ip_cod_adq,"COD AUTORIZANTE" = ip_cod_aut,"ABA ADQUIRIENTE" = ip_aba_adq,"ABA AUTORIZANTE" = ip_aba_aut,"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE BANCO" />
+        <column name="COD BANCARIO" />
+        <column name="RUT TRANSITO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="COD AUTORIZANTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="ABA AUTORIZANTE" />
+      </columns>
+      <queryText>SELECT  "NOMBRE BANCO" = ip_nom_banco,"COD BANCARIO" = ip_cod_banco,"RUT TRANSITO" = ip_ruta_transito,"COD ADQUIRIENTE" = ip_cod_adq,"COD AUTORIZANTE" = ip_cod_aut,"ABA ADQUIRIENTE" = ip_aba_adq,"ABA AUTORIZANTE" = ip_aba_aut </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE BANCO" />
+        <column name="COD BANCARIO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="TIPO INSTITUCION" />
+      </columns>
+      <queryText>SELECT  "NOMBRE BANCO" = ip_nom_banco,"COD BANCARIO" = ip_cod_banco,"COD ADQUIRIENTE" = ip_cod_adq,"ABA ADQUIRIENTE" = ip_aba_adq,"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE BANCO" />
+        <column name="COD BANCARIO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="ABA ADQUIRIENTE" />
+      </columns>
+      <queryText>SELECT  "NOMBRE BANCO" = ip_nom_banco,"COD BANCARIO" = ip_cod_banco,"COD ADQUIRIENTE" = ip_cod_adq,"ABA ADQUIRIENTE" = ip_aba_adq </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="NOMBRE BANCO" />
+        <column name="COD BANCARIO" />
+        <column name="RUT TRANSITO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="COD AUTORIZANTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="ABA AUTORIZANTE" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = ip_secuencial,"NOMBRE BANCO" = ip_nom_banco,"COD BANCARIO" = ip_cod_banco,"RUT TRANSITO" = ip_ruta_transito,"COD ADQUIRIENTE" = ip_cod_adq,"COD AUTORIZANTE" = ip_cod_aut,"ABA ADQUIRIENTE" = ip_aba_adq,"ABA AUTORIZANTE" = ip_aba_aut,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_pgd     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="NOMBRE BANCO" />
+        <column name="COD BANCARIO" />
+        <column name="RUT TRANSITO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="COD AUTORIZANTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="ABA AUTORIZANTE" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = ip_secuencial,"NOMBRE BANCO" = ip_nom_banco,"COD BANCARIO" = ip_cod_banco,"RUT TRANSITO" = ip_ruta_transito,"COD ADQUIRIENTE" = ip_cod_adq,"COD AUTORIZANTE" = ip_cod_aut,"ABA ADQUIRIENTE" = ip_aba_adq,"ABA AUTORIZANTE" = ip_aba_aut,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_pgd     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="NOMBRE BANCO" />
+        <column name="CODIGO BANCARIO" />
+        <column name="RUTA TRANSITO" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = ip_secuencial,"NOMBRE BANCO" = ip_nom_banco,"CODIGO BANCARIO" = ip_cod_banco,"RUTA TRANSITO" = ip_ruta_transito,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_spi     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="NOMBRE BANCO" />
+        <column name="CODIGO BANCARIO" />
+        <column name="RUTA TRANSITO" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = ip_secuencial,"NOMBRE BANCO" = ip_nom_banco,"CODIGO BANCARIO" = ip_cod_banco,"RUTA TRANSITO" = ip_ruta_transito,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_spi     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="COD BANCARIO" />
+        <column name="NOMBRE BANCO" />
+        <column name="CODIGO" />
+        <column name="RUT TRANSITO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="COD AUTORIZANTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="ABA AUTORIZANTE" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "COD BANCARIO" = ip_cod_banco,"NOMBRE BANCO" = ip_nom_banco,"CODIGO" = ip_secuencial,"RUT TRANSITO" = ip_ruta_transito,"COD ADQUIRIENTE" = ip_cod_adq,"COD AUTORIZANTE" = ip_cod_aut,"ABA ADQUIRIENTE" = ip_aba_adq,"ABA AUTORIZANTE" = ip_aba_aut,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_pgd     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="COD BANCARIO" />
+        <column name="NOMBRE BANCO" />
+        <column name="CODIGO" />
+        <column name="RUT TRANSITO" />
+        <column name="COD ADQUIRIENTE" />
+        <column name="COD AUTORIZANTE" />
+        <column name="ABA ADQUIRIENTE" />
+        <column name="ABA AUTORIZANTE" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "COD BANCARIO" = ip_cod_banco,"NOMBRE BANCO" = ip_nom_banco,"CODIGO" = ip_secuencial,"RUT TRANSITO" = ip_ruta_transito,"COD ADQUIRIENTE" = ip_cod_adq,"COD AUTORIZANTE" = ip_cod_aut,"ABA ADQUIRIENTE" = ip_aba_adq,"ABA AUTORIZANTE" = ip_aba_aut,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_pgd     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO BANCARIO" />
+        <column name="NOMBRE BANCO" />
+        <column name="CODIGO" />
+        <column name="RUTA TRANSITO" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO BANCARIO" = ip_cod_banco,"NOMBRE BANCO" = ip_nom_banco,"CODIGO" = ip_secuencial,"RUTA TRANSITO" = ip_ruta_transito,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_spi     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO BANCARIO" />
+        <column name="NOMBRE BANCO" />
+        <column name="CODIGO" />
+        <column name="RUTA TRANSITO" />
+        <column name="ESTADO" />
+        <column name="TIPO INSTITUCION" />
+        <column name="TIPO TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO BANCARIO" = ip_cod_banco,"NOMBRE BANCO" = ip_nom_banco,"CODIGO" = ip_secuencial,"RUTA TRANSITO" = ip_ruta_transito,"ESTADO" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_estado_ifis" AND b.codigo = c.ip_estado_spi     ),"TIPO INSTITUCION" = (SELECT  b.valor FROM cobis..cl_tabla a  ,cobis..cl_catalogo b   WHERE a.codigo = b.tabla AND a.tabla = "bv_tipo_institucion" AND b.codigo = c.ip_tip_inst     ),"TIPO TRANSACCION" = ip_tip_tran </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT  ip_cod_aut,ip_nom_banco </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT  ip_nom_banco </queryText>
+    </query>
+  </queries>
+</procedure>

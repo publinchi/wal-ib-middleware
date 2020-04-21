@@ -1,0 +1,3 @@
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGPartialClass" id="1">
+	<field type="String" name="name" value="Enrollment" />
+</class>

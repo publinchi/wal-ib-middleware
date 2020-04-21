@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_simulador_prestamos</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@i_sector" dataType="varchar" direction="in" />
+    <parameter name="@i_toperacion" dataType="varchar" direction="in" />
+    <parameter name="@i_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_codigo" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_amortizacion" dataType="varchar" direction="in" />
+    <parameter name="@i_cuota" dataType="int" direction="in" />
+    <parameter name="@i_plazo" dataType="int" direction="in" />
+    <parameter name="@i_tipo_ente" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="os_nemonico" />
+        <column name="os_descripcion" />
+        <column name="os_banca" />
+      </columns>
+      <queryText>SELECT  os_nemonico,os_descripcion,os_banca </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="codigo" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="porcentaje" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="concepto" />
+        <column name="descripcion" />
+        <column name="tipo_rubro" />
+        <column name="porcentaje" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="fecha final" />
+        <column name="cuota" />
+        <column name="plazo" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="monto" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="endDate" />
+        <column name=" amount" />
+        <column name=" term" />
+        <column name=" operationType" />
+        <column name=" operation" />
+        <column name=" sector" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

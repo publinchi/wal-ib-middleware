@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr_consulta_saldo_cc</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@t_online" dataType="char" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@r_sld_disp" dataType="money" direction="in" />
+    <parameter name="@r_sld_cont" dataType="money" direction="in" />
+    <parameter name="@r_sld_girar" dataType="money" direction="in" />
+    <parameter name="@r_sld_12h" dataType="money" direction="in" />
+    <parameter name="@r_sld_24h" dataType="money" direction="in" />
+    <parameter name="@r_sld_rem" dataType="money" direction="in" />
+    <parameter name="@r_monto_blq" dataType="money" direction="in" />
+    <parameter name="@r_num_bloq" dataType="int" direction="in" />
+    <parameter name="@r_num_blqmonto" dataType="int" direction="in" />
+    <parameter name="@r_ofi_cta" dataType="smallint" direction="in" />
+    <parameter name="@r_pro_ban" dataType="smallint" direction="in" />
+    <parameter name="@r_estado" dataType="char" direction="in" />
+    <parameter name="@r_ssn_host" dataType="int" direction="in" />
+    <parameter name="@r_monto_sob" dataType="money" direction="in" />
+    <parameter name="@r_fecha_host" dataType="datetime" direction="in" />
+    <parameter name="@r_nombre" dataType="varchar" direction="in" />
+    <parameter name="@r_fecha_ultmov" dataType="char" direction="in" />
+    <parameter name="@r_estado_cta" dataType="char" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_valor_trn" dataType="money" direction="in" />
+    <parameter name="@i_cuenta_dst" dataType="varchar" direction="in" />
+    <parameter name="@i_graba_log" dataType="char" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_alias" dataType="char" direction="in" />
+    <parameter name="@o_id" dataType="int" direction="out" />
+    <parameter name="@i_alias" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="nombre" />
+        <column name="fecha_ult" />
+        <column name="estado" />
+        <column name="contable" />
+        <column name="encaje" />
+        <column name="disponible" />
+        <column name="cliente" />
+        <column name="cheques locales" />
+        <column name="cheques propios" />
+        <column name="girar" />
+        <column name="apertura" />
+        <column name="sobregiro" />
+        <column name="bloqueos" />
+        <column name="monto bloqueado" />
+        <column name="direccion" />
+        <column name="saldo cheques" />
+        <column name="monto embargado" />
+        <column name="oficial" />
+        <column name="campo1" />
+        <column name="campo2" />
+        <column name="r_num_blqmonto" />
+        <column name="r_ofi_cta" />
+        <column name="r_pro_ban" />
+        <column name="r_estado" />
+        <column name="r_ssn_host" />
+        <column name="r_fecha_host" />
+      </columns>
+      <queryText>select  'nombre'          = @r_nombre ,                                              -- 00  'fecha_ult'       = convert(varchar, @r_fecha_ultmov, 101),                  -- 01  'estado'          = @r_estado_cta,                                           -- 02  'contable'        = @r_sld_cont,                                             -- 03  'encaje'          = @r_sld_disp + @r_sld_12h + @r_sld_24h + @r_sld_rem,      -- 04  'disponible'      = @r_sld_disp,                                             -- 05  'cliente'         = 0,                                                       -- 06  'cheques locales' = @r_sld_24h,                                              -- 07  'cheques propios' = @r_sld_12h,                                              -- 08  'girar'           = @r_sld_girar,                                            -- 09  'apertura'        = convert(varchar, @w_fech_aper, 101),                     -- 10  'sobregiro'       = @r_monto_sob,                                            -- 11    'bloqueos'        = @r_num_bloq,                                             -- 12  'monto bloqueado' = @r_monto_blq,                                            -- 13  'direccion'       = '',                                                      -- 14  'saldo cheques'   = @r_sld_rem,                                              -- 15  'monto embargado' = 0,                                                       -- 16  'oficial'         = @w_nom_oficial,                                          -- 17    'campo1'          = @r_sld_12h + @r_sld_24h + @r_monto_blq,                  -- 18  'campo2'          = @r_sld_12h + @r_sld_24h + @r_monto_blq,                  -- 19  'r_num_blqmonto'  = @r_num_blqmonto,                                         -- 20  'r_ofi_cta'       = @r_ofi_cta,                                              -- 21  'r_pro_ban'       = @r_pro_ban,                                              -- 22  'r_estado'        = @r_estado,                                               -- 23  'r_ssn_host'      = @r_ssn_host,                                             -- 24  'r_fecha_host'    = @r_fecha_host                                            -- 25  else*/  -- devuelve saldos locales  select  'nombre'          = @r_nombre ,                                              -- 00  'fecha_ult'       = convert(varchar, @w_fecha_ultmov, 101),                  -- 01  'estado'          = @w_estado,                                               -- 02  'contable'        = @w_sld_cont,                                             -- 03  'encaje'          = @w_sld_disp + @w_sld_12h + @r_sld_24h + @w_sld_rem,      -- 04  'disponible'      = @w_sld_disp,                                             -- 05  'cliente'         = 0,                                                       -- 06  'cheques locales' = @w_sld_24h,                                              -- 07  'cheques propios' = @w_sld_12h,                                              -- 08  'girar'           = @w_sld_girar,                                            -- 09  'apertura'        = convert(varchar, @w_fech_aper, 101),                     -- 10  'sobregiro'       = @w_monto_sob,                                            -- 11  'bloqueos'        = @w_num_bloq,                                             -- 12  'monto bloqueado' = @w_monto_blq,                                            -- 13  'direccion'       = '',                                                      -- 14  'saldo cheques'   = @w_sld_rem,                                              -- 15  'monto embargado' = 0,                                                       -- 16  'oficial'         = @w_nom_oficial,                                          -- 17    'campo1'          = @r_sld_12h + @r_sld_24h + @r_monto_blq,                  -- 18  'campo2'          = @r_sld_12h + @r_sld_24h + @r_monto_blq,                  -- 19  'r_num_blqmonto'  = @r_num_blqmonto,                                         -- 20  'r_ofi_cta'       = @r_ofi_cta,                                              -- 21  'r_pro_ban'       = @r_pro_ban,                                              -- 22  'r_estado'        = @r_estado,                                               -- 23  'r_ssn_host'      = @r_ssn_host,                                             -- 24  'r_fecha_host'    = @r_fecha_host                                            -- 25    -- AQUI</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="nombre" />
+        <column name="fecha_ult_mov" />
+        <column name="estado_des" />
+        <column name="saldo_contable" />
+        <column name="saldo_encanje" />
+        <column name="disponible" />
+        <column name="id_cliente" />
+        <column name="saldo cheques locales" />
+        <column name="saldo cheques propios" />
+        <column name="saldo a girar" />
+        <column name="fecha apertura" />
+        <column name="monto sobregiro" />
+        <column name="bloqueos de valor" />
+        <column name="monto bloqueado" />
+        <column name="direccion" />
+        <column name="saldo cheques internacionales" />
+        <column name="monto embargado" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

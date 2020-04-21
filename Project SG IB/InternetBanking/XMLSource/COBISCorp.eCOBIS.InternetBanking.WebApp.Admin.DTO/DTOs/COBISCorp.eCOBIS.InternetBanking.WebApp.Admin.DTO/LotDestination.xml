@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" productVersion="4.6.1.0">
+  <name>LotDestination</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.admin.dto</javaPackage>
+  <ns>http://dto.admin.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="fileName" propertyNet="FileName" propertyJava="fileName" setterJavaMethod="setFileName" getterJavaMethod="getFileName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="numberOfRegisters" propertyNet="NumberOfRegisters" propertyJava="numberOfRegisters" setterJavaMethod="setNumberOfRegisters" getterJavaMethod="getNumberOfRegisters" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="numberOfRegistersError" propertyNet="NumberOfRegistersError" propertyJava="numberOfRegistersError" setterJavaMethod="setNumberOfRegistersError" getterJavaMethod="getNumberOfRegistersError" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="numberOfRegistersOK" propertyNet="NumberOfRegistersOK" propertyJava="numberOfRegistersOK" setterJavaMethod="setNumberOfRegistersOK" getterJavaMethod="getNumberOfRegistersOK" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="status" propertyNet="Status" propertyJava="status" setterJavaMethod="setStatus" getterJavaMethod="getStatus" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="userName" propertyNet="UserName" propertyJava="userName" setterJavaMethod="setUserName" getterJavaMethod="getUserName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="selected" propertyNet="Selected" propertyJava="selected" setterJavaMethod="setSelected" getterJavaMethod="isSelected" xsdType="boolean" netType="bool" javaType="boolean" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="detail" propertyNet="Detail" propertyJava="detail" setterJavaMethod="setDetail" getterJavaMethod="getDetail" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="statusDescription" propertyNet="StatusDescription" propertyJava="statusDescription" setterJavaMethod="setStatusDescription" getterJavaMethod="getStatusDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

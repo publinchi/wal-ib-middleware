@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_pregunta_respuesta</name>
+  <type>SQLSERVER</type>
+  <version>2</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@i_pregunta" dataType="int" direction="in" />
+    <parameter name="@i_pr_descripcion" dataType="varchar" direction="in" />
+    <parameter name="@i_pr_categoria" dataType="varchar" direction="in" />
+    <parameter name="@i_estado" dataType="varchar" direction="in" />
+    <parameter name="@i_re_respuesta" dataType="int" direction="in" />
+    <parameter name="@i_re_descripcion" dataType="varchar" direction="in" />
+    <parameter name="@i_lp_ente" dataType="int" direction="in" />
+    <parameter name="@i_lp_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@i_lp_login" dataType="varchar" direction="in" />
+    <parameter name="@i_nro_preguntas" dataType="int" direction="in" />
+    <parameter name="@o_pregunta" dataType="int" direction="out" />
+    <parameter name="@o_respuesta" dataType="int" direction="out" />
+    <parameter name="@i_culture" dataType="varchar" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="COD.PREGUNTA" />
+        <column name="DESCRIPCION" />
+        <column name="CATEGORIA" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="COD.PREGUNTA" />
+        <column name="COD.RESPUESTA" />
+        <column name="DESCRIPCION" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

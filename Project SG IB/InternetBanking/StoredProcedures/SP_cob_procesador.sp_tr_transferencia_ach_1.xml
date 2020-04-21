@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr_transferencia_ach</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@r_sld_disp" dataType="money" direction="in" />
+    <parameter name="@r_sld_cont" dataType="money" direction="in" />
+    <parameter name="@r_sld_girar" dataType="money" direction="in" />
+    <parameter name="@r_sld_12h" dataType="money" direction="in" />
+    <parameter name="@r_sld_24h" dataType="money" direction="in" />
+    <parameter name="@r_sld_rem" dataType="money" direction="in" />
+    <parameter name="@r_monto_blq" dataType="money" direction="in" />
+    <parameter name="@r_ofi_cta" dataType="smallint" direction="in" />
+    <parameter name="@r_pro_ban" dataType="smallint" direction="in" />
+    <parameter name="@r_estado" dataType="char" direction="in" />
+    <parameter name="@r_ssn_host" dataType="int" direction="in" />
+    <parameter name="@r_num_bloq" dataType="smallint" direction="in" />
+    <parameter name="@r_num_blqmonto" dataType="smallint" direction="in" />
+    <parameter name="@r_monto_sob" dataType="money" direction="in" />
+    <parameter name="@r_idcierre" dataType="int" direction="in" />
+    <parameter name="@r_sldcaja" dataType="money" direction="in" />
+    <parameter name="@r_fecha_host" dataType="datetime" direction="in" />
+    <parameter name="@i_cambio_rty_est" dataType="char" direction="in" />
+    <parameter name="@i_tsn" dataType="int" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_val" dataType="money" direction="in" />
+    <parameter name="@i_conl" dataType="char" direction="in" />
+    <parameter name="@i_kiosco" dataType="varchar" direction="in" />
+    <parameter name="@i_horario" dataType="varchar" direction="in" />
+    <parameter name="@i_idcierre" dataType="int" direction="in" />
+    <parameter name="@i_nom_banco_des" dataType="varchar" direction="in" />
+    <parameter name="@i_cod_banco" dataType="int" direction="in" />
+    <parameter name="@i_ruta_transito" dataType="varchar" direction="in" />
+    <parameter name="@i_clave_bv" dataType="int" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_dst" dataType="varchar" direction="in" />
+    <parameter name="@i_prod_des" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon_des" dataType="smallint" direction="in" />
+    <parameter name="@i_nombre_benef" dataType="varchar" direction="in" />
+    <parameter name="@i_doc_benef" dataType="varchar" direction="in" />
+    <parameter name="@i_telefono_benef" dataType="varchar" direction="in" />
+    <parameter name="@i_concepto" dataType="varchar" direction="in" />
+    <parameter name="@i_comision" dataType="money" direction="in" />
+    <parameter name="@i_tipo_cta_des" dataType="varchar" direction="in" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@o_retorno" dataType="int" direction="out" />
+    <parameter name="@o_condicion" dataType="int" direction="out" />
+    <parameter name="@i_cta_des" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="result_submit_rpc" />
+        <column name="r_sld_disp" />
+        <column name="r_sld_cont" />
+        <column name="r_sld_girar" />
+        <column name="r_sld_12h" />
+        <column name="r_sld_24h" />
+        <column name="r_sld_rem" />
+        <column name="r_monto_blq" />
+        <column name="r_num_bloq" />
+        <column name="r_num_blqmonto" />
+        <column name="r_ofi_cta" />
+        <column name="r_pro_ban" />
+        <column name="r_estado" />
+        <column name="r_ssn_host" />
+        <column name="r_monto_sob" />
+        <column name="r_fecha_host" />
+        <column name="r_nombre" />
+        <column name="r_fecha_ultmov" />
+        <column name="r_estado_cta" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

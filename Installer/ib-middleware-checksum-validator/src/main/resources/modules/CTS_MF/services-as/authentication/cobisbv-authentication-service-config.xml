@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<general>
+		<dbms>
+			<dbms-name>SQLCTS</dbms-name>
+			<serviceProvider>DataSource</serviceProvider>
+		</dbms>
+		<messaging>
+			<inQMgr/>
+			<inQName/>
+			<outQMgr/>
+			<outQName/>
+			<serviceProvider/>
+		</messaging>
+		<log-level>TRACE</log-level>
+	</general>
+	<own>
+		<authentication-params>
+			<!-- sp-name>cob_bvirtual..sp_inicia_sesion</sp-name-->
+			
+			<!-- Parametros de entrada del SP -->
+			<!-- DataTypes: int=56, tinyint o smallint=52, varchar=39, char=47 -->
+			<input-param param="@i_login" dataType="39">login</input-param>
+			<input-param param="@i_clave" dataType="39">clave</input-param>
+			<input-param param="@i_servicio" dataType="52">servicio</input-param>
+			<input-param param="@i_server" dataType="39">server</input-param>
+			<input-param param="@i_webserver" dataType="39">webserver</input-param>
+			<input-param param="@i_terminal_ip" dataType="39">terminalIP</input-param>
+			<input-param param="@i_validate_token" dataType="39">validateToken</input-param>
+			<!-- Inclusion parametro @i_culture para internacionalizacion-->
+			<!-- input-param param="@i_culture" dataType="39">culture</input-param -->
+         
+			<!-- Parametros de salida del SP -->
+			<output-param param="@o_vez" dataType="52" value="0"/>
+			<output-param param="@o_perfil" dataType="56" value="0"/>
+			<output-param param="@o_cliente" dataType="56" value="0"/>
+			<output-param param="@o_cliente_mis" dataType="56" value="0"/>
+			<output-param param="@o_intentos" dataType="52" value="0"/>
+			<output-param param="@o_id_autenticacion" dataType="39" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+			<output-param param="@o_token" dataType="39" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+			<output-param param="@o_des_login" dataType="39" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+			<output-param param="@o_cultura" dataType="39" value="XXXXXXXXXX"/>
+			<output-param param="@o_tema" dataType="39" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+			<output-param param="@o_fecha_ult_acceso" dataType="39" value="XXXXXXXXXXXXXXXXXXX"/>	
+			<output-param param="@o_terminal_ip" dataType="39" value="XXX.XXX.XXX.XXX"/>			
+			<output-param param="@o_tipo_ente" dataType="39" value="XXXXXXXXXX"/>
+			<output-param param="@o_tipo_persona" dataType="47" value="X"/>
+			<output-param param="@o_estado_token" dataType="47" value="X"/>
+			<output-param param="@o_cedula" dataType="39" value="XXXXXXXXXXXXXXXXXXXX"/>
+
+		</authentication-params>
+	</own>
+</config>

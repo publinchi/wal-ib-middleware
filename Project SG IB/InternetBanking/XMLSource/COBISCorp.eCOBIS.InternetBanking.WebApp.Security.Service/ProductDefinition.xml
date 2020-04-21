@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<product path="E:/git/IB_/cobis-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" productNS="http://service.security.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" documentationLanguage="Español" year="2020" version="4.6.1.0" type="SERVICE" GUID="DC8F54F6-53E0-47EC-A82C-4C717D50C59A">
+  <namespaces>
+    <namespace type="class" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.security.service.service" ns="http://service.service.security.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Security\Service" />
+  </namespaces>
+  <templates>
+    <template id="ServiceCTS302" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" package="true" packageType="Jar">
+      <templateFiles>
+        <templateFile filePath="Annotations\JavaInterface.xslt" enabled="true" override="true" />
+        <templateFile filePath="Annotations\JavaService.xslt" enabled="true" override="true" />
+        <templateFile filePath="Annotations\OSGIClass.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+      </templateFiles>
+    </template>
+  </templates>
+  <DTOs />
+  <classes>
+    <class name="Security" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.security.service.service" ns="http://service.service.security.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="Security">
+          <services>
+            <service name="ChangePassword" id="InternetBanking.WebApp.Security.Security.ChangePassword">
+              <procedure name="sp_cambio_clave" database="cob_bvirtual" version="2" />
+            </service>
+            <service name="ChangePasswordChannel" id="InternetBanking.WebApp.Security.Security.ChangePasswordChannel">
+              <procedure name="sp_cambio_clave" database="cob_bvirtual" version="3" />
+            </service>
+            <service name="ChangePasswordChannelsExt" id="InternetBanking.WebApp.Security.Service.Security.ChangePasswordChannelsExt">
+              <procedure name="sp_cambio_clave_ext" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="CreateNewPassword" id="InternetBanking.WebApp.Security.Service.Security.CreateNewPassword">
+              <procedure name="sp_cambio_clave" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="CreateTokenAuthorization" id="InternetBanking.WebApp.Security.Service.Security.CreateTokenAuthorization">
+              <procedure name="sp_administra_token" database="cob_procesador" version="1" />
+            </service>
+            <service name="DeleteDeviceAdministration" id="InternetBanking.WebApp.Security.Service.Security.DeleteDeviceAdministration">
+              <procedure name="sp_administra_afiliacion" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetTokenAuthorization" id="InternetBanking.WebApp.Security.Service.Security.GetTokenAuthorization">
+              <procedure name="sp_administra_token" database="cob_procesador" version="1" />
+            </service>
+            <service name="InsertLoginImage" id="InternetBanking.WebApp.Security.Service.Security.InsertLoginImage">
+              <procedure name="sp_imagen_seguridad" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="ManageNewUser" id="InternetBanking.WebApp.Security.Service.Security.ManageNewUser">
+              <procedure name="sp_adm_usu_nuevo" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="ManagerImagenUX" id="InternetBanking.WebApp.Security.Service.Security.ManagerImagenUX">
+              <procedure name="sp_imagen_seguridad" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="QueryDeviceAdministration" id="InternetBanking.WebApp.Security.Service.Security.QueryDeviceAdministration">
+              <procedure name="sp_administra_afiliacion" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="QueryLoginImage" id="InternetBanking.WebApp.Security.Service.Security.QueryLoginImage">
+              <procedure name="sp_imagen_seguridad" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="QueryLoginImageUX" id="InternetBanking.WebApp.Security.Service.Security.QueryLoginImageUX">
+              <procedure name="sp_imagen_seguridad" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="SetConnectionIP" id="InternetBanking.WebApp.Security.Service.Security.SetConnectionIP">
+              <procedure name="sp_valida_frecuencia_ingreso_ib" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="UpdateLoginImage" id="InternetBanking.WebApp.Security.Service.Security.UpdateLoginImage">
+              <procedure name="sp_imagen_seguridad" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="ValidateIP" id="InternetBanking.WebApp.Security.Service.Security.ValidateIP">
+              <procedure name="sp_valida_frecuencia_ingreso_ib" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="ValidateLoginAuthorization" id="InternetBanking.WebApp.Security.Security.ValidateLoginAuthorization">
+              <procedure name="sp_validacion_autenticacion" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="ValidateNewLogin" id="InternetBanking.WebApp.Security.Service.Security.ValidateNewLogin">
+              <procedure name="sp_actualiza_login_bv" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+  </classes>
+  <packagers>
+    <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="ServiceCTS302" />
+  </packagers>
+  <references>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="6A1FF1BF-8DBA-413F-9A4D-0FA78E5BB7A4">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Admin\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" type="DTO" version="4.6.1.0" GUID="D454C1BA-F9EA-475F-9B93-286F4C17B579">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Utils\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" type="DTO" version="4.6.1.0" GUID="A2E61BDA-038D-49EA-AD97-F67F9D972BE5">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC" name="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" package="cobiscorp.ecobis.internetbanking.webapp.hsbc.dto" ns="http://dto.hsbc.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\HSBC\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" type="DTO" version="4.6.1.0" GUID="201105AC-9FB7-43AA-A652-819A22ED5BCE">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Commons\DTO" />
+      </namespaces>
+    </reference>
+  </references>
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service" />
+    <property name="MavenVersion" value="4.6.1.0" />
+  </productProperties>
+</product>

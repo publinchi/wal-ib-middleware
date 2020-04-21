@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_tr_recaudo_bd</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_ejecuta_consulta" dataType="char" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_val" dataType="money" direction="in" />
+    <parameter name="@i_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+    <parameter name="@o_autorizacion" dataType="char" direction="out" />
+    <parameter name="@o_ssn_branch" dataType="int" direction="out" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_concepto" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_convenio" dataType="int" direction="in" />
+    <parameter name="@i_tipo_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_llave" dataType="varchar" direction="in" />
+    <parameter name="@i_num_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_1" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_2" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_3" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_4" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_5" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_6" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_7" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_8" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_9" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_10" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_11" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_12" dataType="varchar" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_moneda_desc" dataType="varchar" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

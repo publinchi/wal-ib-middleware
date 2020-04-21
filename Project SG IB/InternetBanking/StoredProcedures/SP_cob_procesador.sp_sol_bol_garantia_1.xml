@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_sol_bol_garantia</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_linea_credito" dataType="varchar" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@i_pplazo" dataType="int" direction="in" />
+    <parameter name="@i_beneficiario" dataType="varchar" direction="in" />
+    <parameter name="@i_clase_garantia" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_garantia" dataType="varchar" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_fecha_expiracion" dataType="varchar" direction="in" />
+    <parameter name="@i_motivo1" dataType="varchar" direction="in" />
+    <parameter name="@i_plazo_fijo" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_gar_tr" dataType="varchar" direction="in" />
+    <parameter name="@i_dirpcd" dataType="varchar" direction="in" />
+    <parameter name="@i_mon" dataType="int" direction="in" />
+    <parameter name="@i_valida_des" dataType="varchar" direction="in" />
+    <parameter name="@o_siguiente" dataType="varchar" direction="out" />
+    <parameter name="@i_agencia" dataType="int" direction="in" />
+    <parameter name="@i_fecha_crea" dataType="varchar" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

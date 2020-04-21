@@ -1,0 +1,511 @@
+package com.cobiscorp.ecobis.orchestration.core.ib.international.transfer;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.Service;
+
+import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
+import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
+import com.cobiscorp.cobis.commons.log.ILogger;
+import com.cobiscorp.cobis.commons.log.LogFactory;
+import com.cobiscorp.cobis.csp.domains.ICSP;
+import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
+import com.cobiscorp.cobis.cts.domains.ICOBISTS;
+import com.cobiscorp.cobis.cts.domains.ICTSTypes;
+import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
+import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.InternationalTransferResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.transfers.UtilsTransfers;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.Client;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.Notification;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.NotificationDetail;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceMonetaryTransaction;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceReexecutionComponent;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceInternationalAccountTransfers;
+import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOfflineTemplate;
+
+/**
+ * Plugin of third transfers
+ *
+ * @since Sep 1, 2014
+ * @author gyagual
+ * @version 1.0.0
+ *
+ */
+@Component(name = "InternationalTransferOrchestrationCore", immediate = false)
+@Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
+@Properties(value = { @Property(name = "service.description", value = "InternationalTransferOrchestrationCore"),
+		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
+		@Property(name = "service.identifier", value = "InternationalTransferOrchestrationCore") })
+public class InternationalTransferOrchestrationCore extends TransferOfflineTemplate {
+
+	/**
+	 * Read configuration of parent component
+	 */
+	@Override
+	public void loadConfiguration(IConfigurationReader arg0) {
+	}
+
+	/**
+	 * Instance logger component
+	 */
+	private static ILogger logger = LogFactory.getLogger(InternationalTransferOrchestrationCore.class);
+
+	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
+	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
+
+	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = service;
+	}
+
+	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = null;
+	}
+
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+	protected ICoreServer coreServer;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServer(ICoreServer service) {
+		coreServer = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServer(ICoreServer service) {
+		coreServer = null;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServiceInternationalAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceInternationalTransfers", unbind = "unbindCoreServiceInternationalTransfers")
+	private ICoreServiceInternationalAccountTransfers coreServiceInternationalTransfers;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServiceInternationalTransfers(ICoreServiceInternationalAccountTransfers service) {
+		coreServiceInternationalTransfers = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServiceInternationalTransfers(ICoreServiceInternationalAccountTransfers service) {
+		coreServiceInternationalTransfers = null;
+	}
+
+	@Override
+	public ICoreService getCoreService() {
+		return coreService;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+	protected ICoreService coreService;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreService(ICoreService service) {
+		coreService = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreService(ICoreService service) {
+		coreService = null;
+	}
+
+	/**
+	 * /** Execute transfer first step of service
+	 * <p>
+	 * This method is the main executor of transaction contains the original
+	 * input parameters.
+	 *
+	 * @param anOriginalRequest
+	 *            - Information originally sent by user's.
+	 * @param aBagSPJavaOrchestration
+	 *            - Object dictionary transaction steps.
+	 *
+	 * @return
+	 *         <ul>
+	 *         <li>IProcedureResponse - Represents the service execution.</li>
+	 *         </ul>
+	 */
+	@Override
+	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
+
+		if (logger.isInfoEnabled())
+			logger.logInfo("InternationalTransferOrchestrationCore: executeJavaOrchestration");
+
+		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
+
+		mapInterfaces.put("coreServer", coreServer);
+		mapInterfaces.put("coreService", coreService);
+		mapInterfaces.put("coreServiceNotification", coreServiceNotification);
+		mapInterfaces.put("coreServiceInternationalTransfers", coreServiceInternationalTransfers);
+
+		Utils.validateComponentInstance(mapInterfaces);
+		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA INTERNACIONAL");
+		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
+
+		try {
+
+			return executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
+		} catch (CTSServiceException e) {
+			e.printStackTrace();
+		} catch (CTSInfrastructureException e) {
+			e.printStackTrace();
+		}
+
+		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+	}
+
+	@Override
+	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
+	}
+
+	@Override
+	protected ICoreServiceSendNotification getCoreServiceNotification() {
+
+		return coreServiceNotification;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
+	public ICoreServiceSendNotification coreServiceNotification;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = null;
+	}
+
+	@Override
+	public ICoreServer getCoreServer() {
+		return coreServer;
+	}
+
+	public IProcedureResponse executeTransfer(Map<String, Object> aBagSPJavaOrchestration) {// throws
+																							// CTSServiceException,
+																							// CTSInfrastructureException
+		InternationalTransferResponse InternationalTransferResponse = null;
+		try {
+			InternationalTransferResponse = coreServiceInternationalTransfers.executeInternationalAccountTransfer(
+					UtilsTransfers.transformInternationalAccountTransferRequest(aBagSPJavaOrchestration,
+							ORIGINAL_REQUEST, RESPONSE_LOCAL_VALIDATION));
+		} catch (CTSServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CTSInfrastructureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return transformToProcedureResponse(InternationalTransferResponse, aBagSPJavaOrchestration);
+	}
+
+	private IProcedureResponse transformToProcedureResponse(
+			InternationalTransferResponse aInternationalTransferResponse, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureResponse response = new ProcedureResponseAS();
+		response.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, "1");
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		IProcedureResponse responseLocalValidation = (IProcedureResponse) aBagSPJavaOrchestration
+				.get(RESPONSE_LOCAL_VALIDATION);
+		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+
+		if (serverResponse.getOnLine() && aInternationalTransferResponse.getReturnCode() != 0) {
+			// Si estamos en linea y hubo error
+			response = Utils.returnException(aInternationalTransferResponse.getMessages());
+			response.setReturnCode(aInternationalTransferResponse.getReturnCode());
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
+			if (logger.isInfoEnabled())
+				logger.logInfo(CLASS_NAME + "Respuesta transformToProcedureResponse -->"
+						+ response.getProcedureResponseAsString());
+
+			return response;
+		}
+
+		// Si estamos en fuera de linea consaldos o estamos en línea
+		if ((!serverResponse.getOnLine() && serverResponse.getOfflineWithBalances())
+				|| (serverResponse.getOnLine() && aInternationalTransferResponse.getReturnCode() == 0)) {
+
+			IResultSetData data = new ResultSetData();
+
+			if (aInternationalTransferResponse != null
+					&& !"".equals(aInternationalTransferResponse.getAccountStatus())) {
+				IResultSetRow row = new ResultSetRow();
+				IResultSetHeader metaData = new ResultSetHeader();
+
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("result_submit_rpc", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_sld_disp", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_sld_cont", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_sld_girar", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_sld_12h", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_sld_24h", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_sld_rem", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_monto_blq", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_num_bloq", ICTSTypes.SQLINT2, 6));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_num_blqmonto", ICTSTypes.SQLINT2, 6));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_ofi_cta", ICTSTypes.SQLINT4, 6));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_pro_ban", ICTSTypes.SQLINT2, 4));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_estado", ICTSTypes.SQLVARCHAR, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_ssn_host", ICTSTypes.SQLINT4, 4));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_monto_sob", ICTSTypes.SQLMONEY, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_fecha_host", ICTSTypes.SQLVARCHAR, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_nombre", ICTSTypes.SQLVARCHAR, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_fecha_ultmov", ICTSTypes.SQLVARCHAR, 20));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("r_estado_cta", ICTSTypes.SQLVARCHAR, 20));
+
+				row.addRowData(1, new ResultSetRowColumnData(false, "submit_rpc"));
+				row.addRowData(2, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getAvailableBalance().toString()));
+				row.addRowData(3, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getAccountingBalance().toString()));
+				row.addRowData(4, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getRotateBalance().toString()));
+				row.addRowData(5, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getBalance12H().toString()));
+				row.addRowData(6, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getBalance24H().toString()));
+				row.addRowData(7, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getRemittancesBalance().toString()));
+				row.addRowData(8, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getBlockedAmmount().toString()));
+				row.addRowData(9, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getBlockedNumber().toString()));
+				row.addRowData(10, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getBlockedNumberAmmount().toString()));
+				row.addRowData(11, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getOfficeAccount().getId().toString()));
+				row.addRowData(12, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getProduct().getProductType().toString()));
+				row.addRowData(13, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getState()));
+				row.addRowData(14, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getSsnHost().toString()));
+				row.addRowData(15, new ResultSetRowColumnData(false,
+						aInternationalTransferResponse.getBalanceProduct().getSurplusAmmount().toString()));
+				row.addRowData(16, new ResultSetRowColumnData(false, aInternationalTransferResponse.getDateHost()));
+				row.addRowData(17, new ResultSetRowColumnData(false, aInternationalTransferResponse.getName()));
+				row.addRowData(18,
+						new ResultSetRowColumnData(false, aInternationalTransferResponse.getDateLastMovement()));
+				row.addRowData(19,
+						new ResultSetRowColumnData(false, aInternationalTransferResponse.getAccountStatus()));
+
+				data.addRow(row);
+				IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
+				response.addResponseBlock(resultBlock);
+
+			}
+		}
+		response.addParam("@o_ssn_branch", ICTSTypes.SYBINT4, 0,
+				String.valueOf(originalRequest.readValueParam("@s_ssn_branch")));
+		response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0,
+				String.valueOf(originalRequest.readValueParam("@s_ssn_branch")));
+		response.addParam("@o_num_transferencia", ICTSTypes.SYBVARCHAR, 0,
+				String.valueOf(aInternationalTransferResponse.getReferenceNumber()));
+		response.addParam("@o_autorizacion", ICTSTypes.SYBVARCHAR, 0,
+				responseLocalValidation.readValueParam("@o_autorizacion"));
+		response.addParam("@o_retorno", ICTSTypes.SYBINT4, 0,
+				String.valueOf(responseLocalValidation.readValueParam("@o_retorno")));
+		response.addParam("@o_condicion", ICTSTypes.SYBINT4, 0,
+				String.valueOf(responseLocalValidation.readValueParam("@o_condicion")));
+
+		response.addParam("@o_costo", ICTSTypes.SYBVARCHAR, 0, aInternationalTransferResponse.getTransactionFee());
+		response.addParam("@o_import_tot", ICTSTypes.SYBVARCHAR, 0,
+				aInternationalTransferResponse.getTransactionTotalAmount());
+		response.addParam("@o_pais_benef", ICTSTypes.SYBVARCHAR, 0,
+				aInternationalTransferResponse.getBeneficiaryCountryName());
+		response.addParam("@o_pais_int", ICTSTypes.SYBVARCHAR, 0,
+				aInternationalTransferResponse.getIntermediaryBankCountryName());
+		response.addParam("@o_dir_int", ICTSTypes.SYBVARCHAR, 0,
+				aInternationalTransferResponse.getIntermediaryBankAddress());
+		response.addParam("@o_dir_bco_benef", ICTSTypes.SYBVARCHAR, 0,
+				aInternationalTransferResponse.getBeneficiaryBankAddress());
+		response.addParam("@o_bco_nom_int", ICTSTypes.SYBVARCHAR, 0,
+				aInternationalTransferResponse.getIntermediaryBankName());
+
+		response.setReturnCode(aInternationalTransferResponse.getReturnCode());
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Respuesta Devuelta" + response);
+		return response;
+	}
+
+	@Override
+	public ICoreServiceReexecutionComponent getCoreServiceReexecutionComponent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IProcedureResponse validateCentralExecution(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public NotificationRequest transformNotificationRequest(IProcedureRequest anOriginalRequest,
+			OfficerByAccountResponse anOfficer, Map<String, Object> aBagSPJavaOrchestration) {
+
+		NotificationRequest notificationRequest = new NotificationRequest();
+		notificationRequest.setOriginalRequest(anOriginalRequest);
+		Notification notification = new Notification();
+		IProcedureResponse responseCore = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
+
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "BBO responseCore: " + responseCore.toString());
+
+		Client client = new Client();
+		client.setIdCustomer(anOriginalRequest.readValueParam("@s_cliente"));
+
+		Product product = new Product();
+		product.setProductType(Integer.parseInt(anOriginalRequest.readValueParam("@i_prod")));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_cta"))) {
+			product.setProductNumber(anOriginalRequest.readValueParam("@i_cta"));
+		}
+		if (product.getProductType() == 3)
+			notification.setId("N26");
+		else
+			notification.setId("N27");
+
+		NotificationDetail notificationDetail = new NotificationDetail();
+
+		if (!Utils.isNull(anOfficer.getOfficer().getOfficerEmailAdress()))
+			notificationDetail.setEmailClient(anOfficer.getOfficer().getOfficerEmailAdress());
+		if (!Utils.isNull(anOfficer.getOfficer().getAcountEmailAdress()))
+			notificationDetail.setEmailOficial(anOfficer.getOfficer().getAcountEmailAdress());
+
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_benefi")))
+			notificationDetail.setAuxiliary1(anOriginalRequest.readValueParam("@i_benefi"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_dirben")))
+			notificationDetail.setAuxiliary2(anOriginalRequest.readValueParam("@i_dirben"));
+		if (!Utils.isNull(responseCore.readParam("@o_pais_benef")))
+			notificationDetail.setAuxiliary3(responseCore.readValueParam("@o_pais_benef"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_nomben")))
+			notificationDetail.setAuxiliary4(anOriginalRequest.readValueParam("@i_nomben"));
+		if (!Utils.isNull(responseCore.readParam("@o_dir_bco_benef")))
+			notificationDetail.setAuxiliary5(responseCore.readValueParam("@o_dir_bco_benef"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_swtben")))
+			notificationDetail.setAuxiliary6(anOriginalRequest.readValueParam("@i_swtben"));
+		if (!Utils.isNull(responseCore.readParam("@o_pais_int")))
+			notificationDetail.setAuxiliary7(responseCore.readValueParam("@o_pais_int"));
+		if (!Utils.isNull(responseCore.readParam("@o_bco_nom_int")))
+			notificationDetail.setAuxiliary8(responseCore.readValueParam("@o_bco_nom_int"));
+		if (!Utils.isNull(responseCore.readParam("@o_dir_int")))
+			notificationDetail.setAuxiliary9(responseCore.readValueParam("@o_dir_int"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_swtint")))
+			notificationDetail.setAuxiliary6(anOriginalRequest.readValueParam("@i_swtint"));
+
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_cta")))
+			notificationDetail.setAccountNumberDebit(anOriginalRequest.readValueParam("@i_cta"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_cta_des")))
+			notificationDetail.setAccountNumberCredit(anOriginalRequest.readValueParam("@i_cta_des"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_moncta")))
+			notificationDetail.setCurrencyId1(anOriginalRequest.readValueParam("@i_moncta"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_mon")))
+			notificationDetail.setCost1(anOriginalRequest.readValueParam("@i_mon"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_val")))
+			notificationDetail.setValue(anOriginalRequest.readValueParam("@i_val"));
+		if (!Utils.isNull(responseCore.readParam("@o_costo")))
+			notificationDetail.setCost(responseCore.readValueParam("@o_costo"));
+		if (!Utils.isNull(responseCore.readParam("@o_import_tot")))
+			notificationDetail.setTaxes(responseCore.readValueParam("@o_import_tot"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_cotiz_dolar")))
+			notificationDetail.setQuote(anOriginalRequest.readValueParam("i_cotiz_dolar"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_concepto")))
+			notificationDetail.setNote(anOriginalRequest.readValueParam("@i_concepto"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_email1")))
+			notificationDetail.setEmail1(anOriginalRequest.readValueParam("@i_email1"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@i_email2")))
+			notificationDetail.setEmail2(anOriginalRequest.readValueParam("@i_email2"));
+
+		if (!Utils.isNull(anOriginalRequest.readParam("@s_date")))
+			notificationDetail.setDateNotification(anOriginalRequest.readValueParam("@s_date"));
+		if (!Utils.isNull(anOriginalRequest.readParam("@s_ssn_branch")))
+			notificationDetail.setReference(anOriginalRequest.readValueParam("@s_ssn_branch"));
+
+		notificationRequest.setClient(client);
+		notificationRequest.setNotification(notification);
+		notificationRequest.setNotificationDetail(notificationDetail);
+		notificationRequest.setOriginProduct(product);
+		return notificationRequest;
+	}
+
+	@Override
+	protected void addParametersRequestUpdateLocal(IProcedureRequest aProcedureRequest,
+			IProcedureRequest anOriginalRequest) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

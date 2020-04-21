@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" productVersion="4.6.1.0">
+  <name>SignatureParameter</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.admin.dto</javaPackage>
+  <ns>http://dto.admin.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="systemId" propertyNet="SystemId" propertyJava="systemId" setterJavaMethod="setSystemId" getterJavaMethod="getSystemId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="serviceId" propertyNet="ServiceId" propertyJava="serviceId" setterJavaMethod="setServiceId" getterJavaMethod="getServiceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="optionId" propertyNet="OptionId" propertyJava="optionId" setterJavaMethod="setOptionId" getterJavaMethod="getOptionId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="transactionId" propertyNet="TransactionId" propertyJava="transactionId" setterJavaMethod="setTransactionId" getterJavaMethod="getTransactionId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="extensionId" propertyNet="ExtensionId" propertyJava="extensionId" setterJavaMethod="setExtensionId" getterJavaMethod="getExtensionId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="textToSign" propertyNet="TextToSign" propertyJava="textToSign" setterJavaMethod="setTextToSign" getterJavaMethod="getTextToSign" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="transactionReference" propertyNet="TransactionReference" propertyJava="transactionReference" setterJavaMethod="setTransactionReference" getterJavaMethod="getTransactionReference" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="transactionDescription" propertyNet="TransactionDescription" propertyJava="transactionDescription" setterJavaMethod="setTransactionDescription" getterJavaMethod="getTransactionDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="receivedId" propertyNet="ReceivedId" propertyJava="receivedId" setterJavaMethod="setReceivedId" getterJavaMethod="getReceivedId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="returnPage" propertyNet="ReturnPage" propertyJava="returnPage" setterJavaMethod="setReturnPage" getterJavaMethod="getReturnPage" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="clientIP" propertyNet="ClientIP" propertyJava="clientIP" setterJavaMethod="setClientIP" getterJavaMethod="getClientIP" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="signatureId" propertyNet="SignatureId" propertyJava="signatureId" setterJavaMethod="setSignatureId" getterJavaMethod="getSignatureId" xsdType="long" netType="long" javaType="long" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

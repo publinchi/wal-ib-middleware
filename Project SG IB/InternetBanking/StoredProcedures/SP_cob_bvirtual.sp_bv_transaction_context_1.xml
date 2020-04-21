@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_transaction_context</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="tinyint" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@i_paginar" dataType="char" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_nregistros" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="TRN" />
+        <column name="AUTHORIZATION_REQ " />
+        <column name="AUTENTICATION_REQ" />
+        <column name="AUT_MEDIA" />
+        <column name="OFFLINE" />
+        <column name="SYNC_BALANCES" />
+        <column name="COST_TYPE" />
+        <column name="COST_REQ" />
+        <column name="MENU_ID" />
+      </columns>
+      <queryText>SELECT DISTINCT "TRN" = ISNULL (tr_transaccion, 0),"AUTHORIZATION_REQ " = ISNULL (tr_doble_autorizacion, "N"),"AUTENTICATION_REQ" = ISNULL (tr_autenticacion, "N"),"AUT_MEDIA" = tr_medio_autenticacion,"OFFLINE" = ISNULL (tr_fuera_linea, "N"),"SYNC_BALANCES" = ISNULL (tr_sincroniza_saldos, "N"),"COST_TYPE" = ISNULL (tr_tipo_costo, "N"),"COST_REQ" = ISNULL (tr_mostrar_costos, "N") </queryText>
+    </query>
+  </queries>
+</procedure>

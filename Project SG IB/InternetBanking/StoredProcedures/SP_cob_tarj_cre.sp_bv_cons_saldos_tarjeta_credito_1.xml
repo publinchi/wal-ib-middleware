@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_tarj_cre</database>
+  <name>sp_bv_cons_sal_tar_cred</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Codigo Linea" />
+        <column name="Codigo Cuenta  " />
+        <column name="Marca" />
+        <column name="Tipo Tarjeta" />
+        <column name="Moneda" />
+        <column name="Limite Aprobado" />
+        <column name="Saldo Disponible" />
+        <column name="Fecha Activacion" />
+        <column name="Fecha Expiracion" />
+        <column name="Estado" />
+        <column name="Seguro" />
+        <column name="Nombre Tarjeta" />
+        <column name="Oficina" />
+      </columns>
+      <queryText>SELECT  "Codigo Linea" = sa_cod_linea,"Codigo Cuenta  " = sa_cod_cuenta,"Marca" = sa_estado,"Tipo Tarjeta" = sa_estado,"Moneda" = sa_moneda,"Limite Aprobado" = sa_mont_cuota_act,"Saldo Disponible" = sa_saldo,"Fecha Activacion" = sa_fecha_venc,"Fecha Expiracion" = sa_fecha_venc,"Estado" = sa_estado,"Seguro" = sa_tipo_deudor,"Nombre Tarjeta" = sa_estado,"Oficina" = sa_cod_cuenta </queryText>
+    </query>
+  </queries>
+</procedure>

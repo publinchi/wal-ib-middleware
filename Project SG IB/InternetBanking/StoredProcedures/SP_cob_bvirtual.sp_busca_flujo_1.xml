@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_busca_flujo</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_tipo" dataType="varchar" direction="in" />
+    <parameter name="@i_cod_flujo" dataType="int" direction="in" />
+    <parameter name="@i_estado_flujo" dataType="varchar" direction="in" />
+    <parameter name="@i_estado_pagina" dataType="varchar" direction="in" />
+    <parameter name="@i_opcion" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_canal" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="FLUJO" />
+        <column name="DESCRIPCION" />
+        <column name="ESTADO" />
+        <column name="BANCA" />
+        <column name="CANAL" />
+      </columns>
+      <queryText>SELECT  "FLUJO" = fl_codigo,"DESCRIPCION" = fl_descripcion,"ESTADO" = fl_estado,"BANCA" = fl_tipo_banca </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="FLUJO" />
+        <column name="PAGINA" />
+        <column name="ESTADO" />
+        <column name="ORDEN" />
+        <column name="COMPORTAMIENTO" />
+      </columns>
+      <queryText>SELECT  "FLUJO" = b.pf_codigo_flujo,"PAGINA" = c.codigo,"ESTADO" = b.pf_estado_pagina,"ORDEN" = pf_orden </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="FLUJO" />
+        <column name="PAGINA" />
+        <column name="ESTADO" />
+        <column name="ORDEN" />
+        <column name="COMPORTAMIENTO" />
+      </columns>
+      <queryText>SELECT  "FLUJO" = b.pf_codigo_flujo,"PAGINA" = c.codigo,"ESTADO" = b.pf_estado_pagina,"ORDEN" = b.pf_orden </queryText>
+    </query>
+  </queries>
+</procedure>

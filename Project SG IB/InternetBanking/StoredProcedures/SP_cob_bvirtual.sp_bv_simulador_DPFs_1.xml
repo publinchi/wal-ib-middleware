@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_simulador_DPFs</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_nemonico" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo_reg" dataType="varchar" direction="in" />
+    <parameter name="@i_oficina" dataType="varchar" direction="in" />
+    <parameter name="@i_monto" dataType="float" direction="in" />
+    <parameter name="@i_plazo" dataType="int" direction="in" />
+    <parameter name="@i_tasa" dataType="float" direction="in" />
+    <parameter name="@i_moneda" dataType="smallint" direction="in" />
+    <parameter name="@i_categoria" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_valor" dataType="datetime" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_dia_pago" dataType="tinyint" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ven" dataType="datetime" direction="in" />
+    <parameter name="@o_plazo" dataType="int" direction="out" />
+    <parameter name="@i_fecha_plazo" dataType="char" direction="in" />
+    <parameter name="@o_fecha_ven" dataType="varchar" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="TIPO DE DPF" />
+        <column name="DESCRIPCION" />
+        <column name="FORMA DE PAGO" />
+        <column name="CAPIT." />
+        <column name="DIAS REVERSO" />
+        <column name="BASE CALCULO" />
+        <column name="COD." />
+        <column name="EMISION INICIAL." />
+        <column name="MANT STOCK." />
+        <column name="STOCK" />
+        <column name="PRORROGA AUT" />
+        <column name="DIAS GRACIA" />
+        <column name="NUM DIAS GRACIA" />
+        <column name="NUMERO PRORROGAS" />
+        <column name="FECHA COMERCIAL" />
+        <column name="TASA VARIABLE" />
+        <column name="TASA EFECTIVA" />
+        <column name="RETIENE IMPUESTO" />
+        <column name="TRN.DIA NO LABOR." />
+        <column name="PAGA COMISION" />
+        <column name="MANEJA CUPON" />
+        <column name="CAMBIO TASA" />
+        <column name="INCREM/DISMIN." />
+        <column name="AREA CONTABLE" />
+        <column name="TIPO PERSONA" />
+        <column name="DIAS CALENDARIO" />
+        <column name="TIPO TASA VARIABLE" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Tipo" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="VALOR" />
+        <column name="DESCRIPCION" />
+        <column name="FACTOR" />
+        <column name="PORCENTAJE" />
+        <column name="FACTOR DIAS" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="TASA" />
+        <column name="TASA MAX" />
+        <column name="TASA MIN" />
+        <column name="DESCUENTO" />
+        <column name="AUTORIZADO" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Categoria" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="INTERES ESTIMADO" />
+        <column name="TOTAL INT. ESTIMADO" />
+        <column name="IMPUESTOS A PAGAR" />
+        <column name="FECHA PAGO INTERES" />
+        <column name="DIA DE PAGO" />
+        <column name="NUMERO DE PAGOS" />
+        <column name="TASA EFECTIVA" />
+        <column name="INTERES ESTIMADO HOLD" />
+        <column name="TOTAL INTERES ESTIMADO HOLD" />
+        <column name="INT GANADO ACTUAL" />
+        <column name="NUEVO TIPO MONTO" />
+        <column name="NUEVO TIPO DE PLAZO" />
+        <column name="TOTAL INT GANADO" />
+        <column name="AMORTIZACION PERIODO" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

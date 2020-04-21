@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_pago_tarjetacredito</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_org_err" dataType="char" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_sev" dataType="tinyint" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_filial" dataType="smallint" direction="in" />
+    <parameter name="@i_mon" dataType="tinyint" direction="in" />
+    <parameter name="@i_tarjeta" dataType="varchar" direction="in" />
+    <parameter name="@i_debito_cuenta" dataType="char" direction="in" />
+    <parameter name="@i_cta_debito" dataType="varchar" direction="in" />
+    <parameter name="@i_valor_debito" dataType="money" direction="in" />
+    <parameter name="@i_efe" dataType="money" direction="in" />
+    <parameter name="@i_doc_propio" dataType="money" direction="in" />
+    <parameter name="@i_locales" dataType="money" direction="in" />
+    <parameter name="@i_plaz" dataType="money" direction="in" />
+    <parameter name="@i_total" dataType="money" direction="in" />
+    <parameter name="@i_idcaja" dataType="int" direction="in" />
+    <parameter name="@i_idcierre" dataType="int" direction="in" />
+    <parameter name="@i_sld_caja" dataType="money" direction="in" />
+    <parameter name="@i_tipo_tarjeta" dataType="varchar" direction="in" />
+    <parameter name="@i_extrafinanciamiento" dataType="varchar" direction="in" />
+    <parameter name="@i_canal" dataType="varchar" direction="in" />
+    <parameter name="@i_nocaja" dataType="char" direction="in" />
+    <parameter name="@i_prod_cta_debito" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_r_tipo_mensaje" dataType="varchar" direction="in" />
+    <parameter name="@i_r_codigo_emisor" dataType="varchar" direction="in" />
+    <parameter name="@i_r_numero_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_r_superFranEmi" dataType="char" direction="in" />
+    <parameter name="@i_r_localidad" dataType="char" direction="in" />
+    <parameter name="@i_r_moneda" dataType="char" direction="in" />
+    <parameter name="@i_r_tpago" dataType="char" direction="in" />
+    <parameter name="@i_r_monto" dataType="money" direction="in" />
+    <parameter name="@i_r_codBanChq" dataType="char" direction="in" />
+    <parameter name="@i_r_numChq" dataType="varchar" direction="in" />
+    <parameter name="@i_r_nunFinEsp" dataType="varchar" direction="in" />
+    <parameter name="@i_r_identTran" dataType="varchar" direction="in" />
+    <parameter name="@i_r_codRes" dataType="char" direction="in" />
+    <parameter name="@i_r_numRef" dataType="varchar" direction="in" />
+    <parameter name="@i_r_usuario" dataType="varchar" direction="in" />
+    <parameter name="@i_r_DesCodRes" dataType="varchar" direction="in" />
+    <parameter name="@o_ssn_central" dataType="int" direction="out" />
+    <parameter name="@o_cuenta_cliente" dataType="varchar" direction="out" />
+    <parameter name="@o_nombre_tarjeta" dataType="varchar" direction="out" />
+    <parameter name="@o_error" dataType="char" direction="out" />
+    <parameter name="@i_mon_deb" dataType="tinyint" direction="in" />
+    <parameter name="@i_val_cta" dataType="money" direction="in" />
+    <parameter name="@o_num_referencia" dataType="varchar" direction="out" />
+    <parameter name="@o_retorno" dataType="char" direction="out" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_alias" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="int" direction="in" />
+    <parameter name="@_servicio" dataType="varchar" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Mensaje" />
+        <column name="CodEmisor" />
+        <column name="NumeroCta" />
+        <column name="Tarjeta" />
+        <column name="Franquicia" />
+        <column name="Localidad" />
+        <column name="Moneda" />
+        <column name="Tpago" />
+        <column name="Monto" />
+        <column name="CodBanChq" />
+        <column name="NumChq" />
+        <column name="NunFinEsp" />
+        <column name="IdentTran" />
+        <column name="CodRes" />
+        <column name="NumRef" />
+        <column name="Usuario" />
+        <column name="DesCodRes" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

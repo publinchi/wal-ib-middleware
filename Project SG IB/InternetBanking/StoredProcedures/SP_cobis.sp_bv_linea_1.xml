@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_bv_linea</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_origen" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_nregistros" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="LINEA" />
+        <column name="MONEDA" />
+        <column name="DISPONIBLE" />
+        <column name="COD MONEDA" />
+        <column name="FECHAPROBACION" />
+        <column name="FECHVENCIMIENTO" />
+        <column name="MONTO" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = li_numero,"LINEA" = li_num_banco,"MONEDA" = mo_descripcion,"DISPONIBLE" = li_monto - ISNULL (li_utilizado, 0) </queryText>
+    </query>
+  </queries>
+</procedure>

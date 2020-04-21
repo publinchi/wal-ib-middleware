@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_cons_oper_cartera</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_moneda" dataType="smallint" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="smallint" direction="in" />
+    <parameter name="@i_num_registro" dataType="smallint" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="SECUENCIAL" />
+        <column name="OPERACION BANCO" />
+        <column name="MONTO" />
+        <column name="TIPO OPERACION" />
+        <column name="FECHA INICIO" />
+        <column name="VENCIMIENTO" />
+        <column name="OFICIAL" />
+        <column name="OFICINA" />
+        <column name="LINEA DE CREDITO" />
+        <column name="COD CLIENTE" />
+        <column name="OPERACION" />
+        <column name="CON MORA" />
+        <column name="ESTADO" />
+        <column name="DESC TIPO" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

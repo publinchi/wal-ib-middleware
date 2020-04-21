@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Export-Package: com.cobiscorp.ecobis.ib.orchestration.loanpayments;ver
+ sion="4.6.0";uses:="com.cobiscorp.cobis.commons.configuration,com.cob
+ iscorp.cobis.cts.commons.exceptions,com.cobiscorp.cobis.cts.domains,c
+ om.cobiscorp.ecobis.ib.application.dtos,com.cobiscorp.ecobis.ib.orche
+ stration.interfaces,com.cobiscorp.ecobis.orchestration.core.ib.paymen
+ t.template"
+Service-Component: OSGI-INF/serviceComponents.xml
+Built-By: schancay
+Tool: Bundlor 1.0.0.RELEASE
+Bundle-Name: com.cobiscorp.ecobis.ib.orchestrationcore-orchestration-c
+ ore-ib-loan-payments
+Created-By: Maven Integration for Eclipse
+Bundle-Vendor: COBISCORP
+Bundle-Version: 4.6.0
+Build-Jdk: 1.6.0_29
+Bundle-ManifestVersion: 2
+Import-Package: com.cobiscorp.cobis.commons.configuration,com.cobiscor
+ p.cobis.commons.log,com.cobiscorp.cobis.cts.commons.exceptions,com.co
+ biscorp.cobis.cts.dtos,com.cobiscorp.cobis.cts.dtos.sp,com.cobiscorp.
+ ecobis.ib.application.dtos,com.cobiscorp.ecobis.ib.orchestration.base
+ .commons,com.cobiscorp.ecobis.ib.orchestration.dtos,com.cobiscorp.eco
+ bis.ib.orchestration.interfaces,com.cobiscorp.ecobis.orchestration.co
+ re.ib.payment.template
+Bundle-SymbolicName: com.cobiscorp.ecobis.ib.orchestrationcore-orchest
+ ration-core-ib-loan-payments-4.6.0
+

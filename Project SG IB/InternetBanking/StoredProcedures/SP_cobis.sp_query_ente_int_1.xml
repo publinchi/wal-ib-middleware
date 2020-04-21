@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_query_ente_int</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_formato" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+        <column name="{13}" />
+        <column name="{14}" />
+        <column name="{15}" />
+        <column name="{16}" />
+        <column name="{17}" />
+        <column name="{18}" />
+        <column name="{19}" />
+        <column name="{20}" />
+        <column name="{21}" />
+        <column name="{22}" />
+        <column name="{23}" />
+        <column name="{24}" />
+        <column name="{25}" />
+        <column name="{26}" />
+        <column name="{27}" />
+        <column name="{28}" />
+        <column name="{29}" />
+        <column name="{30}" />
+        <column name="{31}" />
+        <column name="{32}" />
+        <column name="{33}" />
+        <column name="{34}" />
+        <column name="{35}" />
+        <column name="{36}" />
+        <column name="{37}" />
+        <column name="{38}" />
+        <column name="{39}" />
+        <column name="{40}" />
+        <column name="{41}" />
+        <column name="{42}" />
+        <column name="{43}" />
+        <column name="{44}" />
+        <column name="{45}" />
+        <column name="{46}" />
+        <column name="{47}" />
+        <column name="{48}" />
+        <column name="{49}" />
+        <column name="{50}" />
+        <column name="{51}" />
+        <column name="{52}" />
+        <column name="{53}" />
+        <column name="{54}" />
+        <column name="{55}" />
+        <column name="{56}" />
+        <column name="{57}" />
+        <column name="{58}" />
+        <column name="{59}" />
+        <column name="{60}" />
+        <column name="{61}" />
+        <column name="{62}" />
+        <column name="{63}" />
+        <column name="{64}" />
+        <column name="{65}" />
+        <column name="{66}" />
+        <column name="{67}" />
+        <column name="{68}" />
+        <column name="{69}" />
+        <column name="{70}" />
+        <column name="{71}" />
+        <column name="{72}" />
+        <column name="{73}" />
+        <column name="{74}" />
+        <column name="{75}" />
+        <column name="{76}" />
+        <column name="{77}" />
+        <column name="{78}" />
+        <column name="{79}" />
+        <column name="{80}" />
+        <column name="{81}" />
+        <column name="{82}" />
+        <column name="{83}" />
+        <column name="{84}" />
+        <column name="{85}" />
+        <column name="{86}" />
+        <column name="{87}" />
+        <column name="{88}" />
+        <column name="{89}" />
+        <column name="{90}" />
+        <column name="{91}" />
+        <column name="{92}" />
+      </columns>
+      <queryText>SELECT w_ente, w_nombre_completo_DE, w_subtipo, w_ced_ruc, w_tipo_ced, w_filial, w_filial_desc, w_oficina, w_oficina_desc, ctx.convertString(w_fecha_crea ,w_formato), ctx.convertString(w_fecha_mod ,w_formato), w_direccion, w_referencia, w_casilla, w_casilla_def, w_tipo_dp, w_balance, w_grupo, w_grupo_desc, w_pais, w_pais_desc, w_nacionalidad, w_oficial, w_oficial_desc, w_actividad, w_actividad_desc, w_retencion, w_mala_referencia, w_comentario, w_cont_malas, w_nomlar, w_vinculacion, w_tipo_vinculacion, w_tipo_vinc_desc, w_posicion, w_posicion_desc, w_tipo_compania, w_tipo_compania_desc, w_rep_legal, w_rep_legal_desc, w_activo, w_pasivo, w_es_grupo, w_capital_social, w_reserva_legal, ctx.convertString(w_fecha_const ,w_formato), w_nombre_completo, w_plazo, w_direccion_domicilio, ctx.convertString(w_fecha_inscrp ,w_formato), ctx.convertString(w_fecha_aum_capital ,w_formato), w_rep_jud, w_rep_jud_desc, w_rep_ex_jud, w_rep_ex_jud_desc, w_notaria, w_capital_inicial, w_p_apellido, w_s_apellido, w_sexo, w_sexo_desc, ctx.convertString(w_fecha_nac ,w_formato), w_profesion, w_profesion_desc, w_pasaporte, w_estado_civil, w_estado_civil_desc, w_num_cargas, w_nivel_ing, w_nivel_egr, w_tipo_persona, w_tipo_persona_desc, w_personal, w_propiedad, w_trabajo, w_soc_hecho, ctx.convertString(w_fecha_ingreso ,w_formato), ctx.convertString(w_fecha_expira ,w_formato), w_c_apellido, w_s_nombre, w_codsuper, w_tipspub, w_subspub, w_codsuper_desc, w_tipspub_desc, w_subspub_desc, w_razon_social, w_nombre, w_estado, w_c_actividad, w_c_actividad_desc, w_estado_aux</queryText>
+    </query>
+  </queries>
+</procedure>

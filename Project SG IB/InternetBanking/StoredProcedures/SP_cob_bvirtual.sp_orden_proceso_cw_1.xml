@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_orden_proceso_cw</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_id" dataType="int" direction="in" />
+    <parameter name="@i_ssn_aut" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@o_secuencial" dataType="int" direction="out" />
+    <parameter name="@o_ente_email" dataType="varchar" direction="out" />
+    <parameter name="@o_ente_nombre" dataType="varchar" direction="out" />
+    <parameter name="@o_recipient" dataType="varchar" direction="out" />
+    <parameter name="@o_recipientname" dataType="varchar" direction="out" />
+    <parameter name="@o_msgbody" dataType="varchar" direction="out" />
+    <parameter name="@o_msgsubject" dataType="varchar" direction="out" />
+  </parameters>
+  <queries />
+</procedure>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_bv_parametros_ach</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_ente_origen" dataType="int" direction="" />
+    <parameter name="@i_oficina" dataType="int" direction="" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="modulo" />
+        <column name="red_ach" />
+        <column name="ciudad" />
+        <column name="pais" />
+        <column name="tipo_orden_env" />
+        <column name="tipo_cta_orig" />
+        <column name="tipo_doc" />
+        <column name="num_id" />
+        <column name="banco" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_pfijo</database>
+  <name>sp_cons_cuota</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_op_num_banco" dataType="varchar" direction="in" />
+    <parameter name="@i_cuota" dataType="int" direction="in" />
+    <parameter name="@i_fecha" dataType="datetime" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_tipo" dataType="smallint" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_op_operacion" dataType="int" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="14240" />
+        <column name="14241" />
+        <column name="14242" />
+        <column name="14752" />
+        <column name="12069" />
+        <column name="14517" />
+        <column name="12668" />
+        <column name="14377" />
+        <column name="14378" />
+        <column name="11074" />
+        <column name="11061" />
+        <column name="11062" />
+        <column name="11423" />
+        <column name="12460" />
+        <column name="14398" />
+        <column name="11422" />
+        <column name="11370" />
+        <column name="11307" />
+        <column name="14456" />
+        <column name="15819" />
+        <column name="14399" />
+      </columns>
+      <queryText>SELECT  "14240" = cu_cuota,"14241" = CONVERT (VARCHAR (10),cu_fecha_pago ,?),"14242" = cu_valor_cuota,"14752" = cu_ente,"12069" = op_descripcion,"14517" = di_descripcion,"12668" = of_nombre,"14377" = op_num_banco,"14378" = td_descripcion,"11074" = cu_capital,"11061" = cu_ppago,"11062" = cu_moneda,"11423" = op_tasa,"12460" = CONVERT (VARCHAR (10),op_fecha_ven ,?),"14398" = cu_estado,"11422" = op_num_dias,"11370" = CONVERT (VARCHAR (10),op_fecha_ingreso ,?),"11307" = CONVERT (VARCHAR (10),op_fecha_valor ,?),"14456" = cu_num_dias,"15819" = CONVERT (VARCHAR (10),cu_fecha_ult_pago ,?),"14399" = (SELECT  op_int_ganado FROM cob_pfijo..pf_operacion   WHERE op_operacion = a.op_operacion AND op_fecha_ult_pg_int = b.cu_fecha_ult_pago     ) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT 15</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT ctx.convertString(w_fecha_labor ,i_formato_fecha)</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_td_dias_reales</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="14377" />
+        <column name="14240" />
+        <column name="14241" />
+        <column name="14242" />
+        <column name="14398" />
+      </columns>
+      <queryText>SELECT  op_operacion,"14377" = op_num_banco,"14240" = cu_cuota,"14241" = CONVERT (VARCHAR (10),cu_fecha_pago ,101),"14242" = cu_valor_cuota,"14398" = cu_estado </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT 20</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="14377" />
+        <column name="14240" />
+        <column name="14241" />
+        <column name="14242" />
+        <column name="14398" />
+      </columns>
+      <queryText>SELECT  op_operacion,"14377" = op_num_banco,"14240" = cu_cuota,"14241" = CONVERT (VARCHAR (10),cu_fecha_pago ,101),"14242" = cu_valor_cuota,"14398" = cu_estado </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT 20</queryText>
+    </query>
+  </queries>
+</procedure>

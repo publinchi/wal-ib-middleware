@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Servicios -->
+	<servicios>
+		<servicio nombreSp="cobis..sp_oficina" filtro=""></servicio>
+		<servicio nombreSp="cobis..sp_oficina_2" filtro="oficinaSrvOtroSp"></servicio>
+		<servicio nombreSp="cobis..sp_oficina_srv" filtro="oficinaSrvOtroServicio"></servicio>
+        <servicio nombreSp="cob_channels..sp_cross_channel_rules_maintenance" filtro="sp_cross_channel_rules_maintenance"></servicio>
+	</servicios>
+
+	
+		<code-evaluator><![CDATA[
+			
+		String  authorizationByProfile = "authorizationByProfile";
+
+		java.util.Map wCentral = new java.util.HashMap();
+		wCentral.put("cobis..sp_oficina","");
+		wCentral.put("cobis..sp_filial","");
+		wCentral.put("cobis..sp_moneda","");
+		wCentral.put("cobis..sp_producto","");
+		wCentral.put("cobis..sp_usuario","");
+		wCentral.put("cobis..sp_tr_cons_oficiales","");
+		wCentral.put("cobis..sp_direccion_cons","");
+		wCentral.put("cobis..sp_se_ente","");
+		wCentral.put("cobis..sp_qrente","");		
+		
+		wCentral.put("cobis..sp_param_bloqueado","");	
+		wCentral.put("cobis..sp_ente_bloqueado","");	
+		wCentral.put("cobis..sp_funcbusq","");	
+		wCentral.put("cobis..sp_funcionario","");	
+		wCentral.put("cobis..sp_fechapro","");	
+		wCentral.put("cobis..sp_persona_cons","");	
+		wCentral.put("cobis..sp_compania_cons","");	
+		wCentral.put("cobis..sp_cons_productoban","");	
+		wCentral.put("cobis..sp_direccion_cons_atm","");	
+		wCentral.put("cob_cuentas..sp_atm_cuentas_asociadas","");	
+		wCentral.put("cobis..sp_query_ente_int","");
+		wCentral.put("cob_channels..sp_atm_regla_bloqueo","");	
+		wCentral.put("cob_channels..sp_atm_condiciones","");	
+		wCentral.put("cob_channels..sp_parametro_regla","");	
+		wCentral.put("cob_channels..sp_atm_limites","");
+		wCentral.put("cob_channels..sp_dependencia_regla","");
+		wCentral.put("cob_channels..sp_actualiza_dependencia_param","");
+		wCentral.put("cob_channels..sp_atm_excepciones","");
+		wCentral.put("cob_channels..sp_atm_tlimite","");
+		wCentral.put("cob_channels..sp_atm_pseudo_catalog","");
+		wCentral.put("cob_bvirtual..sp_recurso","");
+		wCentral.put("cobis..sp_exec_bcp_out","");    
+    wCentral.put("cob_bvirtual..sp_convenio","");
+		wCentral.put("cob_bvirtual..sp_conv_canal","");
+		wCentral.put("cob_bvirtual..sp_conv_referencia","");
+		wCentral.put("cob_bvirtual..sp_rec_historia_ej","");	
+		wCentral.put("cob_comext..sp_qa_parametro_trn","");
+		wCentral.put("cob_comext..sp_oficina_swift_aba_bv","");
+    wCentral.put("cob_comext..sp_qtu_trr_reporte",""); 
+		wCentral.put("cobis..cons_prom_producto_bv",""); 
+    wCentral.put("firmas..sp_query_firma","");
+		wCentral.put("cobis..sp_ambito_gen","");
+wCentral.put("cob_tarj_cre..sp_cons_tar_lim","");
+wCentral.put("cobis..sp_bv_consulta_convenios","");
+		wCentral.put("cobis..sp_hp_sucursal","");
+		wCentral.put("cobis..sp_ciudad","");
+		wCentral.put("cobis..sp_tr02_afiliaciones_bv","");
+		wCentral.put("cobis..sp_bv_get_cities","");
+		wCentral.put("cobis..sp_pais_bv","");
+		wCentral.put("cobis..sp_tr42_tipo_cambio_div","");
+		wCentral.put("cobis..sp_valida_info_vinculacion","");
+		wCentral.put("cobis..sp_provincia","");
+		wCentral.put("cobis..sp_depart_pais","");
+				wCentral.put("cobis..sp_bc_get_file_type_central","");
+		wCentral.put("cobis..sp_bc_get_fields_format","");
+		wCentral.put("cobis..sp_bc_get_server_ftp","");
+		wCentral.put("cob_bvirtual..sp_ws_ordenate_aprobado","");
+		wCentral.put("cobis..sp_bc_get_ente_rif","");
+    wCentral.put("cobis..sp_bc_cons_mail_ente","");
+		wCentral.put("cob_inforcuenta..sp_conbanc_operac_I","");
+    wCentral.put("cobis..sp_sc_company_group","");
+
+		String wBackendId = aProcedureRequest.readValueFieldInHeader("backEndId");
+		
+		System.out.println("param in evaluator readed:" + aProcedureRequest.readValueFieldInHeader("t_orig_sp_name"));
+		String wSPName=aProcedureRequest.readValueFieldInHeader("t_orig_db_name") + ".."+aProcedureRequest.readValueFieldInHeader("t_orig_sp_name");
+		if(wCentral.containsKey(wSPName)){
+			if("backend2".equals(wBackendId)){
+				aProcedureRequest.addFieldInHeader("targetId",ICOBISTS.HEADER_STRING_TYPE , "cis-central");
+			}else {
+				aProcedureRequest.addFieldInHeader("targetId",ICOBISTS.HEADER_STRING_TYPE , "central");
+			}
+		}else {
+				aProcedureRequest.addFieldInHeader("targetId",ICOBISTS.HEADER_STRING_TYPE , "local");
+		}
+		
+		]]>
+		</code-evaluator>
+
+		
+</config>

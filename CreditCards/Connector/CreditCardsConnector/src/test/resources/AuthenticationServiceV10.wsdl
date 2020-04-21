@@ -1,0 +1,1174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:entrust.com:ig:authenticationV10:wsdl" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:entrust.com:ig:authenticationV10:wsdl" xmlns:intf="urn:entrust.com:ig:authenticationV10:wsdl" xmlns:tns1="urn:entrust.com:ig:commonV10" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on May 19, 2015 (03:31:20 EDT)-->
+ <wsdl:types>
+  <schema targetNamespace="urn:entrust.com:ig:commonV10" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:entrust.com:ig:authenticationV10:wsdl"/>
+   <complexType name="NameValue">
+    <sequence>
+     <element name="Name" nillable="true" type="xsd:string"/>
+     <element name="Value" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_xsd_string">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_NameValue">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:NameValue"/>
+    </sequence>
+   </complexType>
+   <simpleType name="AuthenticationType">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="Challenge">
+    <sequence>
+     <element name="Row" type="xsd:int"/>
+     <element name="Column" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_Challenge">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:Challenge"/>
+    </sequence>
+   </complexType>
+   <complexType name="ChallengeSet">
+    <sequence>
+     <element name="cardCellAlphabet" nillable="true" type="xsd:string"/>
+     <element name="cardCellSize" type="xsd:int"/>
+     <element name="cardSerialNumbers" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="hasCards" type="xsd:boolean"/>
+     <element name="challenge" nillable="true" type="tns1:ListOf_Challenge"/>
+     <element name="temporaryPinCellAlphabet" nillable="true" type="xsd:string"/>
+     <element name="temporaryPinCellSize" type="xsd:int"/>
+     <element name="temporaryPinChallengeSize" type="xsd:int"/>
+     <element name="userHasTemporaryPin" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <simpleType name="DeliveryStatus">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="TokenData">
+    <sequence>
+     <element name="VendorId" nillable="true" type="xsd:string"/>
+     <element name="SerialNumber" nillable="true" type="xsd:string"/>
+     <element name="TokenSet" nillable="true" type="xsd:string"/>
+     <element name="SupportsDataSignature" type="xsd:boolean"/>
+     <element name="SupportsMutualAuthentication" type="xsd:boolean"/>
+     <element name="SupportsDeliveryAndSignature" type="xsd:boolean"/>
+     <element name="SupportsOnlineTransactions" type="xsd:boolean"/>
+     <element name="SupportsOfflineTransactions" type="xsd:boolean"/>
+     <element name="DeliveryStatus" nillable="true" type="tns1:DeliveryStatus"/>
+     <element name="OfflineChallenge" nillable="true" type="xsd:string"/>
+     <element name="OfflineChallengeQRCode" nillable="true" type="xsd:base64Binary"/>
+     <element name="TokenCREncodedChallenge" nillable="true" type="xsd:string"/>
+     <element name="TokenCRChallengeQRCode" nillable="true" type="xsd:base64Binary"/>
+     <element name="MutualAuthenticationResponse" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_TokenData">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:TokenData"/>
+    </sequence>
+   </complexType>
+   <simpleType name="TokenTransactionMode">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="TokenChallenge">
+    <sequence>
+     <element name="challenge" nillable="true" type="xsd:string"/>
+     <element name="tokens" nillable="true" type="tns1:ListOf_TokenData"/>
+     <element name="hasTokens" type="xsd:boolean"/>
+     <element name="transactionMode" nillable="true" type="tns1:TokenTransactionMode"/>
+     <element name="TransactionId" nillable="true" type="xsd:string"/>
+     <element name="CreateDate" nillable="true" type="xsd:dateTime"/>
+     <element name="Lifetime" nillable="true" type="xsd:int"/>
+     <element name="hasTemporaryPIN" nillable="true" type="xsd:boolean"/>
+     <element name="temporaryPINCellAlphabet" nillable="true" type="xsd:string"/>
+     <element name="temporaryPINCellSize" nillable="true" type="xsd:int"/>
+     <element name="temporaryPINChallengeSize" nillable="true" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <simpleType name="PasswordCharacterType">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="PasswordRules">
+    <sequence>
+     <element name="minimumLength" type="xsd:int"/>
+     <element name="number" type="tns1:PasswordCharacterType"/>
+     <element name="numberRequired" type="xsd:int"/>
+     <element name="upperCase" type="tns1:PasswordCharacterType"/>
+     <element name="upperCaseRequired" type="xsd:int"/>
+     <element name="lowerCase" type="tns1:PasswordCharacterType"/>
+     <element name="lowerCaseRequired" type="xsd:int"/>
+     <element name="specialChar" type="tns1:PasswordCharacterType"/>
+     <element name="specialCharRequired" type="xsd:int"/>
+     <element name="maxRepeatedChars" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="CertificateData">
+    <sequence>
+     <element name="IssuerDN" nillable="true" type="xsd:string"/>
+     <element name="SubjectDN" nillable="true" type="xsd:string"/>
+     <element name="SerialNumber" nillable="true" type="xsd:string"/>
+     <element name="IssueDate" nillable="true" type="xsd:dateTime"/>
+     <element name="ExpiryDate" nillable="true" type="xsd:dateTime"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_CertificateData">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:CertificateData"/>
+    </sequence>
+   </complexType>
+   <complexType name="SmartCredentialData">
+    <sequence>
+     <element name="SmartCredentialId" nillable="true" type="xsd:string"/>
+     <element name="FriendlyName" nillable="true" type="xsd:string"/>
+     <element name="supportsSecurityChallenge" type="xsd:boolean"/>
+     <element name="mobile" type="xsd:boolean"/>
+     <element name="registered" type="xsd:boolean"/>
+     <element name="registeredApplications" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="DeliveryStatus" nillable="true" type="tns1:DeliveryStatus"/>
+     <element name="Response" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_SmartCredentialData">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:SmartCredentialData"/>
+    </sequence>
+   </complexType>
+   <complexType name="CertificateChallenge">
+    <sequence>
+     <element name="challenge" type="xsd:string"/>
+     <element name="hashingAlgorithm" nillable="true" type="xsd:string"/>
+     <element name="certificates" nillable="true" type="tns1:ListOf_CertificateData"/>
+     <element name="smartCredentials" nillable="true" type="tns1:ListOf_SmartCredentialData"/>
+     <element name="TransactionId" nillable="true" type="xsd:string"/>
+     <element name="CreateDate" nillable="true" type="xsd:dateTime"/>
+     <element name="Lifetime" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <simpleType name="BiometricType">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="BiometricData">
+    <sequence>
+     <element name="VendorId" nillable="true" type="xsd:string"/>
+     <element name="Type" nillable="true" type="tns1:BiometricType"/>
+     <element name="VendorManufacturer" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_BiometricData">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:BiometricData"/>
+    </sequence>
+   </complexType>
+   <complexType name="BiometricChallenge">
+    <sequence>
+     <element name="biometrics" nillable="true" type="tns1:ListOf_BiometricData"/>
+    </sequence>
+   </complexType>
+   <complexType name="IPLocation">
+    <sequence>
+     <element name="privateAddress" type="xsd:boolean"/>
+     <element name="IPAddress" type="xsd:string"/>
+     <element name="country" nillable="true" type="xsd:string"/>
+     <element name="countryName" nillable="true" type="xsd:string"/>
+     <element name="region" nillable="true" type="xsd:string"/>
+     <element name="regionName" nillable="true" type="xsd:string"/>
+     <element name="city" nillable="true" type="xsd:string"/>
+     <element name="ISP" nillable="true" type="xsd:string"/>
+     <element name="latitude" nillable="true" type="xsd:float"/>
+     <element name="longitude" nillable="true" type="xsd:float"/>
+    </sequence>
+   </complexType>
+   <complexType name="SharedSecret">
+    <sequence>
+     <element name="Name" nillable="true" type="xsd:string"/>
+     <element name="Value" nillable="true" type="xsd:string"/>
+     <element name="WriteOnly" nillable="true" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_SharedSecret">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:SharedSecret"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_AuthenticationType">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:AuthenticationType"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_BiometricType">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:BiometricType"/>
+    </sequence>
+   </complexType>
+   <complexType name="CardData">
+    <sequence>
+     <element name="SerialNumber" nillable="true" type="xsd:string"/>
+     <element name="ExpiryDate" nillable="true" type="xsd:dateTime"/>
+     <element name="SupersededDate" nillable="true" type="xsd:dateTime"/>
+    </sequence>
+   </complexType>
+   <simpleType name="TransactionSignatureType">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="AuthenticationInfo">
+    <sequence>
+     <element name="Date" nillable="true" type="xsd:dateTime"/>
+     <element name="Type" nillable="true" type="tns1:AuthenticationType"/>
+    </sequence>
+   </complexType>
+   <complexType name="NameValues">
+    <sequence>
+     <element name="Name" nillable="true" type="xsd:string"/>
+     <element name="Values" nillable="true" type="tns1:ListOf_xsd_string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_NameValues">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:NameValues"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:entrust.com:ig:authenticationV10:wsdl" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:entrust.com:ig:commonV10"/>
+   <element name="pingCallParms">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns1:NameValue"/>
+     </sequence>
+    </complexType>
+   </element>
+   <simpleType name="ErrorCode">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="AuthenticationFault">
+    <sequence>
+     <element name="ErrorCode" nillable="true" type="impl:ErrorCode"/>
+     <element name="InternalCode" nillable="true" type="xsd:string"/>
+     <element name="errorMessage" type="xsd:string"/>
+     <element name="id" type="xsd:string"/>
+     <element name="Params" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="message" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="AuthenticationSystemFault">
+    <complexContent>
+     <extension base="impl:AuthenticationFault">
+      <sequence/>
+     </extension>
+    </complexContent>
+   </complexType>
+   <element name="AuthenticationSystemFault" type="impl:AuthenticationSystemFault"/>
+   <complexType name="AuthenticationServiceFault">
+    <complexContent>
+     <extension base="impl:AuthenticationFault">
+      <sequence/>
+     </extension>
+    </complexContent>
+   </complexType>
+   <element name="AuthenticationServiceFault" type="impl:AuthenticationServiceFault"/>
+   <simpleType name="ChallengeRequestResult">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="IPAuthenticationStatus">
+    <sequence>
+     <element name="expectedLocations" nillable="true" type="xsd:boolean"/>
+     <element name="IPBlacklist" nillable="true" type="xsd:boolean"/>
+     <element name="countryBlacklist" nillable="true" type="xsd:boolean"/>
+     <element name="locationHistory" nillable="true" type="xsd:boolean"/>
+     <element name="velocity" nillable="true" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <complexType name="MachineAuthenticationStatus">
+    <sequence>
+     <element name="machineNonceFailed" type="xsd:boolean"/>
+     <element name="sequenceNonceFailed" type="xsd:boolean"/>
+     <element name="appDataFailed" type="xsd:boolean"/>
+     <element name="numRequiredApplicationData" type="xsd:int"/>
+     <element name="numFailedApplicationData" type="xsd:int"/>
+     <element name="secretExpired" type="xsd:boolean"/>
+     <element name="deviceFingerprintFailed" type="xsd:boolean"/>
+     <element name="deviceFingerprintRiskScore" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="CertificateAuthenticationStatus">
+    <sequence>
+     <element name="certificateRegistered" type="xsd:boolean"/>
+     <element name="certificateValid" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <simpleType name="ExternalRiskScoreResult">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="RiskScoringResult">
+    <sequence>
+     <element name="IPAuthenticationPassed" nillable="true" type="xsd:boolean"/>
+     <element name="IPAuthenticationStatus" nillable="true" type="impl:IPAuthenticationStatus"/>
+     <element name="MachineAuthenticationPassed" nillable="true" type="xsd:boolean"/>
+     <element name="MachineAuthenticationStatus" nillable="true" type="impl:MachineAuthenticationStatus"/>
+     <element name="CertificateAuthenticationPassed" nillable="true" type="xsd:boolean"/>
+     <element name="CertificateAuthenticationStatus" nillable="true" type="impl:CertificateAuthenticationStatus"/>
+     <element name="ExternalRiskScoreStatus" nillable="true" type="impl:ExternalRiskScoreResult"/>
+     <element name="ExternalRiskScore" nillable="true" type="xsd:int"/>
+     <element name="ExternalRiskParameters" nillable="true" type="tns1:ListOf_NameValue"/>
+    </sequence>
+   </complexType>
+   <complexType name="PVNInfo">
+    <sequence>
+     <element name="required" type="xsd:boolean"/>
+     <element name="available" nillable="true" type="xsd:boolean"/>
+     <element name="changeRequired" nillable="true" type="xsd:boolean"/>
+     <element name="length" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="DeliveryMechanism">
+    <sequence>
+     <element name="contactInfoLabel" nillable="true" type="xsd:string"/>
+     <element name="deliveryConfigurationName" nillable="true" type="xsd:string"/>
+     <element name="defaultContactInfo" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_DeliveryMechanism">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="impl:DeliveryMechanism"/>
+    </sequence>
+   </complexType>
+   <complexType name="ListOf_AuthenticationFault">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="impl:AuthenticationFault"/>
+    </sequence>
+   </complexType>
+   <complexType name="OTPChallenge">
+    <sequence>
+     <element name="manualDeliveryRequired" nillable="true" type="xsd:boolean"/>
+     <element name="deliveryMechanismUsed" nillable="true" type="impl:ListOf_DeliveryMechanism"/>
+     <element name="deliveryMechanismFailed" nillable="true" type="impl:ListOf_DeliveryMechanism"/>
+     <element name="deliveryMechanismFailureReason" nillable="true" type="impl:ListOf_AuthenticationFault"/>
+     <element name="deliveryMechanism" nillable="true" type="impl:ListOf_DeliveryMechanism"/>
+     <element name="dynamicRefresh" type="xsd:boolean"/>
+     <element name="needsDeliveryForChallenge" nillable="true" type="xsd:boolean"/>
+     <element name="needsDeliveryForAuthenticate" nillable="true" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <complexType name="PasswordChallenge">
+    <sequence>
+     <element name="changeRequired" nillable="true" type="xsd:boolean"/>
+     <element name="ExpiryDate" nillable="true" type="xsd:dateTime"/>
+     <element name="AllowChangeAfterDate" nillable="true" type="xsd:dateTime"/>
+     <element name="passwordRules" nillable="true" type="tns1:PasswordRules"/>
+    </sequence>
+   </complexType>
+   <complexType name="ExternalChallenge">
+    <sequence>
+     <element name="challenge" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="MachineSecret">
+    <sequence>
+     <element name="machineLabel" nillable="true" type="xsd:string"/>
+     <element name="machineNonce" nillable="true" type="xsd:string"/>
+     <element name="sequenceNonce" nillable="true" type="xsd:string"/>
+     <element name="applicationData" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="deviceFingerprint" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="MachineSecretPolicy">
+    <sequence>
+     <element name="machineNonceRequired" type="xsd:boolean"/>
+     <element name="sequenceNonceRequired" type="xsd:boolean"/>
+     <element name="appDataRequired" type="xsd:int"/>
+     <element name="deviceFingerprintRequired" type="xsd:boolean"/>
+     <element name="maxMachineSecretSize" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="AuthenticationPasswordChangeRequiredFault">
+    <complexContent>
+     <extension base="impl:AuthenticationFault">
+      <sequence>
+       <element name="PasswordRules" nillable="true" type="tns1:PasswordRules"/>
+      </sequence>
+     </extension>
+    </complexContent>
+   </complexType>
+   <complexType name="GenericChallenge">
+    <sequence>
+     <element name="challengeRequestResult" type="impl:ChallengeRequestResult"/>
+     <element name="riskScoringResult" nillable="true" type="impl:RiskScoringResult"/>
+     <element name="type" nillable="true" type="tns1:AuthenticationType"/>
+     <element name="PVNInfo" nillable="true" type="impl:PVNInfo"/>
+     <element name="GridChallenge" nillable="true" type="tns1:ChallengeSet"/>
+     <element name="QAChallenge" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="TokenChallenge" nillable="true" type="tns1:TokenChallenge"/>
+     <element name="OTPChallenge" nillable="true" type="impl:OTPChallenge"/>
+     <element name="PasswordChallenge" nillable="true" type="impl:PasswordChallenge"/>
+     <element name="CertificateChallenge" nillable="true" type="tns1:CertificateChallenge"/>
+     <element name="ExternalChallenge" nillable="true" type="impl:ExternalChallenge"/>
+     <element name="BiometricChallenge" nillable="true" type="tns1:BiometricChallenge"/>
+     <element name="machineSecret" nillable="true" type="impl:MachineSecret"/>
+     <element name="machineSecretPolicy" nillable="true" type="impl:MachineSecretPolicy"/>
+     <element name="IPLocation" nillable="true" type="tns1:IPLocation"/>
+     <element name="Certificate" nillable="true" type="tns1:CertificateData"/>
+     <element name="AuthenticationSecrets" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="SharedSecrets" nillable="true" type="tns1:ListOf_SharedSecret"/>
+     <element name="TransactionId" nillable="true" type="xsd:string"/>
+     <element name="WarningFault" nillable="true" type="impl:AuthenticationFault"/>
+     <element name="username" nillable="true" type="xsd:string"/>
+     <element name="group" nillable="true" type="xsd:string"/>
+     <element name="disableChallengeRetention" nillable="true" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <element name="getAnonymousChallengeReturn" type="impl:GenericChallenge"/>
+   <complexType name="GetAnonymousChallengeForGroupCallParms">
+    <sequence>
+     <element name="group" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="getAnonymousChallengeForGroupCallParms" type="impl:GetAnonymousChallengeForGroupCallParms"/>
+   <element name="getAnonymousChallengeForGroupReturn" type="impl:GenericChallenge"/>
+   <complexType name="ListOf_xsd_byte">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="xsd:byte"/>
+    </sequence>
+   </complexType>
+   <complexType name="PAPResponse">
+    <sequence>
+     <element name="password" type="impl:ListOf_xsd_byte"/>
+    </sequence>
+   </complexType>
+   <complexType name="CHAPResponse">
+    <sequence>
+     <element name="id" type="xsd:byte"/>
+     <element name="challenge" type="impl:ListOf_xsd_byte"/>
+     <element name="response" type="impl:ListOf_xsd_byte"/>
+    </sequence>
+   </complexType>
+   <complexType name="MSCHAPv1Response">
+    <sequence>
+     <element name="challenge" type="impl:ListOf_xsd_byte"/>
+     <element name="response" type="impl:ListOf_xsd_byte"/>
+    </sequence>
+   </complexType>
+   <complexType name="MSCHAPv2Response">
+    <sequence>
+     <element name="challenge" type="impl:ListOf_xsd_byte"/>
+     <element name="peerChallenge" type="impl:ListOf_xsd_byte"/>
+     <element name="response" type="impl:ListOf_xsd_byte"/>
+     <element name="userName" type="impl:ListOf_xsd_byte"/>
+    </sequence>
+   </complexType>
+   <complexType name="RadiusResponse">
+    <sequence>
+     <element name="pap" nillable="true" type="impl:PAPResponse"/>
+     <element name="chap" nillable="true" type="impl:CHAPResponse"/>
+     <element name="MSCHAPv1" nillable="true" type="impl:MSCHAPv1Response"/>
+     <element name="MSCHAPv2" nillable="true" type="impl:MSCHAPv2Response"/>
+    </sequence>
+   </complexType>
+   <complexType name="Response">
+    <sequence>
+     <element name="PVN" nillable="true" type="xsd:string"/>
+     <element name="response" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="radiusResponse" nillable="true" type="impl:RadiusResponse"/>
+    </sequence>
+   </complexType>
+   <simpleType name="SecurityLevel">
+    <restriction base="xsd:string"/>
+   </simpleType>
+   <complexType name="BiometricFilter">
+    <sequence>
+     <element name="VendorIds" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="VendorManufacturer" nillable="true" type="xsd:string"/>
+     <element name="Types" nillable="true" type="tns1:ListOf_BiometricType"/>
+    </sequence>
+   </complexType>
+   <complexType name="AuthenticationSecretParms">
+    <sequence>
+     <element name="SetSecrets" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="MergeSecrets" nillable="true" type="xsd:boolean"/>
+     <element name="GetSecrets" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="GetAllSecrets" nillable="true" type="xsd:boolean"/>
+     <element name="RemoveSecrets" nillable="true" type="tns1:ListOf_xsd_string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SharedSecretParms">
+    <sequence>
+     <element name="SetSecrets" nillable="true" type="tns1:ListOf_SharedSecret"/>
+     <element name="MergeSecrets" nillable="true" type="xsd:boolean"/>
+     <element name="GetSecrets" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="GetAllSecrets" nillable="true" type="xsd:boolean"/>
+     <element name="RemoveSecrets" nillable="true" type="tns1:ListOf_xsd_string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ExternalRiskScoreParms">
+    <sequence>
+     <element name="SessionId" nillable="true" type="xsd:string"/>
+     <element name="RiskArguments" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="RiskScore" nillable="true" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="GenericAuthenticateParms">
+    <sequence>
+     <element name="SecurityLevel" nillable="true" type="impl:SecurityLevel"/>
+     <element name="AuthenticationType" nillable="true" type="tns1:AuthenticationType"/>
+     <element name="ApplicationName" nillable="true" type="xsd:string"/>
+     <element name="ChallengeSize" nillable="true" type="xsd:int"/>
+     <element name="numWrongAnswersAllowed" nillable="true" type="xsd:int"/>
+     <element name="AuthTypesRequiringPVN" nillable="true" type="tns1:ListOf_AuthenticationType"/>
+     <element name="serialNumber" nillable="true" type="xsd:string"/>
+     <element name="tokenVendorId" nillable="true" type="xsd:string"/>
+     <element name="tokenSets" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="tokenMutualAuthentication" nillable="true" type="xsd:boolean"/>
+     <element name="biometricFilter" nillable="true" type="impl:BiometricFilter"/>
+     <element name="dataSignatureValues" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="authSecretParms" nillable="true" type="impl:AuthenticationSecretParms"/>
+     <element name="sharedSecretParms" nillable="true" type="impl:SharedSecretParms"/>
+     <element name="registerMachineSecret" nillable="true" type="xsd:boolean"/>
+     <element name="machineSecret" nillable="true" type="impl:MachineSecret"/>
+     <element name="IPAddress" nillable="true" type="xsd:string"/>
+     <element name="certificate" nillable="true" type="xsd:string"/>
+     <element name="externalRiskScore" nillable="true" type="impl:ExternalRiskScoreParms"/>
+     <element name="newPassword" nillable="true" type="xsd:string"/>
+     <element name="passwordName" nillable="true" type="xsd:string"/>
+     <element name="newPVN" nillable="true" type="xsd:string"/>
+     <element name="ChallengeHistory" nillable="true" type="tns1:ListOf_AuthenticationType"/>
+     <element name="transactionId" nillable="true" type="xsd:string"/>
+     <element name="cancelTransaction" nillable="true" type="xsd:boolean"/>
+     <element name="ReturnCertificateResponse" nillable="true" type="xsd:boolean"/>
+     <element name="transactionDetails" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="useDefaultDelivery" nillable="true" type="xsd:boolean"/>
+     <element name="contactInfoLabel" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="deliverForDynamicRefresh" nillable="true" type="xsd:boolean"/>
+     <element name="performDeliveryAndSignature" nillable="true" type="xsd:boolean"/>
+     <element name="requireDeliveryAndSignatureIfAvailable" nillable="true" type="xsd:boolean"/>
+     <element name="retrieveRepositoryAttributes" nillable="true" type="tns1:ListOf_xsd_string"/>
+    </sequence>
+   </complexType>
+   <complexType name="AuthenticateAnonymousChallengeCallParms">
+    <sequence>
+     <element name="userId" type="xsd:string"/>
+     <element name="challengeSet" type="tns1:ChallengeSet"/>
+     <element name="response" type="impl:Response"/>
+     <element name="parms" nillable="true" type="impl:GenericAuthenticateParms"/>
+    </sequence>
+   </complexType>
+   <element name="authenticateAnonymousChallengeCallParms" type="impl:AuthenticateAnonymousChallengeCallParms"/>
+   <complexType name="PasswordInfo">
+    <sequence>
+     <element name="ExpiryDate" nillable="true" type="xsd:dateTime"/>
+     <element name="AllowChangeAfterDate" nillable="true" type="xsd:dateTime"/>
+    </sequence>
+   </complexType>
+   <complexType name="TransactionReceiptInfo">
+    <sequence>
+     <element name="transactionSignatureType" type="tns1:TransactionSignatureType"/>
+     <element name="transactionReceipt" type="xsd:string"/>
+     <element name="transactionSignatureFault" nillable="true" type="impl:AuthenticationFault"/>
+    </sequence>
+   </complexType>
+   <complexType name="GenericAuthenticateResponse">
+    <sequence>
+     <element name="cardInfo" nillable="true" type="tns1:CardData"/>
+     <element name="tokenInfo" nillable="true" type="tns1:TokenData"/>
+     <element name="PasswordInfo" nillable="true" type="impl:PasswordInfo"/>
+     <element name="certificateInfo" nillable="true" type="tns1:CertificateData"/>
+     <element name="smartCredentialInfo" nillable="true" type="tns1:SmartCredentialData"/>
+     <element name="biometricInfo" nillable="true" type="tns1:BiometricData"/>
+     <element name="AuthenticationSecrets" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="SharedSecrets" nillable="true" type="tns1:ListOf_SharedSecret"/>
+     <element name="WarningFault" nillable="true" type="impl:AuthenticationFault"/>
+     <element name="machineSecret" nillable="true" type="impl:MachineSecret"/>
+     <element name="IPLocation" nillable="true" type="tns1:IPLocation"/>
+     <element name="certificateRegistered" nillable="true" type="tns1:CertificateData"/>
+     <element name="ChallengeHistory" nillable="true" type="tns1:ListOf_AuthenticationType"/>
+     <element name="MSCHAPV2AuthenticatorResponse" nillable="true" type="impl:ListOf_xsd_byte"/>
+     <element name="transactionReceiptInfo" nillable="true" type="impl:TransactionReceiptInfo"/>
+     <element name="deliveryMechanismUsed" nillable="true" type="impl:ListOf_DeliveryMechanism"/>
+     <element name="deliveryMechanismFailed" nillable="true" type="impl:ListOf_DeliveryMechanism"/>
+     <element name="deliveryMechanismFailureReason" nillable="true" type="impl:ListOf_AuthenticationFault"/>
+     <element name="OTPDynamicRefresh" nillable="true" type="xsd:boolean"/>
+     <element name="OTPNewGenerated" nillable="true" type="xsd:boolean"/>
+     <element name="group" nillable="true" type="xsd:string"/>
+     <element name="FullName" nillable="true" type="xsd:string"/>
+     <element name="lastAuth" nillable="true" type="tns1:AuthenticationInfo"/>
+     <element name="lastFailedAuth" nillable="true" type="tns1:AuthenticationInfo"/>
+     <element name="retrievedRepositoryAttributes" nillable="true" type="tns1:ListOf_NameValues"/>
+    </sequence>
+   </complexType>
+   <element name="authenticateAnonymousChallengeReturn" type="impl:GenericAuthenticateResponse"/>
+   <complexType name="GetAllowedAuthenticationTypesCallParms">
+    <sequence>
+     <element name="userId" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="getAllowedAuthenticationTypesCallParms" type="impl:GetAllowedAuthenticationTypesCallParms"/>
+   <complexType name="AllowedAuthenticationTypes">
+    <sequence>
+     <element name="genericAuth" type="tns1:ListOf_AuthenticationType"/>
+     <element name="enhancedGenericAuth" type="tns1:ListOf_AuthenticationType"/>
+     <element name="machineAuth" type="tns1:ListOf_AuthenticationType"/>
+     <element name="authTypeCanViewSecrets" type="tns1:ListOf_AuthenticationType"/>
+     <element name="authTypeCanModifySecrets" type="tns1:ListOf_AuthenticationType"/>
+     <element name="authTypesRequiringPVN" type="tns1:ListOf_AuthenticationType"/>
+     <element name="PVNLength" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <element name="getAllowedAuthenticationTypesReturn" type="impl:AllowedAuthenticationTypes"/>
+   <complexType name="GetAllowedAuthenticationTypesForGroupCallParms">
+    <sequence>
+     <element name="group" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="getAllowedAuthenticationTypesForGroupCallParms" type="impl:GetAllowedAuthenticationTypesForGroupCallParms"/>
+   <element name="getAllowedAuthenticationTypesForGroupReturn" type="impl:AllowedAuthenticationTypes"/>
+   <complexType name="GenericChallengeParms">
+    <sequence>
+     <element name="ChallengeHistory" nillable="true" type="tns1:ListOf_AuthenticationType"/>
+     <element name="SecurityLevel" nillable="true" type="impl:SecurityLevel"/>
+     <element name="AuthenticationType" nillable="true" type="tns1:AuthenticationType"/>
+     <element name="AuthenticationTypeList" nillable="true" type="tns1:ListOf_AuthenticationType"/>
+     <element name="ApplicationName" nillable="true" type="xsd:string"/>
+     <element name="RequiresPVN" nillable="true" type="xsd:boolean"/>
+     <element name="AuthTypesRequiringPVN" nillable="true" type="tns1:ListOf_AuthenticationType"/>
+     <element name="GridChallengeSize" nillable="true" type="xsd:int"/>
+     <element name="QAChallengeSize" nillable="true" type="xsd:int"/>
+     <element name="authSecretParms" nillable="true" type="impl:AuthenticationSecretParms"/>
+     <element name="sharedSecretParms" nillable="true" type="impl:SharedSecretParms"/>
+     <element name="IPAddress" nillable="true" type="xsd:string"/>
+     <element name="updateMachineSecret" nillable="true" type="xsd:boolean"/>
+     <element name="registerMachineSecret" nillable="true" type="xsd:boolean"/>
+     <element name="machineSecret" nillable="true" type="impl:MachineSecret"/>
+     <element name="registerCertificate" nillable="true" type="xsd:boolean"/>
+     <element name="certificate" nillable="true" type="xsd:string"/>
+     <element name="externalRiskScore" nillable="true" type="impl:ExternalRiskScoreParms"/>
+     <element name="useDefaultDelivery" nillable="true" type="xsd:boolean"/>
+     <element name="contactInfoLabel" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="deliverForDynamicRefresh" nillable="true" type="xsd:boolean"/>
+     <element name="onlySelectOTPAuthenticationIfDeliveryAvailable" nillable="true" type="xsd:boolean"/>
+     <element name="tokenSerialNumber" nillable="true" type="xsd:string"/>
+     <element name="tokenVendorId" nillable="true" type="xsd:string"/>
+     <element name="tokenSets" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="tokenSupportsQRCodeTokenCR" nillable="true" type="xsd:boolean"/>
+     <element name="tokenChallengeQRCodeSize" nillable="true" type="xsd:int"/>
+     <element name="biometricFilter" nillable="true" type="impl:BiometricFilter"/>
+     <element name="transactionDetails" nillable="true" type="tns1:ListOf_NameValue"/>
+     <element name="performDeliveryAndSignature" nillable="true" type="xsd:boolean"/>
+     <element name="requireDeliveryAndSignatureIfAvailable" nillable="true" type="xsd:boolean"/>
+     <element name="tokenTransactionMode" nillable="true" type="tns1:TokenTransactionMode"/>
+     <element name="tokenOnlineFallbackToClassic" nillable="true" type="xsd:boolean"/>
+     <element name="tokenChallengeSummary" nillable="true" type="xsd:string"/>
+     <element name="tokenTransactionReturnQRCode" nillable="true" type="xsd:boolean"/>
+     <element name="tokenTransactionQRCodeSize" nillable="true" type="xsd:int"/>
+     <element name="tokenTransactionAppScheme" nillable="true" type="xsd:string"/>
+     <element name="tokenDeliveryCallback" nillable="true" type="xsd:string"/>
+     <element name="tokenMutualAuthenticationChallenge" nillable="true" type="xsd:string"/>
+     <element name="passwordName" nillable="true" type="xsd:string"/>
+     <element name="requireCertificateDelivery" nillable="true" type="xsd:boolean"/>
+     <element name="performCertificateDelivery" nillable="true" type="xsd:boolean"/>
+     <element name="deliverySmartCredentials" nillable="true" type="tns1:ListOf_xsd_string"/>
+     <element name="smartCredentialDeliveryCallback" nillable="true" type="xsd:string"/>
+     <element name="smartCredentialChallengeSummary" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="GetGenericChallengeCallParms">
+    <sequence>
+     <element name="userId" nillable="true" type="xsd:string"/>
+     <element name="parms" nillable="true" type="impl:GenericChallengeParms"/>
+    </sequence>
+   </complexType>
+   <element name="getGenericChallengeCallParms" type="impl:GetGenericChallengeCallParms"/>
+   <element name="getGenericChallengeReturn" type="impl:GenericChallenge"/>
+   <complexType name="AuthenticateGenericChallengeCallParms">
+    <sequence>
+     <element name="userId" type="xsd:string"/>
+     <element name="response" nillable="true" type="impl:Response"/>
+     <element name="parms" nillable="true" type="impl:GenericAuthenticateParms"/>
+    </sequence>
+   </complexType>
+   <element name="authenticateGenericChallengeCallParms" type="impl:AuthenticateGenericChallengeCallParms"/>
+   <element name="authenticateGenericChallengeReturn" type="impl:GenericAuthenticateResponse"/>
+   <element name="AuthenticationPasswordChangeRequiredFault" type="impl:AuthenticationPasswordChangeRequiredFault"/>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="AuthenticationServiceFault">
+
+      <wsdl:part element="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getGenericChallengeRequest">
+
+      <wsdl:part element="impl:getGenericChallengeCallParms" name="getGenericChallengeCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllowedAuthenticationTypesForGroupResponse">
+
+      <wsdl:part element="impl:getAllowedAuthenticationTypesForGroupReturn" name="getAllowedAuthenticationTypesForGroupReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pingResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="AuthenticationPasswordChangeRequiredFault">
+
+      <wsdl:part element="impl:AuthenticationPasswordChangeRequiredFault" name="AuthenticationPasswordChangeRequiredFault"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllowedAuthenticationTypesForGroupRequest">
+
+      <wsdl:part element="impl:getAllowedAuthenticationTypesForGroupCallParms" name="getAllowedAuthenticationTypesForGroupCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAnonymousChallengeResponse">
+
+      <wsdl:part element="impl:getAnonymousChallengeReturn" name="getAnonymousChallengeReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAnonymousChallengeForGroupResponse">
+
+      <wsdl:part element="impl:getAnonymousChallengeForGroupReturn" name="getAnonymousChallengeForGroupReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getGenericChallengeResponse">
+
+      <wsdl:part element="impl:getGenericChallengeReturn" name="getGenericChallengeReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAnonymousChallengeForGroupRequest">
+
+      <wsdl:part element="impl:getAnonymousChallengeForGroupCallParms" name="getAnonymousChallengeForGroupCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllowedAuthenticationTypesRequest">
+
+      <wsdl:part element="impl:getAllowedAuthenticationTypesCallParms" name="getAllowedAuthenticationTypesCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pingRequest">
+
+      <wsdl:part element="impl:pingCallParms" name="pingCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="AuthenticationSystemFault">
+
+      <wsdl:part element="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="authenticateAnonymousChallengeResponse">
+
+      <wsdl:part element="impl:authenticateAnonymousChallengeReturn" name="authenticateAnonymousChallengeReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="authenticateGenericChallengeResponse">
+
+      <wsdl:part element="impl:authenticateGenericChallengeReturn" name="authenticateGenericChallengeReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="authenticateAnonymousChallengeRequest">
+
+      <wsdl:part element="impl:authenticateAnonymousChallengeCallParms" name="authenticateAnonymousChallengeCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAnonymousChallengeRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllowedAuthenticationTypesResponse">
+
+      <wsdl:part element="impl:getAllowedAuthenticationTypesReturn" name="getAllowedAuthenticationTypesReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="authenticateGenericChallengeRequest">
+
+      <wsdl:part element="impl:authenticateGenericChallengeCallParms" name="authenticateGenericChallengeCallParms"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="AuthenticationService">
+
+      <wsdl:operation name="ping" parameterOrder="pingCallParms">
+
+         <wsdl:input message="impl:pingRequest" name="pingRequest"/>
+
+         <wsdl:output message="impl:pingResponse" name="pingResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAnonymousChallenge">
+
+         <wsdl:input message="impl:getAnonymousChallengeRequest" name="getAnonymousChallengeRequest"/>
+
+         <wsdl:output message="impl:getAnonymousChallengeResponse" name="getAnonymousChallengeResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAnonymousChallengeForGroup" parameterOrder="getAnonymousChallengeForGroupCallParms">
+
+         <wsdl:input message="impl:getAnonymousChallengeForGroupRequest" name="getAnonymousChallengeForGroupRequest"/>
+
+         <wsdl:output message="impl:getAnonymousChallengeForGroupResponse" name="getAnonymousChallengeForGroupResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="authenticateAnonymousChallenge" parameterOrder="authenticateAnonymousChallengeCallParms">
+
+         <wsdl:input message="impl:authenticateAnonymousChallengeRequest" name="authenticateAnonymousChallengeRequest"/>
+
+         <wsdl:output message="impl:authenticateAnonymousChallengeResponse" name="authenticateAnonymousChallengeResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllowedAuthenticationTypes" parameterOrder="getAllowedAuthenticationTypesCallParms">
+
+         <wsdl:input message="impl:getAllowedAuthenticationTypesRequest" name="getAllowedAuthenticationTypesRequest"/>
+
+         <wsdl:output message="impl:getAllowedAuthenticationTypesResponse" name="getAllowedAuthenticationTypesResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllowedAuthenticationTypesForGroup" parameterOrder="getAllowedAuthenticationTypesForGroupCallParms">
+
+         <wsdl:input message="impl:getAllowedAuthenticationTypesForGroupRequest" name="getAllowedAuthenticationTypesForGroupRequest"/>
+
+         <wsdl:output message="impl:getAllowedAuthenticationTypesForGroupResponse" name="getAllowedAuthenticationTypesForGroupResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getGenericChallenge" parameterOrder="getGenericChallengeCallParms">
+
+         <wsdl:input message="impl:getGenericChallengeRequest" name="getGenericChallengeRequest"/>
+
+         <wsdl:output message="impl:getGenericChallengeResponse" name="getGenericChallengeResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="authenticateGenericChallenge" parameterOrder="authenticateGenericChallengeCallParms">
+
+         <wsdl:input message="impl:authenticateGenericChallengeRequest" name="authenticateGenericChallengeRequest"/>
+
+         <wsdl:output message="impl:authenticateGenericChallengeResponse" name="authenticateGenericChallengeResponse"/>
+
+         <wsdl:fault message="impl:AuthenticationSystemFault" name="AuthenticationSystemFault"/>
+
+         <wsdl:fault message="impl:AuthenticationServiceFault" name="AuthenticationServiceFault"/>
+
+         <wsdl:fault message="impl:AuthenticationPasswordChangeRequiredFault" name="AuthenticationPasswordChangeRequiredFault"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="AuthenticationServiceSoapBinding" type="impl:AuthenticationService">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="ping">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="pingRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="pingResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAnonymousChallenge">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAnonymousChallengeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAnonymousChallengeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAnonymousChallengeForGroup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAnonymousChallengeForGroupRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAnonymousChallengeForGroupResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="authenticateAnonymousChallenge">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="authenticateAnonymousChallengeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="authenticateAnonymousChallengeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllowedAuthenticationTypes">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllowedAuthenticationTypesRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllowedAuthenticationTypesResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllowedAuthenticationTypesForGroup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllowedAuthenticationTypesForGroupRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllowedAuthenticationTypesForGroupResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getGenericChallenge">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getGenericChallengeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getGenericChallengeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="authenticateGenericChallenge">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="authenticateGenericChallengeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="authenticateGenericChallengeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="AuthenticationSystemFault">
+
+            <wsdlsoap:fault name="AuthenticationSystemFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationServiceFault">
+
+            <wsdlsoap:fault name="AuthenticationServiceFault" use="literal"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="AuthenticationPasswordChangeRequiredFault">
+
+            <wsdlsoap:fault name="AuthenticationPasswordChangeRequiredFault" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="AuthenticationService">
+
+      <wsdl:port binding="impl:AuthenticationServiceSoapBinding" name="AuthenticationService">
+
+<!--          <wsdlsoap:address location="https://savsdwig06.tpr.bancaribe:8443/IdentityGuardAuthService/services/AuthenticationServiceV10"/> -->
+         <wsdlsoap:address location="http://localhost:8082/"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

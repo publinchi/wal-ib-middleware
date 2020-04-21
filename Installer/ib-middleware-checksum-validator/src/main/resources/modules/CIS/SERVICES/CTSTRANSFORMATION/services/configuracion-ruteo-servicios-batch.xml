@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuracion ida a Corbanking -->
+<csp-config name="coreBanking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="configuracion-transaccion.xsd">
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador notificaciones de saldo minimo 1889999">
+        <conditions>
+            <condition param="trn">
+                <value>1889999</value>
+                <!-- 1889999 Genera los datos de los clientes nuevos --> 
+            </condition>
+        </conditions>
+        <indicators>
+            <!--<indicator name="idTransaction" value="1"/> -->
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/> -->
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GenerateDataCustomerOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1875051">
+        <conditions>
+            <condition param="trn">
+                <value>1875051</value>
+            </condition>
+        </conditions>
+        <indicators>
+            <!--<indicator name="idTransaction" value="1"/> -->
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/> -->
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=ProcessNotificationOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1875063">
+        <conditions>
+            <condition param="trn">
+                <value>1875063</value>
+                <!-- 1800001 Consulta Movimientos CTE -->
+            </condition>
+        </conditions>
+        <indicators>
+            <!--<indicator name="idTransaction" value="1"/> -->
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/> -->
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=BlockedAccountsRefreshOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1801023">
+        <conditions>
+            <condition param="trn">
+                <value>1850024</value>
+             <!--BATCH APERTURA DE PRODUCTOS-->  
+            </condition>
+        </conditions>
+        <indicators>
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GenerateDataProductOpeningOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1890009">
+        <conditions>
+            <condition param="trn">
+                <value>1890009</value>
+            </condition>
+        </conditions>
+        <indicators>
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/> -->
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=RefreshCheckbookTypesOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1875065">
+        <conditions>
+            <condition param="trn">
+                <value>1875065</value>
+             <!--BATCH REFRESH DE SALDOS CUENTAS-->  
+            </condition>
+        </conditions>
+        <indicators>
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=RefreshBalanceAcountsBatchQueryOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1890014">
+        <conditions>
+            <condition param="trn">
+                <value>1890014</value>
+            </condition>
+        </conditions>
+        <indicators>
+            <!--<indicator name="idTransaction" value="1"/> -->
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/> -->
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=RefreshDocumentTypeOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1890012">
+        <conditions>
+            <condition param="trn">
+                <value>1890012</value>
+            </condition>
+        </conditions>
+        <indicators>
+            <!--<indicator name="idTransaction" value="1"/> -->
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <!--<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=dynamicOrchestrator)"/> -->
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=RefreshForeignExchangeOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1850035">
+        <conditions>
+            <condition param="trn">
+                <value>1850035</value>
+             <!--BATCH PAGOS PROGRAMADOS DE LOCAL AL CENTRAL-->  
+            </condition>
+        </conditions>
+        <indicators>
+            <indicator name="externalProvider" value="0" />
+            <indicator name="serviceMethodName" value="executeTransaction" />
+            <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GenerateDataScheduledPaymentOrchestrationCore)" />
+            <indicator name="t_corr" value="" />
+        </indicators>
+        <mappings keepMode="1">
+        </mappings>
+    </config>
+    <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para Bodega">
+	<conditions>
+		<condition param="trn">
+			<value>1850036</value>
+		</condition>
+	</conditions>
+	<indicators>
+		<indicator name="externalProvider" value="0" />
+		<indicator name="serviceMethodName" value="executeTransaction" />
+		<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator"
+			value="(service.identifier=GenerateDataAtmCardsOrchestrationCore)" />
+		<indicator name="t_corr" value="" />
+	</indicators>
+	<mappings keepMode="1">
+	</mappings>
+</config>
+</csp-config>
