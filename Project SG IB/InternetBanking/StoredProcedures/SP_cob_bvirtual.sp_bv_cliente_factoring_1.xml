@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_cliente_factoring</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@o_factoring" dataType="char" direction="out" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT  1 </queryText>
+    </query>
+  </queries>
+</procedure>

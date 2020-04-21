@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_administra_ubicacion</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_cod_pais" dataType="char" direction="in" />
+    <parameter name="@i_cod_provincia" dataType="char" direction="in" />
+    <parameter name="@i_cod_ciudad" dataType="char" direction="in" />
+    <parameter name="@i_modo" dataType="int" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_valor_codigo" dataType="int" direction="in" />
+    <parameter name="@i_valor_nombre" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO " />
+        <column name="VALOR " />
+      </columns>
+      <queryText>SELECT  CODIGO = c.codigo,VALOR = ISNULL (re_valor, valor) </queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_autenticacion_cliente</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="COD. MEDIO" />
+        <column name="MEDIO" />
+        <column name="COD. ESTADO" />
+      </columns>
+      <queryText>SELECT  "COD. MEDIO" = la_trx_auth_type,"MEDIO" = (SELECT  c.valor FROM cobis..cl_tabla t  ,cobis..cl_catalogo c   WHERE t.codigo = c.tabla AND t.tabla = "bv_authentication_type" AND c.codigo = a.la_trx_auth_type     ),"COD. ESTADO" = la_trx_state </queryText>
+    </query>
+  </queries>
+</procedure>

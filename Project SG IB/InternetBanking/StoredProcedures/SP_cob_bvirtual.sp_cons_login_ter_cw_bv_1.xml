@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_cons_login_ter_cw_bv</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_valor" dataType="int" direction="in" />
+    <parameter name="@i_valor_login" dataType="varchar" direction="in" />
+    <parameter name="@i_tercero" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="LOGIN" />
+        <column name="DESCRIPCION" />
+        <column name="CANAL" />
+      </columns>
+      <queryText>select 'CODIGO' = lt_codigo,   'LOGIN'  = lt_login,   'DESCRIPCION' = substring(lo_descripcion,1,30),   'CANAL'  = substring(se_nombre,1,20)   from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="LOGIN" />
+        <column name="DESCRIPCION" />
+        <column name="CANAL" />
+      </columns>
+      <queryText>select 'LOGIN'  = lo_login,   'DESCRIPCION' = substring(lo_descripcion,1,30),   'CANAL'  = substring(se_nombre,1,20)   from</queryText>
+    </query>
+  </queries>
+</procedure>

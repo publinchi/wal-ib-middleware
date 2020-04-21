@@ -1,0 +1,6 @@
+1.0.0 --> 1.0.0.1
+@Esalazar
+	Se modifica el plugin para soporte multibackend para que siempre se vaya al target local. Es decir ya no 
+	se lee la configuracion de bdd.
+	
+	

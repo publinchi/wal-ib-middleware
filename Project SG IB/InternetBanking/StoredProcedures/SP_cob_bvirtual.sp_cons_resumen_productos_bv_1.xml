@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_cons_resumen_productos_bv</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ep_ente" />
+        <column name="ep_servicio" />
+        <column name="ep_producto" />
+        <column name="ep_moneda" />
+        <column name="ep_cuenta" />
+        <column name="ep_alias" />
+        <column name="ep_estado" />
+        <column name="ep_fecha_reg" />
+        <column name="ep_fecha_mod" />
+        <column name="ep_login" />
+        <column name="ep_cuenta_cobro" />
+        <column name="ep_notificacion" />
+        <column name="ep_ver" />
+        <column name="ep_autorizado" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="cta" />
+        <column name="nombre" />
+        <column name="pd_descripcion" />
+        <column name="disponible" />
+        <column name="contable" />
+        <column name="girar" />
+        <column name="mo_descripcion" />
+        <column name="nombre_cta" />
+        <column name="fecha_ult" />
+        <column name="saldo_24h" />
+        <column name="saldo_12h" />
+        <column name="fecha_aper" />
+        <column name="monto_sob" />
+        <column name="monto_blq" />
+        <column name="dir_entrega" />
+        <column name="remesas" />
+        <column name="embargo" />
+        <column name="estado" />
+        <column name="prod" />
+        <column name="mon" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

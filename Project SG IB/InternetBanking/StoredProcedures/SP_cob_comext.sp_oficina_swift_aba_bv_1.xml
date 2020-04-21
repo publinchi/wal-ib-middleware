@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_comext</database>
+  <name>sp_oficina_swift_aba_bv</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_banco" dataType="smallint" direction="in" />
+    <parameter name="@i_secsuc" dataType="smallint" direction="in" />
+    <parameter name="@i_pais" dataType="smallint" direction="in" />
+    <parameter name="@i_tipo_dir" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="DESCRIPCION" />
+      </columns>
+      <queryText>select     'CODIGO' = of_oficina,               'DESCRIPCION' = of_nombre   from</queryText>
+    </query>
+  </queries>
+</procedure>

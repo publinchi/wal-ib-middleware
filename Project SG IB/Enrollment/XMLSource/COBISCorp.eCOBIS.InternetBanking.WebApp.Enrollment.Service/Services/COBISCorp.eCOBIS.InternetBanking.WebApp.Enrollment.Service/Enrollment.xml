@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<serviceClass name="Enrollment" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.service" ns="http://service.enrollment.webapp.internetbanking.ecobis.cobiscorp" module="InternetBanking.WebApp.Enrollment.Service" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" productVersion="4.6.1.0">
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="$(/product/@name)$" />
+    <property name="MavenVersion" value="$(/product/@version)$" />
+  </productProperties>
+  <partialClass name="Enrollment">
+    <services>
+      <service id="InternetBanking.WebApp.Enrollment.Service.Enrollment.AddEnrollmentRequest" netName="AddEnrollmentRequest" javaName="addEnrollmentRequest" mappingType="STORED_PROCEDURE" mapId="94e2267e0ce9fe8cec1ca409575ad33b">
+        <SRVMapping name="cob_bvirtual..sp_enrolamiento_bv" trnCode="1890023">
+          <DTOs>
+            <DTO direction="in" name="Product" alias="inProduct" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+            <DTO direction="out" name="Enrollment" alias="outEnrollment" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="reference" propertyNet="Reference" propertyJava="reference" setterJavaMethod="setReference" getterJavaMethod="getReference" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="clientName" propertyNet="ClientName" propertyJava="clientName" setterJavaMethod="setClientName" getterJavaMethod="getClientName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="clienteId" propertyNet="ClienteId" propertyJava="clienteId" setterJavaMethod="setClienteId" getterJavaMethod="getClienteId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="in" name="Entity" alias="inEntity" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="CONSTANT" allowNull="false" contantValue="I" />
+            <parameter name="@i_tipo_producto" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="DTO" allowNull="false" DTOAlias="inProduct" DTOPropertyName="productId" />
+            <parameter name="@i_cuenta" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inProduct" DTOPropertyName="productNumber" />
+            <parameter name="@i_fechanac" direction="in" mappingDirection="in" dataType="datetime" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="birthDate" />
+            <parameter name="@i_mail" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="email" />
+            <parameter name="@i_telefono" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="phone" />
+            <parameter name="@o_ente_mis" direction="in out" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_ente_mis" direction="in out" mappingDirection="out" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="outEnrollment" DTOPropertyName="clienteId" />
+            <parameter name="@o_nomlar" direction="in out" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_nomlar" direction="in out" mappingDirection="out" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="outEnrollment" DTOPropertyName="clientName" />
+            <parameter name="@o_referencia" direction="in out" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_referencia" direction="in out" mappingDirection="out" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="outEnrollment" DTOPropertyName="reference" />
+            <parameter name="@i_login" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="login" />
+            <parameter name="@i_password" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="pswd" />
+            <parameter name="@i_mailOp" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="emailOp" />
+            <parameter name="@i_telefonoOp" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="phoneOp" />
+          </parameterMappings>
+          <resultMappings />
+          <MappingProperties>
+            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="CISservice" value="true" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+      <service id="InternetBanking.WebApp.Enrollment.Service.Enrollment.ValidateCustomer" netName="ValidateCustomer" javaName="validateCustomer" mappingType="STORED_PROCEDURE" mapId="ff4e4438847e2801c30c1e26bfdaacac">
+        <SRVMapping name="cob_bvirtual..sp_enrolamiento_bv" trnCode="1890023">
+          <DTOs>
+            <DTO direction="in" name="Product" alias="inProduct" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+            <DTO direction="out" name="Enrollment" alias="outEnrollment" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="reference" propertyNet="Reference" propertyJava="reference" setterJavaMethod="setReference" getterJavaMethod="getReference" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="clientName" propertyNet="ClientName" propertyJava="clientName" setterJavaMethod="setClientName" getterJavaMethod="getClientName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="clienteId" propertyNet="ClienteId" propertyJava="clienteId" setterJavaMethod="setClienteId" getterJavaMethod="getClienteId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="in" name="Entity" alias="inEntity" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="CONSTANT" allowNull="false" contantValue="V" />
+            <parameter name="@i_tipo_producto" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="DTO" allowNull="false" DTOAlias="inProduct" DTOPropertyName="productId" />
+            <parameter name="@i_encedruc" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="identification" />
+            <parameter name="@i_cuenta" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inProduct" DTOPropertyName="productNumber" />
+            <parameter name="@i_fechanac" direction="in" mappingDirection="in" dataType="datetime" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="birthDate" />
+            <parameter name="@i_mail" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="email" />
+            <parameter name="@i_telefono" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inEntity" DTOPropertyName="phone" />
+            <parameter name="@o_ente_mis" direction="in out" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_ente_mis" direction="in out" mappingDirection="out" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="outEnrollment" DTOPropertyName="clienteId" />
+            <parameter name="@o_nomlar" direction="in out" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_nomlar" direction="in out" mappingDirection="out" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="outEnrollment" DTOPropertyName="clientName" />
+            <parameter name="@o_referencia" direction="in out" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="0" />
+            <parameter name="@o_referencia" direction="in out" mappingDirection="out" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="outEnrollment" DTOPropertyName="reference" />
+          </parameterMappings>
+          <resultMappings />
+          <MappingProperties>
+            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="CISservice" value="true" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+    </services>
+  </partialClass>
+</serviceClass>

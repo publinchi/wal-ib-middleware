@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_consulta_cuentas</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_modo" dataType="tinyint" direction="in" />
+    <parameter name="@i_producto" dataType="tinyint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_valor_cuenta" dataType="varchar" direction="in" />
+    <parameter name="@i_valor_producto" dataType="tinyint" direction="in" />
+    <parameter name="@i_genera_clave" dataType="char" direction="in" />
+    <parameter name="@i_tipo_fecha" dataType="char" direction="in" />
+    <parameter name="@i_opcion" dataType="char" direction="in" />
+    <parameter name="@i_pais" dataType="varchar" direction="in" />
+    <parameter name="@i_alias" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@r_cuentas1" dataType="varchar" direction="in" />
+    <parameter name="@r_cuentas2" dataType="varchar" direction="in" />
+    <parameter name="@r_mensaje_error" dataType="varchar" direction="in" />
+    <parameter name="@i_bl_net" dataType="char" direction="in" />
+    <parameter name="@o_clave" dataType="int" direction="out" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@i_nregistros" dataType="int" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_valor_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_filtro_moneda" dataType="char" direction="in" />
+    <parameter name="@i_miembro" dataType="int" direction="in" />
+    <parameter name="@i_consolidado" dataType="char" direction="in" />
+    <parameter name="@i_tipo_ejec" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ep_ente         " />
+        <column name="ep_servicio     " />
+        <column name="ep_producto     " />
+        <column name="ep_moneda       " />
+        <column name="ep_cuenta       " />
+        <column name="ep_alias        " />
+        <column name="ep_estado       " />
+        <column name="ep_fecha_reg    " />
+        <column name="ep_fecha_mod    " />
+        <column name="ep_login        " />
+        <column name="ep_cuenta_cobro " />
+        <column name="ep_notificacion " />
+        <column name="ep_ver          " />
+        <column name="ep_autorizado   " />
+      </columns>
+      <queryText>select        'ep_ente         ' = ep_ente         ,  'ep_servicio     ' = ep_servicio     ,  'ep_producto     ' = ep_producto     ,  'ep_moneda       ' = ep_moneda       ,  'ep_cuenta       ' = ep_cuenta       ,  'ep_alias        ' = ep_alias        ,  'ep_estado       ' = ep_estado       ,  'ep_fecha_reg    ' = ep_fecha_reg    ,  'ep_fecha_mod    ' = ep_fecha_mod    ,  'ep_login        ' = ep_login        ,  'ep_cuenta_cobro ' = ep_cuenta_cobro ,  'ep_notificacion ' = ep_notificacion ,  'ep_ver          ' = ep_ver          ,  'ep_autorizado   ' = ep_autorizado      from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ep_ente         " />
+        <column name="ep_servicio     " />
+        <column name="ep_producto     " />
+        <column name="ep_moneda       " />
+        <column name="ep_cuenta       " />
+        <column name="ep_alias        " />
+        <column name="ep_estado       " />
+        <column name="ep_fecha_reg    " />
+        <column name="ep_fecha_mod    " />
+        <column name="ep_login        " />
+        <column name="ep_cuenta_cobro " />
+        <column name="ep_notificacion " />
+        <column name="ep_ver          " />
+        <column name="ep_autorizado   " />
+      </columns>
+      <queryText>select   'ep_ente         ' = ep_ente         ,  'ep_servicio     ' = ep_servicio     ,  'ep_producto     ' = ep_producto     ,  'ep_moneda       ' = ep_moneda       ,  'ep_cuenta       ' = ep_cuenta       ,  'ep_alias        ' = ep_alias        ,  'ep_estado       ' = ep_estado       ,  'ep_fecha_reg    ' = ep_fecha_reg    ,  'ep_fecha_mod    ' = ep_fecha_mod    ,  'ep_login        ' = ep_login        ,  'ep_cuenta_cobro ' = ep_cuenta_cobro ,  'ep_notificacion ' = ep_notificacion ,  'ep_ver          ' = ep_ver          ,  'ep_autorizado   ' = ep_autorizado      from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA'  = ep_cuenta,  'MONEDA'       = ep_moneda,  'PRODUCTO'     = ep_producto,  'ALIAS'     = ep_alias,  'DESC. MONEDA'       = mo_descripcion,  'DESC. PRODUCTO'  = pd_descripcion,  'NEM. PRODUCTO'   = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA'  = ep_cuenta,  'MONEDA'       = ep_moneda,  'PRODUCTO'     = ep_producto,  'ALIAS'     = ep_alias,  'DESC. MONEDA'       = mo_descripcion,  'DESC. PRODUCTO'  = pd_descripcion,  'NEM. PRODUCTO'   = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA'     = ep_cuenta,  'MONEDA'          = ep_moneda,    'PRODUCTO'        = ep_producto,  'ALIAS'        = ep_alias,  'DESC. MONEDA'          = mo_descripcion,  'DESC. PRODUCTO'     = pd_descripcion,  'NEM. PRODUCTO'      = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select   'CUENTA' = ep_cuenta,  'MONEDA'    = ep_moneda,  'PRODUCTO'  = ep_producto,  'ALIAS'  = ep_alias,  'DESC. MONEDA'    = mo_descripcion,  'DESC. PRODUCTO'= pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select   'CUENTA' = ep_cuenta,  'MONEDA'    = ep_moneda,  'PRODUCTO'  = ep_producto,  'ALIAS'  = ep_alias,  'DESC. MONEDA'    = mo_descripcion,  'DESC. PRODUCTO'= pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE" />
+        <column name="MONEDA" />
+        <column name="DES MONEDA" />
+        <column name="DES PRODUCTO" />
+        <column name="CUENTA" />
+        <column name="PRODUCTO" />
+      </columns>
+      <queryText>select  'NOMBRE'       = cc_nombre,  'MONEDA'       = cc_moneda,  'DES MONEDA'   = mo_descripcion,  'DES PRODUCTO'    = pd_descripcion,  'CUENTA'       = cc_cta_banco,  'PRODUCTO'    = '3'  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE" />
+        <column name="MONEDA" />
+        <column name="DES MONEDA" />
+        <column name="DES PRODUCTO" />
+        <column name="CUENTA" />
+        <column name="PRODUCTO" />
+      </columns>
+      <queryText>select   'NOMBRE'     = ah_nombre,  'MONEDA'     = ah_moneda,  'DES MONEDA' = mo_descripcion ,  'DES PRODUCTO' = pd_descripcion,  'CUENTA' =ah_cta_banco,  'PRODUCTO'="4"  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select   'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select   'CUENTA' = ep_cuenta,  'MONEDA'    = ep_moneda,  'PRODUCTO'  = ep_producto,  'ALIAS'  = ep_alias,  'DESC. MONEDA'    = mo_descripcion,  'DESC. PRODUCTO'= pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,    'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion,  'NEM. PRODUCTO' = pd_abreviatura  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="VER" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion,  'VER' = ep_ver  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+      </columns>
+      <queryText>select  'CUENTA' = ep_cuenta,  'MONEDA' = ep_moneda,  'PRODUCTO' = ep_producto,  'ALIAS' = ep_alias,  'DESC. MONEDA' = mo_descripcion,  'DESC. PRODUCTO' = pd_descripcion  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE" />
+        <column name="MONEDA" />
+        <column name="DES MONEDA" />
+        <column name="DES PRODUCTO" />
+        <column name="CUENTA" />
+        <column name="PRODUCTO" />
+      </columns>
+      <queryText>select   'NOMBRE'     = cc_nombre,  'MONEDA'     = cc_moneda,  'DES MONEDA' = mo_descripcion,  'DES PRODUCTO' = pd_descripcion,  'CUENTA' =cc_cta_banco,  'PRODUCTO'="3"  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE" />
+        <column name="MONEDA" />
+        <column name="DES MONEDA" />
+        <column name="DES PRODUCTO" />
+        <column name="CUENTA" />
+        <column name="PRODUCTO" />
+      </columns>
+      <queryText>select   'NOMBRE'     = ah_nombre,  'MONEDA'     = ah_moneda,  'DES MONEDA' = mo_descripcion ,  'DES PRODUCTO' = pd_descripcion,  'CUENTA' =ah_cta_banco,  'PRODUCTO'="4"  from</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CUENTA" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PRODUCTO" />
+        <column name="NEM. PRODUCTO" />
+        <column name="SALDO_GIRAR" />
+        <column name="SALDO_CONTABLE" />
+        <column name="NEM. MONEDA" />
+        <column name=" TIPO DOC" />
+        <column name="DOCUMENTO" />
+        <column name="PRODUCTO_BANCARIO" />
+        <column name="PRODUCTO_BANCARIO_DES" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

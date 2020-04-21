@@ -1,0 +1,205 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.cobiscorp.ecobis</groupId>
+  <artifactId>cobis-ib-build</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <url>http://www.cobiscorp.com/</url>
+
+
+
+  <properties>
+    <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>env-development</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <!-- proyectos de ejemplo -->
+        <!-- COMMONS 8 -->
+        <module>../Commons/orchestration-ib-dtos</module>
+        <module>../Commons/orchestration-ib-interfaces</module>
+        <module>../Commons/orchestration-ib-base</module>
+        <module>../Commons/orchestration-core-ib-commons</module>
+        <module>../Commons/orchestration-core-ib-commons-template</module>
+        <module>../Commons/orchestration-ib-authenticate-interfaces</module>
+        <module>../Commons/orchestration-wservice-base</module>
+        <module>../Commons/orchestration-core-ib-template</module>
+        <!-- CORE COBIS 58-->
+        <module>../CORE_COBIS/orchestration-core-ib-transfer-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-aplication-cashierscheck-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-timedeposits-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-creditcards-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-customer-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-loan-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-admin-products-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-checkbook-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-checks-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-products-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-cards-payment-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-transaction-monetary-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-opening-certificatedeposit-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-account-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-entity-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-executives-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-transfers-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-programmed-savings-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-foreign-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-payments-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-payment-loan-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-transferACHQuery-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-currency-trading-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-consolidate-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-server-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-batch-generate-customer-data-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-based-billing-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-pay-online-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-scheduled-payment-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-payment-service-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-transaction-cost-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-authentication-types-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-authentication-device-stock-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-admin-cause-and-cost-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-stocks-template</module>
+        <module>../CORE_COBIS/orchestration-core-batch-charge-etl-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-batch-productOpening-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-credit-line-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-module-template</module>
+        <module>../CORE_COBIS/orchestration-wservice-module-criteria-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-account-by-criteria-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-application-credit-line-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-account-item-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-account-subitem-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-subtype-guarantees-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-client-enquiries-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-subscribed-payments-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-parameters-ach-template</module>
+        <module>../CORE_COBIS/orchestration-core-batch-scheduled-payment-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-application-bank-guarantee-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-enquiries-detail-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-grb-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-bank-guarantee-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-ach-detail-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-receiving-printing-archive-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-query-office-template</module>
+        <module>../CORE_COBIS/orchestration-core-ib-authenticate-template</module>
+        <module>../CORE_COBIS/orchestration-core-batch-notification-template</module>
+		<module>../CORE_COBIS/orchestration-core-ib-enrollment-template</module>
+        <!-- Direct 54-->
+        <module>../Direct/orchestration-core-ib-cashiers-check</module>
+        <module>../Direct/orchestration-core-ib-authenticate</module>
+        <module>../Direct/orchestration-core-ib-time-deposits</module>
+        <module>../Direct/orchestration-core-ib-cards</module>
+        <module>../Direct/orchestration-core-ib-customer</module>
+        <module>../Direct/orchestration-core-ib-query-products</module>
+        <module>../Direct/orchestration-core-ib-checks</module>
+        <module>../Direct/orchestration-core-ib-checkbook</module>
+        <module>../Direct/orchestration-core-ib-account</module>
+        <module>../Direct/orchestration-core-ib-products</module>
+        <module>../Direct/orchestration-core-ib-query-accounts</module>
+        <module>../Direct/orchestration-core-ib-query-executives</module>
+        <module>../Direct/orchestration-core-ib-querys</module>
+        <module>../Direct/orchestration-core-ib-transfers</module>
+        <module>../Direct/orchestration-core-ib-programmedsavings</module>
+        <module>../Direct/orchestration-core-ib-loans</module>
+        <module>../Direct/orchestration-core-ib-third-party</module>
+        <module>../Direct/orchestration-core-ib-payments</module>
+        <module>../Direct/orchestration-core-ib-query-transferACH</module>
+        <module>../Direct/orchestration-core-ib-query-currency-trading</module>
+        <module>../Direct/orchestration-core-ib-consolidate</module>
+        <module>../Direct/orchestration-core-ib-server</module>
+        <module>../Direct/orchestration-core-ib-batch-generate-customer-data</module>
+        <module>../Direct/orchestration-core-ib-query-based-billing</module>
+        <module>../Direct/orchestration-core-ib-query-pay-service-online</module>
+        <module>../Direct/orchestration-core-ib-scheduled-payments</module>
+        <module>../Direct/orchestration-core-ib-batch-scheduled-payments</module>
+        <module>../Direct/orchestration-core-ib-query-transaction-cost</module>
+        <module>../Direct/orchestration-core-ib-query-authentication-types</module>
+        <module>../Direct/orchestration-core-ib-authentication-device-stock</module>
+        <module>../Direct/orchestration-core-ib-admin-cause-and-cost</module>
+        <module>../Direct/orchestration-core-bib-add-file-order</module>
+        <module>../Direct/orchestration-core-ib-query-stocks</module>
+        <module>../Direct/orchestration-core-batch-charge-etl</module>
+        <module>../Direct/orchestration-core-ib-batch-generate-ProductOpening-data</module>
+        <module>../Direct/orchestration-core-ib-query-credit-line</module>
+        <module>../Direct/orchestration-wservice-module-criteria</module>
+        <module>../Direct/orchestration-core-ib-query-account-by-criteria</module>
+        <module>../Direct/orchestration-wservice-session-start</module>
+        <module>../Direct/orchestration-core-ib-query-account-item</module>
+        <module>../Direct/orchestration-core-ib-query-account-subitem</module>
+        <module>../Direct/orchestration-core-ib-query-subtype-guarantees</module>
+        <module>../Direct/orchestration-core-ib-client-enquiries</module>
+        <module>../Direct/orchestration-core-ib-subscribed-payments</module>
+        <module>../Direct/orchestration-core-ib-query-parameters-ach</module>
+        <module>../Direct/orchestration-core-ib-query-enquiries-detail</module>
+        <module>../Direct/orchestration-core-ib-query-grb</module>
+        <module>../Direct/orchestration-core-ib-query-bank-guarantee</module>
+        <module>../Direct/orchestration-core-ib-query-ach-detail</module>
+        <module>../Direct/orchestration-core-ib-receiving-printing-archive</module>
+        <module>../Direct/orchestration-core-ib-query-office</module>
+        <module>../Direct/orchestration-core-ib-query-customer</module>
+        <module>../Direct/orchestration-core-ib-query-modules</module>
+        <module>../Direct/orchestration-core-batch-notification</module>
+        <module>../Direct/orchestration-ib-cards</module>
+        <!-- Offline 13-->
+        <module>../Offline/orchestration-core-ib-self-account-transfer</module>
+        <module>../Offline/orchestration-core-ib-third-account-transfer</module>
+        <module>../Offline/orchestration-core-ib-international-account-transfer</module>
+        <module>../Offline/orchestration-core-ib-opening-certificate-deposit</module>
+        <module>../Offline/orchestration-core-ib-loan-payments</module>
+        <module>../Offline/orchestration-core-ib-ACH-account-transfer</module>
+        <module>../Offline/orchestration-core-ib-foreign-exchange</module>
+        <module>../Offline/orchestration-core-ib-service-payments</module>
+        <module>../Offline/orchestration-core-ib-application-bank-guarantee</module>
+        <module>../Offline/orchestration-core-ib-application-credit-line</module>
+        <module>../Offline/orchestration-core-ib-application-checkbook</module>
+        <module>../Offline/orchestration-core-ib-reverse-ach-transfer</module>
+        <module>../Offline/orchestration-core-ib-spi-transfer</module>
+        <module>../Offline/orchestration-core-ib-direct-transfer</module>
+         <!-- <module>../OnLine/orchestration-management-token</module>        -->
+		<module>../Offline/orchestration-core-ib-enrollment</module>  
+        <!-- CAPA Funcionalidad de tarjeta de credito en linea -->
+         <!--  <module>../OnLine/orchestration-core-ib-cards-payment</module>-->
+        <!-- ConnectorCreditCard -->
+        <module>../ConnectorCreditCards/cobis-business-process-connector-ib</module>
+        <!--INSTALADOR -->
+        <module>../Installer/ib-middleware-installer</module>
+        <module>../Installer/ib-middleware-checksum-validator</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>Purge</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>purge-local-dependencies</id>
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>purge-local-repository</goal>
+                </goals>
+                <!-- >configuration>
+									<actTransitively>true</actTransitively>
+									<manualInclude>com.cobiscorp.processapi:COBISCorp.eCOBIS.Businessprocess.Creditmanagement.DTO</manualInclude>
+									<reResolve>true</reResolve>
+								</configuration -->
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+
+</project>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_consulta_convenios</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_canal" dataType="varchar" direction="in" />
+    <parameter name="@i_categoria" dataType="varchar" direction="in" />
+    <parameter name="@i_filas_pagina" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@i_id_operativo" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO CONVENIO" />
+        <column name="NOMBRE CONVENIO" />
+        <column name="NEMONICO CONVENIO" />
+        <column name="DESCRIPCION CONVENIO" />
+        <column name="ESTADO CONVENIO" />
+        <column name="CLIENTE CONVENIO" />
+        <column name="NOMBRE LARGO" />
+        <column name="TIPO INTERFAZ" />
+        <column name="FECHA MOD" />
+        <column name="USUARIO MOD" />
+        <column name="ID MONEDA" />
+        <column name="MONEDA" />
+      </columns>
+      <queryText>SELECT  "CODIGO CONVENIO" = cv_convenio,"NOMBRE CONVENIO" = cv_nombre,"NEMONICO CONVENIO" = cv_nemonico,"DESCRIPCION CONVENIO" = cv_descripcion,"ESTADO CONVENIO" = cv_estado,"CLIENTE CONVENIO" = cv_cliente,"NOMBRE LARGO" = en_nomlar,"TIPO INTERFAZ" = cv_tipo_interfaz,"FECHA MOD" = cv_fecha_mod,"USUARIO MOD" = cv_usuario_mod,"ID MONEDA" = cv_moneda,"MONEDA" = re_valor </queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_favoritos</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="tinyint" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@i_id_menu" dataType="int" direction="in" />
+    <parameter name="@i_nombre" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="TRANSACCION" />
+      </columns>
+      <queryText>SELECT  "TRANSACCION" = mf_id_menu </queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_validate_product</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_owner" dataType="varchar" direction="in" />
+    <parameter name="@i_account" dataType="varchar" direction="in" />
+    <parameter name="@i_validate_owner" dataType="char" direction="in" />
+    <parameter name="@i_product_type" dataType="tinyint" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_tipo_cliente" dataType="char" direction="in" />
+    <parameter name="@i_currency" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ProductId" />
+        <column name="ProductName" />
+        <column name="ProductAlias" />
+        <column name="ProductNumber" />
+        <column name="CurrencyId" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ProductId" />
+        <column name="ProductName" />
+        <column name="ProductNumber" />
+        <column name="CurrencyId" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

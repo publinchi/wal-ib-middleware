@@ -1,0 +1,9 @@
+Bundle-SymbolicName: ${project.artifactId}
+Bundle-Name: ${project.groupId}-${project.artifactId}
+Bundle-Version: ${project.version}
+Bundle-Vendor: COBISCORP
+Bundle-ManifestVersion: 2
+Bundle-Activator: com.cobiscorp.ecobis.businessprocess.connector.impl.Activator
+Service-Component: OSGI-INF/serviceComponents.xml
+Excluded-Exports:
+ *

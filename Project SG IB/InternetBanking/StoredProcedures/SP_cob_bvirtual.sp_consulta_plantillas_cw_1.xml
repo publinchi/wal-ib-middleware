@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_consulta_plantillas_cw</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_destino" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_plantilla" dataType="char" direction="in" />
+    <parameter name="@i_id" dataType="int" direction="in" />
+    <parameter name="@i_tipo_consulta" dataType="char" direction="in" />
+    <parameter name="@i_validado" dataType="char" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_total_plantillas</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ID" />
+        <column name="NOMBRE" />
+        <column name="SEPARADOR" />
+        <column name="CABECERA" />
+        <column name="TIPO PLANTILLA" />
+        <column name="TIPO SEPARADOR" />
+        <column name="VALIDADO" />
+        <column name="EN LINEA" />
+        <column name="DESTINO" />
+        <column name="DESCRIPCION" />
+        <column name="TIPO OPERACION" />
+        <column name="MONEDA" />
+      </columns>
+      <queryText>SELECT  "ID" = da_id,"NOMBRE" = da_nombre,"SEPARADOR" = da_separador,"CABECERA" = da_cabecera,"TIPO PLANTILLA" = "S","TIPO SEPARADOR" = "S","VALIDADO" = da_validado,"EN LINEA" = da_enlinea,"DESTINO" = da_destino,"DESCRIPCION" = da_descripcion,"TIPO OPERACION" = da_tipo_operacion,"MONEDA" = da_moneda </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT ctx.convertString(ctx.GETDATE() ,101)</queryText>
+    </query>
+  </queries>
+</procedure>

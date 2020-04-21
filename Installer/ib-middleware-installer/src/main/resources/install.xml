@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installation version="1.0">
+
+	<info>
+		<appname>${project.name}</appname>
+		<appversion>${project.version}</appversion>
+		<authors>
+			<author name="Cobiscorp" email="info@cobiscorp.com" />
+		</authors>
+		<url>${project.url}</url>
+		<!--<run-privileged /> -->
+	</info>
+
+	<variables>
+		<variable name="app-version" value="1.1.0" />
+		<variable name="released-on" value="31/08/2013" />
+		<variable name="InstallerFrame.logfilePath" value="$INSTALL_PATH/Uninstaller/IB-install.log" />
+		<variable name="radioSelection" value="" />
+	</variables>
+	
+
+	<guiprefs width="600" height="400" resizable="no">
+		<modifier key="useHeadingPanel" value="yes" />
+		<modifier key="headingBackgroundColor" value="0x00ffffff" />
+		<modifier key="headingPanelCounter" value="text" />
+	</guiprefs>
+
+	<locale>
+		<langpack iso3="eng" />
+		<langpack iso3="spa" />
+	</locale>
+
+	<resources>
+		<res id="Heading.image" src="images/cobiscorp.jpg" />
+		<!-- licenses -->
+		<res id="HTMLLicencePanel.licence_eng" src="licenses/license.eng.html" />
+		<res id="HTMLLicencePanel.licence_spa" src="licenses/license.spa.html" />
+		<!-- langpacks -->
+		<res id="CustomLangpack.xml_eng" src="langpacks/Custom.Langpack.eng.xml" />
+		<res id="CustomLangpack.xml_spa" src="langpacks/Custom.Langpack.spa.xml" />
+		<!-- panels -->		
+		<res id="ProcessPanel.Spec.xml" src="panels/ProcessPanel.Spec.xml" />
+		<res id="userInputSpec.xml" src="panels/userInputSpec.xml" />
+		<res id="TargetPanel.dir" src="TargetDir.txt" />
+		<res id="log4j.properties" src="log4j.properties" />
+	</resources>
+
+	<panels>
+		<panel classname="HelloPanel" />
+		<panel classname="HTMLLicencePanel" />		
+		<panel classname="TargetPanel">
+			<validator classname="com.cobiscorp.cobis.ib.middleware.installer.validators.impl.EnvironmentValidator" />
+		</panel>
+		<panel classname="ProcessPanel" />
+		<panel classname="PacksPanel" />
+		<panel classname="InstallPanel" />		
+		<panel classname="FinishPanel" />
+	</panels>
+	
+	<conditions>		
+	    <condition type="PackSelection" id="IBCoreWithoutOfflineSelected">
+	        <packid>IBCoreWithoutOffline</packid>
+	    </condition>
+	    <condition type="PackSelection" id="IBCoreWithOfflineSelected">
+	        <packid>IBCoreWithOffline</packid>
+	    </condition>
+	    <condition type="PackSelection" id="IBOtheCoreSelected">
+	        <packid>IBOtheCore</packid>
+	    </condition>
+	    
+	    <condition type="not" id="IBCoreWithoutOfflineIsSelectable">
+	        <condition type="or" id="IBCoreWithoutOfflineIsNotSelectable">
+	            <condition type="ref" refid="IBCoreWithOfflineSelected" />
+	            <condition type="ref" refid="IBOtheCoreSelected" />
+	        </condition>
+	    </condition>
+	    <condition type="not" id="IBCoreWithOfflineIsSelectable">
+	        <condition type="or" id="IBCoreWithOfflineIsNotSelectable">
+	            <condition type="ref" refid="IBCoreWithoutOfflineSelected" />
+	            <condition type="ref" refid="IBOtheCoreSelected" />
+	        </condition>
+	    </condition>
+	    <condition type="not" id="IBOtheCoreIsSelectable">
+	        <condition type="or" id="IBOtheCoreIsNotSelectable">
+	            <condition type="ref" refid="IBCoreWithoutOfflineSelected" />
+	            <condition type="ref" refid="IBCoreWithOfflineSelected" />
+	        </condition>
+	    </condition>
+	</conditions>	
+	
+	<dynamicvariables>
+		  <variable name="typecore" value="WithoutOffline" condition="IBCoreWithoutOfflineSelected"/>
+		  <variable name="typecore" value="WithOffline" condition="IBCoreWithOfflineSelected"/>
+		  <variable name="typecore" value="OtheCore" condition="IBOtheCoreSelected"/>
+	</dynamicvariables>	
+   	
+	<packs>		
+		<pack name="modules" id="General" required="yes" >
+			<description />
+			<file src="modules/CIS/SERVICES/CTSTRANSFORMATION/services"
+				targetdir="$INSTALL_PATH/CIS/SERVICES/CTSTRANSFORMATION" override="true" />
+				
+			<file src="modules/CTS_MF/plugins" targetdir="$INSTALL_PATH/CTS_MF" override="true" />
+			
+			<file src="modules/CTS_MF/services-as/servexecutor/services"
+				targetdir="$INSTALL_PATH/CTS_MF/services-as/servexecutor" override="true" />
+				
+			<file src="modules/CTS_MF/services-as/authentication/cobisbv-authentication-service-config.xml"
+				targetdir="$INSTALL_PATH/CTS_MF/services-as/authentication/" override="true" />
+				
+			<file src="modules/CTS_MF/services-as/channel-admin"
+				targetdir="$INSTALL_PATH/CTS_MF/services-as/" override="true" />
+				
+			<fileset dir="modules/CIS/SERVICES/plugins/IBOrchestration/Commons/"
+				targetdir="$INSTALL_PATH/CIS/SERVICES/plugins/IBOrchestration/" override="true" />
+
+			<fileset dir="modules/CIS/SERVICES/plugins/IBOrchestration/With_Offline/"
+				targetdir="$INSTALL_PATH/CIS/SERVICES/plugins/IBOrchestration/" override="true" />
+		</pack>
+	</packs>
+	
+	
+	
+
+	<jar src="../${project.build.finalName}.jar" />
+	<jar src="dependencies/jdom.jar" />
+	<jar src="dependencies/xercesImpl.jar" />
+	<jar src="dependencies/log4j.jar" />
+	<jar src="dependencies/commons-io.jar" />
+
+</installation>

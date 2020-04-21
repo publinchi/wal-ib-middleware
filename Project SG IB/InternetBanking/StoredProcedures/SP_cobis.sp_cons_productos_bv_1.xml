@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_cons_productos_bv</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_tipo_ejec" dataType="char" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@o_cuota" dataType="money" direction="out" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="OPERACION" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PROD" />
+        <column name="VALOR" />
+      </columns>
+      <queryText>SELECT  "OPERACION" = ep_cuenta,"MONEDA" = ep_moneda,"PRODUCTO" = ep_producto,"ALIAS" = ep_alias,"DESC. MONEDA" = mo_descripcion,"DESC. PROD" = pd_descripcion,"VALOR" = CASE ? WHEN "L" THEN op_monto ELSE 0 END </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="OPERACION" />
+        <column name="MONEDA" />
+        <column name="PRODUCTO" />
+        <column name="ALIAS" />
+        <column name="DESC. MONEDA" />
+        <column name="DESC. PROD" />
+        <column name="VALOR" />
+      </columns>
+      <queryText>SELECT  "OPERACION" = ep_cuenta,"MONEDA" = ep_moneda,"PRODUCTO" = ep_producto,"ALIAS" = ep_alias,"DESC. MONEDA" = mo_descripcion,"DESC. PROD" = pd_descripcion,"VALOR" = CASE ? WHEN "L" THEN op_saldo ELSE 0 END </queryText>
+    </query>
+  </queries>
+</procedure>

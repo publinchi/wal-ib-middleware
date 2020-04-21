@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_simulador_ahorros</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_filial" dataType="smallint" direction="in" />
+    <parameter name="@i_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_monto_ini" dataType="money" direction="in" />
+    <parameter name="@i_tipocta" dataType="char" direction="in" />
+    <parameter name="@i_prod_banc" dataType="smallint" direction="in" />
+    <parameter name="@i_categoria" dataType="char" direction="in" />
+    <parameter name="@i_periodo" dataType="smallint" direction="in" />
+    <parameter name="@i_monto_aprox" dataType="money" direction="in" />
+    <parameter name="@i_tipo_ente" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@o_tasa_interes" dataType="real" direction="out" />
+    <parameter name="@o_periodo" dataType="smallint" direction="out" />
+    <parameter name="@o_monto" dataType="money" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="DESCRIPCION" />
+        <column name="CATEGORIA" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = os_codigo,"DESCRIPCION" = os_descripcion,"CATEGORIA" = os_categoria </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="MONTO" />
+        <column name="TASA" />
+        <column name="PERIODO" />
+      </columns>
+      <queryText>SELECT "MONTO"=o_monto,"TASA"=o_tasa_interes,"PERIODO"=o_periodo</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="MONTO" />
+        <column name="TASA" />
+        <column name="PERIODO" />
+      </columns>
+      <queryText>SELECT "MONTO"=o_monto,"TASA"=o_tasa_interes,"PERIODO"=o_periodo</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="MAX" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

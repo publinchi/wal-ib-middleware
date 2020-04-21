@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_inicia_sesion</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_clave" dataType="varchar" direction="in" />
+    <parameter name="@i_clave_atm" dataType="varchar" direction="in" />
+    <parameter name="@i_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@i_server" dataType="varchar" direction="in" />
+    <parameter name="@i_webserver" dataType="varchar" direction="in" />
+    <parameter name="@i_terminal_ip" dataType="varchar" direction="in" />
+    <parameter name="@i_kiosco" dataType="varchar" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@o_vez" dataType="tinyint" direction="out" />
+    <parameter name="@o_perfil" dataType="int" direction="out" />
+    <parameter name="@o_cliente" dataType="int" direction="out" />
+    <parameter name="@o_cliente_mis" dataType="int" direction="out" />
+    <parameter name="@o_des_login" dataType="varchar" direction="out" />
+    <parameter name="@o_ofi_kiosco" dataType="int" direction="out" />
+    <parameter name="@o_nombre_kiosco" dataType="varchar" direction="out" />
+    <parameter name="@o_des_perfil" dataType="varchar" direction="out" />
+    <parameter name="@o_sessionid" dataType="varchar" direction="out" />
+    <parameter name="@o_intentos" dataType="smallint" direction="out" />
+    <parameter name="@o_id_autenticacion" dataType="varchar" direction="out" />
+    <parameter name="@o_token" dataType="varchar" direction="out" />
+    <parameter name="@o_cultura" dataType="varchar" direction="out" />
+    <parameter name="@o_tema" dataType="varchar" direction="out" />
+    <parameter name="@o_fecha_ult_acceso" dataType="varchar" direction="out" />
+    <parameter name="@o_terminal_ip" dataType="varchar" direction="out" />
+    <parameter name="@o_tipo_ente" dataType="varchar" direction="out" />
+    <parameter name="@i_culture" dataType="varchar" direction="in" />
+    <parameter name="@o_tipo_persona" dataType="varchar" direction="out" />
+    <parameter name="@o_estado_token" dataType="char" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="login" />
+        <column name="validacion" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

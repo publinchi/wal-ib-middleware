@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr83_constarjcred</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_org_err" dataType="char" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_sev" dataType="tinyint" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_cliente" dataType="varchar" direction="in" />
+    <parameter name="@i_usuario" dataType="varchar" direction="in" />
+    <parameter name="@i_tarjeta" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Propietario" />
+        <column name="NumTarjeta" />
+        <column name="Moneda" />
+        <column name="Descripcion" />
+      </columns>
+      <queryText>SELECT  "Propietario" = en_nomlar,"NumTarjeta" = ta_codigo,"Moneda" = em_moneda </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CodMen" />
+        <column name="CodigoEmisor" />
+        <column name="NumeroCuenta" />
+        <column name="NumeroTarjeta" />
+        <column name="SaldoLocal" />
+        <column name="PagoMínimoLocal" />
+        <column name="PagoContadoLocal" />
+        <column name="DisponibleLocal" />
+        <column name="Adelanto" />
+        <column name="DispLocTarj" />
+        <column name="AdeLocTarj" />
+        <column name="DebitosLocal" />
+        <column name="CreditosLocal" />
+        <column name="SubtSalCortelocal" />
+        <column name="CargosBonifLocal" />
+        <column name="SalTotCorteLocal" />
+        <column name="SaldofPlazolocal" />
+        <column name="CargonoBoniflocal" />
+        <column name="RecargCuotaLocal" />
+        <column name="TotalCalcPMLocal" />
+        <column name="SaldoInter" />
+        <column name="PagoMinInt" />
+        <column name="PagoContInt" />
+        <column name="DisponibleInt" />
+        <column name="AdelantoInt" />
+        <column name="DispIntTarjeta" />
+        <column name="AdelIntTarjeta" />
+        <column name="DebitosInt" />
+        <column name="CreditosInt" />
+        <column name="SubtSalCorteInter" />
+        <column name="CargosBonifInter" />
+        <column name="SalTotCorteInter" />
+        <column name="SaldoFinalPlazoInter" />
+        <column name="CargonoBonifInte" />
+        <column name="RecargcuotaInter" />
+        <column name="TotalCalcPMInter" />
+        <column name="LimiteCtaLocal" />
+        <column name="LimiteCtaInter" />
+        <column name="LimiteTarLocal" />
+        <column name="LimiteTarInter" />
+        <column name="SaldoTarLocal" />
+        <column name="SaldoTarInter" />
+        <column name="FechaCorte" />
+        <column name="FechaVenPago" />
+        <column name="Nombre" />
+        <column name="LímiteEFLocal" />
+        <column name="SaldoIniEFLocal" />
+        <column name="DebitosAplicEFLocal" />
+        <column name="CreditosAplicEFLocal" />
+        <column name="SaldoFinalEFLocal" />
+        <column name="DisponibleEFLocal" />
+        <column name="LímiteEFnter" />
+        <column name="SaldoInicialEFInter" />
+        <column name="DebitosAplicadosEFInter" />
+        <column name="CreditosAplicadosEFInter" />
+        <column name="SaldoFinalEFInter" />
+        <column name="DisponibleEFInter" />
+        <column name="EstadoCuenta" />
+        <column name="EstadoTarjeta" />
+        <column name="ImporteVenLocal" />
+        <column name="MontoImporteLocal" />
+        <column name="ImporteVenInter" />
+        <column name="MontoImporteInter" />
+        <column name="NumeroExtrafinan" />
+        <column name="DebitoTranLocal" />
+        <column name="CreditoTranLocal" />
+        <column name="DebitoTranInter" />
+        <column name="CreditoTranInter" />
+        <column name="TasaIntMensualLocal" />
+        <column name="TasaIntMensualInter" />
+        <column name="TasaIntMoratoriaLocal" />
+        <column name="TasaIntMoraInter" />
+        <column name="SaldoIniCorteLocal" />
+        <column name="SaldoIniCorteInter" />
+        <column name="CodigoRespuesta" />
+        <column name="DesCodigoRespuesta" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

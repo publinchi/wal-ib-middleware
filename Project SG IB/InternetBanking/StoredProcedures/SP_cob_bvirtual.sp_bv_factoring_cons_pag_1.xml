@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_factoring_cons_pag</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="smallint" direction="in" />
+    <parameter name="@i_num_registro" dataType="smallint" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="SECUENCIAL" />
+        <column name="OPERACION" />
+        <column name="NO.CONTRATO" />
+        <column name="FECHA DEL COBRO" />
+        <column name="CEDENTE" />
+        <column name="NO.DOCUMENTO A NEGOCIAR" />
+        <column name="FORMA DE PAGO" />
+        <column name="NO.CHEQUE" />
+        <column name="COBRO TOTAL" />
+        <column name="V/N VIGENTE" />
+        <column name="MONTO APL. VN" />
+        <column name="MONTO APL. MORA" />
+        <column name="REMANENTE" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_campos_cliente_cw</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_id" dataType="int" direction="in" />
+    <parameter name="@i_relleno" dataType="varchar" direction="in" />
+    <parameter name="@i_mascara" dataType="varchar" direction="in" />
+    <parameter name="@i_arch_id" dataType="int" direction="in" />
+    <parameter name="@i_campo_id" dataType="int" direction="in" />
+    <parameter name="@i_tipo_long" dataType="varchar" direction="in" />
+    <parameter name="@i_long_minima" dataType="smallint" direction="in" />
+    <parameter name="@i_longitud" dataType="int" direction="in" />
+    <parameter name="@i_decimales" dataType="smallint" direction="in" />
+    <parameter name="@i_orden" dataType="tinyint" direction="in" />
+    <parameter name="@i_alineamiento" dataType="varchar" direction="in" />
+    <parameter name="@i_totalizable" dataType="char" direction="in" />
+    <parameter name="@i_opcional" dataType="char" direction="in" />
+    <parameter name="@i_signo" dataType="varchar" direction="in" />
+    <parameter name="@i_default" dataType="varchar" direction="in" />
+    <parameter name="@o_siguiente" dataType="int" direction="out" />
+    <parameter name="@o_orden" dataType="tinyint" direction="out" />
+  </parameters>
+  <queries />
+</procedure>

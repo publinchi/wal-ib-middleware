@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_remesas</database>
+  <name>sp_tr_recaudo</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_org_err" dataType="char" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_sev" dataType="tinyint" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_filial" dataType="smallint" direction="in" />
+    <parameter name="@i_mon" dataType="tinyint" direction="in" />
+    <parameter name="@i_idcaja" dataType="int" direction="in" />
+    <parameter name="@i_codcaja" dataType="int" direction="in" />
+    <parameter name="@i_canal" dataType="tinyint" direction="in" />
+    <parameter name="@i_convenio" dataType="int" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_nom_cliente" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_debito" dataType="varchar" direction="in" />
+    <parameter name="@i_prod_cta_debito" dataType="char" direction="in" />
+    <parameter name="@i_val_cta" dataType="money" direction="in" />
+    <parameter name="@i_efe" dataType="money" direction="in" />
+    <parameter name="@i_prop" dataType="money" direction="in" />
+    <parameter name="@i_loc" dataType="money" direction="in" />
+    <parameter name="@i_docp" dataType="money" direction="in" />
+    <parameter name="@i_plaz" dataType="money" direction="in" />
+    <parameter name="@i_pago1" dataType="money" direction="in" />
+    <parameter name="@i_pago2" dataType="money" direction="in" />
+    <parameter name="@i_comision" dataType="money" direction="in" />
+    <parameter name="@i_tipo_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_llave" dataType="varchar" direction="in" />
+    <parameter name="@i_num_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_sld_caja" dataType="money" direction="in" />
+    <parameter name="@i_idcierre" dataType="int" direction="in" />
+    <parameter name="@i_ref_1" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_2" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_3" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_4" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_5" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_6" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_7" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_8" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_9" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_10" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_11" dataType="varchar" direction="in" />
+    <parameter name="@i_ref_12" dataType="varchar" direction="in" />
+    <parameter name="@i_num_servicio" dataType="varchar" direction="in" />
+    <parameter name="@i_llave_pago" dataType="varchar" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+    <parameter name="@i_result" dataType="char" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_alias" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="int" direction="in" />
+    <parameter name="@o_tipo_interfaz" dataType="char" direction="out" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@o_condicion" dataType="char" direction="out" />
+    <parameter name="@o_ssn_branch" dataType="int" direction="out" />
+    <parameter name="@o_retorno" dataType="int" direction="out" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Colector" />
+        <column name="Oficina" />
+        <column name="Numero" />
+        <column name="NumeroDocumento" />
+        <column name="TipoIdentificacion" />
+        <column name="Identifiacion" />
+        <column name="Convenio" />
+        <column name="Nombre" />
+        <column name="Numero" />
+        <column name="TotalPago" />
+        <column name="Periodo" />
+        <column name="NumeroRecibo" />
+        <column name="Self" />
+        <column name="FechaPago" />
+        <column name="NRubros" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Codigo" />
+        <column name="Monto" />
+        <column name="Descripcion" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Etiqueta" />
+        <column name="Valor" />
+        <column name="Tipo" />
+        <column name="Formato" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Etiqueta" />
+        <column name="Valor" />
+        <column name="Tipo" />
+        <column name="Formato" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr_cons_chequera</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@t_online" dataType="char" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@r_sld_disp" dataType="money" direction="in" />
+    <parameter name="@r_sld_cont" dataType="money" direction="in" />
+    <parameter name="@r_sld_girar" dataType="money" direction="in" />
+    <parameter name="@r_sld_12h" dataType="money" direction="in" />
+    <parameter name="@r_sld_24h" dataType="money" direction="in" />
+    <parameter name="@r_sld_rem" dataType="money" direction="in" />
+    <parameter name="@r_monto_blq" dataType="money" direction="in" />
+    <parameter name="@r_num_bloq" dataType="int" direction="in" />
+    <parameter name="@r_num_blqmonto" dataType="int" direction="in" />
+    <parameter name="@r_ofi_cta" dataType="smallint" direction="in" />
+    <parameter name="@r_pro_ban" dataType="smallint" direction="in" />
+    <parameter name="@r_estado" dataType="char" direction="in" />
+    <parameter name="@r_ssn_host" dataType="int" direction="in" />
+    <parameter name="@i_prod" dataType="smallint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_modo" dataType="tinyint" direction="in" />
+    <parameter name="@i_sec" dataType="smallint" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="No." />
+        <column name="CHQ. INICIAL" />
+        <column name="No. CHEQUES" />
+        <column name="TIPO" />
+        <column name="F. EMISION" />
+        <column name="F. ENTREGA" />
+        <column name="ESTADO" />
+        <column name="ENVIO IMP." />
+        <column name="RECEP. IMP" />
+        <column name="RECEP. SUCURSAL" />
+        <column name="SUCURSAL EMISION" />
+        <column name="SUCURSAL ENTREGA" />
+        <column name="No. CORRIDA" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

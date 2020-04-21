@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_tr_consulta_movimientos_cc</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_ejec" dataType="char" direction="in" />
+    <parameter name="@t_corr" dataType="char" direction="in" />
+    <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_filial" dataType="smallint" direction="in" />
+    <parameter name="@t_aut" dataType="char" direction="in" />
+    <parameter name="@t_tsn_aut" dataType="int" direction="in" />
+    <parameter name="@t_online" dataType="char" direction="in" />
+    <parameter name="@t_login_aut" dataType="varchar" direction="in" />
+    <parameter name="@r_sld_disp" dataType="money" direction="in" />
+    <parameter name="@r_sld_cont" dataType="money" direction="in" />
+    <parameter name="@r_sld_girar" dataType="money" direction="in" />
+    <parameter name="@r_sld_12h" dataType="money" direction="in" />
+    <parameter name="@r_sld_24h" dataType="money" direction="in" />
+    <parameter name="@r_sld_rem" dataType="money" direction="in" />
+    <parameter name="@r_monto_blq" dataType="money" direction="in" />
+    <parameter name="@r_num_bloq" dataType="int" direction="in" />
+    <parameter name="@r_num_blqmonto" dataType="int" direction="in" />
+    <parameter name="@r_ofi_cta" dataType="smallint" direction="in" />
+    <parameter name="@r_pro_ban" dataType="smallint" direction="in" />
+    <parameter name="@r_estado" dataType="char" direction="in" />
+    <parameter name="@r_ssn_host" dataType="int" direction="in" />
+    <parameter name="@r_monto_sob" dataType="money" direction="in" />
+    <parameter name="@r_fecha_host" dataType="datetime" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_valor_trn" dataType="money" direction="in" />
+    <parameter name="@i_cuenta_dst" dataType="varchar" direction="in" />
+    <parameter name="@i_graba_log" dataType="char" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_sec_alt" dataType="int" direction="in" />
+    <parameter name="@i_diario" dataType="int" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_ult_fecha" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="tinyint" direction="in" />
+    <parameter name="@i_sec" dataType="int" direction="in" />
+    <parameter name="@i_hora" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_alias" dataType="char" direction="in" />
+    <parameter name="@i_nro_registros" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_sec_unico" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="s_user" />
+        <column name="s_ofi" />
+        <column name="s_term" />
+        <column name="s_rol" />
+        <column name="s_srv" />
+        <column name="s_ssn_branch" />
+        <column name="t_online" />
+        <column name="t_trn" />
+        <column name="t_ejec" />
+        <column name="i_prod" />
+        <column name="i_mon" />
+        <column name="i_comision" />
+        <column name="i_cta" />
+        <column name="i_fecha_ini" />
+        <column name="i_fecha_fin" />
+        <column name="i_sec" />
+        <column name="i_sec_alt" />
+        <column name="i_servicio" />
+        <column name="i_diario" />
+        <column name="i_tipo" />
+        <column name="i_ult_fecha" />
+        <column name="i_formato_fecha" />
+        <column name="i_hora" />
+      </columns>
+      <queryText>select 's_user'        = @s_user,  's_ofi'         = @s_ofi,  's_term'        = @s_term,  's_rol'         = @s_rol,  's_srv'         = @s_srv,  's_ssn_branch'  = @s_ssn_branch,  't_online'      = @t_online,  't_trn'         = 18754,  't_ejec'        = @t_ejec,  'i_prod'        = @i_prod,  'i_mon'         = @i_mon,  'i_comision'    = @w_comision,  'i_cta'         = @i_cta,  'i_fecha_ini'   = @i_fecha_ini,  'i_fecha_fin'   = @i_fecha_fin,  'i_sec'         = @i_sec,  'i_sec_alt'     = @i_sec_alt,  'i_servicio'    = @s_servicio,  'i_diario'      = @i_diario,  'i_tipo'        = @i_tipo,         'i_ult_fecha'   = convert(datetime,@i_ult_fecha),  'i_formato_fecha' = @i_formato_fecha,  'i_hora'        = @i_hora  -- gagm1050</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="total movimientos" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="FECHA" />
+        <column name="TRANSACCION" />
+        <column name="COD TRAN" />
+        <column name="REFERENCIA" />
+        <column name="D/C" />
+        <column name="VALOR" />
+        <column name="CONTABLE" />
+        <column name="DISPONIBLE" />
+        <column name="SECUENCIAL" />
+        <column name="COD ALTERNO" />
+        <column name="HORA" />
+        <column name="SEC UNICO" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

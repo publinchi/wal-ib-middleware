@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_pagtarj_aliado_batch</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_val" dataType="money" direction="in" />
+    <parameter name="@i_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
+    <parameter name="@o_autorizacion" dataType="char" direction="out" />
+    <parameter name="@o_ssn_branch" dataType="int" direction="out" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_moneda_desc" dataType="varchar" direction="in" />
+    <parameter name="@i_canal" dataType="varchar" direction="in" />
+    <parameter name="@i_id_trancanal" dataType="varchar" direction="in" />
+    <parameter name="@i_codtipomsg" dataType="varchar" direction="in" />
+    <parameter name="@i_numtarjeta" dataType="varchar" direction="in" />
+    <parameter name="@i_superfranquicia" dataType="varchar" direction="in" />
+    <parameter name="@i_localidad1" dataType="varchar" direction="in" />
+    <parameter name="@i_moneda" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_pago" dataType="varchar" direction="in" />
+    <parameter name="@i_idtransaccion" dataType="varchar" direction="in" />
+    <parameter name="@i_numreferencia" dataType="varchar" direction="in" />
+    <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@i_concepto" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_usuario" dataType="varchar" direction="in" />
+    <parameter name="@i_mon_des" dataType="smallint" direction="in" />
+    <parameter name="@o_valor_convertido" dataType="decimal" direction="out" />
+    <parameter name="@o_cotizacion" dataType="float" direction="out" />
+  </parameters>
+  <queries />
+</procedure>

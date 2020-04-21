@@ -1,0 +1,1 @@
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGNamespace" id="1"><field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.BankGuarantee.Service" /><field type="String" name="module" value="InternetBanking.WebApp.BankGuarantee" /><field type="String" name="type" value="Service" /></class>

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_consulta_cuotas_dpf</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_cuenta" dataType="varchar" direction="in" />
+    <parameter name="@i_modo" dataType="smallint" direction="in" />
+    <parameter name="@i_retenido" dataType="char" direction="in" />
+    <parameter name="@i_custodia" dataType="char" direction="in" />
+    <parameter name="@i_cuota" dataType="tinyint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="#PAGO" />
+        <column name="#PREIMPRESO" />
+        <column name="F.VENCIMIENTO" />
+        <column name="VALOR NETO" />
+        <column name="VALOR" />
+        <column name="IMPUESTO" />
+        <column name="F.CAJA" />
+        <column name="ESTADO" />
+        <column name="#IMPRESIONES" />
+        <column name="RETENIDO" />
+        <column name="NUM. CUPON" />
+        <column name="MONEDA" />
+        <column name="F.INICIO" />
+      </columns>
+      <queryText>SELECT  "#PAGO " = cu_cuota,"#PREIMPRESO" = cu_preimpreso,"F.VENCIMIENTO" = CONVERT (CHAR (10),cu_fecha_pago ,?),"VALOR" = cu_valor_cuota,"F.CAJA" = CONVERT (CHAR (10),cu_fecha_caja ,?),"ESTADO" = cu_estado,"#IMPRESIONES" = cu_num_impr_orig,"RETENIDO" = cu_retenido,"NUM. CUPON" = cu_num_cupon,"MONEDA" = SUBSTRING (mo_descripcion, 1, 7),"VALOR NETO" = cu_valor_neto,"IMPUESTO" = cu_retencion,"F.INICIO" = CONVERT (CHAR (10),cu_fecha_ult_pago ,?) </queryText>
+    </query>
+  </queries>
+</procedure>

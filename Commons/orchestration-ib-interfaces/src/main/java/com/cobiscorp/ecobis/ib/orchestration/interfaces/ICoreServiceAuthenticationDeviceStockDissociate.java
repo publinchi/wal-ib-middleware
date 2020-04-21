@@ -1,0 +1,14 @@
+package com.cobiscorp.ecobis.ib.orchestration.interfaces;
+
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
+import com.cobiscorp.ecobis.ib.application.dtos.AuthenticationDeviceStockDissociateRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.AuthenticationDeviceStockDissociateResponse;
+
+public interface ICoreServiceAuthenticationDeviceStockDissociate {
+
+	AuthenticationDeviceStockDissociateResponse dissociateProviderAuthenticationDeviceStock(AuthenticationDeviceStockDissociateRequest aAuthenticationDeviceStocUpdRequest) throws CTSServiceException, CTSInfrastructureException;
+	
+	AuthenticationDeviceStockDissociateResponse dissociateAuthDeviceStockSB(AuthenticationDeviceStockDissociateRequest aAuthenticationDeviceStocUpdRequest) throws CTSServiceException, CTSInfrastructureException;
+
+}

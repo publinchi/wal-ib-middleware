@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_detalle_pendientes_cw_bv</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_trn_autorizador" dataType="int" direction="in" />
+    <parameter name="@i_trn_sp" dataType="int" direction="in" />
+    <parameter name="@i_valor" dataType="smallint" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@o_estado_lp" dataType="char" direction="out" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="b.pa_orden" />
+        <column name="b.pa_alias" />
+        <column name="a.pa_tipodato" />
+        <column name="a.pa_varchar" />
+        <column name="a.pa_int" />
+        <column name="a.pa_smallint" />
+        <column name="a.pa_tinyint" />
+        <column name="a.pa_money" />
+        <column name="a.pa_datetime" />
+        <column name="a.pa_float" />
+        <column name="b.pa_tabla" />
+        <column name="Descripcion" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Usuario" />
+        <column name="Nombre" />
+        <column name="Estado" />
+        <column name="Motivo" />
+        <column name="Fecha Resp." />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="Usuario" />
+        <column name="Nombre" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="trn_ejecutada" />
+        <column name="rol_originador" />
+        <column name="cuenta_deb" />
+        <column name="cuenta_cre" />
+        <column name="monto" />
+        <column name="beneficiario" />
+        <column name="banco_destino" />
+        <column name="num_prestamo" />
+        <column name="periodicidad" />
+        <column name="num_pagos" />
+        <column name="concepto" />
+        <column name="fecha_ini" />
+        <column name="moneda" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="id" />
+        <column name="cuenta" />
+        <column name="monto" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

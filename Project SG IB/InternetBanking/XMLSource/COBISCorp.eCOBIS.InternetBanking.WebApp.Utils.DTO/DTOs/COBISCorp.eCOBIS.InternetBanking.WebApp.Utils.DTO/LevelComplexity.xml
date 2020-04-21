@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" productVersion="4.6.1.0">
+  <name>LevelComplexity</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.utils.dto</javaPackage>
+  <ns>http://dto.utils.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="type" propertyNet="Type" propertyJava="type" setterJavaMethod="setType" getterJavaMethod="getType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="initalRange" propertyNet="InitalRange" propertyJava="initalRange" setterJavaMethod="setInitalRange" getterJavaMethod="getInitalRange" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="finalRange" propertyNet="FinalRange" propertyJava="finalRange" setterJavaMethod="setFinalRange" getterJavaMethod="getFinalRange" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="required" propertyNet="Required" propertyJava="required" setterJavaMethod="setRequired" getterJavaMethod="getRequired" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

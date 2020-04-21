@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_cons_clientes_bv</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_tipo_cliente" dataType="char" direction="in" />
+    <parameter name="@i_tipo_busqueda" dataType="tinyint" direction="in" />
+    <parameter name="@i_valor_codigo" dataType="int" direction="in" />
+    <parameter name="@i_valor_nombre" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre" dataType="varchar" direction="in" />
+    <parameter name="@i_papellido" dataType="varchar" direction="in" />
+    <parameter name="@i_sapellido" dataType="varchar" direction="in" />
+    <parameter name="@i_valor_cedula" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="tinyint" direction="in" />
+    <parameter name="@i_modo" dataType="tinyint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_canal" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@o_num_filas" dataType="tinyint" direction="out" />
+    <parameter name="@o_ente_mis" dataType="int" direction="out" />
+    <parameter name="@o_nombre" dataType="varchar" direction="out" />
+    <parameter name="@o_email" dataType="varchar" direction="out" />
+    <parameter name="@o_nummaestro" dataType="varchar" direction="out" />
+    <parameter name="@o_idtransaccioncliente" dataType="varchar" direction="out" />
+    <parameter name="@o_dispositivo" dataType="varchar" direction="out" />
+    <parameter name="@o_error" dataType="int" direction="out" />
+    <parameter name="@o_descripcion" dataType="varchar" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT o_num_filas</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. NAC." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="TIPO DOCUMENTO" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+        <column name="SEGMENTO" />
+        <column name="LINEA NEGOCIO" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. NAC." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"TIPO DOCUMENTO" = CASE WHEN CHARINDEX ("-", en_ced_ruc) &gt; 0 THEN SUBSTRING (en_ced_ruc, 1, CHARINDEX ("-", en_ced_ruc) - 1) ELSE "" END,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email,"SEGMENTO" = en_segmento,"LINEA NEGOCIO" = en_linea_negocio </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. CRE." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="TIPO DOCUMENTO" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. CRE." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"TIPO DOCUMENTO" = CASE WHEN CHARINDEX ("-", en_ced_ruc) &gt; 0 THEN SUBSTRING (en_ced_ruc, 1, CHARINDEX ("-", en_ced_ruc) - 1) ELSE "" END,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. CRE." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+        <column name="EMPRESA" />
+        <column name="GRUPO" />
+        <column name="EMPRESA PRINCIPAL" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. CRE." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email,"EMPRESA" = ge_cod_empresa,"GRUPO" = ge_grupo,"EMPRESA PRINCIPAL" = ge_empresa </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. NAC." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="Tipo Documento" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. NAC." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"Tipo Documento" = CASE WHEN CHARINDEX ("-", en_ced_ruc) &gt; 0 THEN SUBSTRING (en_ced_ruc, 1, CHARINDEX ("-", en_ced_ruc) - 1) ELSE "" END,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. CRE." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="Tipo Documento" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. CRE." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"Tipo Documento" = CASE WHEN CHARINDEX ("-", en_ced_ruc) &gt; 0 THEN SUBSTRING (en_ced_ruc, 1, CHARINDEX ("-", en_ced_ruc) - 1) ELSE "" END,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="RUC" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. CRE." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+        <column name="EMPRESA" />
+        <column name="GRUPO" />
+        <column name="EMPRESA PRINCIPAL" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"RUC" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. CRE." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email,"EMPRESA" = ge_cod_empresa,"GRUPO" = ge_grupo,"EMPRESA PRINCIPAL" = ge_empresa </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. NAC." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="Tipo Documento" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. NAC." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"Tipo Documento" = CASE WHEN CHARINDEX ("-", en_ced_ruc) &gt; 0 THEN SUBSTRING (en_ced_ruc, 1, CHARINDEX ("-", en_ced_ruc) - 1) ELSE "" END,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="DOCUMENTO" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. CRE." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="Tipo Documento" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"DOCUMENTO" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. CRE." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"Tipo Documento" = CASE WHEN CHARINDEX ("-", en_ced_ruc) &gt; 0 THEN SUBSTRING (en_ced_ruc, 1, CHARINDEX ("-", en_ced_ruc) - 1) ELSE "" END,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="COD.MIS" />
+        <column name="TIPO" />
+        <column name="TIPO DESCRIPCION" />
+        <column name="RUC" />
+        <column name="NOMBRE" />
+        <column name="CATEGORIA" />
+        <column name="CATEGORIA NOMBRE" />
+        <column name="FEC. CRE." />
+        <column name="FEC. ING" />
+        <column name="SECTOR" />
+        <column name="CULTURA" />
+        <column name="OFICINA" />
+        <column name="NOTIF." />
+        <column name="OFICIAL" />
+        <column name="USO CONV" />
+        <column name="AUTORIZADO" />
+        <column name="DIRECCION" />
+        <column name="EMPRESA" />
+        <column name="GRUPO" />
+        <column name="EMPRESA PRINCIPAL" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = en_ente,"COD.MIS" = en_ente_mis,"TIPO" = en_tipo,"TIPO DESCRIPCION" = SUBSTRING (?, 1, 20),"RUC" = en_ced_ruc,"NOMBRE" = en_nombre,"CATEGORIA" = en_categoria,"CATEGORIA NOMBRE" = SUBSTRING (valor, 1, 20),"FEC. CRE." = ISNULL (CONVERT (VARCHAR (10),en_fecha_nac ,?), ""),"FEC. ING" = ISNULL (CONVERT (VARCHAR (10),en_fecha_reg ,?), ""),"SECTOR" = en_sector,"CULTURA" = en_lenguaje,"OFICINA" = en_oficina,"NOTIF." = en_notificaciones,"OFICIAL" = en_oficial,"USO CONV" = en_uso_convenio,"AUTORIZADO" = en_autorizado,"DIRECCION" = en_email,"EMPRESA" = ge_cod_empresa,"GRUPO" = ge_grupo,"EMPRESA PRINCIPAL" = ge_empresa </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE" />
+      </columns>
+      <queryText>SELECT  "NOMBRE" = en_nombre </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="NOMBRE" />
+      </columns>
+      <queryText>SELECT  "NOMBRE" = en_nombre </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="@o_nombre" />
+        <column name="@o_email" />
+      </columns>
+      <queryText />
+    </query>
+    <query>
+      <columns>
+        <column name="@o_error" />
+        <column name="@o_descripcion" />
+      </columns>
+      <queryText />
+    </query>
+  </queries>
+</procedure>

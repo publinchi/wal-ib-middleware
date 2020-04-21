@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_comext</database>
+  <name>sp_qtu_trn_reporte</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@i_opeban" dataType="varchar" direction="in" />
+    <parameter name="@i_tope" dataType="varchar" direction="in" />
+    <parameter name="@i_modo" dataType="tinyint" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_ttrn" dataType="varchar" direction="in" />
+    <parameter name="@i_sec" dataType="int" direction="in" />
+    <parameter name="@i_sec1" dataType="int" direction="in" />
+    <parameter name="@i_numero" dataType="tinyint" direction="in" />
+    <parameter name="@i_fdate" dataType="int" direction="in" />
+    <parameter name="@i_tins" dataType="varchar" direction="in" />
+    <parameter name="@i_tdato" dataType="varchar" direction="in" />
+    <parameter name="@i_plazo" dataType="char" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_org_err" dataType="char" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_sev" dataType="tinyint" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_prod" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+      </columns>
+      <queryText>SELECT  va_parametro,va_dparametro,ISNULL (va_factor, 0),va_concepto,ISNULL (va_valor, 0),va_sec_trn,ISNULL (va_numero, 0),va_plazo,va_sec_det_trn,va_sec_fpago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+      </columns>
+      <queryText>SELECT  dp_sec_trn,ISNULL (dp_numero, 0),dp_plazo,dp_sec_detalle_pgo,dp_tipo_pago,dp_dtpago,ISNULL (dp_valor_mextra, 0),dp_imoneda,ISNULL (dp_tipo_cambio, 0),ISNULL (dp_valor_mlocal, 0),dp_detalle,dp_sec_fpago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+      </columns>
+      <queryText>SELECT  dp_sec_trn,ISNULL (dp_numero, 0),dp_plazo,dp_sec_detalle_pgo,dp_tipo_pago,dp_dtpago,ISNULL (dp_valor_mextra, 0),dp_imoneda,ISNULL (dp_tipo_cambio, 0),ISNULL (dp_valor_mlocal, 0),dp_detalle,dp_sec_fpago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  ed_sec_enmienda,CONVERT (VARCHAR (11),ed_fecha_enmienda ,?),ed_motivo,ed_cobrar,ed_etapa,valor,ISNULL (ed_nro_aprobacion, 0),CONVERT (VARCHAR (11),ed_fecha_aprobacion ,?),CONVERT (VARCHAR (11),ed_fecha ,?) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT  dm_sec_enmienda,tb_descripcion,mo_nemonico,ISNULL (dm_valor, 0),dm_cont_anterior,dm_cont_nuevo,dm_tdato </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+      </columns>
+      <queryText>SELECT  em_sec_negociacion,em_detalle,CONVERT (VARCHAR (11),em_fecha_embarque ,?),mo_nemonico,ISNULL (em_valor, 0),em_acepta_discrep,em_etapa,valor,CONVERT (VARCHAR (11),em_fecha_neg ,?),CONVERT (VARCHAR (11),em_fecha_reg ,?) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  em_sec_negociacion,em_detalle,CONVERT (VARCHAR (11),em_fecha_embarque ,?),mo_nemonico,ISNULL (em_valor, 0),em_acepta_discrep,em_etapa,valor,CONVERT (VARCHAR (11),em_fecha_neg ,?) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  in_numero,in_tipo_instruccion,SUBSTRING (valor, 1, 40),SUBSTRING (in_descripcion_a, 1, 127),SUBSTRING (in_descripcion_a, 128, 128),SUBSTRING (in_descripcion_b, 1, 127),SUBSTRING (in_descripcion_b, 128, 128),SUBSTRING (in_descripcion_c, 1, 127),SUBSTRING (in_descripcion_c, 128, 128) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  in_numero,in_tipo_instruccion,SUBSTRING (valor, 1, 40),SUBSTRING (in_descripcion_a, 1, 127),SUBSTRING (in_descripcion_a, 128, 128),SUBSTRING (in_descripcion_b, 1, 127),SUBSTRING (in_descripcion_b, 128, 128),SUBSTRING (in_descripcion_c, 1, 127),SUBSTRING (in_descripcion_c, 128, 128) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  in_numero,in_tipo_instruccion,SUBSTRING (valor, 1, 40),SUBSTRING (in_descripcion_a, 1, 127),SUBSTRING (in_descripcion_a, 128, 128),SUBSTRING (in_descripcion_b, 1, 127),SUBSTRING (in_descripcion_b, 128, 128),SUBSTRING (in_descripcion_c, 1, 127),SUBSTRING (in_descripcion_c, 128, 128) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+        <column name="{13}" />
+        <column name="{14}" />
+      </columns>
+      <queryText>SELECT  de_sec_negociacion,dc_secuencial,de_grupo,valor,de_tipo_documento,td_descripcion,de_referencia,dc_descripcion,CONVERT (VARCHAR (11),dc_fecha_registro ,?),CONVERT (VARCHAR (11),dc_fecha_documento ,?),CONVERT (VARCHAR (11),dc_fecha_vigencia ,?),dc_valor,dc_num_originales,dc_num_copias </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+        <column name="{13}" />
+        <column name="{14}" />
+      </columns>
+      <queryText>SELECT  fn_sec_negociacion,fn_plazo,pl_descripcion,mo_nemonico,ISNULL (fn_valor, 0),CONVERT (VARCHAR (11),fn_fecha_ini ,?),CONVERT (VARCHAR (11),fn_fecha_vto ,?),fn_financiada,fn_ref_num_oper,ISNULL (fn_tot_abonos, 0),fn_estado,CONVERT (VARCHAR (11),fn_fecha_pago ,?),fn_estado_pago,fn_sec_fpago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT  fn_sec_negociacion,fn_sec_fpago,fn_plazo,mo_nemonico,ISNULL (fn_valor, 0),CONVERT (VARCHAR (11),fn_fecha_pago ,?),fn_estado_pago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+      </columns>
+      <queryText>SELECT  ab_negociacion,ab_plazo,pl_descripcion,ab_abono,CONVERT (VARCHAR (11),ab_fecha_abono ,?),ab_cancelacion,mo_nemonico,ISNULL (ab_valor, 0),ab_oficina,ab_estado,ab_sec_fpago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+      </columns>
+      <queryText>SELECT  ISNULL (tr_numero, 0),tr_sec_transaccion,tr_ext_concepto,CONVERT (VARCHAR (11),tr_fecha ,?) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+      </columns>
+      <queryText>SELECT  cp_cobro,cp_condonacion,CONVERT (VARCHAR (11),cp_fecha_pago ,?),cp_comentario </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+      </columns>
+      <queryText>SELECT  lt_sec_negociacion,lt_nro_letra,mo_nemonico,ISNULL (lt_valor_letra, 0),CONVERT (VARCHAR (11),lt_fecha_emis ,?),CONVERT (VARCHAR (11),lt_fecha_vto ,?),lt_a_orden_de,lt_plazo,lt_estado_cobro,lt_beneficiario,CONVERT (VARCHAR (11),lt_fecha_pago ,?),lt_estado_pago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT  lt_sec_negociacion,lt_nro_letra,mo_nemonico,ISNULL (lt_valor_letra, 0),lt_beneficiario,CONVERT (VARCHAR (11),lt_fecha_pago ,?),lt_estado_pago </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  ab_negociacion,ab_letra_cambio,ab_abono,CONVERT (VARCHAR (11),ab_fecha_abono ,?),ab_cancelacion,mo_nemonico,ISNULL (ab_valor, 0),ab_oficina,ab_estado </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_fecha_cierre</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+      </columns>
+      <queryText>SELECT  ol_banco,bc_descripcion,ol_oficina,of_nombre,ol_rol,A.valor,ol_tipo_uso,B.valor,ol_nro_reserva,ol_tipo_cuenta,ol_cuenta </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+        <column name="{13}" />
+      </columns>
+      <queryText>SELECT  ra_banco_cca,ra_ttrn,ISNULL (ra_numero, 0),ISNULL (ra_monto, 0),mo_nemonico,ra_origen,ra_estado,ra_plazo,ra_sec_fpago,ra_sec_negociacion,ISNULL (ra_operacion_cca, 0),CONVERT (VARCHAR (11),ra_fecha ,?),ra_monto_financ </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+      </columns>
+      <queryText>SELECT  op_banco,rp_banco_cca_pas,ISNULL (rp_monto, 0),mo_nemonico,rp_linea_credito,SUBSTRING (bc_descripcion, 1, 15),SUBSTRING (of_nombre, 1, 15),rp_operacion_cca_act,rp_operacion_cca_pas </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+      </columns>
+      <queryText>SELECT  va_parametro,va_dparametro,ISNULL (va_factor, 0),va_concepto,ISNULL (va_valor, 0),va_sec_trn,ISNULL (va_numero, 0),va_plazo,va_sec_det_trn,va_sec_fpago,CONVERT (VARCHAR (11),tr_fecha ,?) </queryText>
+    </query>
+  </queries>
+</procedure>

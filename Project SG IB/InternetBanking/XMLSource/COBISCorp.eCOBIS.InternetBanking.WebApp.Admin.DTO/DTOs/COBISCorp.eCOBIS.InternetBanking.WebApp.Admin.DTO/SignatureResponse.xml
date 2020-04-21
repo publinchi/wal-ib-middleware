@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" productVersion="4.6.1.0">
+  <name>SignatureResponse</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.admin.dto</javaPackage>
+  <ns>http://dto.admin.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="idSignature" propertyNet="IdSignature" propertyJava="idSignature" setterJavaMethod="setIdSignature" getterJavaMethod="getIdSignature" xsdType="long" netType="long" javaType="long" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="idSigner" propertyNet="IdSigner" propertyJava="idSigner" setterJavaMethod="setIdSigner" getterJavaMethod="getIdSigner" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="referenceTransaction" propertyNet="ReferenceTransaction" propertyJava="referenceTransaction" setterJavaMethod="setReferenceTransaction" getterJavaMethod="getReferenceTransaction" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="result" propertyNet="Result" propertyJava="result" setterJavaMethod="setResult" getterJavaMethod="getResult" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="tokenClient" propertyNet="TokenClient" propertyJava="tokenClient" setterJavaMethod="setTokenClient" getterJavaMethod="getTokenClient" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="valid" propertyNet="Valid" propertyJava="valid" setterJavaMethod="setValid" getterJavaMethod="isValid" xsdType="boolean" netType="bool" javaType="boolean" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="validUntil" propertyNet="ValidUntil" propertyJava="validUntil" setterJavaMethod="setValidUntil" getterJavaMethod="getValidUntil" xsdType="long" netType="long" javaType="long" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

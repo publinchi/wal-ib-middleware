@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_valida_personal_campana</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_codigo" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_solicitud" dataType="int" direction="in" />
+    <parameter name="@o_imoneda" dataType="char" direction="out" />
+    <parameter name="@o_ictadeb" dataType="char" direction="out" />
+    <parameter name="@o_ictacre" dataType="char" direction="out" />
+    <parameter name="@o_iplazo" dataType="char" direction="out" />
+    <parameter name="@o_itstkey" dataType="char" direction="out" />
+    <parameter name="@o_departamento" dataType="int" direction="out" />
+    <parameter name="@o_tipo_gestion" dataType="int" direction="out" />
+    <parameter name="@o_tipo_solicitud" dataType="varchar" direction="out" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

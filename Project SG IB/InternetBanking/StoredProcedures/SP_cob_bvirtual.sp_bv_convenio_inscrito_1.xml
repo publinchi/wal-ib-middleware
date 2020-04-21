@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_convenio_inscrito</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_id_categoria" dataType="int" direction="in" />
+    <parameter name="@i_id_convenio" dataType="int" direction="in" />
+    <parameter name="@i_num_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_descripcion" dataType="varchar" direction="in" />
+    <parameter name="@i_filas" dataType="tinyint" direction="in" />
+    <parameter name="@i_secuencial" dataType="int" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_ente_bv" dataType="int" direction="in" />
+    <parameter name="@i_llave" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_doc" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia1" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia2" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia3" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia4" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia5" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia6" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia7" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia8" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia9" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia10" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia11" dataType="varchar" direction="in" />
+    <parameter name="@i_referencia12" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ci_id_categoria" />
+        <column name="ci_id_convenio" />
+        <column name="ci_num_doc" />
+        <column name="ci_descripcion" />
+        <column name="cv_nombre" />
+        <column name="ci_ente" />
+        <column name="ci_login" />
+        <column name="ci_ente_bv" />
+        <column name="cip_referencia1" />
+        <column name="cip_referencia2" />
+        <column name="cip_referencia3" />
+        <column name="cip_referencia4" />
+        <column name="cip_referencia5" />
+        <column name="cip_referencia6" />
+        <column name="cip_referencia7" />
+        <column name="cip_referencia8" />
+        <column name="cip_referencia9" />
+        <column name="cip_referencia10" />
+        <column name="cip_referencia11" />
+        <column name="cip_referencia12" />
+        <column name="cip_llave" />
+        <column name="cip_tipo_doc" />
+        <column name=" ci_id" />
+        <column name=" secuencial" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

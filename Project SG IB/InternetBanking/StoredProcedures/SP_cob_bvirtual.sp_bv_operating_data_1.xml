@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_operating_data</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_banco" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@i_cuota_completa" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_cobro" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_reduccion" dataType="varchar" direction="in" />
+    <parameter name="@i_efecto_pago" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_prioridad" dataType="varchar" direction="in" />
+    <parameter name="@i_aceptar_anticipos" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction_id" dataType="int" direction="in" />
+    <parameter name="@s_ofi" dataType="int" direction="in" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+    <parameter name="@i_mon" dataType="int" direction="in" />
+    <parameter name="@i_prod" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_valida_des" dataType="varchar" direction="in" />
+    <parameter name="@i_tercero" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="LoanAccount" />
+      </columns>
+      <queryText>SELECT  "LoanAccount" = pa_cuenta </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="op_tipo_cobro" />
+        <column name="op_aceptar_anticipos" />
+        <column name="op_tipo_reduccion" />
+        <column name="op_tipo_aplicacion" />
+        <column name="op_cuota_completa" />
+        <column name="op_fecha_fin" />
+        <column name="op_tipo_prioridad" />
+        <column name="op_efecto_pago" />
+        <column name="op_moneda" />
+        <column name="mo_descripcion" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="233312" />
+        <column name="233313" />
+        <column name="233311" />
+        <column name="Monto" />
+        <column name="Monto MN" />
+        <column name="Moneda Cuenta" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

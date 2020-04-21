@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_sbancarios</database>
+  <name>sp_ins_ope_divisas</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_oficina" dataType="smallint" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_modulo" dataType="char" direction="in" />
+    <parameter name="@i_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_tipo_op" dataType="char" direction="in" />
+    <parameter name="@i_tipo_ejecucion" dataType="char" direction="in" />
+    <parameter name="@i_opcion" dataType="char" direction="in" />
+    <parameter name="@i_sec_preautori" dataType="int" direction="in" />
+    <parameter name="@o_cotizacion" dataType="float" direction="out" />
+    <parameter name="@o_monto" dataType="money" direction="out" />
+    <parameter name="@o_factor" dataType="float" direction="out" />
+    <parameter name="@o_moneda" dataType="tinyint" direction="out" />
+    <parameter name="@o_obs" dataType="varchar" direction="out" />
+    <parameter name="@o_fecha_t_mas_n" dataType="varchar" direction="out" />
+    <parameter name="@o_monto_otr_c" dataType="float" direction="out" />
+    <parameter name="@o_des_moneda" dataType="varchar" direction="out" />
+    <parameter name="@t_orig_db_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_sp_name" dataType="varchar" direction="in" />
+    <parameter name="@t_orig_trn" dataType="int" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

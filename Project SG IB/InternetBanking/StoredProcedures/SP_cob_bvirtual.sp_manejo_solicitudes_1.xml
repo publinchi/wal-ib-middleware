@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_manejo_solicitudes</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_ofi" dataType="tinyint" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="char" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_codigo" dataType="varchar" direction="in" />
+    <parameter name="@i_ente_mis" dataType="int" direction="in" />
+    <parameter name="@i_tipo_solicitud" dataType="int" direction="in" />
+    <parameter name="@i_moneda" dataType="tinyint" direction="in" />
+    <parameter name="@i_nombre" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_origen" dataType="varchar" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@i_mensaje" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_destino" dataType="varchar" direction="in" />
+    <parameter name="@i_telefono" dataType="varchar" direction="in" />
+    <parameter name="@i_plazo" dataType="smallint" direction="in" />
+    <parameter name="@i_numero" dataType="int" direction="in" />
+    <parameter name="@i_imoneda" dataType="char" direction="in" />
+    <parameter name="@i_masivo" dataType="char" direction="in" />
+    <parameter name="@i_ictadeb" dataType="char" direction="in" />
+    <parameter name="@i_ictacre" dataType="char" direction="in" />
+    <parameter name="@i_iplazo" dataType="char" direction="in" />
+    <parameter name="@i_itstkey" dataType="char" direction="in" />
+    <parameter name="@i_estado" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre_1" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_fordate" dataType="tinyint" direction="in" />
+    <parameter name="@i_departamento" dataType="int" direction="in" />
+    <parameter name="@i_tipo_gestion" dataType="int" direction="in" />
+    <parameter name="@i_solicitud" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_extra" dataType="char" direction="in" />
+    <parameter name="@i_informativa" dataType="char" direction="in" />
+    <parameter name="@i_multiple" dataType="char" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Codigo" />
+        <column name="Nombre" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+      </columns>
+      <queryText>SELECT  "Codigo" = cc_campana,"Nombre" = cc_nombre,ISNULL (cm_texto_bv_1, cc_descripcion_1),ISNULL (cm_texto_bv_2, cc_descripcion_2),ISNULL (cm_texto_bv_3, cc_descripcion_3),ISNULL (cm_texto_bv_4, cc_descripcion_4) </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+      </columns>
+      <queryText>SELECT w_imoneda, w_ictadeb, w_ictacre, w_iplazo, w_itstkey, w_departamento, w_tipo_gestion, w_tipo_solicitud, w_ced_ruc, w_en_nombre</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+      </columns>
+      <queryText>SELECT  cuenta,monto </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+      </columns>
+      <queryText>SELECT  cuenta,nombre,moneda </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_identity</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT ctx.convertString(w_hora ,103) + " " + ctx.convertString(w_hora ,108)</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_identity</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT ctx.convertString(w_hora ,103) + " " + ctx.convertString(w_hora ,108)</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+      </columns>
+      <queryText>SELECT  sc_fecha_ing,(SELECT  valor FROM cobis..cl_catalogo   WHERE tabla = ? AND codigo = a.sc_tipo_solicitud     ),sc_gestion,sc_campana </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="CASE WHEN a.sc_campana &gt; 0 THEN (SELECT  cc_nombre FROM cob_remesas..re_campanas_cab   WHERE cc_campana " />
+        <column name="{3}" />
+        <column name="{4}" />
+      </columns>
+      <queryText>SELECT  sc_fecha_ing,CASE WHEN a.sc_campana &gt; 0 THEN (SELECT  cc_nombre FROM cob_remesas..re_campanas_cab   WHERE cc_campana = a.sc_campana     ) ELSE (SELECT  valor FROM cobis..cl_catalogo   WHERE tabla = ? AND codigo = a.sc_tipo_solicitud     ) END,sc_gestion,sc_campana </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="CASE WHEN a.sc_campana &gt; 0 THEN (SELECT  cc_nombre FROM cob_remesas..re_campanas_cab   WHERE cc_campana " />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+      </columns>
+      <queryText>SELECT  CONVERT (VARCHAR (10),sc_fecha_ing ,103) + " " + CONVERT (VARCHAR (10),sc_fecha_ing ,108),CASE WHEN a.sc_campana &gt; 0 THEN (SELECT  cc_nombre FROM cob_remesas..re_campanas_cab   WHERE cc_campana = a.sc_campana     ) ELSE (SELECT  valor FROM cobis..cl_catalogo   WHERE tabla = ? AND codigo = a.sc_tipo_solicitud     ) END,sc_nombre,sc_codigo,sc_monto,sc_mensaje,sc_plazo,sc_telefono,sc_cuenta_destino,(SELECT  valor FROM cobis..cl_catalogo   WHERE tabla = ? AND codigo = CONVERT (VARCHAR (10),a.sc_moneda )     ),sc_gestion,sc_tipo_extra </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+      </columns>
+      <queryText>SELECT w_extra, w_archivo, w_tipo_archivo, w_tipo_extra</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+      </columns>
+      <queryText>SELECT ctx.ISNULL(w_imoneda, "N"), ctx.ISNULL(w_ictadeb, "N"), ctx.ISNULL(w_ictacre, "N"), ctx.ISNULL(w_iplazo, "N"), ctx.ISNULL(w_itstkey, "S"), ctx.ISNULL(w_tipo_archivo, " "), ctx.ISNULL(w_tipo_extra, " "), ctx.ISNULL(w_departamento, 0), ctx.ISNULL(w_tipo_gestion, 0), w_tipo_solicitud</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+      </columns>
+      <queryText>SELECT  ci_moneda,ci_ctadeb,ci_ctacre,ci_plazo,ci_tstkey,"",ISNULL (ci_departamento, - 1),ISNULL (ci_tipo_gestion, - 1),ISNULL (ci_informativa, "N"),ISNULL (ci_multiple, "N") </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+      </columns>
+      <queryText>SELECT  ci_moneda,ci_ctadeb,ci_ctacre,ci_plazo,ci_tstkey,(SELECT  cc_nombre </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT  cc_campana,SUBSTRING (cc_nombre, 1, 255),cc_descripcion_1,CONVERT (VARCHAR (10),cc_fecha_ini ,?),CONVERT (VARCHAR (10),cc_fecha_fin ,?),cc_estado,cc_tipo_campana </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+      </columns>
+      <queryText>SELECT  cc_campana,cc_nombre,cc_descripcion_1,CONVERT (VARCHAR (10),cc_fecha_ini ,?),CONVERT (VARCHAR (10),cc_fecha_fin ,?),cc_estado,cc_tipo_campana </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+        <column name="{4}" />
+        <column name="{5}" />
+        <column name="{6}" />
+        <column name="{7}" />
+        <column name="{8}" />
+        <column name="{9}" />
+        <column name="{10}" />
+        <column name="{11}" />
+        <column name="{12}" />
+        <column name="{13}" />
+        <column name="{14}" />
+        <column name="{15}" />
+        <column name="{16}" />
+        <column name="{17}" />
+        <column name="{18}" />
+        <column name="{19}" />
+        <column name="{20}" />
+        <column name="{21}" />
+        <column name="{22}" />
+        <column name="{23}" />
+        <column name="{24}" />
+        <column name="{25}" />
+        <column name="{26}" />
+        <column name="{27}" />
+      </columns>
+      <queryText>SELECT  cc_campana,SUBSTRING (cc_nombre, 1, 255),cc_descripcion_1,cc_descripcion_2,cc_descripcion_3,cc_descripcion_4,CONVERT (VARCHAR (10),cc_fecha_ini ,?),CONVERT (VARCHAR (10),cc_fecha_fin ,?),cc_estado,cc_extrafinan,cc_archivo,cc_internet,cc_term_admin,cc_term_finan,cc_cartera,cc_contabilidad,cc_cams,cc_dpf,cc_mip,cc_mis,cc_edocta,cm_texto_1,cm_texto_2,cm_texto_3,cm_texto_4,cc_tipo_campana,cc_tipo_archivo </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="{2}" />
+        <column name="{3}" />
+      </columns>
+      <queryText>SELECT  cp_plazo,cp_tipo_campana,cp_campana </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="DESCRIPCION" />
+      </columns>
+      <queryText>SELECT  "CODIGO" = codigo,"DESCRIPCION" = valor </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_texto_1</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_texto_2</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_texto_3</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_texto_4</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT w_nombre</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="{1}" />
+      </columns>
+      <queryText>SELECT  valor </queryText>
+    </query>
+  </queries>
+</procedure>

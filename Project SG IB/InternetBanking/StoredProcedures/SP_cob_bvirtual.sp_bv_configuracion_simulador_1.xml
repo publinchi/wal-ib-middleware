@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_configuracion_simulador</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@i_money" dataType="smallint" direction="in" />
+    <parameter name="@i_cd_nemonic" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="MinDPF" />
+        <column name="MaxDayDPF" />
+        <column name="MinDayDPF" />
+        <column name="MinLoan" />
+        <column name="MaxLoan" />
+        <column name="MaxTermLoan" />
+        <column name="MaxTermSaving" />
+        <column name="MinMonPF" />
+        <column name="MinTermSaving" />
+      </columns>
+      <queryText>SELECT "MinDPF"=w_min_dpf,"MaxDayDPF"=w_max_day_dpf,"MinDayDPF"=w_min_day_dpf,"MinLoan"=w_min_loan,"MaxLoan"=w_max_loan,"MaxTermLoan"=w_max_term_loan,"MaxTermSaving"=w_max_term_saving</queryText>
+    </query>
+  </queries>
+</procedure>

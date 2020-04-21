@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_envia_email_notificador</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_servicio" dataType="int" direction="in" />
+    <parameter name="@i_mensaje" dataType="varchar" direction="in" />
+    <parameter name="@i_email_envio" dataType="varchar" direction="in" />
+    <parameter name="@i_email_recepcion" dataType="varchar" direction="in" />
+    <parameter name="@i_subject" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

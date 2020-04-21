@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" productVersion="4.6.1.0">
+  <name>Country</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.admin.dto</javaPackage>
+  <ns>http://dto.admin.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="code" propertyNet="Code" propertyJava="code" setterJavaMethod="setCode" getterJavaMethod="getCode" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="name" propertyNet="Name" propertyJava="name" setterJavaMethod="setName" getterJavaMethod="getName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="nationality" propertyNet="Nationality" propertyJava="nationality" setterJavaMethod="setNationality" getterJavaMethod="getNationality" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="continentCode" propertyNet="ContinentCode" propertyJava="continentCode" setterJavaMethod="setContinentCode" getterJavaMethod="getContinentCode" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="continent" propertyNet="Continent" propertyJava="continent" setterJavaMethod="setContinent" getterJavaMethod="getContinent" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

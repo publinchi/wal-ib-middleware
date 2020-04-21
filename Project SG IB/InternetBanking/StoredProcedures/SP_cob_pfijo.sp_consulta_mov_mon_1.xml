@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_pfijo</database>
+  <name>sp_consulta_mov_mon</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="int" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@t_debug" dataType="char" direction="in" />
+    <parameter name="@t_file" dataType="varchar" direction="in" />
+    <parameter name="@t_from" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="smallint" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_num_banco" dataType="varchar" direction="in" />
+    <parameter name="@i_secuencia" dataType="int" direction="in" />
+    <parameter name="@i_formato_fecha" dataType="int" direction="in" />
+    <parameter name="@i_empresa" dataType="tinyint" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_mon" dataType="smallint" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="{1}" />
+        <column name="TRANSACCION" />
+        <column name="FORMA DE PAGO" />
+        <column name="MONEDA" />
+        <column name="MONTO MONEDA EXTERNA" />
+        <column name="MONTO" />
+        <column name="ESTADO" />
+        <column name="SECUENCIA" />
+        <column name="CUENTA" />
+        <column name="tipo_cliente" />
+        <column name="fecha_valor" />
+        <column name="#TRANSACCION" />
+        <column name="SUBSECUENCIA" />
+      </columns>
+      <queryText>SELECT DISTINCT CONVERT (VARCHAR (10),mm_fecha_crea ,?),"TRANSACCION" = CASE mm_tran WHEN 14904 THEN CASE mm_tipo WHEN "C" THEN "DISMINUCION/RENOVACION" WHEN "B" THEN "INCREMENTO/RENOVACION"  END WHEN 14952 THEN CASE mm_tipo WHEN "C" THEN CASE SUBSTRING (mm_producto, 2, 4) WHEN "FRA" THEN "CANCELACION POR FRACCIONAMIENTO" WHEN "FUS" THEN "CANCELACION POR CONSOLIDACION"  END WHEN "B" THEN CASE SUBSTRING (mm_producto, 2, 4) WHEN "FRA" THEN "APERTURA POR FRACCIONAMIENTO" WHEN "FUS" THEN "APERTURA POR CONSOLIDACION"  END  END WHEN 14901 THEN CASE mm_tipo WHEN "C" THEN "APERTURA DE DEPOSITO - VUELTO" ELSE SUBSTRING (tn_descripcion, 1, 30) END ELSE SUBSTRING (tn_descripcion, 1, 30) END,"FORMA DE PAGO" = SUBSTRING (fp_descripcion, 1, 30),"MONEDA" = mo_descripcion,"MONTO MONEDA EXTERNA" = ISNULL (mm_valor_ext, 0) + ISNULL (mm_impuesto_capital_me, 0),"MONTO" = ISNULL (mm_valor, 0) + ISNULL (mm_impuesto, 0),"ESTADO" = (CASE mm_estado WHEN "A" THEN (SELECT  B.valor </queryText>
+    </query>
+  </queries>
+</procedure>
