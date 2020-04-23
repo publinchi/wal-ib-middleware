@@ -26,7 +26,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -49,7 +49,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -70,7 +70,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -88,7 +88,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -103,7 +103,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -121,7 +121,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -158,7 +158,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -178,7 +178,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -207,8 +207,8 @@
             <parameter name="@i_primera_vez" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inLoginImage" DTOPropertyName="firstTime" />
             <parameter name="@i_pregunta1" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSurveyQuestion" DTOPropertyName="id" />
             <parameter name="@i_pregunta2" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSurveyAnswer" DTOPropertyName="questionId" />
-            <parameter name="@i_respuesta1" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSurveyAnswer" DTOPropertyName="id" />
-            <parameter name="@i_respuesta2" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSurveyAnswer" DTOPropertyName="answerid" />
+            <parameter name="@i_respuesta1" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyAnswer" DTOPropertyName="id" />
+            <parameter name="@i_respuesta2" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyAnswer" DTOPropertyName="answerid" />
             <parameter name="@i_preg_personal" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyQuestion" DTOPropertyName="description" />
             <parameter name="@i_resp_personal" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyAnswer" DTOPropertyName="description" />
             <parameter name="@i_tipo" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inDeliveryMethod" DTOPropertyName="typeId" />
@@ -217,7 +217,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -266,7 +266,7 @@
           </resultMappings>
           <MappingProperties>
             <MappingProperty key="BLIQueryPropertyName1" value="loginImage" />
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -344,7 +344,7 @@
           </resultMappings>
           <MappingProperties>
             <MappingProperty key="BLIQueryPropertyName1" value="Device" />
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -387,7 +387,7 @@
           </resultMappings>
           <MappingProperties>
             <MappingProperty key="BLIQueryPropertyName1" value="loginImage" />
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -431,7 +431,7 @@
           </resultMappings>
           <MappingProperties>
             <MappingProperty key="BLIQueryPropertyName1" value="loginImage" />
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -450,7 +450,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
             <MappingProperty key="CISservice" value="false" />
           </MappingProperties>
         </SRVMapping>
@@ -470,7 +470,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -508,7 +508,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
             <MappingProperty key="CISservice" value="false" />
           </MappingProperties>
         </SRVMapping>
@@ -573,7 +573,7 @@
             <MappingProperty key="singleResult1" value="true" />
             <MappingProperty key="singleResult2" value="true" />
             <MappingProperty key="singleResult3" value="true" />
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>
@@ -621,7 +621,7 @@
             <MappingProperty key="singleResult1" value="false" />
             <MappingProperty key="singleResult2" value="false" />
             <MappingProperty key="singleResult3" value="false" />
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
             <MappingProperty key="CISservice" value="false" />
           </MappingProperties>
         </SRVMapping>

@@ -9,8 +9,8 @@
   </TemplateProperties>
   <properties>
     <property name="questionId" propertyNet="QuestionId" propertyJava="questionId" setterJavaMethod="setQuestionId" getterJavaMethod="getQuestionId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
-    <property name="answerid" propertyNet="Answerid" propertyJava="answerid" setterJavaMethod="setAnswerid" getterJavaMethod="getAnswerid" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="answerid" propertyNet="Answerid" propertyJava="answerid" setterJavaMethod="setAnswerid" getterJavaMethod="getAnswerid" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
     <property name="description" propertyNet="Description" propertyJava="description" setterJavaMethod="setDescription" getterJavaMethod="getDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
-    <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
   </properties>
 </DtoObject>
