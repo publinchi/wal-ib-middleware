@@ -40,7 +40,7 @@
             </result>
           </resultMappings>
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
           </MappingProperties>
         </SRVMapping>
       </service>

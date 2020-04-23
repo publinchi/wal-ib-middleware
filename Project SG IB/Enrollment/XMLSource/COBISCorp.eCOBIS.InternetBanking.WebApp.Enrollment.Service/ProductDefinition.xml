@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<product path="C:/CDDEV/R5GIT/cobis-ib-middleware/Project SG IB/Enrollment/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" productNS="http://service.enrollment.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" documentationLanguage="Español" year="2017" version="4.6.1.0" type="SERVICE" GUID="C3046253-291B-4EB0-B55E-C134D11053AF">
+<product path="E:/git/TRF/trf-ib-middleware/Project SG IB/Enrollment/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" productNS="http://service.enrollment.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" documentationLanguage="Español" year="2020" version="4.6.1.0" type="SERVICE" GUID="D93CFF48-E127-4EEC-8BA9-F63C4E3E3718">
   <namespaces>
     <namespace type="class" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.service" ns="http://service.enrollment.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Enrollment" />
   </namespaces>
@@ -47,7 +47,7 @@
     <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="ServiceCTS302" />
   </packagers>
   <references>
-    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" type="DTO" version="4.6.1.0" GUID="68416E4B-5B82-42F7-B1A2-F4AD0E308EF9">
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" type="DTO" version="4.6.1.0" GUID="0162ACF1-1465-4451-8861-61E6CBDD8EA6">
       <templates>
         <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="true" packageType="Jar">
           <templateFiles>

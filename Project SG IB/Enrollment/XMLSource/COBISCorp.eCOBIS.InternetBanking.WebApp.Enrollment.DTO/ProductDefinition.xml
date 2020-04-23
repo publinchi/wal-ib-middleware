@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<product path="C:/CDDEV/R5GIT/cobis-ib-middleware/Project SG IB/Enrollment/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" productNS="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" documentationLanguage="Español" year="2017" version="4.6.1.0" type="DTO" GUID="598A44D6-2331-4CD2-977F-C315EB68697A">
+<product path="E:/git/TRF/trf-ib-middleware/Project SG IB/Enrollment/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" productNS="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="0FFDB242-2B29-4A89-B2CC-7AAA1A53F3A6">
   <namespaces>
     <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO" package="cobiscorp.ecobis.internetbanking.webapp.enrollment.dto" ns="http://dto.enrollment.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Enrollment\DTO" />
   </namespaces>
@@ -23,7 +23,7 @@
     <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="DTOJavaPOJO" />
   </packagers>
   <externalReferences>
-    <externalReference name="CTSServiceFramework-All-1.0.5" package="com.cobiscorp.cobis.cts.sdf.dto" path="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" type="JAR" GUID="63D83607-A61F-44A6-AF47-DBFBB8A582B8" />
+    <externalReference name="CTSServiceFramework-All-1.0.5" package="com.cobiscorp.cobis.cts.sdf.dto" path="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" type="JAR" GUID="2811204C-9474-4D90-9318-53BAC7ACFF9C" />
   </externalReferences>
   <productProperties>
     <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />

@@ -40,7 +40,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
             <MappingProperty key="CISservice" value="true" />
           </MappingProperties>
         </SRVMapping>
@@ -75,7 +75,7 @@
           </parameterMappings>
           <resultMappings />
           <MappingProperties>
-            <MappingProperty key="dbms" value="SQLCTS" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
             <MappingProperty key="CISservice" value="true" />
           </MappingProperties>
         </SRVMapping>
