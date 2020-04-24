@@ -164,6 +164,7 @@ public class AhAccountBalanceQueryOrchestationCore extends QueryBaseTemplate {
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("DeliveryAddress", ICTSTypes.SQLVARCHAR, 60));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("CheckBalance", ICTSTypes.SQLMONEY, 21));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("EmbargoedBalance", ICTSTypes.SQLMONEY, 21));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("oficial", ICTSTypes.SQLVARCHAR, 60));
 
 			IResultSetRow row = new ResultSetRow();
 
@@ -188,6 +189,7 @@ public class AhAccountBalanceQueryOrchestationCore extends QueryBaseTemplate {
 			row.addRowData(15, new ResultSetRowColumnData(false, balance.getDeliveryAddress().toString()));
 			row.addRowData(16, new ResultSetRowColumnData(false, balance.getCheckBalance().toString()));
 			row.addRowData(17, new ResultSetRowColumnData(false, balance.getEmbargoedBalance().toString()));
+			row.addRowData(18, new ResultSetRowColumnData(false, balance.getOficial().toString()));
 			data.addRow(row);
 
 			// Agregar Data - Consolidado General
