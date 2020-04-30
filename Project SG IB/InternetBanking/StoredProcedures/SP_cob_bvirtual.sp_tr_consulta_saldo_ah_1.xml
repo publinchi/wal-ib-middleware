@@ -86,6 +86,7 @@
         <column name="direccion" />
         <column name="saldo cheques internacionales" />
         <column name="monto embargado" />
+        <column name="oficial" />
       </columns>
       <queryText></queryText>
     </query>

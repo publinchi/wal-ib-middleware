@@ -175,7 +175,11 @@ public class AccountsQuerys extends SPJavaOrchestrationBase implements ICoreServ
 				if (!Utils.isNullOrEmpty(rows[16].getValue()))
 					if (rows[16].getValue() != null)
 						balanceProduct.setEmbargoedBalance(new BigDecimal(rows[16].getValue().toString()));
+				if (!Utils.isNullOrEmpty(rows[17].getValue()))
+					if (rows[17].getValue() != null)
+						balanceProduct.setOficial(rows[17].getValue().toString());
 
+				
 				balanceProduct.setClient(client);
 				balanceProduct.setProduct(product);
 			}
