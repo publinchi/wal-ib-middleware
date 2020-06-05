@@ -181,18 +181,18 @@ public class GetBatchProductOpening extends SPJavaOrchestrationBase implements I
 				}
 				if (aProcedureResponse.readValueParam("@o_producto") != null) {
 					aBatchProductOpeningResp
-							.setMaxProduct(Integer.parseInt(aProcedureResponse.readValueParam("@o_moneda")));
+							.setMaxProduct(Integer.parseInt(aProcedureResponse.readValueParam("@o_producto")));
 				}
 				if (aProcedureResponse.readValueParam("@o_moneda") != null) {
 					aBatchProductOpeningResp
-							.setMaxCurrency(Integer.parseInt(aProcedureResponse.readValueParam("@o_cuenta")));
+							.setMaxCurrency(Integer.parseInt(aProcedureResponse.readValueParam("@o_moneda")));
 				}
 				if (aProcedureResponse.readValueParam("@o_cuenta") != null) {
-					aBatchProductOpeningResp.setMaxAccount(aProcedureResponse.readValueParam("@o_secuencial"));
+					aBatchProductOpeningResp.setMaxAccount(aProcedureResponse.readValueParam("@o_cuenta"));
 				}
 				if (aProcedureResponse.readValueParam("@o_secuencial") != null) {
 					aBatchProductOpeningResp
-							.setSecuential(Integer.parseInt(aProcedureResponse.readValueParam("@o_producto")));
+							.setSecuential(Integer.parseInt(aProcedureResponse.readValueParam("@o_secuencial")));
 				}
 				aBatchProductOpeningResp.setBatchProductOpeningList(aBatchProductOpeningList);
 			}
