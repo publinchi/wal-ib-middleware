@@ -415,7 +415,7 @@ public class GenerateDataProductOpeningOrchestrationCore extends QueryBaseTempla
 
 		componentLocator = ComponentLocator.getInstance(this);
 		dbServiceFactory = (IDBServiceFactory) componentLocator.find(IDBServiceFactory.class);
-		dbServiceProvider = dbServiceFactory.getDBServiceProvider("SQLCTS", "DataSource");
+		dbServiceProvider = dbServiceFactory.getDBServiceProvider("SQLCANALES", "DataSource");
 		Statement stmt = null;
 		try {
 			connection = dbServiceProvider.getDBConnection();
