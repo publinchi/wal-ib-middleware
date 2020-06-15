@@ -12,7 +12,7 @@
     <parameter name="@i_operacion" dataType="varchar" direction="in" />
     <parameter name="@i_login" dataType="varchar" direction="in" />
     <parameter name="@i_pregunta" dataType="int" direction="in" />
-    <parameter name="@i_respuesta_aleatoria" dataType="int" direction="in" />
+    <parameter name="@i_respuesta_aleatoria" dataType="varchar" direction="in" />
     <parameter name="@i_respuesta_personal" dataType="varchar" direction="in" />
   </parameters>
   <queries />
