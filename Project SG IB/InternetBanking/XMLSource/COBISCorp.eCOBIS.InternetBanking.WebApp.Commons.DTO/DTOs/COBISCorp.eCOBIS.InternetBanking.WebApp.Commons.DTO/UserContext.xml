@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" productVersion="4.6.1.0">
+  <name>UserContext</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.commons.dto</javaPackage>
+  <ns>http://dto.commons.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="eKeyId" propertyNet="EKeyId" propertyJava="eKeyId" setterJavaMethod="setEKeyId" getterJavaMethod="getEKeyId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="productMasking" propertyNet="ProductMasking" propertyJava="productMasking" setterJavaMethod="setProductMasking" getterJavaMethod="getProductMasking" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="balanceEnquiryAllowed" propertyNet="BalanceEnquiryAllowed" propertyJava="balanceEnquiryAllowed" setterJavaMethod="setBalanceEnquiryAllowed" getterJavaMethod="getBalanceEnquiryAllowed" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="userId" propertyNet="UserId" propertyJava="userId" setterJavaMethod="setUserId" getterJavaMethod="getUserId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

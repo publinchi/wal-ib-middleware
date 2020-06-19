@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>LoansInvoiceDetailCollection</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="loansInvoiceMaster" propertyNet="LoansInvoiceMaster" propertyJava="loansInvoiceMaster" setterJavaMethod="setLoansInvoiceMaster" getterJavaMethod="getLoansInvoiceMaster" xsdType="Array" netType="LoansInvoiceMaster[]" javaType="LoansInvoiceMaster[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="LoansInvoiceMaster" netElementType="LoansInvoiceMaster" javaElementType="LoansInvoiceMaster" />
+    <property name="loansInvoice" propertyNet="LoansInvoice" propertyJava="loansInvoice" setterJavaMethod="setLoansInvoice" getterJavaMethod="getLoansInvoice" xsdType="Array" netType="LoansInvoice[]" javaType="LoansInvoice[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="LoansInvoice" netElementType="LoansInvoice" javaElementType="LoansInvoice" />
+    <property name="loansInvoiceDetail" propertyNet="LoansInvoiceDetail" propertyJava="loansInvoiceDetail" setterJavaMethod="setLoansInvoiceDetail" getterJavaMethod="getLoansInvoiceDetail" xsdType="Array" netType="LoansInvoiceDetail[]" javaType="LoansInvoiceDetail[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="LoansInvoiceDetail" netElementType="LoansInvoiceDetail" javaElementType="LoansInvoiceDetail" />
+  </properties>
+</DtoObject>

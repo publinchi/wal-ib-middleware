@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>AccountRequest</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="idOperative" propertyNet="IdOperative" propertyJava="idOperative" setterJavaMethod="setIdOperative" getterJavaMethod="getIdOperative" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="codeModule" propertyNet="CodeModule" propertyJava="codeModule" setterJavaMethod="setCodeModule" getterJavaMethod="getCodeModule" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="codeCriteria" propertyNet="CodeCriteria" propertyJava="codeCriteria" setterJavaMethod="setCodeCriteria" getterJavaMethod="getCodeCriteria" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="code0" propertyNet="Code0" propertyJava="code0" setterJavaMethod="setCode0" getterJavaMethod="getCode0" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code1" propertyNet="Code1" propertyJava="code1" setterJavaMethod="setCode1" getterJavaMethod="getCode1" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code2" propertyNet="Code2" propertyJava="code2" setterJavaMethod="setCode2" getterJavaMethod="getCode2" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code3" propertyNet="Code3" propertyJava="code3" setterJavaMethod="setCode3" getterJavaMethod="getCode3" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code4" propertyNet="Code4" propertyJava="code4" setterJavaMethod="setCode4" getterJavaMethod="getCode4" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code5" propertyNet="Code5" propertyJava="code5" setterJavaMethod="setCode5" getterJavaMethod="getCode5" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code6" propertyNet="Code6" propertyJava="code6" setterJavaMethod="setCode6" getterJavaMethod="getCode6" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code7" propertyNet="Code7" propertyJava="code7" setterJavaMethod="setCode7" getterJavaMethod="getCode7" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code8" propertyNet="Code8" propertyJava="code8" setterJavaMethod="setCode8" getterJavaMethod="getCode8" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="code9" propertyNet="Code9" propertyJava="code9" setterJavaMethod="setCode9" getterJavaMethod="getCode9" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="login" propertyNet="Login" propertyJava="login" setterJavaMethod="setLogin" getterJavaMethod="getLogin" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

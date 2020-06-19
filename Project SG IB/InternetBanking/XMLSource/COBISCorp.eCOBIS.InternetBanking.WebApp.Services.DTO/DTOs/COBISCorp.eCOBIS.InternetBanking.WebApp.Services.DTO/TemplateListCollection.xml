@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" productVersion="4.6.1.0">
+  <name>TemplateListCollection</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.services.dto</javaPackage>
+  <ns>http://dto.services.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="templateList" propertyNet="TemplateList" propertyJava="templateList" setterJavaMethod="setTemplateList" getterJavaMethod="getTemplateList" xsdType="Array" netType="TemplateList[]" javaType="TemplateList[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="TemplateList" netElementType="TemplateList" javaElementType="TemplateList" />
+  </properties>
+</DtoObject>

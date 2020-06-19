@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" productVersion="4.6.1.0">
+  <name>TokenValidation</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.hsbc.dto</javaPackage>
+  <ns>http://dto.hsbc.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="errorValidation" propertyNet="ErrorValidation" propertyJava="errorValidation" setterJavaMethod="setErrorValidation" getterJavaMethod="getErrorValidation" xsdType="int?" netType="int?" javaType="Integer" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="mesaggeValidation" propertyNet="MesaggeValidation" propertyJava="mesaggeValidation" setterJavaMethod="setMesaggeValidation" getterJavaMethod="getMesaggeValidation" xsdType="char?" netType="char?" javaType="Character" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="valueToken" propertyNet="ValueToken" propertyJava="valueToken" setterJavaMethod="setValueToken" getterJavaMethod="getValueToken" xsdType="char?" netType="char?" javaType="Character" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<product path="D:/Trafalgar/Middleware/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" productNS="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="A1FB6CA1-6D1C-4C3C-AA6A-362C58FC11CB">
+  <namespaces>
+    <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Commons\DTO" />
+  </namespaces>
+  <templates>
+    <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="true" packageType="Jar">
+      <templateFiles>
+        <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+      </templateFiles>
+    </template>
+  </templates>
+  <DTOs>
+    <DTO name="Context" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CoreBanking" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="InternetBankingBase" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Periodicity" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="PeriodicityCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ReceiptInfo" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ReceiptInfoCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Receipts" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ReceiptsCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="RequestTemplate" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="SearchReceipts" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="SecurityContext" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="SimulationSetting" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="SimulationSettingsCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionBase" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionContextCIB" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionContextCIBCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionEnvironment" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionRequest" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionResponse" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="TransactionResponseCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="UserContext" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" package="cobiscorp.ecobis.internetbanking.webapp.commons.dto" ns="http://dto.commons.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+  </DTOs>
+  <classes />
+  <packagers>
+    <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="DTOJavaPOJO" />
+  </packagers>
+  <references>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" type="DTO" version="4.6.1.0" GUID="69817B7A-0C8B-41B2-9702-F15AD15E1AD0">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Products\DTO" />
+      </namespaces>
+    </reference>
+  </references>
+  <externalReferences>
+    <externalReference name="CTSServiceFramework-All-1.0.5" package="com.cobiscorp.cobis.cts.sdf.dto" path="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" type="JAR" GUID="69A32A60-4DCE-4215-8CA5-E30F1D666CE3" />
+  </externalReferences>
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" />
+    <property name="MavenVersion" value="4.6.1.0" />
+  </productProperties>
+</product>
