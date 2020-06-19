@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" productVersion="4.6.1.0">
+  <name>InfoLoginSession</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.hsbc.dto</javaPackage>
+  <ns>http://dto.hsbc.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="channelID" propertyNet="ChannelID" propertyJava="channelID" setterJavaMethod="setChannelID" getterJavaMethod="getChannelID" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="loginChanged" propertyNet="LoginChanged" propertyJava="loginChanged" setterJavaMethod="setLoginChanged" getterJavaMethod="isLoginChanged" xsdType="boolean" netType="bool" javaType="boolean" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="loginOp1" propertyNet="LoginOp1" propertyJava="loginOp1" setterJavaMethod="setLoginOp1" getterJavaMethod="getLoginOp1" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="loginOp2" propertyNet="LoginOp2" propertyJava="loginOp2" setterJavaMethod="setLoginOp2" getterJavaMethod="getLoginOp2" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="loginOp3" propertyNet="LoginOp3" propertyJava="loginOp3" setterJavaMethod="setLoginOp3" getterJavaMethod="getLoginOp3" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="loginOp4" propertyNet="LoginOp4" propertyJava="loginOp4" setterJavaMethod="setLoginOp4" getterJavaMethod="getLoginOp4" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="loginOp5" propertyNet="LoginOp5" propertyJava="loginOp5" setterJavaMethod="setLoginOp5" getterJavaMethod="getLoginOp5" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="newName" propertyNet="NewName" propertyJava="newName" setterJavaMethod="setNewName" getterJavaMethod="getNewName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="operation" propertyNet="Operation" propertyJava="operation" setterJavaMethod="setOperation" getterJavaMethod="getOperation" xsdType="char" netType="char" javaType="char" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="password" propertyNet="Password" propertyJava="password" setterJavaMethod="setPassword" getterJavaMethod="getPassword" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="userName" propertyNet="UserName" propertyJava="userName" setterJavaMethod="setUserName" getterJavaMethod="getUserName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

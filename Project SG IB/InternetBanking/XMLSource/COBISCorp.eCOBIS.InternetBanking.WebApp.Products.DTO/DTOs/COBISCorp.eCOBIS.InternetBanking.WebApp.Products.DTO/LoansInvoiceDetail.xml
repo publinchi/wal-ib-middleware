@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>LoansInvoiceDetail</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="capital" propertyNet="Capital" propertyJava="capital" setterJavaMethod="setCapital" getterJavaMethod="getCapital" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="dividend" propertyNet="Dividend" propertyJava="dividend" setterJavaMethod="setDividend" getterJavaMethod="getDividend" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="maturityDate" propertyNet="MaturityDate" propertyJava="maturityDate" setterJavaMethod="setMaturityDate" getterJavaMethod="getMaturityDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="feeInterest" propertyNet="FeeInterest" propertyJava="feeInterest" setterJavaMethod="setFeeInterest" getterJavaMethod="getFeeInterest" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="payingInterest" propertyNet="PayingInterest" propertyJava="payingInterest" setterJavaMethod="setPayingInterest" getterJavaMethod="getPayingInterest" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="arrears" propertyNet="Arrears" propertyJava="arrears" setterJavaMethod="setArrears" getterJavaMethod="getArrears" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="otherCharges" propertyNet="OtherCharges" propertyJava="otherCharges" setterJavaMethod="setOtherCharges" getterJavaMethod="getOtherCharges" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="reference" propertyNet="Reference" propertyJava="reference" setterJavaMethod="setReference" getterJavaMethod="getReference" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="remainder" propertyNet="Remainder" propertyJava="remainder" setterJavaMethod="setRemainder" getterJavaMethod="getRemainder" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="ammount" propertyNet="Ammount" propertyJava="ammount" setterJavaMethod="setAmmount" getterJavaMethod="getAmmount" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

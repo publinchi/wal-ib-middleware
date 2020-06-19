@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>ACHFeeResponse</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+    <TemplateProperty key="WithoutWCFContract" value="false" />
+  </TemplateProperties>
+  <properties>
+    <property name="feeId" propertyNet="FeeId" propertyJava="feeId" setterJavaMethod="setFeeId" getterJavaMethod="getFeeId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="feeExceptionId" propertyNet="FeeExceptionId" propertyJava="feeExceptionId" setterJavaMethod="setFeeExceptionId" getterJavaMethod="getFeeExceptionId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="feeDescription" propertyNet="FeeDescription" propertyJava="feeDescription" setterJavaMethod="setFeeDescription" getterJavaMethod="getFeeDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="fee" propertyNet="Fee" propertyJava="fee" setterJavaMethod="setFee" getterJavaMethod="getFee" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="feeCurrencyCode" propertyNet="FeeCurrencyCode" propertyJava="feeCurrencyCode" setterJavaMethod="setFeeCurrencyCode" getterJavaMethod="getFeeCurrencyCode" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="transactionNumber" propertyNet="TransactionNumber" propertyJava="transactionNumber" setterJavaMethod="setTransactionNumber" getterJavaMethod="getTransactionNumber" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="achFeeResults" propertyNet="AchFeeResults" propertyJava="achFeeResults" setterJavaMethod="setAchFeeResults" getterJavaMethod="getAchFeeResults" xsdType="Array" netType="ACHFeeResult[]" javaType="ACHFeeResult[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="ACHFeeResult" netElementType="ACHFeeResult" javaElementType="ACHFeeResult" />
+  </properties>
+</DtoObject>

@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<serviceClass name="Publicity" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.utils.service.service" ns="http://service.service.utils.webapp.internetbanking.ecobis.cobiscorp" module="InternetBanking.WebApp.Utils.Service" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.Service" productVersion="4.6.1.0">
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="$(/product/@name)$" />
+    <property name="MavenVersion" value="$(/product/@version)$" />
+  </productProperties>
+  <partialClass name="Publicity">
+    <services>
+      <service id="InternetBanking.WebApp.Utils.Publicity.GetFinancialIndicators" netName="GetFinancialIndicators" javaName="getFinancialIndicators" mappingType="STORED_PROCEDURE" mapId="feafb280b99f47d2e75d6008f73c15a3">
+        <SRVMapping name="cob_bvirtual..sp_cons_preferen_arch_bv" trnCode="18536">
+          <DTOs>
+            <DTO direction="return" name="Publicity" alias="returnPublicity" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="preferenceId" propertyNet="PreferenceId" propertyJava="preferenceId" setterJavaMethod="setPreferenceId" getterJavaMethod="getPreferenceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="name" propertyNet="Name" propertyJava="name" setterJavaMethod="setName" getterJavaMethod="getName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="path" propertyNet="Path" propertyJava="path" setterJavaMethod="setPath" getterJavaMethod="getPath" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="type" propertyNet="Type" propertyJava="type" setterJavaMethod="setType" getterJavaMethod="getType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="status" propertyNet="Status" propertyJava="status" setterJavaMethod="setStatus" getterJavaMethod="getStatus" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="typeId" propertyNet="TypeId" propertyJava="typeId" setterJavaMethod="setTypeId" getterJavaMethod="getTypeId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="image" propertyNet="Image" propertyJava="image" setterJavaMethod="setImage" getterJavaMethod="getImage" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="operacion" propertyNet="Operacion" propertyJava="operacion" setterJavaMethod="setOperacion" getterJavaMethod="getOperacion" xsdType="char" netType="char" javaType="char" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="return" name="SearchOption" alias="returnSearchOption" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="clientFileFields" propertyNet="ClientFileFields" propertyJava="clientFileFields" setterJavaMethod="setClientFileFields" getterJavaMethod="getClientFileFields" xsdType="Array" netType="ClientFileField[]" javaType="ClientFileField[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="ClientFileField" netElementType="ClientFileField" javaElementType="ClientFileField" />
+                <property name="criteria" propertyNet="Criteria" propertyJava="criteria" setterJavaMethod="setCriteria" getterJavaMethod="getCriteria" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="criteria2" propertyNet="Criteria2" propertyJava="criteria2" setterJavaMethod="setCriteria2" getterJavaMethod="getCriteria2" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="exchangeRate" propertyNet="ExchangeRate" propertyJava="exchangeRate" setterJavaMethod="setExchangeRate" getterJavaMethod="getExchangeRate" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="finalAmount" propertyNet="FinalAmount" propertyJava="finalAmount" setterJavaMethod="setFinalAmount" getterJavaMethod="getFinalAmount" xsdType="decimal?" netType="decimal?" javaType="java.math.BigDecimal" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="finalCheck" propertyNet="FinalCheck" propertyJava="finalCheck" setterJavaMethod="setFinalCheck" getterJavaMethod="getFinalCheck" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="finalDate" propertyNet="FinalDate" propertyJava="finalDate" setterJavaMethod="setFinalDate" getterJavaMethod="getFinalDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="initialAmount" propertyNet="InitialAmount" propertyJava="initialAmount" setterJavaMethod="setInitialAmount" getterJavaMethod="getInitialAmount" xsdType="decimal" netType="Decimal" javaType="java.math.BigDecimal" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="initialCheck" propertyNet="InitialCheck" propertyJava="initialCheck" setterJavaMethod="setInitialCheck" getterJavaMethod="getInitialCheck" xsdType="int?" netType="int?" javaType="Integer" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="initialDate" propertyNet="InitialDate" propertyJava="initialDate" setterJavaMethod="setInitialDate" getterJavaMethod="getInitialDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="lastResult" propertyNet="LastResult" propertyJava="lastResult" setterJavaMethod="setLastResult" getterJavaMethod="getLastResult" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="mode" propertyNet="Mode" propertyJava="mode" setterJavaMethod="setMode" getterJavaMethod="getMode" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="nextResults" propertyNet="NextResults" propertyJava="nextResults" setterJavaMethod="setNextResults" getterJavaMethod="isNextResults" xsdType="boolean" netType="bool" javaType="boolean" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="notes" propertyNet="Notes" propertyJava="notes" setterJavaMethod="setNotes" getterJavaMethod="getNotes" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="numberOfResults" propertyNet="NumberOfResults" propertyJava="numberOfResults" setterJavaMethod="setNumberOfResults" getterJavaMethod="getNumberOfResults" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="sequential" propertyNet="Sequential" propertyJava="sequential" setterJavaMethod="setSequential" getterJavaMethod="getSequential" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="statusCheck" propertyNet="StatusCheck" propertyJava="statusCheck" setterJavaMethod="setStatusCheck" getterJavaMethod="getStatusCheck" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="statusCheckDescription" propertyNet="StatusCheckDescription" propertyJava="statusCheckDescription" setterJavaMethod="setStatusCheckDescription" getterJavaMethod="getStatusCheckDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="operationMode" propertyNet="OperationMode" propertyJava="operationMode" setterJavaMethod="setOperationMode" getterJavaMethod="getOperationMode" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="serviceId" propertyNet="ServiceId" propertyJava="serviceId" setterJavaMethod="setServiceId" getterJavaMethod="getServiceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="out" name="PublicityCollection" alias="outPublicityCollection" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="searchOptions" propertyNet="SearchOptions" propertyJava="searchOptions" setterJavaMethod="setSearchOptions" getterJavaMethod="getSearchOptions" xsdType="Array" netType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption[]" javaType="cobiscorp.ecobis.internetbanking.webapp.utils.dto.SearchOption[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption" netElementType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption" javaElementType="cobiscorp.ecobis.internetbanking.webapp.utils.dto.SearchOption" />
+                <property name="publicities" propertyNet="Publicities" propertyJava="publicities" setterJavaMethod="setPublicities" getterJavaMethod="getPublicities" xsdType="Array" netType="Publicity[]" javaType="Publicity[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Publicity" netElementType="Publicity" javaElementType="Publicity" />
+              </properties>
+            </DTO>
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="CONSTANT" allowNull="false" contantValue="I" />
+          </parameterMappings>
+          <resultMappings>
+            <result>
+              <DTOResult DTOAlias="returnSearchOption" MapReturn="true">
+                <columnMapping position="0" name="@o_num_filas" DTOPropertyName="numberOfResults" DataType="int" />
+              </DTOResult>
+            </result>
+            <result>
+              <DTOResult DTOAlias="returnPublicity" MapReturn="true">
+                <columnMapping position="0" name="CODIGO" DTOPropertyName="id" DataType="int" />
+                <columnMapping position="1" name="TIPO" DTOPropertyName="typeId" DataType="string" />
+                <columnMapping position="2" name="TIPO DESCRIPCION" DTOPropertyName="type" DataType="string" />
+                <columnMapping position="3" name="NOMBRE" DTOPropertyName="name" DataType="string" />
+                <columnMapping position="4" name="PATH" DTOPropertyName="path" DataType="string" />
+              </DTOResult>
+            </result>
+          </resultMappings>
+          <MappingProperties>
+            <MappingProperty key="BLIQueryPropertyName1" value="searchOptions" />
+            <MappingProperty key="BLIQueryPropertyName2" value="publicities" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+      <service id="InternetBanking.WebApp.Utils.Publicity.GetNews" netName="GetNews" javaName="getNews" mappingType="STORED_PROCEDURE" mapId="247e7efbde76a5bdf2dadbbacce18e7f">
+        <SRVMapping name="cob_bvirtual..sp_cons_preferen_arch_bv" trnCode="18536">
+          <DTOs>
+            <DTO direction="return" name="Publicity" alias="returnPublicity" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="preferenceId" propertyNet="PreferenceId" propertyJava="preferenceId" setterJavaMethod="setPreferenceId" getterJavaMethod="getPreferenceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="name" propertyNet="Name" propertyJava="name" setterJavaMethod="setName" getterJavaMethod="getName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="path" propertyNet="Path" propertyJava="path" setterJavaMethod="setPath" getterJavaMethod="getPath" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="type" propertyNet="Type" propertyJava="type" setterJavaMethod="setType" getterJavaMethod="getType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="status" propertyNet="Status" propertyJava="status" setterJavaMethod="setStatus" getterJavaMethod="getStatus" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="typeId" propertyNet="TypeId" propertyJava="typeId" setterJavaMethod="setTypeId" getterJavaMethod="getTypeId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="image" propertyNet="Image" propertyJava="image" setterJavaMethod="setImage" getterJavaMethod="getImage" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="operacion" propertyNet="Operacion" propertyJava="operacion" setterJavaMethod="setOperacion" getterJavaMethod="getOperacion" xsdType="char" netType="char" javaType="char" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="return" name="SearchOption" alias="returnSearchOption" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="clientFileFields" propertyNet="ClientFileFields" propertyJava="clientFileFields" setterJavaMethod="setClientFileFields" getterJavaMethod="getClientFileFields" xsdType="Array" netType="ClientFileField[]" javaType="ClientFileField[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="ClientFileField" netElementType="ClientFileField" javaElementType="ClientFileField" />
+                <property name="criteria" propertyNet="Criteria" propertyJava="criteria" setterJavaMethod="setCriteria" getterJavaMethod="getCriteria" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="criteria2" propertyNet="Criteria2" propertyJava="criteria2" setterJavaMethod="setCriteria2" getterJavaMethod="getCriteria2" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="exchangeRate" propertyNet="ExchangeRate" propertyJava="exchangeRate" setterJavaMethod="setExchangeRate" getterJavaMethod="getExchangeRate" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="finalAmount" propertyNet="FinalAmount" propertyJava="finalAmount" setterJavaMethod="setFinalAmount" getterJavaMethod="getFinalAmount" xsdType="decimal?" netType="decimal?" javaType="java.math.BigDecimal" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="finalCheck" propertyNet="FinalCheck" propertyJava="finalCheck" setterJavaMethod="setFinalCheck" getterJavaMethod="getFinalCheck" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="finalDate" propertyNet="FinalDate" propertyJava="finalDate" setterJavaMethod="setFinalDate" getterJavaMethod="getFinalDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="initialAmount" propertyNet="InitialAmount" propertyJava="initialAmount" setterJavaMethod="setInitialAmount" getterJavaMethod="getInitialAmount" xsdType="decimal" netType="Decimal" javaType="java.math.BigDecimal" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="initialCheck" propertyNet="InitialCheck" propertyJava="initialCheck" setterJavaMethod="setInitialCheck" getterJavaMethod="getInitialCheck" xsdType="int?" netType="int?" javaType="Integer" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="initialDate" propertyNet="InitialDate" propertyJava="initialDate" setterJavaMethod="setInitialDate" getterJavaMethod="getInitialDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="lastResult" propertyNet="LastResult" propertyJava="lastResult" setterJavaMethod="setLastResult" getterJavaMethod="getLastResult" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="mode" propertyNet="Mode" propertyJava="mode" setterJavaMethod="setMode" getterJavaMethod="getMode" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="nextResults" propertyNet="NextResults" propertyJava="nextResults" setterJavaMethod="setNextResults" getterJavaMethod="isNextResults" xsdType="boolean" netType="bool" javaType="boolean" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="notes" propertyNet="Notes" propertyJava="notes" setterJavaMethod="setNotes" getterJavaMethod="getNotes" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="numberOfResults" propertyNet="NumberOfResults" propertyJava="numberOfResults" setterJavaMethod="setNumberOfResults" getterJavaMethod="getNumberOfResults" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="sequential" propertyNet="Sequential" propertyJava="sequential" setterJavaMethod="setSequential" getterJavaMethod="getSequential" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="statusCheck" propertyNet="StatusCheck" propertyJava="statusCheck" setterJavaMethod="setStatusCheck" getterJavaMethod="getStatusCheck" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="statusCheckDescription" propertyNet="StatusCheckDescription" propertyJava="statusCheckDescription" setterJavaMethod="setStatusCheckDescription" getterJavaMethod="getStatusCheckDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="operationMode" propertyNet="OperationMode" propertyJava="operationMode" setterJavaMethod="setOperationMode" getterJavaMethod="getOperationMode" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="serviceId" propertyNet="ServiceId" propertyJava="serviceId" setterJavaMethod="setServiceId" getterJavaMethod="getServiceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="out" name="PublicityCollection" alias="outPublicityCollection" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="searchOptions" propertyNet="SearchOptions" propertyJava="searchOptions" setterJavaMethod="setSearchOptions" getterJavaMethod="getSearchOptions" xsdType="Array" netType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption[]" javaType="cobiscorp.ecobis.internetbanking.webapp.utils.dto.SearchOption[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption" netElementType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption" javaElementType="cobiscorp.ecobis.internetbanking.webapp.utils.dto.SearchOption" />
+                <property name="publicities" propertyNet="Publicities" propertyJava="publicities" setterJavaMethod="setPublicities" getterJavaMethod="getPublicities" xsdType="Array" netType="Publicity[]" javaType="Publicity[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Publicity" netElementType="Publicity" javaElementType="Publicity" />
+              </properties>
+            </DTO>
+            <DTO direction="in" name="User" alias="inUser" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_ente" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inUser" DTOPropertyName="id" />
+            <parameter name="@i_servicio" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inUser" DTOPropertyName="serviceId" />
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="CONSTANT" allowNull="false" contantValue="N" />
+          </parameterMappings>
+          <resultMappings>
+            <result>
+              <DTOResult DTOAlias="returnPublicity" MapReturn="true">
+                <columnMapping position="0" name="CODIGO" DTOPropertyName="id" DataType="int" Format="" />
+                <columnMapping position="1" name="TIPO" DTOPropertyName="typeId" DataType="string" Format="" />
+                <columnMapping position="2" name="TIPO DESCRIPCION" DTOPropertyName="type" DataType="string" Format="" />
+                <columnMapping position="3" name="NOMBRE" DTOPropertyName="name" DataType="string" Format="" />
+                <columnMapping position="4" name="PATH" DTOPropertyName="path" DataType="string" Format="" />
+              </DTOResult>
+            </result>
+          </resultMappings>
+          <MappingProperties>
+            <MappingProperty key="BLIQueryPropertyName1" value="publicities" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+      <service id="InternetBanking.WebApp.Utils.Service.Publicity.GetPublicity" netName="GetPublicity" javaName="getPublicity" mappingType="STORED_PROCEDURE" mapId="062c0f9ee5e09daa27f5909f82fecb7e">
+        <SRVMapping name="cob_bvirtual..sp_cons_preferen_arch_bv" trnCode="1800119">
+          <DTOs>
+            <DTO direction="return" name="Publicity" alias="returnPublicity" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="preferenceId" propertyNet="PreferenceId" propertyJava="preferenceId" setterJavaMethod="setPreferenceId" getterJavaMethod="getPreferenceId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="id" propertyNet="Id" propertyJava="id" setterJavaMethod="setId" getterJavaMethod="getId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+                <property name="name" propertyNet="Name" propertyJava="name" setterJavaMethod="setName" getterJavaMethod="getName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="path" propertyNet="Path" propertyJava="path" setterJavaMethod="setPath" getterJavaMethod="getPath" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="type" propertyNet="Type" propertyJava="type" setterJavaMethod="setType" getterJavaMethod="getType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="status" propertyNet="Status" propertyJava="status" setterJavaMethod="setStatus" getterJavaMethod="getStatus" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="typeId" propertyNet="TypeId" propertyJava="typeId" setterJavaMethod="setTypeId" getterJavaMethod="getTypeId" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="image" propertyNet="Image" propertyJava="image" setterJavaMethod="setImage" getterJavaMethod="getImage" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="operacion" propertyNet="Operacion" propertyJava="operacion" setterJavaMethod="setOperacion" getterJavaMethod="getOperacion" xsdType="char" netType="char" javaType="char" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+            <DTO direction="out" name="PublicityCollection" alias="outPublicityCollection" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="searchOptions" propertyNet="SearchOptions" propertyJava="searchOptions" setterJavaMethod="setSearchOptions" getterJavaMethod="getSearchOptions" xsdType="Array" netType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption[]" javaType="cobiscorp.ecobis.internetbanking.webapp.utils.dto.SearchOption[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption" netElementType="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO.SearchOption" javaElementType="cobiscorp.ecobis.internetbanking.webapp.utils.dto.SearchOption" />
+                <property name="publicities" propertyNet="Publicities" propertyJava="publicities" setterJavaMethod="setPublicities" getterJavaMethod="getPublicities" xsdType="Array" netType="Publicity[]" javaType="Publicity[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="Publicity" netElementType="Publicity" javaElementType="Publicity" />
+              </properties>
+            </DTO>
+            <DTO direction="in" name="User" alias="inUser" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_ente" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inUser" DTOPropertyName="id" />
+            <parameter name="@i_servicio" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inUser" DTOPropertyName="serviceId" />
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="CONSTANT" allowNull="false" contantValue="B" />
+          </parameterMappings>
+          <resultMappings>
+            <result>
+              <DTOResult DTOAlias="returnPublicity" MapReturn="true">
+                <columnMapping position="0" name="CODIGO" DTOPropertyName="id" DataType="int" Format="" />
+                <columnMapping position="1" name="TIPO" DTOPropertyName="typeId" DataType="string" Format="" />
+                <columnMapping position="2" name="TIPO DESCRIPCION" DTOPropertyName="type" DataType="string" Format="" />
+                <columnMapping position="3" name="NOMBRE" DTOPropertyName="name" DataType="string" Format="" />
+                <columnMapping position="4" name="PATH" DTOPropertyName="path" DataType="string" Format="" />
+                <columnMapping position="5" name=" IMAGE" DTOPropertyName="image" DataType="string" />
+              </DTOResult>
+            </result>
+          </resultMappings>
+          <MappingProperties>
+            <MappingProperty key="BLIQueryPropertyName1" value="publicities" />
+            <MappingProperty key="dbms" value="SQLCANALES" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+      <service id="InternetBanking.WebApp.Utils.Service.Publicity.SetPublicity" netName="SetPublicity" javaName="setPublicity" mappingType="STORED_PROCEDURE" mapId="ebd727dfd18cb80ecd05a2576cbcae4d">
+        <SRVMapping name="cob_bvirtual..sp_preferen_arch_bv" trnCode="181111">
+          <DTOs>
+            <DTO direction="in" name="Publicity" alias="inPublicity" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@t_trn" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="CONSTANT" allowNull="false" contantValue="18537" />
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="char" CTSDataType="SQLCHAR" JavaSQLType="CHAR" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="operacion" />
+            <parameter name="@i_codigo_preferen" direction="in" mappingDirection="in" dataType="smallint" CTSDataType="SQLINT2" JavaSQLType="SMALLINT" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="preferenceId" />
+            <parameter name="@i_codigo" direction="in" mappingDirection="in" dataType="smallint" CTSDataType="SQLINT2" JavaSQLType="SMALLINT" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="typeId" />
+            <parameter name="@i_nombre" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="name" />
+            <parameter name="@i_tipo_archivo" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="type" />
+            <parameter name="@i_path" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="path" />
+            <parameter name="@i_estado" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="status" />
+            <parameter name="@i_imagen" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inPublicity" DTOPropertyName="image" />
+          </parameterMappings>
+          <resultMappings />
+          <MappingProperties>
+            <MappingProperty key="dbms" value="SQLCANALES" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
+    </services>
+  </partialClass>
+</serviceClass>

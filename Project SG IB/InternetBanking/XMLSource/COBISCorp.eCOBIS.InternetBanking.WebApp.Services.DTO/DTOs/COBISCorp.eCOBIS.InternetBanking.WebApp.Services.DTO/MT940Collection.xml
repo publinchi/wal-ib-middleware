@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" productVersion="4.6.1.0">
+  <name>MT940Collection</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.services.dto</javaPackage>
+  <ns>http://dto.services.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+    <TemplateProperty key="WithoutWCFContract" value="false" />
+  </TemplateProperties>
+  <properties>
+    <property name="mT940" propertyNet="MT940" propertyJava="mT940" setterJavaMethod="setMT940" getterJavaMethod="getMT940" xsdType="Array" netType="MT940[]" javaType="MT940[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="MT940" netElementType="MT940" javaElementType="MT940" />
+  </properties>
+</DtoObject>

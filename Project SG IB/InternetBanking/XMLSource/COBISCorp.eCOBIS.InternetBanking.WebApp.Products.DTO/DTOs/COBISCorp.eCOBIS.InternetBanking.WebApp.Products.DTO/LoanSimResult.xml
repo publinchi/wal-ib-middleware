@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>LoanSimResult</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="capital" propertyNet="Capital" propertyJava="capital" setterJavaMethod="setCapital" getterJavaMethod="getCapital" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="capitalAmount" propertyNet="CapitalAmount" propertyJava="capitalAmount" setterJavaMethod="setCapitalAmount" getterJavaMethod="getCapitalAmount" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="concept" propertyNet="Concept" propertyJava="concept" setterJavaMethod="setConcept" getterJavaMethod="getConcept" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="date" propertyNet="Date" propertyJava="date" setterJavaMethod="setDate" getterJavaMethod="getDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="dividend" propertyNet="Dividend" propertyJava="dividend" setterJavaMethod="setDividend" getterJavaMethod="getDividend" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="feci" propertyNet="Feci" propertyJava="feci" setterJavaMethod="setFeci" getterJavaMethod="getFeci" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="interest" propertyNet="Interest" propertyJava="interest" setterJavaMethod="setInterest" getterJavaMethod="getInterest" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="payment" propertyNet="Payment" propertyJava="payment" setterJavaMethod="setPayment" getterJavaMethod="getPayment" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="state" propertyNet="State" propertyJava="state" setterJavaMethod="setState" getterJavaMethod="getState" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

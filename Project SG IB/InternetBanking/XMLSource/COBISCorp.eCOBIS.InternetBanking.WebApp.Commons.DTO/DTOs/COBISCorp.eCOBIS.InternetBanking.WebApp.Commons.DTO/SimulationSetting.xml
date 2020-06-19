@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" productVersion="4.6.1.0">
+  <name>SimulationSetting</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.commons.dto</javaPackage>
+  <ns>http://dto.commons.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="maxDayCD" propertyNet="MaxDayCD" propertyJava="maxDayCD" setterJavaMethod="setMaxDayCD" getterJavaMethod="getMaxDayCD" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="minCD" propertyNet="MinCD" propertyJava="minCD" setterJavaMethod="setMinCD" getterJavaMethod="getMinCD" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="minDayCD" propertyNet="MinDayCD" propertyJava="minDayCD" setterJavaMethod="setMinDayCD" getterJavaMethod="getMinDayCD" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="minLoan" propertyNet="MinLoan" propertyJava="minLoan" setterJavaMethod="setMinLoan" getterJavaMethod="getMinLoan" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="maxTermLoan" propertyNet="MaxTermLoan" propertyJava="maxTermLoan" setterJavaMethod="setMaxTermLoan" getterJavaMethod="getMaxTermLoan" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="maxTermSaving" propertyNet="MaxTermSaving" propertyJava="maxTermSaving" setterJavaMethod="setMaxTermSaving" getterJavaMethod="getMaxTermSaving" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="maxLoan" propertyNet="MaxLoan" propertyJava="maxLoan" setterJavaMethod="setMaxLoan" getterJavaMethod="getMaxLoan" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="minMonPF" propertyNet="MinMonPF" propertyJava="minMonPF" setterJavaMethod="setMinMonPF" getterJavaMethod="getMinMonPF" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="minTermSaving" propertyNet="MinTermSaving" propertyJava="minTermSaving" setterJavaMethod="setMinTermSaving" getterJavaMethod="getMinTermSaving" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>
