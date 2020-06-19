@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<product path="D:/Trafalgar/Middleware/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productNS="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="3B34F71F-83AC-4866-89DC-EA726238687B">
+  <namespaces>
+    <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Products\DTO" />
+  </namespaces>
+  <templates>
+    <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="true" packageType="Jar">
+      <templateFiles>
+        <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+      </templateFiles>
+    </template>
+  </templates>
+  <DTOs>
+    <DTO name="AccountBalanceList" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="AccountByCriteriaCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="AccountCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="AccountDetail" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="AccountRequest" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ACHFeeRequest" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ACHFeeResponse" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ACHFeeResult" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="BeneficiaryCertificateDeposit" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CDExpirationDateInfo" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CDExpirationDateResponse" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CertificateDeposit" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CertificateDepositCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CertificateDepositResult" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CertificateDepositResultCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Check" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Checkbook" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CheckbookCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CheckbookType" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CheckbookTypeCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CheckCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ClientEnquiries" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ClientEnquiriesCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CreditLineRequest" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="CreditLineResponse" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="DetailAppEnquiriesResponse" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="DetailAppResponseCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="DetailEnqueriesAppRequest" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="FixedTermDeposit" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Loan" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanData" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanDataCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanItem" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanItemResults" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanSim" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanSimCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanSimExecResults" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoanSimResult" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoansInvoice" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoansInvoiceDetail" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoansInvoiceDetailCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="LoansInvoiceMaster" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Product" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ProductCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="ProductType" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="SavingSim" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="SavingSimCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+  </DTOs>
+  <classes />
+  <packagers>
+    <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="DTOJavaPOJO" />
+  </packagers>
+  <references>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" type="DTO" version="4.6.1.0" GUID="D1582B0C-9BF9-4EE7-905C-C44A4CB61C25">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Services" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" package="cobiscorp.ecobis.internetbanking.webapp.services.dto" ns="http://dto.services.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Services\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="E7A44E51-13F2-4DBD-9464-223CE18DBACE">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Admin\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" type="DTO" version="4.6.1.0" GUID="B3C3A843-527F-40C8-916C-1ABB529B783D">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Utils\DTO" />
+      </namespaces>
+    </reference>
+  </references>
+  <externalReferences>
+    <externalReference name="CTSServiceFramework-All-1.0.5" package="com.cobiscorp.cobis.cts.sdf.dto" path="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" type="JAR" GUID="14175533-A9AF-4941-A76C-BB9E573F0E9E" />
+  </externalReferences>
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" />
+    <property name="MavenVersion" value="4.6.1.0" />
+  </productProperties>
+</product>

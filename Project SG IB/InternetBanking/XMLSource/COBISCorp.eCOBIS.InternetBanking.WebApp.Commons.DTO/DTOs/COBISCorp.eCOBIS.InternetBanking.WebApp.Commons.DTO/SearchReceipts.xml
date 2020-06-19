@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" productVersion="4.6.1.0">
+  <name>SearchReceipts</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.commons.dto</javaPackage>
+  <ns>http://dto.commons.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="paymentType" propertyNet="PaymentType" propertyJava="paymentType" setterJavaMethod="setPaymentType" getterJavaMethod="getPaymentType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="startDate" propertyNet="StartDate" propertyJava="startDate" setterJavaMethod="setStartDate" getterJavaMethod="getStartDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="endDate" propertyNet="EndDate" propertyJava="endDate" setterJavaMethod="setEndDate" getterJavaMethod="getEndDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="debitAccount" propertyNet="DebitAccount" propertyJava="debitAccount" setterJavaMethod="setDebitAccount" getterJavaMethod="getDebitAccount" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="paidService" propertyNet="PaidService" propertyJava="paidService" setterJavaMethod="setPaidService" getterJavaMethod="getPaidService" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="idService" propertyNet="IdService" propertyJava="idService" setterJavaMethod="setIdService" getterJavaMethod="getIdService" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

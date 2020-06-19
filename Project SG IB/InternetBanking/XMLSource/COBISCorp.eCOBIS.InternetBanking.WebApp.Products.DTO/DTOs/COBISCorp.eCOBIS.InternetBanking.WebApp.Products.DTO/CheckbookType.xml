@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>CheckbookType</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="idType" propertyNet="IdType" propertyJava="idType" setterJavaMethod="setIdType" getterJavaMethod="getIdType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="name" propertyNet="Name" propertyJava="name" setterJavaMethod="setName" getterJavaMethod="getName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="type" propertyNet="Type" propertyJava="type" setterJavaMethod="setType" getterJavaMethod="getType" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="art" propertyNet="Art" propertyJava="art" setterJavaMethod="setArt" getterJavaMethod="getArt" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="customArt" propertyNet="CustomArt" propertyJava="customArt" setterJavaMethod="setCustomArt" getterJavaMethod="getCustomArt" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="quantity" propertyNet="Quantity" propertyJava="quantity" setterJavaMethod="setQuantity" getterJavaMethod="getQuantity" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="item" propertyNet="Item" propertyJava="item" setterJavaMethod="setItem" getterJavaMethod="getItem" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="time" propertyNet="Time" propertyJava="time" setterJavaMethod="setTime" getterJavaMethod="getTime" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="state" propertyNet="State" propertyJava="state" setterJavaMethod="setState" getterJavaMethod="getState" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="currencyId" propertyNet="CurrencyId" propertyJava="currencyId" setterJavaMethod="setCurrencyId" getterJavaMethod="getCurrencyId" xsdType="int?" netType="int?" javaType="Integer" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="amount" propertyNet="Amount" propertyJava="amount" setterJavaMethod="setAmount" getterJavaMethod="getAmount" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

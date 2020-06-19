@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" productVersion="4.6.1.0">
+  <name>CoreBanking</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.commons.dto</javaPackage>
+  <ns>http://dto.commons.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+  </TemplateProperties>
+  <properties>
+    <property name="serviceStatus" propertyNet="ServiceStatus" propertyJava="serviceStatus" setterJavaMethod="setServiceStatus" getterJavaMethod="getServiceStatus" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="processDate" propertyNet="ProcessDate" propertyJava="processDate" setterJavaMethod="setProcessDate" getterJavaMethod="getProcessDate" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="withBalance" propertyNet="WithBalance" propertyJava="withBalance" setterJavaMethod="setWithBalance" getterJavaMethod="getWithBalance" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

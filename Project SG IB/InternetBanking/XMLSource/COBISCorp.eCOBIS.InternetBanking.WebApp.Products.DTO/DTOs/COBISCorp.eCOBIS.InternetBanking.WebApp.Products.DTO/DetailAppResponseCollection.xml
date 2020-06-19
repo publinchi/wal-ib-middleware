@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productVersion="4.6.1.0">
+  <name>DetailAppResponseCollection</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.products.dto</javaPackage>
+  <ns>http://dto.products.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties>
+    <TemplateProperty key="BLIResponse" value="true" />
+    <TemplateProperty key="WithoutWCFContract" value="false" />
+  </TemplateProperties>
+  <properties>
+    <property name="detailAppEnquiries" propertyNet="DetailAppEnquiries" propertyJava="detailAppEnquiries" setterJavaMethod="setDetailAppEnquiries" getterJavaMethod="getDetailAppEnquiries" xsdType="Array" netType="DetailAppEnquiriesResponse[]" javaType="DetailAppEnquiriesResponse[]" cobisMapping="" isInherit="false" isComplexType="true" isCollectionType="true" required="true" encrypted="false" maxLength="0" XSDElementType="DetailAppEnquiriesResponse" netElementType="DetailAppEnquiriesResponse" javaElementType="DetailAppEnquiriesResponse" />
+  </properties>
+</DtoObject>

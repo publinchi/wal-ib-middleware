@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" productVersion="4.6.1.0">
+  <name>RequestCreditCard</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.services.dto</javaPackage>
+  <ns>http://dto.services.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="accountNumber" propertyNet="AccountNumber" propertyJava="accountNumber" setterJavaMethod="setAccountNumber" getterJavaMethod="getAccountNumber" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="amount" propertyNet="Amount" propertyJava="amount" setterJavaMethod="setAmount" getterJavaMethod="getAmount" xsdType="double" netType="double" javaType="double" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="card" propertyNet="Card" propertyJava="card" setterJavaMethod="setCard" getterJavaMethod="getCard" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="currencyId" propertyNet="CurrencyId" propertyJava="currencyId" setterJavaMethod="setCurrencyId" getterJavaMethod="getCurrencyId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+    <property name="productName" propertyNet="ProductName" propertyJava="productName" setterJavaMethod="setProductName" getterJavaMethod="getProductName" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="productAlias" propertyNet="ProductAlias" propertyJava="productAlias" setterJavaMethod="setProductAlias" getterJavaMethod="getProductAlias" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="productId" propertyNet="ProductId" propertyJava="productId" setterJavaMethod="setProductId" getterJavaMethod="getProductId" xsdType="int" netType="int" javaType="int" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="true" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>

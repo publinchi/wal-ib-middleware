@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DtoObject productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" productVersion="4.6.1.0">
+  <name>DetailFE</name>
+  <nameSpace>COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO</nameSpace>
+  <javaPackage>cobiscorp.ecobis.internetbanking.webapp.services.dto</javaPackage>
+  <ns>http://dto.services.webapp.internetbanking.ecobis.cobiscorp</ns>
+  <TemplateProperties />
+  <properties>
+    <property name="electronicBill" propertyNet="ElectronicBill" propertyJava="electronicBill" setterJavaMethod="setElectronicBill" getterJavaMethod="getElectronicBill" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="url" propertyNet="Url" propertyJava="url" setterJavaMethod="setUrl" getterJavaMethod="getUrl" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="description" propertyNet="Description" propertyJava="description" setterJavaMethod="setDescription" getterJavaMethod="getDescription" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+    <property name="typeGeneration" propertyNet="TypeGeneration" propertyJava="typeGeneration" setterJavaMethod="setTypeGeneration" getterJavaMethod="getTypeGeneration" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+  </properties>
+</DtoObject>
