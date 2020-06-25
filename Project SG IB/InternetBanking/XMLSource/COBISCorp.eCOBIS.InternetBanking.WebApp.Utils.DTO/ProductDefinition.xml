@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<product path="D:/Trafalgar/Middleware/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" productNS="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="C408C27D-749F-4895-A5AB-0E50BEB0F847">
+<product path="D:/_Clientes/TRAFALGAR/Repositorios/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" productNS="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="8530CCE1-8F66-4CEB-9046-865B567C4AE5">
   <namespaces>
     <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Utils\DTO" />
   </namespaces>
@@ -56,6 +56,7 @@
     <DTO name="Transfer" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" version="1" />
     <DTO name="TypeDeposit" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" version="1" />
     <DTO name="TypeDepositCollection" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" version="1" />
+    <DTO name="Commission" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" version="1" />
   </DTOs>
   <classes />
   <packagers>

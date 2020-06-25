@@ -70,6 +70,43 @@
           </MappingProperties>
         </SRVMapping>
       </service>
+      <service id="InternetBanking.WebApp.Utils.Service.Utils.GetCommission" netName="GetCommission" javaName="getCommission" mappingType="STORED_PROCEDURE" mapId="282a2cdbc876bbf52133b885447d4750">
+        <SRVMapping name="cob_bvirtual..sp_bv_cons_comision" trnCode="18027">
+          <DTOs>
+            <DTO direction="in" name="Commission" alias="inCommission" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" required="true" />
+            <DTO direction="return" name="Commission" alias="returnCommission" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" required="true">
+              <properties>
+                <property name="transaccion" propertyNet="Transaccion" propertyJava="transaccion" setterJavaMethod="setTransaccion" getterJavaMethod="getTransaccion" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="moneda" propertyNet="Moneda" propertyJava="moneda" setterJavaMethod="setMoneda" getterJavaMethod="getMoneda" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="servicio" propertyNet="Servicio" propertyJava="servicio" setterJavaMethod="setServicio" getterJavaMethod="getServicio" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="cliente" propertyNet="Cliente" propertyJava="cliente" setterJavaMethod="setCliente" getterJavaMethod="getCliente" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="categoria" propertyNet="Categoria" propertyJava="categoria" setterJavaMethod="setCategoria" getterJavaMethod="getCategoria" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="tipo" propertyNet="Tipo" propertyJava="tipo" setterJavaMethod="setTipo" getterJavaMethod="getTipo" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+                <property name="valor" propertyNet="Valor" propertyJava="valor" setterJavaMethod="setValor" getterJavaMethod="getValor" xsdType="string" netType="string" javaType="String" cobisMapping="" isInherit="false" isComplexType="false" isCollectionType="false" required="false" encrypted="false" maxLength="0" />
+              </properties>
+            </DTO>
+          </DTOs>
+          <parameterMappings>
+            <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="tinyint" CTSDataType="SQLINT1" JavaSQLType="INTEGER" mappingType="CONSTANT" allowNull="false" contantValue="1" />
+            <parameter name="@i_trn" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inCommission" DTOPropertyName="transaccion" />
+            <parameter name="@i_moneda" direction="in" mappingDirection="in" dataType="tinyint" CTSDataType="SQLINT1" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inCommission" DTOPropertyName="moneda" />
+            <parameter name="@i_servicio" direction="in" mappingDirection="in" dataType="tinyint" CTSDataType="SQLINT1" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inCommission" DTOPropertyName="servicio" />
+            <parameter name="@i_ente" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inCommission" DTOPropertyName="cliente" />
+            <parameter name="@i_categoria" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inCommission" DTOPropertyName="categoria" />
+          </parameterMappings>
+          <resultMappings>
+            <result>
+              <DTOResult DTOAlias="returnCommission" MapReturn="true">
+                <columnMapping position="0" name="{1}" DTOPropertyName="tipo" DataType="string" />
+                <columnMapping position="1" name="{2}" DTOPropertyName="valor" DataType="string" />
+              </DTOResult>
+            </result>
+          </resultMappings>
+          <MappingProperties>
+            <MappingProperty key="dbms" value="SQLCANALES" />
+          </MappingProperties>
+        </SRVMapping>
+      </service>
       <service id="InternetBanking.WebApp.Utils.Service.Utils.GetCurrency" netName="GetCurrencies" javaName="getCurrencies" mappingType="STORED_PROCEDURE" mapId="6fe131632103526e3a6e8114c78eb1e1">
         <SRVMapping name="cobis..sp_moneda" trnCode="1555">
           <DTOs>
