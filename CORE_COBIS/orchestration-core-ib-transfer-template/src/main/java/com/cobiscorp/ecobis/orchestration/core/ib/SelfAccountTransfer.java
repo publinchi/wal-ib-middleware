@@ -83,7 +83,7 @@ public class SelfAccountTransfer extends SPJavaOrchestrationBase implements ICor
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, request.getTerminal());
 		anOriginalRequest.addInputParam("@s_rol", ICTSTypes.SQLINT2, String.valueOf(request.getRole()));
 		anOriginalRequest.addInputParam("@s_date", ICTSTypes.SQLDATETIME, String.valueOf(request.getSystemDate()));
-		anOriginalRequest.addInputParam("@i_causa_com", ICTSTypes.SQLVARCHAR, request.getCauseComi());
+		anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, request.getCauseComi());
 		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, request.getCause());
 		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, request.getCauseDes());
 

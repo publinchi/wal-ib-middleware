@@ -329,6 +329,28 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_cod_mis", ICTSTypes.SYBINT4, "0");
 		request.addOutputParam("@o_clave_bv", ICTSTypes.SYBINT4, "0");
 
+		//JCOS PRUEBA
+		if (!Utils.isNull(originalRequest.readParam("@i_val"))) {
+			
+			String valies=originalRequest.readParam("@i_val").toString();
+			
+			
+			
+			if (logger.isDebugEnabled())
+				logger.logDebug(CLASS_NAME + "Valorsito " + valies);
+			
+		}
+		
+		
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: Transaccion "+String.valueOf(t_trn)+" monto::::  "  );
+		
+		//JCOS PRUEBA
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: " + " COMISION CON EL VALOR DE PI 3.1416");
+		request.addOutputParam("@o_comision", ICTSTypes.SYBMONEY, "0");
+		
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Validacion local, request: " + request.getProcedureRequestAsString());
 
