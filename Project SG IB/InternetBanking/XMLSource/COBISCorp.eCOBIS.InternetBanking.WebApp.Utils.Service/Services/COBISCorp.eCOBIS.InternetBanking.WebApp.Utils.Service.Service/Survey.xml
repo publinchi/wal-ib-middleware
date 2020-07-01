@@ -254,6 +254,7 @@
           <parameterMappings>
             <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="BP" />
             <parameter name="@i_pr_categoria" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="true" contantValue="P" />
+            <parameter name="@i_lp_servicio" direction="in" mappingDirection="in" dataType="tinyint" CTSDataType="SQLINT1" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSurveyUserQuestion" DTOPropertyName="serviceId" />
             <parameter name="@i_lp_login" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyUserQuestion" DTOPropertyName="userName" />
           </parameterMappings>
           <resultMappings>
@@ -358,6 +359,7 @@
           </DTOs>
           <parameterMappings>
             <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="RN" />
+            <parameter name="@i_lp_servicio" direction="in" mappingDirection="in" dataType="tinyint" CTSDataType="SQLINT1" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSearchOption" DTOPropertyName="notes" />
             <parameter name="@i_nro_preguntas" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSearchOption" DTOPropertyName="numberOfResults" />
             <parameter name="@i_culture" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSearchOption" DTOPropertyName="criteria" />
           </parameterMappings>
@@ -692,7 +694,7 @@
             <parameter name="@i_operacion" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="CONSTANT" allowNull="false" contantValue="VR" />
             <parameter name="@i_login" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyUserAnswer" DTOPropertyName="userName" />
             <parameter name="@i_pregunta" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLINT4" JavaSQLType="INTEGER" mappingType="DTO" allowNull="false" DTOAlias="inSurveyUserAnswer" DTOPropertyName="question" />
-            <parameter name="@i_respuesta_aleatoria" direction="in" mappingDirection="in" dataType="int" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyUserAnswer" DTOPropertyName="answer" />
+            <parameter name="@i_respuesta_aleatoria" direction="in" mappingDirection="in" dataType="varchar" CTSDataType="SQLVARCHAR" JavaSQLType="VARCHAR" mappingType="DTO" allowNull="false" DTOAlias="inSurveyUserAnswer" DTOPropertyName="answer" />
           </parameterMappings>
           <resultMappings />
           <MappingProperties>

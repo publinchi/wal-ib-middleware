@@ -2766,4 +2766,5 @@
   <service id="InternetBanking.WebApp.Payments.SchedulePayment.GetScheduledPaymentsToSPI" interface="cobiscorp.ecobis.internetbanking.webapp.payments.service.service.IScheduledPayment" method="getScheduledPaymentsToSPI" description=""/>
   <service id="InternetBanking.WebApp.Security.Service.Security.SetConnectionIP" interface="cobiscorp.ecobis.internetbanking.webapp.security.service.service.ISecurity" method="setConnectionIP" description="" />
   <service id="InternetBanking.WebApp.Loan.Service.Loan.GetLoanMovements" interface="cobiscorp.ecobis.internetbanking.webapp.loan.service.service.ILoan" method="getLoanMovements" description=""/>
+  <service id="InternetBanking.WebApp.Utils.Service.Utils.GetCommission" interface="cobiscorp.ecobis.internetbanking.webapp.utils.service.service.IUtils" method="getCommission" description=" "/>
 </services>
