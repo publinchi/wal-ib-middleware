@@ -42,6 +42,9 @@
     <parameter name="@i_origen_fondos" dataType="varchar" direction="in" />
     <parameter name="@i_dest_fondos" dataType="varchar" direction="in" />
     <parameter name="@i_graba_tranmonet" dataType="char" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_perfil" dataType="smallint" direction="in" />
   </parameters>
   <queries>
     <query>
