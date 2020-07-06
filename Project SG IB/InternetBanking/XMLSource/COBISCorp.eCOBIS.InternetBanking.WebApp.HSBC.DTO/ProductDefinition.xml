@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<product path="D:/Trafalgar/Middleware/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" productNS="http://dto.hsbc.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="C204783E-191C-4073-8185-243E26FA4F6D">
+<product path="D:/Trafalgar/Middleware/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" productNS="http://dto.hsbc.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="394DF95D-8131-44EE-B4F9-E2E9C8D2D380">
   <namespaces>
     <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC" name="COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO" package="cobiscorp.ecobis.internetbanking.webapp.hsbc.dto" ns="http://dto.hsbc.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\HSBC\DTO" />
   </namespaces>
@@ -33,7 +33,7 @@
     <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="DTOJavaPOJO" />
   </packagers>
   <references>
-    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="91721023-45E8-4469-ACB7-D9FC28AC8537">
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="7FD6FD0E-7D1A-431E-9DA8-77C1EC9A23F8">
       <templates>
         <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="true" packageType="Jar">
           <templateFiles>
