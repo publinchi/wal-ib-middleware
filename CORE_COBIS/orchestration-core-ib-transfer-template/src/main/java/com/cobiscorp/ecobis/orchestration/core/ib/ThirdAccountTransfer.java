@@ -142,7 +142,13 @@ public class ThirdAccountTransfer extends SPJavaOrchestrationBase implements ICo
 			anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY, request.getAmmount().toString());
 		if (request.getDescriptionTransfer() != null)
 			anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, request.getDescriptionTransfer());
-
+        
+		
+		if (request.getCommisionAmmount() != null) {
+			if (logger.isDebugEnabled())
+				logger.logDebug(CLASS_NAME + "Se envia Comission:" + request.getCommisionAmmount().toString());
+			anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, request.getCommisionAmmount().toString());
+		}
 		Integer channelId = 0;
 		if (request.getChannelId() != null)
 			channelId = Integer.parseInt(request.getChannelId());

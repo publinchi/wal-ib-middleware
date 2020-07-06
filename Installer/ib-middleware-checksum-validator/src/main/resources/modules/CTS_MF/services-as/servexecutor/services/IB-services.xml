@@ -2744,5 +2744,5 @@
 	<service id="InternetBanking.WebApp.Products.Service.Product.GetCreditCards" interface="cobiscorp.ecobis.internetbanking.webapp.products.service.service.IProduct" method="getCreditCards" description="" />
 	<service id="InternetBanking.WebApp.Products.Service.Product.GetCreditCardInformation" interface="cobiscorp.ecobis.internetbanking.webapp.products.service.service.IProduct" method="getCreditCardInformation" description="" />
 	<service id="InternetBanking.WebApp.Payments.Service.CreditCard.PaymentCreditCards" interface="cobiscorp.ecobis.internetbanking.webapp.payments.service.service.ICreditCard" method="paymentCreditCards" description="" />
-
+    <service id="InternetBanking.WebApp.Utils.Service.Utils.GetCommission" interface="cobiscorp.ecobis.internetbanking.webapp.utils.service.service.IUtils" method="getCommission" description=" "/>
 </services>

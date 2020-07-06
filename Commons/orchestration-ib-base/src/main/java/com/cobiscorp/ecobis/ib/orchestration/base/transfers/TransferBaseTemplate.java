@@ -211,11 +211,17 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	protected IProcedureResponse validateLocalExecution(Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Inicia validacion local");
+		
+
 
 		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 		IProcedureResponse responseSigners = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_QUERY_SIGNER);
-		IProcedureRequest request = initProcedureRequest(originalRequest);
-
+		IProcedureRequest request = initProcedureRequest(originalRequest);	
+		
+		ServerResponse responseServer =(ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+	
+		
+			
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800048");
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
@@ -237,13 +243,15 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled())
 			logger.logInfo("t_trn a evaluar: " + t_trn);
 
-		request.addInputParam("@t_trn", ICTSTypes.SYBINTN, String.valueOf(Utils.getTransactionMenu(t_trn)));
-
+		request.addInputParam("@t_trn", ICTSTypes.SYBINTN, String.valueOf(Utils.getTransactionMenu(t_trn)));	
+		
 		switch (t_trn) {
 		case 1800009:
 			request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "S");
 			request.addInputParam("@i_option", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_option"));
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
+			//same accounts
+			
 			break;
 		case 1800011:
 		case 1800012:
@@ -277,7 +285,8 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_tercero", ICTSTypes.SYBVARCHAR, "N");
 			break;
 		}
-
+		request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR, responseServer!=null &&responseServer.getOnLine() ? "N" : "O" );
+		
 		if (!getFromReentryExcecution(aBagSPJavaOrchestration))
 			request.addInputParam("@i_genera_clave", ICTSTypes.SYBVARCHAR, "S");
 
@@ -329,6 +338,28 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_cod_mis", ICTSTypes.SYBINT4, "0");
 		request.addOutputParam("@o_clave_bv", ICTSTypes.SYBINT4, "0");
 
+		//JCOS PRUEBA
+		if (!Utils.isNull(originalRequest.readParam("@i_val"))) {
+			
+			String valies=originalRequest.readParam("@i_val").toString();
+			
+			
+			
+			if (logger.isDebugEnabled())
+				logger.logDebug(CLASS_NAME + "Valorsito " + valies);
+			
+		}
+		
+		
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: Transaccion "+String.valueOf(t_trn)+" monto::::  "  );
+		
+		
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: " + " COMISION CON EL VALOR DE PI 3.1416");
+		request.addOutputParam("@o_comision", ICTSTypes.SYBMONEY, "0");
+		
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Validacion local, request: " + request.getProcedureRequestAsString());
 
