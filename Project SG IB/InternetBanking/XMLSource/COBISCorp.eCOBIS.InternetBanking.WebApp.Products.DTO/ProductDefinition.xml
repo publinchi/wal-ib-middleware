@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<product path="D:/Trafalgar/Middleware/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productNS="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="3B34F71F-83AC-4866-89DC-EA726238687B">
+<product path="D:/_Clientes/TRAFALGAR/Repositorios/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" appPath="C:/Program Files (x86)/COBIS/COBIS Services Generator/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" productNS="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" documentationLanguage="Español" year="2020" version="4.6.1.0" type="DTO" GUID="9E929A45-2716-4D15-A6CA-740D3FED884C">
   <namespaces>
     <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Products\DTO" />
   </namespaces>
@@ -67,7 +67,7 @@
     <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="DTOJavaPOJO" />
   </packagers>
   <references>
-    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" type="DTO" version="4.6.1.0" GUID="D1582B0C-9BF9-4EE7-905C-C44A4CB61C25">
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" type="DTO" version="4.6.1.0" GUID="FE9F4886-04BB-4DC6-8B83-3598CD15365F">
       <templates>
         <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" package="true" packageType="Jar">
           <templateFiles>
@@ -81,7 +81,7 @@
         <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Services" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" package="cobiscorp.ecobis.internetbanking.webapp.services.dto" ns="http://dto.services.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Services\DTO" />
       </namespaces>
     </reference>
-    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="E7A44E51-13F2-4DBD-9464-223CE18DBACE">
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="3B8CB07A-0873-4916-841D-8850F779DC27">
       <templates>
         <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="true" packageType="Jar">
           <templateFiles>
@@ -95,7 +95,7 @@
         <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Admin\DTO" />
       </namespaces>
     </reference>
-    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" type="DTO" version="4.6.1.0" GUID="B3C3A843-527F-40C8-916C-1ABB529B783D">
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" type="DTO" version="4.6.1.0" GUID="B289507F-4884-41F9-966F-241BC9C39687">
       <templates>
         <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="true" packageType="Jar">
           <templateFiles>
@@ -111,7 +111,7 @@
     </reference>
   </references>
   <externalReferences>
-    <externalReference name="CTSServiceFramework-All-1.0.5" package="com.cobiscorp.cobis.cts.sdf.dto" path="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" type="JAR" GUID="14175533-A9AF-4941-A76C-BB9E573F0E9E" />
+    <externalReference name="CTSServiceFramework-All-1.0.5" package="com.cobiscorp.cobis.cts.sdf.dto" path="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" type="JAR" GUID="B17D5658-4A0A-4B6D-B4D7-F5E2702D1145" />
   </externalReferences>
   <productProperties>
     <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />

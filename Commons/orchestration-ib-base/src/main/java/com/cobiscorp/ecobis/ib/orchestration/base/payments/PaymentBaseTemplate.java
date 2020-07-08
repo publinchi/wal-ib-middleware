@@ -208,11 +208,11 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		map = existsAccountingParameter(responseAccountingParameters, Integer.parseInt(request.readValueParam("@i_prod")), "C");
 		aTransactionMonetaryRequest.setCauseComi("0");
 		if (!Utils.isNull(map)) {
-			BigDecimal cost = getCoreServiceMonetaryTransaction().getCost(map.get("ACCOUNTING_PARAM"), currency, product);
-			if (!cost.equals(new BigDecimal(0))) {
+			//BigDecimal cost = getCoreServiceMonetaryTransaction().getCost(map.get("ACCOUNTING_PARAM"), currency, product);
+			//if (!cost.equals(new BigDecimal(0))) {
 				aTransactionMonetaryRequest.setCauseComi(map.get("ACCOUNTING_PARAM").getCause());
-				aTransactionMonetaryRequest.setAmmountCommission(cost);
-			}
+				aTransactionMonetaryRequest.setAmmountCommission(new BigDecimal(request.readValueParam("@i_comi_val")));
+			//}
 		}
 
 		if (request.readValueParam("@s_ssn_branch") != null)
@@ -223,8 +223,10 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta el DEBITO " + aTransactionMonetaryRequest.toString());
 
-		aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
-
+		if (request.readValueParam("@i_reversa") != null &&  !"S".equals(request.readValueParam("@i_reversa"))) {
+		   aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del DEBITO " + aTransactionMonetaryResponse.toString());
 			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn_branch: " + request.readValueParam("@s_ssn_branch"));
@@ -238,24 +240,27 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put(SSN, request.readValueParam("@s_ssn"));
 
 		responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
-		Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
+		//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
 
-		if (logger.isDebugEnabled()) {
+		/*if (logger.isDebugEnabled()) {
 			logger.logDebug(CLASS_NAME + " Executing executePayment Respuesta de ejecucion del CREDITO" + responsePayDestinationProduct.getProcedureResponseAsString());
 			logger.logDebug(CLASS_NAME + " Executing executePayment CodigoRespuesta: " + codeResponse);
-		}
+		}*/
 
-		long codigoRespuesta = 1; // Tarjetas si es error <= 0
-		if (codeResponse != null)
+		//long codigoRespuesta = 1; // Tarjetas si es error <= 0
+		/*if (codeResponse != null)
 			codigoRespuesta = Long.parseLong(codeResponse.toString());
+			*/
+		//if (Utils.flowError(messageErrorPayment.append(" --> payDestinationProduct").toString(), responsePayDestinationProduct) || codigoRespuesta <= 0) {
 
-		if (Utils.flowError(messageErrorPayment.append(" --> payDestinationProduct").toString(), responsePayDestinationProduct) || codigoRespuesta <= 0) {
+		if (request.readValueParam("@i_reversa") != null &&  "S".equals(request.readValueParam("@i_reversa"))) {
 			/*
 			 * Ejecuta el reverso del DEBITO
 			 */
 			logger.logError(CLASS_NAME + messageErrorPayment);
 			aTransactionMonetaryRequest.setCorrection("S");
-			aTransactionMonetaryRequest.setSsnCorrection(Integer.valueOf(aBagSPJavaOrchestration.get(SSN_BRANCH).toString()));
+			aTransactionMonetaryRequest.setSsnCorrection(Integer.parseInt(request.readValueParam("@i_ssn_branch")));
+			aTransactionMonetaryRequest.setReferenceNumber(request.readValueParam("@i_ssn"));
 			aTransactionMonetaryRequest.setAlternateCode(0);
 
 			if (logger.isDebugEnabled())
@@ -408,7 +413,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		}
 
 		IProcedureResponse responseValidateCoreSigners = new ProcedureResponseAS();
-		if (responseServer.getOnLine()) {
+		/*if (responseServer.getOnLine()) {
 			responseValidateCoreSigners = AccountCoreSignersValidation.validateCoreSigners(getCoreService(), aBagSPJavaOrchestration);
 			if (Utils.flowError(messageErrorPayment.append(" --> validateCoreSigners").toString(), responseValidateCoreSigners)) {
 				if (logger.isInfoEnabled())
@@ -419,29 +424,38 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		} else {
 			responseValidateCoreSigners.setReturnCode(0);
 			responseValidateCoreSigners.addParam("@o_condiciones_firmantes", ICTSTypes.SQLVARCHAR, 0, "");
-		}
+		}*/
+		
+		responseValidateCoreSigners.setReturnCode(0);
+		responseValidateCoreSigners.addParam("@o_condiciones_firmantes", ICTSTypes.SQLVARCHAR, 0, "");
+		
 		aBagSPJavaOrchestration.put(RESPONSE_CORE_SIGNERS, responseValidateCoreSigners);
 
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + " Ejectando executeStepsPaymentBase: Validaciones en el Local " + anOriginalRequest.getProcedureRequestAsString());
+        if(anOriginalRequest != null && !"S".equals(anOriginalRequest.readValueParam("@i_reversa"))) {
+        	
+    		if (logger.isDebugEnabled())
+    			logger.logDebug(CLASS_NAME + " Ejectando executeStepsPaymentBase: Validaciones en el Local " + anOriginalRequest.getProcedureRequestAsString());
 
-		responseValidateLocalExecution = validateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+    		responseValidateLocalExecution = validateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 
-		if (Utils.flowError(messageErrorPayment.append(" --> validateLocalExecution").toString(), responseValidateLocalExecution)) {
-			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + messageErrorPayment);
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseValidateLocalExecution);
-			return responseValidateLocalExecution;
-		}
-		aBagSPJavaOrchestration.put(RESPONSE_VALIDATE_LOCAL, responseValidateLocalExecution);
+    		if (Utils.flowError(messageErrorPayment.append(" --> validateLocalExecution").toString(), responseValidateLocalExecution)) {
+    			if (logger.isInfoEnabled())
+    				logger.logInfo(CLASS_NAME + messageErrorPayment);
+    			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseValidateLocalExecution);
+    			return responseValidateLocalExecution;
+    		}
+    		aBagSPJavaOrchestration.put(RESPONSE_VALIDATE_LOCAL, responseValidateLocalExecution);
 
-		if ("S".equals(responseValidateLocalExecution.readValueParam("@o_autorizacion"))) {
-			if (logger.isInfoEnabled())
-				logger.logInfo("Fin del flujo. Requiere autorizacion");
-			aBagSPJavaOrchestration.put("RESPONSE_TRANSACTION", responseValidateLocalExecution);//cmeg 03/12/2018 para que no se caiga
-			return Utils.returnException("TRANSACCIÃ“N NECESITA AUTORIZACIÃ“N");
-		}
-		aBagSPJavaOrchestration.put(RESPONSE_VALIDATE_LOCAL, responseValidateLocalExecution);
+    		if ("S".equals(responseValidateLocalExecution.readValueParam("@o_autorizacion"))) {
+    			if (logger.isInfoEnabled())
+    				logger.logInfo("Fin del flujo. Requiere autorizacion");
+    			aBagSPJavaOrchestration.put("RESPONSE_TRANSACTION", responseValidateLocalExecution);//cmeg 03/12/2018 para que no se caiga
+    			return Utils.returnException("TRANSACCIÃ“N NECESITA AUTORIZACIÃ“N");
+    		}
+    		aBagSPJavaOrchestration.put(RESPONSE_VALIDATE_LOCAL, responseValidateLocalExecution);
+        	
+        }
+
 		/*
 		 * Obtiene Transacciones y Causa del movimiento a aplicar
 		 */
@@ -640,6 +654,10 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 		if (anOriginalRequest.readValueParam("@i_recurr_id") != null) {
 			Utils.copyParam("@i_recurr_id", anOriginalRequest, request);
+		}
+		
+		if (anOriginalRequest.readValueParam("@s_servicio") != null) {
+			request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_servicio"));			
 		}
 
 		if (anOriginalRequest.readValueParam("@i_mon_des") != null) {
