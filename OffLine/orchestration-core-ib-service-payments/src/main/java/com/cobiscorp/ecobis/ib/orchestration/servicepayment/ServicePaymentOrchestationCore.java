@@ -247,9 +247,16 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 		if (logger.isInfoEnabled())
 			logger.logInfo("INGRESA payService");
 
-		PaymentServiceResponse aPaymentServiceResponse = coreServicePayment.payService(
-				transformToPaymentServiceRequest(aProcedureRequest), this.properties, aBagSPJavaOrchestration);// ,
+		//TODO LLAMAR A TERCERO
+		//PaymentServiceResponse aPaymentServiceResponse = coreServicePayment.payService(
+			//	transformToPaymentServiceRequest(aProcedureRequest), this.properties, aBagSPJavaOrchestration);// ,
 																												// aBagSPJavaOrchestration));
+																												 
+		PaymentServiceResponse  aPaymentServiceResponse = new PaymentServiceResponse();
+		aPaymentServiceResponse.setReturnCode(0);
+		aPaymentServiceResponse.setBranchSSN(Integer.parseInt((String)aBagSPJavaOrchestration.get(SSN_BRANCH)));
+		aPaymentServiceResponse.setReference(Integer.parseInt((String)aBagSPJavaOrchestration.get(SSN_BRANCH)));
+																												 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("SALE payService" + aPaymentServiceResponse.getReturnCode());
 			logger.logInfo("SALE payService" + aPaymentServiceResponse.getMessage());
@@ -285,11 +292,9 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 				logger.logInfo("ORIGINAL_REQUEST" + aBagSPJavaOrchestration.get(ORIGINAL_REQUEST));
 			response = executeStepsPaymentBase(anOrginalRequest, aBagSPJavaOrchestration);
 			return processResponse(anOrginalRequest, aBagSPJavaOrchestration);
-
 		} catch (CTSServiceException e) {
 			return Utils.returnExceptionService(anOrginalRequest, e);
 		} catch (CTSInfrastructureException e) {
-
 			return Utils.returnExceptionService(anOrginalRequest, e);
 		}
 	}

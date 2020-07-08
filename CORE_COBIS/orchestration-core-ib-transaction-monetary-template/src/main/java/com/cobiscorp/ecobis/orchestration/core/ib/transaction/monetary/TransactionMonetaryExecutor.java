@@ -207,13 +207,13 @@ public class TransactionMonetaryExecutor extends SPJavaOrchestrationBase impleme
 				String.valueOf(aTransactionMonetaryRequest.getTransaction()));
 
 		request.addInputParam("@i_causa", ICTSTypes.SYBVARCHAR, aTransactionMonetaryRequest.getCause());
+		//request.addInputParam("@i_causa", ICTSTypes.SYBVARCHAR, "185");
 		request.addInputParam("@i_val", ICTSTypes.SYBMONEY, aTransactionMonetaryRequest.getAmmount().toString());
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
 				aTransactionMonetaryRequest.getProduct().getProductNumber());
-		request.addInputParam("@i_mon", ICTSTypes.SQLINT2,
-				aTransactionMonetaryRequest.getProduct().getCurrency().getCurrencyId().toString());
-		request.addInputParam("@i_moneda_destino", ICTSTypes.SQLINT2,
-				String.valueOf(aTransactionMonetaryRequest.getPayCurrency()));
+		request.addInputParam("@i_mon", ICTSTypes.SQLINT2, aTransactionMonetaryRequest.getProduct().getCurrency().getCurrencyId().toString());
+		//request.addInputParam("@i_moneda_destino", ICTSTypes.SQLINT2, String.valueOf(aTransactionMonetaryRequest.getPayCurrency()));
+		
 
 		request.addInputParam("@i_fecha", ICTSTypes.SQLDATETIME, request.readValueFieldInHeader("date"));
 		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aTransactionMonetaryRequest.getConcept());

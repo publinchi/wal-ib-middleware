@@ -45,6 +45,10 @@
     <parameter name="@s_cliente" dataType="int" direction="in" />
     <parameter name="@s_servicio" dataType="tinyint" direction="in" />
     <parameter name="@s_perfil" dataType="smallint" direction="in" />
+    <parameter name="@i_comi_val" dataType="money" direction="in" />
+    <parameter name="@i_reversa" dataType="char" direction="in" />
+    <parameter name="@i_ssn" dataType="int" direction="in" />
+    <parameter name="@i_ssn_branch" dataType="int" direction="in" />
   </parameters>
   <queries>
     <query>
