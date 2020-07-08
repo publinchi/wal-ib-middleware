@@ -255,9 +255,14 @@ public class UtilsTransfers {
 		destinationProduct.setProductNumber(anOriginalRequest.readValueParam("@i_cta_des"));
 		destinationProduct.setProductType(Integer.parseInt(anOriginalRequest.readValueParam("@i_prod_des").toString()));
 		destinationProduct.setCurrency(currencyDest);
-
-		if (localValidation.readParam("@o_comision") != null)
+        
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Cargando Comission");
+		if (localValidation.readParam("@o_comision") != null) {
+			if (logger.isInfoEnabled())
+				logger.logInfo(CLASS_NAME + " Cargando Comission::: "+localValidation.readValueParam("@o_comision").toString());
 			ThirdPartyTransferRequest.setCommisionAmmount(new BigDecimal(localValidation.readValueParam("@o_comision").toString()));
+		}
 		ThirdPartyTransferRequest.setAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_val").toString()));
 		ThirdPartyTransferRequest.setOriginProduct(originProduct);
 		ThirdPartyTransferRequest.setDestinationProduct(destinationProduct);
