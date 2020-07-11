@@ -225,9 +225,9 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 		if (request.readValueParam("@i_reversa") != null &&  !"S".equals(request.readValueParam("@i_reversa"))) {
 		   aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
-		}
 		
 		if (logger.isInfoEnabled()) {
+			   	logger.logInfo(CLASS_NAME + "Executing executePayment JCB Reversa " + aTransactionMonetaryResponse.toString());
 			logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del DEBITO " + aTransactionMonetaryResponse.toString());
 			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn_branch: " + request.readValueParam("@s_ssn_branch"));
 			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn: " + request.readValueParam("@s_ssn"));
@@ -235,6 +235,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 		if (!aTransactionMonetaryResponse.getSuccess())
 			return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+		}
 
 		aBagSPJavaOrchestration.put(SSN_BRANCH, request.readValueParam("@s_ssn_branch"));
 		aBagSPJavaOrchestration.put(SSN, request.readValueParam("@s_ssn"));
@@ -260,7 +261,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			logger.logError(CLASS_NAME + messageErrorPayment);
 			aTransactionMonetaryRequest.setCorrection("S");
 			aTransactionMonetaryRequest.setSsnCorrection(Integer.parseInt(request.readValueParam("@i_ssn_branch")));
-			aTransactionMonetaryRequest.setReferenceNumber(request.readValueParam("@i_ssn"));
+            //aTransactionMonetaryRequest.setReferenceNumber(request.readValueParam("@i_ssn"));
 			aTransactionMonetaryRequest.setAlternateCode(0);
 
 			if (logger.isDebugEnabled())
@@ -500,6 +501,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			if (!Utils.isNull(responseExecuteTransaction))
 				logger.logInfo(new StringBuilder("RESPONSE_TRANSACTION --> ").append(responseExecuteTransaction.getProcedureResponseAsString()));
 
+		if(anOriginalRequest != null && !"S".equals(anOriginalRequest.readValueParam("@i_reversa"))) {
 		responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 
 		aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
@@ -509,7 +511,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseLocalExecution);
 			return responseLocalExecution;
 		}
-
+		}
 		responseNotification = sendNotification(anOriginalRequest, aBagSPJavaOrchestration);
 
 		if (Utils.flowError(messageErrorPayment.append(" --> sendNotification").toString(), responseNotification)) {
