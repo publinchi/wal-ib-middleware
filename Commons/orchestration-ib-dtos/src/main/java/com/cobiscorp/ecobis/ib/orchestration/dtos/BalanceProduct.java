@@ -174,7 +174,7 @@ public class BalanceProduct {
 	 */
 	private String oficial;
 	
-	private String numCtaClabe;
+	private String clabeAccountNumber;
 	
 	/**
 	 * @return the type
@@ -657,12 +657,12 @@ public class BalanceProduct {
 		this.oficial = oficial;
 	}
 
-	public String getNumCtaClabe() {
-		return numCtaClabe;
+	public String getClabeAccountNumber() {
+		return clabeAccountNumber;
 	}
 
-	public void setNumCtaClabe(String numCtaClabe) {
-		this.numCtaClabe = numCtaClabe;
+	public void setClabeAccountNumber(String clabeAccountNumber) {
+		this.clabeAccountNumber = clabeAccountNumber;
 	}
 
 
@@ -671,7 +671,7 @@ public class BalanceProduct {
 		return "BalanceProduct [deliveryAddress=" + deliveryAddress + ", checkBalance=" + checkBalance + ", overdraftBalance=" + overdraftBalance + ", openingDate=" + openingDate + ", inExchangeBalance=" + inExchangeBalance + ", embargoedBalance=" + embargoedBalance + ", product=" + product + ", client=" + client + ", totalBalance=" + totalBalance + ", drawBalance=" + drawBalance + ", rate="
 				+ rate + ", expirationDate=" + expirationDate + ", availableBalance=" + availableBalance + ", equityBalance=" + equityBalance + ", rotateBalance=" + rotateBalance + ", balance12H=" + balance12H + ", balance24H=" + balance24H + ", remittancesBalance=" + remittancesBalance + ", blockedAmmount=" + blockedAmmount + ", blockedNumber=" + blockedNumber + ", blockedNumberAmmount="
 				+ blockedNumberAmmount + ", processDate=" + processDate + ", state=" + state + ", surplusAmmount=" + surplusAmmount + ", idClosed=" + idClosed + ", cashBalance=" + cashBalance + ", nextPaymentValue=" + nextPaymentValue + ", dateLastMovent=" + dateLastMovent + ", officeAccount=" + officeAccount + ", productBanking=" + productBanking + ", ssnHost=" + ssnHost + ", accountingBalance="
-				+ accountingBalance +",oficial="+ oficial +",numCtaClabe="+ numCtaClabe + "]";
+				+ accountingBalance +",oficial="+ oficial +",clabeAccountNumber="+ clabeAccountNumber + "]";
 	}
 
 }

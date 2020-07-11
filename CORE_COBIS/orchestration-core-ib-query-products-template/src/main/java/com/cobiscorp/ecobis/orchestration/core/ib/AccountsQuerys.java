@@ -180,7 +180,7 @@ public class AccountsQuerys extends SPJavaOrchestrationBase implements ICoreServ
 						balanceProduct.setOficial(rows[17].getValue().toString());
 				if (!Utils.isNullOrEmpty(rows[18].getValue()))
 					if (rows[18].getValue() != null)
-						balanceProduct.setNumCtaClabe(rows[17].getValue().toString());
+						balanceProduct.setClabeAccountNumber(rows[18].getValue().toString());
 
 
 				
