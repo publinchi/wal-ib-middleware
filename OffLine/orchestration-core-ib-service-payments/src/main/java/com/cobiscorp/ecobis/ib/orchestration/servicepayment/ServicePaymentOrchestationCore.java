@@ -313,7 +313,7 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 			response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, response.readValueFieldInHeader("ssn_branch"));
 		}
 		
-		if (response.readValueParam("@o_autorizacion") == null) {
+		if (response.readValueParam("@o_autorizacion") == null && responseVL != null) {
 			response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0, responseVL.readValueParam("@o_autorizacion"));
 		}
 
