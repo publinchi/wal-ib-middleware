@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<product path="D:/IB/GIT/trf-ib-middleware/Project SG IB/InternetBanking/Products/COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" appPath="C:/Program Files/COBIS/COBIS Services Generator 4/" appDataPath="C:/Users/mguanuna/AppData/Roaming/COBIS/CENServicesGenerator/4.1.0.0/" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" productNS="http://service.enquiries.webapp.internetbanking.ecobis.cobiscorp" description="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" documentationLanguage="Español" year="2020" version="4.6.1.0" type="SERVICE" GUID="D1555233-28B1-4E78-970E-6AA8088BB1DB">
+  <namespaces>
+    <namespace type="class" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Enquiries\Service" />
+  </namespaces>
+  <templates>
+    <template id="ServiceCTS302" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" package="true" packageType="Jar">
+      <templateFiles>
+        <templateFile filePath="Annotations\JavaInterface.xslt" enabled="true" override="true" />
+        <templateFile filePath="Annotations\JavaService.xslt" enabled="true" override="true" />
+        <templateFile filePath="Annotations\OSGIClass.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+        <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+      </templateFiles>
+    </template>
+  </templates>
+  <DTOs />
+  <classes>
+    <class name="AccountBalance" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="AccountBalance">
+          <services>
+            <service name="GetCheckingAccountBalance" id="InternetBanking.WebApp.Enquiries.AccountBalance.GetCheckingAccountBalance">
+              <procedure name="sp_tr_consulta_saldo_cc" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetSavingsAccountBalance" id="InternetBanking.WebApp.Enquiries.AccountBalance.GetSavingsAccountBalance">
+              <procedure name="sp_tr_consulta_saldo_ah" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="AccountOperations" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="AccountOperations">
+          <services>
+            <service name="GetAccountOperationsOffline" id="InternetBanking.WebApp.Enquiries.Service.AccountOperations.GetAccountOperationsOffline">
+              <procedure name="sp_tran_monet" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetCheckingAccountLastOperations" id="InternetBanking.WebApp.Enquiries.AccountOperations.GetCheckingAccountLastOperations">
+              <procedure name="sp_tr_cons_ult_movimientos_cc" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetCheckingAccountOperationDetail" id="InternetBanking.WebApp.Enquiries.AccountOperations.GetCheckingAccountOperationDetail">
+              <procedure name="sp_tr_detalle_trn_cc" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetCheckingAccountOperations" id="InternetBanking.WebApp.Enquiries.AccountOperations.GetCheckingAccountOperations">
+              <procedure name="sp_tr_consulta_movimientos_cc" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetCreditCardLastOperations" id="InternetBanking.WebApp.Enquiries.Service.AccountOperations.GetCreditCardLastOperations">
+              <procedure name="sp_consulta_saldos_tar_cre" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetCreditCardLastOperationsConnector" id="InternetBanking.WebApp.Enquiries.Service.AccountOperations.GetCreditCardLastOperationsConnector">
+              <procedure name="sp_consulta_saldos_tar_cre" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetFormatMT940" id="InternetBanking.WebApp.Enquiries.Service.AccountOperations.GetFormatMT940">
+              <procedure name="sp_mensaje_MT940" database="cob_remesas" version="1" />
+            </service>
+            <service name="GetSavingsAccountLastOperations" id="InternetBanking.WebApp.Enquiries.AccountOperations.GetSavingsAccountLastOperations">
+              <procedure name="sp_tr_cons_ult_movimientos_ah" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetSavingsAccountOperationDetail" id="InternetBanking.WebApp.Enquiries.AccountOperations.GetSavingsAccountOperationDetail">
+              <procedure name="sp_tr_detalle_trn_ah" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetSavingsAccountOperations" id="InternetBanking.WebApp.Enquiries.AccountOperations.GetSavingsAccountOperations">
+              <procedure name="sp_tr_consulta_movimientos_ah" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="AccountStatement" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="AccountStatement">
+          <services>
+            <service name="AccountStatementService" id="InternetBanking.WebApp.Enquiries.Service.AccountStatement.AccountStatementService">
+              <procedure name="sp_tr_pago_comision" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetAditionalData" id="InternetBanking.WebApp.Enquiries.Service.AccountStatement.GetAditionalData">
+              <procedure name="sp_bv_adicional_estcta" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetCheckingAccountStatement" id="InternetBanking.WebApp.Enquiries.AccountStatement.GetCheckingAccountStatement">
+              <procedure name="sp_tr_cons_estadocuenta_cc" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetSavingsAccountStatement" id="InternetBanking.WebApp.Enquiries.AccountStatement.GetSavingsAccountStatement">
+              <procedure name="sp_tr_cons_estadocuenta_ah" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="CertificateDeposit" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="CertificateDeposit">
+          <services>
+            <service name="GetHistoricals" id="InternetBanking.WebApp.Enquiries.Service.CertificateDeposit.GetHistoricals">
+              <procedure name="sp_conhis" database="cob_pfijo" version="1" />
+            </service>
+            <service name="GetPayableInterests" id="InternetBanking.WebApp.Enquiries.Service.CertificateDeposit.GetPayableInterests">
+              <procedure name="sp_bv_consulta_cuotas_dpf" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetPaymentDetailSchedule" id="InternetBanking.WebApp.Enquiries.Service.CertificateDeposit.GetPaymentDetailSchedule">
+              <procedure name="sp_consulta_oper" database="cob_pfijo" version="1" />
+            </service>
+            <service name="GetPaymentSchedule" id="InternetBanking.WebApp.Enquiries.Service.CertificateDeposit.GetPaymentSchedule">
+              <procedure name="sp_cons_cuota" database="cob_pfijo" version="1" />
+            </service>
+            <service name="GetRealDays" id="InternetBanking.WebApp.Enquiries.Service.CertificateDeposit.GetRealDays">
+              <procedure name="sp_consulta_oper" database="cob_pfijo" version="1" />
+            </service>
+            <service name="GetStatements" id="InternetBanking.WebApp.Enquiries.Service.CertificateDeposit.GetStatements">
+              <procedure name="sp_consulta_mov_mon" database="cob_pfijo" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="Enquiries" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="Enquiries">
+          <services>
+            <service name="GetClientEnquiries" id="InternetBanking.WebApp.Enquiries.Service.Enquiries.GetClientEnquiries">
+              <procedure name="sp_cons_solicitudes" database="cobis" version="1" />
+            </service>
+            <service name="GetCreditCardOperations" id="InternetBanking.WebApp.Enquiries.Service.Enquiries.GetCreditCardOperations">
+              <procedure name="sp_tr83_tarjcred" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="GetDetailAppEnquiries" id="InternetBanking.WebApp.Enquiries.Service.Enquiries.GetDetailAppEnquiries">
+              <procedure name="sp_bv_cons_detalle_solicitud" database="cobis" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="FactoringOperations" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="FactoringOperations">
+          <services>
+            <service name="GetFactoringPayments" id="InternetBanking.WebApp.Enquiries.Service.FactoringOperations.GetFactoringPayments">
+              <procedure name="sp_bv_factoring_cons_pag" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="FixedTermDepositBalance" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="FixedTermDepositBalance">
+          <services>
+            <service name="GetFixedTermDepositBalance" id="InternetBanking.WebApp.Enquiries.FixedTermDepositBalance.GetFixedTermDepositBalance">
+              <procedure name="sp_tr_consulta_pfijo_itf" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="LoanBalance" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="LoanBalance">
+          <services>
+            <service name="GetLoanBalance" id="InternetBanking.WebApp.Enquiries.LoanBalance.GetLoanBalance">
+              <procedure name="sp_tr_consulta_prestamo_cca" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+    <class name="SearchCheck" nsBase="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" namespace="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service.Service" package="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service" ns="http://service.service.enquiries.webapp.internetbanking.ecobis.cobiscorp" version="1">
+      <partialClasses>
+        <partialClass name="SearchCheck">
+          <services>
+            <service name="SearchCheckByNumber" id="InternetBanking.WebApp.Enquiries.SearchCheck.SearchCheckByNumber">
+              <procedure name="sp_tr_consulta_cheque" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="SearchChecks" id="InternetBanking.WebApp.Enquiries.SearchCheck.SearchChecks">
+              <procedure name="sp_tr_consulta_cheque" database="cob_bvirtual" version="1" />
+            </service>
+            <service name="ValidateChecksState" id="InternetBanking.WebApp.Enquiries.Service.SearchCheck.ValidateChecksState">
+              <procedure name="sp_bv_valida_estado_cheque" database="cob_bvirtual" version="1" />
+            </service>
+          </services>
+        </partialClass>
+      </partialClasses>
+    </class>
+  </classes>
+  <packagers>
+    <packager type="SGPackageJava" AntTask="sign-archive" KeyAlias="cobisBV" KeyPassword="cobisbvadminadmin" KeyCertificatePassword="cobisbvadmin" KeyFileName="cobisBV.KEYSTORE" RelativeFolder="True" TemplateId="ServiceCTS302" JDKVersion="1.6" JDKPath="C:\Program Files\Java\jdk1.7.0_80" />
+  </packagers>
+  <references>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" type="DTO" version="4.6.1.0" GUID="3A39D945-50A4-4424-B614-428ED5A34A5D">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Products" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" package="cobiscorp.ecobis.internetbanking.webapp.products.dto" ns="http://dto.products.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Products\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" type="DTO" version="4.6.1.0" GUID="E04A1DB6-E591-4B87-BBB1-2637FDA9C155">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Services" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" package="cobiscorp.ecobis.internetbanking.webapp.services.dto" ns="http://dto.services.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Services\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" type="DTO" version="4.6.1.0" GUID="A537D25C-A38F-4959-8414-4B8736AD2E80">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" package="cobiscorp.ecobis.internetbanking.webapp.utils.dto" ns="http://dto.utils.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Utils\DTO" />
+      </namespaces>
+    </reference>
+    <reference name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" type="DTO" version="4.6.1.0" GUID="3C7CDDF4-FD50-4542-B7B8-503CBB3FF555">
+      <templates>
+        <template id="DTOJavaPOJO" productName="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" outputFolder="c:\COBIS-SG\Output\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="true" packageType="Jar">
+          <templateFiles>
+            <templateFile filePath="JavaPOJO\JavaDTO.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\buildProperties.xslt" enabled="true" override="true" />
+            <templateFile filePath="..\Commons\Java\build.xslt" enabled="true" override="true" />
+          </templateFiles>
+        </template>
+      </templates>
+      <namespaces>
+        <namespace type="dto" base="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" package="cobiscorp.ecobis.internetbanking.webapp.admin.dto" ns="http://dto.admin.webapp.internetbanking.ecobis.cobiscorp" folder="WebApp\Admin\DTO" />
+      </namespaces>
+    </reference>
+  </references>
+  <productProperties>
+    <property name="MavenGroupId" value="com.cobiscorp.channels.ib" />
+    <property name="MavenArtifactId" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service" />
+    <property name="MavenVersion" value="4.6.1.0" />
+  </productProperties>
+</product>

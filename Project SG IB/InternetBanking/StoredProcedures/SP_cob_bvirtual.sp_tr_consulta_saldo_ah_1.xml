@@ -87,6 +87,7 @@
         <column name="saldo cheques internacionales" />
         <column name="monto embargado" />
         <column name="oficial" />
+        <column name="clabeAccountNumber" />
       </columns>
       <queryText></queryText>
     </query>
