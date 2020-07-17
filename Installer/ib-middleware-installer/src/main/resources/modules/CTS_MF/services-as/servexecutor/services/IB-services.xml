@@ -1564,7 +1564,7 @@
     <service id="InternetBanking.WebApp.Transfers.Transfer.InternationalTransfer" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="internationalTransfer" description=" "/>
 
 
-    <service id="InternetBanking.WebApp.Transfers.Transfer.TransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="transferACH" description=" "/>
+    <!--service id="InternetBanking.WebApp.Transfers.Transfer.TransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="transferACH" description=" "/-->
 
 
     <service id="InternetBanking.WebApp.Transfers.Transfer.TransferBetweenOwnAccounts" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="transferBetweenOwnAccounts" description=" "/>
@@ -1574,9 +1574,9 @@
         
     <service id="InternetBanking.WebApp.Transfers.Transfer.GetTransfers" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getTransfers" description=" "/>
     <service id="InternetBanking.WebApp.Transfers.Transfer.GetTransfersToThird" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getTransfersToThird" description=" "/>        
-    <service id="InternetBanking.WebApp.Transfers.Transfer.GetTransfersACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getTransfersACH" description=" "/>
+    <!--service id="InternetBanking.WebApp.Transfers.Transfer.GetTransfersACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getTransfersACH" description=" "/-->
         
-    <service id="InternetBanking.WebApp.Utils.Format.GetACHAccountFormat" interface="cobiscorp.ecobis.internetbanking.webapp.utils.service.service.IFormat" method="getACHAccountFormat" description=" "/>
+    <!--service id="InternetBanking.WebApp.Utils.Format.GetACHAccountFormat" interface="cobiscorp.ecobis.internetbanking.webapp.utils.service.service.IFormat" method="getACHAccountFormat" description=" "/-->
 
 
     <service id="InternetBanking.WebApp.Utils.Format.GetFormats" interface="cobiscorp.ecobis.internetbanking.webapp.utils.service.service.IFormat" method="getFormats" description=" "/>
@@ -2330,7 +2330,7 @@
 
     <service id="InternetBanking.WebApp.EnterpriseServices.UniqueLogin.ValidateAccountsRelations" interface="cobiscorp.ecobis.internetbanking.webapp.enterpriseservices.service.service.IUniqueLogin" method="validateAccountsRelations" description=" "/>
         
-    <service id="InternetBanking.WebApp.Transfers.Transfer.TransferACHPayLoan" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="transferACHPayLoan" description=" "/>
+    <!--service id="InternetBanking.WebApp.Transfers.Transfer.TransferACHPayLoan" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="transferACHPayLoan" description=" "/-->
         
     <!-- JOCH 2011.07.25 - Login Unico -->
     <service id="InternetBanking.WebApp.EnterpriseServices.UniqueLogin.GetMembersByGroup" interface="cobiscorp.ecobis.internetbanking.webapp.enterpriseservices.service.service.IUniqueLogin" method="getMembersByGroup" description=" "/>  
@@ -2727,12 +2727,12 @@
     <service id="InternetBanking.WebApp.Enquiries.Service.Enquiries.GetClientEnquiries" interface="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service.IEnquiries" method="getClientEnquiries" description="" />
     <service id="InternetBanking.WebApp.Enquiries.Service.Enquiries.GetDetailAppEnquiries" interface="cobiscorp.ecobis.internetbanking.webapp.enquiries.service.service.IEnquiries" method="getDetailAppEnquiries" description="" />
     <service id="InternetBanking.WebApp.Customer.Service.Customer.GetContractInformation" interface="cobiscorp.ecobis.internetbanking.webapp.customer.service.service.ICustomer" method="getContractInformation" description="" />
-    <service id="InternetBanking.WebApp.Transfers.Service.Transfer.GetCatalogTransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getCatalogTransferACH" description="" />
-	<service id="InternetBanking.WebApp.Transfers.Service.Transfer.GetFeeTransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getFeeTransferACH" description="" />
+    <!--service id="InternetBanking.WebApp.Transfers.Service.Transfer.GetCatalogTransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getCatalogTransferACH" description="" /-->
+	<!--service id="InternetBanking.WebApp.Transfers.Service.Transfer.GetFeeTransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getFeeTransferACH" description="" /-->
 	<service id="InternetBanking.WebApp.BankGuarantee.Guarantee.ExecuteApplication" interface="cobiscorp.ecobis.internetbanking.webapp.bankguarantee.service.IGuarantee" method="executeApplication" description="" />
 	<service id="InternetBanking.WebApp.BankGuarantee.Guarantee.GetBankGuarantee" interface="cobiscorp.ecobis.internetbanking.webapp.bankguarantee.service.IGuarantee" method="getBankGuarantee" description="" />
-	<service id="InternetBanking.WebApp.Transfers.Transfer.ReverseTransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="reverseTransferACH" description="" />
-	<service id="InternetBanking.WebApp.Transfers.Service.Transfer.GetTransfersACHDetail" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getTransfersACHDetail" description="" />
+	<!--service id="InternetBanking.WebApp.Transfers.Transfer.ReverseTransferACH" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="reverseTransferACH" description="" /-->
+	<!--service id="InternetBanking.WebApp.Transfers.Service.Transfer.GetTransfersACHDetail" interface="cobiscorp.ecobis.internetbanking.webapp.transfers.service.service.ITransfer" method="getTransfersACHDetail" description="" /-->
 	<service id="InternetBanking.WebApp.Security.Service.Security.UpdateLoginImage" interface="cobiscorp.ecobis.internetbanking.webapp.security.service.service.ISecurity" method="updateLoginImage" description="" />
   <service id="InternetBanking.WebApp.Security.Service.Security.InsertLoginImage" interface="cobiscorp.ecobis.internetbanking.webapp.security.service.service.ISecurity" method="insertLoginImage" description="" />
   <service id="InternetBanking.WebApp.Security.Service.Security.QueryLoginImage" interface="cobiscorp.ecobis.internetbanking.webapp.security.service.service.ISecurity" method="queryLoginImage" description="" />
