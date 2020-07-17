@@ -14,7 +14,7 @@
 	<variables>
 		<variable name="app-version" value="1.1.0" />
 		<variable name="released-on" value="31/08/2013" />
-		<variable name="InstallerFrame.logfilePath" value="$INSTALL_PATH/Uninstaller/IB-install.log" />
+		<!--variable name="InstallerFrame.logfilePath" value="$INSTALL_PATH/Uninstaller/IB-install.log" /-->
 		<variable name="radioSelection" value="" />
 	</variables>
 	

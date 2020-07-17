@@ -209,11 +209,11 @@
 			<artifactId>orchestration-core-ib-payments</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-transferACH</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-currency-trading</artifactId>
@@ -329,11 +329,11 @@
 			<artifactId>orchestration-core-ib-subscribed-payments</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-parameters-ach</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-enquiries-detail</artifactId>
@@ -349,11 +349,11 @@
 			<artifactId>orchestration-core-ib-query-bank-guarantee</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-ach-detail</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-receiving-printing-archive</artifactId>
@@ -494,11 +494,11 @@
 			<artifactId>orchestration-core-ib-payment-loan-template</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-transferACH-template</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-currency-trading-template</artifactId>
@@ -624,11 +624,11 @@
 			<artifactId>orchestration-core-ib-subscribed-payments-template</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-parameters-ach-template</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-batch-scheduled-payment-template</artifactId>
@@ -654,11 +654,11 @@
 			<artifactId>orchestration-core-ib-query-bank-guarantee-template</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-ach-detail-template</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-receiving-printing-archive-template</artifactId>
@@ -927,11 +927,11 @@
 			<artifactId>orchestration-core-ib-loan-payments</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-ACH-account-transfer</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-foreign-exchange</artifactId>
@@ -962,11 +962,11 @@
 			<artifactId>orchestration-core-ib-application-checkbook</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-reverse-ach-transfer</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency-->	
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.authenticate</groupId>
 			<artifactId>orchestration-core-ib-authenticate-template</artifactId>
@@ -1149,7 +1149,6 @@
 											orchestration-core-ib-loans,
 											orchestration-core-ib-third-party,
 											orchestration-core-ib-payments,
-											orchestration-core-ib-transferACH,
 											orchestration-core-ib-query-currency-trading,
 											orchestration-core-ib-consolidate,
 											orchestration-core-ib-server,
@@ -1175,11 +1174,9 @@
 											orchestration-core-ib-query-subtype-guarantees,
 											orchestration-core-ib-client-enquiries,
 											orchestration-core-ib-subscribed-payments,
-											orchestration-core-ib-query-parameters-ach,
 											orchestration-core-ib-query-enquiries-detail,
 											orchestration-core-ib-query-grb,
 											orchestration-core-ib-query-bank-guarantee,
-											orchestration-core-ib-query-ach-detail,
 											orchestration-core-ib-receiving-printing-archive,
 											orchestration-core-ib-query-office,
 											orchestration-core-ib-query-customer,
@@ -1208,7 +1205,6 @@
 											orchestration-core-ib-query-foreign-template,
 											orchestration-core-ib-query-payments-template,
 											orchestration-core-ib-payment-loan-template,
-											orchestration-core-ib-transferACH-template,
 											orchestration-core-ib-query-currency-trading-template,
 											orchestration-core-ib-query-consolidate-template,
 											orchestration-core-ib-query-server-template,
@@ -1234,13 +1230,11 @@
 											orchestration-core-ib-query-subtype-guarantees-template,
 											orchestration-core-ib-client-enquiries-template,
 											orchestration-core-ib-subscribed-payments-template,
-											orchestration-core-ib-query-parameters-ach-template,
 											orchestration-core-batch-scheduled-payment-template,
 											orchestration-core-ib-application-bank-guarantee-template,
 											orchestration-core-ib-query-enquiries-detail-template,
 											orchestration-core-ib-query-grb-template,
 											orchestration-core-ib-query-bank-guarantee-template,
-											orchestration-core-ib-query-ach-detail-template,
 											orchestration-core-ib-receiving-printing-archive-template,
 											orchestration-core-ib-query-office-template,
 											orchestration-ib-cards,	
@@ -1282,7 +1276,6 @@
 											orchestration-core-ib-query-foreign-template,
 											orchestration-core-ib-query-payments-template,
 											orchestration-core-ib-payment-loan-template,
-											orchestration-core-ib-transferACH-template,
 											orchestration-core-ib-query-currency-trading-template,
 											orchestration-core-ib-query-consolidate-template,
 											orchestration-core-ib-query-server-template,
@@ -1308,13 +1301,11 @@
 											orchestration-core-ib-query-subtype-guarantees-template,
 											orchestration-core-ib-client-enquiries-template,
 											orchestration-core-ib-subscribed-payments-template,
-											orchestration-core-ib-query-parameters-ach-template,
 											orchestration-core-batch-scheduled-payment-template,
 											orchestration-core-ib-application-bank-guarantee-template,
 											orchestration-core-ib-query-enquiries-detail-template,
 											orchestration-core-ib-query-grb-template,
 											orchestration-core-ib-query-bank-guarantee-template,
-											orchestration-core-ib-query-ach-detail-template,
 											orchestration-core-ib-receiving-printing-archive-template,
 											orchestration-core-ib-query-office-template                                         
 						</includeArtifactIds>
@@ -1336,13 +1327,11 @@
                           orchestration-core-ib-cards-payment,
                           orchestration-core-ib-opening-certificate-deposit,
                           orchestration-core-ib-loan-payments,
-                          orchestration-core-ib-ACH-account-transfer,
                           orchestration-core-ib-foreign-exchange,
                           orchestration-core-ib-service-payments,
                           orchestration-core-ib-application-bank-guarantee,
                           orchestration-core-ib-application-credit-line,
                           orchestration-core-ib-application-checkbook,
-                          orchestration-core-ib-reverse-ach-transfer,
                           orchestration-core-ib-spi-transfer,
                           orchestration-core-ib-direct-transfer
                         </includeArtifactIds>
