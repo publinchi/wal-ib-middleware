@@ -269,10 +269,9 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
 			break;
 		case 1870013:
-			request.addInputParam("@i_tercero", ICTSTypes.SYBVARCHAR, "S");
 			request.addInputParam("@i_option", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_option"));
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
-			request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "N");
+			break;
 		case 1800015:
 			Utils.copyParam("@i_nombre_benef", originalRequest, request);
 			Utils.copyParam("@i_doc_benef", originalRequest, request);
@@ -404,6 +403,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
 		
 		if(anOriginalRequest!=null && anOriginalRequest.readValueFieldInHeader("comision")!=null) {
+			
 			if (logger.isInfoEnabled())
 				logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
 		}
@@ -583,7 +583,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	 */
 	protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		if (logger.isDebugEnabled())
-			logger.logDebug("Ejecutando metodo updateLocalExecution: " + anOriginalRequest.toString());
+			logger.logDebug("Ejecutando mÃ©todo updateLocalExecution: " + anOriginalRequest.toString());
 
 		IProcedureRequest request = initProcedureRequest(anOriginalRequest);
 
@@ -611,14 +611,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_cta", anOriginalRequest, request);
 		Utils.copyParam("@i_prod", anOriginalRequest, request);
 		Utils.copyParam("@i_mon", anOriginalRequest, request);
-		//ENVIO DE LA COMISION
-		request.addInputParam("@i_comision", ICTSTypes.SQLDECIMAL, responseTransaction.readValueParam("@o_comision"));
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Leyendo @o_comision: " + responseTransaction.readValueParam("@o_comision"));
-			logger.logInfo("Leyendo responseTransaction: " + responseTransaction.getParams());
-			logger.logInfo("Leyendo bag: " + bag.toString());
-		}
-		
+
 		// Datos de cuenta destino
 		Integer t_trn = Integer.parseInt(anOriginalRequest.readValueParam("@t_trn"));
 		if (!Utils.isNull(anOriginalRequest.readValueParam("@i_cta_des")) && !Utils.isNull(anOriginalRequest.readValueParam("@i_prod_des"))
@@ -638,11 +631,6 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			case 1870001:
 			case 1870013:
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
-				request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
-				logger.logInfo("@i_banco_dest bag: " + bag.get("@i_banco_dest"));
-				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
-				logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
-				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
 				break;
 			default:
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "S");
