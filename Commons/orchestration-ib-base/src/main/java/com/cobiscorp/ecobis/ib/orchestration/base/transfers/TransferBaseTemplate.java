@@ -403,6 +403,11 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
 		aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
 		
+		if(anOriginalRequest!=null && anOriginalRequest.readValueFieldInHeader("comision")!=null) {
+			if (logger.isInfoEnabled())
+				logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
+		}
+		
 		//Valida el fuera de línea
 		
 		if (logger.isInfoEnabled())
@@ -578,7 +583,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	 */
 	protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		if (logger.isDebugEnabled())
-			logger.logDebug("Ejecutando mÃ©todo updateLocalExecution: " + anOriginalRequest.toString());
+			logger.logDebug("Ejecutando metodo updateLocalExecution: " + anOriginalRequest.toString());
 
 		IProcedureRequest request = initProcedureRequest(anOriginalRequest);
 
@@ -606,12 +611,6 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_cta", anOriginalRequest, request);
 		Utils.copyParam("@i_prod", anOriginalRequest, request);
 		Utils.copyParam("@i_mon", anOriginalRequest, request);
-		//ENVIO DE LA COMISION
-		request.addInputParam("@i_comision", ICTSTypes.SQLDECIMAL, responseTransaction.readValueParam("@o_comision"));
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Leyendo @o_comision: " + responseTransaction.readValueParam("@o_comision"));
-			logger.logInfo("Leyendo responseTransaction: " + responseTransaction.getParams());
-		}
 		
 		// Datos de cuenta destino
 		Integer t_trn = Integer.parseInt(anOriginalRequest.readValueParam("@t_trn"));
@@ -631,7 +630,12 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			case 1800016:
 			case 1870001:
 			case 1870013:
-				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");				
+				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
+				request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
+				logger.logInfo("@i_banco_dest bag: " + bag.get("@i_banco_dest"));
+				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+				logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo").toString());
+				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
 				break;
 			default:
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "S");

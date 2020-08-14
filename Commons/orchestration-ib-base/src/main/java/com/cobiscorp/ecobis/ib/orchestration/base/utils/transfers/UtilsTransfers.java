@@ -102,8 +102,8 @@ public class UtilsTransfers {
 		destinationProduct.setProductType(Integer.parseInt(anOriginalRequest.readValueParam("@i_prod_des").toString()));
 		destinationProduct.setCurrency(currencyDestProduct);
 
-		if (localValidation.readParam("@o_comision") != null)
-			selfAccountTransferRequest.setCommisionAmmount(new BigDecimal(localValidation.readValueParam("@o_comision").toString()));
+		//if (localValidation.readParam("@o_comision") != null)
+		//	selfAccountTransferRequest.setCommisionAmmount(new BigDecimal(localValidation.readValueParam("@o_comision").toString()));
 		selfAccountTransferRequest.setAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_val").toString()));
 		selfAccountTransferRequest.setOriginProduct(originProduct);
 		selfAccountTransferRequest.setDestinationProduct(destinationProduct);
@@ -111,6 +111,13 @@ public class UtilsTransfers {
 		selfAccountTransferRequest.setReceiverFunds(anOriginalRequest.readValueParam("@i_dest_fondos"));
 		selfAccountTransferRequest.setDescriptionTransfer(anOriginalRequest.readValueParam("@i_concepto"));
 
+		if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comission")!=null) {
+			if (logger.isInfoEnabled())
+				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comission"));
+			
+			selfAccountTransferRequest.setCommisionAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_comission").toString()));
+		}
+		
 		selfAccountTransferRequest.setChannelId(anOriginalRequest.readValueParam("@s_servicio"));
 
 		if (anOriginalRequest.readValueParam("@s_ssn_branch") != null)
@@ -256,13 +263,24 @@ public class UtilsTransfers {
 		destinationProduct.setProductType(Integer.parseInt(anOriginalRequest.readValueParam("@i_prod_des").toString()));
 		destinationProduct.setCurrency(currencyDest);
         
-		if (logger.isInfoEnabled())
+		/*if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Cargando Comission");
 		if (localValidation.readParam("@o_comision") != null) {
 			if (logger.isInfoEnabled())
 				logger.logInfo(CLASS_NAME + " Cargando Comission::: "+localValidation.readValueParam("@o_comision").toString());
 			ThirdPartyTransferRequest.setCommisionAmmount(new BigDecimal(localValidation.readValueParam("@o_comision").toString()));
+		}*/
+		
+		if (logger.isInfoEnabled())
+			logger.logInfo("PRE COMISION --->   RECUPERADA");
+		
+		if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comision")!=null) {			
+			if (logger.isInfoEnabled())
+				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comission"));
+			
+			ThirdPartyTransferRequest.setCommisionAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_comision").toString()));
 		}
+		
 		ThirdPartyTransferRequest.setAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_val").toString()));
 		ThirdPartyTransferRequest.setOriginProduct(originProduct);
 		ThirdPartyTransferRequest.setDestinationProduct(destinationProduct);
