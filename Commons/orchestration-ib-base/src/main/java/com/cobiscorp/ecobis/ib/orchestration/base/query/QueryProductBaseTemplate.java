@@ -494,6 +494,8 @@ public abstract class QueryProductBaseTemplate extends SPJavaOrchestrationBase {
 	private void intersectAffiliatedTunning(IProcedureResponse aResponseAffiliated,
 			IProcedureResponse aResponseProductsCore, Map<String, Object> bag) {
 		ServerResponse Resp = (ServerResponse) bag.get(SERVER_STATUS_RESP);
+		
+		//Armando salida JOS
 
 		if (logger.isDebugEnabled())
 			logger.logDebug("--->>>intersectAffiliatedTunning Inicio--->>");
@@ -603,6 +605,8 @@ public abstract class QueryProductBaseTemplate extends SPJavaOrchestrationBase {
 											columnsCore[i].getValue());
 									if (logger.isDebugEnabled())
 										logger.logDebug("Producto -->" + columnsCore[3].getValue());
+									
+						
 
 									if ((wProd == ACCOUNTS || wProd == CHECKING_ACCOUNT || wProd == SAVING_ACCOUNT)
 											&& i == 3)// verifico la posicion

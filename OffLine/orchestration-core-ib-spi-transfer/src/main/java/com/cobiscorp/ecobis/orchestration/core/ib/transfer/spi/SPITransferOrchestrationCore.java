@@ -302,12 +302,28 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
 
-		if (responseLocalValidation.readParam("@o_comision") == null) {
+	/*	if (responseLocalValidation.readParam("@o_comision") == null) {
 			requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
 		} else {
 			requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY,
 					responseLocalValidation.readValueParam("@o_comision"));
+		} */
+		
+			if (logger.isInfoEnabled())
+			logger.logInfo("PRE COMISION --->   RECUPERADA");
+		
+       if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comision")!=null) {
+			
+			if (logger.isInfoEnabled())
+				logger.logInfo("Llegada de comisiom 3.1416 SPEIDO ---> " + anOriginalRequest.readValueParam("@i_comision"));
+			
+	     	requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY,
+					anOriginalRequest.readValueParam("@i_comision"));
+		}else{
+			
+			  requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
 		}
+		
 
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))) {

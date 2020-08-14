@@ -403,6 +403,12 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
 		aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
 		
+		if(anOriginalRequest!=null && anOriginalRequest.readValueFieldInHeader("comision")!=null) {
+			
+			if (logger.isInfoEnabled())
+				logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
+		}
+		
 		//Valida el fuera de línea
 		
 		if (logger.isInfoEnabled())
