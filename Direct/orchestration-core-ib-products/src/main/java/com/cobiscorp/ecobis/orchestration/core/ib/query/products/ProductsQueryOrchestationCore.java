@@ -254,7 +254,7 @@ public class ProductsQueryOrchestationCore extends QueryProductBaseTemplate {
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("productAlias", ICTSTypes.SQLVARCHAR, 50));
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("ARMANDO RESPONSE PRODUCTS ALFA JCOS");
+			logger.logDebug("ARMANDO RESPONSE");
 		}
 		for (ProductConsolidate product : aConsolidateResponse.getProductCollection()) {
 			IResultSetRow row = new ResultSetRow();
@@ -262,7 +262,6 @@ public class ProductsQueryOrchestationCore extends QueryProductBaseTemplate {
 				logger.logDebug(" *** ProductNumber: " + product.getProduct().getProductNumber());
 				logger.logDebug(" *** ProductType: " + product.getProduct().getProductType().toString());
 				logger.logDebug(" Currency Id: " + product.getCurrency().getCurrencyId().toString());
-				logger.logDebug(" 	JOS BALANCE: " + product.getBalance().getTotalBalance().toString());
 			}
 
 			row.addRowData(1, new ResultSetRowColumnData(false, product.getProduct().getProductType().toString())); // productType

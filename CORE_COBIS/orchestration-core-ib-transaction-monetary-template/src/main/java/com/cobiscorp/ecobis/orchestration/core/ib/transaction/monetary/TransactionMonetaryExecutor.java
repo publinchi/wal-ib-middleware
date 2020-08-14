@@ -191,12 +191,8 @@ public class TransactionMonetaryExecutor extends SPJavaOrchestrationBase impleme
 			request.removeFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH);
 			request.removeParam("@s_ssn_branch");
 		}
-		
-		
 
 		request.setSpName("cob_remesas..sp_channels_ndc_automatic");
-		
-		
 
 		if (aTransactionMonetaryRequest.getCorrection().equals("S")) {
 			request.addInputParam("@s_ssn", ICTSTypes.SYBINT4, aTransactionMonetaryRequest.getReferenceNumber());

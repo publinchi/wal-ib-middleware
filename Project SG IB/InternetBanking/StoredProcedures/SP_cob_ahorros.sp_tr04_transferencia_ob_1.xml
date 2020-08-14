@@ -63,7 +63,6 @@
     <parameter name="@t_trn" dataType="smallint" direction="in" />
     <parameter name="@i_option" dataType="char" direction="in" />
     <parameter name="@i_detail" dataType="varchar" direction="in" />
-    <parameter name="@i_comision" dataType="money" direction="in" />
   </parameters>
   <queries />
 </procedure>

@@ -1,6 +1,8 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.transfer.spi;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -161,11 +163,33 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Inicia executeTransfer");
 		}
-
+		IProcedureResponse responseTransfer = null;
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
-			IProcedureResponse responseTransfer = this.executeTransferSPI(originalRequest, aBagSPJavaOrchestration);
-			return transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration);
+			//SE EJECUTA LA NOTA DE DEBITO
+			responseTransfer = this.executeTransferSPI(originalRequest, aBagSPJavaOrchestration);
+			responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration);
+			//SE LLAMA LA SERVICIO DE BANPAY
+			List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
+			//SE HACE LA VALIDACION DE LA RESPUESTA
+			if (respuesta != null) {
+				if (respuesta.get(2).equals("0")) {
+					//SE HACELA REVERSA DE LA NOTA DE DEBITO
+					speiRollback(originalRequest, aBagSPJavaOrchestration);
+				}
+				else {
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("Paso exitoso");
+					}
+				}	
+			}
+			else {
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("List<String> respuesta error o null");
+				}
+				//SE HACELA REVERSA DE LA NOTA DE DEBITO
+				speiRollback(originalRequest, aBagSPJavaOrchestration);
+			}
 		} catch (CTSServiceException e) {
 			logger.logError(e);
 		} catch (CTSInfrastructureException e) {
@@ -175,7 +199,90 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				logger.logDebug("Fin executeTransfer");
 			}
 		}
-		return null;
+		return responseTransfer;
+	}
+	
+	protected List<String> banpayExecution(IProcedureRequest anOriginalRequest,Map<String, Object> bag) {
+		//SE INICIALIZA VARIABLE
+		List<String> response = null;
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Entrando a banpayExecution");
+		}
+		try {
+			
+			//SE OBTIENE LA DATA FALTANTE
+			List<String> data = speiData(anOriginalRequest, bag);
+			
+			//SE SETEAN LOS PARAMETROS DE ENTRADA
+			anOriginalRequest.addInputParam("@i_concepto_pago", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_concepto"));
+			anOriginalRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des"));
+			anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+			anOriginalRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+			anOriginalRequest.addInputParam("@i_institucion_contraparte", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_banco_ben"));
+			anOriginalRequest.addInputParam("@i_institucion_operante", ICTSTypes.SQLVARCHAR, data.get(0));
+			anOriginalRequest.addInputParam("@i_monto", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
+			anOriginalRequest.addInputParam("@i_nombre_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));
+			anOriginalRequest.addInputParam("@i_nombre_ordenante", ICTSTypes.SQLVARCHAR, data.get(1));
+			anOriginalRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, ""); //OPCIONAL
+			anOriginalRequest.addInputParam("@i_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, ""); //OPCIONAL
+			anOriginalRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, data.get(2));
+			anOriginalRequest.addInputParam("@i_tipo_cuenta_beneficiario", ICTSTypes.SQLINT1, anOriginalRequest.readValueParam("@i_prod_des"));
+			anOriginalRequest.addInputParam("@i_tipo_cuenta_ordenante", ICTSTypes.SQLINT1, data.get(3));
+			anOriginalRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLINT1, "1");
+			anOriginalRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_ssn"));
+			//VARIABLES DE SALIDA
+			anOriginalRequest.addOutputParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequest.addOutputParam("@o_msj_respuesta", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequest.addOutputParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequest.addOutputParam("@o_id", ICTSTypes.SQLINT1, "X");
+			anOriginalRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "X");
+						
+			//SE HACE LA LLAMADA AL CONECTOR
+			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
+			anOriginalRequest.setSpName("cob_procesador..sp_orq_banpay_spei");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1870013");
+			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "1870013");
+			
+			//SE EJECUTA
+			IProcedureResponse connectorSpeiResponse = executeProvider(anOriginalRequest, bag);
+			//SE VALIDA LA RESPUESTA
+			if (!connectorSpeiResponse.hasError()) {
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("success CISConnectorSpei: true");
+					logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
+				}
+				//SE MAPEAN LAS VARIABLES DE SALIDA
+				response = new ArrayList<String>();
+				response.add(connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+				logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+				logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readParam("@o_cod_respuesta"));
+				response.add(connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
+				response.add(connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
+				response.add(connectorSpeiResponse.readValueParam("@o_id"));
+				response.add(connectorSpeiResponse.readValueParam("@o_descripcion_error"));
+				
+				//SE ALMACENA EL DATO DE CLAVE DE RASTREO
+				bag.put("@i_clave_rastreo", connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
+				bag.put("@i_msj_respuesta", connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
+				bag.put("@i_cod_respuesta", connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+				bag.put("@i_id", connectorSpeiResponse.readValueParam("@o_id"));
+				bag.put("@i_descripcion_error", connectorSpeiResponse.readValueParam("@o_descripcion_error"));
+				data = null;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			response = null;
+			logger.logInfo("Error de banpayExecution");
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de banpayExecution");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return response;
 	}
 
 	@Override
@@ -202,21 +309,21 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		}
 
 		if (responseBank.getReturnCode() == 0 && responseBank.getResultSetListSize() > 0) {
-
-			IResultSetRow[] rows = responseBank.getResultSet(responseBank.getResultSetListSize()).getData()
-					.getRowsAsArray();
+			
+			IResultSetRow[] rows = responseBank.getResultSet(responseBank.getResultSetListSize()).getData().getRowsAsArray();
 			IResultSetRowColumnData[] columns = rows[0].getColumnsAsArray();
 
-			IProcedureResponse responseLocalValidation = (IProcedureResponse) aBagSPJavaOrchestration
-					.get(RESPONSE_LOCAL_VALIDATION);
+			IProcedureResponse responseLocalValidation = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_LOCAL_VALIDATION);
 			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, responseLocalValidation);
 
 			requestTransfer.addInputParam("@i_nom_banco_des", ICTSTypes.SYBVARCHAR, columns[0].getValue());
+			aBagSPJavaOrchestration.put("@i_banco_dest", columns[0].getValue());
 			requestTransfer.addInputParam("@i_ruta_trans", ICTSTypes.SYBVARCHAR, columns[2].getValue());
 
 			response = executeCoreBanking(requestTransfer);
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Request accountTransfer: " + anOriginalRequest.getProcedureRequestAsString());
+				logger.logDebug("aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
 			}
 		}
 
@@ -302,13 +409,6 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
 
-	/*	if (responseLocalValidation.readParam("@o_comision") == null) {
-			requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
-		} else {
-			requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY,
-					responseLocalValidation.readValueParam("@o_comision"));
-		} */
-		
 			if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
 		
@@ -326,7 +426,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		
 
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
-				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))) {
+				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
+				|| "10".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))) {
 
 			// CUENTA ORIGEN
 			requestTransfer.addInputParam(I_CTA_LOCAL, anOriginalRequest.readParam(I_CTA_LOCAL).getDataType(),
@@ -524,4 +625,187 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	public IProcedureResponse processResponse(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
 		return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
 	}
+	
+	protected List<String> speiData(IProcedureRequest anOriginalRequest,Map<String, Object> bag) {
+		//SE INICIALIZA LA LISTA DE STRINGS
+		List<String> fres = new ArrayList<String>();
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Entrando a speiData");
+		}
+		try {
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+			
+			//SE SETEAN DATOS
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			request.addFieldInHeader(KEEP_SSN,ICOBISTS.HEADER_STRING_TYPE, "Y");
+			request.setSpName("cob_bvirtual..sp_registra_spei");
+			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "E");
+			request.addInputParam("@i_ente_bv", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@s_cliente"));
+			//SE SETEA VARIABLE DE SALIDA
+			request.addOutputParam("@o_salida", ICTSTypes.SYBVARCHAR, "XXX");
+			request.addOutputParam("@o_nom_ordenante", ICTSTypes.SYBVARCHAR, "XXX");
+			request.addOutputParam("@o_curp_ordenante", ICTSTypes.SYBVARCHAR, "XXX");
+			request.addOutputParam("@o_tipo_cuenta_ord", ICTSTypes.SYBVARCHAR, "XXX");
+			//SE EJECUTA Y SE OBTIENE LA RESPUESTA
+			IProcedureResponse pResponse = executeCoreBanking(request);
+			
+			//SE OBTIENE LA RESPUESTA
+			fres.add(pResponse.readValueParam("@o_salida"));
+			fres.add(pResponse.readValueParam("@o_nom_ordenante"));
+			fres.add(pResponse.readValueParam("@o_curp_ordenante"));
+			fres.add(pResponse.readValueParam("@o_tipo_cuenta_ord"));
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo("Error de speiData");
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de speiData");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return fres;
+	}
+	
+	protected boolean speiRollback(IProcedureRequest anOriginalRequest,Map<String, Object> bag) {
+		//SE INICIALIZA VARIABLE
+		boolean response = false;
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Entrando a speiRollback");
+		}
+		try {
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+			
+			//SE SETEAN DATOS
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
+			request.addFieldInHeader(KEEP_SSN,ICOBISTS.HEADER_STRING_TYPE, "Y");
+			request.setSpName("cob_bvirtual..sp_reverso_spei");
+			
+			request.addInputParam("@s_ssn", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
+			request.addInputParam("@s_srv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_srv"));
+			request.addInputParam("@s_ssn_branch", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn_branch"));
+			request.addInputParam("@s_user", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_user"));
+			request.addInputParam("@s_term", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_term"));
+			request.addInputParam("@s_rol", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_rol"));
+			request.addInputParam("@t_ssn_corr", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
+			request.addInputParam("@t_corr", ICTSTypes.SQLVARCHAR, "N");
+			request.addInputParam("@s_date", ICTSTypes.SQLDATETIME, anOriginalRequest.readValueParam("@s_date"));
+			
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+			request.addInputParam("@t_trn", ICTSTypes.SQLINT1, "18009");
+			//DATOS CUENTA ORIGEN
+			request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+			Utils.copyParam("@i_mon", anOriginalRequest, request);
+			Utils.copyParam("@i_concepto", anOriginalRequest, request);
+			request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
+			request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
+			if (bag.get("@i_comision") != null) {
+				request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, bag.get("@i_comision").toString());	
+			}
+			else {
+				request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, "0");
+			}
+			
+
+			//SE EJECUTA Y SE OBTIENE LA RESPUESTA
+			IProcedureResponse pResponse = executeCoreBanking(request);
+			
+			response = true;	
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo("Error de speiRollback");
+			response = false;
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de speiRollback");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return response;
+	}
+	
+	protected boolean speiUpdate(IProcedureRequest anOriginalRequest,Map<String, Object> bag) {
+		//SE INICIALIZA VARIABLE
+		boolean response = false;
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Entrando a speiUpdate");
+		}
+		try {
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+			
+			//SE SETEAN DATOS
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			request.addFieldInHeader(KEEP_SSN,ICOBISTS.HEADER_STRING_TYPE, "Y");
+			request.setSpName("cob_bvirtual..sp_registra_spei");
+			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+			
+			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
+			
+			request.addInputParam("@i_id_transaccion", ICTSTypes.SQLVARCHAR, bag.get("@i_id").toString());
+			request.addInputParam("@i_descripcion_error", ICTSTypes.SQLVARCHAR, bag.get("@i_descripcion_error").toString());
+
+			//SE EJECUTA Y SE OBTIENE LA RESPUESTA
+			IProcedureResponse pResponse = executeCoreBanking(request);
+			
+			response = true;	
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			response = false;
+			logger.logInfo("Error de speiUpdate");
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de speiUpdate");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return response;
+	}
+	
+	protected boolean speiUpdateTmp(IProcedureRequest anOriginalRequest,Map<String, Object> bag) {
+		//SE INICIALIZA VARIABLE
+		boolean response = false;
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Entrando a speiUpdateTmp");
+		}
+		try {
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+			
+			//SE SETEAN DATOS
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			request.addFieldInHeader(KEEP_SSN,ICOBISTS.HEADER_STRING_TYPE, "Y");
+			request.setSpName("cob_bvirtual..sp_registra_spei");
+			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "F");
+			
+			request.addInputParam("@i_clave_rastreo_tmp", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo_tmp").toString());
+			logger.logInfo("@i_clave_rastreo_tmp bag: " + bag.get("@i_clave_rastreo_tmp"));
+
+			//SE EJECUTA Y SE OBTIENE LA RESPUESTA
+			IProcedureResponse pResponse = executeCoreBanking(request);
+			
+			response = true;	
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			response = false;
+			logger.logInfo("Error de speiUpdateTmp");
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de speiUpdateTmp");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return response;
+	}
 }
+	

@@ -77,7 +77,6 @@
     <parameter name="@i_dest_fondos" dataType="varchar" direction="in" />
     <parameter name="@i_option" dataType="char" direction="in" />
     <parameter name="@i_detail" dataType="varchar" direction="in" />
-    <parameter name="@i_comision" dataType="decimal" direction="" />
   </parameters>
   <queries>
     <query>

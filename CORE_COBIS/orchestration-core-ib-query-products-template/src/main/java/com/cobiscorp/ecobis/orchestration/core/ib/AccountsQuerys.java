@@ -178,10 +178,10 @@ public class AccountsQuerys extends SPJavaOrchestrationBase implements ICoreServ
 				if (!Utils.isNullOrEmpty(rows[17].getValue()))
 					if (rows[17].getValue() != null)
 						balanceProduct.setOficial(rows[17].getValue().toString());
-				if (!Utils.isNullOrEmpty(rows[18].getValue()))
+				/*if (!Utils.isNullOrEmpty(rows[18].getValue()))
 					if (rows[18].getValue() != null)
 						balanceProduct.setClabeAccountNumber(rows[18].getValue().toString());
-				
+				*/
 
 				
 				balanceProduct.setClient(client);
