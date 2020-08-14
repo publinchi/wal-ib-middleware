@@ -408,19 +408,22 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				anOriginalRequest.readValueParam(T_EJEC));
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
-		
-		if (logger.isInfoEnabled())
+
+			if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
 		
        if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comision")!=null) {
 			
 			if (logger.isInfoEnabled())
-				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comision"));
+				logger.logInfo("Llegada de comisiom 3.1416 SPEIDO ---> " + anOriginalRequest.readValueParam("@i_comision"));
 			
-	     	requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY,anOriginalRequest.readValueParam("@i_comision"));
+	     	requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY,
+					anOriginalRequest.readValueParam("@i_comision"));
 		}else{
+			
 			  requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
 		}
+		
 
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
