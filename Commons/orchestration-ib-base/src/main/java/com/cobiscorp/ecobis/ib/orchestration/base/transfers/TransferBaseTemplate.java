@@ -636,6 +636,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
 				logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo").toString());
 				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
+				request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
 				break;
 			default:
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "S");
