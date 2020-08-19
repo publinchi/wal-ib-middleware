@@ -54,6 +54,7 @@
         <column name="Chqs ot plazas" />
         <column name="Total chqs" />
         <column name="Cod. Causa" />
+        <column name="Clabe Interbanc" />
       </columns>
       <queryText></queryText>
     </query>
