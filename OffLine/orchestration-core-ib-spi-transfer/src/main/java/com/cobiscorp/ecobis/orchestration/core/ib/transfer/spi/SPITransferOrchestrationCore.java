@@ -173,7 +173,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
 			//SE HACE LA VALIDACION DE LA RESPUESTA
 			if (respuesta != null) {
-				if (respuesta.get(2).equals("0")) {
+				if (respuesta.get(3).equals("0")) {
 					//SE HACELA REVERSA DE LA NOTA DE DEBITO
 					speiRollback(originalRequest, aBagSPJavaOrchestration);
 				}
@@ -181,6 +181,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					if (logger.isDebugEnabled()) {
 						logger.logDebug("Paso exitoso");
 					}
+					//SE ADJUNTA LA CLAVE DE RASTREO
+					responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(), respuesta.get(2));
 				}	
 			}
 			else {
