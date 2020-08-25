@@ -310,6 +310,8 @@ public class ConsolidateAccountsQuery extends SPJavaOrchestrationBase implements
 							product.setBankProductId(new Integer(rows[12].getValue().toString()));
 						if (rows[13].getValue() != null)
 							product.setBankProduct(rows[13].getValue().toString());
+						if (rows[14].getValue() != null)
+							product.setClabeInterbank (rows[14].getValue().toString());
 					}
 					if (rows[0].getValue().equals("7")) {
 						if (rows[11].getValue() != null)
