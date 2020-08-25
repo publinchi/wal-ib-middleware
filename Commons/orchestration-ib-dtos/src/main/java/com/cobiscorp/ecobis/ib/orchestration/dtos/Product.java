@@ -48,6 +48,8 @@ public class Product {
 	private String productDescription;
 
 	private Integer productId;
+	
+	private String clabeInterbank;
 
 	/**
 	 * @return the productId
@@ -162,6 +164,20 @@ public class Product {
 	 */
 	public void setProductTypeAccount(String productTypeAccount) {
 		this.productTypeAccount = productTypeAccount;
+	}
+
+	/**
+	 * @return the clabeInterbank
+	 */
+	public String getClabeInterbank() {
+		return clabeInterbank;
+	}
+
+	/**
+	 * @param clabeInterbank the clabeInterbank to set
+	 */
+	public void setClabeInterbank(String clabeInterbank) {
+		this.clabeInterbank = clabeInterbank;
 	}
 
 	/*

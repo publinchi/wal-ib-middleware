@@ -324,6 +324,7 @@
         <column name="DOCUMENTO" />
         <column name="PRODUCTO_BANCARIO" />
         <column name="PRODUCTO_BANCARIO_DES" />
+        <column name="CLABE_INTERBANK" />
       </columns>
       <queryText></queryText>
     </query>
