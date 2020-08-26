@@ -13,6 +13,8 @@
     <parameter name="@i_cta_cobro" dataType="varchar" direction="in" />
     <parameter name="@i_cta_des" dataType="varchar" direction="in" />
     <parameter name="@i_destino_fondos" dataType="varchar" direction="in" />
+    <parameter name="@i_detail" dataType="varchar" direction="in" />
+    <parameter name="@i_doble_autorizacion" dataType="char" direction="in" />
     <parameter name="@i_doc_benef" dataType="varchar" direction="in" />
     <parameter name="@i_email" dataType="varchar" direction="in" />
     <parameter name="@i_ente" dataType="int" direction="in" />
@@ -24,6 +26,7 @@
     <parameter name="@i_nom_cliente" dataType="varchar" direction="in" />
     <parameter name="@i_nom_cta_dest" dataType="varchar" direction="in" />
     <parameter name="@i_nombre_benef" dataType="varchar" direction="in" />
+    <parameter name="@i_option" dataType="char" direction="in" />
     <parameter name="@i_origen_fondos" dataType="varchar" direction="in" />
     <parameter name="@i_prod" dataType="tinyint" direction="in" />
     <parameter name="@i_prod_cobro" dataType="tinyint" direction="in" />
@@ -35,7 +38,11 @@
     <parameter name="@i_tipo_persona" dataType="char" direction="in" />
     <parameter name="@i_titularidad" dataType="char" direction="in" />
     <parameter name="@i_val" dataType="money" direction="in" />
+    <parameter name="@o_autorizacion" dataType="char" direction="out" />
+    <parameter name="@o_condicion" dataType="int" direction="out" />
     <parameter name="@o_referencia" dataType="int" direction="out" />
+    <parameter name="@o_retorno" dataType="int" direction="out" />
+    <parameter name="@o_ssn_branch" dataType="int" direction="out" />
     <parameter name="@r_retorno" dataType="int" direction="in" />
     <parameter name="@s_date" dataType="datetime" direction="in" />
     <parameter name="@s_error" dataType="int" direction="in" />
@@ -61,8 +68,6 @@
     <parameter name="@t_rty" dataType="char" direction="in" />
     <parameter name="@t_ssn_corr" dataType="int" direction="in" />
     <parameter name="@t_trn" dataType="smallint" direction="in" />
-    <parameter name="@i_option" dataType="char" direction="in" />
-    <parameter name="@i_detail" dataType="varchar" direction="in" />
   </parameters>
   <queries />
 </procedure>
