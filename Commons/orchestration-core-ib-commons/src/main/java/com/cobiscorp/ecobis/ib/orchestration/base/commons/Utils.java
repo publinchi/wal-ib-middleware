@@ -552,6 +552,7 @@ public class Utils {
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("document", ICTSTypes.SQLVARCHAR, 50));// 14
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("bankProductId", ICTSTypes.SQLINT2, 0));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("bankProduct", ICTSTypes.SQLVARCHAR, 50));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeInterbank", ICTSTypes.SQLVARCHAR, 50));
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("ARMANDO RESPONSE");
 			}
@@ -596,7 +597,7 @@ public class Utils {
 
 				row.addRowData(13, new ResultSetRowColumnData(false, String.valueOf(product.getProduct().getBankProductId()))); // productAlias
 				row.addRowData(14, new ResultSetRowColumnData(false, product.getProduct().getBankProduct())); // productAlias
-
+				row.addRowData(15, new ResultSetRowColumnData(false, product.getProduct().getClabeInterbank()));
 				data.addRow(row);
 			}
 
