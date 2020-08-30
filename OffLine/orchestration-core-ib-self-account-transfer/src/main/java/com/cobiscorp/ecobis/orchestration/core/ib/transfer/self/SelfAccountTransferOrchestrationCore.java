@@ -66,12 +66,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOffl
 		@Property(name = "service.identifier", value = "SelfAccountTransferOrchestrationCore") })
 public class SelfAccountTransferOrchestrationCore extends TransferOfflineTemplate {
 
-	/**
-	 * Read configuration of parent component
-	 */
-	@Override
-	public void loadConfiguration(IConfigurationReader arg0) {
-	}
+
 
 	/**
 	 * Instance logger component
