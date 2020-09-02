@@ -27,6 +27,7 @@
     <parameter name="@i_servicio" dataType="tinyint" direction="in" />
     <parameter name="@i_ente" dataType="int" direction="in" />
     <parameter name="@i_categoria" dataType="varchar" direction="in" />
+    <parameter name="@i_account" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
