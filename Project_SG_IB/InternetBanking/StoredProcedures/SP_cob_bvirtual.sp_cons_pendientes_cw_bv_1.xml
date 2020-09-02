@@ -43,7 +43,8 @@
         <column name="Descrip. Archivo" />
         <column name="Total Monto" />
         <column name="Total Registros" />
-        <column name="Fecha Proceso " />
+        <column name="Fecha Proceso" />
+        <column name="Estado Login" />
       </columns>
       <queryText></queryText>
     </query>
