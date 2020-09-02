@@ -411,26 +411,29 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
 
-			if (logger.isInfoEnabled())
+		if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
 		
        if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comision")!=null) {
-			
+    	   
+    	   logger.logInfo("ENTRA VALIDACION COMISION");
+    	   
+    	   
 			if (logger.isInfoEnabled())
 				logger.logInfo("Llegada de comisiom 3.1416 SPEIDO ---> " + anOriginalRequest.readValueParam("@i_comision"));
 			
 	     	requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY,
 					anOriginalRequest.readValueParam("@i_comision"));
 		}else{
-			
-			  requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
+			logger.logInfo("NO ENTRA VALIDACION COMISION > 0");
+			requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
 		}
 		
-
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "10".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))) {
 
+			logger.logInfo("ENTRA VALIDACION TIPO SERVICIO 1,8,10");
 			// CUENTA ORIGEN
 			requestTransfer.addInputParam(I_CTA_LOCAL, anOriginalRequest.readParam(I_CTA_LOCAL).getDataType(),
 					anOriginalRequest.readValueParam(I_CTA_LOCAL));
@@ -442,8 +445,13 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// CUENTA DESTINO
 			requestTransfer.addInputParam(I_CTA_DES_LOCAL, anOriginalRequest.readParam(I_CTA_DES_LOCAL).getDataType(),
 					anOriginalRequest.readValueParam(I_CTA_DES_LOCAL));
-			requestTransfer.addInputParam(I_PROD_DES_LOCAL, anOriginalRequest.readParam(I_PROD_DES_LOCAL).getDataType(),
-					anOriginalRequest.readValueParam(I_PROD_DES_LOCAL));
+			
+			if (anOriginalRequest.readValueParam(I_PROD_DES_LOCAL) != null) {
+				logger.logInfo("ENTRA VALIDACION I_PROD_DES_LOCAL");
+				requestTransfer.addInputParam(I_PROD_DES_LOCAL, anOriginalRequest.readParam(I_PROD_DES_LOCAL).getDataType(),
+					anOriginalRequest.readValueParam(I_PROD_DES_LOCAL));	
+			}
+			
 			requestTransfer.addInputParam(I_MON_DES_LOCAL, anOriginalRequest.readParam(I_MON_DES_LOCAL).getDataType(),
 					anOriginalRequest.readValueParam(I_MON_DES_LOCAL));
 
@@ -454,16 +462,19 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					anOriginalRequest.readValueParam(I_CONCEPTO_LOCAL));
 			requestTransfer.addInputParam(I_NOMBRE_BENEF, anOriginalRequest.readParam(I_NOMBRE_BENEF).getDataType(),
 					anOriginalRequest.readValueParam(I_NOMBRE_BENEF));
+			/*
 			requestTransfer.addInputParam("@i_ced_ruc_ben", anOriginalRequest.readParam(I_DOC_BENEF).getDataType(),
 					anOriginalRequest.readValueParam(I_DOC_BENEF));
+			*/
 			requestTransfer.addInputParam(I_BANCO_BEN, anOriginalRequest.readParam(I_BANCO_BEN).getDataType(),
 					anOriginalRequest.readValueParam(I_BANCO_BEN));
 			requestTransfer.addInputParam("@i_servicio", anOriginalRequest.readParam(S_SERVICIO_LOCAL).getDataType(),
 					anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
 		}
-
+		
 		if ("6".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "7".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))) {
+			logger.logInfo("ENTRA VALIDACION TIPO SERVICIO 6,7");
 			requestTransfer.addInputParam(I_MON_LOCAL, responseLocalValidation.readParam("@o_mon").getDataType(),
 					responseLocalValidation.readValueParam("@o_mon"));
 			requestTransfer.addInputParam("@i_prod_org", responseLocalValidation.readParam("@o_prod").getDataType(),
