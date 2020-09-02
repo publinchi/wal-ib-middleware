@@ -289,6 +289,7 @@ public class MovementsAccountsQueryOrchestrationCore extends SPJavaOrchestration
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("HOUR", ICTSTypes.SQLVARCHAR, 20));
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("UNIQUESEQUENTIAL", ICTSTypes.SQLINT4, 6));
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("IMAGE", ICTSTypes.SQLVARCHAR, 1));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("CONCEPT", ICTSTypes.SQLVARCHAR, 255));
 
 				for (AccountStatement obj : accountStatementResponse.getAccountStatements()) {
 					row = new ResultSetRow();
@@ -305,6 +306,11 @@ public class MovementsAccountsQueryOrchestrationCore extends SPJavaOrchestration
 					row.addRowData(11, new ResultSetRowColumnData(false, obj.getHour()));
 					if (obj.getUniqueSequential() != null)
 						row.addRowData(12, new ResultSetRowColumnData(false, obj.getUniqueSequential().toString()));
+					
+					row.addRowData(13, new ResultSetRowColumnData(false, obj.getImage()));
+					logger.logInfo("obj: " + obj.toString());
+					logger.logInfo("getConcept: " + obj.getConcept());
+					row.addRowData(14, new ResultSetRowColumnData(false, obj.getConcept()));
 					data.addRow(row);
 				}
 				resultBlock = new ResultSetBlock(metaData, data);
