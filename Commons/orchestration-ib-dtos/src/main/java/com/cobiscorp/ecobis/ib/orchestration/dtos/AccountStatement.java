@@ -418,8 +418,17 @@ public class AccountStatement {
 	}
 	@Override
 	public String toString() {
-		return "AccountStatement [transactionDate=" + transactionDate + ", description=" + description + ", typeOperation=" + typeOperation + ", reference=" + reference + ", typeTransaction=" + typeTransaction + ", amount=" + amount + ", accountingBalance=" + accountingBalance + ", availableBalance=" + availableBalance + ", sequential=" + sequential + ", alternateCode=" + alternateCode
-				+ ", hour=" + hour + ", uniqueSequential=" + uniqueSequential + "]";
+		return "AccountStatement [account=" + account + ", transactionDate=" + transactionDate + ", description="
+				+ description + ", typeOperation=" + typeOperation + ", reference=" + reference + ", typeTransaction="
+				+ typeTransaction + ", amount=" + amount + ", debitsAmount=" + debitsAmount + ", creditsAmount="
+				+ creditsAmount + ", signDC=" + signDC + ", causeId=" + causeId + ", cause=" + cause + ", concept="
+				+ concept + ", stringDate=" + stringDate + ", operationType=" + operationType + ", documentNumber="
+				+ documentNumber + ", image=" + image + ", internationalCheckBookBalance="
+				+ internationalCheckBookBalance + ", localChecksBalance=" + localChecksBalance + ", office=" + office
+				+ ", ownChecksBalance=" + ownChecksBalance + ", totalChecksBalance=" + totalChecksBalance + ", typeDC="
+				+ typeDC + ", accountingBalance=" + accountingBalance + ", availableBalance=" + availableBalance
+				+ ", sequential=" + sequential + ", alternateCode=" + alternateCode + ", hour=" + hour
+				+ ", uniqueSequential=" + uniqueSequential + "]";
 	}
 
 }

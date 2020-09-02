@@ -49,7 +49,7 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 	static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
 	protected static final String COBIS_CONTEXT = "COBIS";
 	private static final String CLASS_NAME = " >-----> ";
-	private static ILogger logger = LogFactory.getLogger(BankInformationQuerys.class);
+	private static ILogger logger = LogFactory.getLogger(MovementsQueryAccounts.class);
 
 	@Override
 	public AccountStatementResponse getMovementsCheckingAccount(AccountStatementRequest accountStatementRequest)
@@ -258,6 +258,9 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 				for (IResultSetRow iResultSetRow : rowsTemp) {
 					IResultSetRowColumnData[] rows = iResultSetRow.getColumnsAsArray();
 					AccountStatement accountStatement = new AccountStatement();
+					
+					logger.logInfo("rows length: " + rows.length);
+					logger.logInfo("rows: " + rows.toString());
 
 					if (rows[0].getValue() != null)
 						accountStatement.setStringDate(rows[0].getValue());
@@ -283,6 +286,12 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 						accountStatement.setHour(rows[10].getValue().toString());
 					if (rows[11].getValue() != null)
 						accountStatement.setUniqueSequential(new Integer(rows[11].getValue().toString()));
+					if (rows[12].getValue() != null)
+						accountStatement.setImage(rows[12].getValue().toString());
+					if (rows[13].getValue() != null)
+						accountStatement.setConcept(rows[13].getValue().toString());
+
+					logger.logInfo("rows[13]: " + rows[13].getValue().toString());	
 
 					accountStatementCollection.add(accountStatement);
 				}
