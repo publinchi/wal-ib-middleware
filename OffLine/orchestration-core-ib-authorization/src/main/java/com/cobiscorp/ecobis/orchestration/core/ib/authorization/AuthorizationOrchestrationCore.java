@@ -124,7 +124,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	protected IProcedureResponse executeStepsTransactionsBase(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
 		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Ejecutando mÃ©todo executeStepsTransactionsBase: " + anOriginalRequest);
+			logger.logInfo(CLASS_NAME + " Ejecutando método executeStepsTransactionsBase: " + anOriginalRequest);
 
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
 
@@ -134,8 +134,14 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		StringBuilder messageErrorTransfer = new StringBuilder();
 		messageErrorTransfer.append((String) aBagSPJavaOrchestration.get("AUTHORIZATION_TRN"));
 
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + " Before transformToPendingTransactionRequest " + anOriginalRequest);
+
 		PendingTransactionRequest pendingTransactionRequest = transformToPendingTransactionRequest(
 				anOriginalRequest.clone());
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + " Before changeTransactionStatus " + anOriginalRequest);
+
 /*		
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId(anOriginalRequest.readValueFieldInHeader("servicio"));
@@ -154,7 +160,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		}
 
 		if (logger.isInfoEnabled())
-			logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta metodo executeStepsTransactionsBase: "
+			logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta método executeStepsTransactionsBase: "
 					+ aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
 
 		return transformProcedureResponse(pendingTransactionResponse, anOriginalRequest);
@@ -195,7 +201,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 	private PendingTransactionRequest transformToPendingTransactionRequest(IProcedureRequest aRequest) {
 		if (logger.isDebugEnabled())
-			logger.logDebug("Procedure Request to Transform->" + aRequest.getProcedureRequestAsString());
+			logger.logDebug("Procedure Request to Transform-->" + aRequest.getProcedureRequestAsString());
 
 		String messageError = null;
 		messageError = aRequest.readValueParam("@s_cliente") == null ? " - @s_cliente can't be null" : "";
@@ -209,8 +215,14 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		messageError += aRequest.readValueParam("@i_motivo") == null ? " - @i_motivo can't be null" : "";
 		messageError += aRequest.readValueParam("@i_formato_fecha") == null ? " - @i_formato_fecha can't be null" : "";
 
+		if (logger.isDebugEnabled())
+			logger.logDebug("messageError->" + messageError);
+		
 		if (!messageError.equals(""))
 			throw new IllegalArgumentException(messageError);
+		
+		if (logger.isDebugEnabled())
+			logger.logDebug("aRequest->" + aRequest);
 
 		PendingTransactionRequest pendingTransactionRequest = new PendingTransactionRequest();
 
