@@ -15,11 +15,14 @@ import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
+import com.cobiscorp.cobis.csp.domains.ICSP;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
+import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
@@ -43,14 +46,18 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceAuthorizatio
 
 public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
-	protected static final String CLASS_NAME = " >-----> ";
-	protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
-	protected static final String RESPONSE_SERVER = "RESPONSE_SERVER";
 	private static ILogger logger = LogFactory.getLogger(AuthorizationOrchestrationCore.class);
 	private static final String CORESERVICEAUTHORIZATION = "coreServiceAuthorization";
 	private static final String CORE_SERVER = "coreServer";
-	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
+	static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
+	protected static final String CLASS_NAME = " >-----> ";
 
+	@Override
+	public void loadConfiguration(IConfigurationReader arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Reference(referenceInterface = ICoreServiceAuthorization.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceAuthorization", unbind = "unbindCoreServiceAuthorization")
 	protected ICoreServiceAuthorization coreServiceAuthorization;
 
@@ -61,7 +68,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	public void unbindCoreServiceAuthorization(ICoreServiceAuthorization service) {
 		coreServiceAuthorization = null;
 	}
-
+	
 	public ICoreServer getCoreServer() {
 		return coreServer;
 	}
@@ -88,15 +95,8 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	}
 
 	@Override
-	public void loadConfiguration(IConfigurationReader arg0) {
-		// TODO Auto-generated method stub
+	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
-	}
-
-	@Override
-	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
-			Map<String, Object> aBagSPJavaOrchestration) {
-		IProcedureResponse response = null;
 		if (logger.isInfoEnabled())
 			logger.logInfo("AuthorizationOrchestrationCore: executeJavaOrchestration");
 
@@ -121,54 +121,57 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
+	
 	protected IProcedureResponse executeStepsTransactionsBase(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Ejecutando método executeStepsTransactionsBase: " + anOriginalRequest);
+		IProcedureResponse responseProc = null;
+		try {
+			//Cambio de estado de la transacción
+			responseProc = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
 
-		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseProc);
+			if (Utils.flowError("changeTransactionStatus", responseProc)) {
+				return responseProc;
+			}
 
-		ICoreServiceAuthorization coreServiceAuthorization = (ICoreServiceAuthorization) aBagSPJavaOrchestration
-				.get(CORESERVICEAUTHORIZATION);
+			return responseProc;
+		} catch (Exception e) {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("*********  Error en " + e.getMessage(), e);
+			}
 
-		StringBuilder messageErrorTransfer = new StringBuilder();
-		messageErrorTransfer.append((String) aBagSPJavaOrchestration.get("AUTHORIZATION_TRN"));
-
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Before transformToPendingTransactionRequest " + anOriginalRequest);
-
-		PendingTransactionRequest pendingTransactionRequest = transformToPendingTransactionRequest(
-				anOriginalRequest.clone());
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Before changeTransactionStatus " + anOriginalRequest);
-
-/*		
-		ServerRequest serverRequest = new ServerRequest();
-		serverRequest.setChannelId(anOriginalRequest.readValueFieldInHeader("servicio"));
-		ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
-		aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
-*/
-		PendingTransactionResponse pendingTransactionResponse = coreServiceAuthorization.changeTransactionStatus(pendingTransactionRequest);
-
-		if (logger.isInfoEnabled())
-			logger.logInfo("RESPONSE AUTHORIZATION -->" + pendingTransactionResponse.getReturnCode());
-
-		if (!pendingTransactionResponse.getSuccess()) {
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, pendingTransactionResponse);
-			return Utils.returnException(pendingTransactionResponse.getReturnCode(),
-					new StringBuilder(messageErrorTransfer).append(pendingTransactionResponse.getMessage()).toString());
+			IProcedureResponse wProcedureRespFinal = initProcedureResponse(anOriginalRequest);
+			ErrorBlock eb = new ErrorBlock(-1, "Service is not available");
+			wProcedureRespFinal.addResponseBlock(eb);
+			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, "1");
+			wProcedureRespFinal.setReturnCode(-1);
+			return wProcedureRespFinal;
 		}
 
-		if (logger.isInfoEnabled())
-			logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta método executeStepsTransactionsBase: "
-					+ aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
-
-		return transformProcedureResponse(pendingTransactionResponse, anOriginalRequest);
-
 	}
+	
+	private IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
+		PendingTransactionRequest pendingTransactionRequest = transformToPendingTransactionRequest(anOriginalRequest.clone());
+		PendingTransactionResponse pendingTransactionResponse = new PendingTransactionResponse();
+		
+		IProcedureResponse wProcedureResponse = null;
+		try {
+			pendingTransactionResponse = coreServiceAuthorization.changeTransactionStatus(pendingTransactionRequest);
+		
+		} catch (CTSServiceException e) {
+			e.printStackTrace();
+		} catch (CTSInfrastructureException e) {
+			e.printStackTrace();
+		}
+		
+		wProcedureResponse = transformProcedureResponse(pendingTransactionResponse, aBagSPJavaOrchestration);
+	
+		return wProcedureResponse;
+	}
+	
 	private IProcedureResponse transformProcedureResponse(PendingTransactionResponse pendingTransactionResponse,
-			IProcedureRequest request) {
+			Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled())
 			logger.logInfo("transformProcedureResponse " + pendingTransactionResponse.toString());
 
@@ -179,6 +182,8 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 			wProcedureResponse = Utils.returnException(pendingTransactionResponse.getMessages());
 			wProcedureResponse.setReturnCode(pendingTransactionResponse.getReturnCode());
 
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION,wProcedureResponse);
+			
 			return wProcedureResponse;
 		}
 
@@ -186,18 +191,16 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 			wProcedureResponse = Utils.returnException(pendingTransactionResponse.getMessages());
 			wProcedureResponse.setReturnCode(pendingTransactionResponse.getReturnCode());
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION,wProcedureResponse);
 		}
-		
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + "Respuesta transformToProcedureResponse -->"
-					+ wProcedureResponse.getProcedureResponseAsString());
 
 		if (logger.isDebugEnabled())
-			logger.logDebug("Procedure Response Final ApplicationBankGuaranteeResponse --> "
+			logger.logDebug("Procedure Response Final PendingTransactionResponse --> "
 					+ wProcedureResponse.getProcedureResponseAsString());
 
 		return wProcedureResponse;
 	}
+	
 
 	private PendingTransactionRequest transformToPendingTransactionRequest(IProcedureRequest aRequest) {
 		if (logger.isDebugEnabled())
@@ -213,7 +216,6 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 				: "";
 		messageError += aRequest.readValueParam("@i_login") == null ? " - @i_login can't be null" : "";
 		messageError += aRequest.readValueParam("@i_motivo") == null ? " - @i_motivo can't be null" : "";
-		messageError += aRequest.readValueParam("@i_formato_fecha") == null ? " - @i_formato_fecha can't be null" : "";
 
 		if (logger.isDebugEnabled())
 			logger.logDebug("messageError->" + messageError);
@@ -237,10 +239,10 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 		return pendingTransactionRequest;
 	}
-
+	
 	@Override
-	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest,
-			Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
 		return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
 	}
 
