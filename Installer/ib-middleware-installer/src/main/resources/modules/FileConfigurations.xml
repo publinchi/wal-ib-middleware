@@ -259,6 +259,7 @@
 		<staff id="62" name="orchestration-core-ib-query-office-template" version="4.6.1.0" />
 		<staff id="63" name="orchestration-core-batch-notification-template" version="4.6.1.0" />
 		<staff id="64" name="orchestration-core-ib-enrollment-template" version="4.6.1.0" />
+		<staff id="64" name="orchestration-core-ib-authorization-template" version="4.6.1.0" />
 	</orchestrationsTemplate>
 		
 	<orchestrations>
@@ -333,7 +334,8 @@
     <staff id="70" name="orchestration-management-token" version="4.6.1.0" />
     <staff id="71" name="orchestration-core-ib-spi-transfer" version="4.6.1.0" />
     <staff id="72" name="orchestration-core-ib-direct-transfer" version="4.6.1.0" />
-	<staff id="72" name="orchestration-core-ib-enrollment" version="4.6.1.0" />
+	<staff id="73" name="orchestration-core-ib-enrollment" version="4.6.1.0" />
+	<staff id="74" name="orchestration-core-ib-authorization" version="4.6.1.0" />
   </orchestrations>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />

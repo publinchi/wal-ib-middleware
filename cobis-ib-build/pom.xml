@@ -92,6 +92,7 @@
         <module>../CORE_COBIS/orchestration-core-ib-authenticate-template</module>
         <module>../CORE_COBIS/orchestration-core-batch-notification-template</module>
 		<module>../CORE_COBIS/orchestration-core-ib-enrollment-template</module>
+		<module>../CORE_COBIS/orchestration-core-ib-authorization-template</module>
         <!-- Direct 54-->
         <module>../Direct/orchestration-core-ib-cashiers-check</module>
         <module>../Direct/orchestration-core-ib-authenticate</module>
@@ -164,7 +165,8 @@
         <module>../Offline/orchestration-core-ib-spi-transfer</module>
         <module>../Offline/orchestration-core-ib-direct-transfer</module>
          <!-- <module>../OnLine/orchestration-management-token</module>        -->
-		<module>../Offline/orchestration-core-ib-enrollment</module>  
+		<module>../Offline/orchestration-core-ib-enrollment</module>
+		<module>../Offline/orchestration-core-ib-authorization</module>  
         <!-- CAPA Funcionalidad de tarjeta de credito en linea -->
          <!--  <module>../OnLine/orchestration-core-ib-cards-payment</module>-->
         <!-- ConnectorCreditCard -->

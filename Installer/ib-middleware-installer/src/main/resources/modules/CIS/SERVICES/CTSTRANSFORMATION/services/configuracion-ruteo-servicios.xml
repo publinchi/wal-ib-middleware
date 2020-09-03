@@ -2902,4 +2902,18 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 18790">
+		<conditions>
+			<condition param="trn">
+				<value>18790</value>      
+		</condition>
+		</conditions>
+		<indicators>
+			<indicator name="externalProvider" value="0"/>
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AuthorizationOrchestrationCore)"/>
+			<indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>
