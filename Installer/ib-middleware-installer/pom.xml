@@ -670,6 +670,11 @@
 			<version>4.6.1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorization-template</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestration</groupId>
 			<artifactId>orchestration-ib-cards</artifactId>
 			<version>4.6.1.0</version>
@@ -1003,6 +1008,11 @@
       <artifactId>orchestration-core-ib-direct-transfer</artifactId>
       <version>4.6.1.0</version>
     </dependency>
+	<dependency>
+      <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+      <artifactId>orchestration-core-ib-authorization</artifactId>
+      <version>4.6.1.0</version>
+    </dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1241,7 +1251,8 @@
 											cobis-business-process-connector-ib,
 											orchestration-management-token,
 											orchestration-core-ib-enrollment-template,
-                                            orchestration-core-ib-enrollment											
+                                            orchestration-core-ib-enrollment,
+											orchestration-core-ib-authorization-template											
 						</includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
@@ -1333,7 +1344,8 @@
                           orchestration-core-ib-application-credit-line,
                           orchestration-core-ib-application-checkbook,
                           orchestration-core-ib-spi-transfer,
-                          orchestration-core-ib-direct-transfer
+                          orchestration-core-ib-direct-transfer,
+						  orchestration-core-ib-authorization
                         </includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
