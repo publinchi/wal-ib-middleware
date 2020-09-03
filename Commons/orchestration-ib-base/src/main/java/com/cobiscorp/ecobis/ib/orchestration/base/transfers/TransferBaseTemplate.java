@@ -3,7 +3,6 @@ package com.cobiscorp.ecobis.ib.orchestration.base.transfers;
 import java.util.Map;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
-import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
@@ -13,10 +12,19 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.AccountingParameterRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.AccountingParameterResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
@@ -60,10 +68,6 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	protected static final int CODE_OFFLINE = 40004;
 	private static ILogger logger = LogFactory.getLogger(TransferBaseTemplate.class);
 
-	protected java.util.Properties properties;
-
-
-	
 	/**
 	 * Constant controller offline functionality activation.<br>
 	 * When this value is true the functionality is enabled.
@@ -96,16 +100,6 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 
 	protected abstract IProcedureResponse executeTransaction(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration);
 
-	/**
-	 * Read configuration of parent component
-	 */
-	@Override
-	public void loadConfiguration(IConfigurationReader configurationReader) {
-		
-		properties = configurationReader.getProperties("//property");
-		logger.logInfo(" TransferBaseTemplate Properties --> " + properties);
-	}
-	
 	/**
 	 * Finds account officers for notification.
 	 * 
@@ -392,7 +386,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	 */
 	protected IProcedureResponse executeStepsTransactionsBase(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
 		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Ejecutando mÃ©todo executeStepsTransactionsBase:: " + anOriginalRequest);
+			logger.logInfo(CLASS_NAME + " Ejecutando mÃ©todo executeStepsTransactionsBase: " + anOriginalRequest);
 
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
 
@@ -442,16 +436,9 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 
 		// Si producto y transaccion estan autorizados
 		if (validatePreConditions(aBagSPJavaOrchestration)) {
-			Boolean validateSign=true;
-			logger.logDebug("TransferBaseTemplate properties: "+properties);
+
 			// Valida firmas fisicas solo en lÃ­nea
-			//if (properties!=null && properties.get("VALIDATE_SIGNERS")!=null) {
-				//String validateSigners= properties.get("VALIDATE_SIGNERS").toString();
-				//validateSign= new Boolean(validateSigners);
-			//}
-			
 			IProcedureResponse responseSigner = new ProcedureResponseAS();
-						
 			if (responseServer.getOnLine()) {
 				responseSigner = AccountCoreSignersValidation.validateCoreSigners(getCoreService(), aBagSPJavaOrchestration);
 				if (Utils.flowError("querySigners", responseSigner)) {
