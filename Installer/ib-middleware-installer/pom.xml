@@ -998,21 +998,21 @@
 			<artifactId>orchestration-core-ib-enrollment-template</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-    <dependency>
-      <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-      <artifactId>orchestration-core-ib-spi-transfer</artifactId>
-      <version>4.6.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-      <artifactId>orchestration-core-ib-direct-transfer</artifactId>
-      <version>4.6.1.0</version>
-    </dependency>
-	<dependency>
-      <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-      <artifactId>orchestration-core-ib-authorization</artifactId>
-      <version>4.6.1.0</version>
-    </dependency>
+        <dependency>
+          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+          <artifactId>orchestration-core-ib-spi-transfer</artifactId>
+          <version>4.6.1.0</version>
+        </dependency>
+        <dependency>
+          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+          <artifactId>orchestration-core-ib-direct-transfer</artifactId>
+          <version>4.6.1.0</version>
+        </dependency>
+	    <dependency>
+          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+          <artifactId>orchestration-core-ib-authorization</artifactId>
+          <version>4.6.1.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

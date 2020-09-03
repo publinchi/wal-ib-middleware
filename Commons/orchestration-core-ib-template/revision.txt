@@ -1,4 +1,4 @@
 --> 1.0.0
 
-	@autor tbaidal
-	- Se crea el proyecto a partir de un proyecto existente
+	@autor fabad
+	- Se crea el proyecto
