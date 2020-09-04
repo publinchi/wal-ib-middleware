@@ -258,9 +258,6 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 				for (IResultSetRow iResultSetRow : rowsTemp) {
 					IResultSetRowColumnData[] rows = iResultSetRow.getColumnsAsArray();
 					AccountStatement accountStatement = new AccountStatement();
-					
-					logger.logInfo("rows length: " + rows.length);
-					logger.logInfo("rows: " + rows.toString());
 
 					if (rows[0].getValue() != null)
 						accountStatement.setStringDate(rows[0].getValue());
@@ -289,9 +286,7 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 					if (rows[12].getValue() != null)
 						accountStatement.setImage(rows[12].getValue().toString());
 					if (rows[13].getValue() != null)
-						accountStatement.setConcept(rows[13].getValue().toString());
-
-					logger.logInfo("rows[13]: " + rows[13].getValue().toString());	
+						accountStatement.setConcept(rows[13].getValue().toString());	
 
 					accountStatementCollection.add(accountStatement);
 				}
