@@ -181,6 +181,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					if (logger.isDebugEnabled()) {
 						logger.logDebug("Paso exitoso");
 					}
+					//SE ACTUALIZA TABLA DE SECUENCIAL SPEI
+					speiSec(originalRequest, aBagSPJavaOrchestration);
 					//SE ADJUNTA LA CLAVE DE RASTREO
 					responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(), respuesta.get(2));
 				}	
@@ -815,6 +817,45 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		finally {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo("Saliendo de speiUpdateTmp");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return response;
+	}
+	
+	protected boolean speiSec(IProcedureRequest anOriginalRequest,Map<String, Object> bag) {
+		//SE INICIALIZA VARIABLE
+		boolean response = false;
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Entrando a speiSec");
+		}
+		try {
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+			
+			//SE SETEAN DATOS
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
+			request.addFieldInHeader(KEEP_SSN,ICOBISTS.HEADER_STRING_TYPE, "Y");
+			request.setSpName("cob_bvirtual..sp_secuencial_spei");
+			
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18011");
+			
+			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
+
+			//SE EJECUTA Y SE OBTIENE LA RESPUESTA
+			IProcedureResponse pResponse = executeCoreBanking(request);
+			
+			response = true;	
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo("Error de speiSec");
+			response = false;
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de speiSec");
 			}
 		}
 		//SE REGRESA RESPUESTA
