@@ -804,7 +804,7 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="118" index="28">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="119" name="parameter">
-        <field type="String" name="name" value="@i_comission" />
+        <field type="String" name="name" value="@i_comision" />
         <field type="String" name="dataType" value="decimal" />
         <field type="String" name="direction" value="in" />
       </class>
