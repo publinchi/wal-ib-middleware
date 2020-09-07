@@ -20,6 +20,4 @@ public class PayRollResponse extends BaseResponse{
 		this.paymentAccountList = paymentaccountList;
 	}
 	
-	
-	
 }

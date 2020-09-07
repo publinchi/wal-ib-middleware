@@ -23,6 +23,8 @@
     <parameter name="@i_login" dataType="varchar" direction="in" />
     <parameter name="@i_motivo" dataType="varchar" direction="in" />
     <parameter name="@r_fuera_linea" dataType="char" direction="in" />
+    <parameter name="@i_file_id" dataType="int" direction="in" />
+    <parameter name="@i_filas_pagina" dataType="int" direction="in" />
     <parameter name="@o_condicion" dataType="int" direction="out" />
   </parameters>
   <queries />
