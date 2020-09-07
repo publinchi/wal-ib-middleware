@@ -112,7 +112,7 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		
 		request.setSpName("cob_bvirtual..sp_cons_carga_nomina");
 		request.addInputParam("@i_operacion", ICTSTypes.SQLINT4, paymentAccountRequest.getOperation());
-		request.addInputParam("@i_file_id", ICTSTypes.SQLINT4, paymentAccountRequest.getFileId());
+		request.addInputParam("@i_trn_autorizador", ICTSTypes.SQLINT4, paymentAccountRequest.getPendingTransaction());
 		request.addInputParam("@i_filas_pagina", ICTSTypes.SQLINT4, paymentAccountRequest.getPageRows());
 
 		if (logger.isDebugEnabled()) {

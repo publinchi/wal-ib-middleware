@@ -12,8 +12,7 @@ public class PaymentAccountRequest {
 	private String fileId;
 	private String accountNumber;
 	private String pageRows;
-
-	
+	private String pendingTransaction;
 	
 	/**
 	 * @return the operation
@@ -83,6 +82,23 @@ public class PaymentAccountRequest {
 	 */
 	public void setPageRows(String pageRows) {
 		this.pageRows = pageRows;
+	}
+
+
+	/**
+	 * @return the pendingTransaction
+	 */
+	public String getPendingTransaction() {
+		return pendingTransaction;
+	}
+
+
+
+	/**
+	 * @param pendingTransaction the pendingTransaction to set
+	 */
+	public void setPendingTransaction(String pendingTransaction) {
+		this.pendingTransaction = pendingTransaction;
 	}
 
 

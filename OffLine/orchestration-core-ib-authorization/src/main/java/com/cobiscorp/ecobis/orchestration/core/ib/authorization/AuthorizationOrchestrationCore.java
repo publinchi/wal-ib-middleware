@@ -133,13 +133,15 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		try {
 
 			PaymentAccountRequest paymentAccountRequest = transformToPaymentAccountRequest(anOriginalRequest.clone());
-			
-			if (anOriginalRequest != null && !"S".equals(anOriginalRequest.readValueParam("@i_file_id"))) {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("*********  anOriginalRequest.readValueParam(\"@i_file_id\") " + anOriginalRequest.readValueParam("@i_file_id"));
+			}
+
+			if (anOriginalRequest != null && anOriginalRequest.readValueParam("@i_file_id")!=null) {
 				// Consultar pagos
 				payRollResponse = coreServiceAuthorization.getPaymentAccounts(paymentAccountRequest);
 
 				// Desbloqueo de fondos - bucle
-
 			}
 
 			// Rechazar
@@ -268,6 +270,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		paymentAccountRequest.setOperation("S");
 		paymentAccountRequest.setPageRows(aRequest.readValueParam("@i_filas_pagina"));
 		paymentAccountRequest.setAccountNumber("");
+		paymentAccountRequest.setPendingTransaction(aRequest.readValueParam("@i_trn_autorizador"));
 		return paymentAccountRequest;
 	}
 
