@@ -7,12 +7,15 @@ package com.cobiscorp.ecobis.ib.application.dtos;
  * @author tbaidal
  *
  */
-public class PaymentAccountRequest {
+public class PayrollRequest {
 	private String operation;
 	private String fileId;
 	private String accountNumber;
 	private String pageRows;
 	private String pendingTransaction;
+	private String ssn;
+	private String channel;
+	private String massive;
 	
 	/**
 	 * @return the operation
@@ -99,6 +102,60 @@ public class PaymentAccountRequest {
 	 */
 	public void setPendingTransaction(String pendingTransaction) {
 		this.pendingTransaction = pendingTransaction;
+	}
+
+
+
+	/**
+	 * @return the ssn
+	 */
+	public String getSsn() {
+		return ssn;
+	}
+
+
+
+	/**
+	 * @param ssn the ssn to set
+	 */
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+
+
+
+	/**
+	 * @return the channel
+	 */
+	public String getChannel() {
+		return channel;
+	}
+
+
+
+	/**
+	 * @param channel the channel to set
+	 */
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+
+
+	/**
+	 * @return the massive
+	 */
+	public String getMassive() {
+		return massive;
+	}
+
+
+
+	/**
+	 * @param massive the massive to set
+	 */
+	public void setMassive(String massive) {
+		this.massive = massive;
 	}
 
 

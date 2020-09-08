@@ -2,7 +2,7 @@ package com.cobiscorp.ecobis.ib.application.dtos;
 
 import java.util.List;
 
-public class PayRollResponse extends BaseResponse{
+public class PayrollResponse extends BaseResponse{
 
 	private List<PaymentAccountResponse> paymentAccountList;
 
