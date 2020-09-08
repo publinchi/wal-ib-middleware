@@ -830,7 +830,7 @@
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inTransferRequest" />
       <field type="String" name="dTOPropertyName" value="comision" />
-      <field type="String" name="cTSDataType" value="SQLDECIMAL" />
+      <field type="String" name="cTSDataType" value="SQLMONEY" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
   </collection>
