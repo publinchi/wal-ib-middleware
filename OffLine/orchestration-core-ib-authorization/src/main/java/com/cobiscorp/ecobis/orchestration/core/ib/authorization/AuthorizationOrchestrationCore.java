@@ -24,10 +24,14 @@ import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
-import com.cobiscorp.ecobis.ib.application.dtos.PayRollResponse;
-import com.cobiscorp.ecobis.ib.application.dtos.PaymentAccountRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.BlockedAccountRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.BlockedAccountResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.PaymentAccountResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.PayrollRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.PayrollResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.UnblockedFundsResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceAuthorization;
@@ -53,6 +57,9 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	private static final String CORE_SERVER = "coreServer";
 	static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String CLASS_NAME = " >-----> ";
+	private static final String OPERATION_UNBLOCK = "R";
+	private static final String OPERATION_SAVE_PAYMENT_TMP = "I";
+	private static final String MASSIVE = "S";
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
@@ -129,22 +136,40 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	protected IProcedureResponse executeStepsTransactionsBase(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
 		IProcedureResponse responseProc = null;
-		PayRollResponse payRollResponse = null;
+		PayrollResponse payRollResponse = null;
 		try {
 
-			PaymentAccountRequest paymentAccountRequest = transformToPaymentAccountRequest(anOriginalRequest.clone());
+			
 			if (logger.isInfoEnabled()) {
-				logger.logInfo("*********  anOriginalRequest.readValueParam(\"@i_file_id\") " + anOriginalRequest.readValueParam("@i_file_id"));
+				logger.logInfo("*********  anOriginalRequest.readValueParam(@i_file_id) " + anOriginalRequest.readValueParam("@i_file_id"));
 			}
 
 			if (anOriginalRequest != null && anOriginalRequest.readValueParam("@i_file_id")!=null) {
-				// Consultar pagos
-				payRollResponse = coreServiceAuthorization.getPaymentAccounts(paymentAccountRequest);
+				// LOCAL - Consultar cuentas
+				PayrollRequest payrollRequest = transformToPayrollRequest(anOriginalRequest.clone());
+				payRollResponse = coreServiceAuthorization.getPaymentAccounts(payrollRequest);
 
-				// Desbloqueo de fondos - bucle
+				//CENTRAL - Guardar cuentas en estructura temporal
+				for (PaymentAccountResponse paymentAccountResponse : payRollResponse.getPaymentAccountList()) {
+					//CENTRAL - Guardar cuenta temporalmente
+					BlockedAccountRequest blockedAccountRequest = new BlockedAccountRequest();
+					blockedAccountRequest.setFileId(payrollRequest.getFileId());
+					blockedAccountRequest.setOperation(OPERATION_SAVE_PAYMENT_TMP);
+					blockedAccountRequest.setAccount(paymentAccountResponse.getAccount());
+					blockedAccountRequest.setProductId(paymentAccountResponse.getProductId()!=null ? String.valueOf(paymentAccountResponse.getProductId()) : null);
+					blockedAccountRequest.setCurrencyId(paymentAccountResponse.getCurrencyId()!=null ? String.valueOf(paymentAccountResponse.getCurrencyId()) : null);
+					blockedAccountRequest.setBlockId(paymentAccountResponse.getBlockId()!=null ? String.valueOf(paymentAccountResponse.getBlockId()) : null);
+					blockedAccountRequest.setAmount(paymentAccountResponse.getAmount()!=null ? String.valueOf(paymentAccountResponse.getAmount()) : null );
+					BlockedAccountResponse blockedAccountResponse = coreServiceAuthorization.saveBlockedAccountTmp(blockedAccountRequest);
+				}
+				
+				//CENTRAL - Desbloquear fondos de cuentas y Borrar cuentas de estructura temporal
+				payrollRequest.setOperation(OPERATION_UNBLOCK);
+				payrollRequest.setMassive(MASSIVE);
+				UnblockedFundsResponse unblockedFundsResponse = coreServiceAuthorization.unblockFunds(payrollRequest);
 			}
 
-			// Rechazar
+			// LOCAL - Rechazar transacción
 			responseProc = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
 
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseProc);
@@ -260,18 +285,17 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	}
 	
 	/**************************************************************************/
-	private PaymentAccountRequest transformToPaymentAccountRequest(IProcedureRequest aRequest) {
-		PaymentAccountRequest paymentAccountRequest = new PaymentAccountRequest();
+	private PayrollRequest transformToPayrollRequest(IProcedureRequest aRequest) {
+		PayrollRequest payrollRequest = new PayrollRequest();
 
 		if (logger.isDebugEnabled())
 			logger.logDebug("<<<Procedure Request to Transform->>>" + aRequest.getProcedureRequestAsString());
 	
-		paymentAccountRequest.setFileId(aRequest.readValueParam("@i_file_id"));
-		paymentAccountRequest.setOperation("S");
-		paymentAccountRequest.setPageRows(aRequest.readValueParam("@i_filas_pagina"));
-		paymentAccountRequest.setAccountNumber("");
-		paymentAccountRequest.setPendingTransaction(aRequest.readValueParam("@i_trn_autorizador"));
-		return paymentAccountRequest;
+		payrollRequest.setFileId(aRequest.readValueParam("@i_file_id"));
+		payrollRequest.setOperation("S");
+		payrollRequest.setPageRows(aRequest.readValueParam("@i_filas_pagina"));
+		payrollRequest.setPendingTransaction(aRequest.readValueParam("@i_trn_autorizador"));
+		return payrollRequest;
 	}
 
 	@Override
