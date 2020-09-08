@@ -359,6 +359,19 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="59" index="27">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="60" name="parameter">
+        <field type="String" name="name" value="@i_comision" />
+        <field type="String" name="dataType" value="money" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inTransferRequest" />
+      <field type="String" name="dTOPropertyName" value="comision" />
+      <field type="String" name="cTSDataType" value="SQLMONEY" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="61" index="28">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="62" name="parameter">
         <field type="String" name="name" value="@i_banco_ben" />
         <field type="String" name="dataType" value="smallint" />
         <field type="String" name="direction" value="in" />
@@ -368,19 +381,6 @@
       <field type="String" name="dTOAlias" value="inDestinationAccount" />
       <field type="String" name="dTOPropertyName" value="bankId" />
       <field type="String" name="cTSDataType" value="SQLINT2" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="61" index="28">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="62" name="parameter">
-        <field type="String" name="name" value="@i_comision" />
-        <field type="String" name="dataType" value="decimal" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inTransferRequest" />
-      <field type="String" name="dTOPropertyName" value="comision" />
-      <field type="String" name="cTSDataType" value="SQLDECIMAL" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
   </collection>
