@@ -24,6 +24,11 @@ import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.ecobis.ib.application.dtos.BlockedAccountRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.BlockedAccountResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.PaymentAccountResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.PayrollRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.PayrollResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
@@ -51,13 +56,17 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	private static final String CORE_SERVER = "coreServer";
 	static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String CLASS_NAME = " >-----> ";
+	private static final String OPERATION_UNBLOCK = "R";
+	private static final String PAYROLL_RESPONSE = "PAYROLL_RESPONSE";
+	private static final Object PAYMENT_ACCOUNT = "PAYMENT_ACCOUNT";
+	private static final String RESPONSE_UNBLOCK_ACCOUNT = "RESPONSE_UNBLOCK_ACCOUNT";
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Reference(referenceInterface = ICoreServiceAuthorization.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceAuthorization", unbind = "unbindCoreServiceAuthorization")
 	protected ICoreServiceAuthorization coreServiceAuthorization;
 
@@ -68,7 +77,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	public void unbindCoreServiceAuthorization(ICoreServiceAuthorization service) {
 		coreServiceAuthorization = null;
 	}
-	
+
 	public ICoreServer getCoreServer() {
 		return coreServer;
 	}
@@ -95,22 +104,25 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 	}
 
 	@Override
-	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
 
 		if (logger.isInfoEnabled())
 			logger.logInfo("AuthorizationOrchestrationCore: executeJavaOrchestration");
-
-		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
-
-		mapInterfaces.put(CORESERVICEAUTHORIZATION, coreServiceAuthorization);
-		mapInterfaces.put(CORE_SERVER, coreServer);
-
-		Utils.validateComponentInstance(mapInterfaces);
-
-		aBagSPJavaOrchestration.put(CORESERVICEAUTHORIZATION, coreServiceAuthorization);
-		aBagSPJavaOrchestration.put(CORE_SERVER, coreServer);
+		
+		
 
 		try {
+
+			Map<String, Object> mapInterfaces = new HashMap<String, Object>();
+
+			mapInterfaces.put(CORESERVICEAUTHORIZATION, coreServiceAuthorization);
+			mapInterfaces.put(CORE_SERVER, coreServer);
+
+			Utils.validateComponentInstance(mapInterfaces);
+
+			aBagSPJavaOrchestration.put(CORESERVICEAUTHORIZATION, coreServiceAuthorization);
+			aBagSPJavaOrchestration.put(CORE_SERVER, coreServer);
 
 			executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 		} catch (CTSServiceException e) {
@@ -121,17 +133,55 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
-	
 	protected IProcedureResponse executeStepsTransactionsBase(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
 		IProcedureResponse responseProc = null;
+		PayrollResponse payRollResponse = null;
 		try {
-			//Cambio de estado de la transacción
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("*********  anOriginalRequest.readValueParam(@i_file_id) " + anOriginalRequest.readValueParam("@i_file_id"));
+			}
+			
+			// LOCAL - Rechazar transacción
 			responseProc = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
-
+			
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseProc);
 			if (Utils.flowError("changeTransactionStatus", responseProc)) {
 				return responseProc;
+			}
+
+			if (anOriginalRequest != null && anOriginalRequest.readValueParam("@i_file_id")!=null) {
+				
+				// LOCAL - Consultar cuentas
+				PayrollRequest payrollRequest = transformToPayrollRequest(anOriginalRequest.clone());
+				payRollResponse = coreServiceAuthorization.getPaymentAccounts(payrollRequest);
+
+				StringBuilder messageGetPaymentAccounts = new StringBuilder();
+				messageGetPaymentAccounts.append((String) aBagSPJavaOrchestration.get(PAYMENT_ACCOUNT));
+				
+				aBagSPJavaOrchestration.put(PAYROLL_RESPONSE, payRollResponse);
+				if (!payRollResponse.getSuccess()) {
+					aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, payRollResponse);
+					return Utils.returnException(payRollResponse.getReturnCode(), new StringBuilder(messageGetPaymentAccounts).append(payRollResponse.getMessage()).toString());
+				}
+				
+				for (PaymentAccountResponse paymentAccountResponse : payRollResponse.getPaymentAccountList()) {
+					//CENTRAL - Desbloquear cuenta
+					BlockedAccountRequest blockedAccountRequest = new BlockedAccountRequest();
+					blockedAccountRequest.setFileId(payrollRequest.getFileId());
+					blockedAccountRequest.setOperation(OPERATION_UNBLOCK);
+					blockedAccountRequest.setAccount(paymentAccountResponse.getAccount());
+					blockedAccountRequest.setProductId(paymentAccountResponse.getProductId()!=null ? String.valueOf(paymentAccountResponse.getProductId()) : null);
+					blockedAccountRequest.setCurrencyId(paymentAccountResponse.getCurrencyId()!=null ? String.valueOf(paymentAccountResponse.getCurrencyId()) : null);
+					blockedAccountRequest.setBlockId(paymentAccountResponse.getBlockId()!=null ? String.valueOf(paymentAccountResponse.getBlockId()) : null);
+					blockedAccountRequest.setAmount(paymentAccountResponse.getAmount()!=null ? String.valueOf(paymentAccountResponse.getAmount()) : null );
+					BlockedAccountResponse blockedAccountResponse = coreServiceAuthorization.unblockAccount(blockedAccountRequest);
+				
+					if (blockedAccountResponse!=null && !blockedAccountResponse.getSuccess()) {
+						responseProc.addMessage(blockedAccountResponse.getReturnCode(), "ERROR. ARCHIVO: "+payrollRequest.getFileId()+" CUENTA: "+paymentAccountResponse.getAccount());
+					}
+				}
+				
 			}
 
 			return responseProc;
@@ -149,27 +199,29 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		}
 
 	}
-	
-	private IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
-		PendingTransactionRequest pendingTransactionRequest = transformToPendingTransactionRequest(anOriginalRequest.clone());
+	private IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
+
+		PendingTransactionRequest pendingTransactionRequest = transformToPendingTransactionRequest(
+				anOriginalRequest.clone());
 		PendingTransactionResponse pendingTransactionResponse = new PendingTransactionResponse();
-		
+
 		IProcedureResponse wProcedureResponse = null;
 		try {
 			pendingTransactionResponse = coreServiceAuthorization.changeTransactionStatus(pendingTransactionRequest);
-		
+
 		} catch (CTSServiceException e) {
 			e.printStackTrace();
 		} catch (CTSInfrastructureException e) {
 			e.printStackTrace();
 		}
-		
+
 		wProcedureResponse = transformProcedureResponse(pendingTransactionResponse, aBagSPJavaOrchestration);
-	
+
 		return wProcedureResponse;
 	}
-	
+
 	private IProcedureResponse transformProcedureResponse(PendingTransactionResponse pendingTransactionResponse,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled())
@@ -182,8 +234,8 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 			wProcedureResponse = Utils.returnException(pendingTransactionResponse.getMessages());
 			wProcedureResponse.setReturnCode(pendingTransactionResponse.getReturnCode());
 
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION,wProcedureResponse);
-			
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, wProcedureResponse);
+
 			return wProcedureResponse;
 		}
 
@@ -191,7 +243,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 			wProcedureResponse = Utils.returnException(pendingTransactionResponse.getMessages());
 			wProcedureResponse.setReturnCode(pendingTransactionResponse.getReturnCode());
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION,wProcedureResponse);
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, wProcedureResponse);
 		}
 
 		if (logger.isDebugEnabled())
@@ -200,7 +252,6 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 		return wProcedureResponse;
 	}
-	
 
 	private PendingTransactionRequest transformToPendingTransactionRequest(IProcedureRequest aRequest) {
 		if (logger.isDebugEnabled())
@@ -219,10 +270,10 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 		if (logger.isDebugEnabled())
 			logger.logDebug("messageError->" + messageError);
-		
+
 		if (!messageError.equals(""))
 			throw new IllegalArgumentException(messageError);
-		
+
 		if (logger.isDebugEnabled())
 			logger.logDebug("aRequest->" + aRequest);
 
@@ -240,6 +291,20 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 		return pendingTransactionRequest;
 	}
 	
+	/**************************************************************************/
+	private PayrollRequest transformToPayrollRequest(IProcedureRequest aRequest) {
+		PayrollRequest payrollRequest = new PayrollRequest();
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("<<<Procedure Request to Transform->>>" + aRequest.getProcedureRequestAsString());
+	
+		payrollRequest.setFileId(aRequest.readValueParam("@i_file_id"));
+		payrollRequest.setOperation("S");
+		payrollRequest.setPageRows(aRequest.readValueParam("@i_filas_pagina"));
+		payrollRequest.setPendingTransaction(aRequest.readValueParam("@i_trn_autorizador"));
+		return payrollRequest;
+	}
+
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
 		// TODO Auto-generated method stub
