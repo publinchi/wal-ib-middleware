@@ -19,5 +19,12 @@ public class PayrollResponse extends BaseResponse{
 	public void setPaymentAccountList(List<PaymentAccountResponse> paymentaccountList) {
 		this.paymentAccountList = paymentaccountList;
 	}
+
+	@Override
+	public String toString() {
+		return "PayrollResponse [paymentAccountList=" + paymentAccountList + "]";
+	}
+	
+	
 	
 }
