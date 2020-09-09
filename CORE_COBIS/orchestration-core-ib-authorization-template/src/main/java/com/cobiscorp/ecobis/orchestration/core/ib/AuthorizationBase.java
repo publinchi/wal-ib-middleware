@@ -34,7 +34,6 @@ import com.cobiscorp.ecobis.ib.application.dtos.PayrollRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PayrollResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
-import com.cobiscorp.ecobis.ib.application.dtos.UnblockedFundsResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceAuthorization;
 
@@ -174,12 +173,6 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		List<PaymentAccountResponse> paymentAccountResponseList = new ArrayList<PaymentAccountResponse>();
 		PaymentAccountResponse paymentAccountResponse = null;
 		
-		if (paymentsAccountsResponse == null) {
-			if (logger.isInfoEnabled())
-				logger.logInfo("PendingTransactionResponse --> Response null");
-			return null;
-		}
-		
 		IResultSetRow[] rowsPaymentAccounts = aProcedureResponse.getResultSet(1).getData().getRowsAsArray();
 
 		for (IResultSetRow iResultSetRow : rowsPaymentAccounts) {
@@ -239,22 +232,6 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		return null;
 	}
 
-	
-	private UnblockedFundsResponse transformToUnblockedFundsResponse(IProcedureResponse aProcedureResponse) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("INICIANDO SERVICIO: transformToUnblockedFundsResponse");
-		}
-
-		UnblockedFundsResponse unblockedFundsResponse = new UnblockedFundsResponse();
-		
-		if (aProcedureResponse.getReturnCode() != 0)
-			unblockedFundsResponse.setMessages(Utils.returnArrayMessage(aProcedureResponse));
-		
-		unblockedFundsResponse.setSuccess(aProcedureResponse.getReturnCode() == 0 ? true : false);
-		unblockedFundsResponse.setReturnCode(aProcedureResponse.getReturnCode());
-
-		return unblockedFundsResponse;
-	}
 
 	@Override
 	public BlockedAccountResponse unblockAccount(BlockedAccountRequest blockedAccountRequest)
@@ -313,43 +290,5 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 
 		return blockedAccountResponse;
 	}
-/*
-	@Override
-	public UnblockedFundsResponse unblockFunds(PayrollRequest payrollRequest) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("INICIANDO SERVICIO: unblockFunds");
-		}
-		
-		IProcedureRequest request = new ProcedureRequestAS();
 
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_CENTRAL);
-
-		request.setSpName("cobis..sp_bc_payment_commission");
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, payrollRequest.getOperation());
-		request.addInputParam("@i_servicio", ICTSTypes.SQLINT4, payrollRequest.getChannel());
-		request.addInputParam("@i_file_id", ICTSTypes.SQLINT4, payrollRequest.getFileId());
-		request.addInputParam("@i_masivo", ICTSTypes.SQLINT4, payrollRequest.getMassive());
-		request.addOutputParam("@o_msg", ICTSTypes.SQLVARCHAR, "");
-
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Request: " + request.getProcedureRequestAsString());
-		}
-
-		
-		IProcedureResponse pResponse = executeCoreBanking(request);
-
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("--->>>>ResponseCOREBANKING: " + pResponse.getProcedureResponseAsString());
-		}
-
-		UnblockedFundsResponse unblockedFundsResponse = transformToUnblockedFundsResponse(pResponse);
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("---->>>>blockedFundResponse--->>>>" + unblockedFundsResponse);
-		}
-		return unblockedFundsResponse;
-	}
-
-*/
 }
