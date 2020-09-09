@@ -1,8 +1,6 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.authorization;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -33,9 +31,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.PayrollRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PayrollResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
-import com.cobiscorp.ecobis.ib.application.dtos.UnblockedFundsResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
-import com.cobiscorp.ecobis.ib.orchestration.dtos.Message;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceAuthorization;
 
@@ -168,10 +164,6 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 					aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, payRollResponse);
 					return Utils.returnException(payRollResponse.getReturnCode(), new StringBuilder(messageGetPaymentAccounts).append(payRollResponse.getMessage()).toString());
 				}
-
-				UnblockedFundsResponse unblockedFundsResponse = new UnblockedFundsResponse();
-				List<Message> messages;
-				messages = new ArrayList<Message>();
 				
 				for (PaymentAccountResponse paymentAccountResponse : payRollResponse.getPaymentAccountList()) {
 					//CENTRAL - Desbloquear cuenta
@@ -185,22 +177,10 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 					blockedAccountRequest.setAmount(paymentAccountResponse.getAmount()!=null ? String.valueOf(paymentAccountResponse.getAmount()) : null );
 					BlockedAccountResponse blockedAccountResponse = coreServiceAuthorization.unblockAccount(blockedAccountRequest);
 				
-					if (!blockedAccountResponse.getSuccess()) {
-						//messages.add(blockedAccountResponse.getMessage());
-						responseProc.addMessage(blockedAccountResponse.getReturnCode(), blockedAccountResponse.getMessage().getDescription());
+					if (blockedAccountResponse!=null && !blockedAccountResponse.getSuccess()) {
+						responseProc.addMessage(blockedAccountResponse.getReturnCode(), "ERROR. ARCHIVO: "+payrollRequest.getFileId()+" CUENTA: "+paymentAccountResponse.getAccount());
 					}
 				}
-				
-				/*				
-				if (!messages.isEmpty()){
-					Message[] msgArr = new Message[messages.size()];
-					msgArr = messages.toArray(msgArr);
-					unblockedFundsResponse.setMessages(msgArr);
-
-					aBagSPJavaOrchestration.put(RESPONSE_UNBLOCK_ACCOUNT, unblockedFundsResponse);
-					
-				}
-				*/
 				
 			}
 
