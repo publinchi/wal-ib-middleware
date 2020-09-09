@@ -111,11 +111,11 @@ public class UtilsTransfers {
 		selfAccountTransferRequest.setReceiverFunds(anOriginalRequest.readValueParam("@i_dest_fondos"));
 		selfAccountTransferRequest.setDescriptionTransfer(anOriginalRequest.readValueParam("@i_concepto"));
 
-		if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comission")!=null) {
+		if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comision")!=null) {
 			if (logger.isInfoEnabled())
-				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comission"));
+				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comision"));
 			
-			selfAccountTransferRequest.setCommisionAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_comission").toString()));
+			selfAccountTransferRequest.setCommisionAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_comision").toString()));
 		}
 		
 		selfAccountTransferRequest.setChannelId(anOriginalRequest.readValueParam("@s_servicio"));
@@ -271,12 +271,13 @@ public class UtilsTransfers {
 			ThirdPartyTransferRequest.setCommisionAmmount(new BigDecimal(localValidation.readValueParam("@o_comision").toString()));
 		}*/
 		
+		
 		if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
 		
 		if(anOriginalRequest!=null && anOriginalRequest.readValueParam("@i_comision")!=null) {			
 			if (logger.isInfoEnabled())
-				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comission"));
+				logger.logInfo("Llegada de comisiom 3.1416 desca2 ---> " + anOriginalRequest.readValueParam("@i_comision"));
 			
 			ThirdPartyTransferRequest.setCommisionAmmount(new BigDecimal(anOriginalRequest.readValueParam("@i_comision").toString()));
 		}
