@@ -257,7 +257,7 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 	}
 
 	@Override
-	public BlockedAccountResponse saveBlockedAccountTmp(BlockedAccountRequest blockedAccountRequest)
+	public BlockedAccountResponse unblockAccount(BlockedAccountRequest blockedAccountRequest)
 			throws CTSServiceException, CTSInfrastructureException {
 		
 		if (logger.isInfoEnabled()) {
@@ -270,16 +270,15 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 
-		request.setSpName("cobis..sp_bv_cuenta_pago_nomina");
+		request.setSpName("cobis..sp_bc_payment_commission");
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, blockedAccountRequest.getOperation());
 		request.addInputParam("@i_file_id", ICTSTypes.SQLINT4, blockedAccountRequest.getFileId());
-		request.addInputParam("@i_numero_cuenta", ICTSTypes.SQLVARCHAR, blockedAccountRequest.getAccount());
-		request.addInputParam("@i_moneda", ICTSTypes.SQLINT4, blockedAccountRequest.getCurrencyId());
-		request.addInputParam("@i_producto", ICTSTypes.SQLINT4, blockedAccountRequest.getProductId());
-		request.addInputParam("@i_bloqueo", ICTSTypes.SQLINT4, blockedAccountRequest.getBlockId());
-		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, blockedAccountRequest.getAmount());
-		
-		//request.addOutputParam("@o_msg", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@i_cta_org", ICTSTypes.SQLVARCHAR, blockedAccountRequest.getAccount());
+		request.addInputParam("@i_mon_org", ICTSTypes.SQLINT4, blockedAccountRequest.getCurrencyId());
+		request.addInputParam("@i_prod_org", ICTSTypes.SQLINT4, blockedAccountRequest.getProductId());
+		request.addInputParam("@i_block_id_comision", ICTSTypes.SQLINT4, blockedAccountRequest.getBlockId());
+		request.addInputParam("@i_ammount_comm", ICTSTypes.SQLMONEY, blockedAccountRequest.getAmount());
+		request.addOutputParam("@o_msg", ICTSTypes.SQLVARCHAR, "");
 
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Request: " + request.getProcedureRequestAsString());
@@ -314,7 +313,7 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 
 		return blockedAccountResponse;
 	}
-
+/*
 	@Override
 	public UnblockedFundsResponse unblockFunds(PayrollRequest payrollRequest) {
 		if (logger.isInfoEnabled()) {
@@ -338,7 +337,7 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 			logger.logDebug("Request: " + request.getProcedureRequestAsString());
 		}
 
-		/* Ejecuta y obtiene la respuesta */
+		
 		IProcedureResponse pResponse = executeCoreBanking(request);
 
 		if (logger.isDebugEnabled()) {
@@ -351,4 +350,6 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		}
 		return unblockedFundsResponse;
 	}
+
+*/
 }

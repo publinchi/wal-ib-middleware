@@ -11,7 +11,6 @@ import com.cobiscorp.ecobis.ib.application.dtos.PayrollRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PayrollResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
-import com.cobiscorp.ecobis.ib.application.dtos.UnblockedFundsResponse;
 
 /**
  * @author tbaidal
@@ -23,8 +22,6 @@ public interface ICoreServiceAuthorization {
 
 	PayrollResponse getPaymentAccounts(PayrollRequest paymentAccountRequest) throws CTSServiceException, CTSInfrastructureException;
 
-	BlockedAccountResponse saveBlockedAccountTmp(BlockedAccountRequest blockedAccountRequest)  throws CTSServiceException, CTSInfrastructureException;
-
-	UnblockedFundsResponse unblockFunds(PayrollRequest payrollRequest)  throws CTSServiceException, CTSInfrastructureException;
+	BlockedAccountResponse unblockAccount(BlockedAccountRequest blockedAccountRequest)  throws CTSServiceException, CTSInfrastructureException;
 
 }

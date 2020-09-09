@@ -151,22 +151,17 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 				//CENTRAL - Guardar cuentas en estructura temporal
 				for (PaymentAccountResponse paymentAccountResponse : payRollResponse.getPaymentAccountList()) {
-					//CENTRAL - Guardar cuenta temporalmente
+					//CENTRAL - Desnloquear cuenta
 					BlockedAccountRequest blockedAccountRequest = new BlockedAccountRequest();
 					blockedAccountRequest.setFileId(payrollRequest.getFileId());
-					blockedAccountRequest.setOperation(OPERATION_SAVE_PAYMENT_TMP);
+					blockedAccountRequest.setOperation(OPERATION_UNBLOCK);
 					blockedAccountRequest.setAccount(paymentAccountResponse.getAccount());
 					blockedAccountRequest.setProductId(paymentAccountResponse.getProductId()!=null ? String.valueOf(paymentAccountResponse.getProductId()) : null);
 					blockedAccountRequest.setCurrencyId(paymentAccountResponse.getCurrencyId()!=null ? String.valueOf(paymentAccountResponse.getCurrencyId()) : null);
 					blockedAccountRequest.setBlockId(paymentAccountResponse.getBlockId()!=null ? String.valueOf(paymentAccountResponse.getBlockId()) : null);
 					blockedAccountRequest.setAmount(paymentAccountResponse.getAmount()!=null ? String.valueOf(paymentAccountResponse.getAmount()) : null );
-					BlockedAccountResponse blockedAccountResponse = coreServiceAuthorization.saveBlockedAccountTmp(blockedAccountRequest);
+					BlockedAccountResponse blockedAccountResponse = coreServiceAuthorization.unblockAccount(blockedAccountRequest);
 				}
-				
-				//CENTRAL - Desbloquear fondos de cuentas y Borrar cuentas de estructura temporal
-				payrollRequest.setOperation(OPERATION_UNBLOCK);
-				payrollRequest.setMassive(MASSIVE);
-				UnblockedFundsResponse unblockedFundsResponse = coreServiceAuthorization.unblockFunds(payrollRequest);
 			}
 
 			// LOCAL - Rechazar transacción
