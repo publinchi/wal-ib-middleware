@@ -291,4 +291,34 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		return blockedAccountResponse;
 	}
 
+	@Override
+	public PendingTransactionResponse changeTransactionStatusCash(PendingTransactionRequest pendingTransactionRequest)
+			throws CTSServiceException, CTSInfrastructureException {
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN, ICOBISTS.HEADER_NUMBER_TYPE,
+				String.valueOf(pendingTransactionRequest.getReferenceNumber()));
+		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE,
+				String.valueOf(pendingTransactionRequest.getReferenceNumberBranch()));
+		anOriginalRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18790");
+		anOriginalRequest.setSpName("cob_bvirtual..sp_autoriza_pendientes_cash_bv");
+
+		anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SYBINT2, pendingTransactionRequest.getChannelId());
+		anOriginalRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, pendingTransactionRequest.getOperation());
+		anOriginalRequest.addInputParam("@i_trn_autorizador", ICTSTypes.SQLVARCHAR,
+				pendingTransactionRequest.getTransactionId());
+		anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, pendingTransactionRequest.getLogin());
+		anOriginalRequest.addInputParam("@i_motivo", ICTSTypes.SQLVARCHAR, pendingTransactionRequest.getReason());
+
+		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Respuesta Devuelta del Core:" + response.getProcedureResponseAsString());
+
+		PendingTransactionResponse pendingTransactionResponse = transformToPendingResponse(response);
+		return pendingTransactionResponse;
+	}
+
 }

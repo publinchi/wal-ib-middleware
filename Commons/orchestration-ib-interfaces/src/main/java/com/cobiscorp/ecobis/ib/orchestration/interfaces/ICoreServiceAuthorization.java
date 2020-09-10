@@ -18,10 +18,13 @@ import com.cobiscorp.ecobis.ib.application.dtos.PendingTransactionResponse;
  */
 public interface ICoreServiceAuthorization {
 	
-	PendingTransactionResponse changeTransactionStatus(PendingTransactionRequest rendingTransactionRequest) throws CTSServiceException, CTSInfrastructureException;
+	PendingTransactionResponse changeTransactionStatus(PendingTransactionRequest pendingTransactionRequest) throws CTSServiceException, CTSInfrastructureException;
 
 	PayrollResponse getPaymentAccounts(PayrollRequest paymentAccountRequest) throws CTSServiceException, CTSInfrastructureException;
 
 	BlockedAccountResponse unblockAccount(BlockedAccountRequest blockedAccountRequest)  throws CTSServiceException, CTSInfrastructureException;
 
+	PendingTransactionResponse changeTransactionStatusCash(PendingTransactionRequest rendingTransactionRequest) throws CTSServiceException, CTSInfrastructureException;
+
+	
 }
