@@ -149,8 +149,12 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 			if (Utils.flowError("changeTransactionStatus", responseProc)) {
 				return responseProc;
 			}
+			
 
-			if (anOriginalRequest != null && anOriginalRequest.readValueParam("@i_file_id")!=null) {
+			if (anOriginalRequest != null && anOriginalRequest.readValueParam("@i_file_id")!=null && Integer.parseInt(anOriginalRequest.readValueParam("@i_file_id"))!=0) {
+				if (logger.isInfoEnabled()) {
+					logger.logInfo("*********  anOriginalRequest.readValueParam(@i_file_id) " + anOriginalRequest.readValueParam("@i_file_id"));
+				}
 				
 				// LOCAL - Consultar cuentas
 				PayrollRequest payrollRequest = transformToPayrollRequest(anOriginalRequest.clone());
@@ -209,8 +213,21 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 
 		IProcedureResponse wProcedureResponse = null;
 		try {
-			pendingTransactionResponse = coreServiceAuthorization.changeTransactionStatus(pendingTransactionRequest);
+			Integer fileId = anOriginalRequest.readValueParam("@i_file_id")!=null ? Integer.parseInt(anOriginalRequest.readValueParam("@i_file_id")) : null;
 
+			if (fileId==null || fileId == 0) {
+				if (logger.isInfoEnabled()) {
+					logger.logInfo("*********  Ingresa a changeTransactionStatus");
+				}
+
+				pendingTransactionResponse = coreServiceAuthorization.changeTransactionStatus(pendingTransactionRequest);
+			}else {
+				if (logger.isInfoEnabled()) {
+					logger.logInfo("*********  Ingresa a changeTransactionStatusCash");
+				}
+				pendingTransactionResponse = coreServiceAuthorization.changeTransactionStatusCash(pendingTransactionRequest);
+			}
+			
 		} catch (CTSServiceException e) {
 			e.printStackTrace();
 		} catch (CTSInfrastructureException e) {
