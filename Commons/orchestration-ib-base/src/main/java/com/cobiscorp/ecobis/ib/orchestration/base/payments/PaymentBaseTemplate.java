@@ -66,8 +66,8 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 	protected static final String LOG_MESSAGE = "LOG_MESSAGE";
 	protected static final String REENTRY_EXE = "reentryExecution";
 	protected static final String ACCOUNTING_PARAMETER = "ACCOUNTING_PARAMETER";
-	// protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
-
+	protected static final String ESTADO = "ESTADO";
+	
 	protected static final int CODE_OFFLINE = 40004;
 	protected static final int CODE_OFFLINE_NO_BAL = 40002;
 	public boolean SUPPORT_OFFLINE = false;
@@ -145,9 +145,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		StringBuilder messageErrorPayment = new StringBuilder();
 		messageErrorPayment.append((String) aBagSPJavaOrchestration.get(PAYMENT_NAME));
 
-		/*
-		 * Obtiene Transacciones y Causa del movimiento a aplicar
-		 */
+		//Obtiene Transacciones y Causa del movimiento a aplicar
 		anAccountingParameterRequest = new AccountingParameterRequest();
 		anAccountingParameterRequest.setOriginalRequest(request);
 		anAccountingParameterRequest.setTransaction(Integer.parseInt(request.readValueParam("@t_trn")));
@@ -163,17 +161,14 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		if (!responseAccountingParameters.getSuccess())
 			return Utils.returnException(responseAccountingParameters.getMessages());
 
-		/*
-		 * Valida que exista la parametrizacion de la TRANSACCION
-		 */
+		//Valida que exista la parametrizacion de la TRANSACCION
 		map = existsAccountingParameter(responseAccountingParameters, Integer.parseInt(request.readValueParam("@i_prod")), "T");
 		if (Utils.isNull(map)) {
 			responseExecutePayment = Utils.returnException(new StringBuilder(messageErrorPayment).append(" ERROR OBTENIENDO PARAMETROS TRANSACCION").toString());
 			return responseExecutePayment;
 		}
-		/*
-		 * Ejecuta el debito respectivo a la cuenta origen
-		 */
+		
+		//Ejecuta el debito respectivo a la cuenta origen
 		aTransactionMonetaryRequest = new TransactionMonetaryRequest();
 		aTransactionMonetaryRequest.setOriginalRequest(request);
 		Product product = new Product();
@@ -201,59 +196,85 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		else
 			aTransactionMonetaryRequest.setPayCurrency(Integer.parseInt(request.readValueParam("@i_mon")));
 
-		/*
-		 * Valida que exista la parametrizacion de la COMISION
-		 */
+		//Valida que exista la parametrizacion de la COMISION
 		map = null;
 		map = existsAccountingParameter(responseAccountingParameters, Integer.parseInt(request.readValueParam("@i_prod")), "C");
 		aTransactionMonetaryRequest.setCauseComi("0");
 		if (!Utils.isNull(map)) {
-			//BigDecimal cost = getCoreServiceMonetaryTransaction().getCost(map.get("ACCOUNTING_PARAM"), currency, product);
-			//if (!cost.equals(new BigDecimal(0))) {
 				aTransactionMonetaryRequest.setCauseComi(map.get("ACCOUNTING_PARAM").getCause());
 				aTransactionMonetaryRequest.setAmmountCommission(new BigDecimal(request.readValueParam("@i_comi_val")));
-			//}
+		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn_branch: " + request.readValueParam("@s_ssn_branch"));
+			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn: " + request.readValueParam("@s_ssn"));
 		}
 
-		if (request.readValueParam("@s_ssn_branch") != null)
+		if (request.readValueParam("@s_ssn_branch") != null) {
 			aTransactionMonetaryRequest.setReferenceNumberBranch(request.readValueParam("@s_ssn_branch"));
-		if (request.readValueParam("@s_ssn") != null)
+			aBagSPJavaOrchestration.put(SSN_BRANCH, request.readValueParam("@s_ssn_branch"));
+		}			
+			
+		if (request.readValueParam("@s_ssn") != null) {
 			aTransactionMonetaryRequest.setReferenceNumber(request.readValueParam("@s_ssn"));
+			aBagSPJavaOrchestration.put(SSN, request.readValueParam("@s_ssn"));
+		}
+			
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta el DEBITO " + aTransactionMonetaryRequest.toString());
 
 		if (request.readValueParam("@i_reversa") != null &&  !"S".equals(request.readValueParam("@i_reversa"))) {
-		   aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
+			aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
 		
-		if (logger.isInfoEnabled()) {
-			   	logger.logInfo(CLASS_NAME + "Executing executePayment JCB Reversa " + aTransactionMonetaryResponse.toString());
-			logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del DEBITO " + aTransactionMonetaryResponse.toString());
-			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn_branch: " + request.readValueParam("@s_ssn_branch"));
-			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn: " + request.readValueParam("@s_ssn"));
-		}
+			if (logger.isInfoEnabled()) {
+			   logger.logInfo(CLASS_NAME + "Executing executePayment JCB Reversa " + aTransactionMonetaryResponse.toString());
+			   logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del DEBITO " + aTransactionMonetaryResponse.toString());
+			}
 
-		if (!aTransactionMonetaryResponse.getSuccess())
-			return Utils.returnException(aTransactionMonetaryResponse.getMessages());
-		}
+			if (!aTransactionMonetaryResponse.getSuccess())
+			   return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+			
+			responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
+			//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
 
-		aBagSPJavaOrchestration.put(SSN_BRANCH, request.readValueParam("@s_ssn_branch"));
-		aBagSPJavaOrchestration.put(SSN, request.readValueParam("@s_ssn"));
+			if (logger.isDebugEnabled()) {
+				logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getProcedureResponseAsString()" + responsePayDestinationProduct.getProcedureResponseAsString());
+				logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getParams()" + responsePayDestinationProduct.getParams());
+			}
+			
+			if("01".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
+				aBagSPJavaOrchestration.put(ESTADO, "R");
+				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "R");
+			} else if ("82".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
+				aBagSPJavaOrchestration.put(ESTADO, "P");
+				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "P");
+			} else {
+				aBagSPJavaOrchestration.put(ESTADO, "C");
+				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "C");
+				if(aTransactionMonetaryRequest.getAmmount().compareTo(BigDecimal.ZERO) != 0 && aTransactionMonetaryRequest.getAmmountCommission().compareTo(BigDecimal.ZERO) != 0) {
+					//Ejecuta el reverso del DEBITO		
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta REVERSO DEL DEBITO " + aTransactionMonetaryRequest.toString());					
+					}
+					logger.logError(CLASS_NAME + messageErrorPayment);
+					aTransactionMonetaryRequest.setCorrection("S");
+					aTransactionMonetaryRequest.setSsnCorrection(Integer.parseInt(request.readValueParam("@s_ssn_branch")));            //
+					aTransactionMonetaryRequest.setAlternateCode(0);
+					
+					aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
+					
+					if (logger.isInfoEnabled())
+						logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del REVERSO DEL DEBITO " + aTransactionMonetaryResponse.toString());
 
-		responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
-		//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
-
-		/*if (logger.isDebugEnabled()) {
-			logger.logDebug(CLASS_NAME + " Executing executePayment Respuesta de ejecucion del CREDITO" + responsePayDestinationProduct.getProcedureResponseAsString());
-			logger.logDebug(CLASS_NAME + " Executing executePayment CodigoRespuesta: " + codeResponse);
-		}*/
-
-		//long codigoRespuesta = 1; // Tarjetas si es error <= 0
-		/*if (codeResponse != null)
-			codigoRespuesta = Long.parseLong(codeResponse.toString());
-			*/
-		//if (Utils.flowError(messageErrorPayment.append(" --> payDestinationProduct").toString(), responsePayDestinationProduct) || codigoRespuesta <= 0) {
-
+					if (!aTransactionMonetaryResponse.getSuccess())
+						return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+				}
+			}
+			
+			saveTranPagoServ(request, responsePayDestinationProduct, aBagSPJavaOrchestration); 
+		}	
+		
 		if (request.readValueParam("@i_reversa") != null &&  "S".equals(request.readValueParam("@i_reversa"))) {
 			/*
 			 * Ejecuta el reverso del DEBITO
@@ -274,7 +295,8 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 			if (!aTransactionMonetaryResponse.getSuccess())
 				return Utils.returnException(aTransactionMonetaryResponse.getMessages());
-		}
+		}		
+		
 		responseExecutePayment = responsePayDestinationProduct;
 
 		return responseExecutePayment;
@@ -891,9 +913,86 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		}
 		
 		return responseSupportOffline;
-		
-		
 	}
 	
+	protected void saveTranPagoServ(IProcedureRequest anOriginalRequest, IProcedureResponse anOriginalResponse,Map<String, Object> aBagSPJavaOrchestration) {
+		
+		boolean response = false;
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Initialize method saveTranPagoServ");
+			logger.logDebug(CLASS_NAME + " anOriginalRequest.getProcedureRequestAsString()" + anOriginalRequest.getProcedureRequestAsString());
+			logger.logDebug(CLASS_NAME + " anOriginalRequest.getParams()" + anOriginalRequest.getParams());
+			logger.logDebug(CLASS_NAME + " anOriginalResponse.getProcedureResponseAsString()" + anOriginalResponse.getProcedureResponseAsString());
+			logger.logDebug(CLASS_NAME + " anOriginalResponse.getParams()" + anOriginalResponse.getParams());
+			logger.logDebug(CLASS_NAME + " anOriginalResponse.getProcedureResponseAsString()" + aBagSPJavaOrchestration.toString());
+		}
+		
+		try {
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+			
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			request.addFieldInHeader(KEEP_SSN,ICOBISTS.HEADER_STRING_TYPE, "Y");
+			
+			request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18017");
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+			
+			request.setSpName("cob_bvirtual..sp_bv_administra_pago_gestopago");
+			
+			request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "I");
+			request.addInputParam("@i_estado", ICTSTypes.SQLCHAR, aBagSPJavaOrchestration.get(ESTADO).toString());
+			request.addInputParam("@i_id_pago_serv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn_branch"));
+			request.addInputParam("@i_cod_resp", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_cod_respuesta"));
+			request.addInputParam("@i_msj_resp", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_msj_respuesta"));
+			request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_ente"));
+			request.addInputParam("@i_ente_bv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_ref_7"));
+			request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_login"));
+			request.addInputParam("@i_com_serv", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comi_val"));
+			request.addInputParam("@i_phone_udid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_6"));
+			request.addInputParam("@i_id_cat_serv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_ref_8"));
+			request.addInputParam("@i_tipo_front", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_ref_9"));
+			if("a".equals(anOriginalRequest.readValueParam("@i_ref_10"))) 
+				request.addInputParam("@i_field_req", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_1"));
+			else 
+				request.addInputParam("@i_field_req", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_5"));
+			request.addInputParam("@i_precio", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
+			request.addInputParam("@i_num_aut", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_num_autorizacion"));
+			request.addInputParam("@i_saldo", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo"));
+			request.addInputParam("@i_saldo_cliente", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo_cliente"));
+			request.addInputParam("@i_com_prov", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_comision"));
+			request.addInputParam("@i_xml_req", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_req"));
+			request.addInputParam("@i_xml_resp", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_resp"));
+			request.addInputParam("@i_fecha", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+			request.addInputParam("@i_ssn", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
+			request.addInputParam("@i_img_serv", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_11"));
+			request.addInputParam("@i_img_ayuda", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_12"));			
+			request.addInputParam("@i_est_prov", ICTSTypes.SQLBIT, "1");
+			request.addInputParam("@i_pin", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_pin"));
+			request.addInputParam("@i_instruc", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_instrucciones"));
+			request.addInputParam("@i_id_trn_prov", ICTSTypes.SQLINTN, anOriginalResponse.readValueParam("@o_transaccion_ID"));
+			request.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+			request.addInputParam("@i_canal", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_canal"));
+			request.addInputParam("@i_servicio_id", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_ref_2"));
+			request.addInputParam("@i_servicio_desc", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_13"));
+			request.addInputParam("@i_producto_id", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_ref_3"));
+			request.addInputParam("@i_producto_desc", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_14"));
+					
+			
+			IProcedureResponse tResponse = executeCoreBanking(request);
+
+			if (logger.isDebugEnabled())
+				logger.logDebug(CLASS_NAME + "saveTranPagoServ, response: " + tResponse.getProcedureResponseAsString());			
+				
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo("Error de saveTranPagoServ");
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Finalize method saveTranPagoServ");
+			}
+		}
+	}
 
 }
