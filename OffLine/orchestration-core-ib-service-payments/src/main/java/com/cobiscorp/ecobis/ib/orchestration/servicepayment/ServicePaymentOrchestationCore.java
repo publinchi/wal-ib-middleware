@@ -51,6 +51,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.payment.template.PaymentOfflin
 public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 	protected static final String ACCOUNTING_PARAMETER = "ACCOUNTING_PARAMETER";
 	protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
+	protected static final String TRN_PAGO_SERVICIOS_PUBLICOS = "1801024";
 	private java.util.Properties properties;
 
 	private static ILogger logger = LogFactory.getLogger(ServicePaymentOrchestationCore.class);
@@ -244,14 +245,97 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 	@Override
 	protected IProcedureResponse payDestinationProduct(IProcedureRequest aProcedureRequest,
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
-		if (logger.isInfoEnabled())
-			logger.logInfo("INGRESA payService");
-
-		//TODO LLAMAR A TERCERO
-		//PaymentServiceResponse aPaymentServiceResponse = coreServicePayment.payService(
-			//	transformToPaymentServiceRequest(aProcedureRequest), this.properties, aBagSPJavaOrchestration);// ,
-																												// aBagSPJavaOrchestration));
-																												 
+		IProcedureResponse aPaymentServiceResponse = null;
+		try {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Request payDestinationProduct GESTOPAGO");
+				logger.logInfo("@i_ssn: " + aProcedureRequest.readValueParam("@i_ssn"));
+				logger.logInfo("@i_ref_1: " + aProcedureRequest.readValueParam("@i_ref_1"));
+				logger.logInfo("@i_ref_2: " + aProcedureRequest.readValueParam("@i_ref_2"));
+				logger.logInfo("@i_ref_3: " + aProcedureRequest.readValueParam("@i_ref_3"));
+				logger.logInfo("@i_ref_4: " + aProcedureRequest.readValueParam("@i_ref_4"));
+				logger.logInfo("@i_ref_5: " + aProcedureRequest.readValueParam("@i_ref_5"));
+				logger.logInfo("@s_date: " + aProcedureRequest.readValueParam("@s_date"));			
+			}
+			//PARAMETROS DE ENTRADA
+			aProcedureRequest.addInputParam("@t_trn", ICTSTypes.SQLINT1, TRN_PAGO_SERVICIOS_PUBLICOS);
+			aProcedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "I");
+			aProcedureRequest.addInputParam("@i_transaccion_ID", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ssn"));
+			aProcedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_1"));
+			aProcedureRequest.addInputParam("@i_id_servicio", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_2"));
+			aProcedureRequest.addInputParam("@i_id_producto", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_3"));
+			aProcedureRequest.addInputParam("@i_id_sucursal", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_4"));
+			aProcedureRequest.addInputParam("@i_hora", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@s_date"));
+			aProcedureRequest.addInputParam("@i_referencia", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_5"));
+		
+			//PARAMETROS DE ENTRADA
+			aProcedureRequest.addOutputParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_msj_respuesta", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_transaccion_ID", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_num_autorizacion", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_saldo", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_comision", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_saldo_final", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_comision_final", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_fecha", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_monto", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_pin", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_instrucciones", ICTSTypes.SQLVARCHAR, "X");
+			aProcedureRequest.addOutputParam("@o_saldo_cliente", ICTSTypes.SQLVARCHAR, "X");
+		
+			//SE HACE LA LLAMADA AL CONECTOR DE GESTOPAGO
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorGestopago)");
+			aProcedureRequest.setSpName("cob_procesador..sp_orq_gestopago");
+			aProcedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, TRN_PAGO_SERVICIOS_PUBLICOS);
+			aProcedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, TRN_PAGO_SERVICIOS_PUBLICOS);
+        
+			//SE EJECUTA
+			aPaymentServiceResponse = executeProvider(aProcedureRequest, aBagSPJavaOrchestration);	
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Response payDestinationProduct GESTOPAGO");
+				logger.logInfo("@o_cod_respuesta: " + aPaymentServiceResponse.readValueParam("@o_cod_respuesta"));
+				logger.logInfo("@o_msj_respuesta: " + aPaymentServiceResponse.readValueParam("@o_msj_respuesta"));
+				logger.logInfo("@o_transaccion_ID: " + aPaymentServiceResponse.readValueParam("@o_transaccion_ID"));
+				logger.logInfo("@o_num_autorizacion: " + aPaymentServiceResponse.readValueParam("@o_num_autorizacion"));
+				logger.logInfo("@o_saldo: " + aPaymentServiceResponse.readValueParam("@o_saldo"));
+				logger.logInfo("@o_comision: " + aPaymentServiceResponse.readValueParam("@o_comision"));
+				logger.logInfo("@o_saldo_final: " + aPaymentServiceResponse.readValueParam("@o_saldo_final"));
+				logger.logInfo("@o_fecha: " + aPaymentServiceResponse.readValueParam("@o_fecha"));
+				logger.logInfo("@o_monto: " + aPaymentServiceResponse.readValueParam("@o_monto"));
+				logger.logInfo("@o_pin: " + aPaymentServiceResponse.readValueParam("@o_pin"));
+				logger.logInfo("@o_instrucciones: " + aPaymentServiceResponse.readValueParam("@o_instrucciones"));
+				logger.logInfo("@o_saldo_cliente: " + aPaymentServiceResponse.readValueParam("@o_saldo_cliente"));
+			}
+			
+			aPaymentServiceResponse.addParam("@o_xml_resp", ICTSTypes.SQLVARCHAR, 0, aPaymentServiceResponse.getProcedureResponseAsString());
+			aPaymentServiceResponse.addParam("@o_xml_req", ICTSTypes.SQLVARCHAR, 0, aProcedureRequest.getProcedureRequestAsString());			
+			aPaymentServiceResponse.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, (String)aBagSPJavaOrchestration.get(SSN_BRANCH));
+			aPaymentServiceResponse.addParam("@o_ssn_branch", ICTSTypes.SQLINT4, 0, (String)aBagSPJavaOrchestration.get(SSN_BRANCH));
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Response payDestinationProduct GESTOPAGO");
+				logger.logInfo("@o_xml_resp: " + aPaymentServiceResponse.readValueParam("@o_xml_resp"));
+				logger.logInfo("@o_xml_req: " + aPaymentServiceResponse.readValueParam("@o_xml_req"));
+				logger.logInfo("@o_referencia: " + aPaymentServiceResponse.readValueParam("@o_referencia"));
+				logger.logInfo("@o_ssn_branch: " + aPaymentServiceResponse.readValueParam("@o_ssn_branch"));
+			}
+		}
+		catch (Exception e) {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("ERROR payDestinationProduct GESTOPAGO");
+			}
+			e.printStackTrace();
+			aPaymentServiceResponse = null;			
+		}
+		finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("SALIENDO payDestinationProduct GESTOPAGO");
+			}
+		}
+		//SE REGRESA RESPUESTA
+		return aPaymentServiceResponse;
+		/*
 		PaymentServiceResponse  aPaymentServiceResponse = new PaymentServiceResponse();
 		aPaymentServiceResponse.setReturnCode(0);
 		aPaymentServiceResponse.setBranchSSN(Integer.parseInt((String)aBagSPJavaOrchestration.get(SSN_BRANCH)));
@@ -262,6 +346,7 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 			logger.logInfo("SALE payService" + aPaymentServiceResponse.getMessage());
 		}
 		return transformToProcedureResponse(aPaymentServiceResponse, aBagSPJavaOrchestration);
+		*/
 	}
 
 	@Override
