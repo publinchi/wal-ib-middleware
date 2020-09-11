@@ -204,70 +204,98 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 				aTransactionMonetaryRequest.setCauseComi(map.get("ACCOUNTING_PARAM").getCause());
 				aTransactionMonetaryRequest.setAmmountCommission(new BigDecimal(request.readValueParam("@i_comi_val")));
 		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn_branch: " + request.readValueParam("@s_ssn_branch"));
+			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn: " + request.readValueParam("@s_ssn"));
+		}
 
-		if (request.readValueParam("@s_ssn_branch") != null)
+		if (request.readValueParam("@s_ssn_branch") != null) {
 			aTransactionMonetaryRequest.setReferenceNumberBranch(request.readValueParam("@s_ssn_branch"));
-		if (request.readValueParam("@s_ssn") != null)
+			aBagSPJavaOrchestration.put(SSN_BRANCH, request.readValueParam("@s_ssn_branch"));
+		}			
+			
+		if (request.readValueParam("@s_ssn") != null) {
 			aTransactionMonetaryRequest.setReferenceNumber(request.readValueParam("@s_ssn"));
+			aBagSPJavaOrchestration.put(SSN, request.readValueParam("@s_ssn"));
+		}
+			
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta el DEBITO " + aTransactionMonetaryRequest.toString());
 
 		if (request.readValueParam("@i_reversa") != null &&  !"S".equals(request.readValueParam("@i_reversa"))) {
-		   aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
+			aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
 		
-		if (logger.isInfoEnabled()) {
-			   	logger.logInfo(CLASS_NAME + "Executing executePayment JCB Reversa " + aTransactionMonetaryResponse.toString());
-			logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del DEBITO " + aTransactionMonetaryResponse.toString());
-			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn_branch: " + request.readValueParam("@s_ssn_branch"));
-			logger.logInfo(CLASS_NAME + "Executing executePayment Values of ssn: " + request.readValueParam("@s_ssn"));
-		}
-
-		if (!aTransactionMonetaryResponse.getSuccess())
-			return Utils.returnException(aTransactionMonetaryResponse.getMessages());
-		}
-
-		aBagSPJavaOrchestration.put(SSN_BRANCH, request.readValueParam("@s_ssn_branch"));
-		aBagSPJavaOrchestration.put(SSN, request.readValueParam("@s_ssn"));
-
-		responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
-		//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
-
-		if (logger.isDebugEnabled()) {
-			logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getProcedureResponseAsString()" + responsePayDestinationProduct.getProcedureResponseAsString());
-			logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getParams()" + responsePayDestinationProduct.getParams());
-		}
-		
-		if("01".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
-			aBagSPJavaOrchestration.put(ESTADO, "R");
-			responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "R");
-		} else if ("82".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
-			aBagSPJavaOrchestration.put(ESTADO, "P");
-			responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "P");
-		} else {
-			aBagSPJavaOrchestration.put(ESTADO, "C");
-			responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "C");
-			if(aTransactionMonetaryRequest.getAmmount().compareTo(BigDecimal.ZERO) != 0 && aTransactionMonetaryRequest.getAmmountCommission().compareTo(BigDecimal.ZERO) != 0) {
-				//Ejecuta el reverso del DEBITO		
-				if (logger.isDebugEnabled()) {
-					logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta REVERSO DEL DEBITO " + aTransactionMonetaryRequest.toString());					
-				}
-				logger.logError(CLASS_NAME + messageErrorPayment);
-				aTransactionMonetaryRequest.setCorrection("S");
-				aTransactionMonetaryRequest.setSsnCorrection(Integer.parseInt(request.readValueParam("@s_ssn_branch")));            //
-				aTransactionMonetaryRequest.setAlternateCode(0);
-				
-				aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
-				
-				if (logger.isInfoEnabled())
-					logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del REVERSO DEL DEBITO " + aTransactionMonetaryResponse.toString());
-
-				if (!aTransactionMonetaryResponse.getSuccess())
-					return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+			if (logger.isInfoEnabled()) {
+			   logger.logInfo(CLASS_NAME + "Executing executePayment JCB Reversa " + aTransactionMonetaryResponse.toString());
+			   logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del DEBITO " + aTransactionMonetaryResponse.toString());
 			}
-		}
+
+			if (!aTransactionMonetaryResponse.getSuccess())
+			   return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+			
+			responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
+			//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getProcedureResponseAsString()" + responsePayDestinationProduct.getProcedureResponseAsString());
+				logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getParams()" + responsePayDestinationProduct.getParams());
+			}
+			
+			if("01".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
+				aBagSPJavaOrchestration.put(ESTADO, "R");
+				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "R");
+			} else if ("82".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
+				aBagSPJavaOrchestration.put(ESTADO, "P");
+				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "P");
+			} else {
+				aBagSPJavaOrchestration.put(ESTADO, "C");
+				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "C");
+				if(aTransactionMonetaryRequest.getAmmount().compareTo(BigDecimal.ZERO) != 0 && aTransactionMonetaryRequest.getAmmountCommission().compareTo(BigDecimal.ZERO) != 0) {
+					//Ejecuta el reverso del DEBITO		
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta REVERSO DEL DEBITO " + aTransactionMonetaryRequest.toString());					
+					}
+					logger.logError(CLASS_NAME + messageErrorPayment);
+					aTransactionMonetaryRequest.setCorrection("S");
+					aTransactionMonetaryRequest.setSsnCorrection(Integer.parseInt(request.readValueParam("@s_ssn_branch")));            //
+					aTransactionMonetaryRequest.setAlternateCode(0);
+					
+					aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
+					
+					if (logger.isInfoEnabled())
+						logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del REVERSO DEL DEBITO " + aTransactionMonetaryResponse.toString());
+
+					if (!aTransactionMonetaryResponse.getSuccess())
+						return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+				}
+			}
+			
+			saveTranPagoServ(request, responsePayDestinationProduct, aBagSPJavaOrchestration); 
+		}	
 		
-		saveTranPagoServ(request, responsePayDestinationProduct, aBagSPJavaOrchestration); 
+		if (request.readValueParam("@i_reversa") != null &&  "S".equals(request.readValueParam("@i_reversa"))) {
+			/*
+			 * Ejecuta el reverso del DEBITO
+			 */
+			logger.logError(CLASS_NAME + messageErrorPayment);
+			aTransactionMonetaryRequest.setCorrection("S");
+			aTransactionMonetaryRequest.setSsnCorrection(Integer.parseInt(request.readValueParam("@i_ssn_branch")));
+            //aTransactionMonetaryRequest.setReferenceNumber(request.readValueParam("@i_ssn"));
+			aTransactionMonetaryRequest.setAlternateCode(0);
+
+			if (logger.isDebugEnabled())
+				logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta REVERSO DEL DEBITO " + aTransactionMonetaryRequest.toString());
+
+			aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction().debitCreditAccount(aTransactionMonetaryRequest);
+
+			if (logger.isInfoEnabled())
+				logger.logInfo(CLASS_NAME + "Executing executePayment Respuesta de ejecucion del REVERSO DEL DEBITO " + aTransactionMonetaryResponse.toString());
+
+			if (!aTransactionMonetaryResponse.getSuccess())
+				return Utils.returnException(aTransactionMonetaryResponse.getMessages());
+		}		
 		
 		responseExecutePayment = responsePayDestinationProduct;
 
