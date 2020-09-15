@@ -267,6 +267,7 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 			aProcedureRequest.addInputParam("@i_id_sucursal", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_4"));
 			aProcedureRequest.addInputParam("@i_hora", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@s_date"));
 			aProcedureRequest.addInputParam("@i_referencia", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_5"));
+			aProcedureRequest.addInputParam("@i_monto", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_val"));
 		
 			//PARAMETROS DE ENTRADA
 			aProcedureRequest.addOutputParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, "X");
