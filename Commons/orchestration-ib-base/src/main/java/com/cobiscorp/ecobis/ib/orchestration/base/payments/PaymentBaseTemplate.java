@@ -586,7 +586,36 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_prod", anOriginalRequest, request);
 		Utils.copyParam("@i_concepto", anOriginalRequest, request);
 		Utils.copyParam("@i_doble_autorizacion", anOriginalRequest, request);
-		Utils.copyParam("@i_val", anOriginalRequest, request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Integer.parseInt(anOriginalRequest.readValueParam(@t_trn): " + anOriginalRequest.readValueParam("@t_trn"));
+		}
+		
+		if (Integer.parseInt(anOriginalRequest.readValueParam("@t_trn")) == 1801035) {
+			
+						
+			BigDecimal amount=new BigDecimal(0);
+			BigDecimal comission=new BigDecimal(0);
+			BigDecimal totalAmout=new BigDecimal(0);
+			
+			amount = anOriginalRequest.readValueParam("@i_val")!=null ? new BigDecimal(anOriginalRequest.readValueParam("@i_val")): new BigDecimal(0);
+			comission = anOriginalRequest.readValueParam("@i_comi_val")!=null ? new BigDecimal(anOriginalRequest.readValueParam("@i_comi_val")): new BigDecimal(0);
+			totalAmout = amount.add(comission);
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("amount: " + amount);
+				logger.logDebug("comission: " + comission);
+				logger.logDebug("totalAmout: " + totalAmout);
+				
+			}
+			
+			request.addInputParam("@i_val", anOriginalRequest.readParam("@i_val").getDataType(), totalAmout.toString());
+
+		}else {
+			Utils.copyParam("@i_val", anOriginalRequest, request);
+		}
+			
+		
 		request.addInputParam("@i_valida_limites", ICTSTypes.SQLVARCHAR, "S");
 		if (!Utils.isNull(anOriginalRequest.readValueParam("@i_tercero_asociado")))
 			Utils.copyParam("@i_tercero_asociado", anOriginalRequest, request);
