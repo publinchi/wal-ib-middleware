@@ -217,6 +217,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 		IProcedureResponse responseSigners = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_QUERY_SIGNER);
 		IProcedureRequest request = initProcedureRequest(originalRequest);	
+		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 		
 		ServerResponse responseServer =(ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 	
@@ -338,17 +339,23 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_prod_cobro", ICTSTypes.SYBINT2, "0");
 		request.addOutputParam("@o_cod_mis", ICTSTypes.SYBINT4, "0");
 		request.addOutputParam("@o_clave_bv", ICTSTypes.SYBINT4, "0");
+		
+		request.addOutputParam("@o_saldo_local", ICTSTypes.SQLMONEY, "0");
+		request.addOutputParam("@o_aplica_tran", ICTSTypes.SYBVARCHAR, "X");
 
-		//JCOS PRUEBA
+	
 		if (!Utils.isNull(originalRequest.readParam("@i_val"))) {
 			
 			String valies=originalRequest.readParam("@i_val").toString();
 			
-			
-			
 			if (logger.isDebugEnabled())
-				logger.logDebug(CLASS_NAME + "Valorsito " + valies);
+				logger.logDebug(CLASS_NAME + "Valorsito " + valies);			
+		}
+		
+		if(!serverResponse.getOnLine()) {
 			
+			request.addInputParam("@i_linea", ICTSTypes.SQLVARCHAR, "N");
+			request.addInputParam("@i_saldo", ICTSTypes.SQLVARCHAR, "S");
 		}
 		
 		
@@ -356,8 +363,6 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			logger.logDebug(CLASS_NAME + "Validacion local, response: Transaccion "+String.valueOf(t_trn)+" monto::::  "  );
 		
 		
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "Validacion local, response: " + " COMISION CON EL VALOR DE PI 3.1416");
 		request.addOutputParam("@o_comision", ICTSTypes.SYBMONEY, "0");
 		
 		
@@ -509,7 +514,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 					}
 				}
 			}
-
+            
 			// Actualizacion local
 			IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
