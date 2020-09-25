@@ -29,7 +29,8 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 	public abstract ICoreServiceReexecutionComponent getCoreServiceReexecutionComponent();
 
 	@Override
-	protected IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	protected IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse responseToSychronize = null;
 		IProcedureResponse responseTransfer = null;
 
@@ -50,13 +51,14 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			}
 		}
 
-		responseTransfer = executeTransfer(aBagSPJavaOrchestration); 
+		responseTransfer = executeTransfer(aBagSPJavaOrchestration);
 		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseTransfer);
-		
+
 		if (serverResponse.getOnLine()) {
 
 			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + " Respuesta de ejecución método executeTransfer: " + responseTransfer.getProcedureResponseAsString());
+				logger.logInfo(CLASS_NAME + " Respuesta de ejecución método executeTransfer: "
+						+ responseTransfer.getProcedureResponseAsString());
 
 			if (Utils.flowError(messageErrorTransfer.append(" --> executeTransfer").toString(), responseTransfer)) {
 				if (logger.isInfoEnabled())
@@ -67,10 +69,17 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			// Si no es ejecucion de reentry, grabar en reentry
 			if (!getFromReentryExcecution(aBagSPJavaOrchestration)) {
 				if (logger.isInfoEnabled())
-					logger.logInfo(CLASS_NAME + " Transferencia en OffLine serverResponse :" + serverResponse.toString());
+					logger.logInfo(
+							CLASS_NAME + " Transferencia en OffLine serverResponse :" + serverResponse.toString());
+                 //saltar reentry si es que hubo problemas con el proveedor
+				if (responseTransfer.readParam("@i_fail_provider") == null
+						|| !responseTransfer.readParam("@i_fail_provider").equals("S")) {
 
-				responseTransfer = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-				aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
+					responseTransfer = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
+					
+
+				}
 			}
 		}
 
@@ -84,15 +93,18 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 		}
 
 		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + "Respuesta de ejecución método executeTransaction Response:  " + responseTransfer.getProcedureResponseAsString());
+			logger.logInfo(CLASS_NAME + "Respuesta de ejecución método executeTransaction Response:  "
+					+ responseTransfer.getProcedureResponseAsString());
 		return responseTransfer;
 	}
 
-	protected IProcedureResponse saveReentry(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	protected IProcedureResponse saveReentry(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
 
 		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
 		IProcedureRequest request = anOriginalRequest.clone();
-		IProcedureResponse responseLocalValidation = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_LOCAL_VALIDATION);
+		IProcedureResponse responseLocalValidation = (IProcedureResponse) aBagSPJavaOrchestration
+				.get(RESPONSE_LOCAL_VALIDATION);
 
 		ComponentLocator componentLocator = null;
 		IReentryPersister reentryPersister = null;
