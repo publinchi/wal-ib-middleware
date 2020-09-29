@@ -95,6 +95,14 @@ public abstract class PaymentOnlineTemplate extends PaymentBaseTemplate  {
 		if (responseServer.getOnLine()){
 			
 			responseExecutePayment = executePayment(anOriginalRequest, aBagSPJavaOrchestration);
+			
+	
+		     if(this.evaluateExecuteReentry(anOriginalRequest)) {	        	
+		    	 response= new ProcedureResponseAS(); 
+		    	 response.setReturnCode(0);
+				 return response;
+				}
+			
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseExecutePayment);
 			if (Utils.flowError(messageErrorPayment.append(" --> executePayment").toString(), responseExecutePayment)) {
 				if (logger.isInfoEnabled()) logger.logInfo(CLASS_NAME + messageErrorPayment);

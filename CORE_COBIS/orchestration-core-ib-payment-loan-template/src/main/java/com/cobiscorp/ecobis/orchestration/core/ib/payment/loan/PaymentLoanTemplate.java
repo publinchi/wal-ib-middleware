@@ -94,6 +94,8 @@ public class PaymentLoanTemplate extends SPJavaOrchestrationBase implements ICor
 			logger.logInfo(CLASS_NAME + " Ejecutando executePaymentLoan numberBranch: "
 					+ aPaymentLoanRequest.getReferenceNumberBranch() + " ReferenceNumber: "
 					+ aPaymentLoanRequest.getReferenceNumber());
+		
+		if (logger.isInfoEnabled()) logger.logInfo("::: EJECUTANDO TRANSACCION CENTRAL->LOAN");
 
 		// Context context = ContextManager.getContext();
 		// CobisSession session = (CobisSession) context.getSession();
@@ -153,7 +155,7 @@ public class PaymentLoanTemplate extends SPJavaOrchestrationBase implements ICor
 		if (logger.isDebugEnabled())
 			logger.logDebug("Request a enviar: " + executionRequest.toString());
 		IProcedureResponse response = executeCoreBanking(executionRequest);
-
+		if (logger.isInfoEnabled()) logger.logInfo("::: EJECUTADO CENTRAL");
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + " Ejecutando executePaymentLoan Respuesta: "
 					+ response.getProcedureResponseAsString());

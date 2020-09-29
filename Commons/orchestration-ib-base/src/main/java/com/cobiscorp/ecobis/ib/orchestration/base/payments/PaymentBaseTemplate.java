@@ -123,6 +123,71 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		}
 		return map;
 	}
+	
+		protected IProcedureResponse executePaymentOuterCore(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
+			throws CTSServiceException, CTSInfrastructureException {
+
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Ejecutando executePaymentOuterCore: " + request);
+		
+		if (logger.isInfoEnabled()) logger.logInfo("::::APLICA TRANSACCION DESTINATION executePaymentOuterCore");
+		
+		IProcedureResponse salida=null;
+		IProcedureResponse responsePayDestinationProduct = null;
+		
+		// VALIDAR QUE EL COSTO DE X SERVICIO SI PUEDA PROCESDER A BANPAY
+		
+		responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
+		// Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); //
+		// se-establece-en-pagoTarjetas
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getProcedureResponseAsString()"
+					+ responsePayDestinationProduct.getProcedureResponseAsString());
+			logger.logDebug(CLASS_NAME + " responsePayDestinationProduct.getParams()"
+					+ responsePayDestinationProduct.getParams());
+		}
+
+		if ("01".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
+			aBagSPJavaOrchestration.put(ESTADO, "R");
+			responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "R");
+		} else if ("82".equals(responsePayDestinationProduct.readValueParam("@o_cod_respuesta"))) {
+			aBagSPJavaOrchestration.put(ESTADO, "P");
+			responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "P");
+		} else {
+			aBagSPJavaOrchestration.put(ESTADO, "C");
+			//NO SE GUARDA EN REENTRY REGRESO CON ERROR 
+			if (logger.isInfoEnabled())	logger.logInfo("SE SALTA REENTRY REGRESO CON ERROR");
+		}
+			//responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "C");
+			
+			
+			saveTranPagoServ(request, responsePayDestinationProduct, aBagSPJavaOrchestration);
+			/*if (aTransactionMonetaryRequest.getAmmount().compareTo(BigDecimal.ZERO) != 0
+					&& aTransactionMonetaryRequest.getAmmountCommission().compareTo(BigDecimal.ZERO) != 0) {
+				// Ejecuta el reverso del DEBITO
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta REVERSO DEL DEBITO "
+							+ aTransactionMonetaryRequest.toString());
+				}
+				logger.logError(CLASS_NAME + messageErrorPayment);
+				aTransactionMonetaryRequest.setCorrection("S");
+				aTransactionMonetaryRequest
+						.setSsnCorrection(Integer.parseInt(request.readValueParam("@s_ssn_branch"))); //
+				aTransactionMonetaryRequest.setAlternateCode(0);
+
+				aTransactionMonetaryResponse = getCoreServiceMonetaryTransaction()
+						.debitCreditAccount(aTransactionMonetaryRequest);
+
+				if (logger.isInfoEnabled())
+					logger.logInfo(
+							CLASS_NAME + "Executing executePayment Respuesta de ejecucion del REVERSO DEL DEBITO "
+									+ aTransactionMonetaryResponse.toString());*/
+		
+		
+		return responsePayDestinationProduct;
+		
+	}
 
 	/**
 	 * Execute Payment (getAccountingParameter, debitAccount,
@@ -234,7 +299,8 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 			if (!aTransactionMonetaryResponse.getSuccess())
 			   return Utils.returnException(aTransactionMonetaryResponse.getMessages());
-			
+				// INVOKA GESTOPAGO
+			if (!evaluateExecuteReentry(request)){
 			responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
 			//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
 
@@ -270,9 +336,14 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 					if (!aTransactionMonetaryResponse.getSuccess())
 						return Utils.returnException(aTransactionMonetaryResponse.getMessages());
 				}
-			}
+			  }
 			
 			saveTranPagoServ(request, responsePayDestinationProduct, aBagSPJavaOrchestration); 
+			}else {
+				  
+					if (logger.isDebugEnabled())
+						logger.logDebug(":::::NO APLICA GESTO PAGO POR REENTRY");
+			  }
 		}	
 		
 		if (request.readValueParam("@i_reversa") != null &&  "S".equals(request.readValueParam("@i_reversa"))) {
@@ -300,6 +371,19 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		responseExecutePayment = responsePayDestinationProduct;
 
 		return responseExecutePayment;
+	}
+	
+		protected boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){
+
+		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
+			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
+				return true;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
 	}
 
 	protected ValidationAccountsRequest transformToValidationAccountRequest(IProcedureRequest anOriginalRequest) {
@@ -391,6 +475,8 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		// aBagSPJavaOrchestration.get(PAYMENT_NAME));
 		StringBuilder messageErrorPayment = new StringBuilder();
 		messageErrorPayment.append((String) aBagSPJavaOrchestration.get(PAYMENT_NAME));
+		
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
 
 		requestAccountingParameters.setTransaction(Integer.parseInt(anOriginalRequest.readValueParam("@t_trn")));
 
@@ -427,7 +513,18 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		}else {
 			SUPPORT_OFFLINE = false;
 		}
+		
+		if (logger.isInfoEnabled())	logger.logInfo(":::: DEFINICION REENTRY GESTOPAGO "+ getFromReentryExcecution(aBagSPJavaOrchestration));
+		if (logger.isInfoEnabled())	logger.logInfo(":::: DEFINICION ESTATUS GESTOPAGO "+ responseServer.getOnLine().toString());
+		if (logger.isInfoEnabled())	logger.logInfo(":::: SUPPORT OFFLINE "+ SUPPORT_OFFLINE);
 
+		if (!SUPPORT_OFFLINE && !responseServer.getOnLine()) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Transferencia no permite ejecución mientras el servidor este fuera de linea"));
+			return Utils.returnException("Pago de Servicios no permite ejecución mientras el servidor este fuera de linea");
+		}
+		
+		
+		
 		// if is not Online and if is reentryExecution , have to leave
 		if (getFromReentryExcecution(aBagSPJavaOrchestration) && !responseServer.getOnLine() && !SUPPORT_OFFLINE) {
 			IProcedureResponse resp = Utils.returnException(CODE_OFFLINE, "El pago de servicios no se puede ejecutar mientras el servidor se encuentre fuera de línea");
@@ -500,8 +597,18 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put(ACCOUNTING_PARAMETER, responseAccountingParameters);
 
 		// Ejecucion en Core
+		if (logger.isDebugEnabled())
+			logger.logDebug(":::Ejecutando Core");
 		responseExecuteTransaction = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
 
+		if(responseServer.getOnLine() 
+				&& responseExecuteTransaction!=null 
+				&& responseExecuteTransaction.getReturnCode()==0
+				 && evaluateExecuteReentry(anOriginalRequest)) {
+			
+			return responseExecuteTransaction;
+		}
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + " Executing executeStepsPaymentBase: Respuesta executeTransaction: " + responseExecuteTransaction);
 
@@ -563,6 +670,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 		IProcedureRequest request = initProcedureRequest(anOriginalRequest);
 		IProcedureResponse responseCoreSigners = (IProcedureResponse) bag.get(RESPONSE_CORE_SIGNERS);
+		ServerResponse serverResponse = (ServerResponse) bag.get(RESPONSE_SERVER);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, anOriginalRequest.readValueParam("@t_trn"));
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
@@ -640,6 +748,15 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_prod_cobro", ICTSTypes.SQLINT1, "0");
 		request.addOutputParam("@o_cod_mis", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_clave_bv", ICTSTypes.SYBINT4, "0");
+		request.addOutputParam("@o_saldo_local", ICTSTypes.SQLMONEY, "0");
+		request.addOutputParam("@o_aplica_tran", ICTSTypes.SYBVARCHAR, "X");
+
+		// jcos
+		if (!serverResponse.getOnLine()) {
+
+			request.addInputParam("@i_linea", ICTSTypes.SQLVARCHAR, "N");
+			request.addInputParam("@i_saldo", ICTSTypes.SQLVARCHAR, "S");
+		}
 
 		if (!Utils.isNull(responseCoreSigners.readParam("@o_condiciones_firmantes")))
 			if (!Utils.isNull(responseCoreSigners.readValueParam("@o_condiciones_firmantes")))
