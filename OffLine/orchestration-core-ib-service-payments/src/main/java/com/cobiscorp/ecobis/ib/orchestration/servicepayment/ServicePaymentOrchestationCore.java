@@ -274,12 +274,12 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 			aProcedureRequest.addOutputParam("@o_msj_respuesta", ICTSTypes.SQLVARCHAR, "X");
 			aProcedureRequest.addOutputParam("@o_transaccion_ID", ICTSTypes.SQLVARCHAR, "X");
 			aProcedureRequest.addOutputParam("@o_num_autorizacion", ICTSTypes.SQLVARCHAR, "X");
-			aProcedureRequest.addOutputParam("@o_saldo", ICTSTypes.SQLMONEY, "X");
-			aProcedureRequest.addOutputParam("@o_comision", ICTSTypes.SQLMONEY, "X");
-			aProcedureRequest.addOutputParam("@o_saldo_final", ICTSTypes.SQLMONEY, "X");
-			aProcedureRequest.addOutputParam("@o_comision_final", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_saldo", ICTSTypes.SQLMONEY, "0");
+			aProcedureRequest.addOutputParam("@o_comision", ICTSTypes.SQLMONEY, "0");
+			aProcedureRequest.addOutputParam("@o_saldo_final", ICTSTypes.SQLMONEY, "0");
+			aProcedureRequest.addOutputParam("@o_comision_final", ICTSTypes.SQLMONEY, "0");
 			aProcedureRequest.addOutputParam("@o_fecha", ICTSTypes.SQLVARCHAR, "X");
-			aProcedureRequest.addOutputParam("@o_monto", ICTSTypes.SQLMONEY, "X");
+			aProcedureRequest.addOutputParam("@o_monto", ICTSTypes.SQLMONEY, "0");
 			aProcedureRequest.addOutputParam("@o_pin", ICTSTypes.SQLVARCHAR, "X");
 			aProcedureRequest.addOutputParam("@o_instrucciones", ICTSTypes.SQLVARCHAR, "X");
 			aProcedureRequest.addOutputParam("@o_saldo_cliente", ICTSTypes.SQLVARCHAR, "X");
@@ -364,6 +364,9 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 		@SuppressWarnings("unused")
 		IProcedureResponse response = null;
 		try {
+			
+			if (logger.isInfoEnabled())	logger.logInfo("*******CARAGANDO ORQUESTACION PAGO SERVICIOS JCOS");
+			
 			Map<String, Object> mapInterfaces = new HashMap<String, Object>();
 			mapInterfaces.put("coreServer", coreServer);
 			mapInterfaces.put("coreService", coreService);
@@ -389,18 +392,29 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
 		IProcedureResponse responseVL = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_VALIDATE_LOCAL);
-		if (logger.isDebugEnabled())
-			logger.logDebug("RESPONSE FINAL -->" + response.getProcedureResponseAsString());
-		if (response.readValueParam("@o_ssn_branch") == null) {
-			response.addParam("@o_ssn_branch", ICTSTypes.SQLINT4, 0, response.readValueFieldInHeader("ssn_branch"));
-		}
 
-		if (response.readValueParam("@o_referencia") == null) {
-			response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, response.readValueFieldInHeader("ssn_branch"));
-		}
-		
-		if (response.readValueParam("@o_autorizacion") == null && responseVL != null) {
-			response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0, responseVL.readValueParam("@o_autorizacion"));
+		if (response != null) {
+
+			if (logger.isDebugEnabled())
+				logger.logDebug("RESPONSE FINAL -->" + response.getProcedureResponseAsString());
+			if (response.readValueParam("@o_ssn_branch") == null) {
+				response.addParam("@o_ssn_branch", ICTSTypes.SQLINT4, 0, response.readValueFieldInHeader("ssn_branch"));
+			}
+
+			if (response.readValueParam("@o_referencia") == null) {
+				response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, response.readValueFieldInHeader("ssn_branch"));
+			}
+
+			if (response.readValueParam("@o_autorizacion") == null && responseVL != null) {
+				response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0,
+						responseVL.readValueParam("@o_autorizacion"));
+			}
+		}else {
+			response= new ProcedureResponseAS(); 
+			response.setReturnCode(0);
+			response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0,responseVL.readValueParam("@o_autorizacion"));
+			response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, responseVL.readValueFieldInHeader("ssn_branch"));
+			response.addParam("@o_ssn_branch", ICTSTypes.SQLINT4, 0, responseVL.readValueFieldInHeader("ssn_branch"));
 		}
 
 		return response;

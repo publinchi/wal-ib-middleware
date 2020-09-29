@@ -1,5 +1,6 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.payment.template;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
@@ -12,7 +13,6 @@ import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
-import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.base.payments.PaymentBaseTemplate;
@@ -22,6 +22,7 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 	ILogger logger = (ILogger) this.getLogger();
 	
 
+ 
 
 	@Override
 	protected IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException{
@@ -30,6 +31,8 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 		IProcedureResponse responseBalancesToSychronize = null;
 		IProcedureResponse responseOffline = null;
 		IProcedureResponse response = null;
+		IProcedureRequest copyOriginal = null;
+		Map<String, Object> aBagSPJavaOrchestrationOriginal;
 		
 		
 		StringBuilder messageErrorPayment = new StringBuilder();
@@ -46,19 +49,35 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 		}
 		ServerResponse responseServer = (ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 		
-		if (responseServer.getOnLine()){
+		aBagSPJavaOrchestrationOriginal=  new HashMap<String, Object>();
+		
+		if (responseServer.getOnLine() ){
+			
+			if (logger.isInfoEnabled()) logger.logInfo("::: On Line GestoPago");
+			
+			if (logger.isInfoEnabled()) logger.logInfo("reentry on line");
 			
 			responseExecutePayment = executePayment(anOriginalRequest, aBagSPJavaOrchestration);
+			
+	        if(this.evaluateExecuteReentry(anOriginalRequest)) {	        	
+	        	response= new ProcedureResponseAS(); 
+	        	response.setReturnCode(0);
+				return response;
+			}
+			
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseExecutePayment);
 			if (Utils.flowError(messageErrorPayment.append(" --> executePayment").toString(), responseExecutePayment)) {
 				if (logger.isInfoEnabled()) logger.logInfo(CLASS_NAME + messageErrorPayment);
 					return responseExecutePayment;
 			};
+			
+			
 			responseBalancesToSychronize = new ProcedureResponseAS();
 			responseBalancesToSychronize.setReturnCode(0);
 			if (responseExecutePayment.getResultSetListSize()>0)
 				responseBalancesToSychronize.addResponseBlock(responseExecutePayment.getResultSet(1));
 			else{
+				
 				responseBalancesToSychronize = getBalancesToSynchronize(anOriginalRequest);
 				if (responseBalancesToSychronize.getReturnCode()!=CODE_OFFLINE){
 					if (Utils.flowError(messageErrorPayment.append(" --> getBalancesToSychronize").toString(), responseBalancesToSychronize)){ 
@@ -69,15 +88,31 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 			}
 			response = responseExecutePayment;
 		}
-		else{
-			responseExecutePayment = buildOfflineCoreResponse(anOriginalRequest, aBagSPJavaOrchestration);
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseExecutePayment);
+		else if(!responseServer.getOnLine() && !this.evaluateExecuteReentry(anOriginalRequest)){
 			
-			if (!evaluateExecuteReentry(anOriginalRequest)){
-				responseOffline = saveReentry(anOriginalRequest,aBagSPJavaOrchestration);
+			if (logger.isInfoEnabled()) logger.logInfo("::: Off Line GestoPago");		
+			
+			if (logger.isInfoEnabled()) logger.logInfo("::: cloning bag");	
+			
+			aBagSPJavaOrchestrationOriginal.putAll(aBagSPJavaOrchestration); 	
+			copyOriginal=anOriginalRequest.clone();
+			
+			responseExecutePayment = buildOfflineCoreResponse(anOriginalRequest, aBagSPJavaOrchestration/*,responseExecutePayment*/);
+			
+			responseExecutePayment=executePaymentOuterCore(anOriginalRequest, aBagSPJavaOrchestration);
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseExecutePayment);			
+
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseExecutePayment);					
+			
+			if (!evaluateExecuteReentry(copyOriginal) && (aBagSPJavaOrchestration.get("ESTADO")!=null && !aBagSPJavaOrchestration.get("ESTADO").equals("C")) ){
+				responseOffline = saveReentry(copyOriginal,aBagSPJavaOrchestrationOriginal);
 				aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
+				// sacar metodo de invocacion a gesto pago y si tiene saldo aplicar servicio				
+			}else {
+				
+				if (logger.isInfoEnabled()) logger.logInfo("::: GESTOPAGO ERROR NO SE GUARDA REENTRY PARA NO DEBITAR CENTRAL");	
 			}
-			
+					
 			if (responseServer.getOfflineWithBalances()){
 				responseBalancesToSychronize = getBalancesToSynchronize(anOriginalRequest);
 				if (responseBalancesToSychronize.getReturnCode()!=CODE_OFFLINE){
@@ -91,18 +126,18 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 					response = responseOffline;
 			}			
 			
+			response = responseExecutePayment;
 		}
 		aBagSPJavaOrchestration.put(RESPONSE_BALANCE, responseBalancesToSychronize);
 		return response;
 	}
 
-	private IProcedureResponse buildOfflineCoreResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration){
+	private IProcedureResponse buildOfflineCoreResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration/*, IProcedureResponse response*/){
 		
 		ServerResponse responseServer = (ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 		IProcedureResponse responseLocalValidation = (IProcedureResponse)aBagSPJavaOrchestration.get(RESPONSE_VALIDATE_LOCAL);
-		IProcedureResponse response = new ProcedureResponseAS();
+		IProcedureResponse response = new ProcedureResponseAS();		
 		
-		response = new ProcedureResponseAS();
 		if (responseServer.getOfflineWithBalances()){
 			response.setReturnCode(CODE_OFFLINE);
 			//response.addMessage(CODE_OFFLINE, "OFFLINE CON SALDOS");
@@ -110,7 +145,8 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 		else{
 			response.setReturnCode(CODE_OFFLINE_NO_BAL);
 			//response.addMessage(CODE_OFFLINE_NO_BAL, "OFFLINE SIN SALDOS");
-		}				
+		}
+
 		response.addParam("@o_retorno", ICTSTypes.SYBINT4, 0, String.valueOf(responseLocalValidation.readValueParam("@o_retorno")));
 		response.addParam("@o_condicion", ICTSTypes.SYBINT4, 0, String.valueOf(responseLocalValidation.readValueParam("@o_condicion")));
 		response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, anOriginalRequest.readValueParam("@s_ssn_branch"));
@@ -141,17 +177,24 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 	    reentryPersister = (IReentryPersister)componentLocator.find(IReentryPersister.class, REENTRY_FILTER);
 	    if (reentryPersister == null) throw new COBISInfrastructureRuntimeException("Service IReentryPersister was not found");
 
-	    request.removeFieldInHeader("sessionId");
+	    request.removeFieldInHeader("sessionId");	    
 	    request.addFieldInHeader("reentryPriority", 'S', "5");
 	    request.addFieldInHeader("REENTRY_SSN_TRX", 'S', request.readValueFieldInHeader("ssn"));
 	    request.addFieldInHeader("targetId", 'S', "local");
 	    request.removeFieldInHeader("serviceMethodName");
+	    request.removeFieldInHeader("serviceMethodName");
+	    
 	    request.addFieldInHeader("trn", 'N', request.readValueFieldInHeader("trn"));
 	    request.removeParam("@t_rty");
+	    
+
 
 	    if (logger.isInfoEnabled()) {
 	      logger.logInfo("REQUEST TO SAVE REENTRY -->" + request.getProcedureRequestAsString());
 	    }
+	    
+	    
+	    
 	    Boolean reentryResponse = reentryPersister.addTransaction(request);
 
 	    IProcedureResponse response = initProcedureResponse(request);
@@ -188,7 +231,7 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 	}
 */
 
-	private boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){
+	/*private boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){
 
 		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
 			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
@@ -199,7 +242,7 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 		}
 		else
 			return false;
-	}
+	}*/
 
 	
 	 
