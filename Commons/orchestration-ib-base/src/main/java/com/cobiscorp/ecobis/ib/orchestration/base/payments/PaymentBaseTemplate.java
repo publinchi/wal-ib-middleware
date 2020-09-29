@@ -2,7 +2,7 @@ package com.cobiscorp.ecobis.ib.orchestration.base.payments;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map; 
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.log.ILogger;
