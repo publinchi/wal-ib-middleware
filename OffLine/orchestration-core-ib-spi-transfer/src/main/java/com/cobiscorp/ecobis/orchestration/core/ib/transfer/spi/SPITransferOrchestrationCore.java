@@ -44,6 +44,7 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceReexecutionC
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOfflineTemplate;
 
+
 //import com.cobiscorp.ecobis.orchestration7x24.commons.utils.ProcedureUtils;
 
 @Component(name = "SPITransferOrchestrationCore", immediate = false)
@@ -74,6 +75,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	private static final String I_CTA_LOCAL = "@i_cta";
 	private static final String S_SERVICIO_LOCAL = "@s_servicio";
 	private static final String I_PROD_LOCAL = "@i_prod";
+	private static final String ERROR_SPEI = "ERROR EN TRANSFERENCIA SPEI";
 	/** Instancia del Logger */
 	private static ILogger logger = LogFactory.getLogger(SPITransferOrchestrationCore.class);
 
@@ -180,7 +182,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
 					if (originalRequest.readValueParam(T_RTY).equals("N"))
-						executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
 				} else {
 
 					if (logger.isDebugEnabled()) {
@@ -223,21 +225,26 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		return responseTransfer;
 	}
 
-	private void executeBanpay(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
+	private IProcedureResponse executeBanpay(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
 			IProcedureRequest originalRequest) {
 		// SE LLAMA LA SERVICIO DE BANPAY
 		List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
+		// SE ACTUALIZA TABLA DE SECUENCIAL SPEI
+		speiSec(originalRequest, aBagSPJavaOrchestration);
 		// SE HACE LA VALIDACION DE LA RESPUESTA
 		if (respuesta != null) {
-			if (respuesta.get(3).equals("0")) {
+			if (!respuesta.get(0).equals("00")) {
 				// SE HACELA REVERSA DE LA NOTA DE DEBITO
 				speiRollback(originalRequest, aBagSPJavaOrchestration);
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Error SPEI");
+				}
+				
+				return Utils.returnException(-10, ERROR_SPEI);
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("Paso exitoso");
 				}
-				// SE ACTUALIZA TABLA DE SECUENCIAL SPEI
-				speiSec(originalRequest, aBagSPJavaOrchestration);
 				// SE ADJUNTA LA CLAVE DE RASTREO
 				responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
 						respuesta.get(2));
@@ -246,10 +253,12 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("List<String> respuesta error o null");
 			}
-
 			// SE HACELA REVERSA DE LA NOTA DE DEBITO
 			speiRollback(originalRequest, aBagSPJavaOrchestration);
+			
+			return Utils.returnException(-10, ERROR_SPEI);
 		}
+		return responseTransfer;
 	}
 
 	private void executeBanpayOffLine(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
@@ -258,7 +267,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
 		// SE HACE LA VALIDACION DE LA RESPUESTA
 		if (respuesta != null) {
-			if (respuesta.get(3).equals("0")) {
+			if (!respuesta.get(0).equals("00")) {
 
 				responseTransfer.addParam("@i_fail_provider", ICTSTypes.SQLVARCHAR, 1, "S");
 			}
