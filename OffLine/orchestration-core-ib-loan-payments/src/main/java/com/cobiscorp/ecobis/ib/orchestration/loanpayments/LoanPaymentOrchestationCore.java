@@ -264,6 +264,8 @@ public class LoanPaymentOrchestationCore extends PaymentOfflineTemplate {
 	protected IProcedureResponse executePayment(IProcedureRequest aProcedureRequest,
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
 		// obtencion de causa
+		
+		if (logger.isInfoEnabled()) logger.logInfo("::: executePayment->LOAN");
 
 		PaymentLoanResponse aPaymentLoanResponse = coreServicePayment
 				.executePaymentLoan(transformToPaymentLoanRequest(aProcedureRequest));// ,
