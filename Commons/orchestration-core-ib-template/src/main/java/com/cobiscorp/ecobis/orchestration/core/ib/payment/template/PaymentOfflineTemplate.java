@@ -105,6 +105,7 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseExecutePayment);					
 			
 			if (!evaluateExecuteReentry(copyOriginal) && (aBagSPJavaOrchestration.get("ESTADO")!=null && !aBagSPJavaOrchestration.get("ESTADO").equals("C")) ){
+				copyOriginal.addInputParam("@i_type_reentry", ICTSTypes.SQLVARCHAR,TYPE_REENTRY_OFF);				
 				responseOffline = saveReentry(copyOriginal,aBagSPJavaOrchestrationOriginal);
 				aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
 				// sacar metodo de invocacion a gesto pago y si tiene saldo aplicar servicio				
