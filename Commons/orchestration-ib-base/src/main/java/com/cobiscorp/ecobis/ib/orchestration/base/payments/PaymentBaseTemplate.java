@@ -1083,7 +1083,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_precio", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
 			request.addInputParam("@i_num_aut", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_num_autorizacion"));
 			request.addInputParam("@i_saldo", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo"));
-			request.addInputParam("@i_saldo_cliente", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo_cliente"));
+			request.addInputParam("@i_saldo_cliente", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo_final"));
 			request.addInputParam("@i_com_prov", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_comision"));
 			request.addInputParam("@i_xml_req", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_req"));
 			request.addInputParam("@i_xml_resp", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_resp"));
@@ -1093,7 +1093,11 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_img_ayuda", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_12"));			
 			request.addInputParam("@i_est_prov", ICTSTypes.SQLBIT, "1");
 			request.addInputParam("@i_pin", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_pin"));
-			request.addInputParam("@i_instruc", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_instrucciones"));
+			String instruc = anOriginalResponse.readValueParam("@o_instrucciones");
+			if(instruc != null && !instruc.equals("")){
+				instruc = new String(instruc.getBytes("ISO-8859-1"), "UTF-8");
+			}
+			request.addInputParam("@i_instruc", ICTSTypes.SQLVARCHAR, instruc);
 			request.addInputParam("@i_id_trn_prov", ICTSTypes.SQLINTN, anOriginalResponse.readValueParam("@o_transaccion_ID"));
 			request.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
 			request.addInputParam("@i_canal", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_canal"));
