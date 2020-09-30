@@ -67,6 +67,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 	protected static final String REENTRY_EXE = "reentryExecution";
 	protected static final String ACCOUNTING_PARAMETER = "ACCOUNTING_PARAMETER";
 	protected static final String ESTADO = "ESTADO";
+	protected static final String TYPE_REENTRY_OFF="OFF_LINE";
 	
 	protected static final int CODE_OFFLINE = 40004;
 	protected static final int CODE_OFFLINE_NO_BAL = 40002;
@@ -300,7 +301,10 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			if (!aTransactionMonetaryResponse.getSuccess())
 			   return Utils.returnException(aTransactionMonetaryResponse.getMessages());
 				// INVOKA GESTOPAGO
-			if (!evaluateExecuteReentry(request)){
+			if (!evaluateExecuteReentry(request) || 
+					(request.readParam("@i_type_reentry")==null ||
+					!request.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))){
+				
 			responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
 			//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
 
@@ -604,7 +608,11 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		if(responseServer.getOnLine() 
 				&& responseExecuteTransaction!=null 
 				&& responseExecuteTransaction.getReturnCode()==0
-				 && evaluateExecuteReentry(anOriginalRequest)) {
+				&& evaluateExecuteReentry(anOriginalRequest)
+				&& (anOriginalRequest.readParam("@i_type_reentry")!=null 
+				&&	anOriginalRequest.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {
+			//OFFCA
+			responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 			
 			return responseExecuteTransaction;
 		}
@@ -694,23 +702,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_prod", anOriginalRequest, request);
 		Utils.copyParam("@i_concepto", anOriginalRequest, request);
 		Utils.copyParam("@i_doble_autorizacion", anOriginalRequest, request);
-				
-		if (Integer.parseInt(anOriginalRequest.readValueParam("@t_trn")) == 1801035) {
-			
-			BigDecimal amount=new BigDecimal(0);
-			BigDecimal comission=new BigDecimal(0);
-			BigDecimal totalAmout=new BigDecimal(0);
-			
-			amount = anOriginalRequest.readValueParam("@i_val")!=null ? new BigDecimal(anOriginalRequest.readValueParam("@i_val")): new BigDecimal(0);
-			comission = anOriginalRequest.readValueParam("@i_comi_val")!=null ? new BigDecimal(anOriginalRequest.readValueParam("@i_comi_val")): new BigDecimal(0);
-			totalAmout = amount.add(comission);
-			request.addInputParam("@i_val", anOriginalRequest.readParam("@i_val").getDataType(), totalAmout.toString());
-
-		}else {
-			Utils.copyParam("@i_val", anOriginalRequest, request);
-		}
-			
-		
+		Utils.copyParam("@i_val", anOriginalRequest, request);
 		request.addInputParam("@i_valida_limites", ICTSTypes.SQLVARCHAR, "S");
 		if (!Utils.isNull(anOriginalRequest.readValueParam("@i_tercero_asociado")))
 			Utils.copyParam("@i_tercero_asociado", anOriginalRequest, request);
@@ -1101,11 +1093,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_img_ayuda", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_12"));			
 			request.addInputParam("@i_est_prov", ICTSTypes.SQLBIT, "1");
 			request.addInputParam("@i_pin", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_pin"));
-			String instruc = anOriginalResponse.readValueParam("@o_instrucciones");
-			if(instruc != null && !instruc.equals("")){
-				instruc = new String(instruc.getBytes("ISO-8859-1"), "UTF-8");
-			}
-			request.addInputParam("@i_instruc", ICTSTypes.SQLVARCHAR, instruc);
+			request.addInputParam("@i_instruc", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_instrucciones"));
 			request.addInputParam("@i_id_trn_prov", ICTSTypes.SQLINTN, anOriginalResponse.readValueParam("@o_transaccion_ID"));
 			request.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
 			request.addInputParam("@i_canal", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_canal"));
