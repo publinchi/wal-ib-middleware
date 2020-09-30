@@ -866,6 +866,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
 			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
+			
+			request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
 
 			request.addInputParam("@i_estatus_respuesta", ICTSTypes.SQLINTN, bag.get("@i_cod_respuesta").toString());
 			request.addInputParam("@i_descripcion_error", ICTSTypes.SQLVARCHAR, ERROR_SPEI);
