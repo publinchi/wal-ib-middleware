@@ -234,6 +234,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		// SE HACE LA VALIDACION DE LA RESPUESTA
 		if (respuesta != null) {
 			if (!respuesta.get(0).equals("00")) {
+				// SE CAMBIA ESTADO DE REGISTRO
+				speiGetDataRB(originalRequest, aBagSPJavaOrchestration);
 				// SE HACELA REVERSA DE LA NOTA DE DEBITO
 				speiRollback(originalRequest, aBagSPJavaOrchestration);
 				if (logger.isDebugEnabled()) {
@@ -253,6 +255,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("List<String> respuesta error o null");
 			}
+			// SE CAMBIA ESTADO DE REGISTRO
+			speiGetDataRB(originalRequest, aBagSPJavaOrchestration);
 			// SE HACELA REVERSA DE LA NOTA DE DEBITO
 			speiRollback(originalRequest, aBagSPJavaOrchestration);
 			
@@ -797,36 +801,35 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
 
 			// SE SETEAN DATOS
-			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-					IMultiBackEndResolverService.TARGET_CENTRAL);
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
 			request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 			request.setSpName("cob_bvirtual..sp_reverso_spei");
-
+			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18009");
+			
+			// DATOS CUENTA ORIGEN
+			request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, bag.get("@o_cuenta_ori").toString());
+			request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, ERROR_SPEI);
+			request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, bag.get("@o_monto").toString());
+			request.addInputParam("@i_mon", ICTSTypes.SQLINT1, bag.get("@o_mon").toString());
+			request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
+			request.addInputParam("@i_tipo_error", ICTSTypes.SQLINTN, "7");
+			//VALIDA COMISION
+			if (bag.get("@o_comision") != null) {
+				request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, bag.get("@o_comision").toString());
+			} else {
+				request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, "0");
+			}
+			request.addInputParam("@s_ssn_branch", ICTSTypes.SQLINTN, bag.get("@o_ssn_branch").toString());
+			// CLAVE DE RASTREO
+			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
+			//VARIABLES DE CTS
 			request.addInputParam("@s_ssn", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
-			request.addInputParam("@s_srv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_srv"));
-			request.addInputParam("@s_ssn_branch", ICTSTypes.SQLINTN,
-					anOriginalRequest.readValueParam("@s_ssn_branch"));
+			request.addInputParam("@s_srv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_srv"));			
 			request.addInputParam("@s_user", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_user"));
 			request.addInputParam("@s_term", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_term"));
 			request.addInputParam("@s_rol", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_rol"));
 			request.addInputParam("@s_date", ICTSTypes.SQLDATETIME, anOriginalRequest.readValueParam("@s_date"));
-
-			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18009");
-			// DATOS CUENTA ORIGEN
-			request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
-			Utils.copyParam("@i_mon", anOriginalRequest, request);
-			request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, "REVERSO SPEI");
-			request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
-			request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
-			request.addInputParam("@i_tipo_error", ICTSTypes.SQLINTN, "7");
-			if (bag.get("@i_comision") != null) {
-				request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, bag.get("@i_comision").toString());
-			} else {
-				request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, "0");
-			}
-			// CLAVE DE RASTREO
-			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
-			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
 
 			// SE EJECUTA Y SE OBTIENE LA RESPUESTA
 			IProcedureResponse pResponse = executeCoreBanking(request);
@@ -845,41 +848,65 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		return response;
 	}
 
-	protected boolean speiUpdate(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+	protected boolean speiGetDataRB(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		// SE INICIALIZA VARIABLE
 		boolean response = false;
 		if (logger.isInfoEnabled()) {
-			logger.logInfo("Entrando a speiUpdate");
+			logger.logInfo("Entrando a speiGetDataRB");
 		}
 		try {
 			IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
 
 			// SE SETEAN DATOS
-			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-					IMultiBackEndResolverService.TARGET_LOCAL);
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
 			request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
-			request.setSpName("cob_bvirtual..sp_registra_spei");
-			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
-			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+			request.setSpName("cob_bvirtual..sp_secuencial_spei");
+			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18011");
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "C");
 
 			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
 			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
 
-			request.addInputParam("@i_id_transaccion", ICTSTypes.SQLVARCHAR, bag.get("@i_id").toString());
-			request.addInputParam("@i_descripcion_error", ICTSTypes.SQLVARCHAR,
-					bag.get("@i_descripcion_error").toString());
+			request.addInputParam("@i_estatus_respuesta", ICTSTypes.SQLINTN, bag.get("@i_cod_respuesta").toString());
+			request.addInputParam("@i_descripcion_error", ICTSTypes.SQLVARCHAR, ERROR_SPEI);
+			
+			//SE SETEAN VARIABLES DE SALIDA
+			request.addOutputParam("@o_cuenta_ori", ICTSTypes.SQLVARCHAR, "XXXX");
+			request.addOutputParam("@o_monto", ICTSTypes.SQLMONEY, "0");
+			request.addOutputParam("@o_mon", ICTSTypes.SQLINTN, "0");
+			request.addOutputParam("@o_comision", ICTSTypes.SQLMONEY, "0");
+			request.addOutputParam("@o_proceso_origen", ICTSTypes.SQLINTN, "0");
+			request.addOutputParam("@o_tipo_error", ICTSTypes.SQLINTN, "0");
+			request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 
 			// SE EJECUTA Y SE OBTIENE LA RESPUESTA
 			IProcedureResponse pResponse = executeCoreBanking(request);
+			
+			//SE OBTIENEN LAS VARIABLES DE SALIDA
+			bag.put("@o_cuenta_ori", pResponse.readValueParam("@o_cuenta_ori"));
+			bag.put("@o_monto", pResponse.readValueParam("@o_monto"));
+			bag.put("@o_mon", pResponse.readValueParam("@o_mon"));
+			bag.put("@o_comision", pResponse.readValueParam("@o_comision"));
+			bag.put("@o_proceso_origen", pResponse.readValueParam("@o_proceso_origen"));
+			bag.put("@o_tipo_error", pResponse.readValueParam("@o_tipo_error"));
+			bag.put("@o_ssn_branch", pResponse.readValueParam("@o_ssn_branch"));
+			
+			logger.logInfo("@o_cuenta_ori bag: " + bag.get("@o_cuenta_ori"));
+			logger.logInfo("@o_monto bag: " + bag.get("@o_monto"));
+			logger.logInfo("@o_mon bag: " + bag.get("@o_mon"));
+			logger.logInfo("@o_comision bag: " + bag.get("@o_comision"));
+			logger.logInfo("@o_proceso_origen bag: " + bag.get("@o_proceso_origen"));
+			logger.logInfo("@o_tipo_error bag: " + bag.get("@o_tipo_error"));
+			logger.logInfo("@o_ssn_branch bag: " + bag.get("@o_ssn_branch"));
 
 			response = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			response = false;
-			logger.logInfo("Error de speiUpdate");
+			logger.logInfo("Error de speiGetDataRB");
 		} finally {
 			if (logger.isInfoEnabled()) {
-				logger.logInfo("Saliendo de speiUpdate");
+				logger.logInfo("Saliendo de speiGetDataRB");
 			}
 		}
 		// SE REGRESA RESPUESTA
@@ -941,6 +968,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
 			request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18011");
+			
+			request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
 
 			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
 			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
