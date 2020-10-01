@@ -52,6 +52,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.TransactionMonetaryResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.TransferResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ValidationAccountsResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
@@ -76,6 +77,7 @@ public abstract class PaymentOnlineTemplate extends PaymentBaseTemplate  {
 		IProcedureResponse responseExecutePayment = null;
 		IProcedureResponse responseBalancesToSychronize = null;
 		IProcedureResponse response = null;
+		TransactionMonetaryResponse onMonetary ;
 		
 		
 		StringBuilder messageErrorPayment = new StringBuilder();
@@ -97,8 +99,13 @@ public abstract class PaymentOnlineTemplate extends PaymentBaseTemplate  {
 			responseExecutePayment = executePayment(anOriginalRequest, aBagSPJavaOrchestration);
 			
 	
-		     if(this.evaluateExecuteReentry(anOriginalRequest)) {	        	
+		     if(this.evaluateExecuteReentry(anOriginalRequest) 
+		    		 && (anOriginalRequest.readParam("@i_type_reentry")!=null 
+						&&	anOriginalRequest.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {	 
+		    		if (logger.isInfoEnabled()) logger.logInfo(":::: RETURN DEFAULT RESPONSE POR REENTRY DE OFFLINE SOBRE PROVEEDOR");		    		
+		    		onMonetary =  (TransactionMonetaryResponse) aBagSPJavaOrchestration.get(ONLY_MONETARY);		    		
 		    	 response= new ProcedureResponseAS(); 
+		    	 if(onMonetary.getSuccess())
 		    	 response.setReturnCode(0);
 				 return response;
 				}
