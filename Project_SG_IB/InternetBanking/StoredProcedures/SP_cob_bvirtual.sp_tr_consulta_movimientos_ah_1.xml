@@ -99,6 +99,8 @@
         <column name="COD ALTERNO" />
         <column name="HORA" />
         <column name="SEC UNICO" />
+        <column name="IMAGEN" />
+        <column name="CONCEPTO" />
       </columns>
       <queryText></queryText>
     </query>
