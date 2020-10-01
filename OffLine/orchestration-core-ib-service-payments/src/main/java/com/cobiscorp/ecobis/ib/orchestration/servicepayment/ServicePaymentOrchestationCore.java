@@ -392,6 +392,7 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
 		IProcedureResponse responseVL = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_VALIDATE_LOCAL);
+		
 
 		if (response != null) {
 
@@ -409,12 +410,19 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 				response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0,
 						responseVL.readValueParam("@o_autorizacion"));
 			}
-		}else {
+		}else if ( (arg0.readParam("@i_type_reentry")!=null 
+				&&	arg0.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))
+				&&  evaluateExecuteReentry(arg0)) {
+			
+			if (logger.isInfoEnabled()) logger.logInfo(":::: RETURN ONLY MONETARY RESPONSE POR REENTRY DE OFFLINE SOBRE PROVEEDOR");
+			
+			//validacion de transaccion aplicada
+			if(response==null)
 			response= new ProcedureResponseAS(); 
 			response.setReturnCode(0);
 			response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0,responseVL.readValueParam("@o_autorizacion"));
-			response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, responseVL.readValueFieldInHeader("ssn_branch"));
-			response.addParam("@o_ssn_branch", ICTSTypes.SQLINT4, 0, responseVL.readValueFieldInHeader("ssn_branch"));
+			response.addParam("@o_referencia", ICTSTypes.SQLINT4, 0, arg0.readValueFieldInHeader("ssn_branch"));
+			response.addParam("@o_ssn_branch", ICTSTypes.SQLINT4, 0, arg0.readValueFieldInHeader("ssn_branch"));
 		}
 
 		return response;

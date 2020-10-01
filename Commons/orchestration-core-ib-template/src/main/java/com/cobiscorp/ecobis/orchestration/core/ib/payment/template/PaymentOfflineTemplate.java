@@ -14,6 +14,7 @@ import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.TransactionMonetaryResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.base.payments.PaymentBaseTemplate;
 
@@ -33,6 +34,7 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 		IProcedureResponse response = null;
 		IProcedureRequest copyOriginal = null;
 		Map<String, Object> aBagSPJavaOrchestrationOriginal;
+		TransactionMonetaryResponse onMonetary =  (TransactionMonetaryResponse) aBagSPJavaOrchestration.get(ONLY_MONETARY);
 		
 		
 		StringBuilder messageErrorPayment = new StringBuilder();
@@ -59,9 +61,13 @@ public abstract class PaymentOfflineTemplate extends PaymentBaseTemplate  {
 			
 			responseExecutePayment = executePayment(anOriginalRequest, aBagSPJavaOrchestration);
 			
-	        if(this.evaluateExecuteReentry(anOriginalRequest)) {	        	
+	        if(this.evaluateExecuteReentry(anOriginalRequest)
+	           && (anOriginalRequest.readParam("@i_type_reentry")!=null 
+			   &&  anOriginalRequest.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {
+	        	
+	        	if (logger.isInfoEnabled()) logger.logInfo(":::: RETURN DEFAULT RESPONSE POR REENTRY DE OFFLINE SOBRE PROVEEDOR");
 	        	response= new ProcedureResponseAS(); 
-	        	response.setReturnCode(0);
+	        	response.setReturnCode(onMonetary.getReturnCode());
 				return response;
 			}
 			
