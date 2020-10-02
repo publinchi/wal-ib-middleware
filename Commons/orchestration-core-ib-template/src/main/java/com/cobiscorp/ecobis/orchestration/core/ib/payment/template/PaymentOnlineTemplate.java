@@ -94,14 +94,14 @@ public abstract class PaymentOnlineTemplate extends PaymentBaseTemplate  {
 		}
 		ServerResponse responseServer = (ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 		
-		if (responseServer.getOnLine()){
+		if (responseServer.getOnLine() || (this.evaluateExecuteReentry(anOriginalRequest)&& responseServer.getOnLine() )){
 			
 			responseExecutePayment = executePayment(anOriginalRequest, aBagSPJavaOrchestration);
 			
 	
 		     if(this.evaluateExecuteReentry(anOriginalRequest) 
-		    		 && (anOriginalRequest.readParam("@i_type_reentry")!=null 
-						&&	anOriginalRequest.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {	 
+		    		 && (anOriginalRequest.readValueParam("@i_type_reentry")!=null 
+						&&	anOriginalRequest.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {	 
 		    		if (logger.isInfoEnabled()) logger.logInfo(":::: RETURN DEFAULT RESPONSE POR REENTRY DE OFFLINE SOBRE PROVEEDOR");		    		
 		    		onMonetary =  (TransactionMonetaryResponse) aBagSPJavaOrchestration.get(ONLY_MONETARY);		    		
 		    	 response= new ProcedureResponseAS(); 

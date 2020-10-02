@@ -69,6 +69,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 	protected static final String ESTADO = "ESTADO";
 	protected static final String TYPE_REENTRY_OFF="OFF_LINE";
 	protected static final String ONLY_MONETARY="MONETARY_OFF";
+	protected static final String TYPE_OFF_GESTO="OFF_GESTO";
 	
 	protected static final int CODE_OFFLINE = 40004;
 	protected static final int CODE_OFFLINE_NO_BAL = 40002;
@@ -280,10 +281,9 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 
 			if (!aTransactionMonetaryResponse.getSuccess())
 			   return Utils.returnException(aTransactionMonetaryResponse.getMessages());
-				// INVOKA GESTOPAGO
-			if (!evaluateExecuteReentry(request) || 
-					(request.readParam("@i_type_reentry")==null ||
-					!request.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))){
+				// INVOKA GESTOPAGO			
+			
+			if ( !(request.readValueParam("@i_type_reentry")!=null && request.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF)) ){
 				
 			responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
 			//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
@@ -326,11 +326,13 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			}else {
 				  
 				aBagSPJavaOrchestration.put(ONLY_MONETARY, aTransactionMonetaryResponse);
+				aBagSPJavaOrchestration.put(ESTADO, "R");
 				
 					if (logger.isDebugEnabled())
-						logger.logDebug(":::::NO APLICA GESTO PAGO POR REENTRY");
+						logger.logDebug(":::::NO APLICA GESTO PAGO POR REENTRY "+aTransactionMonetaryResponse);
 			  }
 		}	
+		
 		
 		if (request.readValueParam("@i_reversa") != null &&  "S".equals(request.readValueParam("@i_reversa"))) {
 			/*
@@ -588,11 +590,10 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		responseExecuteTransaction = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
 
 		if(responseServer.getOnLine() 
-				&& responseExecuteTransaction!=null 
-				&& responseExecuteTransaction.getReturnCode()==0
+				&& responseExecuteTransaction!=null 				
 				 && evaluateExecuteReentry(anOriginalRequest)
-				&& (anOriginalRequest.readParam("@i_type_reentry")!=null 
-				&&	anOriginalRequest.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {
+				&& (anOriginalRequest.readValueParam("@i_type_reentry")!=null 
+				&&	anOriginalRequest.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {
 			//OFFCA
 			if (logger.isInfoEnabled()) logger.logInfo(":::: RETURN DEFAULT RESPONSE POR REENTRY DE OFFLINE SOBRE PROVEEDOR");
 		//	responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
