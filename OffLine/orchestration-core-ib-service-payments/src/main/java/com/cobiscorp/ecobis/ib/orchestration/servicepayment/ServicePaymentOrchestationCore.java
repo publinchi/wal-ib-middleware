@@ -28,6 +28,8 @@ import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.PaymentServiceRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.PaymentServiceResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.application.dtos.TransactionMonetaryResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Currency;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Notification;
@@ -392,6 +394,8 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
 		IProcedureResponse responseVL = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_VALIDATE_LOCAL);
+		ServerResponse responseServer = (ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+		//TransactionMonetaryResponse aTransactionMonetaryResponse=(TransactionMonetaryResponse)  aBagSPJavaOrchestration.get(ONLY_MONETARY);
 		
 
 		if (response != null) {
@@ -410,8 +414,8 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 				response.addParam("@o_autorizacion", ICTSTypes.SQLCHAR, 0,
 						responseVL.readValueParam("@o_autorizacion"));
 			}
-		}else if ( (arg0.readParam("@i_type_reentry")!=null 
-				&&	arg0.readParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))
+		}else if ( responseServer.getOnLine()  && (arg0.readValueParam("@i_type_reentry")!=null 
+				&&	arg0.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))
 				&&  evaluateExecuteReentry(arg0)) {
 			
 			if (logger.isInfoEnabled()) logger.logInfo(":::: RETURN ONLY MONETARY RESPONSE POR REENTRY DE OFFLINE SOBRE PROVEEDOR");
