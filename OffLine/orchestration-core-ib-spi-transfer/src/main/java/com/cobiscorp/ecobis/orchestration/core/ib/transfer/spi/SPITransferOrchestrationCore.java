@@ -181,7 +181,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
-					if (originalRequest.readValueParam(T_RTY).equals("N"))
+					//if (originalRequest.readValueParam(T_RTY).equals("N")) // VALIDACION DE REENTRY
 						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
 				} else {
 
@@ -242,7 +242,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					logger.logDebug("Error SPEI");
 				}
 				
-				return Utils.returnException(-10, ERROR_SPEI);
+				return Utils.returnException(1, ERROR_SPEI);
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("Paso exitoso");
@@ -260,7 +260,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// SE HACELA REVERSA DE LA NOTA DE DEBITO
 			speiRollback(originalRequest, aBagSPJavaOrchestration);
 			
-			return Utils.returnException(-10, ERROR_SPEI);
+			return Utils.returnException(1, ERROR_SPEI);
 		}
 		return responseTransfer;
 	}
