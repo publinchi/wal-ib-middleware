@@ -227,7 +227,7 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 		}
 
 		if (originProduct.getProductType() == 4)
-			notification.setId("N39");
+			notification.setId("N124");
 		else if (originProduct.getProductType() == 3)
 			notification.setId("N30");
 

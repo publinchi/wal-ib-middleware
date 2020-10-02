@@ -361,7 +361,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 		return responseExecutePayment;
 	}
 	
-		protected boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){
+		public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){
 
 		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
 			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
