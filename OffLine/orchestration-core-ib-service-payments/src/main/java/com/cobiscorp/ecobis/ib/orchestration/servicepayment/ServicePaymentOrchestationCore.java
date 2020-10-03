@@ -215,9 +215,13 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 		if (!Utils.isNull(aProcedureRequest.readParam("@i_concepto")))
 			notificationDetail.setNote(aProcedureRequest.readValueParam("@i_concepto"));
 
-		if (!Utils.isNull(aProcedureRequest.readParam("@i_prod")))
-			originProduct.setProductType(Integer.parseInt(aProcedureRequest.readValueParam("@i_prod")));
-
+		if ("1801035".equals(aProcedureRequest.readValueParam("@t_trn"))){
+			originProduct.setProductType(18);
+		}else {
+			if (!Utils.isNull(aProcedureRequest.readParam("@i_prod")))
+				originProduct.setProductType(Integer.parseInt(aProcedureRequest.readValueParam("@i_prod")));
+		}
+		
 		if (!Utils.isNull(aProcedureRequest.readParam("@i_cta")))
 			originProduct.setProductNumber(aProcedureRequest.readValueParam("@i_cta"));
 

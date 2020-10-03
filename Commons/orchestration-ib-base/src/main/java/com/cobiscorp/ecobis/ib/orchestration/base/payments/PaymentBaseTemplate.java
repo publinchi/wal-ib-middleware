@@ -842,8 +842,13 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 					request.addInputParam("@i_clave_bv", ICTSTypes.SQLINT4, responseLocalValidation.readValueParam("@o_clave_bv"));
 				}
 		} else {
-			request.addInputParam("@i_genera_clave", ICTSTypes.SQLVARCHAR, "N");
-			request.addInputParam("@i_clave_bv", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_clave_bv"));
+			if (anOriginalRequest.readValueParam("@i_autorizada_rty") != null) {
+				if (anOriginalRequest.readValueParam("@i_autorizada_rty").equals("S"))
+					request.addInputParam("@i_genera_clave", ICTSTypes.SQLVARCHAR, "S");
+			} else {
+				request.addInputParam("@i_genera_clave", ICTSTypes.SQLVARCHAR, "N");
+				request.addInputParam("@i_clave_bv", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_clave_bv"));
+			}
 		}
 
 		addParametersRequestUpdateLocal(request, anOriginalRequest);
