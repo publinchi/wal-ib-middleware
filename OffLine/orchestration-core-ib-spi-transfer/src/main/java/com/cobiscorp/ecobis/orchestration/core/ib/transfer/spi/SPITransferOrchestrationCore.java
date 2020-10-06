@@ -1,6 +1,8 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.transfer.spi;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -315,8 +317,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					anOriginalRequest.readValueParam("@i_cta_des"));
 			anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR,
 					anOriginalRequest.readValueParam("@i_cta"));
-			anOriginalRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR,
-					anOriginalRequest.readValueParam("@s_date"));
+			//FECHA
+			Date fecha = new Date();
+			SimpleDateFormat forma = new SimpleDateFormat("yyyyMMdd");
+			anOriginalRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR, forma.format(fecha));
 			anOriginalRequest.addInputParam("@i_institucion_contraparte", ICTSTypes.SQLVARCHAR,
 					anOriginalRequest.readValueParam("@i_banco_ben"));
 			anOriginalRequest.addInputParam("@i_institucion_operante", ICTSTypes.SQLVARCHAR, data.get(0));
