@@ -2594,4 +2594,19 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<!-- 1800007 OTROS BANCOS -->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 1870013">
+		<conditions>
+		  <condition param="trn">
+			<value>1870013</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=SPITransferOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>
