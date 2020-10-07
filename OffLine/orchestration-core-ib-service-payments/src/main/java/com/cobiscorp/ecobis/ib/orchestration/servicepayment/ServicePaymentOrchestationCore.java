@@ -1,8 +1,12 @@
 package com.cobiscorp.ecobis.ib.orchestration.servicepayment;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -255,26 +259,27 @@ public class ServicePaymentOrchestationCore extends PaymentOfflineTemplate {
 		try {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo("Request payDestinationProduct GESTOPAGO");
-				logger.logInfo("@i_ssn: " + aProcedureRequest.readValueParam("@i_ssn"));
+				logger.logInfo("@i_ssn: " + aProcedureRequest.readValueParam("@s_ssn"));
 				logger.logInfo("@i_ref_1: " + aProcedureRequest.readValueParam("@i_ref_1"));
 				logger.logInfo("@i_ref_2: " + aProcedureRequest.readValueParam("@i_ref_2"));
 				logger.logInfo("@i_ref_3: " + aProcedureRequest.readValueParam("@i_ref_3"));
 				logger.logInfo("@i_ref_4: " + aProcedureRequest.readValueParam("@i_ref_4"));
 				logger.logInfo("@i_ref_5: " + aProcedureRequest.readValueParam("@i_ref_5"));
-				logger.logInfo("@s_date: " + aProcedureRequest.readValueParam("@s_date"));			
+				logger.logInfo("@i_hora: " + aProcedureRequest.readValueParam("@i_hora"));			
 			}
 			//PARAMETROS DE ENTRADA
 			aProcedureRequest.addInputParam("@t_trn", ICTSTypes.SQLINT1, TRN_PAGO_SERVICIOS_PUBLICOS);
 			aProcedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "I");
-			aProcedureRequest.addInputParam("@i_transaccion_ID", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ssn"));
+			aProcedureRequest.addInputParam("@i_transaccion_ID", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@s_ssn"));
 			aProcedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_1"));
 			aProcedureRequest.addInputParam("@i_id_servicio", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_2"));
 			aProcedureRequest.addInputParam("@i_id_producto", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_3"));
 			aProcedureRequest.addInputParam("@i_id_sucursal", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_4"));
-			aProcedureRequest.addInputParam("@i_hora", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@s_date"));
+			
+			aProcedureRequest.addInputParam("@i_hora", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_hora"));
 			aProcedureRequest.addInputParam("@i_referencia", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_ref_5"));
 			aProcedureRequest.addInputParam("@i_monto", ICTSTypes.SQLVARCHAR, aProcedureRequest.readValueParam("@i_val"));
-		
+
 			//PARAMETROS DE ENTRADA
 			aProcedureRequest.addOutputParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, "X");
 			aProcedureRequest.addOutputParam("@o_msj_respuesta", ICTSTypes.SQLVARCHAR, "X");
