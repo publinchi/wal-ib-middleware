@@ -1,8 +1,12 @@
 package com.cobiscorp.ecobis.ib.orchestration.base.payments;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.log.ILogger;
@@ -285,6 +289,14 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			
 			if ( !(request.readValueParam("@i_type_reentry")!=null && request.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF)) ){
 				
+				
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-5"));
+			Date today = cal.getTime();	
+			request.addInputParam("@i_hora", ICTSTypes.SQLVARCHAR, sdf.format(today));
+				
+			
+			
 			responsePayDestinationProduct = payDestinationProduct(request, aBagSPJavaOrchestration);
 			//Object codeResponse = aBagSPJavaOrchestration.get("codigoResponse"); // se-establece-en-pagoTarjetas
 
@@ -1092,7 +1104,18 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_com_prov", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_comision"));
 			request.addInputParam("@i_xml_req", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_req"));
 			request.addInputParam("@i_xml_resp", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_resp"));
-			request.addInputParam("@i_fecha", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+			
+			String fechaOrig = anOriginalRequest.readValueParam("@i_hora");
+			if(fechaOrig != null && !"".equals(fechaOrig)){
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+				Date today=sdf.parse(fechaOrig); 
+				
+				sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				fechaOrig = sdf.format(today);
+			}
+			
+			request.addInputParam("@i_fecha", ICTSTypes.SQLVARCHAR, fechaOrig);
+			
 			request.addInputParam("@i_ssn", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
 			request.addInputParam("@i_img_serv", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_11"));
 			request.addInputParam("@i_img_ayuda", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_ref_12"));			
