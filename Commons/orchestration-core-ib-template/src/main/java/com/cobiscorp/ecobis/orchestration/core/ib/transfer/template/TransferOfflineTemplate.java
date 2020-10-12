@@ -82,7 +82,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 					}
 					
 
-					responseTransfer = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+					 saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
 					
 
