@@ -66,6 +66,9 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	protected static final String TRANSFER_NAME = "TRANSFER_NAME";
 	protected static final String ACCOUNTING_PARAMETER = "ACCOUNTING_PARAMETER";
 	protected static final int CODE_OFFLINE = 40004;
+	protected static final String TYPE_REENTRY_OFF_SPI="S";
+	protected static final String TYPE_REENTRY_OFF="OFF_LINE";
+	protected static final String ERROR_SPEI = "ERROR EN TRANSFERENCIA SPEI";
 	private static ILogger logger = LogFactory.getLogger(TransferBaseTemplate.class);
 
 	/**

@@ -6,6 +6,7 @@ import com.cobiscorp.cobis.commons.components.ComponentLocator;
 import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
+import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
@@ -52,7 +53,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 		}
 
 		responseTransfer = executeTransfer(aBagSPJavaOrchestration);
-		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseTransfer);
+		
 
 		if (serverResponse.getOnLine()) {
 
@@ -72,17 +73,28 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 					logger.logInfo(
 							CLASS_NAME + " Transferencia en OffLine serverResponse :" + serverResponse.toString());
                  //saltar reentry si es que hubo problemas con el proveedor
-				if (responseTransfer.readParam("@i_fail_provider") == null
-						|| !responseTransfer.readParam("@i_fail_provider").equals("S")) {
+				if (responseTransfer.readValueParam("@i_fail_provider") == null
+						|| !responseTransfer.readValueParam("@i_fail_provider").equals("S")) {
+					
+					if(responseTransfer.readValueParam("@i_type_reentry")!=null && responseTransfer.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF_SPI)) {
+						
+						anOriginalRequest.addInputParam("@i_type_reentry", ICTSTypes.SQLVARCHAR,TYPE_REENTRY_OFF);
+					}
+					
 
 					responseTransfer = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
 					
 
+				}else {				
+					
+					return Utils.returnException(1, ERROR_SPEI);
 				}
 			}
 		}
 
+		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseTransfer);
+		
 		if (serverResponse.getOnLine() || (!serverResponse.getOnLine() && serverResponse.getOfflineWithBalances())) {
 			responseToSychronize = new ProcedureResponseAS();
 			responseToSychronize.setReturnCode(responseTransfer.getReturnCode());

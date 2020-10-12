@@ -708,12 +708,14 @@ public class DetailedConsolidatedQueryOrchestrationCore extends QueryProductBase
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("INICIANDO SERVICIO: getAccountBalanceLocal");
 		}
+		
+		//JCOS XDX
 
 		ProductQueryResponse productQueryResponse = new ProductQueryResponse();
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getAccountBalanceLocal");
 		}
-
+          //JCOS XDX
 		Context context = ContextManager.getContext();
 		CobisSession session = (CobisSession) context.getSession();
 
