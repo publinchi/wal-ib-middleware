@@ -204,7 +204,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 							if (logger.isDebugEnabled()) {
 								logger.logDebug(":::: Se aplicara servicio spei por que tiene saldo en local");
 							}
-							responseTransfer=executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+							executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequest);
 							responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR,1,TYPE_REENTRY_OFF_SPI);
 						}
 					} else {
@@ -270,7 +270,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		return responseTransfer;
 	}
 
-	private IProcedureResponse executeBanpayOffLine(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
+	private void executeBanpayOffLine(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
 			IProcedureRequest originalRequest) {
 		// SE LLAMA LA SERVICIO DE BANPAY
 		List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
@@ -284,7 +284,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					logger.logDebug("Error Provider");
 				}
 				
-				return Utils.returnException(1, ERROR_SPEI);
+				//return Utils.returnException(1, ERROR_SPEI);
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -293,10 +293,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// SE ACTUALIZA TABLA DE SECUENCIAL SPEI
 			speiSec(originalRequest, aBagSPJavaOrchestration);
 			// SE ADJUNTA LA CLAVE DE RASTREO
+			// SE ADJUNTA LA CLAVE DE RASTREO
 			responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
 					respuesta.get(2));
 			
-			return responseTransfer;
+		//	return responseTransfer;
 
 		} else {
 			if (logger.isDebugEnabled()) {
@@ -310,7 +311,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// SE HACELA REVERSA DE LA NOTA DE DEBITO
 			responseTransfer.addParam("@i_fail_provider", ICTSTypes.SQLVARCHAR, 1, "S");
 			
-			return Utils.returnException(1, ERROR_SPEI);
+	//		return Utils.returnException(1, ERROR_SPEI);
 
 		}
 	}
@@ -386,6 +387,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				response.add(connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
 				response.add(connectorSpeiResponse.readValueParam("@o_id"));
 				response.add(connectorSpeiResponse.readValueParam("@o_descripcion_error"));
+				
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
+					logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
+				}
 
 				// SE ALMACENA EL DATO DE CLAVE DE RASTREO
 				bag.put("@i_clave_rastreo", connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
