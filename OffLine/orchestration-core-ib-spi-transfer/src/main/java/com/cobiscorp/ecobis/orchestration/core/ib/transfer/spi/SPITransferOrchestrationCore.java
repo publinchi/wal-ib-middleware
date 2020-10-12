@@ -77,7 +77,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	private static final String I_CTA_LOCAL = "@i_cta";
 	private static final String S_SERVICIO_LOCAL = "@s_servicio";
 	private static final String I_PROD_LOCAL = "@i_prod";
-	private static final String ERROR_SPEI = "ERROR EN TRANSFERENCIA SPEI";
+
 	/** Instancia del Logger */
 	private static ILogger logger = LogFactory.getLogger(SPITransferOrchestrationCore.class);
 
@@ -183,9 +183,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
-					//if (originalRequest.readValueParam(T_RTY).equals("N")) // VALIDACION DE REENTRY
+					if ( (originalRequest.readValueParam("@i_type_reentry")==null 
+							||	!originalRequest.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) // VALIDACION DE REENTRY
 						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
-				} else {
+					
+				} else if(originalRequest.readValueParam("@i_type_reentry")==null    && !serverResponse.getOnLine()) {
 
 					if (logger.isDebugEnabled()) {
 						logger.logDebug("Se envia a reentry por fuera de linea JCOS");
@@ -202,7 +204,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 							if (logger.isDebugEnabled()) {
 								logger.logDebug(":::: Se aplicara servicio spei por que tiene saldo en local");
 							}
-							executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+							responseTransfer=executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+							responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR,1,TYPE_REENTRY_OFF_SPI);
 						}
 					} else {
 
@@ -267,7 +270,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		return responseTransfer;
 	}
 
-	private void executeBanpayOffLine(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
+	private IProcedureResponse executeBanpayOffLine(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
 			IProcedureRequest originalRequest) {
 		// SE LLAMA LA SERVICIO DE BANPAY
 		List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
@@ -276,6 +279,12 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			if (!respuesta.get(0).equals("00")) {
 
 				responseTransfer.addParam("@i_fail_provider", ICTSTypes.SQLVARCHAR, 1, "S");
+				
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Error Provider");
+				}
+				
+				return Utils.returnException(1, ERROR_SPEI);
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -286,14 +295,22 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// SE ADJUNTA LA CLAVE DE RASTREO
 			responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
 					respuesta.get(2));
+			
+			return responseTransfer;
 
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("List<String> respuesta error o null " + respuesta);
 			}
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Error Provider");
+			}
 
 			// SE HACELA REVERSA DE LA NOTA DE DEBITO
 			responseTransfer.addParam("@i_fail_provider", ICTSTypes.SQLVARCHAR, 1, "S");
+			
+			return Utils.returnException(1, ERROR_SPEI);
 
 		}
 	}

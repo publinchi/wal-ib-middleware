@@ -226,7 +226,7 @@ public abstract class QueryProductBaseTemplate extends SPJavaOrchestrationBase {
 		case SAVING_ACCOUNT:
 			wProcedureResponse = getSavingAccountsCore(request, aBagSPJavaOrchestration);
 			break;
-		case CHECKING_ACCOUNT:
+		case CHECKING_ACCOUNT:   // JCOS XDX CC
 			wProcedureResponse = getCheckingAccountsCore(request, aBagSPJavaOrchestration);
 			break;
 		case LOAN:
