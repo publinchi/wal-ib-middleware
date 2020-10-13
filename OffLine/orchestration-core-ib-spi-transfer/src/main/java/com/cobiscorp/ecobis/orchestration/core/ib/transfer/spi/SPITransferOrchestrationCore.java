@@ -171,9 +171,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
-
+			IProcedureRequest originalRequestClone= originalRequest.clone();
 			// SE EJECUTA LA NOTA DE DEBITO CENTRAL
-			responseTransfer = this.executeTransferSPI(originalRequest, aBagSPJavaOrchestration);
+			responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
 
 			responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration);
 
@@ -183,12 +183,14 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
-					if ( (originalRequest.readValueParam("@i_type_reentry")==null 
-							||	!originalRequest.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) // VALIDACION DE REENTRY
-						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+					if ( (originalRequestClone.readValueParam("@i_type_reentry")==null 
+							||	!originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) // VALIDACION DE REENTRY
+						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
 					
-				} else if(originalRequest.readValueParam("@i_type_reentry")==null    && !serverResponse.getOnLine()) {
+				} else if(originalRequestClone.readValueParam("@i_type_reentry")==null    && !serverResponse.getOnLine()) {
 
+				
+					
 					if (logger.isDebugEnabled()) {
 						logger.logDebug("Se envia a reentry por fuera de linea JCOS");
 					}
@@ -198,13 +200,13 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 					if (validationData != null) {
 
-						if (validationData != null && originalRequest.readValueParam(T_RTY).equals("N")
+						if (validationData != null && originalRequestClone.readValueParam(T_RTY).equals("N")
 								&& validationData.readValueParam("@o_aplica_tran").equals("S")) {
 
 							if (logger.isDebugEnabled()) {
 								logger.logDebug(":::: Se aplicara servicio spei por que tiene saldo en local");
 							}
-							executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+							executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
 							responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR,1,TYPE_REENTRY_OFF_SPI);
 						}
 					} else {
@@ -225,6 +227,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Fin executeTransfer");
 			}
+			
+			
 		}
 
 		return responseTransfer;

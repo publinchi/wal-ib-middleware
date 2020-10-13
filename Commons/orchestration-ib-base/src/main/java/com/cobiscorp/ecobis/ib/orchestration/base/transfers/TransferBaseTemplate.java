@@ -639,10 +639,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			case 1870001:
 			case 1870013:
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
+				if(bag!=null && bag.containsKey("@i_banco_dest"))
 				request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
-				logger.logInfo("@i_banco_dest bag: " + bag.get("@i_banco_dest"));
+				if(bag!=null && bag.containsKey("@i_clave_rastreo"))
 				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
-				logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo").toString());
 				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
 				request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
 				break;
