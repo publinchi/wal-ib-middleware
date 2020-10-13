@@ -81,8 +81,9 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 						anOriginalRequest.addInputParam("@i_type_reentry", ICTSTypes.SQLVARCHAR,TYPE_REENTRY_OFF);
 					}
 					
-
-					 saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+					if (logger.isInfoEnabled())
+						logger.logInfo("::::SAVED REENTRY:::: "+anOriginalRequest);
+				    saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
 					
 
