@@ -255,6 +255,7 @@ public class AuthorizationBase extends SPJavaOrchestrationBase implements ICoreS
 		request.addInputParam("@i_prod_org", ICTSTypes.SQLINT4, blockedAccountRequest.getProductId());
 		request.addInputParam("@i_block_id_comision", ICTSTypes.SQLINT4, blockedAccountRequest.getBlockId());
 		request.addInputParam("@i_ammount_comm", ICTSTypes.SQLMONEY, blockedAccountRequest.getAmount());
+		request.addInputParam("@i_alt", ICTSTypes.SQLINT4, String.valueOf(blockedAccountRequest.getIndex()));
 		request.addOutputParam("@o_msg", ICTSTypes.SQLVARCHAR, "");
 
 		if (logger.isDebugEnabled()) {

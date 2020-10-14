@@ -17,6 +17,21 @@ public class BlockedAccountRequest {
 	private String ssn;
 	private String operation;
 	private String fileId;
+	private int index;
+	
+	
+	/**
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+	/**
+	 * @param index the index to set
+	 */
+	public void setIndex(int index) {
+		this.index = index;
+	}
 	/**
 	 * @return the account
 	 */
