@@ -137,6 +137,7 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 			Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
 		IProcedureResponse responseProc = null;
 		PayrollResponse payRollResponse = null;
+		int contador = 0;
 		try {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo("*********  anOriginalRequest.readValueParam(@i_file_id) " + anOriginalRequest.readValueParam("@i_file_id"));
@@ -179,8 +180,9 @@ public class AuthorizationOrchestrationCore extends SPJavaOrchestrationBase {
 					blockedAccountRequest.setCurrencyId(paymentAccountResponse.getCurrencyId()!=null ? String.valueOf(paymentAccountResponse.getCurrencyId()) : null);
 					blockedAccountRequest.setBlockId(paymentAccountResponse.getBlockId()!=null ? String.valueOf(paymentAccountResponse.getBlockId()) : null);
 					blockedAccountRequest.setAmount(paymentAccountResponse.getAmount()!=null ? String.valueOf(paymentAccountResponse.getAmount()) : null );
+					blockedAccountRequest.setIndex(contador);
 					BlockedAccountResponse blockedAccountResponse = coreServiceAuthorization.unblockAccount(blockedAccountRequest);
-				
+					contador = contador +1;
 					if (blockedAccountResponse!=null && !blockedAccountResponse.getSuccess()) {
 						responseProc.addMessage(blockedAccountResponse.getReturnCode(), "ERROR. ARCHIVO: "+payrollRequest.getFileId()+" CUENTA: "+paymentAccountResponse.getAccount());
 					}
