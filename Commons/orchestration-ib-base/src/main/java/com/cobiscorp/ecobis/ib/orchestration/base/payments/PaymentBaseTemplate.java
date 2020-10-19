@@ -1100,7 +1100,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_precio", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
 			request.addInputParam("@i_num_aut", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_num_autorizacion"));
 			request.addInputParam("@i_saldo", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo"));
-			request.addInputParam("@i_saldo_cliente", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo_final"));
+			request.addInputParam("@i_saldo_cliente", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_saldo_cliente"));
 			request.addInputParam("@i_com_prov", ICTSTypes.SQLMONEY, anOriginalResponse.readValueParam("@o_comision"));
 			request.addInputParam("@i_xml_req", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_req"));
 			request.addInputParam("@i_xml_resp", ICTSTypes.SQLVARCHAR, anOriginalResponse.readValueParam("@o_xml_resp"));
