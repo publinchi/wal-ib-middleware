@@ -4,9 +4,10 @@
 package com.cobiscorp.ecobis.orchestration.core.ib;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -153,6 +154,20 @@ public class DetailMovementQueryAccounts extends SPJavaOrchestrationBase impleme
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("**************jv ProcedureResponse: " + detailMovementsRequest.getwEnquiryRequest());
 		}
+		
+ 
+		String formattedDate=detailMovementsRequest.getwEnquiryRequest().getTransactionDate();
+		try {
+		    DateFormat format = new SimpleDateFormat("dd/MM/yyyy");	
+		    Date fechaSearch=format.parse(detailMovementsRequest.getwEnquiryRequest().getTransactionDate());
+		    formattedDate= new SimpleDateFormat("MM/dd/yyyy").format(fechaSearch);
+		}catch(Exception xe) {
+			logger.logInfo("Error de conversion en date");
+			logger.logInfo(xe);
+		  formattedDate=detailMovementsRequest.getwEnquiryRequest().getTransactionDate();
+		}
+		
+		
 		Context context = ContextManager.getContext();
 		CobisSession session = (CobisSession) context.getSession();
 		IProcedureRequest executionRequest = new ProcedureRequestAS();
@@ -168,8 +183,7 @@ public class DetailMovementQueryAccounts extends SPJavaOrchestrationBase impleme
 		executionRequest.addInputParam("@s_ssn", ICTSTypes.SQLINT4, session.getSessionNumber());
 		executionRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
 				detailMovementsRequest.getwEnquiryRequest().getProductNumber());
-		executionRequest.addInputParam("@i_fecha_trn", ICTSTypes.SQLVARCHAR,
-				detailMovementsRequest.getwEnquiryRequest().getTransactionDate());
+		executionRequest.addInputParam("@i_fecha_trn", ICTSTypes.SQLDATETIME,formattedDate);
 		executionRequest.addInputParam("@i_ssn", ICTSTypes.SQLINT4,
 				detailMovementsRequest.getwAccountStatement().getSequential().toString());
 		executionRequest.addInputParam("@i_alt", ICTSTypes.SQLINT4,
