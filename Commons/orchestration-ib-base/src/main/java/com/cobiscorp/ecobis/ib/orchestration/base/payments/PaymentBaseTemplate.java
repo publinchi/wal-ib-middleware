@@ -314,7 +314,7 @@ public abstract class PaymentBaseTemplate extends SPJavaOrchestrationBase {
 			} else {
 				aBagSPJavaOrchestration.put(ESTADO, "C");
 				responsePayDestinationProduct.addParam("@o_trn_estado", ICTSTypes.SQLCHAR, 0, "C");
-				if(aTransactionMonetaryRequest.getAmmount().compareTo(BigDecimal.ZERO) != 0 && aTransactionMonetaryRequest.getAmmountCommission().compareTo(BigDecimal.ZERO) != 0) {
+				if(aTransactionMonetaryRequest.getAmmount().compareTo(BigDecimal.ZERO) != 0 || aTransactionMonetaryRequest.getAmmountCommission().compareTo(BigDecimal.ZERO) != 0) {
 					//Ejecuta el reverso del DEBITO		
 					if (logger.isDebugEnabled()) {
 						logger.logDebug(CLASS_NAME + "Executing executePayment Ejecuta REVERSO DEL DEBITO " + aTransactionMonetaryRequest.toString());					
