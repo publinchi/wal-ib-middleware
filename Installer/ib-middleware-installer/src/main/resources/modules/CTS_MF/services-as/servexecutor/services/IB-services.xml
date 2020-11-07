@@ -2769,4 +2769,5 @@
   <service id="InternetBanking.WebApp.Utils.Service.Utils.GetCommission" interface="cobiscorp.ecobis.internetbanking.webapp.utils.service.service.IUtils" method="getCommission" description=" "/>
   <service id="Cobiscorp.BusinessBanking.Services.Authorization.Authorization.AuthorizesPending" interface="cobiscorp.businessbanking.services.authorization.IAuthorization" method="authorizesPending" description=" "/>
   <service id="MobileBanking.Service.Survey.GetAnswersQuestionByLogin" interface="cobiscorp.ecobis.mobilebanking.service.service.ISurvey" method="getAnswersQuestionByLogin" description=" "/>
+  <service id="MobileBanking.Service.OnBoardingPerson.CreateSavingAccount" interface="cobiscorp.ecobis.mobilebanking.service.service.IOnBoardingPerson" method="createSavingAccount" description=" "/>
 </services>
