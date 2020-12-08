@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="8" id="2" name="properties">
+  <collection type="List" length="9" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="transaccion" />
       <field type="String" name="type" value="string" />
@@ -81,11 +81,22 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="11" index="8">
+      <field type="String" name="name" value="tipoServicio" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="String" name="collectionType" value="" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="Commission" />
-  <collection type="List" length="0" id="11" name="templates">
+  <collection type="List" length="0" id="12" name="templates">
   </collection>
-  <collection type="Map" length="0" id="12" name="templatesProperties">
+  <collection type="Map" length="0" id="13" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />
