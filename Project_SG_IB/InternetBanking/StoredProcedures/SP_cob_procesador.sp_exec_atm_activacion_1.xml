@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_exec_atm_activacion</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_proceso" dataType="varchar" direction="in" />
+    <parameter name="@i_motivo" dataType="varchar" direction="in" />
+    <parameter name="@i_servicio" dataType="varchar" direction="in" />
+    <parameter name="@i_banco" dataType="tinyint" direction="in" />
+    <parameter name="@i_tarjeta" dataType="int" direction="in" />
+    <parameter name="@i_oficina" dataType="smallint" direction="in" />
+    <parameter name="@i_util_sobre" dataType="char" direction="in" />
+    <parameter name="@i_comentario" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion_pin" dataType="tinyint" direction="in" />
+  </parameters>
+  <queries />
+</procedure>

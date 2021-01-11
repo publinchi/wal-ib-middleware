@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_activate_card</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_modo" dataType="varchar" direction="in" />
+    <parameter name="@i_id_solicitud" dataType="varchar" direction="in" />
+    <parameter name="@i_tarjeta" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_nacimiento" dataType="varchar" direction="in" />
+    <parameter name="@i_ValorNIP" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo_actualizacion" dataType="varchar" direction="in" />
+    <parameter name="@i_clave_empresa" dataType="varchar" direction="in" />
+    <parameter name="@i_nombre_embozar" dataType="varchar" direction="in" />
+    <parameter name="@i_genero" dataType="varchar" direction="in" />
+    <parameter name="@i_correo" dataType="varchar" direction="in" />
+    <parameter name="@i_ciudad" dataType="varchar" direction="in" />
+    <parameter name="@i_curp" dataType="varchar" direction="in" />
+    <parameter name="@i_NIP_nuevo" dataType="varchar" direction="in" />
+    <parameter name="@o_cod_respuesta" dataType="varchar" direction="out" />
+    <parameter name="@o_desc_respuesta" dataType="varchar" direction="out" />
+    <parameter name="@o_id_solicitud" dataType="varchar" direction="out" />
+    <parameter name="@o_tarjeta" dataType="varchar" direction="out" />
+    <parameter name="@o_ValorNIP" dataType="varchar" direction="out" />
+  </parameters>
+  <queries />
+</procedure>
