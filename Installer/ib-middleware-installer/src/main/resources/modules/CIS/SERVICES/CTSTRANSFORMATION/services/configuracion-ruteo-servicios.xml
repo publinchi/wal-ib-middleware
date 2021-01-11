@@ -2916,11 +2916,11 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
-	<!-- 18500045 ACTIVACION TARJETA CACAO -->
-	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para ActivateCardOrchestrationCore 18500045">
+	<!-- 18500050 ACTIVACION TARJETA CACAO -->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para ActivateCardOrchestrationCore 18500050">
 		<conditions>
 		  <condition param="trn">
-			<value>18500045</value>      
+			<value>18500050</value>      
 		  </condition>
 		</conditions>
 		<indicators>
