@@ -1257,7 +1257,8 @@
 											orchestration-management-token,
 											orchestration-core-ib-enrollment-template,
                                             orchestration-core-ib-enrollment,
-											orchestration-core-ib-authorization-template											
+											orchestration-core-ib-authorization-template,
+											orchestration-core-ib-activate-card											
 						</includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
