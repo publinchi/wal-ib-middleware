@@ -92,7 +92,8 @@
         <module>../CORE_COBIS/orchestration-core-ib-authenticate-template</module>
         <module>../CORE_COBIS/orchestration-core-batch-notification-template</module>
 		<module>../CORE_COBIS/orchestration-core-ib-enrollment-template</module>
-		<module>../CORE_COBIS/orchestration-core-ib-authorization-template</module>
+		<module>../CORE_COBIS/orchestration-core-ib-authorization-template</module>	
+		<module>../OnLine/orchestration-core-ib-activate-card</module>	
         <!-- Direct 54-->
         <module>../Direct/orchestration-core-ib-cashiers-check</module>
         <module>../Direct/orchestration-core-ib-authenticate</module>
@@ -148,7 +149,7 @@
         <module>../Direct/orchestration-core-ib-query-customer</module>
         <module>../Direct/orchestration-core-ib-query-modules</module>
         <module>../Direct/orchestration-core-batch-notification</module>
-        <module>../Direct/orchestration-ib-cards</module>
+        <module>../Direct/orchestration-ib-cards</module>        
         <!-- Offline 13-->
         <module>../Offline/orchestration-core-ib-self-account-transfer</module>
         <module>../Offline/orchestration-core-ib-third-account-transfer</module>
