@@ -31,7 +31,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
-import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest; 
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
@@ -168,24 +168,39 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			logger.logDebug("Inicia executeTransfer");
 		}
 		IProcedureResponse responseTransfer = null;
+		String idTransaccion="";
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 			IProcedureRequest originalRequestClone= originalRequest.clone();
 			// SE EJECUTA LA NOTA DE DEBITO CENTRAL
 			responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
+			String idMovement="";
+			if(responseTransfer.readValueParam("@o_referencia")!=null && responseTransfer.readValueParam("@o_referencia")!=null)
+              idMovement= responseTransfer.readValueParam("@o_referencia");
+		
 
-			responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration);
-
+			responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration,idTransaccion);
+			
+		
 			// JCOS VALIDACION PARA FL
 			if (serverResponse.getOnLine()) {
+				
+				IProcedureResponse tran=(IProcedureResponse)aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
+				idTransaccion=idMovement;
+				
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(":::: Referencia XDX "+ idTransaccion);
+				}
 
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
 					if ( (originalRequestClone.readValueParam("@i_type_reentry")==null 
-							||	!originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) // VALIDACION DE REENTRY
-						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
+							||	!originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {// VALIDACION DE REENTRY
+						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);				
+					    
+					}
 					
 				} else if(originalRequestClone.readValueParam("@i_type_reentry")==null    && !serverResponse.getOnLine()) {
 
@@ -229,6 +244,14 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			}
 			
 			
+		}
+		
+		if(idTransaccion!=null && idTransaccion!="") {
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Almacenadox !!! "+idTransaccion);
+			}
+			responseTransfer.addParam("@o_idTransaccion", ICTSTypes.SQLVARCHAR, idTransaccion.length(), idTransaccion);
 		}
 
 		return responseTransfer;
@@ -548,7 +571,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				anOriginalRequest.readValueParam(T_EJEC));
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
-
+	
+		
 		if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
 
@@ -566,6 +590,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			logger.logInfo("NO ENTRA VALIDACION COMISION > 0");
 			requestTransfer.addInputParam("@i_comision", ICTSTypes.SYBMONEY, "0");
 		}
+		
+		//jcos recuperacion de SSN TRANSACCIONAL
+		requestTransfer.addOutputParam("@o_referencia", ICTSTypes.SYBINT4, "0");
 
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
@@ -643,7 +670,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	 * @return
 	 */
 	private IProcedureResponse transformToProcedureResponse(IProcedureResponse responseTransfer,
-			Map<String, Object> aBagSPJavaOrchestration) {
+			Map<String, Object> aBagSPJavaOrchestration,String idTransaccion) {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Inicia transformToProcedureResponse");
 		}
@@ -663,6 +690,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
 			response.setReturnCode(responseTransfer.getReturnCode());
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
+			
+			idTransaccion=String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH));
+			
+			logger.logDebug(CLASS_NAME + "Respuesta TRANSACCION ID --> "+idTransaccion);
 		}
 
 		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
