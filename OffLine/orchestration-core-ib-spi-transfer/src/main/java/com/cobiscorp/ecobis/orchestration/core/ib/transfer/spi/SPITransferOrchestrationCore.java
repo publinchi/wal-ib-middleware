@@ -77,6 +77,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	private static final String I_CTA_LOCAL = "@i_cta";
 	private static final String S_SERVICIO_LOCAL = "@s_servicio";
 	private static final String I_PROD_LOCAL = "@i_prod";
+	private static final String CANCEL_OPERATION="0";
 
 	/** Instancia del Logger */
 	private static ILogger logger = LogFactory.getLogger(SPITransferOrchestrationCore.class);
@@ -196,9 +197,24 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
-					if ( (originalRequestClone.readValueParam("@i_type_reentry")==null 
+					if (  (originalRequestClone.readValueParam("@i_type_reentry")==null 
 							||	!originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {// VALIDACION DE REENTRY
-						responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);				
+						
+						if(idTransaccion!=null && idTransaccion!="") {
+							if (logger.isDebugEnabled()) {
+								logger.logDebug(":::: Ahorros OK Transfer Banpay "+ idTransaccion);
+							}
+							int transacctionApplied =Integer.parseInt(idTransaccion.trim());
+							if(transacctionApplied>0)
+								responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);		
+							else
+								logger.logDebug(":::: No Aplica Transaccion no valida "+ idTransaccion);
+						}else {
+							
+							if (logger.isDebugEnabled()) {
+								logger.logDebug(":::: No Aplica Transaccion Cancel jcos "+ idTransaccion);
+							}
+						}
 					    
 					}
 					
