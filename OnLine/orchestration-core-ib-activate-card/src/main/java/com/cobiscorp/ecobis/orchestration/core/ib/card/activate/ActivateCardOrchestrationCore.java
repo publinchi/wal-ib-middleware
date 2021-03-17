@@ -179,39 +179,61 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 
 	private IProcedureResponse executeCacao(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer, IProcedureRequest originalRequest) {
 		if (logger.isDebugEnabled())
-			logger.logDebug("inicio metodo executeCacao");
+			logger.logDebug("jcos -> Activate inicio metodo executeCacao");
 
-		// SE LLAMA LA SERVICIO DE CACAO
+		// SE LLAMA LA SERVICIO DE CACAO //CORRECCIONES SERVICIO DE ATIVACIÓN CACAO
 		List<String> respuesta = cacaoExecution(originalRequest, aBagSPJavaOrchestration);
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("rfl--> respuesta: " + respuesta);
+			logger.logDebug("jcos-->Activate respuesta: " + respuesta);
 		}
+		
+		
 
 		// SE HACE LA VALIDACION DE LA RESPUESTA (0000 exito)
 		if (respuesta != null && respuesta.size() > 0) {
 			if (!respuesta.get(1).equals("0000")) {
-				if (logger.isDebugEnabled()) {
+				/*if (logger.isDebugEnabled()) {
 					logger.logDebug("rfl--> error nip");
 				}
-				return Utils.returnException(1, ERROR_CACAO);
+				return Utils.returnException(1, ERROR_CACAO);*/
+				String codeError=respuesta.get(1);
+			 /*  if(codeError.equals("1109")) {
+				   
+				   return Utils.returnException(1, "La Tarjeta o Medio de Acceso ya se encuentra ativo");
+				   
+			   }else if(codeError.equals("1018")) {
+				   
+				   return Utils.returnException(1, "La Tarjeta o Medio de Acceso No Existe");
+			   } */				
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("jcos--> code Error "+respuesta.get(1));
+				}
+				
+				responseTransfer.addParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(), respuesta.get(2));
+				responseTransfer.addParam("@o_desc_respuesta", ICTSTypes.SQLVARCHAR, respuesta.get(1).length(), respuesta.get(1));
+			   
 			} else {
 				if (logger.isDebugEnabled()) {
-					logger.logDebug("rfl--> ok nip");
+					logger.logDebug("jcos--> ok nip");
 				}
 				// SE ADJUNTA NIP
-				if (respuesta.size() > 3)
+				if (respuesta.size() > 3) {
+					
 					responseTransfer.addParam("@o_ValorNIP", ICTSTypes.SQLVARCHAR, respuesta.get(3).length(), respuesta.get(3));
+					responseTransfer.addParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(), respuesta.get(2));
+					responseTransfer.addParam("@o_desc_respuesta", ICTSTypes.SQLVARCHAR, respuesta.get(1).length(), respuesta.get(1));
+				}
 			}
 		} else {
 			if (logger.isDebugEnabled()) {
-				logger.logDebug("rfl--> List<String> respuesta error o null");
+				logger.logDebug("jcos--> List<String> respuesta error o null");
 			}
 			return Utils.returnException(1, ERROR_CACAO);
 		}
 
 		if (logger.isDebugEnabled())
-			logger.logDebug("fin metodo executeCacao");
+			logger.logDebug("jcos fin metodo executeCacao");
 
 		return responseTransfer;
 
@@ -221,7 +243,7 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 		List<String> response = null;
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo("rfl--> Entrando a cacaoExecution");
+			logger.logInfo("jcos--> Entrando a cacaoExecution Activation");
 		}
 
 		try {
@@ -257,13 +279,13 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 			IProcedureResponse connectorSpeiResponse = executeProvider(anOriginalRequest, bag);
 
 			if (logger.isDebugEnabled())
-				logger.logDebug("rfl--> connectorSpeiResponse: " + connectorSpeiResponse);
+				logger.logDebug("jcos--> connectorCacaoActivationResponse: " + connectorSpeiResponse);
 
 			// SE VALIDA LA RESPUESTA
 			if (!connectorSpeiResponse.hasError()) {
 				if (logger.isDebugEnabled()) {
-					logger.logDebug("rfl--> success CISConnectorCacao: true");
-					logger.logDebug("rfl--> connectorCacaoResponse: " + connectorSpeiResponse.getParams());
+					logger.logDebug("jcos--> success CISConnectorCacao: true");
+					logger.logDebug("jcos--> connectorCacaoResponse: " + connectorSpeiResponse.getParams());
 				}
 
 				// SE MAPEAN LAS VARIABLES DE SALIDA
@@ -277,17 +299,17 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 			} else {
 
 				if (logger.isDebugEnabled()) {
-					logger.logDebug("rfl--> Error connectorCacaoResponse: " + connectorSpeiResponse);
+					logger.logDebug("jcos--> Error connectorCacaoResponse: " + connectorSpeiResponse);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			response = null;
-			logger.logInfo("rfl--> Error Catastrofico de cacaoExecution");
+			logger.logInfo("jcos--> Error Catastrofico de cacaoExecution");
 
 		} finally {
 			if (logger.isInfoEnabled()) {
-				logger.logInfo("rfl--> Saliendo de cacaoExecution");
+				logger.logInfo("jcos--> Saliendo de cacaoExecution");
 			}
 		}
 
