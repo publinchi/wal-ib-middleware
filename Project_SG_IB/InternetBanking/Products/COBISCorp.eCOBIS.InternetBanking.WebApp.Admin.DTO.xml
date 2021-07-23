@@ -27,7 +27,7 @@
       <field type="String" name="packageTypeName" value="Jar" />
     </class>
   </collection>
-  <collection type="List" length="112" id="9" name="dTOs">
+  <collection type="List" length="113" id="9" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="10" index="0">
       <field type="String" name="name" value="ActiveCustomerCard" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
@@ -534,63 +534,68 @@
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="111" index="101">
-      <field type="String" name="name" value="ThirdPartiesResponse" />
+      <field type="String" name="name" value="Spei" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="112" index="102">
-      <field type="String" name="name" value="ThirdParty" />
+      <field type="String" name="name" value="ThirdPartiesResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="113" index="103">
-      <field type="String" name="name" value="Transaction" />
+      <field type="String" name="name" value="ThirdParty" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="114" index="104">
-      <field type="String" name="name" value="TransactionProfile" />
+      <field type="String" name="name" value="Transaction" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="115" index="105">
-      <field type="String" name="name" value="TransferBeneficiary" />
+      <field type="String" name="name" value="TransactionProfile" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="116" index="106">
-      <field type="String" name="name" value="TransferBeneficiaryCollection" />
+      <field type="String" name="name" value="TransferBeneficiary" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="117" index="107">
-      <field type="String" name="name" value="User" />
+      <field type="String" name="name" value="TransferBeneficiaryCollection" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="118" index="108">
-      <field type="String" name="name" value="UserCollection" />
+      <field type="String" name="name" value="User" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="119" index="109">
-      <field type="String" name="name" value="UserProfile" />
+      <field type="String" name="name" value="UserCollection" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="120" index="110">
-      <field type="String" name="name" value="Widget" />
+      <field type="String" name="name" value="UserProfile" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="121" index="111">
+      <field type="String" name="name" value="Widget" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="122" index="112">
       <field type="String" name="name" value="WidgetCollection" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="version" value="1" />
     </class>
   </collection>
-  <collection type="List" length="1" id="122" name="properties">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="123" index="0">
+  <collection type="List" length="1" id="123" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="124" index="0">
       <field type="String" name="name" value="MavenGroupId" />
       <field type="String" name="value" value="com.cobiscorp.channels.ib" />
       <field type="char" name="type" value="\u0000" />
@@ -601,8 +606,8 @@
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="true" />
   <field type="boolean" name="autoCleanSource" value="true" />
-  <collection type="List" length="1" id="124" name="references">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="125" index="0">
+  <collection type="List" length="1" id="125" name="references">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="126" index="0">
       <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" />
       <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" />
       <field type="String" name="documentationLanguage" value="Español" />
@@ -610,28 +615,29 @@
       <field type="String" name="version" value="1.0.0.0" />
     </class>
   </collection>
-  <collection type="List" length="1" id="126" name="externalReferences">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGExternalReferences" id="127" index="0">
+  <collection type="List" length="1" id="127" name="externalReferences">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGExternalReferences" id="128" index="0">
       <field type="String" name="name" value="CTSServiceFramework-All-1.0.5" />
       <field type="String" name="type" value="JAR" />
       <field type="String" name="path" value="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" />
       <field type="String" name="package" value="com.cobiscorp.cobis.cts.sdf.dto" />
     </class>
   </collection>
-  <collection type="List" length="1" id="128" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="129" index="0">
+  <collection type="List" length="1" id="129" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="130" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobisBV" />
       <field type="String" name="keyPassword" value="cobisbvadminadmin" />
       <field type="String" name="keyCertificatePassword" value="cobisbvadmin" />
       <field type="String" name="keyFileName" value="cobisBV.KEYSTORE" />
       <field type="boolean" name="relativeFolder" value="true" />
+      <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.6" />
       <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.6.0_45" />
     </class>
   </collection>
-  <collection type="List" length="6" id="130" name="templateCommands">
+  <collection type="List" length="6" id="131" name="templateCommands">
     <field type="String" index="0" value="cmd_Maven install in local repository" />
     <field type="String" index="1" value="cmd_Maven deploy in remote repository" />
     <field type="String" index="2" value="cmd_Nuget install in local repository" />
