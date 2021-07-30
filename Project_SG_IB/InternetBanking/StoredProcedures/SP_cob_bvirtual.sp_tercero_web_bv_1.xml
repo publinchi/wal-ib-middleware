@@ -61,6 +61,8 @@
     <parameter name="@o_existe" dataType="char" direction="out" />
     <parameter name="@s_perfil" dataType="smallint" direction="in" />
     <parameter name="@t_rty" dataType="char" direction="in" />
+    <parameter name="@i_primer_apellido" dataType="varchar" direction="in" />
+    <parameter name="@i_segundo_apellido" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
