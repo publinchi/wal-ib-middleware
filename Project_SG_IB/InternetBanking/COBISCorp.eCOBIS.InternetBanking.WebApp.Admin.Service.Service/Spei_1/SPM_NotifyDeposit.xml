@@ -17,7 +17,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="18500068" />
+      <field type="String" name="constantValue" value="18500069" />
       <field type="String" name="cTSDataType" value="SQLINT4" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -323,8 +323,8 @@
   </collection>
   <collection type="List" length="0" id="53" name="parametersOpenApi">
   </collection>
-  <field type="String" name="trnCode" value="18500068" />
-  <collection type="List" length="3" id="54" name="dTOs">
+  <field type="String" name="trnCode" value="18500069" />
+  <collection type="List" length="2" id="54" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="55" index="0">
       <field type="String" name="dTOName" value="Spei" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
@@ -345,18 +345,8 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="57" index="2">
-      <field type="String" name="dTOName" value="Spei" />
-      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
-      <field type="String" name="dTOVersion" value="1" />
-      <field type="int" name="repetition" value="0" />
-      <field type="String" name="alias" value="returnSpei" />
-      <field type="String" name="direction" value="return" />
-      <field type="boolean" name="required" value="true" />
-      <field type="String" name="stateDTO" value="" />
-    </class>
   </collection>
-  <collection type="Map" length="2" id="58" name="mappingProperties">
+  <collection type="Map" length="2" id="57" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />
