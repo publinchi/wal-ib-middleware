@@ -176,6 +176,8 @@ public class BalanceProduct {
 	
 	private String clabeAccountNumber;
 	
+	private BigDecimal totalCredit;
+	
 	/**
 	 * @return the type
 	 */
@@ -665,13 +667,26 @@ public class BalanceProduct {
 		this.clabeAccountNumber = clabeAccountNumber;
 	}
 
+	/**
+	 * @return the totalCredit
+	 */
+	public BigDecimal getTotalCredit() {
+		return totalCredit;
+	}
+
+	/**
+	 * @param totalCredit the totalCredit to set
+	 */
+	public void setTotalCredit(BigDecimal totalCredit) {
+		this.totalCredit = totalCredit;
+	}
 
 	@Override
 	public String toString() {
 		return "BalanceProduct [deliveryAddress=" + deliveryAddress + ", checkBalance=" + checkBalance + ", overdraftBalance=" + overdraftBalance + ", openingDate=" + openingDate + ", inExchangeBalance=" + inExchangeBalance + ", embargoedBalance=" + embargoedBalance + ", product=" + product + ", client=" + client + ", totalBalance=" + totalBalance + ", drawBalance=" + drawBalance + ", rate="
 				+ rate + ", expirationDate=" + expirationDate + ", availableBalance=" + availableBalance + ", equityBalance=" + equityBalance + ", rotateBalance=" + rotateBalance + ", balance12H=" + balance12H + ", balance24H=" + balance24H + ", remittancesBalance=" + remittancesBalance + ", blockedAmmount=" + blockedAmmount + ", blockedNumber=" + blockedNumber + ", blockedNumberAmmount="
 				+ blockedNumberAmmount + ", processDate=" + processDate + ", state=" + state + ", surplusAmmount=" + surplusAmmount + ", idClosed=" + idClosed + ", cashBalance=" + cashBalance + ", nextPaymentValue=" + nextPaymentValue + ", dateLastMovent=" + dateLastMovent + ", officeAccount=" + officeAccount + ", productBanking=" + productBanking + ", ssnHost=" + ssnHost + ", accountingBalance="
-				+ accountingBalance +",oficial="+ oficial +",clabeAccountNumber="+ clabeAccountNumber + "]";
+				+ accountingBalance +",oficial="+ oficial +",clabeAccountNumber="+ clabeAccountNumber + ",totalCredit="+totalCredit+"]";
 	}
 
 }
