@@ -818,6 +818,8 @@ public class DetailedConsolidatedQueryOrchestrationCore extends QueryProductBase
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("productType", ICTSTypes.SQLCHAR, 1));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("alias", ICTSTypes.SQLVARCHAR, 32));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("currencyId", ICTSTypes.SQLINT2, 21));
+		
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("totalCredit", ICTSTypes.SQLMONEY, 21));
 
 		for (ProductConsolidate consolidate : aProcedureResponse.getProductCollection()) {
 			Product product = consolidate.getProduct();
@@ -854,6 +856,8 @@ public class DetailedConsolidatedQueryOrchestrationCore extends QueryProductBase
 			row.addRowData(18, new ResultSetRowColumnData(false, ""));// productType
 			row.addRowData(19, new ResultSetRowColumnData(false, product.getProductAlias()));
 			row.addRowData(20, new ResultSetRowColumnData(false, currency.getCurrencyId().toString()));
+			
+			row.addRowData(21, new ResultSetRowColumnData(false, balance.getTotalCredit().toString()));
 			data.addRow(row);
 
 		}

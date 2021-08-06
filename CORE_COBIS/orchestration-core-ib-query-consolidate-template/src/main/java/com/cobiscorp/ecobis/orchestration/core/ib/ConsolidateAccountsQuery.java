@@ -312,6 +312,8 @@ public class ConsolidateAccountsQuery extends SPJavaOrchestrationBase implements
 							product.setBankProduct(rows[13].getValue().toString());
 						if (rows[14].getValue() != null)
 							product.setClabeInterbank (rows[14].getValue().toString());
+						if (rows[15].getValue() != null)
+							balanceProduct.setTotalCredit(new BigDecimal(rows[15].getValue().toString()));
 					}
 					if (rows[0].getValue().equals("7")) {
 						if (rows[11].getValue() != null)
