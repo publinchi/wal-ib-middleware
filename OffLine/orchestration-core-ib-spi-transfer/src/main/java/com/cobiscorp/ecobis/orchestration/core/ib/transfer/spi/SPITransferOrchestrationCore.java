@@ -301,10 +301,12 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 					logger.logDebug("Paso exitoso");
 				}
 				// SE ADJUNTA LA CLAVE DE RASTREO
-				String wPrcessingSpeiMessage = "PENDIENTE";
-				responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, wPrcessingSpeiMessage.length(),wPrcessingSpeiMessage);
-				/*responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
-						respuesta.get(2));*/
+				responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
+						respuesta.get(2));
+
+				/*String wPrcessingSpeiMessage = "PENDIENTE";
+				responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, wPrcessingSpeiMessage.length(),wPrcessingSpeiMessage);*/
+
 			}
 		} else {
 			if (logger.isDebugEnabled()) {
@@ -343,10 +345,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// SE ACTUALIZA TABLA DE SECUENCIAL SPEI
 			speiSec(originalRequest, aBagSPJavaOrchestration);
 			// SE ADJUNTA LA CLAVE DE RASTREO
-			String wPrcessingSpeiMessage = "PENDIENTE";
-			responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, wPrcessingSpeiMessage.length(),wPrcessingSpeiMessage);
-			/*responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
-					respuesta.get(2));*/
+			responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
+					respuesta.get(2));
+			/*String wPrcessingSpeiMessage = "PENDIENTE";
+			responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, wPrcessingSpeiMessage.length(),wPrcessingSpeiMessage);*/
 			
 		//	return responseTransfer;
 
