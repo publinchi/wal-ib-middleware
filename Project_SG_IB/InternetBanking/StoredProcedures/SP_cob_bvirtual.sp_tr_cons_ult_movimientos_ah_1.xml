@@ -101,6 +101,7 @@
         <column name="SEC UNICO" />
         <column name="IMAGEN" />
         <column name="CONCEPTO" />
+        <column name="RASTREO" />
       </columns>
       <queryText></queryText>
     </query>

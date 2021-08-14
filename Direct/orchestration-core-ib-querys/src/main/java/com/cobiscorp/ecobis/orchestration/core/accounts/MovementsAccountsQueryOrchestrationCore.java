@@ -290,6 +290,7 @@ public class MovementsAccountsQueryOrchestrationCore extends SPJavaOrchestration
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("UNIQUESEQUENTIAL", ICTSTypes.SQLINT4, 6));
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("IMAGE", ICTSTypes.SQLVARCHAR, 1));
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("CONCEPT", ICTSTypes.SQLVARCHAR, 255));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("RASTREO", ICTSTypes.SQLVARCHAR, 255));
 
 				for (AccountStatement obj : accountStatementResponse.getAccountStatements()) {
 					row = new ResultSetRow();
@@ -311,6 +312,7 @@ public class MovementsAccountsQueryOrchestrationCore extends SPJavaOrchestration
 					logger.logInfo("obj: " + obj.toString());
 					logger.logInfo("getConcept: " + obj.getConcept());
 					row.addRowData(14, new ResultSetRowColumnData(false, obj.getConcept()));
+					row.addRowData(15,new ResultSetRowColumnData(false, obj.getRastreo()));
 					data.addRow(row);
 				}
 				resultBlock = new ResultSetBlock(metaData, data);

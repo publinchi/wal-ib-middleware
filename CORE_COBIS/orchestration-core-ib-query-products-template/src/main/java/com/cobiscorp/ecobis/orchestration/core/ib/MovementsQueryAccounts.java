@@ -158,6 +158,9 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 
 		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
 
+		response.addParam("RASTREO",ICTSTypes.SQLVARCHAR,255,"PENDIENTE");
+
+
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Respuesta Devuelta del Core:" + response.getProcedureResponseAsString());
 
@@ -286,7 +289,10 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 					if (rows[12].getValue() != null)
 						accountStatement.setImage(rows[12].getValue().toString());
 					if (rows[13].getValue() != null)
-						accountStatement.setConcept(rows[13].getValue().toString());	
+						accountStatement.setConcept(rows[13].getValue().toString());
+					//	accountStatement.setRastreo(rastreoSpei(new Integer(rows[8].getValue().toString())));
+                    if(rows[14].getValue() != null)
+						accountStatement.setRastreo(rows[14].getValue().toString());
 
 					accountStatementCollection.add(accountStatement);
 				}
@@ -310,6 +316,36 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Respuesta Devuelta" + wAccountStatementResponse);
 		return wAccountStatementResponse;
+	}
+
+	private String rastreoSpei(int secuencial){
+
+		String rastreo="";
+
+		logger.logInfo("jcos- OBTENIENDO RASTREO SPEI");
+		String transaccion="0";
+
+		transaccion=String.valueOf(secuencial);
+
+
+		IProcedureRequest request = new ProcedureRequestAS();
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);		// SE SETEAN DATOS
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		request.setSpName("cob_bvirtual..sp_registra_spei");
+		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "R");
+		request.addInputParam("@i_transaccion_spei", ICTSTypes.SYBINT4, transaccion);
+		// SE SETEA VARIABLE DE SALIDA
+		request.addOutputParam("@o_rastreo", ICTSTypes.SYBVARCHAR, "XXX");
+		// SE EJECUTA Y SE OBTIENE LA RESPUESTA
+		IProcedureResponse pResponse = executeCoreBanking(request);
+		rastreo=pResponse.readValueParam("@o_rastreo");
+
+		logger.logInfo("jcos- TERMINA OBTENIENDO RASTREO SPEI");
+
+		return rastreo;
 	}
 
 	@Override

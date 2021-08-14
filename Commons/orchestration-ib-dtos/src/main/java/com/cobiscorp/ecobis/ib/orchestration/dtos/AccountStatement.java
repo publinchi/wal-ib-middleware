@@ -55,6 +55,7 @@ public class AccountStatement {
 	private String ownChecksBalance;
 	private String totalChecksBalance;
 	private String typeDC;
+	private String rastreo;
 	/**
 	 * Indicate the accounting Balance of the account
 	 */
@@ -408,6 +409,14 @@ public class AccountStatement {
 	 */
 	public String getStringDate() {
 		return stringDate;
+	}
+
+	public String getRastreo() {
+		return rastreo;
+	}
+
+	public void setRastreo(String rastreo) {
+		this.rastreo = rastreo;
 	}
 
 	/**

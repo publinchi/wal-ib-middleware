@@ -239,6 +239,12 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 
 	}
 
+	public void registroCacaoResponse(){
+
+
+
+	}
+
 	protected List<String> cacaoExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		List<String> response = null;
 
@@ -293,8 +299,20 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 				response.add(connectorSpeiResponse.readValueParam("@o_id_solicitud"));
 				response.add(connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
 				response.add(connectorSpeiResponse.readValueParam("@o_desc_respuesta"));
+
 				if (connectorSpeiResponse.readValueParam("@o_ValorNIP") != null)
 					response.add(connectorSpeiResponse.readValueParam("@o_ValorNIP"));
+
+				String responseCacao=connectorSpeiResponse.readValueParam("@o_json_response");
+
+				if(responseCacao!=null){
+
+					logger.logInfo("Cacao responde On Json -> "+responseCacao);
+
+				}else{
+
+					logger.logInfo("jcos--> No existe JSON de respuesta de CACAO::: ");
+				}
 
 			} else {
 

@@ -210,8 +210,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 								logger.logDebug(":::: Ahorros OK Transfer Banpay "+ idTransaccion);
 							}
 							int transacctionApplied =Integer.parseInt(idTransaccion.trim());
-							if(transacctionApplied>0)
-								responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);		
+							if(transacctionApplied>0) {
+								originalRequestClone.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR,
+										String.valueOf(transacctionApplied));
+								responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
+							}
 							else
 								logger.logDebug(":::: No Aplica Transaccion no valida "+ idTransaccion);
 						}else {
@@ -408,6 +411,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 			anOriginalRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLINT1, "1");
 			anOriginalRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_ssn"));
+
+
 			//DatosAccendo
 			anOriginalRequest.addInputParam("@i_beneficiario_cc", ICTSTypes.SQLINT1, data.get(4));
 			anOriginalRequest.addInputParam("@i_tercer_ordenante", ICTSTypes.SQLINT1, data.get(5));
@@ -433,7 +438,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			anOriginalRequest.addOutputParam("@i_algotih", ICTSTypes.SQLVARCHAR, loadded.getAlgorith());	
 			anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR,loadded.getIdCuentaOrdenante());
 			anOriginalRequest.addInputParam("@i_app_cliente", ICTSTypes.SQLVARCHAR, loadded.getAppClient());
-			
+
+			anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+
 			// SE HACE LA LLAMADA AL CONECTOR
 			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
 			anOriginalRequest.setSpName("cob_procesador..sp_orq_banpay_spei");
@@ -463,6 +470,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				response.add(connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
 				response.add(connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
 				response.add(connectorSpeiResponse.readValueParam("@i_codigo_acc"));
+				response.add(anOriginalRequest.readValueParam("@i_transaccion_spei"));
 				
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
@@ -479,6 +487,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				bag.put("@i_mensaje_acc", connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
 				bag.put("@i_id_spei_acc", connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
 				bag.put("@i_codigo_acc", connectorSpeiResponse.readValueParam("@i_codigo_acc"));
+				bag.put("@i_transaccion_spei", anOriginalRequest.readValueParam("@i_transaccion_spei"));
 				data = null;
 			} else {
 
