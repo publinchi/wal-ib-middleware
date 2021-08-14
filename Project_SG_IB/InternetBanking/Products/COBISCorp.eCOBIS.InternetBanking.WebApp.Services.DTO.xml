@@ -746,7 +746,7 @@
       <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.6" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.6.0_45" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.7.0_80" />
     </class>
   </collection>
   <collection type="List" length="6" id="153" name="templateCommands">
