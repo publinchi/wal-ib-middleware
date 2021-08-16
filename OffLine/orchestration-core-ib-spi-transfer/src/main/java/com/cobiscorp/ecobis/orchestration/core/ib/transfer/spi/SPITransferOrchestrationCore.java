@@ -439,7 +439,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR,loadded.getIdCuentaOrdenante());
 			anOriginalRequest.addInputParam("@i_app_cliente", ICTSTypes.SQLVARCHAR, loadded.getAppClient());
 
-			anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+			//anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_transaccion_spei"));
 
 			// SE HACE LA LLAMADA AL CONECTOR
 			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
@@ -471,6 +471,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				response.add(connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
 				response.add(connectorSpeiResponse.readValueParam("@i_codigo_acc"));
 				response.add(anOriginalRequest.readValueParam("@i_transaccion_spei"));
+
+				response.add(connectorSpeiResponse.readValueParam("@o_spei_request"));
+				response.add(connectorSpeiResponse.readValueParam("@o_spei_response"));
 				
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
@@ -487,7 +490,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				bag.put("@i_mensaje_acc", connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
 				bag.put("@i_id_spei_acc", connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
 				bag.put("@i_codigo_acc", connectorSpeiResponse.readValueParam("@i_codigo_acc"));
+				logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam("@i_transaccion_spei"));
 				bag.put("@i_transaccion_spei", anOriginalRequest.readValueParam("@i_transaccion_spei"));
+
+				bag.put("@o_spei_request", connectorSpeiResponse.readValueParam("@o_spei_request"));
+				bag.put("@o_spei_response", connectorSpeiResponse.readValueParam("@o_spei_response"));
 				data = null;
 			} else {
 

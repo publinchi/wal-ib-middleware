@@ -158,7 +158,7 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 
 		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
 
-		response.addParam("RASTREO",ICTSTypes.SQLVARCHAR,255,"PENDIENTE");
+		//response.addParam("RASTREO",ICTSTypes.SQLVARCHAR,255,"PENDIENTE");
 
 
 		if (logger.isInfoEnabled())

@@ -274,6 +274,7 @@ public class DetailMovementQueryAccounts extends SPJavaOrchestrationBase impleme
 					.setInternationalCheckBookBalance(columns[12].getValue() == null ? "" : columns[12].getValue());
 			wAccountStatement.setTotalChecksBalance(columns[13].getValue() == null ? "" : columns[13].getValue());
 			wAccountStatement.setCauseId(columns[14].getValue() == null ? "" : columns[14].getValue());
+			wAccountStatement.setRastreo(columns[15].getValue() == null ? "" : columns[15].getValue());
 			AccountStatementsCollection.add(wAccountStatement);
 			detailsMovementsResponse.setAccountStatementsCollection(AccountStatementsCollection);
 		}

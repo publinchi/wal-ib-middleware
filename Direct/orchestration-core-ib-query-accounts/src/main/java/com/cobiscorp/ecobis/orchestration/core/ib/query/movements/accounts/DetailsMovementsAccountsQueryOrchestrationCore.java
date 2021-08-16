@@ -201,6 +201,8 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("internationalChecksBalance", 39, 20));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("totalChecksBalance", 56, 4));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("causeId", 60, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeInterbank", 60, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("rastreo", 60, 20));
 			List<AccountStatement> accountStatementsCollection = aDetailsMovementsResponse
 					.getAccountStatementsCollection();
 			if (logger.isInfoEnabled())
@@ -233,6 +235,8 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			row.addRowData(14,
 					new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getTotalChecksBalance()));
 			row.addRowData(15, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getCauseId()));
+			row.addRowData(16, new ResultSetRowColumnData(false, ""));
+			row.addRowData(17, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getRastreo()));
 			data.addRow(row);
 
 			IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);

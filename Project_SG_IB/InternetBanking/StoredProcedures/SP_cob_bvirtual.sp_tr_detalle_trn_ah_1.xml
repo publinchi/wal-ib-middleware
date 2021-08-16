@@ -55,6 +55,7 @@
         <column name="Total chqs" />
         <column name="Cod. Causa" />
         <column name="Clabe Interbanc" />
+        <column name="RASTREO" />
       </columns>
       <queryText></queryText>
     </query>
