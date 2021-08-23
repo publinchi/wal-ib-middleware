@@ -95,7 +95,8 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
-		return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
+		logger.logInfo("card response :::"+ aBagSPJavaOrchestration.get("proceso"));
+		return (IProcedureResponse) aBagSPJavaOrchestration.get("proceso");
 	}
 
 	@Override
@@ -139,8 +140,19 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA SPI");
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
 
+		IProcedureResponse processProcedure=null;
+
 		try {
-			executeConnectorActivateCardBase(anOriginalRequest, aBagSPJavaOrchestration);
+			processProcedure= executeConnectorActivateCardBase(anOriginalRequest, aBagSPJavaOrchestration);
+
+			logger.logInfo("jcos final -> solicitud"+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+			logger.logInfo("jcos final -> codigo respuesta"+String.valueOf(aBagSPJavaOrchestration.get("@o_cod_respuesta")));
+			logger.logInfo("jcos final -> descripción respuesta "+String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
+			logger.logInfo("jcos final-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+
+			aBagSPJavaOrchestration.put("proceso",processProcedure);
+
+			return  processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 		} catch (CTSServiceException e) {
 			logger.logError(e);
 		} catch (CTSInfrastructureException e) {
@@ -150,7 +162,9 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 				logger.logInfo("rfl--> Fin executeJavaOrchestration");
 			}
 		}
-		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+
+
+		return  processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
 	@Override
@@ -159,20 +173,20 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 			logger.logDebug("rfl--> Inicia executeTransfer");
 		}
 		IProcedureResponse responseTransfer = new ProcedureResponseAS();
-		try {
+
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			IProcedureRequest originalRequestClone = originalRequest.clone();
 
 			responseTransfer = executeCacao(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
 
-		} catch (Exception e) {
-			if (logger.isDebugEnabled())
-				logger.logError("rfl--> error executeTransfer: " + e);
-		} finally {
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("rfl--> Fin executeTransfer");
-			}
-		}
+		logger.logInfo("jcos-> solicitud"+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+		logger.logInfo("jcos-> codigo respuesta"+String.valueOf(aBagSPJavaOrchestration.get("@o_cod_respuesta")));
+		logger.logInfo("jcos-> descripción respuesta "+String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
+		logger.logInfo("jcos-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+
+		//	responseTransfer.readValueParam("");
+
+
 
 		return responseTransfer;
 	}
@@ -182,30 +196,35 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 			logger.logDebug("jcos -> Activate inicio metodo executeCacao");
 
 		// SE LLAMA LA SERVICIO DE CACAO //CORRECCIONES SERVICIO DE ATIVACIÓN CACAO
-		List<String> respuesta = cacaoExecution(originalRequest, aBagSPJavaOrchestration);
+		cacaoExecution(originalRequest, aBagSPJavaOrchestration);
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("jcos-->Activate respuesta: " + respuesta);
+			logger.logDebug("jcos-->Activate respuesta: " + aBagSPJavaOrchestration);
 		}
-		
-		
+
+		logger.logInfo("jcos-> solicitud"+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+		logger.logInfo("jcos-> codigo respuesta"+String.valueOf(aBagSPJavaOrchestration.get("@o_cod_respuesta")));
+		logger.logInfo("jcos-> descripción respuesta "+String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
+		logger.logInfo("jcos-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+
+
 
 		// SE HACE LA VALIDACION DE LA RESPUESTA (0000 exito)
-		if (respuesta != null && respuesta.size() > 0) {
-			if (!respuesta.get(1).equals("0000")) {
-				/*if (logger.isDebugEnabled()) {
+		/*if (aBagSPJavaOrchestration.get("@o_cod_respuesta") != null ) {
+			if (!aBagSPJavaOrchestration.get("@o_cod_respuesta").toString().equals("0000")) {
+				if (logger.isDebugEnabled()) {
 					logger.logDebug("rfl--> error nip");
 				}
-				return Utils.returnException(1, ERROR_CACAO);*/
+				return Utils.returnException(1, ERROR_CACAO);
 				String codeError=respuesta.get(1);
-			 /*  if(codeError.equals("1109")) {
+			   if(codeError.equals("1109")) {
 				   
 				   return Utils.returnException(1, "La Tarjeta o Medio de Acceso ya se encuentra ativo");
 				   
 			   }else if(codeError.equals("1018")) {
 				   
 				   return Utils.returnException(1, "La Tarjeta o Medio de Acceso No Existe");
-			   } */				
+			   }
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("jcos--> code Error "+respuesta.get(1));
 				}
@@ -229,11 +248,11 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("jcos--> List<String> respuesta error o null");
 			}
-			return Utils.returnException(1, ERROR_CACAO);
+		//	return Utils.returnException(1, ERROR_CACAO);
 		}
 
 		if (logger.isDebugEnabled())
-			logger.logDebug("jcos fin metodo executeCacao");
+			logger.logDebug("jcos fin metodo executeCacao");*/
 
 		return responseTransfer;
 
@@ -296,18 +315,20 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 
 				// SE MAPEAN LAS VARIABLES DE SALIDA
 				response = new ArrayList<String>();
-				response.add(connectorSpeiResponse.readValueParam("@o_id_solicitud"));
-				response.add(connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
-				response.add(connectorSpeiResponse.readValueParam("@o_desc_respuesta"));
+				bag.put("@o_id_solicitud",connectorSpeiResponse.readValueParam("@o_id_solicitud"));
+				bag.put("@o_cod_respuesta",connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+				bag.put("@o_desc_respuesta",connectorSpeiResponse.readValueParam("@o_desc_respuesta"));
 
 				if (connectorSpeiResponse.readValueParam("@o_ValorNIP") != null)
-					response.add(connectorSpeiResponse.readValueParam("@o_ValorNIP"));
+					bag.put("@o_ValorNIP",connectorSpeiResponse.readValueParam("@o_ValorNIP"));
 
 				String responseCacao=connectorSpeiResponse.readValueParam("@o_json_response");
 
 				if(responseCacao!=null){
 
-					logger.logInfo("Cacao responde On Json -> "+responseCacao);
+					logger.logInfo(" jcos Cacao responde On Json -> "+responseCacao);
+
+					bag.put("@o_json_cacao",responseCacao);
 
 				}else{
 

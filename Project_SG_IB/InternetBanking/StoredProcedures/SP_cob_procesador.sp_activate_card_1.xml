@@ -24,5 +24,15 @@
     <parameter name="@o_tarjeta" dataType="varchar" direction="out" />
     <parameter name="@o_ValorNIP" dataType="varchar" direction="out" />
   </parameters>
-  <queries />
+  <queries>
+    <query>
+      <columns>
+        <column name="descRespuesta" />
+        <column name="idSolicitud" />
+        <column name="tarjeta" />
+        <column name="valorNip" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
 </procedure>
