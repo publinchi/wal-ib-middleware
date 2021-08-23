@@ -8,7 +8,7 @@
   <field type="String" name="procedureName" value="cob_procesador..sp_activate_card" />
   <collection type="List" length="0" id="3" name="queries">
   </collection>
-  <collection type="List" length="18" id="4" name="parameters">
+  <collection type="List" length="23" id="4" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="5" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="6" name="parameter">
         <field type="String" name="name" value="@i_modo" />
@@ -186,64 +186,129 @@
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="constantValue" value="-" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="33" index="14">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="34" name="parameter">
+        <field type="String" name="name" value="@o_cod_respuesta" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outCardNipResponse" />
+      <field type="String" name="dTOPropertyName" value="respuesta" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="35" index="15">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="36" name="parameter">
         <field type="String" name="name" value="@o_desc_respuesta" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in out" />
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="X" />
+      <field type="String" name="constantValue" value="-" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="35" index="15">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="36" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="37" index="16">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="38" name="parameter">
+        <field type="String" name="name" value="@o_desc_respuesta" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outCardNipResponse" />
+      <field type="String" name="dTOPropertyName" value="codigo" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="39" index="17">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="40" name="parameter">
         <field type="String" name="name" value="@o_id_solicitud" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in out" />
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="constantValue" value="-" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="37" index="16">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="38" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="41" index="18">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="42" name="parameter">
+        <field type="String" name="name" value="@o_id_solicitud" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outCardNipResponse" />
+      <field type="String" name="dTOPropertyName" value="idSolicitud" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="43" index="19">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="44" name="parameter">
         <field type="String" name="name" value="@o_tarjeta" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in out" />
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="X" />
+      <field type="String" name="constantValue" value="-" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="39" index="17">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="40" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="45" index="20">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="46" name="parameter">
+        <field type="String" name="name" value="@o_tarjeta" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outCardNipResponse" />
+      <field type="String" name="dTOPropertyName" value="tarjeta" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="47" index="21">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="48" name="parameter">
         <field type="String" name="name" value="@o_ValorNIP" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in out" />
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="constantValue" value="-" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="49" index="22">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="50" name="parameter">
+        <field type="String" name="name" value="@o_ValorNIP" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outCardNipResponse" />
+      <field type="String" name="dTOPropertyName" value="nip" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
   </collection>
-  <collection type="List" length="0" id="41" name="parametersOpenApi">
+  <collection type="List" length="0" id="51" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="18500050" />
-  <collection type="List" length="1" id="42" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="43" index="0">
+  <collection type="List" length="2" id="52" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="53" index="0">
       <field type="String" name="dTOName" value="CardNipRequest" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -253,8 +318,18 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="54" index="1">
+      <field type="String" name="dTOName" value="CardNipResponse" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="outCardNipResponse" />
+      <field type="String" name="direction" value="out" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
   </collection>
-  <collection type="Map" length="2" id="44" name="mappingProperties">
+  <collection type="Map" length="2" id="55" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />

@@ -5,6 +5,7 @@ import java.util.Map;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
+import com.cobiscorp.cobis.csp.util.CSPUtil;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
@@ -120,7 +121,26 @@ public abstract class ActivateCardBaseTemplate extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "rfl--> fin executeConnectorActivateCardBase: " + anOriginalRequest);
 
-		return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
+
+		IProcedureResponse processProcedure=(IProcedureResponse)aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
+
+
+		logger.logInfo("jcos-> solicitud"+String.valueOf(aBagSPJavaOrchestration.get("descRespuesta")));
+		logger.logInfo("jcos-> codigo respuesta"+String.valueOf(aBagSPJavaOrchestration.get("idSolicitud")));
+		logger.logInfo("jcos-> descripción respuesta "+String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
+		logger.logInfo("jcos-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+		//
+		//logger.logInfo("jcos-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+		
+
+		processProcedure.addParam("@o_id_solicitud",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+		processProcedure.addParam("@o_cod_respuesta",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_cod_respuesta")));
+		processProcedure.addParam("@o_desc_respuesta",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
+		processProcedure.addParam("@o_ValorNIP",ICTSTypes.SYBVARCHAR,200,aBagSPJavaOrchestration.get("@o_ValorNIP")!=null? String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")):"");
+
+		CSPUtil.copyHeaderFields(anOriginalRequest, processProcedure);
+
+		return processProcedure;
 
 	}
 
