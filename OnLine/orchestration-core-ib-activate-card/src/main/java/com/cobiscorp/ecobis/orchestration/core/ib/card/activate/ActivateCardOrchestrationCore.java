@@ -319,6 +319,7 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 				bag.put("@o_cod_respuesta",connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
 				bag.put("@o_desc_respuesta",connectorSpeiResponse.readValueParam("@o_desc_respuesta"));
 
+
 				if (connectorSpeiResponse.readValueParam("@o_ValorNIP") != null)
 					bag.put("@o_ValorNIP",connectorSpeiResponse.readValueParam("@o_ValorNIP"));
 

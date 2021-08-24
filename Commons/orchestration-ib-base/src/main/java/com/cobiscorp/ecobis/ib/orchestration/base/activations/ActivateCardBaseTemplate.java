@@ -128,7 +128,7 @@ public abstract class ActivateCardBaseTemplate extends SPJavaOrchestrationBase {
 		logger.logInfo("jcos-> solicitud"+String.valueOf(aBagSPJavaOrchestration.get("descRespuesta")));
 		logger.logInfo("jcos-> codigo respuesta"+String.valueOf(aBagSPJavaOrchestration.get("idSolicitud")));
 		logger.logInfo("jcos-> descripción respuesta "+String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
-		logger.logInfo("jcos-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+		logger.logInfo("jcos-> Valor NIPAX "+String.valueOf(aBagSPJavaOrchestration.get("@o_ValorNIP")));
 		//
 		//logger.logInfo("jcos-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
 		
@@ -136,7 +136,7 @@ public abstract class ActivateCardBaseTemplate extends SPJavaOrchestrationBase {
 		processProcedure.addParam("@o_id_solicitud",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
 		processProcedure.addParam("@o_cod_respuesta",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_cod_respuesta")));
 		processProcedure.addParam("@o_desc_respuesta",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
-		processProcedure.addParam("@o_ValorNIP",ICTSTypes.SYBVARCHAR,200,aBagSPJavaOrchestration.get("@o_ValorNIP")!=null? String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")):"");
+		processProcedure.addParam("@o_ValorNIP",ICTSTypes.SYBVARCHAR,200,aBagSPJavaOrchestration.get("@o_ValorNIP")!=null? String.valueOf(aBagSPJavaOrchestration.get("@o_ValorNIP")):"");
 
 		CSPUtil.copyHeaderFields(anOriginalRequest, processProcedure);
 
