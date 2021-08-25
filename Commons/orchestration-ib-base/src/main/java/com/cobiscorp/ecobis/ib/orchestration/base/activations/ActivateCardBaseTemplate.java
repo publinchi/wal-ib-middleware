@@ -138,6 +138,8 @@ public abstract class ActivateCardBaseTemplate extends SPJavaOrchestrationBase {
 		processProcedure.addParam("@o_desc_respuesta",ICTSTypes.SYBVARCHAR,200,String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
 		processProcedure.addParam("@o_ValorNIP",ICTSTypes.SYBVARCHAR,200,aBagSPJavaOrchestration.get("@o_ValorNIP")!=null? String.valueOf(aBagSPJavaOrchestration.get("@o_ValorNIP")):"");
 
+		processProcedure.addParam("@o_account_atm",ICTSTypes.SYBVARCHAR,200,aBagSPJavaOrchestration.get("@o_account_atm")!=null? String.valueOf(aBagSPJavaOrchestration.get("@o_account_atm")):"");
+
 		CSPUtil.copyHeaderFields(anOriginalRequest, processProcedure);
 
 		return processProcedure;
