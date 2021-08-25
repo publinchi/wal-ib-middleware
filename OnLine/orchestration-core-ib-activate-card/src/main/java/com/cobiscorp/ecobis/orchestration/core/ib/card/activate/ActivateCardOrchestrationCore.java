@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -149,6 +151,8 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 			logger.logInfo("jcos final -> codigo respuesta"+String.valueOf(aBagSPJavaOrchestration.get("@o_cod_respuesta")));
 			logger.logInfo("jcos final -> descripción respuesta "+String.valueOf(aBagSPJavaOrchestration.get("@o_desc_respuesta")));
 			logger.logInfo("jcos final-> Valor NIP "+String.valueOf(aBagSPJavaOrchestration.get("@o_id_solicitud")));
+			logger.logInfo("jcos final-> Valor account "+String.valueOf(aBagSPJavaOrchestration.get("@o_account_atm")));
+
 
 			aBagSPJavaOrchestration.put("proceso",processProcedure);
 
@@ -319,6 +323,17 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 				bag.put("@o_cod_respuesta",connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
 				bag.put("@o_desc_respuesta",connectorSpeiResponse.readValueParam("@o_desc_respuesta"));
 
+				try {
+					logger.logInfo("jcos Recuperando cuenta de ahorros");
+					IProcedureResponse responseAtm = getProductoAsociadoAtm(anOriginalRequest);
+					String account= responseAtm.readValueParam("@o_account");
+					logger.logInfo("Cuenta cliente "+account);
+					bag.put("@o_account_atm",account);
+				}catch(Exception xe){
+					logger.logInfo("Error al recuperar cuenta");
+					logger.logError(xe);
+				}
+
 
 				if (connectorSpeiResponse.readValueParam("@o_ValorNIP") != null)
 					bag.put("@o_ValorNIP",connectorSpeiResponse.readValueParam("@o_ValorNIP"));
@@ -354,6 +369,28 @@ public class ActivateCardOrchestrationCore extends ActivateCardOfflineTemplate {
 		}
 
 		return response;
+	}
+
+	private IProcedureResponse getProductoAsociadoAtm(IProcedureRequest anOriginalRequest) {
+		IProcedureRequest requestProductoAtm = new ProcedureRequestAS();
+
+		requestProductoAtm.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500072");
+		requestProductoAtm.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		requestProductoAtm.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		requestProductoAtm.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+
+		requestProductoAtm.setSpName("cob_bvirtual..bv_atm_producto_asociado");
+		requestProductoAtm.addInputParam("@t_online", ICTSTypes.SQLCHAR, "S");
+		requestProductoAtm.addInputParam("@t_trn", ICTSTypes.SYBINTN, "18500072");
+		requestProductoAtm.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		requestProductoAtm.addInputParam("@i_tarjeta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tarjeta"));
+		requestProductoAtm.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
+
+
+		IProcedureResponse atmResponse = executeCoreBanking(requestProductoAtm);
+
+		return atmResponse;
 	}
 
 }
