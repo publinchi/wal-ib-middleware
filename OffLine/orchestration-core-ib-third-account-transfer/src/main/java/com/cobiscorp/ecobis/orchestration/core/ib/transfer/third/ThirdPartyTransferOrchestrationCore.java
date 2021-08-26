@@ -188,6 +188,8 @@ public class ThirdPartyTransferOrchestrationCore extends TransferOfflineTemplate
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = null;
+		IProcedureRequest originalByNotify = anOriginalRequest;
+
 		if (logger.isInfoEnabled())
 			logger.logInfo("ThirdAccountTransferOrchestrationCore: executeJavaOrchestration");
 
@@ -209,6 +211,11 @@ public class ThirdPartyTransferOrchestrationCore extends TransferOfflineTemplate
 		} catch (CTSInfrastructureException e) {
 			e.printStackTrace();
 		}
+		
+		if(response!=null && !response.hasError()) {
+			notifyThirdPartyTransfer(originalByNotify, aBagSPJavaOrchestration);
+		}
+			
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
@@ -520,6 +527,52 @@ public class ThirdPartyTransferOrchestrationCore extends TransferOfflineTemplate
 	public ICoreServiceMonetaryTransaction getCoreServiceMonetaryTransaction() {
 		// TODO Auto-generated method stub
 		return coreServiceMonetaryTransaction;
+	}
+	
+	private void notifyThirdPartyTransfer (IProcedureRequest anOriginalRequest, java.util.Map map) {
+
+		try {
+
+			logger.logInfo("jcos Enviando notificacion cuentas terceros");
+
+			IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
+
+			String cuentaClave=anOriginalRequest.readValueParam("@i_cta_des");
+
+			logger.logInfo("jcos using clabe account account "+cuentaClave);
+
+			procedureRequest.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib");
+			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S',"local");
+			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N',"1800195");
+
+			procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "1800195");
+			procedureRequest.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
+			// procedureRequest.addInputParam("@i_num_producto", Types.VARCHAR, "");
+			procedureRequest.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLCHAR, "F");
+			procedureRequest.addInputParam("@i_notificacion", ICTSTypes.SYBVARCHAR, "N146");    		
+			procedureRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "I");
+			procedureRequest.addInputParam("@i_producto", ICTSTypes.SQLINT1, "18");
+			//procedureRequest.addInputParam("@i_transaccion_id", ICTSTypes.SQLINT1, "0");
+			procedureRequest.addInputParam("@i_canal", ICTSTypes.SQLINT1, "8");
+			procedureRequest.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "A");
+			//procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des"));    			 
+			procedureRequest.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
+			procedureRequest.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+			procedureRequest.addInputParam("@i_c2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des"));
+			procedureRequest.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, String.valueOf(  anOriginalRequest.readValueParam("@i_val")));
+			procedureRequest.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_concepto"));
+			procedureRequest.addInputParam("@i_m", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_mon"));
+			//procedureRequest.addInputParam("@i_aux9", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
+			//procedureRequest.addInputParam("@i_aux8", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombreOrdenante"));
+			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+
+			logger.logInfo("jcos proceso de notificaciom terminado");
+
+		}catch(Exception xe) {
+
+			logger.logInfo("jcos Error en la notificacion cuentas terceros");
+			logger.logError(xe);
+		}
 	}
 
 }
