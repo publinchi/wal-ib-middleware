@@ -490,7 +490,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				bag.put("@i_cod_respuesta", connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
 				bag.put("@i_id", connectorSpeiResponse.readValueParam("@o_id"));
 				bag.put("@i_descripcion_error", connectorSpeiResponse.readValueParam("@o_descripcion_error"));
-				
+
 				bag.put("@i_mensaje_acc", connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
 				bag.put("@i_id_spei_acc", connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
 				bag.put("@i_codigo_acc", connectorSpeiResponse.readValueParam("@i_codigo_acc"));
@@ -1139,7 +1139,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// CLAVE DE RASTREO
 			request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
 			logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
-			request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT4, "7");
+			request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT4, "1");
+			request.addInputParam("@i_transaccion_core", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+
 			//VARIABLES DE CTS
 			request.addInputParam("@s_ssn", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
 			request.addInputParam("@s_srv", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_srv"));			
