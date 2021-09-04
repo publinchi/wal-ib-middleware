@@ -24,8 +24,8 @@ public class Constants {
     public static final String ACCENDO_EMPTY_VALUE = "N/A";
     public static final String ERROR_CODE_ON_RFC_CURP = "HUBP0001";
     
-    public static final String URL_AUTH_SINGLE_TOKEN = "SINGLETURL";
-    public static final String URL_AUTH_SESION_TOKEN = "SESSIONURL";
+    public static final String URL_AUTH_SINGLE_TOKEN = "AUTH_URL";
+    public static final String URL_AUTH_SESION_TOKEN = "LOGIN_URL";
     public static final String URL_SPEI_REGISTER = "SPEIURL";
     public static final String SECURITY_ALGORITH = "SINGALGOTH";
     public static final String CAT_APP_CLIENT = "CATPPCL";

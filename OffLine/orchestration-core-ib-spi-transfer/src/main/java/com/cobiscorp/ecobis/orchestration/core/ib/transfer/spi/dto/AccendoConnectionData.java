@@ -112,6 +112,32 @@ public class AccendoConnectionData {
 		this.appClient = appClient;
 	}
 
-    
-    
+    @Override
+    public String toString() {
+        return "AccendoConnectionData{" +
+                "scope='" + scope + '\'' +
+                ", grantType='" + grantType + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", authServerUrl='" + authServerUrl + '\'' +
+                ", loginServerUrl='" + loginServerUrl + '\'' +
+                ", predefinedReferencesUrl='" + predefinedReferencesUrl + '\'' +
+                ", queryReferencesUrl='" + queryReferencesUrl + '\'' +
+                ", client='" + client + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", idCuentaOrdenante='" + idCuentaOrdenante + '\'' +
+                ", token='" + token + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", thirdPartyIUrl='" + thirdPartyIUrl + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                ", updateReferencesUrl='" + updateReferencesUrl + '\'' +
+                ", baseUrl='" + baseUrl + '\'' +
+                ", algorith='" + algorith + '\'' +
+                ", urlSession='" + urlSession + '\'' +
+                ", urlSingleToken='" + urlSingleToken + '\'' +
+                ", urlRegistraSpei='" + urlRegistraSpei + '\'' +
+                ", appClient='" + appClient + '\'' +
+                '}';
+    }
 }
