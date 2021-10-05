@@ -209,6 +209,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 							if (logger.isDebugEnabled()) {
 								logger.logDebug(":::: Ahorros OK Transfer Banpay "+ idTransaccion);
 							}
+
+							aBagSPJavaOrchestration.put("APPLY_DATE",originalRequestClone.readValueParam("@o_fecha_tran"));
+
 							int transacctionApplied =Integer.parseInt(idTransaccion.trim());
 							if(transacctionApplied>0) {
 								originalRequestClone.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR,
@@ -425,7 +428,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			anOriginalRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "X");
 
 			AccendoConnectionData loadded= retrieveAccendoConnectionData();
-			
+			logger.logInfo(loadded.toString());
+
 			anOriginalRequest.addOutputParam("@i_url_single_token", ICTSTypes.SQLVARCHAR, loadded.getUrlSingleToken());
 			anOriginalRequest.addOutputParam("@i_url_session", ICTSTypes.SQLVARCHAR,loadded.getUrlSession());
 			anOriginalRequest.addOutputParam("@i_url_spei", ICTSTypes.SQLVARCHAR,loadded.getUrlRegistraSpei());
@@ -562,7 +566,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		AccendoConnectionData accendoConnectionData = new AccendoConnectionData();
 
 		if(response!=null && response.getResultSetListSize() > 0) {
-			logger.logInfo("jcos resultados validacion");
+			logger.logInfo("jcos V2 resultados validacion");
 
 			IResultSetBlock block= response.getResultSet(1);
 			if(block!=null &&  block.getData().getRowsNumber()>=1) {
@@ -722,7 +726,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			requestTransfer.addInputParam("@i_nom_banco_des", ICTSTypes.SYBVARCHAR, columns[0].getValue());
 			aBagSPJavaOrchestration.put("@i_banco_dest", columns[0].getValue());
 			requestTransfer.addInputParam("@i_ruta_trans", ICTSTypes.SYBVARCHAR, columns[2].getValue());
-
+			requestTransfer.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 			response = executeCoreBanking(requestTransfer);
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Request accountTransfer: " + anOriginalRequest.getProcedureRequestAsString());
@@ -809,7 +813,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				anOriginalRequest.readValueParam(T_EJEC));
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
-	
+
+		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
@@ -831,6 +836,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		
 		//jcos recuperacion de SSN TRANSACCIONAL
 		requestTransfer.addOutputParam("@o_referencia", ICTSTypes.SYBINT4, "0");
+
+
 
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
 				|| "8".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
@@ -1149,6 +1156,9 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			request.addInputParam("@s_term", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_term"));
 			request.addInputParam("@s_rol", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_rol"));
 			request.addInputParam("@s_date", ICTSTypes.SQLDATETIME, anOriginalRequest.readValueParam("@s_date"));
+			//reversa nuevo campo envio de transaccion para reversa
+			request.addInputParam("@i_transaction_core", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_clave_rastreo"));
+
 
 			// SE EJECUTA Y SE OBTIENE LA RESPUESTA
 			IProcedureResponse pResponse = executeCoreBanking(request);

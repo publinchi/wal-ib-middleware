@@ -142,7 +142,8 @@ public class ThirdAccountTransfer extends SPJavaOrchestrationBase implements ICo
 			anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY, request.getAmmount().toString());
 		if (request.getDescriptionTransfer() != null)
 			anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, request.getDescriptionTransfer());
-        
+
+		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 		
 		if (request.getCommisionAmmount() != null) {
 			if (logger.isDebugEnabled())
@@ -283,6 +284,7 @@ public class ThirdAccountTransfer extends SPJavaOrchestrationBase implements ICo
 
 		responseTransfer.setSuccess(response.getReturnCode() == 0 ? true : false);
 		responseTransfer.setReturnCode(response.getReturnCode());
+		responseTransfer.setApplyDate(response.readValueParam("@o_fecha_tran"));
 
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Respuesta Devuelta hsa" + responseTransfer);

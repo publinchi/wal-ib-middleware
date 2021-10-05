@@ -267,6 +267,8 @@ public class SelfAccountTransferOrchestrationCore extends TransferOfflineTemplat
 					UtilsTransfers.transformSelfAccountTransferRequest(aBagSPJavaOrchestration, ORIGINAL_REQUEST,
 							RESPONSE_LOCAL_VALIDATION));
 
+			logger.logInfo("applay date 02 "+ SelfAccountTransferResponse.getApplyDate());
+
 		} catch (CTSServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -290,6 +292,7 @@ public class SelfAccountTransferOrchestrationCore extends TransferOfflineTemplat
 			// Si estamos en linea y hubo error
 			response = Utils.returnException(aSelfAccountTransferResponse.getMessages());
 			response.setReturnCode(aSelfAccountTransferResponse.getReturnCode());
+			logger.logInfo("fecha_hora transaccion "+aSelfAccountTransferResponse.getApplyDate());
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 			if (logger.isInfoEnabled())
 				logger.logInfo(CLASS_NAME + "Respuesta transformToProcedureResponse -->"
@@ -297,6 +300,8 @@ public class SelfAccountTransferOrchestrationCore extends TransferOfflineTemplat
 
 			return response;
 		}
+		aBagSPJavaOrchestration.put("APPLY_DATE", aSelfAccountTransferResponse.getApplyDate());
+
 
 		// Si estamos en fuera de linea consaldos o estamos en línea
 		if ((!serverResponse.getOnLine() && serverResponse.getOfflineWithBalances())
@@ -427,6 +432,10 @@ public class SelfAccountTransferOrchestrationCore extends TransferOfflineTemplat
 		response.addParam("@o_ssn_branch", ICTSTypes.SYBINT4, 0,
 				String.valueOf(originalRequest.readValueParam("@s_ssn_branch")));
 
+		response.addParam("@applay_date", ICTSTypes.SYBVARCHAR, 0,
+				aSelfAccountTransferResponse.getApplyDate());
+
+
 		response.setReturnCode(aSelfAccountTransferResponse.getReturnCode());
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Respuesta transformToProcedureResponse -->"
@@ -504,6 +513,9 @@ public class SelfAccountTransferOrchestrationCore extends TransferOfflineTemplat
 		notificationRequest.setNotification(notification);
 		notificationRequest.setNotificationDetail(notificationDetail);
 		notificationRequest.setOriginProduct(product);
+
+
+
 		return notificationRequest;
 	}
 

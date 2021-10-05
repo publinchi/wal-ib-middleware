@@ -166,6 +166,17 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			client.setLogin(anOriginalRequest.readValueParam("@i_login"));
 		}
 
+		logger.logInfo("CARGADO APPLY DATE "+aBagSPJavaOrchestration.get("APPLY_DATE"));
+
+		if(aBagSPJavaOrchestration.containsKey("APPLY_DATE")
+				&& aBagSPJavaOrchestration.get("APPLY_DATE")!=null){
+			notificationRequest.getNotificationDetail().
+					setAuxiliary27(aBagSPJavaOrchestration.get("APPLY_DATE").toString());
+
+		}else{
+			logger.logInfo("No hay fecha transacción");
+		}
+
 		notificationRequest.setClient(client);
 		notificationRequest.setChannelId(anOriginalRequest.readValueFieldInHeader("servicio"));
 
