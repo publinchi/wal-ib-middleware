@@ -86,6 +86,7 @@ public class SelfAccountTransfer extends SPJavaOrchestrationBase implements ICor
 		anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, request.getCauseComi());
 		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, request.getCause());
 		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, request.getCauseDes());
+		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
 		if (request.getServiceCost() != null) {			
 			anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, request.getServiceCost());
@@ -254,6 +255,9 @@ public class SelfAccountTransfer extends SPJavaOrchestrationBase implements ICor
 		responseTransfer.setReferenceNumber(response.readValueParam("@o_referencia"));
 		responseTransfer.setReturnCode(response.getReturnCode());
 		responseTransfer.setSuccess(response.getReturnCode() == 0 ? true : false);
+		responseTransfer.setApplyDate(response.readValueParam("@o_fecha_tran"));
+
+		logger.logInfo( "JCOS- Fecha aplicación"+ response.readValueParam("@o_fecha_tran"));
 
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Respuesta Devuelta " + responseTransfer);

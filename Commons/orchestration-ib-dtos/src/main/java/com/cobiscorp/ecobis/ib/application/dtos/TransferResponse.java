@@ -104,6 +104,7 @@ public class TransferResponse extends BaseResponse {
 	private Integer reference;
 	private Double amount;
 	private Double commission;
+	private String applyDate;
 	/**
 	 * @return the body
 	 */
@@ -443,24 +444,41 @@ public class TransferResponse extends BaseResponse {
 		this.reference = reference;
 	}
 
-	@Override
-	public String toString() {
-		return "TransferResponse [referenceNumber=" + referenceNumber
-				+ ", information=" + information + ", lastBalanceProduct="
-				+ lastBalanceProduct + ", oldBalanceProduct="
-				+ oldBalanceProduct + ", signer=" + signer + ", officer="
-				+ officer + ", Name=" + Name + ", dateLastMovement="
-				+ dateLastMovement + ", BalanceProduct=" + BalanceProduct
-				+ ", BalanceProductDest=" + BalanceProductDest
-				+ ", AccountStatus=" + AccountStatus + ", DateHost=" + DateHost
-				+ ", returnValue=" + returnValue + ", conditionId="
-				+ conditionId + ", authorizationRequired="
-				+ authorizationRequired + ", branchSSN=" + branchSSN
-				+ ", body=" + body + ", reference=" + reference + ", amount="
-				+ amount + ", commission=" + commission + ", transferMessage="
-				+ transferMessage + ", productNumber=" + productNumber
-				+ ", returnCode=" + returnCode + "]";
+	public String getApplyDate() {
+		return applyDate;
 	}
 
-	
+	public void setApplyDate(String applyDate) {
+		this.applyDate = applyDate;
+	}
+
+	@Override
+	public String toString() {
+		return "TransferResponse{" +
+				"referenceNumber='" + referenceNumber + '\'' +
+				", information='" + information + '\'' +
+				", lastBalanceProduct=" + lastBalanceProduct +
+				", oldBalanceProduct=" + oldBalanceProduct +
+				", signer=" + signer +
+				", officer=" + officer +
+				", Name='" + Name + '\'' +
+				", dateLastMovement='" + dateLastMovement + '\'' +
+				", BalanceProduct=" + BalanceProduct +
+				", BalanceProductDest=" + BalanceProductDest +
+				", AccountStatus='" + AccountStatus + '\'' +
+				", DateHost='" + DateHost + '\'' +
+				", returnValue=" + returnValue +
+				", conditionId=" + conditionId +
+				", authorizationRequired='" + authorizationRequired + '\'' +
+				", branchSSN=" + branchSSN +
+				", body='" + body + '\'' +
+				", reference=" + reference +
+				", amount=" + amount +
+				", commission=" + commission +
+				", applyDate='" + applyDate + '\'' +
+				", transferMessage='" + transferMessage + '\'' +
+				", productNumber='" + productNumber + '\'' +
+				", returnCode=" + returnCode +
+				'}';
+	}
 }

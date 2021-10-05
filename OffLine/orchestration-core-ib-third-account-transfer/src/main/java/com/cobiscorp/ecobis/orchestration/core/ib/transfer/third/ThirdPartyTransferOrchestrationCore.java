@@ -432,6 +432,8 @@ public class ThirdPartyTransferOrchestrationCore extends TransferOfflineTemplate
 		response.addParam("@o_ssn_branch", ICTSTypes.SYBINT4, 0,
 				String.valueOf(responseLocalValidation.readValueParam("@o_ssn_branch")));
 
+		aBagSPJavaOrchestration.put("APPLY_DATE", aThirdPartyTransferResponse.getApplyDate());
+
 		aBagSPJavaOrchestration.put("ssn_branch", aThirdPartyTransferResponse.getBranchSSN());
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + "SSN_BRANCH -->" + aBagSPJavaOrchestration.get("ssn_branch"));
