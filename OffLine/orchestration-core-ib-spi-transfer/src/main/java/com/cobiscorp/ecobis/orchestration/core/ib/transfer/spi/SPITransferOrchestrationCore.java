@@ -813,7 +813,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				anOriginalRequest.readValueParam(T_EJEC));
 		requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
 				anOriginalRequest.readValueParam(T_RTY));
-	
+
+		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("PRE COMISION --->   RECUPERADA");
