@@ -41,6 +41,7 @@
         <column name="alias" />
         <column name="currencyId" />
         <column name="totalCredit" />
+        <column name="clabeInterBank" />
       </columns>
       <queryText></queryText>
     </query>

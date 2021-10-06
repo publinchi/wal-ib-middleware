@@ -820,6 +820,8 @@ public class DetailedConsolidatedQueryOrchestrationCore extends QueryProductBase
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("currencyId", ICTSTypes.SQLINT2, 21));
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("totalCredit", ICTSTypes.SQLMONEY, 21));
+		
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeInterBank", ICTSTypes.SQLVARCHAR, 22));
 
 		for (ProductConsolidate consolidate : aProcedureResponse.getProductCollection()) {
 			Product product = consolidate.getProduct();
@@ -858,6 +860,8 @@ public class DetailedConsolidatedQueryOrchestrationCore extends QueryProductBase
 			row.addRowData(20, new ResultSetRowColumnData(false, currency.getCurrencyId().toString()));
 			
 			row.addRowData(21, new ResultSetRowColumnData(false, balance.getTotalCredit().toString()));
+			
+			row.addRowData(22, new ResultSetRowColumnData(false, product.getClabeInterbank()));
 			data.addRow(row);
 
 		}
