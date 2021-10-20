@@ -1005,7 +1005,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "E");
 			request.addInputParam("@i_ente_bv", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@s_cliente"));
 			request.addInputParam("@i_cuenta_benef", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_cta_des"));
-			
+			request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_cta"));
+
 			// SE SETEA VARIABLE DE SALIDA
 			request.addOutputParam("@o_salida", ICTSTypes.SYBVARCHAR, "XXX");
 			request.addOutputParam("@o_nom_ordenante", ICTSTypes.SYBVARCHAR, "XXX");
