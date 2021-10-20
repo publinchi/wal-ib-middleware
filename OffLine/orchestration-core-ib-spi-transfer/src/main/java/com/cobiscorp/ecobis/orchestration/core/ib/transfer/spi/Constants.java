@@ -29,4 +29,8 @@ public class Constants {
     public static final String URL_SPEI_REGISTER = "SPEIURL";
     public static final String SECURITY_ALGORITH = "SINGALGOTH";
     public static final String CAT_APP_CLIENT = "CATPPCL";
+
+    public static final String COMPANY_ID = "COMPID";
+    public static final String TRACKING_KEY_PREFIX = "BANKPREFIX";
+
 }
