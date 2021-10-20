@@ -25,7 +25,8 @@ public class AccendoConnectionData {
     private String urlSingleToken;
     private String urlRegistraSpei;
     private String appClient;
-
+    private String companyId;
+    private String trackingKeyPrefix;
     
 
     public String getScope() { return scope; }
@@ -111,6 +112,22 @@ public class AccendoConnectionData {
 	public void setAppClient(String appClient) {
 		this.appClient = appClient;
 	}
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getTrackingKeyPrefix() {
+        return trackingKeyPrefix;
+    }
+
+    public void setTrackingKeyPrefix(String trackingKeyPrefix) {
+        this.trackingKeyPrefix = trackingKeyPrefix;
+    }
 
     @Override
     public String toString() {
