@@ -277,7 +277,6 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 						mappingResponseSpeiToProcedureOffline(responseSpei, responseTransfer, aBagSPJavaOrchestration);
 
-						//executeBanpayOffLine(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
 						responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR, 1, TYPE_REENTRY_OFF_SPI);
 					}
 				} else {
@@ -316,17 +315,17 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	private SpeiMappingRequest mappingBagToSpeiRequest(Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse responseTransfer,
 													   IProcedureRequest anOriginalRequest) {
 		String wInfo = "[SPITransferOrchestrationCore][transformBagToSpeiRequest] ";
-		logger.logInfo(wInfo + "init task ---->");
+		logger.logInfo(wInfo + Constants.INIT_TASK);
 
 		SpeiMappingRequest request = new SpeiMappingRequest();
-		request.setConceptoPago(anOriginalRequest.readValueParam("@i_concepto"));
-		request.setCuentaOrdenante(anOriginalRequest.readValueParam("@i_cta"));
-		request.setCuentaClabeBeneficiario(anOriginalRequest.readValueParam("@i_cta_des"));
-		request.setNombreBeneficiario(anOriginalRequest.readValueParam("@i_nombre_benef"));
-		request.setInstitucionContraparte(anOriginalRequest.readValueParam("@i_banco_ben"));
-		request.setBancoDestino(aBagSPJavaOrchestration.get("@i_banco_dest") != null ? aBagSPJavaOrchestration.get("@i_banco_dest").toString() : "");
+		request.setConceptoPago(anOriginalRequest.readValueParam(Constants.I_CONCEPTO));
+		request.setCuentaOrdenante(anOriginalRequest.readValueParam(Constants.I_CUENTA));
+		request.setCuentaClabeBeneficiario(anOriginalRequest.readValueParam(Constants.I_CUENTA_DESTINO));
+		request.setNombreBeneficiario(anOriginalRequest.readValueParam(Constants.I_NOMBRE_BENEFICIARIO));
+		request.setInstitucionContraparte(anOriginalRequest.readValueParam(Constants.I_BANCO_BENEFICIARIO));
+		request.setBancoDestino(aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO) != null ? aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO).toString() : "");
 
-		BigDecimal monto = new BigDecimal(anOriginalRequest.readValueParam("@i_val"));
+		BigDecimal monto = new BigDecimal(anOriginalRequest.readValueParam(Constants.I_VALOR));
 		request.setMonto(monto.setScale(2, RoundingMode.CEILING));
 		request.setRfcCurpBeneficiario("ND");
 		request.setTipoCuentaBeneficiario(anOriginalRequest.readValueParam("@i_prod_des"));
@@ -351,7 +350,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		request.setCtsRol(anOriginalRequest.readValueParam("@s_rol"));
 		request.setCtsDate(anOriginalRequest.readValueParam("@s_date"));
 
-		logger.logInfo(wInfo + "end task ---->");
+		logger.logInfo(wInfo + Constants.END_TASK);
 
 		return request;
 
@@ -359,29 +358,31 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 	private IProcedureResponse mappingResponseSpeiToProcedure(SpeiMappingResponse response, IProcedureResponse responseTransfer, Map<String, Object> aBagSPJavaOrchestration){
 		String wInfo = "[SPITransferOrchestrationCore][mappingResponseSpeiToProcedure] ";
-		logger.logInfo(wInfo + "init task ---->");
-		logger.logInfo(wInfo + "response de entrada: "+response.toString());
+		logger.logInfo(wInfo + Constants.INIT_TASK);
+		logger.logInfo(wInfo + "response de entrada spei: "+response.toString());
 
 		if(response.getErrorCode() != null){
 			return Utils.returnException(1, ERROR_SPEI);
 		}
 
-		logger.logInfo(wInfo + "end task ---->");
+		logger.logInfo(wInfo + Constants.END_TASK);
 
 		return putSpeiResponseOnBag(response, responseTransfer, aBagSPJavaOrchestration);
 	}
 
 	private IProcedureResponse mappingResponseSpeiToProcedureOffline(SpeiMappingResponse response, IProcedureResponse responseTransfer, Map<String, Object> aBagSPJavaOrchestration){
 		String wInfo = "[SPITransferOrchestrationCore][mappingResponseSpeiToProcedure] ";
-		logger.logInfo(wInfo + "init task ---->");
+		logger.logInfo(wInfo + Constants.INIT_TASK);
 		logger.logInfo(wInfo + "response de entrada: "+response.toString());
 
+		aBagSPJavaOrchestration.put("@i_transaccion_spei", response.getCodigoAcc());
+
 		if(response.getErrorCode() != null){
-			responseTransfer.addParam("@i_fail_provider", ICTSTypes.SQLVARCHAR, 1, "S");
+			responseTransfer.addParam(Constants.I_FAIL_PROVIDER, ICTSTypes.SQLVARCHAR, 1, "S");
 			return responseTransfer;
 		}
 
-		logger.logInfo(wInfo + "end task ---->");
+		logger.logInfo(wInfo + Constants.END_TASK);
 
 		return putSpeiResponseOnBag(response, responseTransfer, aBagSPJavaOrchestration);
 
@@ -392,15 +393,17 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		logger.logInfo(wInfo + "init task ---->");
 		logger.logInfo(wInfo + "response de entrada: " + response.toString());
 
-		responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, response.getClaveRastreo().length(),
+		responseTransfer.addParam(Constants.O_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, response.getClaveRastreo().length(),
 				response.getClaveRastreo());
 
-		aBagSPJavaOrchestration.put("@i_clave_rastreo", response.getClaveRastreo());
-		aBagSPJavaOrchestration.put("@i_mensaje_acc", response.getMensajeAcc());
-		aBagSPJavaOrchestration.put("@i_id_spei_acc", response.getCodigoAcc());
-		aBagSPJavaOrchestration.put("@i_codigo_acc", response.getCodigoAcc());
-		aBagSPJavaOrchestration.put("@o_spei_request", response.getSpeiRequest());
-		aBagSPJavaOrchestration.put("@o_spei_response", response.getSpeiResponse());
+		aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, response.getClaveRastreo());
+		aBagSPJavaOrchestration.put(Constants.I_MENSAJE_ACC, response.getMensajeAcc());
+		aBagSPJavaOrchestration.put(Constants.I_ID_SPEI_ACC, response.getCodigoAcc());
+		aBagSPJavaOrchestration.put(Constants.I_CODIGO_ACC, response.getCodigoAcc());
+
+		aBagSPJavaOrchestration.put(Constants.O_SPEI_REQUEST, response.getSpeiRequest());
+		aBagSPJavaOrchestration.put(Constants.O_SPEI_RESPONSE, response.getSpeiResponse());
+
 
 		logger.logInfo(wInfo + "end task ---->");
 
