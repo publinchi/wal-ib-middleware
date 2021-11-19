@@ -33,4 +33,31 @@ public class Constants {
     public static final String COMPANY_ID = "COMPID";
     public static final String TRACKING_KEY_PREFIX = "BANKPREFIX";
 
+    /*------------------ SPEI -----------------------------------*/
+    //ENTRADAS
+    public static final String I_CLAVE_RASTREO = "@i_clave_rastreo";
+    public static final String I_MENSAJE_ACC = "@i_mensaje_acc";
+    public static final String I_ID_SPEI_ACC = "@i_id_spei_acc";
+    public static final String I_CODIGO_ACC = "@i_codigo_acc";
+    public static final String I_CONCEPTO = "@i_concepto";
+    public static final String I_CUENTA = "@i_cta";
+    public static final String I_CUENTA_DESTINO = "@i_cta_des";
+    public static final String I_NOMBRE_BENEFICIARIO = "@i_nombre_benef";
+    public static final String I_BANCO_BENEFICIARIO = "@i_banco_ben";
+    public static final String I_BANCO_DESTINO = "@i_banco_dest";
+    public static final String I_VALOR = "@i_val";
+    public static final String I_PROD_DES = "@i_prod_des";
+    public static final String I_FAIL_PROVIDER = "@i_fail_provider";
+
+    //SALIDAS
+    public static final String O_SPEI_REQUEST = "@o_spei_request";
+    public static final String O_SPEI_RESPONSE = "@o_spei_response";
+    public static final String O_CLAVE_RASTREO = "@o_clave_rastreo";
+
+    //MENSAJES
+    public static final String INIT_TASK = "init task ---->";
+    public static final String END_TASK = "end task ---->";
+
+
+
 }
