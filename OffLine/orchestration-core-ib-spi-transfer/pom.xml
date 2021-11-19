@@ -57,5 +57,10 @@
       <artifactId>orchestration-core-ib-template</artifactId>
       <version>4.6.1.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.cobiscorp.trf.spei</groupId>
+      <artifactId>cobis-trfspeiservice-bsl</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
 </project>
