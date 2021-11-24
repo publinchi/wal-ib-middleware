@@ -24,6 +24,7 @@
     <parameter name="@i_perfil" dataType="smallint" direction="in" />
     <parameter name="@i_paginar" dataType="char" direction="in" />
     <parameter name="@i_siguiente" dataType="int" direction="in" />
+    <parameter name="@i_modo" dataType="int" direction="in" />
   </parameters>
   <queries>
     <query>
