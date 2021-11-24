@@ -1,1 +1,231 @@
-<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMapping" id="1"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureBase" id="2" name="storedProcedure"><field type="String" name="database" value="cob_bvirtual" /><field type="String" name="name" value="sp_construye_menu" /><field type="String" name="version" value="1" /></class><field type="String" name="procedureName" value="cob_bvirtual..sp_construye_menu" /><collection type="List" length="2" id="3" name="parameters"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="4" index="0"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="5" name="parameter"><field type="String" name="name" value="@i_login" /><field type="String" name="dataType" value="varchar" /><field type="String" name="direction" value="in" /></class><field type="String" name="mappingTypeName" value="DTO" /><field type="String" name="mappingDirection" value="in" /><field type="String" name="dTOAlias" value="inUser" /><field type="String" name="dTOPropertyName" value="name" /><field type="String" name="cTSDataType" value="SQLVARCHAR" /><field type="boolean" name="allowNull" value="false" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="6" index="1"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="7" name="parameter"><field type="String" name="name" value="@i_operacion" /><field type="String" name="dataType" value="varchar" /><field type="String" name="direction" value="in" /></class><field type="String" name="mappingTypeName" value="CONSTANT" /><field type="String" name="mappingDirection" value="in" /><field type="String" name="constantValue" value="UX" /><field type="String" name="cTSDataType" value="SQLVARCHAR" /><field type="boolean" name="allowNull" value="false" /></class></collection><collection type="List" length="1" id="8" name="queries"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="9" index="0"><field type="int" name="order" value="1" /><field type="boolean" name="mapReturn" value="true" /><collection type="List" length="16" id="10" name="columns"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="11" index="0"><field type="int" name="position" value="0" /><field type="String" name="columnName" value="ID" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="id" /><field type="String" name="dataType" value="int" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="12" index="1"><field type="int" name="position" value="1" /><field type="String" name="columnName" value="PARENT" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="parent" /><field type="String" name="dataType" value="int" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="13" index="2"><field type="int" name="position" value="2" /><field type="String" name="columnName" value="ORDER" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="order" /><field type="String" name="dataType" value="int" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="14" index="3"><field type="int" name="position" value="3" /><field type="String" name="columnName" value="LEVEL" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="level" /><field type="String" name="dataType" value="int" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="15" index="4"><field type="int" name="position" value="4" /><field type="String" name="columnName" value="TRN" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="trn" /><field type="String" name="dataType" value="int" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="16" index="5"><field type="int" name="position" value="5" /><field type="String" name="columnName" value="DESCRIPTION" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="description" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="17" index="6"><field type="int" name="position" value="6" /><field type="String" name="columnName" value="FILE" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="file" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="18" index="7"><field type="int" name="position" value="7" /><field type="String" name="columnName" value="FINAL" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="finalMenu" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="19" index="8"><field type="int" name="position" value="8" /><field type="String" name="columnName" value="CULTURE" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="culture" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="20" index="9"><field type="int" name="position" value="9" /><field type="String" name="columnName" value="FAVORITE" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="favorite" /><field type="String" name="dataType" value="boolean" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="21" index="10"><field type="int" name="position" value="10" /><field type="String" name="columnName" value="IMAGE" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="image" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="22" index="11"><field type="int" name="position" value="11" /><field type="String" name="columnName" value="MINI" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="mini" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="23" index="12"><field type="int" name="position" value="12" /><field type="String" name="columnName" value="FAVORITE DESC" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="favoriteDesc" /><field type="String" name="dataType" value="string" /><field type="String" name="format" value="" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="24" index="13"><field type="int" name="position" value="13" /><field type="String" name="columnName" value="IS PACKAGE" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="isPackage" /><field type="String" name="dataType" value="string" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="25" index="14"><field type="int" name="position" value="14" /><field type="String" name="columnName" value="IS NEW" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="isNew" /><field type="String" name="dataType" value="string" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="26" index="15"><field type="int" name="position" value="15" /><field type="String" name="columnName" value="IMAGE PACKAGE" /><field type="String" name="dTOAlias" value="returnMenuItem" /><field type="String" name="dTOPropertyName" value="imagePackage" /><field type="String" name="dataType" value="string" /></class></collection></class></collection><field type="String" name="trnCode" value="1875904" /><collection type="List" length="3" id="27" name="dTOs"><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="28" index="0"><field type="String" name="dTOName" value="User" /><field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" /><field type="String" name="dTOVersion" value="1" /><field type="int" name="repetition" value="0" /><field type="String" name="alias" value="inUser" /><field type="String" name="direction" value="in" /><field type="boolean" name="required" value="true" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="29" index="1"><field type="String" name="dTOName" value="MenuItem" /><field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" /><field type="String" name="dTOVersion" value="1" /><field type="int" name="repetition" value="0" /><field type="String" name="alias" value="returnMenuItem" /><field type="String" name="direction" value="return" /><field type="boolean" name="required" value="true" /></class><class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="30" index="2"><field type="String" name="dTOName" value="MenuItemCollection" /><field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" /><field type="String" name="dTOVersion" value="1" /><field type="int" name="repetition" value="0" /><field type="String" name="alias" value="outMenuItemCollection" /><field type="String" name="direction" value="out" /><field type="boolean" name="required" value="true" /></class></collection><collection type="Map" length="2" id="31" name="mappingProperties"><entry><key type="String" value="BLIQueryPropertyName1" /><value type="String" value="menuItems" /></entry><entry><key type="String" value="dbms" /><value type="String" value="SQLCANALES" /></entry></collection></class>
+<?xml version="1.0"?>
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMapping" id="1">
+  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureBase" id="2" name="storedProcedure">
+    <field type="String" name="database" value="cob_bvirtual" />
+    <field type="String" name="name" value="sp_construye_menu" />
+    <field type="String" name="version" value="1" />
+  </class>
+  <field type="String" name="procedureName" value="cob_bvirtual..sp_construye_menu" />
+  <collection type="List" length="1" id="3" name="queries">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="4" index="0">
+      <field type="int" name="order" value="1" />
+      <field type="boolean" name="mapReturn" value="true" />
+      <collection type="List" length="16" id="5" name="columns">
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="6" index="0">
+          <field type="int" name="position" value="0" />
+          <field type="String" name="columnName" value="ID" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="id" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="7" index="1">
+          <field type="int" name="position" value="1" />
+          <field type="String" name="columnName" value="PARENT" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="parent" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="8" index="2">
+          <field type="int" name="position" value="2" />
+          <field type="String" name="columnName" value="ORDER" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="order" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="9" index="3">
+          <field type="int" name="position" value="3" />
+          <field type="String" name="columnName" value="LEVEL" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="level" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="4">
+          <field type="int" name="position" value="4" />
+          <field type="String" name="columnName" value="TRN" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="trn" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="11" index="5">
+          <field type="int" name="position" value="5" />
+          <field type="String" name="columnName" value="DESCRIPTION" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="description" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="12" index="6">
+          <field type="int" name="position" value="6" />
+          <field type="String" name="columnName" value="FILE" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="file" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="13" index="7">
+          <field type="int" name="position" value="7" />
+          <field type="String" name="columnName" value="FINAL" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="finalMenu" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="14" index="8">
+          <field type="int" name="position" value="8" />
+          <field type="String" name="columnName" value="CULTURE" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="culture" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="15" index="9">
+          <field type="int" name="position" value="9" />
+          <field type="String" name="columnName" value="FAVORITE" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="favorite" />
+          <field type="String" name="dataType" value="boolean" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="16" index="10">
+          <field type="int" name="position" value="10" />
+          <field type="String" name="columnName" value="IMAGE" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="image" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="17" index="11">
+          <field type="int" name="position" value="11" />
+          <field type="String" name="columnName" value="MINI" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="mini" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="18" index="12">
+          <field type="int" name="position" value="12" />
+          <field type="String" name="columnName" value="FAVORITE DESC" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="favoriteDesc" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="19" index="13">
+          <field type="int" name="position" value="13" />
+          <field type="String" name="columnName" value="IS PACKAGE" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="isPackage" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="20" index="14">
+          <field type="int" name="position" value="14" />
+          <field type="String" name="columnName" value="IS NEW" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="isNew" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="21" index="15">
+          <field type="int" name="position" value="15" />
+          <field type="String" name="columnName" value="IMAGE PACKAGE" />
+          <field type="String" name="dTOAlias" value="returnMenuItem" />
+          <field type="String" name="dTOPropertyName" value="imagePackage" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+      </collection>
+    </class>
+  </collection>
+  <collection type="List" length="3" id="22" name="parameters">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="23" index="0">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="24" name="parameter">
+        <field type="String" name="name" value="@i_login" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inUser" />
+      <field type="String" name="dTOPropertyName" value="name" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="25" index="1">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="26" name="parameter">
+        <field type="String" name="name" value="@i_operacion" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="UX" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="27" index="2">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="28" name="parameter">
+        <field type="String" name="name" value="@i_modo" />
+        <field type="String" name="dataType" value="int" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inUser" />
+      <field type="String" name="dTOPropertyName" value="modo" />
+      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+  </collection>
+  <collection type="List" length="0" id="29" name="parametersOpenApi">
+  </collection>
+  <field type="String" name="trnCode" value="1875904" />
+  <collection type="List" length="3" id="30" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="31" index="0">
+      <field type="String" name="dTOName" value="User" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="inUser" />
+      <field type="String" name="direction" value="in" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="32" index="1">
+      <field type="String" name="dTOName" value="MenuItem" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="returnMenuItem" />
+      <field type="String" name="direction" value="return" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="33" index="2">
+      <field type="String" name="dTOName" value="MenuItemCollection" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="outMenuItemCollection" />
+      <field type="String" name="direction" value="out" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+  </collection>
+  <collection type="Map" length="2" id="34" name="mappingProperties">
+    <entry>
+      <key type="String" value="BLIQueryPropertyName1" />
+      <value type="String" value="menuItems" />
+    </entry>
+    <entry>
+      <key type="String" value="dbms" />
+      <value type="String" value="SQLCANALES" />
+    </entry>
+  </collection>
+  <field type="String" name="stateParams" value="" />
+</class>
