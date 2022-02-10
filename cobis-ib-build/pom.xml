@@ -172,6 +172,7 @@
          <!--  <module>../OnLine/orchestration-core-ib-cards-payment</module>-->
         <!-- ConnectorCreditCard -->
         <module>../ConnectorCreditCards/cobis-business-process-connector-ib</module>
+		<module>../Offline/orchestration-core-ib-spei-in</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>

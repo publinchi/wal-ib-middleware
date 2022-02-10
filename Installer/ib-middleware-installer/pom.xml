@@ -1018,6 +1018,11 @@
           <artifactId>orchestration-core-ib-activate-card</artifactId>
           <version>4.6.1.0</version>
         </dependency>
+		<dependency>
+          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+          <artifactId>orchestration-core-ib-spei-in</artifactId>
+          <version>4.6.1.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1258,7 +1263,7 @@
 											orchestration-core-ib-enrollment-template,
                                             orchestration-core-ib-enrollment,
 											orchestration-core-ib-authorization-template,
-											orchestration-core-ib-activate-card											
+											orchestration-core-ib-activate-card
 						</includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
@@ -1351,7 +1356,8 @@
                           orchestration-core-ib-application-checkbook,
                           orchestration-core-ib-spi-transfer,
                           orchestration-core-ib-direct-transfer,
-						  orchestration-core-ib-authorization
+						  orchestration-core-ib-authorization,
+						  orchestration-core-ib-spei-in
                         </includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
