@@ -36,6 +36,10 @@
     <parameter name="@o_idCausaDevolucion" dataType="varchar" direction="out" />
     <parameter name="@o_resultado" dataType="int" direction="out" />
     <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_string_request" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_cobis" dataType="varchar" direction="in" />
+    <parameter name="@i_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_codigo_cliente" dataType="int" direction="in" />
   </parameters>
   <queries />
 </procedure>
