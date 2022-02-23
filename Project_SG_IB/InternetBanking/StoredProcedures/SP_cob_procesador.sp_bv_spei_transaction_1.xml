@@ -19,7 +19,7 @@
     <parameter name="@i_idTipoPago" dataType="int" direction="in" />
     <parameter name="@i_institucionBeneficiaria" dataType="int" direction="in" />
     <parameter name="@i_institucionOrdenante" dataType="int" direction="in" />
-    <parameter name="@i_monto" dataType="decimal" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
     <parameter name="@i_motivo" dataType="varchar" direction="in" />
     <parameter name="@i_nombreBeneficiario" dataType="varchar" direction="in" />
     <parameter name="@i_nombreOrdenante" dataType="varchar" direction="in" />
