@@ -51,8 +51,8 @@
     <parameter name="@i_ssn_branch" dataType="int" direction="in" />
     <parameter name="@i_ref_13" dataType="varchar" direction="in" />
     <parameter name="@i_ref_14" dataType="varchar" direction="in" />
-    <parameter name="@i_latitud" dataType="float" direction="" />
-    <parameter name="@i_longitud" dataType="float" direction="" />
+    <parameter name="@i_latitud" dataType="float" direction="in" />
+    <parameter name="@i_longitud" dataType="float" direction="in" />
   </parameters>
   <queries>
     <query>

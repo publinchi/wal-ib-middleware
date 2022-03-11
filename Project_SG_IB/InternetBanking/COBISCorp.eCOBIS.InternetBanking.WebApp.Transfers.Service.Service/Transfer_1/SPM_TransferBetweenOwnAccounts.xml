@@ -819,7 +819,7 @@
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="121" name="parameter">
         <field type="String" name="name" value="@i_latitud" />
         <field type="String" name="dataType" value="float" />
-        <field type="String" name="direction" value="" />
+        <field type="String" name="direction" value="in" />
       </class>
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
@@ -832,7 +832,7 @@
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="123" name="parameter">
         <field type="String" name="name" value="@i_longitud" />
         <field type="String" name="dataType" value="float" />
-        <field type="String" name="direction" value="" />
+        <field type="String" name="direction" value="in" />
       </class>
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
