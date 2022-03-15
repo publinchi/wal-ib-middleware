@@ -8,7 +8,7 @@
   <field type="String" name="procedureName" value="cob_procesador..sp_tr_recaudo_bd" />
   <collection type="List" length="0" id="3" name="queries">
   </collection>
-  <collection type="List" length="48" id="4" name="parameters">
+  <collection type="List" length="50" id="4" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="5" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="6" name="parameter">
         <field type="String" name="name" value="@i_ejecuta_consulta" />
@@ -629,12 +629,38 @@
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="101" index="48">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="102" name="parameter">
+        <field type="String" name="name" value="@i_latitud" />
+        <field type="String" name="dataType" value="float" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inPaymentServices" />
+      <field type="String" name="dTOPropertyName" value="latitud" />
+      <field type="String" name="cTSDataType" value="SQLFLT8i" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="103" index="49">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="104" name="parameter">
+        <field type="String" name="name" value="@i_longitud" />
+        <field type="String" name="dataType" value="float" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inPaymentServices" />
+      <field type="String" name="dTOPropertyName" value="longitud" />
+      <field type="String" name="cTSDataType" value="SQLFLT8i" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
   </collection>
-  <collection type="List" length="0" id="101" name="parametersOpenApi">
+  <collection type="List" length="0" id="105" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="1801035" />
-  <collection type="List" length="5" id="102" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="103" index="0">
+  <collection type="List" length="5" id="106" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="107" index="0">
       <field type="String" name="dTOName" value="Product" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -644,7 +670,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="104" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="108" index="1">
       <field type="String" name="dTOName" value="User" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -654,7 +680,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="105" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="109" index="2">
       <field type="String" name="dTOName" value="PaymentServices" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -664,7 +690,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="106" index="3">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="110" index="3">
       <field type="String" name="dTOName" value="TransactionContextCIB" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -674,7 +700,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="107" index="4">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="111" index="4">
       <field type="String" name="dTOName" value="PaidDetailServiceCollection" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -685,7 +711,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="6" id="108" name="mappingProperties">
+  <collection type="Map" length="6" id="112" name="mappingProperties">
     <entry>
       <key type="String" value="BLIQueryPropertyName1" />
       <value type="String" value="paidDetailServices" />
