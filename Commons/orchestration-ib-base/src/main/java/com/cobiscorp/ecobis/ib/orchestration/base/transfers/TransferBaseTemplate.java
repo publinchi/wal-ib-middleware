@@ -625,6 +625,14 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, anOriginalRequest.readValueParam("@s_servicio"));
 
 		request.addInputParam("@i_graba_log", ICTSTypes.SQLVARCHAR, "S");
+		
+		if (anOriginalRequest.readValueParam("@i_latitud") != null) {
+			request.addInputParam("@i_latitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_latitud"));
+		}
+		
+		if (anOriginalRequest.readValueParam("@i_longitud") != null) {
+			request.addInputParam("@i_longitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_longitud"));
+		}
 
 		// Datos de cuenta origen
 		Utils.copyParam("@i_cta", anOriginalRequest, request);
