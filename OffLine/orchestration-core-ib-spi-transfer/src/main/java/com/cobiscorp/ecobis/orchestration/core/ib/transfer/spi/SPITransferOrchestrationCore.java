@@ -192,18 +192,40 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		}
 		IProcedureResponse responseTransfer = null;
 		String idTransaccion = "";
+		String idMovement = "";
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 			IProcedureRequest originalRequestClone = originalRequest.clone();
 			// SE EJECUTA LA NOTA DE DEBITO CENTRAL
-			responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
-			String idMovement = "";
-			if (responseTransfer.readValueParam("@o_referencia") != null && responseTransfer.readValueParam("@o_referencia") != null)
-				idMovement = responseTransfer.readValueParam("@o_referencia");
+			
+			logger.logDebug("Aplicando Transacción " + idTransaccion);
+			
+			if(aBagSPJavaOrchestration.containsKey("origin_spei") &&  aBagSPJavaOrchestration.get("origin_spei")!=null) {
+				logger.logDebug("On Origin Spei " );
+				String appliedOrigin= aBagSPJavaOrchestration.get("origin_spei").toString();
+				logger.logDebug("On Origin Spei do "+appliedOrigin );
+				if(appliedOrigin.equals("MASSIVE")) {
+					logger.logDebug("On massive function");					
+			    	idTransaccion="040";
+			    }
+			}
+			
+			 responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
+			
+			if(!(idTransaccion!=null && idTransaccion.equals("040"))) {
+				logger.logDebug("Normal transacction");			   
+				
+				if (responseTransfer.readValueParam("@o_referencia") != null && responseTransfer.readValueParam("@o_referencia") != null)
+					idMovement = responseTransfer.readValueParam("@o_referencia");
+				
+				  responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration, idTransaccion);
+			}else {
+				logger.logDebug("On massive transacction");
+				idMovement=aBagSPJavaOrchestration.get("ssn_operation").toString();;
+			}	
 
-
-			responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration, idTransaccion);
+			
 
 
 			// JCOS VALIDACION PARA FL
@@ -228,7 +250,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 						}
 
 						aBagSPJavaOrchestration.put("APPLY_DATE", originalRequestClone.readValueParam("@o_fecha_tran"));
-
+						
+					
+						
+						
 						int transacctionApplied = Integer.parseInt(idTransaccion.trim());
 						if (transacctionApplied > 0) {
 
@@ -236,8 +261,14 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 									String.valueOf(transacctionApplied));
 							aBagSPJavaOrchestration.put("@i_transaccion_spei", String.valueOf(transacctionApplied));
 
+							if (logger.isDebugEnabled()) {
+								logger.logDebug("Spei Armed");
+							}
 							SpeiMappingRequest requestSpei = mappingBagToSpeiRequest(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
 
+							if (logger.isDebugEnabled()) {
+								logger.logDebug("Spei do it");
+							}
 							SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
 
 							responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer, aBagSPJavaOrchestration);
@@ -797,6 +828,14 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			aBagSPJavaOrchestration.put("@i_banco_dest", columns[0].getValue());
 			requestTransfer.addInputParam("@i_ruta_trans", ICTSTypes.SYBVARCHAR, columns[2].getValue());
 			requestTransfer.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+			if(aBagSPJavaOrchestration.containsKey("origin_spei") 
+					&& aBagSPJavaOrchestration.get("origin_spei")!=null
+					 && aBagSPJavaOrchestration.get("origin_spei").equals("MASSIVE")) {
+				
+				logger.logDebug("go to exit Spei Transaction");
+				
+				return response;
+			}
 			response = executeCoreBanking(requestTransfer);
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Request accountTransfer: " + anOriginalRequest.getProcedureRequestAsString());
