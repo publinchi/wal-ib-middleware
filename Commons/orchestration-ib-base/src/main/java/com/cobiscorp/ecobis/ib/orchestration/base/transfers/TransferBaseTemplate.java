@@ -262,7 +262,11 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		
 		switch (t_trn) {
 		case 1800009:
-			request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "S");
+			if("S".equals(originalRequest.readValueParam("@i_is_expense_account"))){
+				request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "N");
+			} else {
+				request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "S");
+			}
 			request.addInputParam("@i_option", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_option"));
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
 			//same accounts

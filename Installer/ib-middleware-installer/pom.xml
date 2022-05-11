@@ -725,7 +725,12 @@
 		<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExternalProducts.DTO</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	    <dependency>
 	      	<groupId>com.cobiscorp.channels.ib</groupId>
 	      	<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.Service</artifactId>
@@ -859,6 +864,11 @@
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
 		
@@ -1013,11 +1023,23 @@
           <artifactId>orchestration-core-ib-authorization</artifactId>
           <version>4.6.1.0</version>
         </dependency>
-	<dependency>
+		<dependency>
           <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
           <artifactId>orchestration-core-ib-activate-card</artifactId>
           <version>4.6.1.0</version>
         </dependency>
+		<!--Cuentas de Gastos -->
+		<dependency>
+          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+          <artifactId>orchestration-ib-expenses-accounts-template</artifactId>
+          <version>4.6.1.0</version>
+        </dependency>
+		<dependency>
+          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+          <artifactId>orchestration-ib-expenses-accounts</artifactId>
+          <version>4.6.1.0</version>
+        </dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
@@ -1103,7 +1125,9 @@
 											COBISCorp.eCOBIS.InternetBanking.WebApp.Flows.Service,
 											channel-adm-commons,
                                             COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO,
-                                            COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service											
+                                            COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service,
+											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO,
+											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service
 						</includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
@@ -1258,7 +1282,9 @@
 											orchestration-core-ib-enrollment-template,
                                             orchestration-core-ib-enrollment,
 											orchestration-core-ib-authorization-template,
-											orchestration-core-ib-activate-card											
+											orchestration-core-ib-activate-card,
+											orchestration-ib-expenses-accounts-template,
+											orchestration-ib-expenses-accounts											
 						</includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>

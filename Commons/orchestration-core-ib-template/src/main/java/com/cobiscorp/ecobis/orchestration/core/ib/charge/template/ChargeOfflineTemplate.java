@@ -1,0 +1,163 @@
+package com.cobiscorp.ecobis.orchestration.core.ib.charge.template;
+
+import com.cobiscorp.cobis.commons.components.ComponentLocator;
+import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
+import com.cobiscorp.cobis.commons.log.ILogger;
+import com.cobiscorp.cobis.commons.log.LogFactory;
+import com.cobiscorp.cobis.cts.domains.ICTSTypes;
+import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
+import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.cts.reentry.api.IReentryPersister;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.orchestration.base.charges.ChargeBaseTemplate;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceReexecutionComponent;
+
+import java.util.Map;
+
+public abstract class ChargeOfflineTemplate extends ChargeBaseTemplate {
+
+	protected static String CORE_SERVER = "CORE_SERVER";
+	protected static String CHARGE_RESPONSE = "CHARGE_RESPONSE";
+	protected static final String CHARGE_NAME = "CHARGE_NAME";
+	protected static final int CODE_OFFLINE = 40004;
+
+	protected abstract IProcedureResponse executeTransfer(Map<String, Object> aBagSPJavaOrchestration);
+
+	private static ILogger logger = LogFactory.getLogger(ChargeOfflineTemplate.class);
+
+	public abstract ICoreServiceReexecutionComponent getCoreServiceReexecutionComponent();
+
+	@Override
+	protected IProcedureResponse executeTransaction(IProcedureRequest anOriginalRequest,
+													Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureResponse responseToSychronize = null;
+		IProcedureResponse responseTransfer = null;
+
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Ejecutando método executeTransaction Request: " + anOriginalRequest);
+
+		StringBuilder messageErrorTransfer = new StringBuilder();
+		messageErrorTransfer.append((String) aBagSPJavaOrchestration.get(CHARGE_NAME));
+
+		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+
+		// SI ESTA EN LINEA Y ESTA COMO EJECUCION DE REENTRY, DEBE SALIR - if is Online and if is reentryExecution , have to leave
+		if (getFromReentryExcecution(aBagSPJavaOrchestration)) {
+			if (!serverResponse.getOnLine()) {
+				IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
+				aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, resp);
+				return resp;
+			}
+		}
+
+		responseTransfer = executeTransfer(aBagSPJavaOrchestration);
+
+
+		if (serverResponse.getOnLine()) {
+
+			if (logger.isInfoEnabled())
+				logger.logInfo(CLASS_NAME + " Respuesta de ejecución método executeTransfer: "
+						+ responseTransfer.getProcedureResponseAsString());
+
+			if (Utils.flowError(messageErrorTransfer.append(" --> executeTransfer").toString(), responseTransfer)) {
+				if (logger.isInfoEnabled())
+					logger.logInfo(CLASS_NAME + messageErrorTransfer);
+				return responseTransfer;
+			}
+		} else {
+			// SI NO ES EJECUCION DE REENTRY, GRABAR EN REENTRY
+			if (!getFromReentryExcecution(aBagSPJavaOrchestration)) {
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(CLASS_NAME + " Transferencia en OffLine serverResponse :" + serverResponse.toString());
+					logger.logInfo(CLASS_NAME + " Respuesta de ejecución método executeTransfer validando offline mode: " + responseTransfer.getProcedureResponseAsString());
+				}
+
+				//SALTAR REENTRY SI ES Q HUBO PROBLEMAS CON EL PROVEEDOR
+				if (responseTransfer.readValueParam("@i_fail_provider") == null
+						|| !responseTransfer.readValueParam("@i_fail_provider").equals("S")) {
+
+					if (responseTransfer.readValueParam("@i_type_reentry") != null && responseTransfer.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF_SPI)) {
+
+						anOriginalRequest.addInputParam("@i_type_reentry", ICTSTypes.SQLVARCHAR, TYPE_REENTRY_OFF);
+					}
+
+					if (logger.isInfoEnabled())
+						logger.logInfo("::::SAVED REENTRY:::: " + anOriginalRequest);
+					saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
+
+
+				} else {
+					IProcedureResponse response = Utils.returnException(1, ERROR_SPEI);
+					response.addFieldInHeader("failProvider", "S".charAt(0), "S");
+					return response;
+				}
+			}
+		}
+
+		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseTransfer);
+
+		if (serverResponse.getOnLine() || (!serverResponse.getOnLine() && serverResponse.getOfflineWithBalances())) {
+			responseToSychronize = new ProcedureResponseAS();
+			responseToSychronize.setReturnCode(responseTransfer.getReturnCode());
+			if (responseTransfer.getResultSetListSize() > 0) {
+				responseToSychronize.addResponseBlock(responseTransfer.getResultSet(1));
+			}
+			aBagSPJavaOrchestration.put(RESPONSE_BALANCE, responseToSychronize);
+		}
+
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Respuesta de ejecución método executeTransaction Response:  "
+					+ responseTransfer.getProcedureResponseAsString());
+		return responseTransfer;
+	}
+
+	protected IProcedureResponse saveReentry(IProcedureRequest anOriginalRequest,
+											 Map<String, Object> aBagSPJavaOrchestration) {
+
+		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
+		IProcedureRequest request = anOriginalRequest.clone();
+		IProcedureResponse responseLocalValidation = (IProcedureResponse) aBagSPJavaOrchestration
+				.get(RESPONSE_LOCAL_VALIDATION);
+
+		ComponentLocator componentLocator = null;
+		IReentryPersister reentryPersister = null;
+		componentLocator = ComponentLocator.getInstance(this);
+
+		Utils.addInputParam(request, "@i_clave_bv", 56, responseLocalValidation.readValueParam("@o_clave_bv"));
+		Utils.addInputParam(request, "@i_en_linea", 39, "N");
+		Utils.addOutputParam(request, "@o_clave", 56, "0");
+
+		reentryPersister = (IReentryPersister) componentLocator.find(IReentryPersister.class, REENTRY_FILTER);
+		if (reentryPersister == null)
+			throw new COBISInfrastructureRuntimeException("Service IReentryPersister was not found");
+
+		request.removeFieldInHeader("sessionId");
+		request.addFieldInHeader("reentryPriority", 'S', "5");
+		request.addFieldInHeader("REENTRY_SSN_TRX", 'S', request.readValueFieldInHeader("ssn"));
+		request.addFieldInHeader("targetId", 'S', "local");
+		request.removeFieldInHeader("serviceMethodName");
+		request.addFieldInHeader("trn", 'N', request.readValueFieldInHeader("trn"));
+
+		request.removeParam("@t_rty");
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("REQUEST TO SAVE REENTRY -->" + request.getProcedureRequestAsString());
+		}
+		Boolean reentryResponse = reentryPersister.addTransaction(request);
+
+		IProcedureResponse response = initProcedureResponse(request);
+		if (!reentryResponse.booleanValue()) {
+			response.addFieldInHeader("executionResult", 'S', "1");
+			response.addMessage(1, "Ocurrio un error al tratar de registrar la transaccion en el Reentry CORE COBIS");
+		} else {
+			response.addFieldInHeader("executionResult", 'S', "0");
+		}
+
+		return response;
+
+	}
+
+}

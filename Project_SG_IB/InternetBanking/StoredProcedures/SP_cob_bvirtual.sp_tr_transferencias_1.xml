@@ -91,6 +91,7 @@
     <parameter name="@i_comision" dataType="money" direction="in" />
     <parameter name="@i_latitud" dataType="float" direction="in" />
     <parameter name="@i_longitud" dataType="float" direction="in" />
+    <parameter name="@i_is_expense_account" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

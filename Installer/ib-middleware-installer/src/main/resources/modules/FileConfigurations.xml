@@ -190,7 +190,11 @@
         <staff id="34" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO"
 			path="../plugins/IB" version="4.6.1.0" />
         <staff id="35" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service"
-			path="../plugins/IB" version="4.6.1.0" />			
+			path="../plugins/IB" version="4.6.1.0" />
+		<staff id="36" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO"
+			   path="../plugins/IB" version="4.6.1.0" />
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/IB" version="4.6.1.0" />
 	</plan-config>
 	
 	<orchestrationsTemplate>
@@ -260,6 +264,7 @@
 		<staff id="63" name="orchestration-core-batch-notification-template" version="4.6.1.0" />
 		<staff id="64" name="orchestration-core-ib-enrollment-template" version="4.6.1.0" />
 		<staff id="64" name="orchestration-core-ib-authorization-template" version="4.6.1.0" />
+		<staff id="65" name="orchestration-ib-expenses-accounts-template" version="4.6.1.0" />
 	</orchestrationsTemplate>
 		
 	<orchestrations>
@@ -336,7 +341,8 @@
     <staff id="72" name="orchestration-core-ib-direct-transfer" version="4.6.1.0" />
 	<staff id="73" name="orchestration-core-ib-enrollment" version="4.6.1.0" />
 	<staff id="74" name="orchestration-core-ib-authorization" version="4.6.1.0" />
-  <staff id="75" name="orchestration-core-ib-activate-card" version="4.6.1.0" />
+    <staff id="75" name="orchestration-core-ib-activate-card" version="4.6.1.0" />
+    <staff id="76" name="orchestration-ib-expenses-accounts" version="4.6.1.0" />
   </orchestrations>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_tran_cta_gasto</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@i_filas_pagina" dataType="int" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="datetime" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="datetime" direction="in" />
+    <parameter name="@i_cta_principal" dataType="varchar" direction="in" />
+    <parameter name="@i_lote" dataType="int" direction="in" />
+    <parameter name="@i_detalle" dataType="int" direction="in" />
+    <parameter name="@i_id_cta_gasto" dataType="int" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_num_ctas" dataType="int" direction="in" />
+    <parameter name="@i_estado" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_gasto" dataType="varchar" direction="in" />
+    <parameter name="@i_grupo" dataType="varchar" direction="in" />
+    <parameter name="@i_ssn_operacion" dataType="int" direction="in" />
+    <parameter name="@i_signo_operacion" dataType="varchar" direction="in" />
+    <parameter name="@i_offline" dataType="varchar" direction="in" />
+    <parameter name="@i_prod_cta_orig" dataType="varchar" direction="in" />
+    <parameter name="@i_prod_cta_dest" dataType="varchar" direction="in" />
+    <parameter name="@i_nom_cta_dest" dataType="varchar" direction="in" />
+    <parameter name="@i_monto_comision" dataType="money" direction="in" />
+    <parameter name="@i_moneda" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ID LOTE" />
+        <column name="FECHA REGISTRO" />
+        <column name="CUENTA PRINCIPAL" />
+        <column name="# CUENTAS" />
+        <column name="MONTO TOTAL" />
+        <column name="ESTADO" />
+        <column name="CODIGO ERROR" />
+        <column name="MENSAJE ERROR" />
+      </columns>
+      <queryText>SELECT  "ID LOTE" = tcg_id,"FECHA REGISTRO" = tcg_fecha_registro,"CUENTA PRINCIPAL" = tcg_cta_origen,"# CUENTAS" = tcg_num_ctas,"MONTO TOTAL" = tcg_monto_total,"ESTADO" = tcg_estado,"CODIGO ERROR" = tcg_error,"MENSAJE ERROR" = tcg_error_msg </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ID TRANSFERENCIA" />
+        <column name="ID LOTE" />
+        <column name="FECHA REGISTRO" />
+        <column name="CUENTA ORIGEN" />
+        <column name="CUENTA DESTINO" />
+        <column name="MONTO" />
+        <column name="GRUPO" />
+        <column name="ESTADO" />
+        <column name="CODIGO ERROR" />
+        <column name="MENSAJE ERROR" />
+      </columns>
+      <queryText>SELECT  "ID TRANSFERENCIA" = tcgd_id,"ID LOTE" = tcgd_id_lote,"FECHA REGISTRO" = tcgd_fecha_registro,"CUENTA ORIGEN" = tcgd_cta_origen,"CUENTA DESTINO" = tcgd_cta_destino,"MONTO" = tcgd_monto,"GRUPO" = tcgd_grupo,"ESTADO" = tcgd_estado,"CODIGO ERROR" = tcgd_error,"MENSAJE ERROR" = tcgd_error_msg </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="ID CUENTA GASTO" />
+        <column name="NOMBRE CUENTA GASTO" />
+        <column name="CUENTA ORIGEN" />
+        <column name="CUENTA GASTO" />
+        <column name="GRUPO" />
+        <column name="CALENDARIZACION" />
+        <column name="FECHA CALENDARIZACION" />
+      </columns>
+      <queryText>SELECT  "ID CUENTA GASTO" = cg_id,"NOMBRE CUENTA GASTO","CUENTA ORIGEN" = cg_cuenta,"CUENTA GASTO" = cg_expense_account,"GRUPO" = cg_group_code </queryText>
+    </query>
+  </queries>
+</procedure>
