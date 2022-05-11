@@ -3,6 +3,10 @@ package com.cobiscorp.ecobis.orchestration.core.ib.query.detail;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cobiscorp.ecobis.ib.orchestration.dtos.ExpensesAccount;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.ExpensesAccountRequest;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.ExpensesAccountResponse;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.IExpensesAccounts;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -44,8 +48,8 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceEnquiriesDet
 /**
  * Enquiries Detail
  * 
- * @since Aug 20, 2015
- * @author dmorla
+ * @since Dic 16, 2021
+ * @author jvelasquez
  * @version 1.0.0
  * 
  */
@@ -71,16 +75,16 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 	/**
 	 * Instance plugin to use services other core banking
 	 */
-	@Reference(referenceInterface = ICoreServiceEnquiriesDetail.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceEnquiriesDetail", unbind = "unbindCoreServiceEnquiriesDetail")
-	protected ICoreServiceEnquiriesDetail coreServiceEnquiriesDetail;
+	@Reference(referenceInterface = IExpensesAccounts.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindExpensesAccounts", unbind = "unbindExpensesAccounts")
+	protected IExpensesAccounts coreExpensesAccounts;
 
 	/**
 	 * Instance Service Interface
 	 * 
 	 * @param service
 	 */
-	public void bindCoreServiceEnquiriesDetail(ICoreServiceEnquiriesDetail service) {
-		coreServiceEnquiriesDetail = service;
+	public void bindExpensesAccounts(IExpensesAccounts service) {
+		coreExpensesAccounts = service;
 	}
 
 	/**
@@ -88,8 +92,8 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 	 * 
 	 * @param service
 	 */
-	public void unbindCoreServiceEnquiriesDetail(ICoreServiceEnquiriesDetail service) {
-		coreServiceEnquiriesDetail = null;
+	public void unbindExpensesAccounts(IExpensesAccounts service) {
+		coreExpensesAccounts = null;
 	}
 
 	/**
@@ -117,7 +121,7 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 
 		try {
 			Map<String, Object> mapInterfaces = new HashMap<String, Object>();
-			mapInterfaces.put("coreServiceEnquiriesDetail", coreServiceEnquiriesDetail);
+			mapInterfaces.put("coreExpensesAccounts", coreExpensesAccounts);
 
 			Utils.validateComponentInstance(mapInterfaces);
 
@@ -184,19 +188,19 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 	 */
 	private IProcedureResponse queryExecution(IProcedureRequest anOriginalRequest, Map<String, Object> aBag) {
 
-		EnquiriesDetailResponse wEnquiriesDetailResp = new EnquiriesDetailResponse();
-		EnquiriesDetailRequest wEnquiriesDetailRequest = transformEnquiriesDetailRequest(anOriginalRequest.clone());
+		ExpensesAccountResponse wExpensesAccountResponse = new ExpensesAccountResponse();
+		ExpensesAccountRequest wExpensesAccountRequest = transformExpensesAccountRequest(anOriginalRequest.clone());
 
 		try {
-			wEnquiriesDetailRequest.setOriginalRequest(anOriginalRequest);
-			wEnquiriesDetailResp = coreServiceEnquiriesDetail.getDetail(wEnquiriesDetailRequest);
+			wExpensesAccountRequest.setOriginalRequest(anOriginalRequest);
+			wExpensesAccountResponse = coreExpensesAccounts.getExpensesAccounts(wExpensesAccountRequest);
 		} catch (CTSServiceException e) {
 			e.printStackTrace();
 		} catch (CTSInfrastructureException e) {
 			e.printStackTrace();
 		}
 
-		return transformDetailResponse(wEnquiriesDetailResp, aBag);
+		return transformExpensesAccountResponse(wExpensesAccountResponse, aBag);
 	}
 
 	/*
@@ -217,43 +221,37 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 	 * Transformación de ProcedureRequest a StockRequest
 	 ********************/
 
-	private EnquiriesDetailRequest transformEnquiriesDetailRequest(IProcedureRequest aRequest) {
-		EnquiriesDetailRequest wEnquiriesDetailRequest = new EnquiriesDetailRequest();
+	private ExpensesAccountRequest transformExpensesAccountRequest(IProcedureRequest aRequest) {
+		ExpensesAccountRequest wExpensesAccountRequest = new ExpensesAccountRequest();
 
 		if (logger.isDebugEnabled())
 			logger.logDebug("Procedure Request to Transform->" + aRequest.getProcedureRequestAsString());
 
-		String messageError = null;
 
-		messageError = aRequest.readValueParam("@i_tipo_solicitud") == null ? " - @i_tipo_solicitud can't be null" : "";
+		wExpensesAccountRequest.setOperation(aRequest.readValueParam("@i_operacion"));
+		wExpensesAccountRequest.setExpensesAccountId(Integer.parseInt(aRequest.readValueParam("@i_cta_gasto_id")));
+		wExpensesAccountRequest.setMasterAccount(aRequest.readValueParam("@i_cuenta_principal"));
+		wExpensesAccountRequest.setGroupCode(Integer.parseInt(aRequest.readValueParam("@i_codigo_grupo")));
+		if(null != aRequest.readValueParam("@i_saldo")){
+			wExpensesAccountRequest.setBalance(new Double(aRequest.readValueParam("@i_saldo")));
+		}
 
-		if (!messageError.equals(""))
-			throw new IllegalArgumentException(messageError);
-
-		wEnquiriesDetailRequest.setOperation(aRequest.readValueParam("@i_tipo_solicitud"));
-		if (aRequest.readValueParam("@i_cta") != null)
-			wEnquiriesDetailRequest.setAccount(aRequest.readValueParam("@i_cta"));
-		if (aRequest.readValueParam("@i_chequera") != null)
-			wEnquiriesDetailRequest.setCheckbook(Integer.parseInt(aRequest.readValueParam("@i_chequera")));
-		if (aRequest.readValueParam("@i_id") != null)
-			wEnquiriesDetailRequest.setId(Integer.parseInt(aRequest.readValueParam("@i_id")));
-
-		return wEnquiriesDetailRequest;
+		return wExpensesAccountRequest;
 	}
 
 	/*********************
 	 * Transformación de Response a ProcedureResponse
 	 ***********************/
 
-	private IProcedureResponse transformDetailResponse(EnquiriesDetailResponse aEnquiriesDetailResponse,
+	private IProcedureResponse transformExpensesAccountResponse(ExpensesAccountResponse aExpensesAccountResponse,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		if (logger.isDebugEnabled())
 			logger.logDebug("Transform Procedure Response");
 
-		if (aEnquiriesDetailResponse.getReturnCode() != 0) {
+		if (aExpensesAccountResponse.getReturnCode() != 0) {
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION,
-					Utils.returnException(aEnquiriesDetailResponse.getMessages()));
+					Utils.returnException(aExpensesAccountResponse.getMessages()));
 
 		} else {
 
@@ -261,65 +259,33 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 			IResultSetHeader metaData = new ResultSetHeader();
 			IResultSetData data = new ResultSetData();
 
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("ID", ICTSTypes.SYBINT4, 10));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("CUENTA ORIGEN", ICTSTypes.SYBVARCHAR, 10));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("CUENTA", ICTSTypes.SYBVARCHAR, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("MONTO", ICTSTypes.SYBMONEY, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("TIPO CHEQUERA", ICTSTypes.SYBVARCHAR, 128));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("TOTAL CHEQUES", ICTSTypes.SYBINT4, 10));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("OFICINA ENTREGA", ICTSTypes.SYBVARCHAR, 128));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("PROPOSITO", ICTSTypes.SYBVARCHAR, 128));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("BENEFICIARIO", ICTSTypes.SYBVARCHAR, 128));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("ID AUTORIZADO", ICTSTypes.SYBVARCHAR, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("AUTORIZADO", ICTSTypes.SYBVARCHAR, 128));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("ESTADO", ICTSTypes.SYBVARCHAR, 10));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("TIPO", ICTSTypes.SYBVARCHAR, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("SUBTIPO", ICTSTypes.SYBVARCHAR, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("PLAZO", ICTSTypes.SYBINT2, 3));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("FECHA_FIN", ICTSTypes.SYBVARCHAR, 10));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("GARANTIZAR", ICTSTypes.SYBVARCHAR, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("TIPO AVAL", ICTSTypes.SYBVARCHAR, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("AVAL", ICTSTypes.SYBVARCHAR, 64));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("NOMBRE COMPLETO", ICTSTypes.SYBVARCHAR, 64));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("SALDO", ICTSTypes.SYBVARCHAR, 128));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("EMAIL", ICTSTypes.SYBVARCHAR, 10));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("GRUPO", ICTSTypes.SYBINT4, 128));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("TARJETA", ICTSTypes.SYBVARCHAR, 128));
 
-			for (EnquiriesDetail aDetail : aEnquiriesDetailResponse.getEnquiriesDetailCollection()) {
+
+			for (ExpensesAccount aExpensesAccount : aExpensesAccountResponse.getExpensesAccountList()) {
 
 				IResultSetRow row = new ResultSetRow();
 
 				row.addRowData(1, new ResultSetRowColumnData(false,
-						aDetail.getApplicationNumber() == null ? "" : aDetail.getApplicationNumber().toString()));
+						aExpensesAccount.getMasterAccountNumber() == null ? "" : aExpensesAccount.getMasterAccountNumber()));
 				row.addRowData(2,
-						new ResultSetRowColumnData(false, aDetail.getAccount() == null ? "" : aDetail.getAccount()));
+						new ResultSetRowColumnData(false, aExpensesAccount.getExpensesAccountNumber() == null ? "" : aExpensesAccount.getExpensesAccountNumber()));
 				row.addRowData(3, new ResultSetRowColumnData(false,
-						aDetail.getAmount() == null ? "" : aDetail.getAmount().setScale(2).toString()));
-				row.addRowData(4, new ResultSetRowColumnData(false,
-						aDetail.getCheckbookTipe() == null ? "" : aDetail.getCheckbookTipe()));
+						aExpensesAccount.getOwnerAccountName() == null ? "" :aExpensesAccount.getOwnerAccountName()));
+				/*row.addRowData(4, new ResultSetRowColumnData(false,
+						aExpensesAccount. == null ? "" : aDetail.getCheckbookTipe()));*/
 				row.addRowData(5, new ResultSetRowColumnData(false,
-						aDetail.getChecks() == null ? "" : aDetail.getChecks().toString()));
-				row.addRowData(6,
-						new ResultSetRowColumnData(false, aDetail.getDelivery() == null ? "" : aDetail.getDelivery()));
+						aExpensesAccount.getEmail() == null ? "" : aExpensesAccount.getEmail()));
+				/*row.addRowData(6,
+						new ResultSetRowColumnData(false, aExpensesAccount.getGroupCode() == null ? "" : aExpensesAccount.getGroupCode()));
 				row.addRowData(7,
-						new ResultSetRowColumnData(false, aDetail.getPurpose() == null ? "" : aDetail.getPurpose()));
-				row.addRowData(8, new ResultSetRowColumnData(false,
-						aDetail.getBeneficiary() == null ? "" : aDetail.getBeneficiary()));
-				row.addRowData(9, new ResultSetRowColumnData(false,
-						aDetail.getThirdIdentification() == null ? "" : aDetail.getThirdIdentification()));
-				row.addRowData(10,
-						new ResultSetRowColumnData(false, aDetail.getName() == null ? "" : aDetail.getName()));
-				row.addRowData(11,
-						new ResultSetRowColumnData(false, aDetail.getState() == null ? "" : aDetail.getState()));
-				row.addRowData(12,
-						new ResultSetRowColumnData(false, aDetail.getType() == null ? "" : aDetail.getType()));
-				row.addRowData(13,
-						new ResultSetRowColumnData(false, aDetail.getSubtype() == null ? "" : aDetail.getSubtype()));
-				row.addRowData(14, new ResultSetRowColumnData(false,
-						aDetail.getTerm() == null ? "0" : aDetail.getTerm().toString()));
-				row.addRowData(15,
-						new ResultSetRowColumnData(false, aDetail.getEndDate() == null ? "" : aDetail.getEndDate()));
-				row.addRowData(16, new ResultSetRowColumnData(false,
-						aDetail.getGuarantee() == null ? "" : aDetail.getGuarantee()));
-				row.addRowData(17, new ResultSetRowColumnData(false,
-						aDetail.getEndorsementType() == null ? "" : aDetail.getEndorsementType()));
-				row.addRowData(18, new ResultSetRowColumnData(false,
-						aDetail.getEndorsement() == null ? "" : aDetail.getEndorsement()));
+						new ResultSetRowColumnData(false, ""));*/
 				data.addRow(row);
 			}
 
@@ -328,7 +294,7 @@ public class EnquiriesDetailOrchestrationCore extends SPJavaOrchestrationBase {
 			wProcedureResponse.addResponseBlock(resultBlock);
 
 		}
-		wProcedureResponse.setReturnCode(aEnquiriesDetailResponse.getReturnCode());
+		wProcedureResponse.setReturnCode(aExpensesAccountResponse.getReturnCode());
 		if (logger.isDebugEnabled())
 			logger.logDebug("transformProcedureResponse Final -->" + wProcedureResponse.getProcedureResponseAsString());
 
