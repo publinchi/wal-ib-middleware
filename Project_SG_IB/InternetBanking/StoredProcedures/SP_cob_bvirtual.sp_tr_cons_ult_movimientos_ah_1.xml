@@ -102,6 +102,7 @@
         <column name="IMAGEN" />
         <column name="CONCEPTO" />
         <column name="RASTREO" />
+        <column name="TARJETNUMBER" />
       </columns>
       <queryText></queryText>
     </query>
