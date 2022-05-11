@@ -37,7 +37,6 @@ import com.cobiscorp.ecobis.ib.orchestration.dtos.AccountStatement;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceMovementsQuery;
 import com.cobiscorp.ecobis.ib.utils.dtos.Utils;
-import com.cobiscorp.ecobis.orchestration.core.ib.banks.BankInformationQuerys;
 
 @Component(name = "MovementsQueryAccounts", immediate = false)
 @Service(value = { ICoreServiceMovementsQuery.class })
