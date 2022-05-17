@@ -37,7 +37,6 @@ import com.cobiscorp.ecobis.ib.orchestration.dtos.AccountStatement;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceMovementsQuery;
 import com.cobiscorp.ecobis.ib.utils.dtos.Utils;
-import com.cobiscorp.ecobis.orchestration.core.ib.banks.BankInformationQuerys;
 
 @Component(name = "MovementsQueryAccounts", immediate = false)
 @Service(value = { ICoreServiceMovementsQuery.class })
@@ -293,6 +292,8 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 					//	accountStatement.setRastreo(rastreoSpei(new Integer(rows[8].getValue().toString())));
                     if(rows[14].getValue() != null)
 						accountStatement.setRastreo(rows[14].getValue().toString());
+					if(rows[15].getValue() != null)
+						accountStatement.setTarjetNumber(rows[15].getValue().toString());
 
 					accountStatementCollection.add(accountStatement);
 				}

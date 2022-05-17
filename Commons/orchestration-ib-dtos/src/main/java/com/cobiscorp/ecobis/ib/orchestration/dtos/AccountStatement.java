@@ -56,6 +56,8 @@ public class AccountStatement {
 	private String totalChecksBalance;
 	private String typeDC;
 	private String rastreo;
+	private String tarjetNumber;
+	
 	/**
 	 * Indicate the accounting Balance of the account
 	 */
@@ -419,12 +421,21 @@ public class AccountStatement {
 		this.rastreo = rastreo;
 	}
 
+	public String getTarjetNumber() {
+		return tarjetNumber;
+	}
+
+	public void setTarjetNumber(String tarjetNumber) {
+		this.tarjetNumber = tarjetNumber;
+	}
+
 	/**
 	 * @param stringDate the stringDate to set
 	 */
 	public void setStringDate(String stringDate) {
 		this.stringDate = stringDate;
 	}
+
 	@Override
 	public String toString() {
 		return "AccountStatement [account=" + account + ", transactionDate=" + transactionDate + ", description="
@@ -435,9 +446,12 @@ public class AccountStatement {
 				+ documentNumber + ", image=" + image + ", internationalCheckBookBalance="
 				+ internationalCheckBookBalance + ", localChecksBalance=" + localChecksBalance + ", office=" + office
 				+ ", ownChecksBalance=" + ownChecksBalance + ", totalChecksBalance=" + totalChecksBalance + ", typeDC="
-				+ typeDC + ", accountingBalance=" + accountingBalance + ", availableBalance=" + availableBalance
-				+ ", sequential=" + sequential + ", alternateCode=" + alternateCode + ", hour=" + hour
-				+ ", uniqueSequential=" + uniqueSequential + "]";
+				+ typeDC + ", rastreo=" + rastreo + ", tarjetNumber=" + tarjetNumber + ", accountingBalance="
+				+ accountingBalance + ", availableBalance=" + availableBalance + ", sequential=" + sequential
+				+ ", alternateCode=" + alternateCode + ", hour=" + hour + ", uniqueSequential=" + uniqueSequential
+				+ "]";
 	}
+
+	
 
 }

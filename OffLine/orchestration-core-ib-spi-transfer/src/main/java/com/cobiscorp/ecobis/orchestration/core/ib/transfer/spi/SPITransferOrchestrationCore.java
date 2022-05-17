@@ -350,6 +350,14 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		request.setCtsRol(anOriginalRequest.readValueParam("@s_rol"));
 		request.setCtsDate(anOriginalRequest.readValueParam("@s_date"));
 
+		// VARIABLE DE ORIGEN
+		logger.logInfo(wInfo + " trn_origen: " + anOriginalRequest.readValueFieldInHeader("trn_origen"));
+		request.setTrnOrigen(anOriginalRequest.readValueFieldInHeader("trn_origen"));
+		request.setUser(anOriginalRequest.readValueFieldInHeader("user"));
+		request.setOffice(anOriginalRequest.readValueFieldInHeader("ofi"));
+		request.setServer(anOriginalRequest.readValueFieldInHeader("srv"));
+		request.setTerminal(anOriginalRequest.readValueFieldInHeader("term"));
+
 		logger.logInfo(wInfo + Constants.END_TASK);
 
 		return request;
