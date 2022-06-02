@@ -52,6 +52,9 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			}
 		}
 
+		aBagSPJavaOrchestration.put("origin_spei", anOriginalRequest.readValueParam("@i_origin_req"));
+		aBagSPJavaOrchestration.put("ssn_operation", anOriginalRequest.readValueParam("@i_ssn_operation"));
+		
 		responseTransfer = executeTransfer(aBagSPJavaOrchestration);
 		
 
