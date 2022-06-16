@@ -68,6 +68,8 @@
     <parameter name="@i_comision" dataType="money" direction="in" />
     <parameter name="@i_batch" dataType="tinyint" direction="in" />
     <parameter name="@i_banco_ben" dataType="smallint" direction="in" />
+    <parameter name="@i_latitud" dataType="float" direction="in" />
+    <parameter name="@i_longitud" dataType="float" direction="in" />
   </parameters>
   <queries />
 </procedure>

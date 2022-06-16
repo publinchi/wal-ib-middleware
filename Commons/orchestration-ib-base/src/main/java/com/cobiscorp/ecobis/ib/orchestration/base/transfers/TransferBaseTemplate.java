@@ -262,7 +262,11 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		
 		switch (t_trn) {
 		case 1800009:
-			request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "S");
+			if("S".equals(originalRequest.readValueParam("@i_is_expense_account"))){
+				request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "N");
+			} else {
+				request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR, "S");
+			}
 			request.addInputParam("@i_option", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_option"));
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
 			//same accounts
@@ -625,6 +629,14 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, anOriginalRequest.readValueParam("@s_servicio"));
 
 		request.addInputParam("@i_graba_log", ICTSTypes.SQLVARCHAR, "S");
+		
+		if (anOriginalRequest.readValueParam("@i_latitud") != null) {
+			request.addInputParam("@i_latitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_latitud"));
+		}
+		
+		if (anOriginalRequest.readValueParam("@i_longitud") != null) {
+			request.addInputParam("@i_longitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_longitud"));
+		}
 
 		// Datos de cuenta origen
 		Utils.copyParam("@i_cta", anOriginalRequest, request);

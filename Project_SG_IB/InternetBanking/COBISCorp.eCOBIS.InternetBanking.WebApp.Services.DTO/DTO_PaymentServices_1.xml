@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="40" id="2" name="properties">
+  <collection type="List" length="42" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="amount" />
       <field type="String" name="type" value="double" />
@@ -436,11 +436,31 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="43" index="40">
+      <field type="String" name="name" value="latitud" />
+      <field type="String" name="type" value="double" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="44" index="41">
+      <field type="String" name="name" value="longitud" />
+      <field type="String" name="type" value="double" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="PaymentServices" />
-  <collection type="List" length="0" id="43" name="templates">
+  <collection type="List" length="0" id="45" name="templates">
   </collection>
-  <collection type="Map" length="1" id="44" name="templatesProperties">
+  <collection type="Map" length="1" id="46" name="templatesProperties">
     <entry>
       <key type="String" value="BLIResponse" />
       <value type="String" value="true" />

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_bv_cta_gastos_local</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@t_show_version" dataType="bit" direction="in" />
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_sesn" dataType="varchar" direction="in" />
+    <parameter name="@s_lsrv" dataType="varchar" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@s_ofi" dataType="smallint" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@s_error" dataType="int" direction="in" />
+    <parameter name="@s_msg" dataType="varchar" direction="in" />
+    <parameter name="@s_org" dataType="char" direction="in" />
+    <parameter name="@s_cliente" dataType="int" direction="in" />
+    <parameter name="@s_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@s_culture" dataType="varchar" direction="in" />
+    <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
+    <parameter name="@i_login" dataType="varchar" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_direccion_code" dataType="tinyint" direction="in" />
+    <parameter name="@i_direccion" dataType="varchar" direction="in" />
+    <parameter name="@i_codigo_grupo" dataType="int" direction="in" />
+    <parameter name="@i_cuenta_principal" dataType="varchar" direction="in" />
+    <parameter name="@i_numero_tarjeta" dataType="varchar" direction="in" />
+    <parameter name="@i_cta_gasto_id" dataType="int" direction="in" />
+    <parameter name="@i_filas_pagina" dataType="int" direction="in" />
+    <parameter name="@i_saldo" dataType="money" direction="in" />
+    <parameter name="@i_codigo_tarjeta" dataType="int" direction="in" />
+    <parameter name="@i_cuenta_gasto" dataType="varchar" direction="in" />
+	<parameter name="@i_convenio_tarjeta" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="ID CUENTA" />
+        <column name="CUENTA ORIGEN" />
+        <column name="CUENTA" />
+        <column name="NOMBRE COMPLETO" />
+        <column name="SALDO" />
+        <column name="EMAIL" />
+        <column name="GRUPO" />
+        <column name="TARJETA" />
+        <column name="ID TARJETA" />
+        <column name="LOGIN" />
+        <column name="LOTE" />
+		<column name="CONVENIO TARJETA" />
+      </columns>
+      <queryText>SELECT  "CUENTA ORIGEN" = cg_cuenta,"CUENTA" = cg_expense_account,"NOMBRE COMPLETO" = cg_apellido1 + cg_apellido2 + cg_nombre1 + cg_nombre2,"SALDO" = ah_disponible,"EMAIL" = cg_email,"GRUPO" = cg_group_code,"TARJETA" = cg_debt_card_id </queryText>
+    </query>
+  </queries>
+</procedure>
