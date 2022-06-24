@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_cons_dispersion</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@s_ssn" dataType="int" direction="in" />
+    <parameter name="@s_srv" dataType="varchar" direction="in" />
+    <parameter name="@s_ssn_branch" dataType="int" direction="in" />
+    <parameter name="@s_user" dataType="varchar" direction="in" />
+    <parameter name="@s_term" dataType="varchar" direction="in" />
+    <parameter name="@s_rol" dataType="smallint" direction="in" />
+    <parameter name="@t_ssn_corr" dataType="int" direction="in" />
+    <parameter name="@s_date" dataType="datetime" direction="in" />
+    <parameter name="@i_fo_file_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="Nombre" />
+        <column name="No. De cliente" />
+        <column name="No. De cuenta" />
+        <column name="Clabe" />
+        <column name="RFC" />
+        <column name="Lote" />
+        <column name="Cuenta Destino" />
+        <column name="Banco Destino" />
+        <column name="Nombre Destinatario" />
+        <column name="CURP Destinatario" />
+        <column name="Monto" />
+        <column name="Clave de rastreo" />
+        <column name="Fecha y hora" />
+        <column name="Concepto" />
+        <column name="ID Transaccion" />
+        <column name="Tipo Transaccion" />
+        <column name="Estado" />
+        <column name="Estado Descripcion" />
+      </columns>
+      <queryText>SELECT  "Nombre" = g.en_nombre,"No. De cliente" = g.en_ente_mis,"No. De cuenta" = re_account_org,"Clabe" = c.da_clabe,"RFC" = g.en_ced_ruc,"Lote" = a.fo_file_id,"Cuenta Destino" = re_account_dest,"Banco Destino" = CASE re_account_dest_type WHEN 4 THEN "TRAFALGAR" ELSE ISNULL (h.ip_nom_banco, "DESCONOCIDO") END,"Nombre Destinatario" = re_beneficiary,"CURP Destinatario" = re_cedula,"Monto" = re_amount,"Clave de rastreo" = d.ts_clave_rastreo,"Fecha y hora" = re_date_hour,"Concepto" = CASE re_account_dest_type WHEN 4 THEN ISNULL (e.tm_concepto, f.hm_concepto) ELSE d.ts_concepto END,"ID Transaccion" = CASE re_account_dest_type WHEN 4 THEN ISNULL (tm_secuencial, hm_secuencial) ELSE d.ts_ssn END,"Tipo Transaccion" = CASE re_account_dest_type WHEN 4 THEN "TRASPASO ENTRE CUENTAS TRAFALGAR" ELSE "SPEI" END,"Estado" = CASE re_account_dest_type WHEN 4 THEN CASE WHEN tm_secuencial IS NOT NULL || hm_secuencial IS NOT NULL THEN "PROCESADO" ELSE "FALLIDO" END ELSE CASE d.ts_estado WHEN "A" THEN "PROCESADO" WHEN "P" THEN "REGISTRADO" ELSE "FALLIDO" END END,"Estado Descripcion" = ts_spei_response </queryText>
+    </query>
+  </queries>
+</procedure>
