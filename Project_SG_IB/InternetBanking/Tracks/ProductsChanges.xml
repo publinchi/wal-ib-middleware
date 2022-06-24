@@ -92,11 +92,8 @@
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
     <field type="String" name="state" value="Change" />
   </class>
-  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="25" index="23">
-    <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.Service" />
-    <field type="String" name="state" value="Change" />
-  </class>
-  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="26" index="24">
+  <reference id="10" index="23" />
+  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="25" index="24">
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO" />
     <field type="String" name="state" value="Change" />
   </class>
