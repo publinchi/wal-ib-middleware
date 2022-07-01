@@ -362,6 +362,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		request.setTipoCuentaBeneficiario(anOriginalRequest.readValueParam("@i_prod_des"));
 		request.setEnteBancaVirtual(anOriginalRequest.readValueParam("@s_cliente"));
 		request.setLogin(anOriginalRequest.readValueParam("@i_login"));
+		request.setReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
 		request.setServicio(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
 
 		//TRANSACCIONALIDAD

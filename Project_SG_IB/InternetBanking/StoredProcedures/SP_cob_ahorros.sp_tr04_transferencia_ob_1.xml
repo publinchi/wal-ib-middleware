@@ -70,6 +70,7 @@
     <parameter name="@i_banco_ben" dataType="smallint" direction="in" />
     <parameter name="@i_latitud" dataType="float" direction="in" />
     <parameter name="@i_longitud" dataType="float" direction="in" />
+    <parameter name="@i_reference_number" dataType="varchar" direction="in" />
   </parameters>
   <queries />
 </procedure>
