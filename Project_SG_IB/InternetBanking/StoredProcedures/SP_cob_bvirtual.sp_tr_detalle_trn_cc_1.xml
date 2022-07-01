@@ -60,5 +60,34 @@
       </columns>
       <queryText></queryText>
     </query>
+    <query>
+      <columns>
+        <column name="Cuenta" />
+        <column name="Fecha" />
+        <column name="Hora" />
+        <column name="Descripcion" />
+        <column name="Concepto" />
+        <column name="Causa" />
+        <column name="Monto Efectivo" />
+        <column name="No. Doc." />
+        <column name="Tipo" />
+        <column name="Oficina" />
+        <column name="Chqs propios" />
+        <column name="Chqs locales" />
+        <column name="Chqs ot plazas" />
+        <column name="Total chqs" />
+        <column name="Cod. Causa" />
+        <column name="Clabe Interbanc" />
+        <column name="RASTREO" />
+        <column name="montoTran" />
+        <column name="beneficiario" />
+        <column name="cuentaDestino" />
+        <column name="cuentaOrigen" />
+        <column name="comision" />
+        <column name="ivaTran" />
+        <column name="mensageTran" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>

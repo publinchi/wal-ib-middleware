@@ -58,6 +58,70 @@ public class AccountStatement {
 	private String rastreo;
 	private String tarjetNumber;
 	
+	private String montoTran;
+	private String beneficiario;
+	private String cuentaDest;
+	private String cuentaOrig;
+	private String comisionTran;
+	private String ivaTran;
+	private String mensajeTran;
+	
+	public String getMontoTran() {
+		return montoTran;
+	}
+
+	public void setMontoTran(String montoTran) {
+		this.montoTran = montoTran;
+	}
+
+	public String getBeneficiario() {
+		return beneficiario;
+	}
+
+	public void setBeneficiario(String beneficiario) {
+		this.beneficiario = beneficiario;
+	}
+
+	public String getCuentaDest() {
+		return cuentaDest;
+	}
+
+	public void setCuentaDest(String cuentaDest) {
+		this.cuentaDest = cuentaDest;
+	}
+
+	public String getCuentaOrig() {
+		return cuentaOrig;
+	}
+
+	public void setCuentaOrig(String cuentaOrig) {
+		this.cuentaOrig = cuentaOrig;
+	}
+
+	public String getComisionTran() {
+		return comisionTran;
+	}
+
+	public void setComisionTran(String comisionTran) {
+		this.comisionTran = comisionTran;
+	}
+
+	public String getIvaTran() {
+		return ivaTran;
+	}
+
+	public void setIvaTran(String ivaTran) {
+		this.ivaTran = ivaTran;
+	}
+
+	public String getMensajeTran() {
+		return mensajeTran;
+	}
+
+	public void setMensajeTran(String mensajeTran) {
+		this.mensajeTran = mensajeTran;
+	}
+
 	/**
 	 * Indicate the accounting Balance of the account
 	 */

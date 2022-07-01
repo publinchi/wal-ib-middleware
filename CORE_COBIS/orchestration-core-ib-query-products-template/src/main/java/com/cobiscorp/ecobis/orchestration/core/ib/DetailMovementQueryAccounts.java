@@ -275,6 +275,15 @@ public class DetailMovementQueryAccounts extends SPJavaOrchestrationBase impleme
 			wAccountStatement.setTotalChecksBalance(columns[13].getValue() == null ? "" : columns[13].getValue());
 			wAccountStatement.setCauseId(columns[14].getValue() == null ? "" : columns[14].getValue());
 			wAccountStatement.setRastreo(columns[15].getValue() == null ? "" : columns[15].getValue());
+			
+			wAccountStatement.setMontoTran(columns[16].getValue() == null ? "" : columns[16].getValue());
+			wAccountStatement.setBeneficiario(columns[17].getValue() == null ? "" : columns[17].getValue());
+			wAccountStatement.setCuentaDest(columns[18].getValue() == null ? "" : columns[18].getValue());
+			wAccountStatement.setCuentaOrig(columns[19].getValue() == null ? "" : columns[19].getValue());
+			wAccountStatement.setComisionTran(columns[20].getValue() == null ? "" : columns[20].getValue());
+			wAccountStatement.setIvaTran(columns[21].getValue() == null ? "" : columns[21].getValue());
+			wAccountStatement.setMensajeTran(columns[22].getValue() == null ? "" : columns[22].getValue());
+			
 			AccountStatementsCollection.add(wAccountStatement);
 			detailsMovementsResponse.setAccountStatementsCollection(AccountStatementsCollection);
 		}
