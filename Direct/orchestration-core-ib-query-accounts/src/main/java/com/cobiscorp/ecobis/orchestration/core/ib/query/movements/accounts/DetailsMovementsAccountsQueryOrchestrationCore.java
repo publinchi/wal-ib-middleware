@@ -212,6 +212,13 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("ivaTran", 39, 20));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("mensajeTran", 39, 20));
 			
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("originAccountProp", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("currencySymbol", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("referenceNumber", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("destinationAccountType", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("originAccountType", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("bank", 39, 20));
+			
 			List<AccountStatement> accountStatementsCollection = aDetailsMovementsResponse
 					.getAccountStatementsCollection();
 			if (logger.isInfoEnabled())
@@ -254,6 +261,14 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			row.addRowData(22, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getComisionTran()));
 			row.addRowData(23, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getIvaTran()));
 			row.addRowData(24, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getMensajeTran()));
+			
+			row.addRowData(25, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getOriginAccountProp()));
+			row.addRowData(26, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getCurrencySymbol()));
+			row.addRowData(27, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getReferenceNumber()));
+			row.addRowData(28, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getDestinationAccountType()));
+			row.addRowData(29, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getOriginAccountType()));
+			row.addRowData(30, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getBank()));
+			
 			
 			data.addRow(row);
 
