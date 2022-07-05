@@ -284,6 +284,13 @@ public class DetailMovementQueryAccounts extends SPJavaOrchestrationBase impleme
 			wAccountStatement.setIvaTran(columns[21].getValue() == null ? "" : columns[21].getValue());
 			wAccountStatement.setMensajeTran(columns[22].getValue() == null ? "" : columns[22].getValue());
 			
+			wAccountStatement.setOriginAccountProp(columns[23].getValue() == null ? "" : columns[23].getValue());
+			wAccountStatement.setCurrencySymbol(columns[24].getValue() == null ? "" : columns[24].getValue());
+			wAccountStatement.setReferenceNumber(columns[25].getValue() == null ? "" : columns[25].getValue());
+			wAccountStatement.setDestinationAccountType(columns[26].getValue() == null ? "" : columns[26].getValue());
+			wAccountStatement.setOriginAccountType(columns[27].getValue() == null ? "" : columns[27].getValue());
+			wAccountStatement.setBank(columns[28].getValue() == null ? "" : columns[28].getValue());
+			
 			AccountStatementsCollection.add(wAccountStatement);
 			detailsMovementsResponse.setAccountStatementsCollection(AccountStatementsCollection);
 		}

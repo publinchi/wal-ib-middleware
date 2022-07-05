@@ -65,6 +65,60 @@ public class AccountStatement {
 	private String comisionTran;
 	private String ivaTran;
 	private String mensajeTran;
+	private String originAccountProp;
+	private String currencySymbol;
+	private String referenceNumber;
+	private String destinationAccountType;
+	private String originAccountType;
+	private String bank;
+	
+	public String getOriginAccountProp() {
+		return originAccountProp;
+	}
+
+	public void setOriginAccountProp(String originAccountProp) {
+		this.originAccountProp = originAccountProp;
+	}
+
+	public String getCurrencySymbol() {
+		return currencySymbol;
+	}
+
+	public void setCurrencySymbol(String currencySymbol) {
+		this.currencySymbol = currencySymbol;
+	}
+
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+
+	public String getDestinationAccountType() {
+		return destinationAccountType;
+	}
+
+	public void setDestinationAccountType(String destinationAccountType) {
+		this.destinationAccountType = destinationAccountType;
+	}
+
+	public String getOriginAccountType() {
+		return originAccountType;
+	}
+
+	public void setOriginAccountType(String originAccountType) {
+		this.originAccountType = originAccountType;
+	}
+
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
 	
 	public String getMontoTran() {
 		return montoTran;
@@ -513,9 +567,18 @@ public class AccountStatement {
 				+ typeDC + ", rastreo=" + rastreo + ", tarjetNumber=" + tarjetNumber + ", accountingBalance="
 				+ accountingBalance + ", availableBalance=" + availableBalance + ", sequential=" + sequential
 				+ ", alternateCode=" + alternateCode + ", hour=" + hour + ", uniqueSequential=" + uniqueSequential
+				
+				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
+				+ ", cuentaOrig=" + cuentaOrig + ", comisionTran=" + comisionTran + ", ivaTran=" + ivaTran
+				+ ", referenceNumber=" + referenceNumber + ", destinationAccountType=" + destinationAccountType + ", originAccountType=" + originAccountType
+				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
+				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
+				+ ", bank=" + bank 
+				
 				+ "]";
 	}
 
+	
 	
 
 }
