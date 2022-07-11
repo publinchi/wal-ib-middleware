@@ -188,5 +188,21 @@
       </columns>
       <queryText>SELECT w_uso_convenio</queryText>
     </query>
+    <query>
+      <columns>
+        <column name="COD." />
+        <column name="ID TERCERO" />
+        <column name="NOMBRE" />
+        <column name="ID BANCO" />
+        <column name="BANCO" />
+        <column name="CUENTA" />
+        <column name="PRODUCTO" />
+        <column name="MONEDA" />
+        <column name="DESC MONEDA" />
+        <column name="DESC PRODUCTO" />
+        <column name="TITULAR" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>
