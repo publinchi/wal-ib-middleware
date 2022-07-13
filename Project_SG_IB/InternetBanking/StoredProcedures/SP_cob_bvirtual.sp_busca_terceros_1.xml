@@ -26,6 +26,7 @@
     <parameter name="@i_identif_cont" dataType="varchar" direction="in" />
     <parameter name="@i_colec" dataType="varchar" direction="in" />
     <parameter name="@i_cuenta_origen" dataType="varchar" direction="in" />
+    <parameter name="@i_orden" dataType="tinyint" direction="in" />
   </parameters>
   <queries>
     <query>
