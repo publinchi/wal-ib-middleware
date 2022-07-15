@@ -102,7 +102,7 @@
       </collection>
     </class>
   </collection>
-  <collection type="List" length="5" id="17" name="parameters">
+  <collection type="List" length="6" id="17" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="18" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="19" name="parameter">
         <field type="String" name="name" value="@i_tipo" />
@@ -167,12 +167,25 @@
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="28" index="5">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="29" name="parameter">
+        <field type="String" name="name" value="@i_orden" />
+        <field type="String" name="dataType" value="tinyint" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inTransferRequest" />
+      <field type="String" name="dTOPropertyName" value="currencyId" />
+      <field type="String" name="cTSDataType" value="SQLINT1" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
   </collection>
-  <collection type="List" length="0" id="28" name="parametersOpenApi">
+  <collection type="List" length="0" id="30" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="18765" />
-  <collection type="List" length="3" id="29" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="30" index="0">
+  <collection type="List" length="3" id="31" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="32" index="0">
       <field type="String" name="dTOName" value="TransferRequest" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -182,7 +195,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="31" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="33" index="1">
       <field type="String" name="dTOName" value="TransferBeneficiary" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -192,7 +205,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="32" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="34" index="2">
       <field type="String" name="dTOName" value="TransferBeneficiaryCollection" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -203,7 +216,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="2" id="33" name="mappingProperties">
+  <collection type="Map" length="2" id="35" name="mappingProperties">
     <entry>
       <key type="String" value="BLIQueryPropertyName1" />
       <value type="String" value="transferBeneficiaries" />
