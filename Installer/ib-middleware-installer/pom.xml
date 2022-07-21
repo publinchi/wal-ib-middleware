@@ -871,7 +871,7 @@
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		
+
 			
 		<!-- GENERADOR DE SERVICIOS BIB-->	
 		<!--<dependency>
@@ -1039,7 +1039,11 @@
           <artifactId>orchestration-ib-expenses-accounts</artifactId>
           <version>4.6.1.0</version>
         </dependency>
-		
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-spei-in</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1284,7 +1288,7 @@
 											orchestration-core-ib-authorization-template,
 											orchestration-core-ib-activate-card,
 											orchestration-ib-expenses-accounts-template,
-											orchestration-ib-expenses-accounts											
+											orchestration-ib-expenses-accounts
 						</includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
@@ -1377,7 +1381,8 @@
                           orchestration-core-ib-application-checkbook,
                           orchestration-core-ib-spi-transfer,
                           orchestration-core-ib-direct-transfer,
-						  orchestration-core-ib-authorization
+						  orchestration-core-ib-authorization,
+						  orchestration-core-ib-spei-in
                         </includeArtifactIds>
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
