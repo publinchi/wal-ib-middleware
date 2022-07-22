@@ -65,7 +65,7 @@ public class ThirdAccountTransfer extends SPJavaOrchestrationBase implements ICo
 		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		
-		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN, ICOBISTS.HEADER_NUMBER_TYPE,
+		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN, ICOBISTS.HEADER_NUMBER_TYPE, 
 				request.getReferenceNumber());
 		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE,
 				request.getReferenceNumberBranch());
@@ -142,6 +142,9 @@ public class ThirdAccountTransfer extends SPJavaOrchestrationBase implements ICo
 			anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY, request.getAmmount().toString());
 		if (request.getDescriptionTransfer() != null)
 			anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, request.getDescriptionTransfer());
+		
+		if (request.getClientReferenceNumber() != null)
+			anOriginalRequest.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, request.getClientReferenceNumber());
 
 		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 		
