@@ -12,19 +12,10 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.AccountingParameterRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.AccountingParameterResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
@@ -637,6 +628,9 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		if (anOriginalRequest.readValueParam("@i_longitud") != null) {
 			request.addInputParam("@i_longitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_longitud"));
 		}
+
+		if (anOriginalRequest.readValueParam("@i_reference_number") != null)
+			request.addInputParam("@i_reference_number", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_reference_number"));
 
 		// Datos de cuenta origen
 		Utils.copyParam("@i_cta", anOriginalRequest, request);
