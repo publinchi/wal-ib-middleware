@@ -125,6 +125,10 @@ public class UtilsTransfers {
 
 		if (anOriginalRequest.readValueParam("@s_ssn") != null)
 			selfAccountTransferRequest.setReferenceNumber(anOriginalRequest.readValueParam("@s_ssn"));
+		
+		if (anOriginalRequest.readValueParam("@i_reference_number") != null)
+			selfAccountTransferRequest.setClientReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
+				
 
 		selfAccountTransferRequest = (SelfAccountTransferRequest) Utils.setSessionParameters(selfAccountTransferRequest, anOriginalRequest);
 		if (logger.isDebugEnabled())
