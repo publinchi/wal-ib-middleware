@@ -103,6 +103,7 @@
         <column name="CONCEPTO" />
         <column name="RASTREO" />
         <column name="TARJETNUMBER" />
+        <column name="DATACOMPROBANTE" />
       </columns>
       <queryText></queryText>
     </query>
