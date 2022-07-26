@@ -294,7 +294,8 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 						accountStatement.setRastreo(rows[14].getValue().toString());
 					if(rows[15].getValue() != null)
 						accountStatement.setTarjetNumber(rows[15].getValue().toString());
-
+					if(rows[16].getValue() != null)
+						accountStatement.setBeneficiario(rows[16].getValue().toString());
 					accountStatementCollection.add(accountStatement);
 				}
 			}
