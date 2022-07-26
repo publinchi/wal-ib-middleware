@@ -43,7 +43,6 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceMonetaryTransaction;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
-import com.cobiscorp.ecobis.orchestration.core.ib.common.AccountCoreSignersValidation;
 
 /**
  * @author cecheverria
