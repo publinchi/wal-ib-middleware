@@ -294,6 +294,9 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 						accountStatement.setRastreo(rows[14].getValue().toString());
 					if(rowsTemp.length >= 15 && rows[15].getValue() != null)
 						accountStatement.setTarjetNumber(rows[15].getValue().toString());
+					else
+						accountStatement.setTarjetNumber("");
+					
 					if(rowsTemp.length >= 16 && rows[16].getValue() != null)
 						accountStatement.setBeneficiario(rows[16].getValue().toString());
 					else
