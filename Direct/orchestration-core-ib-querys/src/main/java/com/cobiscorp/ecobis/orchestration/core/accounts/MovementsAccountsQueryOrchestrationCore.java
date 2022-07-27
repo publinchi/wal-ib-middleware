@@ -291,6 +291,8 @@ public class MovementsAccountsQueryOrchestrationCore extends SPJavaOrchestration
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("IMAGE", ICTSTypes.SQLVARCHAR, 1));
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("CONCEPT", ICTSTypes.SQLVARCHAR, 255));
 				metaData.addColumnMetaData(new ResultSetHeaderColumn("RASTREO", ICTSTypes.SQLVARCHAR, 255));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("TARJETNUMBER", ICTSTypes.SQLVARCHAR, 255));
+				metaData.addColumnMetaData(new ResultSetHeaderColumn("DATACOMPROBANTE", ICTSTypes.SQLVARCHAR, 255));
 
 				for (AccountStatement obj : accountStatementResponse.getAccountStatements()) {
 					row = new ResultSetRow();
@@ -313,6 +315,8 @@ public class MovementsAccountsQueryOrchestrationCore extends SPJavaOrchestration
 					logger.logInfo("getConcept: " + obj.getConcept());
 					row.addRowData(14, new ResultSetRowColumnData(false, obj.getConcept()));
 					row.addRowData(15,new ResultSetRowColumnData(false, obj.getRastreo()));
+					row.addRowData(16,new ResultSetRowColumnData(false, obj.getTarjetNumber()));
+					row.addRowData(17,new ResultSetRowColumnData(false, obj.getBeneficiario()));
 					data.addRow(row);
 				}
 				resultBlock = new ResultSetBlock(metaData, data);
