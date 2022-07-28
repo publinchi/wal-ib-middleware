@@ -647,8 +647,8 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			switch (t_trn) {
 			case 1800012:
 				if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nom_cliente_benef"))) {
-					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_cliente_benef"));
-					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_cliente_benef"));
+					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_beneficiary"));//pa_beneficiario
+					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_cliente_benef"));//pa_nombre_cr
 				}
 				break;
 			case 1800015:
