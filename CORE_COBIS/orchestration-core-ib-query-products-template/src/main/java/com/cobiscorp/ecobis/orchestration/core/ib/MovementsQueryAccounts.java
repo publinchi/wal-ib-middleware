@@ -254,13 +254,12 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 		if (!response.hasError()) {
 			IResultSetBlock resulsetOrigin = response.getResultSet(2);
 			IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
-
+			
 			if (rowsTemp.length > 0) {
-
 				for (IResultSetRow iResultSetRow : rowsTemp) {
 					IResultSetRowColumnData[] rows = iResultSetRow.getColumnsAsArray();
 					AccountStatement accountStatement = new AccountStatement();
-
+					
 					if (rows[0].getValue() != null)
 						accountStatement.setStringDate(rows[0].getValue());
 					if (rows[1].getValue() != null)
@@ -292,15 +291,17 @@ public class MovementsQueryAccounts extends SPJavaOrchestrationBase implements I
 					//	accountStatement.setRastreo(rastreoSpei(new Integer(rows[8].getValue().toString())));
                     if(rows[14].getValue() != null)
 						accountStatement.setRastreo(rows[14].getValue().toString());
-					if(rowsTemp.length >= 15 && rows[15].getValue() != null)
+					if(rows.length >= 16 && rows[15].getValue() != null) { //viene tam 16 con targetNumber
 						accountStatement.setTarjetNumber(rows[15].getValue().toString());
-					else
+					} else {
 						accountStatement.setTarjetNumber("");
+					}
 					
-					if(rowsTemp.length >= 16 && rows[16].getValue() != null)
+					if(rows.length >= 17 && rows[16].getValue() != null) {  //viene tam 16 con DATACOMPROBANTE
 						accountStatement.setBeneficiario(rows[16].getValue().toString());
-					else
+					} else {
 						accountStatement.setBeneficiario("");
+					}
 					accountStatementCollection.add(accountStatement);
 				}
 			}

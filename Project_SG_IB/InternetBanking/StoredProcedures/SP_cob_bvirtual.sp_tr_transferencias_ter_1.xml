@@ -81,6 +81,7 @@
     <parameter name="@i_latitud" dataType="float" direction="in" />
     <parameter name="@i_longitud" dataType="float" direction="in" />
     <parameter name="@i_reference_number" dataType="varchar" direction="in" />
+    <parameter name="@i_nom_beneficiary" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
