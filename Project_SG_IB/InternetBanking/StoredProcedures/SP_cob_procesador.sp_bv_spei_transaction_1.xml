@@ -19,7 +19,7 @@
     <parameter name="@i_idTipoPago" dataType="int" direction="in" />
     <parameter name="@i_institucionBeneficiaria" dataType="int" direction="in" />
     <parameter name="@i_institucionOrdenante" dataType="int" direction="in" />
-    <parameter name="@i_monto" dataType="decimal" direction="in" />
+    <parameter name="@i_monto" dataType="money" direction="in" />
     <parameter name="@i_motivo" dataType="varchar" direction="in" />
     <parameter name="@i_nombreBeneficiario" dataType="varchar" direction="in" />
     <parameter name="@i_nombreOrdenante" dataType="varchar" direction="in" />
@@ -36,6 +36,10 @@
     <parameter name="@o_idCausaDevolucion" dataType="varchar" direction="out" />
     <parameter name="@o_resultado" dataType="int" direction="out" />
     <parameter name="@t_trn" dataType="int" direction="in" />
+    <parameter name="@i_string_request" dataType="varchar" direction="in" />
+    <parameter name="@i_cuenta_cobis" dataType="varchar" direction="in" />
+    <parameter name="@i_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_codigo_cliente" dataType="int" direction="in" />
   </parameters>
   <queries />
 </procedure>
