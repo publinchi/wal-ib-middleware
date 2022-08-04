@@ -84,6 +84,7 @@
         <column name="de_tipo" />
         <column name="de_banco" />
         <column name="de_tipo_transf" />
+        <column name="te_nombre" />
       </columns>
       <queryText>SELECT  "de_cuenta_destino" = de_cuenta_destino,"de_moneda_destino" = de_moneda_destino,"de_producto_destino" = de_producto_destino,"tipo_des" = tipo_des,"de_id_beneficiario" = de_id_beneficiario,"de_beneficiario" = de_beneficiario,"de_lote" = de_lote,"sec" = sec,"de_estado" = de_estado,"de_email1" = de_email1,"de_email2" = de_email2,"de_email3" = de_email3,"estado" = abc </queryText>
     </query>
