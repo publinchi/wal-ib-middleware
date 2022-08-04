@@ -343,7 +343,8 @@
 	<staff id="74" name="orchestration-core-ib-authorization" version="4.6.1.0" />
     <staff id="75" name="orchestration-core-ib-activate-card" version="4.6.1.0" />
     <staff id="76" name="orchestration-ib-expenses-accounts" version="4.6.1.0" />
-  </orchestrations>
+	<staff id="77" name="orchestration-core-ib-spei-in" version="4.6.1.0" />
+	</orchestrations>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
 		<staff id="2" name="orchestration-core-ib-authenticate-template" version="4.6.1.0" />
@@ -390,6 +391,7 @@
 		<staff id="1" name="configuracion-ruteo-servicios.xml" />
 		<staff id="2" name="configuracion-executor-channel-admin.xml" />
 		<staff id="3" name="configuracion-ruteo-servicios-batch.xml" />
+		<staff id="4" name="Configuracion-ORQSPEI-IN.xml" />
 	</ctstransformation>
 	<adm-channels>
 		<staff id="1" name="channel-adm-commons" version="1.0.1"

@@ -175,6 +175,7 @@
 		<!-- Cuentas de Gastos-->
 		<module>../Expenses/orchestration-ib-expenses-accounts-template</module>
         <module>../Expenses/orchestration-ib-expenses-accounts</module>
+        <module>../Offline/orchestration-core-ib-spei-in</module>
 
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
