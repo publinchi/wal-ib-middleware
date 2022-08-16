@@ -193,6 +193,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		IProcedureResponse responseTransfer = null;
 		String idTransaccion = "";
 		String idMovement = "";
+		String refBranch = "";
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
@@ -213,21 +214,35 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			
 			 responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
 			
+			 
+			 
+			 
 			if(!(idTransaccion!=null && idTransaccion.equals("040"))) {
 				logger.logDebug("Normal transacction");			   
+			
+				
 				
 				if (responseTransfer.readValueParam("@o_referencia") != null && responseTransfer.readValueParam("@o_referencia") != null)
 					idMovement = responseTransfer.readValueParam("@o_referencia");
+				
+				if (responseTransfer.readValueParam("@o_ref_branch") != null && responseTransfer.readValueParam("@o_ref_branch") != null) {
+					refBranch = responseTransfer.readValueParam("@o_ref_branch");
+				}
+				
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("ref_branch" + refBranch);
+				}
 				
 				  responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration, idTransaccion);
 			}else {
 				logger.logDebug("On massive transacction");
 				idMovement=aBagSPJavaOrchestration.get("ssn_operation").toString();;
-			}	
-
+			}
 			
-
-
+			originalRequestClone.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, refBranch);
+			aBagSPJavaOrchestration.put("@i_ssn_branch", refBranch);
+			
+			
 			// JCOS VALIDACION PARA FL
 			if (serverResponse.getOnLine()) {
 
@@ -241,6 +256,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
+				
 				if ((originalRequestClone.readValueParam("@i_type_reentry") == null
 						|| !originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {// VALIDACION DE REENTRY
 
@@ -251,14 +267,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 						aBagSPJavaOrchestration.put("APPLY_DATE", originalRequestClone.readValueParam("@o_fecha_tran"));
 						
-					
-						
-						
 						int transacctionApplied = Integer.parseInt(idTransaccion.trim());
 						if (transacctionApplied > 0) {
 
-							originalRequestClone.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR,
-									String.valueOf(transacctionApplied));
+							originalRequestClone.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, String.valueOf(transacctionApplied));
 							aBagSPJavaOrchestration.put("@i_transaccion_spei", String.valueOf(transacctionApplied));
 
 							if (logger.isDebugEnabled()) {
@@ -279,8 +291,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 						if (logger.isDebugEnabled()) {
 							logger.logDebug(":::: No Aplica Transaccion Cancel jcos " + idTransaccion);
 						}
-					}
-
+					}	
 				}
 
 			} else if (originalRequestClone.readValueParam("@i_type_reentry") == null && !serverResponse.getOnLine()) {
@@ -370,6 +381,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		if(null == transaccionSpei){ //Si esta en offline no hay ssn de debito
 			transaccionSpei = anOriginalRequest.readValueParam("@s_ssn"); //se obtiene ssn de CTS
 		}
+		
 
 		request.setSsnDebito(transaccionSpei);
 		request.setSsnBranchDebito(anOriginalRequest.readValueParam("@s_ssn_branch"));
@@ -613,7 +625,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			bag.put("@i_clave_rastreo", claveRastreo);
 
 			anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_transaccion_spei"));
-
+			anOriginalRequest.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_ssn_branch"));
+			
 			// SE HACE LA LLAMADA AL CONECTOR
 			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
 			anOriginalRequest.setSpName("cob_procesador..sp_orq_banpay_spei");
@@ -670,6 +683,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				bag.put("@i_codigo_acc", connectorSpeiResponse.readValueParam("@i_codigo_acc"));
 				logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam("@i_transaccion_spei"));
 				bag.put("@i_transaccion_spei", anOriginalRequest.readValueParam("@i_transaccion_spei"));
+				
+				if (logger.isDebugEnabled()) {					
+					logger.logDebug("i_ssn_branch origin" + anOriginalRequest.readValueParam("@i_ssn_branch"));
+				}				
+				bag.put("@i_ssn_branch", anOriginalRequest.readValueParam("@i_ssn_branch"));
 
 				bag.put("@o_spei_request", connectorSpeiResponse.readValueParam("@o_spei_request"));
 				bag.put("@o_spei_response", connectorSpeiResponse.readValueParam("@o_spei_response"));
@@ -946,7 +964,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 		//jcos recuperacion de SSN TRANSACCIONAL
 		requestTransfer.addOutputParam("@o_referencia", ICTSTypes.SYBINT4, "0");
-
+		requestTransfer.addOutputParam("@o_ref_branch", ICTSTypes.SYBINT4, "0");
 
 
 		if ("1".equals(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL))
@@ -1041,8 +1059,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			response = Utils.returnException(Utils.returnArrayMessage(responseTransfer));
 
 		} else {
-			response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0,
-					String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
+			response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0, String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
+			
+			//response.addParam("@o_ref_branch", ICTSTypes.SYBINT4, 0, String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
+			
 			response.setReturnCode(responseTransfer.getReturnCode());
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
@@ -1475,7 +1495,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc") != null ? bag.get("@i_codigo_acc").toString() : "");
 		request.addInputParam("@i_transaccion_spei", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_transaccion_spei"));
 		request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_request") != null ? bag.get("@o_spei_request").toString() : "");
-		request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response") != null ? bag.get("@o_spei_response").toString(): "");
+		request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response") != null ? bag.get("@o_spei_response").toString(): "");		
+		request.addInputParam("@i_reference_number", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_reference_number"));
 
 		// SE SETEA VARIABLE DE SALIDA
 		request.addOutputParam("@o_salida", ICTSTypes.SYBVARCHAR, "0");
