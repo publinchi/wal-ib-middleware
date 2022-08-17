@@ -120,6 +120,7 @@
         <column name="Tipo cta destino" />
         <column name=" tipo cta origen" />
         <column name=" banco" />
+        <column name="dataComprobante" />
       </columns>
       <queryText></queryText>
     </query>
