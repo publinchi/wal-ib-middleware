@@ -218,6 +218,7 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("destinationAccountType", 39, 20));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("originAccountType", 39, 20));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("bank", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("dataComprobante", 60, 20));
 			
 			List<AccountStatement> accountStatementsCollection = aDetailsMovementsResponse
 					.getAccountStatementsCollection();
@@ -268,7 +269,7 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			row.addRowData(28, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getDestinationAccountType()));
 			row.addRowData(29, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getOriginAccountType()));
 			row.addRowData(30, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getBank()));
-			
+			row.addRowData(31, new ResultSetRowColumnData(false, ""));
 			
 			data.addRow(row);
 

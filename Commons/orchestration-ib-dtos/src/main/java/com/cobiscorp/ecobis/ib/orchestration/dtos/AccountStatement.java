@@ -71,6 +71,7 @@ public class AccountStatement {
 	private String destinationAccountType;
 	private String originAccountType;
 	private String bank;
+	private String dataComprobante;
 	
 	public String getOriginAccountProp() {
 		return originAccountProp;
@@ -553,6 +554,14 @@ public class AccountStatement {
 	public void setStringDate(String stringDate) {
 		this.stringDate = stringDate;
 	}
+	
+	public String getDataComprobante() {
+		return this.dataComprobante;
+	}
+	public void setDataComprobante(String dataComprobante) {
+		this.dataComprobante = dataComprobante;
+	}
+	
 
 	@Override
 	public String toString() {
@@ -573,7 +582,7 @@ public class AccountStatement {
 				+ ", referenceNumber=" + referenceNumber + ", destinationAccountType=" + destinationAccountType + ", originAccountType=" + originAccountType
 				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
 				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
-				+ ", bank=" + bank 
+				+ ", bank=" + bank + ", dataComprobante=" + dataComprobante 
 				
 				+ "]";
 	}
