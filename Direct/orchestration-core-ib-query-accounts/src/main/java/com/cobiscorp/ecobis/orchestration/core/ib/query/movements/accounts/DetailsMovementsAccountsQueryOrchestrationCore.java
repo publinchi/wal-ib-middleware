@@ -203,6 +203,23 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("causeId", 60, 20));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeInterbank", 60, 20));
 			metaData.addColumnMetaData(new ResultSetHeaderColumn("rastreo", 60, 20));
+			
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("montoTran", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("beneficiario", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("cuentaOrig", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("cuentaDest", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("comisionTran", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("ivaTran", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("mensajeTran", 39, 20));
+			
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("originAccountProp", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("currencySymbol", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("referenceNumber", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("destinationAccountType", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("originAccountType", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("bank", 39, 20));
+			metaData.addColumnMetaData(new ResultSetHeaderColumn("dataComprobante", 60, 20));
+			
 			List<AccountStatement> accountStatementsCollection = aDetailsMovementsResponse
 					.getAccountStatementsCollection();
 			if (logger.isInfoEnabled())
@@ -237,6 +254,23 @@ public class DetailsMovementsAccountsQueryOrchestrationCore extends QueryBaseTem
 			row.addRowData(15, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getCauseId()));
 			row.addRowData(16, new ResultSetRowColumnData(false, ""));
 			row.addRowData(17, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getRastreo()));
+			
+			row.addRowData(18, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getMontoTran()));
+			row.addRowData(19, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getBeneficiario()));
+			row.addRowData(20, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getCuentaDest()));
+			row.addRowData(21, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getCuentaOrig()));
+			row.addRowData(22, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getComisionTran()));
+			row.addRowData(23, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getIvaTran()));
+			row.addRowData(24, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getMensajeTran()));
+			
+			row.addRowData(25, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getOriginAccountProp()));
+			row.addRowData(26, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getCurrencySymbol()));
+			row.addRowData(27, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getReferenceNumber()));
+			row.addRowData(28, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getDestinationAccountType()));
+			row.addRowData(29, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getOriginAccountType()));
+			row.addRowData(30, new ResultSetRowColumnData(false, accountStatementsCollection.get(0).getBank()));
+			row.addRowData(31, new ResultSetRowColumnData(false, ""));
+			
 			data.addRow(row);
 
 			IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);

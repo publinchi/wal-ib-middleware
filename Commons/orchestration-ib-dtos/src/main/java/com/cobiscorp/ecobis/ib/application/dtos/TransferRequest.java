@@ -124,6 +124,16 @@ public class TransferRequest extends BaseRequest {
 	private String causeComi;
 	private String comissionCurrency;
 	
+	private String clientReferenceNumber;
+	
+	public String getClientReferenceNumber() {
+		return clientReferenceNumber;
+	}
+
+	public void setClientReferenceNumber(String clientReferenceNumber) {
+		this.clientReferenceNumber = clientReferenceNumber;
+	}
+
 	/**
 	 * @return the comissionCurrency
 	 */

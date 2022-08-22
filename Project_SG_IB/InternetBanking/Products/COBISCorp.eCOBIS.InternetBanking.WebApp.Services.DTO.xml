@@ -27,7 +27,7 @@
       <field type="String" name="packageTypeName" value="Jar" />
     </class>
   </collection>
-  <collection type="List" length="137" id="9" name="dTOs">
+  <collection type="List" length="140" id="9" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="10" index="0">
       <field type="String" name="name" value="AccountBalance" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
@@ -59,663 +59,678 @@
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="16" index="6">
-      <field type="String" name="name" value="AditionalDataAccountStatement" />
+      <field type="String" name="name" value="ACHDetail" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="17" index="7">
-      <field type="String" name="name" value="AgreementService" />
+      <field type="String" name="name" value="ACHDetailCollection" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="18" index="8">
-      <field type="String" name="name" value="CheckbookRequest" />
+      <field type="String" name="name" value="AditionalDataAccountStatement" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="19" index="9">
-      <field type="String" name="name" value="CheckingAccountCollection" />
+      <field type="String" name="name" value="AgreementService" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="20" index="10">
-      <field type="String" name="name" value="CheckingAccountStatementCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="21" index="11">
-      <field type="String" name="name" value="CheckPaymentServiceDetail" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="22" index="12">
-      <field type="String" name="name" value="CheckPaymentServiceDetailCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="23" index="13">
-      <field type="String" name="name" value="Contract" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="24" index="14">
-      <field type="String" name="name" value="ContractCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="25" index="15">
-      <field type="String" name="name" value="ContractImpresionRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="26" index="16">
-      <field type="String" name="name" value="ContractReference" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="27" index="17">
-      <field type="String" name="name" value="ContractReferenceCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="28" index="18">
-      <field type="String" name="name" value="ConventionItemsPaidDetail" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="29" index="19">
-      <field type="String" name="name" value="ConventionItemsPaidDetailCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="30" index="20">
-      <field type="String" name="name" value="CreditCard" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="31" index="21">
-      <field type="String" name="name" value="CreditCardCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="32" index="22">
-      <field type="String" name="name" value="CreditCardPaymentRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="33" index="23">
-      <field type="String" name="name" value="CurrencyTrading" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="34" index="24">
-      <field type="String" name="name" value="DataReceiptPrinter" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="35" index="25">
-      <field type="String" name="name" value="DataReceiptPrinterCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="36" index="26">
-      <field type="String" name="name" value="DetailFE" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="37" index="27">
-      <field type="String" name="name" value="DetailFECollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="38" index="28">
-      <field type="String" name="name" value="DetailInternationalTransfersReceived" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="39" index="29">
-      <field type="String" name="name" value="DetailInternationalTransfersReceivedCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="40" index="30">
-      <field type="String" name="name" value="DetailLoanPayment" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" index="31">
-      <field type="String" name="name" value="DetailLoanPaymentCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="42" index="32">
-      <field type="String" name="name" value="EKey" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="43" index="33">
-      <field type="String" name="name" value="EnquiryRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="44" index="34">
-      <field type="String" name="name" value="ExecutionResultSINPE" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="45" index="35">
-      <field type="String" name="name" value="FactoringPayments" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="46" index="36">
-      <field type="String" name="name" value="FactoringPaymentsCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="47" index="37">
-      <field type="String" name="name" value="FactoringStatement" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="48" index="38">
-      <field type="String" name="name" value="FactoringStatementColletion" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="49" index="39">
-      <field type="String" name="name" value="FixedTermDepositBalance" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="50" index="40">
-      <field type="String" name="name" value="FixedTermDepositBalanceCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="51" index="41">
-      <field type="String" name="name" value="FrequentPayment" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="52" index="42">
-      <field type="String" name="name" value="FrequentPaymentCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="53" index="43">
-      <field type="String" name="name" value="FrequentPaymentRecord" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="54" index="44">
-      <field type="String" name="name" value="FrequentPaymentResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="55" index="45">
-      <field type="String" name="name" value="HeaderAccountStatement" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="56" index="46">
-      <field type="String" name="name" value="HeaderCheckPaymentService" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="57" index="47">
-      <field type="String" name="name" value="HeaderCheckPaymentServiceCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="58" index="48">
-      <field type="String" name="name" value="Historical" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="59" index="49">
-      <field type="String" name="name" value="HistoricalCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="60" index="50">
-      <field type="String" name="name" value="InternationalTransferRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="61" index="51">
-      <field type="String" name="name" value="InternationalTransfersReceived" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="62" index="52">
-      <field type="String" name="name" value="InternationalTransfersReceivedCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="63" index="53">
-      <field type="String" name="name" value="InvoicingBase" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="64" index="54">
-      <field type="String" name="name" value="InvoicingBaseCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="65" index="55">
-      <field type="String" name="name" value="LoanBalance" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="66" index="56">
-      <field type="String" name="name" value="LoanBalanceCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="67" index="57">
-      <field type="String" name="name" value="LoanStatement" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="68" index="58">
-      <field type="String" name="name" value="LoanStatementCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="69" index="59">
-      <field type="String" name="name" value="ManagerCheck" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="70" index="60">
-      <field type="String" name="name" value="ManagerCheckCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="71" index="61">
-      <field type="String" name="name" value="MovementsSinpeDetail" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="72" index="62">
-      <field type="String" name="name" value="MovementsSinpeDetailCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="73" index="63">
-      <field type="String" name="name" value="MT940" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="74" index="64">
-      <field type="String" name="name" value="MT940Collection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="75" index="65">
-      <field type="String" name="name" value="NoPaycheckOrder" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="76" index="66">
-      <field type="String" name="name" value="NoPaycheckOrderResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="77" index="67">
-      <field type="String" name="name" value="OfficeParameter" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="78" index="68">
-      <field type="String" name="name" value="OfficeParameterCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="79" index="69">
-      <field type="String" name="name" value="OnlineServiceInvoicingResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="80" index="70">
-      <field type="String" name="name" value="PaidDetailService" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="81" index="71">
-      <field type="String" name="name" value="PaidDetailServiceCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="82" index="72">
-      <field type="String" name="name" value="PayableInterest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="83" index="73">
-      <field type="String" name="name" value="PayableInterestCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="84" index="74">
-      <field type="String" name="name" value="Payment" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="85" index="75">
-      <field type="String" name="name" value="PaymentCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="86" index="76">
-      <field type="String" name="name" value="PaymentDetails" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="87" index="77">
-      <field type="String" name="name" value="PaymentDetailSchedule" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="88" index="78">
-      <field type="String" name="name" value="PaymentDetailScheduleCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="89" index="79">
-      <field type="String" name="name" value="PaymentDetailsCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="90" index="80">
-      <field type="String" name="name" value="PaymentRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="91" index="81">
-      <field type="String" name="name" value="PaymentRequestCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="92" index="82">
-      <field type="String" name="name" value="PaymentResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="93" index="83">
-      <field type="String" name="name" value="PaymentSchedule" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="94" index="84">
-      <field type="String" name="name" value="PaymentScheduleCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="95" index="85">
-      <field type="String" name="name" value="PaymentServices" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="96" index="86">
-      <field type="String" name="name" value="PreAuthCheckOrder" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="97" index="87">
-      <field type="String" name="name" value="Request" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="98" index="88">
-      <field type="String" name="name" value="RequestCreditCard" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="99" index="89">
-      <field type="String" name="name" value="ResponseAccountStatement" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="100" index="90">
-      <field type="String" name="name" value="ResponseBalanceAccount" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="101" index="91">
-      <field type="String" name="name" value="ResponseBalanceDestinationAccount" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="102" index="92">
-      <field type="String" name="name" value="ResponseBalanceLoan" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="103" index="93">
-      <field type="String" name="name" value="ResponseBalancesProducts" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="104" index="94">
-      <field type="String" name="name" value="ResponseCreditCard" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="105" index="95">
-      <field type="String" name="name" value="ResponseCreditCardCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="106" index="96">
-      <field type="String" name="name" value="ResponseCurrencyTrading" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="107" index="97">
-      <field type="String" name="name" value="ResponseManagerCheck" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="108" index="98">
-      <field type="String" name="name" value="ResponseMembers" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="109" index="99">
-      <field type="String" name="name" value="ResponseMembersCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="110" index="100">
-      <field type="String" name="name" value="ResponseSubmit" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="111" index="101">
-      <field type="String" name="name" value="ResponseSummaryBalance" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="112" index="102">
-      <field type="String" name="name" value="ResponseSummaryCreditCard" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="113" index="103">
-      <field type="String" name="name" value="ResponseSummaryCreditCardColletion" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="114" index="104">
-      <field type="String" name="name" value="ResponseSummaryProducts" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="115" index="105">
-      <field type="String" name="name" value="ResponseSummaryProductsColletion" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="116" index="106">
-      <field type="String" name="name" value="ResponseTemplate" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="117" index="107">
-      <field type="String" name="name" value="ResponseThirdAccounts" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="118" index="108">
-      <field type="String" name="name" value="ResponseThirdAccountsColletion" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="119" index="109">
-      <field type="String" name="name" value="ResponseTotalBalance" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="120" index="110">
-      <field type="String" name="name" value="ReverseTransferACH" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="121" index="111">
-      <field type="String" name="name" value="ScheduledExternalTransfersCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="122" index="112">
-      <field type="String" name="name" value="ScheduledPayment" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="123" index="113">
-      <field type="String" name="name" value="ScheduledServicePayment" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="124" index="114">
-      <field type="String" name="name" value="ScheduledServicePaymentCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="125" index="115">
-      <field type="String" name="name" value="SearchOptionPayments" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="126" index="116">
-      <field type="String" name="name" value="SinpeTransferRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="127" index="117">
-      <field type="String" name="name" value="SinpeTransferResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="128" index="118">
-      <field type="String" name="name" value="Statement" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="129" index="119">
-      <field type="String" name="name" value="StatementCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="130" index="120">
-      <field type="String" name="name" value="SubscribedContract" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="131" index="121">
-      <field type="String" name="name" value="SubscribedContractCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="132" index="122">
-      <field type="String" name="name" value="SupportiveRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="133" index="123">
-      <field type="String" name="name" value="SuspendChecksCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="134" index="124">
-      <field type="String" name="name" value="TemplateDetail" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="135" index="125">
-      <field type="String" name="name" value="TemplateDetailCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="136" index="126">
-      <field type="String" name="name" value="TemplateList" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="137" index="127">
-      <field type="String" name="name" value="TemplateListCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="138" index="128">
-      <field type="String" name="name" value="TransferCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="139" index="129">
-      <field type="String" name="name" value="TransferInternationalDetail" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="140" index="130">
-      <field type="String" name="name" value="TransferInternationalDetailCollection" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="141" index="131">
-      <field type="String" name="name" value="TransferRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="142" index="132">
-      <field type="String" name="name" value="TransferRequestACH" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="143" index="133">
-      <field type="String" name="name" value="TransferResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="144" index="134">
       <field type="String" name="name" value="BatchDetail" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="145" index="135">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="21" index="11">
+      <field type="String" name="name" value="CheckbookRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="22" index="12">
+      <field type="String" name="name" value="CheckingAccountCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="23" index="13">
+      <field type="String" name="name" value="CheckingAccountStatementCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="24" index="14">
+      <field type="String" name="name" value="CheckPaymentServiceDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="25" index="15">
+      <field type="String" name="name" value="CheckPaymentServiceDetailCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="26" index="16">
+      <field type="String" name="name" value="Contract" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="27" index="17">
+      <field type="String" name="name" value="ContractCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="28" index="18">
+      <field type="String" name="name" value="ContractImpresionRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="29" index="19">
+      <field type="String" name="name" value="ContractReference" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="30" index="20">
+      <field type="String" name="name" value="ContractReferenceCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="31" index="21">
+      <field type="String" name="name" value="ConventionItemsPaidDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="32" index="22">
+      <field type="String" name="name" value="ConventionItemsPaidDetailCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="33" index="23">
+      <field type="String" name="name" value="CreditCard" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="34" index="24">
+      <field type="String" name="name" value="CreditCardCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="35" index="25">
+      <field type="String" name="name" value="CreditCardPaymentRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="36" index="26">
+      <field type="String" name="name" value="CreditLineRequest2" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="37" index="27">
+      <field type="String" name="name" value="CurrencyTrading" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="38" index="28">
+      <field type="String" name="name" value="DataReceiptPrinter" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="39" index="29">
+      <field type="String" name="name" value="DataReceiptPrinterCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="40" index="30">
+      <field type="String" name="name" value="DetailFE" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" index="31">
+      <field type="String" name="name" value="DetailFECollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="42" index="32">
+      <field type="String" name="name" value="DetailInternationalTransfersReceived" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="43" index="33">
+      <field type="String" name="name" value="DetailInternationalTransfersReceivedCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="44" index="34">
+      <field type="String" name="name" value="DetailLoanPayment" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="45" index="35">
+      <field type="String" name="name" value="DetailLoanPaymentCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="46" index="36">
       <field type="String" name="name" value="DispersionDetail" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="146" index="136">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="47" index="37">
       <field type="String" name="name" value="DispersionOut" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
       <field type="String" name="version" value="1" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="48" index="38">
+      <field type="String" name="name" value="EKey" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="49" index="39">
+      <field type="String" name="name" value="EnquiryRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="50" index="40">
+      <field type="String" name="name" value="ExecutionResultSINPE" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="51" index="41">
+      <field type="String" name="name" value="FactoringPayments" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="52" index="42">
+      <field type="String" name="name" value="FactoringPaymentsCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="53" index="43">
+      <field type="String" name="name" value="FactoringStatement" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="54" index="44">
+      <field type="String" name="name" value="FactoringStatementColletion" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="55" index="45">
+      <field type="String" name="name" value="FixedTermDepositBalance" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="56" index="46">
+      <field type="String" name="name" value="FixedTermDepositBalanceCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="57" index="47">
+      <field type="String" name="name" value="FrequentPayment" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="58" index="48">
+      <field type="String" name="name" value="FrequentPaymentCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="59" index="49">
+      <field type="String" name="name" value="FrequentPaymentRecord" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="60" index="50">
+      <field type="String" name="name" value="FrequentPaymentResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="61" index="51">
+      <field type="String" name="name" value="HeaderAccountStatement" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="62" index="52">
+      <field type="String" name="name" value="HeaderCheckPaymentService" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="63" index="53">
+      <field type="String" name="name" value="HeaderCheckPaymentServiceCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="64" index="54">
+      <field type="String" name="name" value="Historical" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="65" index="55">
+      <field type="String" name="name" value="HistoricalCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="66" index="56">
+      <field type="String" name="name" value="InternationalTransferRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="67" index="57">
+      <field type="String" name="name" value="InternationalTransfersReceived" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="68" index="58">
+      <field type="String" name="name" value="InternationalTransfersReceivedCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="69" index="59">
+      <field type="String" name="name" value="InvoicingBase" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="70" index="60">
+      <field type="String" name="name" value="InvoicingBaseCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="71" index="61">
+      <field type="String" name="name" value="LoanBalance" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="72" index="62">
+      <field type="String" name="name" value="LoanBalanceCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="73" index="63">
+      <field type="String" name="name" value="LoanStatement" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="74" index="64">
+      <field type="String" name="name" value="LoanStatementCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="75" index="65">
+      <field type="String" name="name" value="ManagerCheck" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="76" index="66">
+      <field type="String" name="name" value="ManagerCheckCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="77" index="67">
+      <field type="String" name="name" value="MovementsSinpeDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="78" index="68">
+      <field type="String" name="name" value="MovementsSinpeDetailCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="79" index="69">
+      <field type="String" name="name" value="MT940" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="80" index="70">
+      <field type="String" name="name" value="MT940Collection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="81" index="71">
+      <field type="String" name="name" value="NoPaycheckOrder" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="82" index="72">
+      <field type="String" name="name" value="NoPaycheckOrderResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="83" index="73">
+      <field type="String" name="name" value="OfficeParameter" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="84" index="74">
+      <field type="String" name="name" value="OfficeParameterCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="85" index="75">
+      <field type="String" name="name" value="OnlineServiceInvoicingResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="86" index="76">
+      <field type="String" name="name" value="PaidDetailService" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="87" index="77">
+      <field type="String" name="name" value="PaidDetailServiceCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="88" index="78">
+      <field type="String" name="name" value="PayableInterest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="89" index="79">
+      <field type="String" name="name" value="PayableInterestCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="90" index="80">
+      <field type="String" name="name" value="Payment" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="91" index="81">
+      <field type="String" name="name" value="PaymentCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="92" index="82">
+      <field type="String" name="name" value="PaymentDetails" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="93" index="83">
+      <field type="String" name="name" value="PaymentDetailSchedule" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="94" index="84">
+      <field type="String" name="name" value="PaymentDetailScheduleCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="95" index="85">
+      <field type="String" name="name" value="PaymentDetailsCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="96" index="86">
+      <field type="String" name="name" value="PaymentRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="97" index="87">
+      <field type="String" name="name" value="PaymentRequestCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="98" index="88">
+      <field type="String" name="name" value="PaymentResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="99" index="89">
+      <field type="String" name="name" value="PaymentSchedule" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="100" index="90">
+      <field type="String" name="name" value="PaymentScheduleCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="101" index="91">
+      <field type="String" name="name" value="PaymentServices" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="102" index="92">
+      <field type="String" name="name" value="PreAuthCheckOrder" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="103" index="93">
+      <field type="String" name="name" value="Request" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="104" index="94">
+      <field type="String" name="name" value="RequestCreditCard" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="105" index="95">
+      <field type="String" name="name" value="ResponseAccountStatement" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="106" index="96">
+      <field type="String" name="name" value="ResponseBalanceAccount" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="107" index="97">
+      <field type="String" name="name" value="ResponseBalanceDestinationAccount" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="108" index="98">
+      <field type="String" name="name" value="ResponseBalanceLoan" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="109" index="99">
+      <field type="String" name="name" value="ResponseBalancesProducts" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="110" index="100">
+      <field type="String" name="name" value="ResponseCreditCard" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="111" index="101">
+      <field type="String" name="name" value="ResponseCreditCardCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="112" index="102">
+      <field type="String" name="name" value="ResponseCurrencyTrading" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="113" index="103">
+      <field type="String" name="name" value="ResponseManagerCheck" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="114" index="104">
+      <field type="String" name="name" value="ResponseMembers" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="115" index="105">
+      <field type="String" name="name" value="ResponseMembersCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="116" index="106">
+      <field type="String" name="name" value="ResponseSubmit" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="117" index="107">
+      <field type="String" name="name" value="ResponseSummaryBalance" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="118" index="108">
+      <field type="String" name="name" value="ResponseSummaryCreditCard" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="119" index="109">
+      <field type="String" name="name" value="ResponseSummaryCreditCardColletion" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="120" index="110">
+      <field type="String" name="name" value="ResponseSummaryProducts" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="121" index="111">
+      <field type="String" name="name" value="ResponseSummaryProductsColletion" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="122" index="112">
+      <field type="String" name="name" value="ResponseTemplate" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="123" index="113">
+      <field type="String" name="name" value="ResponseThirdAccounts" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="124" index="114">
+      <field type="String" name="name" value="ResponseThirdAccountsColletion" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="125" index="115">
+      <field type="String" name="name" value="ResponseTotalBalance" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="126" index="116">
+      <field type="String" name="name" value="ReverseTransferACH" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="127" index="117">
+      <field type="String" name="name" value="ScheduledExternalTransfersCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="128" index="118">
+      <field type="String" name="name" value="ScheduledPayment" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="129" index="119">
+      <field type="String" name="name" value="ScheduledServicePayment" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="130" index="120">
+      <field type="String" name="name" value="ScheduledServicePaymentCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="131" index="121">
+      <field type="String" name="name" value="SearchOptionPayments" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="132" index="122">
+      <field type="String" name="name" value="SinpeTransferRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="133" index="123">
+      <field type="String" name="name" value="SinpeTransferResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="134" index="124">
+      <field type="String" name="name" value="Statement" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="135" index="125">
+      <field type="String" name="name" value="StatementCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="136" index="126">
+      <field type="String" name="name" value="SubscribedContract" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="137" index="127">
+      <field type="String" name="name" value="SubscribedContractCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="138" index="128">
+      <field type="String" name="name" value="SupportiveRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="139" index="129">
+      <field type="String" name="name" value="SuspendChecksCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="140" index="130">
+      <field type="String" name="name" value="TemplateDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="141" index="131">
+      <field type="String" name="name" value="TemplateDetailCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="142" index="132">
+      <field type="String" name="name" value="TemplateList" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="143" index="133">
+      <field type="String" name="name" value="TemplateListCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="144" index="134">
+      <field type="String" name="name" value="TransferCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="145" index="135">
+      <field type="String" name="name" value="TransferInternationalDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="146" index="136">
+      <field type="String" name="name" value="TransferInternationalDetailCollection" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="147" index="137">
+      <field type="String" name="name" value="TransferRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="148" index="138">
+      <field type="String" name="name" value="TransferRequestACH" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="149" index="139">
+      <field type="String" name="name" value="TransferResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
   </collection>
-  <collection type="List" length="1" id="147" name="properties">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="148" index="0">
+  <collection type="List" length="1" id="150" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="151" index="0">
       <field type="String" name="name" value="MavenGroupId" />
       <field type="String" name="value" value="com.cobiscorp.channels.ib" />
       <field type="char" name="type" value="\u0000" />
@@ -726,15 +741,15 @@
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="true" />
   <field type="boolean" name="autoCleanSource" value="true" />
-  <collection type="List" length="2" id="149" name="references">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="150" index="0">
+  <collection type="List" length="2" id="152" name="references">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="153" index="0">
       <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" />
       <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO" />
       <field type="String" name="documentationLanguage" value="Español" />
       <field type="String" name="typeName" value="DTO" />
       <field type="String" name="version" value="1.0.0.0" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="151" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="154" index="1">
       <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO" />
       <field type="String" name="documentationLanguage" value="Español" />
@@ -742,16 +757,16 @@
       <field type="String" name="version" value="1.0.0.0" />
     </class>
   </collection>
-  <collection type="List" length="1" id="152" name="externalReferences">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGExternalReferences" id="153" index="0">
+  <collection type="List" length="1" id="155" name="externalReferences">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGExternalReferences" id="156" index="0">
       <field type="String" name="name" value="CTSServiceFramework-All-1.0.5" />
       <field type="String" name="type" value="JAR" />
       <field type="String" name="path" value="C:\Program Files\COBIS\CEN - Services Generator\\Packager\Java\COBISConstruction\lib\CTSServiceFramework-All-1.0.5" />
       <field type="String" name="package" value="com.cobiscorp.cobis.cts.sdf.dto" />
     </class>
   </collection>
-  <collection type="List" length="1" id="154" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="155" index="0">
+  <collection type="List" length="1" id="157" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="158" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobisBV" />
       <field type="String" name="keyPassword" value="cobisbvadminadmin" />
@@ -760,10 +775,10 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.6" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.7.0_80" />
+      <field type="String" name="jDKPath" value="C:\Desarrollo\java\jdk1.6.0_45" />
     </class>
   </collection>
-  <collection type="List" length="6" id="156" name="templateCommands">
+  <collection type="List" length="6" id="159" name="templateCommands">
     <field type="String" index="0" value="cmd_Maven install in local repository" />
     <field type="String" index="1" value="cmd_Maven deploy in remote repository" />
     <field type="String" index="2" value="cmd_Nuget install in local repository" />

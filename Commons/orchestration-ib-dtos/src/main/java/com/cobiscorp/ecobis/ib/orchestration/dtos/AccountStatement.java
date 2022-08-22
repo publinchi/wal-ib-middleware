@@ -58,6 +58,125 @@ public class AccountStatement {
 	private String rastreo;
 	private String tarjetNumber;
 	
+	private String montoTran;
+	private String beneficiario;
+	private String cuentaDest;
+	private String cuentaOrig;
+	private String comisionTran;
+	private String ivaTran;
+	private String mensajeTran;
+	private String originAccountProp;
+	private String currencySymbol;
+	private String referenceNumber;
+	private String destinationAccountType;
+	private String originAccountType;
+	private String bank;
+	private String dataComprobante;
+	
+	public String getOriginAccountProp() {
+		return originAccountProp;
+	}
+
+	public void setOriginAccountProp(String originAccountProp) {
+		this.originAccountProp = originAccountProp;
+	}
+
+	public String getCurrencySymbol() {
+		return currencySymbol;
+	}
+
+	public void setCurrencySymbol(String currencySymbol) {
+		this.currencySymbol = currencySymbol;
+	}
+
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+
+	public String getDestinationAccountType() {
+		return destinationAccountType;
+	}
+
+	public void setDestinationAccountType(String destinationAccountType) {
+		this.destinationAccountType = destinationAccountType;
+	}
+
+	public String getOriginAccountType() {
+		return originAccountType;
+	}
+
+	public void setOriginAccountType(String originAccountType) {
+		this.originAccountType = originAccountType;
+	}
+
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+	
+	public String getMontoTran() {
+		return montoTran;
+	}
+
+	public void setMontoTran(String montoTran) {
+		this.montoTran = montoTran;
+	}
+
+	public String getBeneficiario() {
+		return beneficiario;
+	}
+
+	public void setBeneficiario(String beneficiario) {
+		this.beneficiario = beneficiario;
+	}
+
+	public String getCuentaDest() {
+		return cuentaDest;
+	}
+
+	public void setCuentaDest(String cuentaDest) {
+		this.cuentaDest = cuentaDest;
+	}
+
+	public String getCuentaOrig() {
+		return cuentaOrig;
+	}
+
+	public void setCuentaOrig(String cuentaOrig) {
+		this.cuentaOrig = cuentaOrig;
+	}
+
+	public String getComisionTran() {
+		return comisionTran;
+	}
+
+	public void setComisionTran(String comisionTran) {
+		this.comisionTran = comisionTran;
+	}
+
+	public String getIvaTran() {
+		return ivaTran;
+	}
+
+	public void setIvaTran(String ivaTran) {
+		this.ivaTran = ivaTran;
+	}
+
+	public String getMensajeTran() {
+		return mensajeTran;
+	}
+
+	public void setMensajeTran(String mensajeTran) {
+		this.mensajeTran = mensajeTran;
+	}
+
 	/**
 	 * Indicate the accounting Balance of the account
 	 */
@@ -435,6 +554,14 @@ public class AccountStatement {
 	public void setStringDate(String stringDate) {
 		this.stringDate = stringDate;
 	}
+	
+	public String getDataComprobante() {
+		return this.dataComprobante;
+	}
+	public void setDataComprobante(String dataComprobante) {
+		this.dataComprobante = dataComprobante;
+	}
+	
 
 	@Override
 	public String toString() {
@@ -449,9 +576,18 @@ public class AccountStatement {
 				+ typeDC + ", rastreo=" + rastreo + ", tarjetNumber=" + tarjetNumber + ", accountingBalance="
 				+ accountingBalance + ", availableBalance=" + availableBalance + ", sequential=" + sequential
 				+ ", alternateCode=" + alternateCode + ", hour=" + hour + ", uniqueSequential=" + uniqueSequential
+				
+				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
+				+ ", cuentaOrig=" + cuentaOrig + ", comisionTran=" + comisionTran + ", ivaTran=" + ivaTran
+				+ ", referenceNumber=" + referenceNumber + ", destinationAccountType=" + destinationAccountType + ", originAccountType=" + originAccountType
+				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
+				+ ", montoTran=" + montoTran + ", beneficiario=" + beneficiario + ", cuentaDest=" + cuentaDest
+				+ ", bank=" + bank + ", dataComprobante=" + dataComprobante 
+				
 				+ "]";
 	}
 
+	
 	
 
 }
