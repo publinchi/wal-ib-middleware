@@ -125,6 +125,10 @@ public class UtilsTransfers {
 
 		if (anOriginalRequest.readValueParam("@s_ssn") != null)
 			selfAccountTransferRequest.setReferenceNumber(anOriginalRequest.readValueParam("@s_ssn"));
+		
+		if (anOriginalRequest.readValueParam("@i_reference_number") != null)
+			selfAccountTransferRequest.setClientReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
+				
 
 		selfAccountTransferRequest = (SelfAccountTransferRequest) Utils.setSessionParameters(selfAccountTransferRequest, anOriginalRequest);
 		if (logger.isDebugEnabled())
@@ -300,9 +304,14 @@ public class UtilsTransfers {
 		if (anOriginalRequest.readValueParam("@s_ssn") != null)
 			ThirdPartyTransferRequest.setReferenceNumber(anOriginalRequest.readValueParam("@s_ssn"));
 
+		if (anOriginalRequest.readValueParam("@i_reference_number") != null)
+			ThirdPartyTransferRequest.setClientReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
+		
 		ThirdPartyTransferRequest = (ThirdPartyTransferRequest) Utils.setSessionParameters(ThirdPartyTransferRequest, anOriginalRequest);
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Request de Transferencia:" + ThirdPartyTransferRequest + anOriginalRequest);
+
 		return ThirdPartyTransferRequest;
 	}
 
@@ -406,6 +415,9 @@ public class UtilsTransfers {
 
 		if (anOriginalRequest.readValueParam("@s_ssn") != null)
 			aInternationalTransferRequest.setReferenceNumber(anOriginalRequest.readValueParam("@s_ssn"));
+		
+		if (anOriginalRequest.readValueParam("@i_reference_number") != null)
+			aInternationalTransferRequest.setClientReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
 
 		aInternationalTransferRequest = (InternationalTransferRequest) Utils.setSessionParameters(aInternationalTransferRequest, anOriginalRequest);
 		if (logger.isDebugEnabled())
@@ -516,7 +528,9 @@ public class UtilsTransfers {
 		if (anOriginalRequest.readValueParam("@s_ssn_branch") != null)
 			aACHTransferRequest.setReferenceNumberBranch(anOriginalRequest.readValueParam("@s_ssn_branch"));
 		if (anOriginalRequest.readValueParam("@s_ssn") != null)
-			aACHTransferRequest.setReferenceNumber(anOriginalRequest.readValueParam("@s_ssn"));
+			aACHTransferRequest.setReferenceNumber(anOriginalRequest.readValueParam("@s_ssn"));		
+		if (anOriginalRequest.readValueParam("@i_reference_number") != null)
+			aACHTransferRequest.setClientReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
 
 		aACHTransferRequest = (ACHTransferRequest) Utils.setSessionParameters(aACHTransferRequest, anOriginalRequest);
 		if (logger.isDebugEnabled())

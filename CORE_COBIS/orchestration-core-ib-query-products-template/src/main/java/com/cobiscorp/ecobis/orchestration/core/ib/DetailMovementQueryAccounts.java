@@ -275,6 +275,22 @@ public class DetailMovementQueryAccounts extends SPJavaOrchestrationBase impleme
 			wAccountStatement.setTotalChecksBalance(columns[13].getValue() == null ? "" : columns[13].getValue());
 			wAccountStatement.setCauseId(columns[14].getValue() == null ? "" : columns[14].getValue());
 			wAccountStatement.setRastreo(columns[15].getValue() == null ? "" : columns[15].getValue());
+			
+			wAccountStatement.setMontoTran(columns[16].getValue() == null ? "" : columns[16].getValue());
+			wAccountStatement.setBeneficiario(columns[17].getValue() == null ? "" : columns[17].getValue());
+			wAccountStatement.setCuentaDest(columns[18].getValue() == null ? "" : columns[18].getValue());
+			wAccountStatement.setCuentaOrig(columns[19].getValue() == null ? "" : columns[19].getValue());
+			wAccountStatement.setComisionTran(columns[20].getValue() == null ? "" : columns[20].getValue());
+			wAccountStatement.setIvaTran(columns[21].getValue() == null ? "" : columns[21].getValue());
+			wAccountStatement.setMensajeTran(columns[22].getValue() == null ? "" : columns[22].getValue());
+			
+			wAccountStatement.setOriginAccountProp(columns[23].getValue() == null ? "" : columns[23].getValue());
+			wAccountStatement.setCurrencySymbol(columns[24].getValue() == null ? "" : columns[24].getValue());
+			wAccountStatement.setReferenceNumber(columns[25].getValue() == null ? "" : columns[25].getValue());
+			wAccountStatement.setDestinationAccountType(columns[26].getValue() == null ? "" : columns[26].getValue());
+			wAccountStatement.setOriginAccountType(columns[27].getValue() == null ? "" : columns[27].getValue());
+			wAccountStatement.setBank(columns[28].getValue() == null ? "" : columns[28].getValue());
+			
 			AccountStatementsCollection.add(wAccountStatement);
 			detailsMovementsResponse.setAccountStatementsCollection(AccountStatementsCollection);
 		}
