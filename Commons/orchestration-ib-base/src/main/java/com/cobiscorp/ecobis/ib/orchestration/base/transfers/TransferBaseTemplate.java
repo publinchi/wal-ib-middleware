@@ -676,7 +676,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, (bag.get("@o_spei_request")!=null)?bag.get("@o_spei_request").toString():"");
 				request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response")!=null?bag.get("@o_spei_response").toString():""  );
 				request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch").toString());
-
+				if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nombre_benef"))) {
+					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_beneficiario
+					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_nombre_cr
+				}
 				break;
 			default:
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "S");
