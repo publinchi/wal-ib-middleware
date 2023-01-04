@@ -10,11 +10,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement  
-public class mensaje  implements Serializable {
+public class mensaje implements Serializable{
 	
+	 
 	private  ordenpago ordenpago;
 	private String categoria;
-
+	
 	
 	public mensaje() {}
 
@@ -39,6 +40,7 @@ public class mensaje  implements Serializable {
 	public synchronized void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
+
 
 	/**
 	 * @return the respuesta

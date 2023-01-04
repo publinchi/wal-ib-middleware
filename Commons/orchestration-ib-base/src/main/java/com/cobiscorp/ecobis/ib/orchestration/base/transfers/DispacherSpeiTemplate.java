@@ -19,6 +19,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
@@ -115,21 +116,48 @@ public abstract class DispacherSpeiTemplate  extends SPJavaOrchestrationBase {
         ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
         logger.logInfo("SERVER RESPONSE: "+responseServer.toString());
         aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
+        mensaje message=(mensaje)aBagSPJavaOrchestration.get("plot");
 
-        if(anOriginalRequest.readValueFieldInHeader("comision") != null) {
+     /*   if(anOriginalRequest.readValueFieldInHeader("comision") != null) {
             if (logger.isInfoEnabled())
                 logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
-        }
+     }*/
 
         SUPPORT_OFFLINE = true;
 
         // Valida firmas fisicas
-        IProcedureResponse responseSigner = new ProcedureResponseAS();
+   /*     IProcedureResponse responseSigner = new ProcedureResponseAS();
         responseSigner.setReturnCode(0);
-        aBagSPJavaOrchestration.put(RESPONSE_QUERY_SIGNER, responseSigner);
+        aBagSPJavaOrchestration.put(RESPONSE_QUERY_SIGNER, responseSigner);*/
+        
+		if (message != null) {			
+			
+			// METODO GUARDAR CAMPOS SEPARADOS QUE EXISTAN
+
+			if (message.getCategoria() != null) {
+
+				if (message.getCategoria().equals("ODPS_LIQUIDADAS_CARGOS")) {
+					
+					
+					executeCreditTransferOrchest( anOriginalRequest, aBagSPJavaOrchestration);
+
+				} else if (message.getCategoria().equals("ODPS_LIQUIDADAS_CARGOS")) {
+
+				} else if (message.getCategoria().equals("ODPS_LIQUIDADAS_ABONOS")) {
+
+				} else if (message.getCategoria().equals("ODPS_CANCELADAS_LOCAL")) {
+
+				} else if (message.getCategoria().equals("ODPS_CANCELADAS_X_BANXICO")) {
+
+				}
+
+			}
+		}
+        
+        
 
         // Ejecuta transaccion core
-        responseTransfer = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
+       /* responseTransfer = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
         if (Utils.flowError("executeTransaction", responseTransfer)) {
             if (Boolean.TRUE.equals(responseServer.getOnLine())) {
                 if (Boolean.FALSE.equals(getFromReentryExcecution(aBagSPJavaOrchestration))) {
@@ -152,12 +180,18 @@ public abstract class DispacherSpeiTemplate  extends SPJavaOrchestrationBase {
         aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
 
         if (logger.isInfoEnabled())
-            logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta metodo executeStepsTransactionsBase: " + aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
+            logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta metodo executeStepsTransactionsBase: " + aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());*/
 
         return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
     }
 
-    /**
+    protected abstract void executeCreditTransferOrchest(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration);
+    
+    protected abstract Boolean doSignature(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration);
+
+	/**
      * Local updates: saves monetary trn, saves log, syncs local balances
      *
      * @param originalRequest
