@@ -7,6 +7,7 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,11 @@ import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.cobis.cts.dtos.ServiceRequest;
+import com.cobiscorp.cobis.cts.services.session.SessionCrypt;
+import com.cobiscorp.cobisv.commons.context.CobisSession;
+import com.cobiscorp.cobisv.commons.context.Context;
+import com.cobiscorp.cobisv.commons.context.ContextManager;
 import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -43,6 +49,7 @@ import com.cobiscorp.ecobis.ib.orchestration.dtos.Client;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Notification;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.NotificationDetail;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.ordenpago;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
@@ -52,6 +59,8 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSelfAccountT
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.DispatcherSpeiOfflineTemplate;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferInOfflineTemplate;
+
+import cobiscorp.ecobis.commons.dto.ServiceRequestTO;
 
 import static org.mockito.Mockito.doThrow;
 
@@ -229,7 +238,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		try {
 
 			String xmls = anOriginalRequest.readValueParam("@i_pay_order");
-			ValidatePlot plot = new ValidatePlot();
+			DispatcherUtil plot = new DispatcherUtil();
 			message = plot.getDataMessage(xmls);
 			if (message != null) {
 				aBagSPJavaOrchestration.put("speiTransaction", message);
@@ -451,79 +460,9 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		}
 	}
 
-	@Override
-	protected IProcedureResponse validateCentralExecution(IProcedureRequest request,
-			Map<String, Object> aBagSPJavaOrchestration) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public NotificationRequest transformNotificationRequest(IProcedureRequest anOriginalRequest,
-			OfficerByAccountResponse anOfficer, Map<String, Object> aBagSPJavaOrchestration) {
 
-		NotificationRequest notificationRequest = new NotificationRequest();
-		notificationRequest.setOriginalRequest(anOriginalRequest);
-		Notification notification = new Notification();
 
-		Client client = new Client();
-		client.setIdCustomer(anOriginalRequest.readValueParam("@s_cliente"));
-
-		Product product = new Product();
-		product.setProductType(Integer.parseInt(anOriginalRequest.readValueParam("@i_prod")));
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_cta"))) {
-			product.setProductNumber(anOriginalRequest.readValueParam("@i_cta"));
-		}
-		if (product.getProductType() == 3)
-			notification.setId("N19");
-		else
-			notification.setId("N20");
-
-		NotificationDetail notificationDetail = new NotificationDetail();
-
-		if (!Utils.isNull(anOfficer.getOfficer().getOfficerEmailAdress()))
-			notificationDetail.setEmailClient(anOfficer.getOfficer().getOfficerEmailAdress());
-		if (!Utils.isNull(anOfficer.getOfficer().getAcountEmailAdress()))
-			notificationDetail.setEmailOficial(anOfficer.getOfficer().getAcountEmailAdress());
-
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_cta")))
-			notificationDetail.setAccountNumberDebit(anOriginalRequest.readValueParam("@i_cta"));
-
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_cta_des")))
-			notificationDetail.setAccountNumberCredit(anOriginalRequest.readValueParam("@i_cta_des"));
-
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_concepto")))
-			notificationDetail.setNote(anOriginalRequest.readValueParam("@i_concepto"));
-
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_mon"))) {
-			notificationDetail.setCurrencyId1(anOriginalRequest.readValueParam("@i_mon"));
-			notificationDetail.setCurrencyId2(anOriginalRequest.readValueParam("@i_mon"));
-		}
-
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_val")))
-			notificationDetail.setValue(anOriginalRequest.readValueParam("@i_val"));
-
-		if (!Utils.isNull(anOriginalRequest.readParam("@s_date")))
-			notificationDetail.setDateNotification(anOriginalRequest.readValueParam("@s_date"));
-		if (!Utils.isNull(anOriginalRequest.readParam("@s_ssn")))
-			notificationDetail.setReference(anOriginalRequest.readValueParam("@s_ssn"));
-		if (!Utils.isNull(anOriginalRequest.readParam("@i_nom_cliente_benef")))
-			notificationDetail.setAuxiliary1(anOriginalRequest.readValueParam("@i_nom_cliente_benef"));
-
-		notificationRequest.setClient(client);
-		notificationRequest.setNotification(notification);
-		notificationRequest.setNotificationDetail(notificationDetail);
-		notificationRequest.setOriginProduct(product);
-
-		return notificationRequest;
-	}
-
-	@Override
-	protected void addParametersRequestUpdateLocal(IProcedureRequest aProcedureRequest,
-			IProcedureRequest anOriginalRequest) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	protected IProcedureResponse executeTransaction(IProcedureRequest request,
@@ -545,52 +484,76 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	protected Boolean doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
 		// TODO Auto-generated method stub
 	
-		Boolean isValid=false;
+		Boolean isValid=false;		
+	
 		
-		
-		try {
-			
-			
-			String signed="";
-			mensaje message=(mensaje)aBagSPJavaOrchestration.get("speiTransaction");
-			byte [] byteArray= ManejoBytes.ArmaTramaBytes(message.getOrdenpago());
-			
-		    String privateKeyFileName = System.getProperty(COBIS_HOME) + "/CTS_MF/security/certificado";
-		     logDebug("Pathx: " + privateKeyFileName);
-			
-		     byte[] key = Files.readAllBytes(Paths.get(privateKeyFileName));
-		     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-	         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(key);
-	         PrivateKey finalKey = keyFactory.generatePrivate(keySpec);
-	         logger.logInfo(finalKey.getAlgorithm());
-	         
-	          if (finalKey instanceof PrivateKey) {	               
-	                PrivateKey pk = (PrivateKey) finalKey;	                
-	                signed = this.sign(byteArray, pk);	    
-	                logger.logInfo( "FIRMA DIGITAL A COMPARAR ::::"+signed);
-	            } else {
-	            	 logger.logInfo( "No se recupero el PRIVATE KEY ERROR EN FIRMA!!!::::::::::::::::::::::::::::::::");
-	            }
-		     
-		}catch (Exception xe) {
-			
-			
-			logger.logInfo("::::::::::Error al FIRMAR::::::::::");
-			logger.logError(xe);
-			
-		}
+        DispatcherUtil util=new DispatcherUtil();
+        String sign=  util.doSignature(request, aBagSPJavaOrchestration);
 		
 		
 		return isValid;
 		
 	}
 	
-    private  String sign(byte[] in, PrivateKey PrivateKey) throws Exception {
-        Signature signed = Signature.getInstance("SHA256withRSA");
-        signed.initSign(PrivateKey);
-        signed.update(in);
-        byte[] signdata = signed.sign();
-        return Base64.getEncoder().encodeToString(signdata);
-    }
+
+
+	@Override
+	protected Object invokeNotifyDeposit(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		mensaje message=(mensaje)aBagSPJavaOrchestration.get("speiTransaction");
+		ordenpago pago=message.getOrdenpago();
+		
+		Context context = ContextManager.getContext();
+		CobisSession session = (CobisSession) context.getSession();
+		String sessionId = session.getSessionId();
+		
+		sessionId = SessionCrypt.encriptSessionID(sessionId, "address", "hostname");
+
+		String serviceId = "InternetBanking.WebApp.Admin.Service.Spei.NotifyDeposit";
+		
+		ServiceRequest header = new ServiceRequest();
+		header.addFieldInHeader(ICOBISTS.HEADER_SESSION_ID, ICOBISTS.HEADER_STRING_TYPE, sessionId);
+		ServiceRequestTO requestTO = new ServiceRequestTO();
+		requestTO.addValue(ServiceRequestTO.SERVICE_HEADER, header);
+		requestTO.setSessionId(sessionId);
+		requestTO.setServiceId(serviceId);
+		
+		cobiscorp.ecobis.internetbanking.webapp.admin.dto.Spei inSpei = new cobiscorp.ecobis.internetbanking.webapp.admin.dto.Spei();
+		inSpei.setIdSpei(String.valueOf(pago.getOpFolio()));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		inSpei.setFechaOperacion(DispatcherUtil.getCalendarFromStringAndFormat(pago.getOpFechaOper(), sdf));
+
+		inSpei.setInstitucionOrdenante(aSpeiRequest.getInstitucionOrdenante()!=null?Integer.parseInt(aSpeiRequest.getInstitucionOrdenante()):null);
+		inSpei.setInstitucionBeneficiaria(aSpeiRequest.getInstitucionBeneficiaria()!=null?Integer.parseInt(aSpeiRequest.getInstitucionBeneficiaria()):null);
+		inSpei.setClaveRastreo(aSpeiRequest.getClaveRastreo());
+		inSpei.setMonto(Double.parseDouble(aSpeiRequest.getMonto()));
+		inSpei.setNombreOrdenante(aSpeiRequest.getNombreOrdenante());
+		inSpei.setTipoCuentaOrdenante(aSpeiRequest.getTipoCuentaOrdenante() != null ? Integer.parseInt(aSpeiRequest.getTipoCuentaOrdenante()) : 40);
+		inSpei.setCuentaOrdenante(aSpeiRequest.getCuentaOrdenante());
+		if(aSpeiRequest.getRfcCurpOrdenante() != null) {
+			inSpei.setRfcCurpOrdenante(aSpeiRequest.getRfcCurpOrdenante());
+		}
+		inSpei.setNombreBeneficiario(aSpeiRequest.getNombreBeneficiario());
+		inSpei.setTipoCuentaBeneficiario(aSpeiRequest.getTipoCuentaBeneficiario()!=null?Integer.parseInt(aSpeiRequest.getTipoCuentaBeneficiario()):null);
+		inSpei.setCuentaBeneficiario(aSpeiRequest.getCuentaBeneficiario());
+		if(aSpeiRequest.getRfcCurpBeneficiario() != null) {
+			inSpei.setRfcCurpBeneficiario(aSpeiRequest.getRfcCurpBeneficiario());
+		}
+		inSpei.setConceptoPago(aSpeiRequest.getConceptoPago());
+		inSpei.setReferenciaNumerica(aSpeiRequest.getReferenciaNumerica()!=null?Integer.parseInt(aSpeiRequest.getReferenciaNumerica()):null);
+		if(aSpeiRequest.getTipoPago()!=null){
+			inSpei.setIdTipoPago(Integer.parseInt(aSpeiRequest.getTipoPago()));
+		}
+		inSpei.setCuentaCobis(notifyDepositResponse.getCuentaCobis());
+		inSpei.setStringPeticion(aSpeiRequest.toString());
+		inSpei.setCodigoCliente(notifyDepositResponse.getCodigoCliente());
+		inSpei.setProductoCuenta(String.valueOf(notifyDepositResponse.getProductoCuenta()));
+
+		requestTO.addValue("inSpei", inSpei);
+		
+		
+		
+		return null;
+	}
 
 }
