@@ -257,14 +257,17 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logError(xe);
 		}
 
-		if (response != null && !response.hasError() && response.getReturnCode() == 0) {
+	/*	if (response != null && !response.hasError() && response.getReturnCode() == 0) {
 			String idDevolucion = response.readValueParam("@o_id_causa_devolucion");
 			if (null == idDevolucion || "0".equals(idDevolucion)) {
 				notifySpei(anOriginalRequest, aBagSPJavaOrchestration);
 			}
-		}
+		}*/
+		
+		IProcedureResponse valuesOutput = new ProcedureResponseAS();
+		valuesOutput.addParam("@replay", 39, 1, aBagSPJavaOrchestration.get("returnMessage").toString());
 
-		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+		return valuesOutput;//processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
 	@Override
@@ -500,7 +503,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	@Override
 	protected Object invokeNotifyDeposit(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
 		
-		mensaje message=(mensaje)aBagSPJavaOrchestration.get("speiTransaction");
+	/*	mensaje message=(mensaje)aBagSPJavaOrchestration.get("speiTransaction");
 		ordenpago pago=message.getOrdenpago();
 		
 		Context context = ContextManager.getContext();
@@ -551,7 +554,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 
 		requestTO.addValue("inSpei", inSpei);
 		
-		
+		*/
 		
 		return null;
 	}

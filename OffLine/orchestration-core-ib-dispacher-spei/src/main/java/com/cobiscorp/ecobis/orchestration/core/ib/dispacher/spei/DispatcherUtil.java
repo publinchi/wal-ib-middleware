@@ -9,7 +9,9 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -76,6 +78,38 @@ public class DispatcherUtil {
 		  
 	  }
 	  
+	    public static Calendar getCalendarFromStringAndFormat(String aDate, SimpleDateFormat aFormat) {
+	        Calendar calendar = Calendar.getInstance();
+
+	        try{
+	            if(null != aDate && !"".equals(aDate)){
+	                calendar.setTime(aFormat.parse(aDate));
+	                return calendar;
+	            }
+	        }catch (Exception e){
+	            logger.logError("Error fecha: ",e);
+	        }
+
+
+	        return null;
+	    }
+	    
+	    
+	    public static Calendar getCalendarFromStringAndFormat(String aDate, SimpleDateFormat aFormat) {
+	        Calendar calendar = Calendar.getInstance();
+
+	        try{
+	            if(null != aDate && !"".equals(aDate)){
+	                calendar.setTime(aFormat.parse(aDate));
+	                return calendar;
+	            }
+	        }catch (Exception e){
+	            logger.logError("Error fecha: ",e);
+	        }
+
+
+	        return null;
+	    }
 	  
 		public  String doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
 			// TODO Auto-generated method stub
@@ -117,7 +151,7 @@ public class DispatcherUtil {
 			
 			return signed;
 			
-		}
+		}  
 	  
 	    private  String sign(byte[] in, PrivateKey PrivateKey) throws Exception {
 	        Signature signed = Signature.getInstance("SHA256withRSA");

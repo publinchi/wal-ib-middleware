@@ -1,11 +1,8 @@
-package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.spei;
-
+package com.cobiscorp.orchestrator.trf.spei.util;
 
 import com.cobiscorp.cobis.commons.domains.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
-import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
-import com.cobiscorp.ecobis.ib.orchestration.dtos.ordenpago;
-
+import com.cobiscorp.orchestrator.trf.spei.dto.SpeiRequest;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -17,25 +14,24 @@ public class ManejoBytes {
 
     private static ILogger logger = LogFactory.getLogger(ManejoBytes.class);
 
-    public static byte[] ArmaTramaBytes(ordenpago pago) throws Exception {
+    public static byte[] ArmaTramaBytes(SpeiRequest aSpeiRequest) throws Exception {
         final String METHOD_NAME = "[ArmaTramaBytes]";
         logInfo(METHOD_NAME, "[INI]");
         byte wFirma[];
-        
         try {
             wFirma = ByteBuffer.allocate(0).array();
-            wFirma = concatByte(wFirma, formateoFrima(getDate(pago.getOpFechaOper())));
+            wFirma = concatByte(wFirma, formateoFrima(getDate(aSpeiRequest.getOrdenPago().getOpFechaOper())));
             //90715- TRAFALGAR
             //715- GEM-TRAFALGAR
-            wFirma = concatByte(wFirma, formateoFrima(Integer.parseInt("90715")));
-            wFirma = concatByte(wFirma, formateoFrima(pago.getOpInsClave()));
-            wFirma = concatByte(wFirma, formateoFrima(pago.getOpCveRastreo()));
-            wFirma = concatByte(wFirma, formateoFrima(pago.getOpMonto().doubleValue()));
+            wFirma = concatByte(wFirma, formateoFrima(aSpeiRequest.getInstitucionOperante()));
+            wFirma = concatByte(wFirma, formateoFrima(aSpeiRequest.getOrdenPago().getOpInsClave()));
+            wFirma = concatByte(wFirma, formateoFrima(aSpeiRequest.getOrdenPago().getOpCveRastreo()));
+            wFirma = concatByte(wFirma, formateoFrima(aSpeiRequest.getOrdenPago().getOpMonto().doubleValue()));
             //40 Cuenta clabe 18 posiciones
             //10 cuenta movil 10 posiciones
             //3 cuenta debito 16 posciciones
-            wFirma = concatByte(wFirma, formateoFrima(pago.getOpCuentaOrd()));
-            wFirma = concatByte(wFirma, formateoFrima(pago.getOpCuentaBen()));
+            wFirma = concatByte(wFirma, formateoFrima(aSpeiRequest.getOrdenPago().getOpCuentaOrd()));
+            wFirma = concatByte(wFirma, formateoFrima(aSpeiRequest.getOrdenPago().getOpCuentaBen()));
 
             logInfo(METHOD_NAME, "Formatter - Bytes Concatenados [" + toString(wFirma) + "]");
             return wFirma;
