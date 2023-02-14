@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_get_catalog_data</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_catalog" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="CODIGO" />
+        <column name="VALOR" />
+        <column name="SUCCESS" />
+        <column name="CODE" />
+        <column name="MESSAGE" />
+      </columns>
+      <queryText>SELECT  "SUCCESS" = en_ente_mis,"PASSWORD" = en_nombre,"MESSAGE" = en_pnombre,"CODE" = en_papellido </queryText>
+    </query>
+  </queries>
+</procedure>
