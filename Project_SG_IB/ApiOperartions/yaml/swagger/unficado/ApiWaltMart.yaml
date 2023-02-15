@@ -173,7 +173,7 @@ components:
           type: integer
           description: External Customer Id
           example: 220
-        decriptedData:
+        password:
           maxLength: 200
           type: string
           description: Phrase or password to be encrypted
@@ -186,7 +186,7 @@ components:
           type: boolean
           description: Indicates whether the service was executed
           example: true
-        encryptedData:
+        password:
           maxLength: 200
           type: string
           description: Phrase or password encrypted
