@@ -23,7 +23,7 @@
           <field type="int" name="position" value="1" />
           <field type="String" name="columnName" value="PASSWORD" />
           <field type="String" name="dTOAlias" value="returnResponseEncriptData" />
-          <field type="String" name="dTOPropertyName" value="encryptedData" />
+          <field type="String" name="dTOPropertyName" value="password" />
           <field type="String" name="dataType" value="string" />
           <field type="String" name="format" value="" />
         </class>
@@ -69,7 +69,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestEncriptData" />
-      <field type="String" name="dTOPropertyName" value="decriptedData" />
+      <field type="String" name="dTOPropertyName" value="password" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
