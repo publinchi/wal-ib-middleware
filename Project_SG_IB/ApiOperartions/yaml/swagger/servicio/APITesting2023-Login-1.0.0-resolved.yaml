@@ -1,0 +1,153 @@
+---
+openapi: 3.0.0
+info:
+  title: Login
+  description: Login and  JWT Bearer token
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/APITesting2023/Login/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://13.52.129.211:8080/CWCREST/services/resources/cobis/cwc/authentication
+  description: Development Server
+tags:
+- name: login
+  description: login and get jwt token
+paths:
+  /public/login:
+    post:
+      tags:
+      - validate
+      summary: Service to validate login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestLogin'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Response Login
+          headers:
+            authorization:
+              description: JWT Bearer Token
+              style: simple
+              explode: false
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseLogin'
+      security: []
+components:
+  schemas:
+    RequestLogin:
+      type: object
+      properties:
+        login:
+          maxLength: 20
+          type: string
+          description: login to validate
+          example: admuser
+        password:
+          maxLength: 20
+          type: string
+          description: password lo validate
+          example: admuser
+        attributes:
+          $ref: '#/components/schemas/attributes'
+      description: All data is to validate the authenticity of the login
+    attributes:
+      type: object
+      properties:
+        culture:
+          type: string
+          description: type culture
+          example: es_EC
+        role:
+          type: string
+          description: rol number
+          example: "1"
+        filial:
+          type: integer
+          description: filial number
+          example: 1
+        office:
+          type: integer
+          description: office number
+          example: 1
+    ResponseLogin:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates result process
+          example: true
+        data:
+          $ref: '#/components/schemas/data'
+        clientContext:
+          $ref: '#/components/schemas/clientContext'
+    data:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        status:
+          type: boolean
+          example: true
+        responseData:
+          $ref: '#/components/schemas/data_responseData'
+    clientContext:
+      type: object
+      properties:
+        _culture:
+          type: string
+          description: type culture
+          example: es_EC
+        _login:
+          type: string
+          description: login result
+          example: es_EC
+        _terminalIp:
+          type: string
+          description: server ip
+          example: es_EC
+    data_responseData_return:
+      type: object
+      properties:
+        name:
+          type: string
+          description: return name
+        value:
+          type: boolean
+          description: value return
+    data_responseData:
+      type: object
+      properties:
+        className:
+          maxLength: 200
+          type: string
+          description: result class name
+          example: success
+        return:
+          $ref: '#/components/schemas/data_responseData_return'
+  responses:
+    Unauthorized:
+      description: Unauthorized service
+    NotFound:
+      description: The information does not exist
+    BadRequest:
+      description: The data sent is incorrect or corrupted
+    ServerError:
+      description: An error occurred on the server
+    "403Forbidden":
+      description: The request has been denied.
