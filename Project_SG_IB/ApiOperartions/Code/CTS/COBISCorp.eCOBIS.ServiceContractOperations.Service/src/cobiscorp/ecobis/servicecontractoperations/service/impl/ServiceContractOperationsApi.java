@@ -34,6 +34,21 @@ import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperat
 @CTSService
 public class ServiceContractOperationsApi extends CTSAbstractService implements IServiceContractOperationsApi {
 
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO createCustomer(ServiceRequestTO requestTO) {
+        ServiceResponseTO responseTO = new ServiceResponseTO();
+        
+		    /*-- Input DTOs --
+		    CreateCustomerRequest inCreateCustomerRequest = (CreateCustomerRequest)requestTO.getValue("inCreateCustomerRequest");
+          
+		     */
+		    
+    	  responseTO.setSuccess(true);
+        return responseTO;
+      }
+    
 	@CTSProcedure(
 		name = "cob_procesador..sp_encryptData", dbms = "SQLCTS",  
 		objectRequest = {
@@ -43,7 +58,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				input = {
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "decriptedData", param = "@i_password", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "password", param = "@i_password", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -58,7 +73,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData.class,
       columns = {
 		    @CTSColumn(field = "success", columnIndex = 1),
-		    @CTSColumn(field = "encryptedData", columnIndex = 2),
+		    @CTSColumn(field = "password", columnIndex = 2),
 		    @CTSColumn(field = "message.message", columnIndex = 3),
 		    @CTSColumn(field = "message.code", columnIndex = 4)
       }
@@ -133,14 +148,26 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   response = {
   
     @CTSResponse(
+      name = "returnCatalogueItems",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems.class,
+      columns = {
+		    @CTSColumn(field = "code", columnIndex = 1),
+		    @CTSColumn(field = "name", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnMessage",
+      type = cobiscorp.ecobis.datacontractoperations.dto.Message.class,
+      columns = {
+		    @CTSColumn(field = "code", columnIndex = 1),
+		    @CTSColumn(field = "message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
       name = "returnResponseCatalog",
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog.class,
       columns = {
-		    @CTSColumn(field = "catalogueItems[0].code", columnIndex = 1),
-		    @CTSColumn(field = "catalogueItems[0].name", columnIndex = 2),
-		    @CTSColumn(field = "success", columnIndex = 3),
-		    @CTSColumn(field = "message.code", columnIndex = 4),
-		    @CTSColumn(field = "message.message", columnIndex = 5)
+		    @CTSColumn(field = "success", columnIndex = 1)
       }
     )
   }
@@ -153,6 +180,36 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       public ServiceResponseTO getCatalog(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
+      }
+    
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO) {
+        ServiceResponseTO responseTO = new ServiceResponseTO();
+        
+		    /*-- Input DTOs --
+		    RequestGetUserEntityInformation inRequestGetUserEntityInformation = (RequestGetUserEntityInformation)requestTO.getValue("inRequestGetUserEntityInformation");
+          
+		     */
+		    
+    	  responseTO.setSuccess(true);
+        return responseTO;
+      }
+    
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO validateIdentity(ServiceRequestTO requestTO) {
+        ServiceResponseTO responseTO = new ServiceResponseTO();
+        
+		    /*-- Input DTOs --
+		    RequestValidateIdentity inRequestValidateIdentity = (RequestValidateIdentity)requestTO.getValue("inRequestValidateIdentity");
+          
+		     */
+		    
+    	  responseTO.setSuccess(true);
+        return responseTO;
       }
     
 }

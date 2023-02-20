@@ -26,6 +26,11 @@ import cobiscorp.ecobis.commons.dto.ServiceResponseTO;
 public interface IServiceContractOperationsApi{
 
   /**
+  * Create new customers
+  */
+  ServiceResponseTO createCustomer(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
@@ -39,6 +44,16 @@ public interface IServiceContractOperationsApi{
   * Get catalog
   */
   ServiceResponseTO getCatalog(ServiceRequestTO requestTO);  
+
+  /**
+  * View Customer Information
+  */
+  ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  
+
+  /**
+  * Validate Identity
+  */
+  ServiceResponseTO validateIdentity(ServiceRequestTO requestTO);  
 
 }
 

@@ -29,7 +29,7 @@ import java.util.HashMap;
 
 public class ResponseEncriptData implements Serializable {
   private Boolean success;
-  private String encryptedData;
+  private String password;
   private Message message;
   public Boolean isSuccess(){
     return this.success;
@@ -37,11 +37,11 @@ public class ResponseEncriptData implements Serializable {
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public String getEncryptedData(){
-    return this.encryptedData;
+  public String getPassword(){
+    return this.password;
   }
-  public void setEncryptedData(String encryptedData ){
-    this.encryptedData=encryptedData;
+  public void setPassword(String password ){
+    this.password=password;
   }
   public Message messageInstance(){
 	if(this.message==null){

@@ -10,13 +10,23 @@
   <queries>
     <query>
       <columns>
-        <column name="CODIGO" />
-        <column name="VALOR" />
-        <column name="SUCCESS" />
-        <column name="CODE" />
-        <column name="MESSAGE" />
+        <column name="codigo" />
+        <column name="valor" />
       </columns>
-      <queryText>SELECT  "SUCCESS" = en_ente_mis,"PASSWORD" = en_nombre,"MESSAGE" = en_pnombre,"CODE" = en_papellido </queryText>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText></queryText>
     </query>
   </queries>
 </procedure>

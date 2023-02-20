@@ -29,17 +29,17 @@ import java.util.HashMap;
 
 public class RequestEncriptData implements Serializable {
   private Integer externalCustomerId;
-  private String decriptedData;
+  private String password;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
   }
-  public String getDecriptedData(){
-    return this.decriptedData;
+  public String getPassword(){
+    return this.password;
   }
-  public void setDecriptedData(String decriptedData ){
-    this.decriptedData=decriptedData;
+  public void setPassword(String password ){
+    this.password=password;
   }
 }

@@ -24,12 +24,18 @@
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     
     import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
+    import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
+    import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
+    import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
+    import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     
     import org.apache.felix.scr.annotations.*;
     import com.cobiscorp.cobis.commons.log.ILogger;
@@ -42,7 +48,7 @@
     import java.util.List;
     import java.io.PrintWriter;
     import java.io.StringWriter;
-    @Path("/cobis/api/Walmart/ServiceContractOperations")
+    @Path("/cobis/api/Waltmart/ServiceContractOperations")
     @Component
     @Service({ServiceContractOperationsApiRest.class})
     public class ServiceContractOperationsApiRest {
@@ -61,17 +67,55 @@
     }
     
           /**
+          * Create new customers
+          */
+        @POST
+      @Path("/apiOperations/customer/createCustomer")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  createCustomer(CreateCustomerRequest inCreateCustomerRequest ){
+	  LOGGER.logDebug("Start service execution REST: createCustomer");
+      CreateCustomerResponse outCreateCustomerResponse  = new CreateCustomerResponse();
+          
+      if(!validateMandatory()) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outCreateCustomerResponse=iServiceContractOperationsApiService.createCustomer( inCreateCustomerRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: createCustomer");
+          return Response.ok(outCreateCustomerResponse).build();
+        
+      }
+    
+          /**
           * Encrypt Data
           */
         @POST
-      @Path("/security/encryptData")
+      @Path("/apiOperations/security/encryptData")
       @Consumes({"application/json"})
       @Produces({"application/json"})
        public Response  encryptData(RequestEncriptData inRequestEncriptData ){
 	  LOGGER.logDebug("Start service execution REST: encryptData");
       List<ResponseEncriptData> outSingleResponseEncriptData  = new ArrayList<>();
           
-      if(!validateMandatory(new Data("externalCustomerId", inRequestEncriptData.getExternalCustomerId()), new Data("decriptedData", inRequestEncriptData.getDecriptedData()))) {
+      if(!validateMandatory(new Data("externalCustomerId", inRequestEncriptData.getExternalCustomerId()), new Data("password", inRequestEncriptData.getPassword()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
@@ -102,7 +146,7 @@
           * Service to generate and send an OTP to the client
           */
         @POST
-      @Path("/password/generateTransactionFactor")
+      @Path("/apiOperations/password/generateTransactionFactor")
       @Consumes({"application/json"})
       @Produces({"application/json"})
        public Response  generateTransactionFactor(RequestOtp inRequestOtp ){
@@ -140,20 +184,58 @@
           * Get catalog
           */
         @POST
-      @Path("/common/getCatalog")
+      @Path("/apiOperations/common/getCatalog")
       @Consumes({"application/json"})
       @Produces({"application/json"})
-       public Response  getCatalog(RequestCatalog inRequestCatalog ){
-	  LOGGER.logDebug("Start service execution REST: getCatalog");
-      List<ResponseCatalog> outSingleResponseCatalog  = new ArrayList<>();
+        public Response  getCatalog(RequestCatalog inRequestCatalog ){
+      	  LOGGER.logDebug("Start service execution REST: getCatalog");
+            ResponseCatalog outResponseCatalog  = new ResponseCatalog();
+                
+        /*    if(!validateMandatory()) {
+              LOGGER.logDebug("400 is returned - Required fields are missing");
+              return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+            }*/
+      	    
+            try {
+            outResponseCatalog=iGetCatalogServiceApiService.getCatalog( inRequestCatalog );
+            } catch (CTSRestException e) {
+            LOGGER.logError("CTSRestException",e);
+            if ("404".equals(e.getMessage())) {
+            LOGGER.logDebug("404 is returned - No data found");
+            return Response.status(404).entity("No data found").build();
+            }
+
+          /*  LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+            return Response.status(409).entity(e.getMessageBlockList()).build();*/
+            } catch (Exception e){
+            LOGGER.logDebug("500 is returned - Code exception");
+            LOGGER.logError("Exception",e);
+            return Response.status(500).entity(e.getMessage()).build();
+            }
+            
+                LOGGER.logDebug("Ends service execution REST: getCatalog");
+                return Response.ok(outResponseCatalog).build();
+              
+            }
+    
+          /**
+          * View Customer Information
+          */
+        @POST
+      @Path("/apiOperations/enrollment/getUserEntityInformation")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  getUserEntityInformation(RequestGetUserEntityInformation inRequestGetUserEntityInformation ){
+	  LOGGER.logDebug("Start service execution REST: getUserEntityInformation");
+      ResponseGetUserEntityInformation outResponseGetUserEntityInformation  = new ResponseGetUserEntityInformation();
           
-      if(!validateMandatory(new Data("catalogueTable", inRequestCatalog.getCatalogueTable()))) {
+      if(!validateMandatory()) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
 	    
       try {
-      outSingleResponseCatalog=iServiceContractOperationsApiService.getCatalog( inRequestCatalog );
+      outResponseGetUserEntityInformation=iServiceContractOperationsApiService.getUserEntityInformation( inRequestGetUserEntityInformation );
       } catch (CTSRestException e) {
       LOGGER.logError("CTSRestException",e);
       if ("404".equals(e.getMessage())) {
@@ -169,8 +251,46 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-          LOGGER.logDebug("Ends service execution REST: getCatalog");
-          return Response.ok(outSingleResponseCatalog).build();
+          LOGGER.logDebug("Ends service execution REST: getUserEntityInformation");
+          return Response.ok(outResponseGetUserEntityInformation).build();
+        
+      }
+    
+          /**
+          * Validate Identity
+          */
+        @POST
+      @Path("/apiOperations/onbording/sendImagesToMati")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  validateIdentity(RequestValidateIdentity inRequestValidateIdentity ){
+	  LOGGER.logDebug("Start service execution REST: validateIdentity");
+      ResponseValidateIdentity outResponseValidateIdentity  = new ResponseValidateIdentity();
+          
+      if(!validateMandatory()) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outResponseValidateIdentity=iServiceContractOperationsApiService.validateIdentity( inRequestValidateIdentity );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: validateIdentity");
+          return Response.ok(outResponseValidateIdentity).build();
         
       }
     

@@ -20,18 +20,32 @@
     /************************************************************/
     
     package  cobiscorp.ecobis.servicecontractoperations.service;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
+    import   cobiscorp.ecobis.datacontractoperations.dto.Message;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
     
+          /**
+          * Create new customers
+          */
+        
+			//Have DTO
+			public CreateCustomerResponse createCustomer(CreateCustomerRequest inCreateCustomerRequest  )throws CTSRestException;
           /**
           * Encrypt Data
           */
@@ -48,8 +62,20 @@
           * Get catalog
           */
         
-			// Return list
-			public  List<ResponseCatalog>  getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException;
+			//Have DTO
+			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException;
+          /**
+          * View Customer Information
+          */
+        
+			//Have DTO
+			public ResponseGetUserEntityInformation getUserEntityInformation(RequestGetUserEntityInformation inRequestGetUserEntityInformation  )throws CTSRestException;
+          /**
+          * Validate Identity
+          */
+        
+			//Have DTO
+			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
     }
 
   

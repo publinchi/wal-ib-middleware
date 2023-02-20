@@ -24,6 +24,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
+[INFO] Deleting C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target
 [INFO] 
 [INFO] --- maven-remote-resources-plugin:1.5:process (2) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
 [INFO] 
@@ -37,144 +38,185 @@
 [INFO] Compiling 2 source files to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\classes
 [INFO] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\src\main\java\cobiscorp\ecobis\servicecontractoperations\service\ServiceContractOperationsApiService.java uses or overrides a deprecated API.
 [INFO] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java: Recompile with -Xlint:deprecation for details.
-[INFO] 
-[INFO] --- com.springsource.bundlor.maven:1.0.0.RELEASE:bundlor (bundlor) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-Manifest written to 'C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\classes\META-INF\MANIFEST.MF'
-[WARNING] Bundlor Warnings:
-[WARNING]     The import of package cobiscorp.ecobis.datacontractoperations.dto does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.commons.log does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.cts.rest.client.api does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.cts.rest.client.api.exception does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.cts.rest.client.dto does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.cts.rest.client.mapper does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.cts.rest.client.util does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.cwc.cts.rest does not specify a version
-[WARNING]     The import of package com.cobiscorp.cobis.jaxrs.publisher does not specify a version
-[INFO] 
-[INFO] --- maven-scr-plugin:1.7.2:scr (generate-scr-scrdescriptor) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] Writing abstract service descriptor C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\scr-plugin-generated\OSGI-INF\scr-plugin\scrinfo.xml with 1 entries.
-[INFO] Generating 1 Service Component Descriptors to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\scr-plugin-generated\OSGI-INF\serviceComponents.xml
-[INFO] 
-[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[debug] execute contextualize
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\src\test\resources
-[INFO] 
-[INFO] --- maven-compiler-plugin:3.5:testCompile (default-testCompile) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] No sources to compile
-[INFO] 
-[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] No tests to run.
-[INFO] 
-[INFO] --- maven-replacer-plugin:1.3.8:replace (default) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] Replacement run on 2 files.
-[INFO] 
-[INFO] --- maven-resources-plugin:2.5:copy-resources (copy-resources) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[debug] execute contextualize
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 2 resources
-[INFO] 
-[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] Building jar: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar
-[INFO] 
-[INFO] --- maven-javadoc-plugin:2.8:jar (attach-javadocs) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] 
-Loading source files for package cobiscorp.ecobis.servicecontractoperations.service...
-Constructing Javadoc information...
-Standard Doclet version 1.8.0_202
-Building tree for all the packages and classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\IServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\ServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-frame.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-summary.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-tree.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\constant-values.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\class-use\ServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\class-use\IServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-use.html...
-Building index for all the packages and classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\overview-tree.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\index-all.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\deprecated-list.html...
-Building index for all classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\allclasses-frame.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\allclasses-noframe.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\index.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\help-doc.html...
-[INFO] Building jar: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0-javadoc.jar
-[INFO] 
-[INFO] >>> maven-javadoc-plugin:2.8:javadoc (javadoc) > generate-sources @ COBISCorp.eCOBIS.ServiceContractOperations.Service >>>
-[INFO] 
-[INFO] <<< maven-javadoc-plugin:2.8:javadoc (javadoc) < generate-sources @ COBISCorp.eCOBIS.ServiceContractOperations.Service <<<
-[INFO] 
-[INFO] --- maven-javadoc-plugin:2.8:javadoc (javadoc) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] 
-Loading source files for package cobiscorp.ecobis.servicecontractoperations.service...
-Constructing Javadoc information...
-Standard Doclet version 1.8.0_202
-Building tree for all the packages and classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\IServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\ServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-frame.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-summary.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-tree.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\constant-values.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\class-use\ServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\class-use\IServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-use.html...
-Building index for all the packages and classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\overview-tree.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\index-all.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\deprecated-list.html...
-Building index for all classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\allclasses-frame.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\allclasses-noframe.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\index.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\site\apidocs\help-doc.html...
-[INFO] 
-[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] 
-Loading source files for package cobiscorp.ecobis.servicecontractoperations.service...
-Constructing Javadoc information...
-Standard Doclet version 1.8.0_202
-Building tree for all the packages and classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\IServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\ServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-frame.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-summary.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-tree.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\constant-values.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\class-use\ServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\class-use\IServiceContractOperationsApiService.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\cobiscorp\ecobis\servicecontractoperations\service\package-use.html...
-Building index for all the packages and classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\overview-tree.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\index-all.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\deprecated-list.html...
-Building index for all classes...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\allclasses-frame.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\allclasses-noframe.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\index.html...
-Generating C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\apidocs\help-doc.html...
-[INFO] Building jar: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0-javadoc.jar
-[INFO] 
-[INFO] --- maven-jarsigner-plugin:1.2:sign (sign) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
-[INFO] 3 archive(s) processed
-[INFO] 
-[INFO] >>> maven-pmd-plugin:3.1:check (check) > :pmd @ COBISCorp.eCOBIS.ServiceContractOperations.Service >>>
-[INFO] 
-[INFO] --- maven-pmd-plugin:3.1:pmd (pmd) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[23,57] cannot find symbol
+  symbol:   class CreateCustomerRequest
+  location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[24,57] cannot find symbol
+  symbol:   class CreateCustomerResponse
+  location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[33,57] cannot find symbol
+  symbol:   class RequestGetUserEntityInformation
+  location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[34,57] cannot find symbol
+  symbol:   class ResponseGetUserEntityInformation
+  location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[35,57] cannot find symbol
+  symbol:   class RequestValidateIdentity
+  location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[36,57] cannot find symbol
+  symbol:   class ResponseValidateIdentity
+  location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[65,70] cannot find symbol
+  symbol:   class CreateCustomerRequest
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[65,32] cannot find symbol
+  symbol:   class CreateCustomerResponse
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[351,90] cannot find symbol
+  symbol:   class RequestGetUserEntityInformation
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[351,32] cannot find symbol
+  symbol:   class ResponseGetUserEntityInformation
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[393,74] cannot find symbol
+  symbol:   class RequestValidateIdentity
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[393,32] cannot find symbol
+  symbol:   class ResponseValidateIdentity
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[48,70] cannot find symbol
+  symbol:   class CreateCustomerRequest
+  location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[48,32] cannot find symbol
+  symbol:   class CreateCustomerResponse
+  location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[72,90] cannot find symbol
+  symbol:   class RequestGetUserEntityInformation
+  location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[72,32] cannot find symbol
+  symbol:   class ResponseGetUserEntityInformation
+  location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[78,74] cannot find symbol
+  symbol:   class RequestValidateIdentity
+  location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[78,32] cannot find symbol
+  symbol:   class ResponseValidateIdentity
+  location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[67,7] cannot find symbol
+  symbol:   class CreateCustomerResponse
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[67,63] cannot find symbol
+  symbol:   class CreateCustomerResponse
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[284,39] cannot find symbol
+  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems)
+  location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[306,39] cannot find symbol
+  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.Message)
+  location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[327,39] cannot find symbol
+  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog)
+  location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[353,7] cannot find symbol
+  symbol:   class ResponseGetUserEntityInformation
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[353,83] cannot find symbol
+  symbol:   class ResponseGetUserEntityInformation
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[395,7] cannot find symbol
+  symbol:   class ResponseValidateIdentity
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[395,67] cannot find symbol
+  symbol:   class ResponseValidateIdentity
+  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[INFO] 27 errors 
+[INFO] -------------------------------------------------------------
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 22.755 s
-[INFO] Finished at: 2023-02-14T17:32:55-06:00
-[INFO] Final Memory: 28M/211M
+[INFO] Total time: 2.432 s
+[INFO] Finished at: 2023-02-20T09:18:55-06:00
+[INFO] Final Memory: 18M/247M
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-pmd-plugin:3.1:pmd (pmd) on project COBISCorp.eCOBIS.ServiceContractOperations.Service: Execution pmd of goal org.apache.maven.plugins:maven-pmd-plugin:3.1:pmd failed: org.apache.maven.reporting.MavenReportException: Could not find resource 'C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target/cobis-pdm-rules-v2.xml'. -> [Help 1]
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.5:compile (default-compile) on project COBISCorp.eCOBIS.ServiceContractOperations.Service: Compilation failure: Compilation failure:
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[23,57] cannot find symbol
+[ERROR] symbol:   class CreateCustomerRequest
+[ERROR] location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[24,57] cannot find symbol
+[ERROR] symbol:   class CreateCustomerResponse
+[ERROR] location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[33,57] cannot find symbol
+[ERROR] symbol:   class RequestGetUserEntityInformation
+[ERROR] location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[34,57] cannot find symbol
+[ERROR] symbol:   class ResponseGetUserEntityInformation
+[ERROR] location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[35,57] cannot find symbol
+[ERROR] symbol:   class RequestValidateIdentity
+[ERROR] location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[36,57] cannot find symbol
+[ERROR] symbol:   class ResponseValidateIdentity
+[ERROR] location: package cobiscorp.ecobis.datacontractoperations.dto
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[65,70] cannot find symbol
+[ERROR] symbol:   class CreateCustomerRequest
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[65,32] cannot find symbol
+[ERROR] symbol:   class CreateCustomerResponse
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[351,90] cannot find symbol
+[ERROR] symbol:   class RequestGetUserEntityInformation
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[351,32] cannot find symbol
+[ERROR] symbol:   class ResponseGetUserEntityInformation
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[393,74] cannot find symbol
+[ERROR] symbol:   class RequestValidateIdentity
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[393,32] cannot find symbol
+[ERROR] symbol:   class ResponseValidateIdentity
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[48,70] cannot find symbol
+[ERROR] symbol:   class CreateCustomerRequest
+[ERROR] location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[48,32] cannot find symbol
+[ERROR] symbol:   class CreateCustomerResponse
+[ERROR] location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[72,90] cannot find symbol
+[ERROR] symbol:   class RequestGetUserEntityInformation
+[ERROR] location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[72,32] cannot find symbol
+[ERROR] symbol:   class ResponseGetUserEntityInformation
+[ERROR] location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[78,74] cannot find symbol
+[ERROR] symbol:   class RequestValidateIdentity
+[ERROR] location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[78,32] cannot find symbol
+[ERROR] symbol:   class ResponseValidateIdentity
+[ERROR] location: interface cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[67,7] cannot find symbol
+[ERROR] symbol:   class CreateCustomerResponse
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[67,63] cannot find symbol
+[ERROR] symbol:   class CreateCustomerResponse
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[284,39] cannot find symbol
+[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems)
+[ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[306,39] cannot find symbol
+[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.Message)
+[ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[327,39] cannot find symbol
+[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog)
+[ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[353,7] cannot find symbol
+[ERROR] symbol:   class ResponseGetUserEntityInformation
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[353,83] cannot find symbol
+[ERROR] symbol:   class ResponseGetUserEntityInformation
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[395,7] cannot find symbol
+[ERROR] symbol:   class ResponseValidateIdentity
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[395,67] cannot find symbol
+[ERROR] symbol:   class ResponseValidateIdentity
+[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
+[ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
 [ERROR] Re-run Maven using the -X switch to enable full debug logging.
 [ERROR] 
 [ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/PluginExecutionException
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
