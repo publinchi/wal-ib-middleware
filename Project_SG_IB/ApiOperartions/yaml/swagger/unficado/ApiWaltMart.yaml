@@ -21,7 +21,7 @@ tags:
 - name: getUserEntityInformation
   description: Service to consult general information of an existing client.  
 paths:
-  /common/getCatalog:
+  apiOperations/common/getCatalog:
     post:
       tags:
       - Get Catalog
@@ -50,7 +50,7 @@ paths:
                 $ref: '#/components/schemas/ResponseCatalog'
       security:
       - bearerAuth: []
-  /password/generateTransactionFactor:
+  apiOperations/password/generateTransactionFactor:
     post:
       tags:
       - Generate and send OTP
@@ -79,7 +79,7 @@ paths:
                 $ref: '#/components/schemas/ResponseOtp'
       security:
       - bearerAuth: []
-  /security/encryptData:
+  apiOperations/security/encryptData:
     post:
       tags:
       - Encrypt Data
@@ -108,7 +108,7 @@ paths:
                 $ref: '#/components/schemas/ResponseEncriptData'
       security:
       - bearerAuth: []
-  /apiOperations/onbording/sendImagesToMati:
+  apiOperations/apiOperations/onbording/sendImagesToMati:
     post:
       tags:
         - Validate Identity
@@ -137,7 +137,7 @@ paths:
                 $ref: '#/components/schemas/ResponseValidateIdentity'
       security:
         - bearerAuth: []
-  /apiOperations/customer/createCustomer:
+  apiOperations/apiOperations/customer/createCustomer:
     post:
       tags:
       - Create Customer API
@@ -167,7 +167,7 @@ paths:
                 $ref: '#/components/schemas/CreateCustomerResponse'
       security:
       - bearerAuth: []        
-  /apiOperations/enrollment/getUserEntityInformation:
+  apiOperations/enrollment/getUserEntityInformation:
     post:
       tags:
       - getUserEntityInformation
