@@ -14,6 +14,12 @@ tags:
   description: Service to generate and send an OTP to the client.
 - name: Encrypt Data
   description: Service to encrypt Data Client
+- name: Validate Identity
+  description: Service to initiate the validation of a client's identity document. Interface with META provider
+- name: Create Customer API
+  description: This Service is used for Create Customer's  
+- name: getUserEntityInformation
+  description: Service to consult general information of an existing client.  
 paths:
   /common/getCatalog:
     post:
@@ -102,6 +108,94 @@ paths:
                 $ref: '#/components/schemas/ResponseEncriptData'
       security:
       - bearerAuth: []
+  /apiOperations/onbording/sendImagesToMati:
+    post:
+      tags:
+        - Validate Identity
+      summary: Validate Identity
+      operationId: validateIdentity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestValidateIdentity'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Validate identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseValidateIdentity'
+      security:
+        - bearerAuth: []
+  /apiOperations/customer/createCustomer:
+    post:
+      tags:
+      - Create Customer API
+      summary: Create new customers
+      operationId: createCustomer
+      requestBody:
+        description: Request Create Customer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerRequest'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Response Create Customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomerResponse'
+      security:
+      - bearerAuth: []        
+  /apiOperations/enrollment/getUserEntityInformation:
+    post:
+      tags:
+      - getUserEntityInformation
+      summary: View Customer Information
+      operationId: getUserEntityInformation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestGetUserEntityInformation'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Response getUserEntityInformation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseGetUserEntityInformation'
+      security:
+      - bearerAuth: []      
 components:
   schemas:
     Message:
@@ -192,7 +286,461 @@ components:
           description: Phrase or password encrypted
           example: gs7VonfE7UZukby0Yglx…
         message:
-          $ref: '#/components/schemas/Message'        
+          $ref: '#/components/schemas/Message'      
+    RequestValidateIdentity:
+      properties:
+        type:
+          maxLength: 3
+          minLength: 1
+          type: string
+          description: Type identity, like (INE, PAS, ,MIG)
+          example: INE
+        imageAnverso:
+          type: string
+          description: Base64 image of the front of the identity document
+          example: /9j/4AAQM98ASkZJRgABAQANJM98AUDAQSkZJa9wJCAFW8I....
+        imageReverso:
+          type: string
+          description: Base64 image of the back of the identity document
+          example: /QAN9j/4AAQSkZJRgABAQANJM98AQSkZJAUDa9wJCAFW8I....
+        imageDomicile:
+          type: string
+          description: Base64 image of proof of
+          example: /JCAF9j/4AAQSkZJRgABAQSkZJAQANJM98AUDa9wJCAFW8I....
+    ResponseValidateIdentity:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the service was executed
+          example: true
+        numeroVerficacion:
+          maxLength: 50
+          type: string
+          description: Process date
+          example: Verification number of META/MATI
+        nombreEvento:
+          maxLength: 50
+          type: string
+          description: Name META/MATI event
+          example: verification_completed
+        message:
+          $ref: '#/components/schemas/Message'    
+    CreateCustomerRequest:
+      properties:
+        externalCustomerId:
+          maxLength: 12
+          type: integer
+          description: External Customer Id
+          example: 220
+        firtname:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: firts name customer
+          example: Jose
+        secondName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: second name customer
+          example: Carlos
+        lastName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: last name customer
+          example: Olmos
+        secondLastName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: second last name customer
+          example: Solis
+        idNumber:
+          maxLength: 18
+          minLength: 1
+          type: string
+          description: id number
+          example: OOSC861001HMCLLR05
+        idType:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: id type
+          example: CURP
+        birthDate:
+          maxLength: 10
+          minLength: 10
+          type: string
+          description: yyyy-MM-dd
+          format: date
+          example: 0986-10-01
+        validityDate:
+          maxLength: 10
+          minLength: 10
+          type: string
+          description: yyyy-MM-dd
+          format: date
+          example: 0986-10-01
+        gender:
+          maxLength: 1
+          minLength: 1
+          type: string
+          description: M for male and F for female
+          example: M
+        email:
+          maxLength: 35
+          minLength: 1
+          type: string
+          description: Customer email
+          format: email
+          example: jcolmos@cobis.com
+        identificationType:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Type identity
+          example: INE
+        identificationNumber:
+          maxLength: 40
+          minLength: 1
+          type: string
+          description: id number identification, for example 54544565245674
+          example: "54544565245674"
+        phoneCode:
+          maxLength: 3
+          minLength: 2
+          type: string
+          description: Customer code country, for example 52 Mexico
+          example: "52"
+        phoneNumber:
+          maxLength: 10
+          minLength: 10
+          type: string
+          description: Customer number phone
+          example: "5568576731"
+        country:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Country of Residence ID(Use the "getCatalog" service with table cl_pais)
+          example: "52"
+        zipcode:
+          maxLength: 5
+          minLength: 5
+          type: string
+          description: Zip code
+          example: "10000"
+        province:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Province ID, (Use the "getCatalog" service with table cl_pais)
+          example: "9"
+        city:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: City of residence ID,for example 9011 (Use the "getCatalog" service with table cl_ciudad)
+          example: "9011"
+        subdivisioncode:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Id of colony or parish of residence,  (Use the "getCatalog" service with table cl_parroquia)
+          example: "90111959"
+        townCode:
+          maxLength: 6
+          minLength: 1
+          type: string
+          description: Id of locality of residence (Use the service searchLocationCatalogwith City of residence ID)
+          example: "146"
+        street:
+          maxLength: 25
+          minLength: 1
+          type: string
+          description: street name of the customer's home
+          example: my street
+        externalNumber:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: External number of the customer's home
+          example: "10"
+        internalNumber:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Inside number of the customer's home  (NA is always 0 )
+          example: "0"
+        referenceAddress:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Reference Address
+          example: street park
+        timeCurrentRecide:
+          maxLength: 3
+          minLength: 1
+          type: string
+          description: Customer time current residence
+          example: "3"
+        AddressTypeCode:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Customer type address (Use the "getCatalog" service with table cl_tdireccion)
+          example: AE
+        propertyTypeCode:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Type of provider where you live (Use the "getCatalog" service with table cl_tpropiedad)
+          example: PRO
+        anotherAddress:
+          maxLength: 15
+          minLength: 1
+          type: string
+          description: Description of the other type of addres
+          example: my type address
+        nationality:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Client nationality (Use the "getCatalog" service with table cl_pais)
+          example: "484"
+        countryBirth:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Country of birth of the client (Use the "getCatalog" service with table cl_pais)
+          example: "484"
+        proviceBirth:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Type of occupation performed (Use the "getCatalog" service with table cl_provincia)
+          example: "9"
+        occupation:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Customer occupation(Use the "getCatalog" service with table cl_ocupacion)
+          example: EMP
+        activity:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Type of activity do you? (Use the "getCatalog" service with table cl_actividad_ec)
+          example: "90001"
+        incomeLevel:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: ncome Level Type (Use the "getCatalog" service with table cl_ingresos)
+          example: "10742"
+        legalIncomeSource:
+          maxLength: 1
+          minLength: 1
+          type: string
+          description: Indicates whether the customer's revenue comes from a legal source(S or N)
+          example: S
+        noConnectionIllegalNetworks:
+          maxLength: 1
+          minLength: 1
+          type: string
+          description: Indicates if the client has connections to illegal networks(S or N)
+          example: S
+        companyName:
+          maxLength: 15
+          minLength: 1
+          type: string
+          description: Name of the client's work company
+          example: my company
+        incomeLevelEntity:
+          maxLength: 5
+          minLength: 1
+          type: string
+          description: Customer's primary revenue city ID  (Use the "getCatalog" service with table cl_provincia)
+          example: "9"
+        otherMexicanAccount:
+          maxLength: 1
+          minLength: 1
+          type: string
+          description: Indicates if the client has another account in the Mexican financial system(S or N)
+          example: "N"
+        paymentCard:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: From the new savings account. Estimated
+          example: "20"
+        paymentRecharge:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: From the new savings account. Estimated percentage that will be allocated to telephone top
+          example: "20"
+        provisionCash:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: From the new savings account. Estimated percentage that will be allocated to savings
+          example: "20"
+        electronicTransfer:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: From the new savings account. Estimated percentage that will be used to pay for services
+          example: "20"
+        averageBalance:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Id of the range corresponding to the estimated average monthly balance of the new savings account(Use the "getCatalog" service with table cl_sdo_prom_mes_n2)
+          example: MTMM2
+        amountTransaction:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: d of the range corresponding to the estimated average monthly transactional amount of the new savings account(Use the "getCatalog" service with table cl_mto_trn_mes_n2)
+          example: MTMM2
+        numberTransaction:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Id of the range corresponding to the estimated average number of transactions in the new savings account(Use the "getCatalog" service with table cl_num_trn_mes_n2)
+          example: NTMB2
+        geolocalizationLongitude:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Longitude from where the client registration is made
+          example: "-99.0517687"
+        geolocalizationLatitude:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Latitude from where customer registration takes place
+          example: "19.281447"
+        isMati:
+          maxLength: 1
+          minLength: 1
+          type: string
+          description: ndicates whether the customer's identity document was verified by the META/MATI provider (S or N)
+          example: S
+    CreateCustomerResponse:
+      properties:
+        customerCobisCode:
+          maxLength: 10
+          minLength: 1
+          type: integer
+          description: Identifier cobis customer
+          example: 587
+        success:
+          type: boolean
+          description: result process
+          example: true
+        message:
+          $ref: '#/components/schemas/Message'  
+    RequestGetUserEntityInformation:
+      type: object
+      properties:
+        externalCustomerId:
+          maxLength: 12
+          type: integer
+          description: External Customer Id
+          example: 220
+    ResponseGetUserEntityInformation:
+      type: object
+      properties:
+        success:
+          maxLength: 1
+          type: boolean
+          description: Indicates whether the service was executed.
+          example: true
+        registrationDate:
+          maxLength: 10
+          type: string
+          description: customer registration date  MM-dd-yyyy
+          format: date
+          example: 0006-06-13
+        modifyDate:
+          maxLength: 10
+          type: string
+          description: customer registration modification date  MM-dd-yyyy
+          format: date
+          example: 0006-06-13
+        completeName:
+          maxLength: 80
+          type: string
+          description: Customer's full name
+          example: JOSE CARLOS OLMOS SOLIS
+        entityType:
+          maxLength: 5
+          type: string
+          description: P= Physical person, C= Legal person
+          example: P
+        identityCard:
+          maxLength: 20
+          type: string
+          description: Unique Key of the Population, Registry (CURP) of customer
+          example: OOSC861001HMCLLX17
+        firstSurName:
+          maxLength: 16
+          type: string
+          description: Customer's last name
+          example: OLMOS
+        secondSurName:
+          maxLength: 16
+          type: string
+          description: Customer's middle name
+          example: SOLIS
+        birthDate:
+          maxLength: 10
+          type: string
+          description: customer bithdate  MM-dd-yyyy
+          format: date
+          example: 0006-06-13
+        firstName:
+          maxLength: 50
+          type: string
+          description: Fisrt name
+          example: JOSE
+        secondName:
+          maxLength: 50
+          type: string
+          description: Fisrt name
+          example: CARLOS
+        RFC:
+          maxLength: 13
+          type: string
+          description: Rfc customer
+          example: OOSC861001RKA
+        mail:
+          maxLength: 45
+          type: string
+          description: mail customer
+          format: mail
+          example: mail@example.com
+        phoneNumber:
+          maxLength: 20
+          type: string
+          description: phone number  customer
+          example: "5553121509"
+        customerLevel:
+          maxLength: 1
+          type: string
+          description: customer level
+          example: "2"
+        addressId:
+          maxLength: 10
+          type: integer
+          description: address id customer
+          example: 520
+        message:
+          $ref: '#/components/schemas/Message'          
   responses:
     Unauthorized:
       description: Unauthorized service
@@ -204,6 +752,16 @@ components:
       description: An error occurred on the server
     "403Forbidden":
       description: The request has been denied.
+  parameters:
+    token:
+      name: token
+      in: header
+      description: Authentication token
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

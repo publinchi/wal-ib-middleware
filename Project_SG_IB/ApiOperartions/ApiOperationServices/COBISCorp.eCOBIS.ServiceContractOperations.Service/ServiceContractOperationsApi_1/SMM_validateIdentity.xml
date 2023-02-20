@@ -7,20 +7,20 @@
   <field type="String" name="trnCode" value="0" />
   <collection type="List" length="2" id="4" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="5" index="0">
-      <field type="String" name="dTOName" value="RequestOtp" />
+      <field type="String" name="dTOName" value="RequestValidateIdentity" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
       <field type="int" name="repetition" value="0" />
-      <field type="String" name="alias" value="inRequestOtp" />
+      <field type="String" name="alias" value="inRequestValidateIdentity" />
       <field type="String" name="direction" value="in" />
       <field type="boolean" name="required" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="6" index="1">
-      <field type="String" name="dTOName" value="ResponseOtp" />
+      <field type="String" name="dTOName" value="ResponseValidateIdentity" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
       <field type="int" name="repetition" value="0" />
-      <field type="String" name="alias" value="outResponseOtp" />
+      <field type="String" name="alias" value="outResponseValidateIdentity" />
       <field type="String" name="direction" value="out" />
       <field type="boolean" name="required" value="true" />
     </class>
@@ -76,7 +76,7 @@
     </entry>
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="password/generateTransactionFactor" />
+      <value type="String" value="apiOperations/onbording/sendImagesToMati" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />
