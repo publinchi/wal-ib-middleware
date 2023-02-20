@@ -127,9 +127,9 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2.432 s
-[INFO] Finished at: 2023-02-20T09:18:55-06:00
-[INFO] Final Memory: 18M/247M
+[INFO] Total time: 2.417 s
+[INFO] Finished at: 2023-02-20T11:53:53-06:00
+[INFO] Final Memory: 18M/249M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.5:compile (default-compile) on project COBISCorp.eCOBIS.ServiceContractOperations.Service: Compilation failure: Compilation failure:
 [ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/IServiceContractOperationsApiService.java:[23,57] cannot find symbol

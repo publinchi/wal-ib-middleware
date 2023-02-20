@@ -32,6 +32,8 @@
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
+    import cobiscorp.ecobis.datacontractoperations.dto.Message;
+    import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
@@ -187,6 +189,7 @@
       @Path("/apiOperations/common/getCatalog")
       @Consumes({"application/json"})
       @Produces({"application/json"})
+
         public Response  getCatalog(RequestCatalog inRequestCatalog ){
       	  LOGGER.logDebug("Start service execution REST: getCatalog");
             ResponseCatalog outResponseCatalog  = new ResponseCatalog();

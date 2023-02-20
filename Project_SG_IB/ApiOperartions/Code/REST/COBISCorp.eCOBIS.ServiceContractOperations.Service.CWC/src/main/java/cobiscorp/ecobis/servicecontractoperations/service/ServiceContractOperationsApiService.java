@@ -45,10 +45,6 @@
     
     import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
     import cobiscorp.ecobis.datacontractoperations.dto.*;
-import cobiscorp.ecobis.getcatalogdto.dto.CatalogueItems;
-import cobiscorp.ecobis.getcatalogdto.dto.Message;
-import cobiscorp.ecobis.getcatalogdto.dto.RequestCatalog;
-import cobiscorp.ecobis.getcatalogdto.dto.ResponseCatalog;
    
     @Component
     @Service({IServiceContractOperationsApiService.class})
@@ -244,7 +240,7 @@ import cobiscorp.ecobis.getcatalogdto.dto.ResponseCatalog;
 			//Have DTO
 			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException{
 	  LOGGER.logDebug("Start service execution: getCatalog");
-   ResponseCatalog outResponseCatalog  = new ResponseCatalog();
+    ResponseCatalog outResponseCatalog  = new ResponseCatalog();
        
    //create procedure
    ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_catalog_data");

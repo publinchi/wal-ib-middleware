@@ -11,10 +11,10 @@
   <queries>
     <query>
       <columns>
-        <column name="SUCCESS" />
-        <column name="PASSWORD" />
-        <column name="MESSAGE" />
-        <column name="CODE" />
+        <column name="success" />
+        <column name="password" />
+        <column name="message" />
+        <column name="code" />
       </columns>
       <queryText>SELECT  "SUCCESS" = en_ente_mis,"PASSWORD" = en_nombre,"MESSAGE" = en_pnombre,"CODE" = en_papellido </queryText>
     </query>
