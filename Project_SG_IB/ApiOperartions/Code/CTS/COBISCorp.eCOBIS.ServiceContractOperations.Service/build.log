@@ -41,7 +41,6 @@ sign-archive:
   [signjar] 
   [signjar] Warning: 
   [signjar] The signer's certificate is self-signed.
-  [signjar] error at LeadPipeInputStream.read():  Pipe broken
   [signjar] Enter Passphrase for keystore: Enter key password for cobis: 
 BUILD SUCCESSFUL
 Total time: 4 seconds

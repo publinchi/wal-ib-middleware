@@ -45,6 +45,7 @@ public class ResponseGetUserEntityInformation implements Serializable {
   private String customerLevel;
   private Integer addressId;
   private Message message;
+  private String gender;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -152,5 +153,11 @@ public class ResponseGetUserEntityInformation implements Serializable {
   }
   public void setMessage(Message message ){
     this.message=message;
+  }
+  public String getGender(){
+    return this.gender;
+  }
+  public void setGender(String gender ){
+    this.gender=gender;
   }
 }

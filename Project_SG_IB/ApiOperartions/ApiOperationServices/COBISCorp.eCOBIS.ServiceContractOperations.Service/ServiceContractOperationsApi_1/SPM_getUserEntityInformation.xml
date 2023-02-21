@@ -71,9 +71,8 @@
           <field type="int" name="position" value="7" />
           <field type="String" name="columnName" value="gender" />
           <field type="String" name="dTOAlias" value="returnResponseGetUserEntityInformation" />
-          <field type="String" name="dTOPropertyName" value="entityType" />
+          <field type="String" name="dTOPropertyName" value="gender" />
           <field type="String" name="dataType" value="string" />
-          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="14" index="8">
           <field type="int" name="position" value="8" />
