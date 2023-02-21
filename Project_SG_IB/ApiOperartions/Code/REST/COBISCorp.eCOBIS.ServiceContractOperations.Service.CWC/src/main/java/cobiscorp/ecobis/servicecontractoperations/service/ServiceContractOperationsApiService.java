@@ -366,7 +366,10 @@
       ResponseGetUserEntityInformation outResponseGetUserEntityInformation  = new ResponseGetUserEntityInformation();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_getCustomer");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500092");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestGetUserEntityInformation.getExternalCustomerId()));
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -387,6 +390,42 @@
       int mapTotal=0;
       int mapBlank=0;
       
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseGetUserEntityInformation returnResponseGetUserEntityInformation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetUserEntityInformation>() { 
+                    @Override
+                    public ResponseGetUserEntityInformation mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseGetUserEntityInformation dto = new ResponseGetUserEntityInformation();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(17));
+                          dto.setRegistrationDate(resultSetMapper.getCalendar(1));
+                          dto.setModifyDate(resultSetMapper.getCalendar(2));
+                          dto.setCompleteName(resultSetMapper.getString(3));
+                          dto.setEntityType(resultSetMapper.getString(4));
+                          dto.setIdentityCard(resultSetMapper.getString(5));
+                          dto.setBirthDate(resultSetMapper.getCalendar(9));
+                          dto.setFirstName(resultSetMapper.getString(6));
+                          dto.setSecondName(resultSetMapper.getString(7));
+                          dto.setRFC(resultSetMapper.getString(12));
+                          dto.setMail(resultSetMapper.getString(13));
+                          dto.setPhoneNumber(resultSetMapper.getString(14));
+                          dto.setCustomerLevel(resultSetMapper.getString(15));
+                          dto.setAddressId(resultSetMapper.getInteger(16));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(18));
+							dto.messageInstance().setMessage(resultSetMapper.getString(19));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseGetUserEntityInformation.set(returnResponseGetUserEntityInformation);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
       //End map returns
       if(mapBlank!=0&&mapBlank==mapTotal){
       LOGGER.logDebug("No data found");

@@ -182,19 +182,59 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       return responseTO;
       }
     
+	@CTSProcedure(
+		name = "cob_procesador..sp_getCustomer",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestGetUserEntityInformation",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500092")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseGetUserEntityInformation",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation.class,
+      columns = {
+		    @CTSColumn(field = "registrationDate", columnIndex = 1),
+		    @CTSColumn(field = "modifyDate", columnIndex = 2),
+		    @CTSColumn(field = "completeName", columnIndex = 3),
+		    @CTSColumn(field = "entityType", columnIndex = 4),
+		    @CTSColumn(field = "identityCard", columnIndex = 5),
+		    @CTSColumn(field = "firstName", columnIndex = 6),
+		    @CTSColumn(field = "secondName", columnIndex = 7),
+		    @CTSColumn(field = "entityType", columnIndex = 8),
+		    @CTSColumn(field = "birthDate", columnIndex = 9),
+		    @CTSColumn(field = "firstName", columnIndex = 10),
+		    @CTSColumn(field = "secondName", columnIndex = 11),
+		    @CTSColumn(field = "rFC", columnIndex = 12),
+		    @CTSColumn(field = "mail", columnIndex = 13),
+		    @CTSColumn(field = "phoneNumber", columnIndex = 14),
+		    @CTSColumn(field = "customerLevel", columnIndex = 15),
+		    @CTSColumn(field = "addressId", columnIndex = 16),
+		    @CTSColumn(field = "success", columnIndex = 17),
+		    @CTSColumn(field = "message.code", columnIndex = 18),
+		    @CTSColumn(field = "message.message", columnIndex = 19)
+      }
+    )
+  }
+  
+	)
+	
   /**
   * {@inheritDoc}
   */
       public ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO) {
-        ServiceResponseTO responseTO = new ServiceResponseTO();
-        
-		    /*-- Input DTOs --
-		    RequestGetUserEntityInformation inRequestGetUserEntityInformation = (RequestGetUserEntityInformation)requestTO.getValue("inRequestGetUserEntityInformation");
-          
-		     */
-		    
-    	  responseTO.setSuccess(true);
-        return responseTO;
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
       }
     
   /**

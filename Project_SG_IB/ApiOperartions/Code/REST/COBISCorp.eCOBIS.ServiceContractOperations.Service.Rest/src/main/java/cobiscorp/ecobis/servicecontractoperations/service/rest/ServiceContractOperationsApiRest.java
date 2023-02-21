@@ -189,7 +189,6 @@
       @Path("/apiOperations/common/getCatalog")
       @Consumes({"application/json"})
       @Produces({"application/json"})
-
         public Response  getCatalog(RequestCatalog inRequestCatalog ){
       	  LOGGER.logDebug("Start service execution REST: getCatalog");
             ResponseCatalog outResponseCatalog  = new ResponseCatalog();
@@ -232,7 +231,7 @@
 	  LOGGER.logDebug("Start service execution REST: getUserEntityInformation");
       ResponseGetUserEntityInformation outResponseGetUserEntityInformation  = new ResponseGetUserEntityInformation();
           
-      if(!validateMandatory()) {
+      if(!validateMandatory(new Data("externalCustomerId", inRequestGetUserEntityInformation.getExternalCustomerId()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
