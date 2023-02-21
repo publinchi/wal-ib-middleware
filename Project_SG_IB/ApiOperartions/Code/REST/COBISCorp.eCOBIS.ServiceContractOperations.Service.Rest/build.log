@@ -26,8 +26,8 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 0.376 s
-[INFO] Finished at: 2023-02-20T22:50:00-06:00
+[INFO] Total time: 0.391 s
+[INFO] Finished at: 2023-02-21T11:45:02-06:00
 [INFO] Final Memory: 10M/238M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal on project COBISCorp.eCOBIS.ServiceContractOperations.Service-rest: Could not resolve dependencies for project COBISCorp.eCOBIS.ServiceContractOperations.Service.rest:COBISCorp.eCOBIS.ServiceContractOperations.Service-rest:jar:1.0.0.0: Could not find artifact COBISCorp.eCOBIS.ServiceContractOperations.Service:COBISCorp.eCOBIS.ServiceContractOperations.Service:jar:1.0.0.0 at specified path C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest\..\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar -> [Help 1]

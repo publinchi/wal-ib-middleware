@@ -211,7 +211,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "identityCard", columnIndex = 5),
 		    @CTSColumn(field = "firstName", columnIndex = 6),
 		    @CTSColumn(field = "secondName", columnIndex = 7),
-		    @CTSColumn(field = "entityType", columnIndex = 8),
+		    @CTSColumn(field = "gender", columnIndex = 8),
 		    @CTSColumn(field = "birthDate", columnIndex = 9),
 		    @CTSColumn(field = "firstName", columnIndex = 10),
 		    @CTSColumn(field = "secondName", columnIndex = 11),

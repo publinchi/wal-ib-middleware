@@ -50,7 +50,7 @@
 [ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[327,39] cannot find symbol
   symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog)
   location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[408,56] cannot find symbol
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[409,56] cannot find symbol
   symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation)
   location: variable outResponseGetUserEntityInformation of type cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation
 [INFO] 4 errors 
@@ -58,9 +58,9 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2.177 s
-[INFO] Finished at: 2023-02-20T22:49:59-06:00
-[INFO] Final Memory: 17M/178M
+[INFO] Total time: 2.372 s
+[INFO] Finished at: 2023-02-21T11:45:00-06:00
+[INFO] Final Memory: 19M/303M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.5:compile (default-compile) on project COBISCorp.eCOBIS.ServiceContractOperations.Service: Compilation failure: Compilation failure:
 [ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[284,39] cannot find symbol
@@ -72,7 +72,7 @@
 [ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[327,39] cannot find symbol
 [ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog)
 [ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[408,56] cannot find symbol
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[409,56] cannot find symbol
 [ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation)
 [ERROR] location: variable outResponseGetUserEntityInformation of type cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation
 [ERROR] -> [Help 1]

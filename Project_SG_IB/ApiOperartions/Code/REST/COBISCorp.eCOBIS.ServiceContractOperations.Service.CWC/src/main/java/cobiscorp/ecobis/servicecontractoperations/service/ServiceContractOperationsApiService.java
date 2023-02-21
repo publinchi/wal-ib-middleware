@@ -414,12 +414,15 @@
                           dto.setAddressId(resultSetMapper.getInteger(16));
 							dto.messageInstance().setCode(resultSetMapper.getInteger(18));
 							dto.messageInstance().setMessage(resultSetMapper.getString(19));
+                          dto.setGender(resultSetMapper.getString(8));
                     return dto;
                     }
                     },false);
 
-                    outResponseGetUserEntityInformation.set(returnResponseGetUserEntityInformation);
+                   // outResponseGetUserEntityInformation.set(returnResponseGetUserEntityInformation);
                         // break;
+
+						outResponseGetUserEntityInformation= returnResponseGetUserEntityInformation;
                       
             }else {
             mapBlank++;
