@@ -1,4 +1,5 @@
 
+    
     /************************************************************/
     /*                     IMPORTANTE                           */
     /*   Esta aplicacion es parte de los  paquetes bancarios    */
@@ -240,121 +241,108 @@
 			//Have DTO
 			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException{
 	  LOGGER.logDebug("Start service execution: getCatalog");
-    ResponseCatalog outResponseCatalog  = new ResponseCatalog();
-       
-   //create procedure
-   ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_catalog_data");
-   
-      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500087");
-   procedureRequestAS.addInputParam("@i_catalog",ICTSTypes.SQLVARCHAR,inRequestCatalog.getCatalogueTable());
-   procedureRequestAS.addOutputParam("@salida",ICTSTypes.SQLVARCHAR,"0");
-   
-   //execute procedure
-   ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+      ResponseCatalog outResponseCatalog  = new ResponseCatalog();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_catalog_data");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500087");
+      procedureRequestAS.addInputParam("@i_catalog",ICTSTypes.SQLVARCHAR,inRequestCatalog.getCatalogueTable());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-   List<MessageBlock> errors = ErrorUtil.getErrors(response);
-   //throw error
-   if(errors!= null && errors.size()> 0){
-   LOGGER.logDebug("Procedure execution returns error");
-   if ( LOGGER.isDebugEnabled() ) {
-   for (int i = 0; i < errors.size(); i++) {
-   LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-   }
-   }
-   throw new CTSRestException("Procedure Response has errors", null, errors);
-   }
-   LOGGER.logDebug("Procedure ok");
-   //Init map returns
-   int mapTotal=0;
-   int mapBlank=0;
-   
-   LOGGER.logDebug(response);
-   
-         mapTotal++;
-         if (response.getResultSets()!=null && response.getResultSets().get(0)!=null  &&response.getResultSets().get(0).getData().getRows().size()>0) {	
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
 								//---------NO Array
 								CatalogueItems [] returnCatalogueItems = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<CatalogueItems>() { 
-                 @Override
-                 public CatalogueItems mapRow(ResultSetMapper resultSetMapper, int index) {
-                 CatalogueItems dto = new CatalogueItems();
-                 
-                       dto.setCode(resultSetMapper.getString(1));
-                       dto.setName(resultSetMapper.getString(2));
-                 return dto;
-                 }
-                 },false);
+                    @Override
+                    public CatalogueItems mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CatalogueItems dto = new CatalogueItems();
+                    
+                          dto.setCode(resultSetMapper.getString(1));
+                          dto.setName(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
 
-                 outResponseCatalog.setCatalogueItems(returnCatalogueItems);
-                     // break;
-                   
-         }else {
-         	
-         	CatalogueItems [] outResponseCatalog2=new CatalogueItems[0]; 
-         	outResponseCatalog.setCatalogueItems(outResponseCatalog2);
-         	
-         mapBlank++;
+                    outResponseCatalog.setCatalogueItems(returnCatalogueItems);
+                        // break;
+                      
+            }else {
+            mapBlank++;
 
-         }
-       
-         mapTotal++;
-         if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
 								//---------NO Array
 								Message returnMessage = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<Message>() { 
-                 @Override
-                 public Message mapRow(ResultSetMapper resultSetMapper, int index) {
-                 Message dto = new Message();
-                 
-                       dto.setCode(resultSetMapper.getInteger(1));
-                       dto.setMessage(resultSetMapper.getString(2));
-                 return dto;
-                 }
-                 },false);
+                    @Override
+                    public Message mapRow(ResultSetMapper resultSetMapper, int index) {
+                    Message dto = new Message();
+                    
+                          dto.setCode(resultSetMapper.getInteger(1));
+                          dto.setMessage(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
 
-                 outResponseCatalog.setMessage(returnMessage);
-                     // break;
-                   
-         }else {
-         mapBlank++;
+                    outResponseCatalog.setMessage(returnMessage);
+                        // break;
+                      
+            }else {
+            mapBlank++;
 
-         }
-       
-         mapTotal++;
-         if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
 								//---------NO Array
-								ResponseCatalog  returnResponseCatalog = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseCatalog>() { 
-                 @Override
-                 public ResponseCatalog mapRow(ResultSetMapper resultSetMapper, int index) {
-                 ResponseCatalog dto = new ResponseCatalog();
-                 
-                       dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                 return dto;
-                 }
-                 },false);
+								ResponseCatalog returnResponseCatalog = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseCatalog>() { 
+                    @Override
+                    public ResponseCatalog mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseCatalog dto = new ResponseCatalog();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                    return dto;
+                    }
+                    },false);
 
-              //   outResponseCatalog.se(returnResponseCatalog);
-                 
-                 outResponseCatalog.setSuccess(true);
-                     // break;
-                   
-         }else {
-         mapBlank++;
+                    outResponseCatalog.setSuccess(true);
+                        // break;
+                      
+            }else {
+            mapBlank++;
 
-         }
-         
-         outResponseCatalog.setSuccess(true);
-         
-       
-   //End map returns
-   if(mapBlank!=0&&mapBlank==mapTotal){
-   LOGGER.logDebug("No data found");
-   throw new CTSRestException("404",null);
-   }
-  // outResponseCatalog.setSuccess(getOutValue(String.class, "@salida", response.getParams()));
-         
-     LOGGER.logDebug("Ends service execution: getCatalog");
-     //returns data
-     return outResponseCatalog;
-   }
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: getCatalog");
+        //returns data
+        return outResponseCatalog;
+      }
     
           /**
           * View Customer Information
@@ -420,6 +408,8 @@
                     },false);
 
                    // outResponseGetUserEntityInformation.set(returnResponseGetUserEntityInformation);
+                    return outResponseGetUserEntityInformation;
+
                         // break;
 
 						outResponseGetUserEntityInformation= returnResponseGetUserEntityInformation;
@@ -450,7 +440,14 @@
       ResponseValidateIdentity outResponseValidateIdentity  = new ResponseValidateIdentity();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_validate_identity");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500091");
+      procedureRequestAS.addInputParam("@i_type",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getType());
+      procedureRequestAS.addInputParam("@i_imageAnverso",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getImageAnverso());
+      procedureRequestAS.addInputParam("@i_imageReverso",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getImageReverso());
+      procedureRequestAS.addInputParam("@i_imageDomicile",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getImageDomicile());
+      procedureRequestAS.addOutputParam("@salida",ICTSTypes.SQLVARCHAR,"0");
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -471,12 +468,98 @@
       int mapTotal=0;
       int mapBlank=0;
       
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateIdentity returnResponseValidateIdentity = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseValidateIdentity>() { 
+                    @Override
+                    public ResponseValidateIdentity mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateIdentity dto = new ResponseValidateIdentity();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setSuccess(true);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								Message returnMessage = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<Message>() { 
+                    @Override
+                    public Message mapRow(ResultSetMapper resultSetMapper, int index) {
+                    Message dto = new Message();
+                    
+                          dto.setCode(resultSetMapper.getInteger(1));
+                          dto.setMessage(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setMessage(returnMessage);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateIdentity returnResponseValidateIdentity = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseValidateIdentity>() { 
+                    @Override
+                    public ResponseValidateIdentity mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateIdentity dto = new ResponseValidateIdentity();
+                    
+                          dto.setNumeroVerficacion(resultSetMapper.getString(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setNumeroVerficacion(returnResponseValidateIdentity.getNumeroVerficacion());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(3).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateIdentity returnResponseValidateIdentity = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseValidateIdentity>() { 
+                    @Override
+                    public ResponseValidateIdentity mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateIdentity dto = new ResponseValidateIdentity();
+                    
+                          dto.setNombreEvento(resultSetMapper.getString(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setNombreEvento(returnResponseValidateIdentity.getNombreEvento());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
       //End map returns
       if(mapBlank!=0&&mapBlank==mapTotal){
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
-      
+      //outResponseValidateIdentity.setSuccess(getOutValue(String.class, "@salida", response.getParams()));
+            
         LOGGER.logDebug("Ends service execution: validateIdentity");
         //returns data
         return outResponseValidateIdentity;
@@ -543,5 +626,6 @@
     }
     
     }
+
 
   
