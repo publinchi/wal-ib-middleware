@@ -419,10 +419,9 @@
                     }
                     },false);
 
-                   // outResponseGetUserEntityInformation.set(returnResponseGetUserEntityInformation);
+               //    outResponseGetUserEntityInformation.set(returnResponseGetUserEntityInformation);
                         // break;
-
-						outResponseGetUserEntityInformation= returnResponseGetUserEntityInformation;
+								outResponseGetUserEntityInformation=	returnResponseGetUserEntityInformation;
                       
             }else {
             mapBlank++;
@@ -439,18 +438,17 @@
         //returns data
         return outResponseGetUserEntityInformation;
       }
-    
-          /**
-          * Validate Identity
-          */
-         @Override
+     @Override
 			//Have DTO
-			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException{
-	  LOGGER.logDebug("Start service execution: validateIdentity");
-      ResponseValidateIdentity outResponseValidateIdentity  = new ResponseValidateIdentity();
+			public ResponseValidateCustomerIdentityCard validateCustomerIdentityCard(RequestValidateCustomerIdentityCard inRequestValidateCustomerIdentityCard  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: validateCustomerIdentityCard");
+      ResponseValidateCustomerIdentityCard outResponseValidateCustomerIdentityCard  = new ResponseValidateCustomerIdentityCard();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_validate_identity_card_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500093");
+      procedureRequestAS.addInputParam("@curp",ICTSTypes.SQLVARCHAR,inRequestValidateCustomerIdentityCard.getIdentityCard());
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -471,12 +469,209 @@
       int mapTotal=0;
       int mapBlank=0;
       
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------SingleResult
+                    ResponseValidateCustomerIdentityCard returnResponseValidateCustomerIdentityCard = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseValidateCustomerIdentityCard>() { 
+                        //----------------isOutDTO
+                        @Override
+                        public ResponseValidateCustomerIdentityCard mapRow(ResultSetMapper resultSetMapper, int index) {
+                        ResponseValidateCustomerIdentityCard dto = new ResponseValidateCustomerIdentityCard();
+                        
+                              dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                        return dto;
+                        }
+                        },false);
+                        outResponseValidateCustomerIdentityCard=returnResponseValidateCustomerIdentityCard;
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateCustomerIdentityCard returnResponseValidateCustomerIdentityCard = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseValidateCustomerIdentityCard>() { 
+                    @Override
+                    public ResponseValidateCustomerIdentityCard mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateCustomerIdentityCard dto = new ResponseValidateCustomerIdentityCard();
+                    
+							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateCustomerIdentityCard.setMessage(returnResponseValidateCustomerIdentityCard.getMessage());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateCustomerIdentityCard returnResponseValidateCustomerIdentityCard = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseValidateCustomerIdentityCard>() { 
+                    @Override
+                    public ResponseValidateCustomerIdentityCard mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateCustomerIdentityCard dto = new ResponseValidateCustomerIdentityCard();
+                    
+                          dto.setExternalCustomerId(resultSetMapper.getInteger(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateCustomerIdentityCard.setExternalCustomerId(returnResponseValidateCustomerIdentityCard.getExternalCustomerId());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
       //End map returns
       if(mapBlank!=0&&mapBlank==mapTotal){
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
       
+        LOGGER.logDebug("Ends service execution: validateCustomerIdentityCard");
+        //returns data
+        return outResponseValidateCustomerIdentityCard;
+      }
+    
+          /**
+          * Validate Identity
+          */
+         @Override
+			//Have DTO
+			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: validateIdentity");
+      ResponseValidateIdentity outResponseValidateIdentity  = new ResponseValidateIdentity();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_validate_identity");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500091");
+      procedureRequestAS.addInputParam("@i_type",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getType());
+      procedureRequestAS.addInputParam("@i_imageAnverso",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getImageAnverso());
+      procedureRequestAS.addInputParam("@i_imageReverso",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getImageReverso());
+      procedureRequestAS.addInputParam("@i_imageDomicile",ICTSTypes.SQLVARCHAR,inRequestValidateIdentity.getImageDomicile());
+      procedureRequestAS.addOutputParam("@salida",ICTSTypes.SQLVARCHAR,"0");
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateIdentity returnResponseValidateIdentity = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseValidateIdentity>() { 
+                    @Override
+                    public ResponseValidateIdentity mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateIdentity dto = new ResponseValidateIdentity();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setSuccess(returnResponseValidateIdentity.isSuccess());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								Message returnMessage = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<Message>() { 
+                    @Override
+                    public Message mapRow(ResultSetMapper resultSetMapper, int index) {
+                    Message dto = new Message();
+                    
+                          dto.setCode(resultSetMapper.getInteger(1));
+                          dto.setMessage(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setMessage(returnMessage);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateIdentity returnResponseValidateIdentity = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseValidateIdentity>() { 
+                    @Override
+                    public ResponseValidateIdentity mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateIdentity dto = new ResponseValidateIdentity();
+                    
+                          dto.setNumeroVerficacion(resultSetMapper.getString(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setNumeroVerficacion(returnResponseValidateIdentity.getNumeroVerficacion());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(3).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseValidateIdentity returnResponseValidateIdentity = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseValidateIdentity>() { 
+                    @Override
+                    public ResponseValidateIdentity mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseValidateIdentity dto = new ResponseValidateIdentity();
+                    
+                          dto.setNombreEvento(resultSetMapper.getString(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseValidateIdentity.setNombreEvento(returnResponseValidateIdentity.getNombreEvento());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+     // outResponseValidateIdentity.setSuccess(getOutValue(String.class, "@salida", response.getParams()));
+            
         LOGGER.logDebug("Ends service execution: validateIdentity");
         //returns data
         return outResponseValidateIdentity;

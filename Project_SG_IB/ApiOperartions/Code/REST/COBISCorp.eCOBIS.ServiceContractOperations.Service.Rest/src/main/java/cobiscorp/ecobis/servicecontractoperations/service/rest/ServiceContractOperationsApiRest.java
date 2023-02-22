@@ -36,6 +36,8 @@
     import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
+    import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     
@@ -257,6 +259,40 @@
           return Response.ok(outResponseGetUserEntityInformation).build();
         
       }
+    @POST
+      @Path("/apiOperations/onbording/validateCustomerIdentityCard")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  validateCustomerIdentityCard(RequestValidateCustomerIdentityCard inRequestValidateCustomerIdentityCard ){
+	  LOGGER.logDebug("Start service execution REST: validateCustomerIdentityCard");
+      ResponseValidateCustomerIdentityCard outResponseValidateCustomerIdentityCard  = new ResponseValidateCustomerIdentityCard();
+          
+      if(!validateMandatory(new Data("identityCard", inRequestValidateCustomerIdentityCard.getIdentityCard()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outResponseValidateCustomerIdentityCard=iServiceContractOperationsApiService.validateCustomerIdentityCard( inRequestValidateCustomerIdentityCard );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: validateCustomerIdentityCard");
+          return Response.ok(outResponseValidateCustomerIdentityCard).build();
+        
+      }
     
           /**
           * Validate Identity
@@ -269,7 +305,7 @@
 	  LOGGER.logDebug("Start service execution REST: validateIdentity");
       ResponseValidateIdentity outResponseValidateIdentity  = new ResponseValidateIdentity();
           
-      if(!validateMandatory()) {
+      if(!validateMandatory(new Data("type", inRequestValidateIdentity.getType()), new Data("imageAnverso", inRequestValidateIdentity.getImageAnverso()), new Data("imageReverso", inRequestValidateIdentity.getImageReverso()), new Data("imageDomicile", inRequestValidateIdentity.getImageDomicile()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }

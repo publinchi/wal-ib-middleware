@@ -237,19 +237,117 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       return responseTO;
       }
     
+	@CTSProcedure(
+		name = "cobis..sp_validate_identity_card_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestValidateCustomerIdentityCard",
+				input = {
+				
+					@CTSInputParam(field = "identityCard", param = "@curp", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500093")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseValidateCustomerIdentityCard",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard.class,
+      singleResult = true,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseValidateCustomerIdentityCard",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseValidateCustomerIdentityCard",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard.class,
+      columns = {
+		    @CTSColumn(field = "externalCustomerId", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
+      public ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_validate_identity", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestValidateIdentity",
+				input = {
+				
+					@CTSInputParam(field = "type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "imageAnverso", param = "@i_imageAnverso", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "imageReverso", param = "@i_imageReverso", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "imageDomicile", param = "@i_imageDomicile", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500091"),
+				@CTSDefaultInputParam(value = "0", param = "@salida", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseValidateIdentity",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnMessage",
+      type = cobiscorp.ecobis.datacontractoperations.dto.Message.class,
+      columns = {
+		    @CTSColumn(field = "code", columnIndex = 1),
+		    @CTSColumn(field = "message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseValidateIdentity",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity.class,
+      columns = {
+		    @CTSColumn(field = "numeroVerficacion", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseValidateIdentity",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity.class,
+      columns = {
+		    @CTSColumn(field = "nombreEvento", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
   /**
   * {@inheritDoc}
   */
       public ServiceResponseTO validateIdentity(ServiceRequestTO requestTO) {
-        ServiceResponseTO responseTO = new ServiceResponseTO();
-        
-		    /*-- Input DTOs --
-		    RequestValidateIdentity inRequestValidateIdentity = (RequestValidateIdentity)requestTO.getValue("inRequestValidateIdentity");
-          
-		     */
-		    
-    	  responseTO.setSuccess(true);
-        return responseTO;
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
       }
     
 }
