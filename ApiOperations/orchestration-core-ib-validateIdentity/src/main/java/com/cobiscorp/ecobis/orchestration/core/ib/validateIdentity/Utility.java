@@ -13,4 +13,7 @@ public class Utility {
 	
 	public static final String codeInternalError="50000";
 	public static final String messagInternalError="Internal server error";
+	
+	public static final String  codeEmptyImageReverso ="400010";
+	public static final String messageNullValidateIdentityImageReverso="The value of imageReverso is required";
 }
