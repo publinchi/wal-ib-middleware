@@ -124,16 +124,36 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				errorMessage = Utility.messageNullValidateIdentityType;
 				isFailed = true;
 							
-			}else if (anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
+			}
+			if (anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
 					|| anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {
 				errorCode = Utility.codeEmptyImageAnverso;
 				errorMessage = Utility.messageNullValidateIdentityImageAnverso;
 				isFailed = true;
 					
-			}else{
 				
-				isFailed = false;
-			}	
+			}
+			if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) != null
+					&& !anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {
+				
+				if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) == null
+						&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {				
+					errorCode = Utility.codeEmptyImageReverso;
+					errorMessage = Utility.messageNullValidateIdentityImageReverso;					
+					isFailed = true;
+				}
+			}
+			
+			if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) != null
+					&& !anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {
+				
+				if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
+						&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {
+					errorCode = Utility.codeEmptyImageAnverso;
+					errorMessage = Utility.messageNullValidateIdentityImageAnverso;
+					isFailed = true;
+				}
+			}
 			
 			/* OPERACION 2 - CONNECTOR------------------------------------------------------ */
 			if (!isFailed) {
@@ -288,6 +308,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 		public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 				java.util.Map aBagSPJavaOrchestration) {
 		 
+		 	IProcedureResponse wProcedureRespFinal = initProcedureResponse(anOriginalProcedureReq);
 		 	//Agregar Header bloque Success
 			ResultSetHeader metaDataSuccess = new ResultSetHeader();
 			metaDataSuccess.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
@@ -320,15 +341,12 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 
 			CSPUtil.copyHeaderFields((IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest"),procedureResponse);
 					
-			if (procedureResponse != null && procedureResponse.getResultSetListSize() > 0) {
+			if (procedureResponse != null && procedureResponse.readValueParam("@o_obResult").equals("true")) {
 				logger.logDebug("Datos ResulSet de la respuesta final ValidateIdentity : "+procedureResponse.getProcedureResponseAsString());
 				
-				try {
-					IResultSetRow[] rowsTemp = procedureResponse.getResultSet(0).getData().getRowsAsArray();
-					IResultSetRowColumnData[] rows = rowsTemp[0].getColumnsAsArray();
-					
-					verificationNumber = String.valueOf(rows[0].getValue());//procedureResponse.getResultSetRows(0).get(0));
-					eventName=String.valueOf(rows[1].getValue());//procedureResponse.getResultSetRows(0).get(1)
+				try {					
+					verificationNumber = String.valueOf(procedureResponse.readValueParam("o_obId"));
+					eventName=String.valueOf(procedureResponse.readValueParam("o_obToken"));
 					logger.logDebug("Seteando la respuesta final ValidateIdentity... verificationNumber: "+verificationNumber+" , eventName: "+eventName);
 
 				}catch(Exception e) {					
@@ -342,7 +360,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				rowSuccess.addRowData(1, new ResultSetRowColumnData(false, "true"));
 				dataSuccess.addRow(rowSuccess);
 				IResultSetBlock resultsetBlockSuccess = new ResultSetBlock(metaDataSuccess, dataSuccess);
-				procedureResponse.addResponseBlock(resultsetBlockSuccess);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockSuccess);
 				
 				
 				// Agregar Header bloque Message
@@ -351,26 +369,25 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				rowMessagge.addRowData(2, new ResultSetRowColumnData(false, "SUCCESS "));
 				dataMessage.addRow(rowMessagge);
 				IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
-				procedureResponse.addResponseBlock(resultsetBlockMessage);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
 				
 				// Agregar Header bloque VerificationNumber
 				
 				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, verificationNumber));
 				dataVerificationNumber.addRow(rowVerificationNumber);
 				IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
-				procedureResponse.addResponseBlock(resultsetBlockVerificationNumber);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
 				
 				// Agregar Header bloque EventName
 				
 				rowEventName.addRowData(1, new ResultSetRowColumnData(false, eventName));
 				dataEventName.addRow(rowEventName);
 				IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
-				procedureResponse.addResponseBlock(resultsetBlockEventName);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
 				
-				procedureResponse.setReturnCode(204);
-	
-				procedureResponse.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
-				
+				wProcedureRespFinal.setReturnCode(200);
+				wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
+				return wProcedureRespFinal;
 				
 			}else {
 				logger.logDebug("Sin datos ResulSet de la respuesta final ValidateIdentity");
@@ -379,7 +396,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				rowSuccess.addRowData(1, new ResultSetRowColumnData(false, "false"));
 				dataSuccess.addRow(rowSuccess);
 				IResultSetBlock resultsetBlockSuccess = new ResultSetBlock(metaDataSuccess, dataSuccess);
-				procedureResponse.addResponseBlock(resultsetBlockSuccess);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockSuccess);
 				
 				
 				// Agregar Header bloque Message
@@ -388,30 +405,29 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				rowMessagge.addRowData(2, new ResultSetRowColumnData(false, "There is no information for the ValidateIdentity"));
 				dataMessage.addRow(rowMessagge);
 				IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
-				procedureResponse.addResponseBlock(resultsetBlockMessage);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
 				
 				// Agregar Header bloque VerificationNumber
 				
 				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				dataVerificationNumber.addRow(rowVerificationNumber);
 				IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
-				procedureResponse.addResponseBlock(resultsetBlockVerificationNumber);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
 				
 				// Agregar Header bloque EventName
 				
 				rowEventName.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				dataEventName.addRow(rowEventName);
 				IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
-				procedureResponse.addResponseBlock(resultsetBlockEventName);
+				wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
 				
-				procedureResponse.setReturnCode(204);
-	
-				procedureResponse.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.ERROR_EXECUTION_SERVICE);
-				
+				wProcedureRespFinal.setReturnCode(204);
+				wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.ERROR_EXECUTION_SERVICE);
+				return wProcedureRespFinal;	
 			}
 	
 				
-				return procedureResponse;
+				//return wProcedureRespFinal;
 		}
 			
 			
@@ -421,4 +437,3 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 
 
 }
-
