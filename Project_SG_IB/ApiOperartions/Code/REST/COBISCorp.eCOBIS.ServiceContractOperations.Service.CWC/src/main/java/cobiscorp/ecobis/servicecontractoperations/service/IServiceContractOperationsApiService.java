@@ -32,6 +32,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     
@@ -70,6 +72,8 @@
         
 			//Have DTO
 			public ResponseGetUserEntityInformation getUserEntityInformation(RequestGetUserEntityInformation inRequestGetUserEntityInformation  )throws CTSRestException;
+			//Have DTO
+			public ResponseValidateCustomerIdentityCard validateCustomerIdentityCard(RequestValidateCustomerIdentityCard inRequestValidateCustomerIdentityCard  )throws CTSRestException;
           /**
           * Validate Identity
           */
