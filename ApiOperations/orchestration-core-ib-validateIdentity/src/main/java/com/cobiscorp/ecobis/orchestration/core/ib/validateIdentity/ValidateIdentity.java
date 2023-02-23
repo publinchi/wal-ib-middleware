@@ -120,20 +120,28 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			 /* OPERACION 1 - VALIDAR DATOS DE ENTRADA---------------------------------------- */		
 			
 			//Validacion a partir del type , para validar IMAGEANVERSO y IMAGEREVERSO con type INE, IMAGEANVERSO solo para type PAS y MIG
-			if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE)!=null && anOriginalRequest.readValueParam(PARAMS_IN_TYPE).isEmpty()) {
+			
+			 if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE)==null || anOriginalRequest.readValueParam(PARAMS_IN_TYPE).isEmpty()) {
+				
+				 errorCode = Utility.codeNullType;
+				 errorMessage = Utility.messageNullValidateIdentityType;
+				 isFailed = true;
+					
+				
+			}else {
 				
 				if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("INE")) {
-					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) == null
-							&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {				
-						errorCode = Utility.codeEmptyImageReverso;
-						errorMessage = Utility.messageNullValidateIdentityImageReverso;					
-						isFailed = true;
-					}
-					
+										
 					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
-							&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
+							|| anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
 						errorCode = Utility.codeEmptyImageAnverso;
 						errorMessage = Utility.messageNullValidateIdentityImageAnverso;					
+						isFailed = true;
+					}
+					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) == null
+							|| anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {				
+						errorCode = Utility.codeEmptyImageReverso;
+						errorMessage = Utility.messageNullValidateIdentityImageReverso;					
 						isFailed = true;
 					}
 				}
@@ -142,7 +150,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 						anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("PAS")) {
 							
 					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
-							&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
+							|| anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
 						errorCode = Utility.codeEmptyImageAnverso;
 						errorMessage = Utility.messageNullValidateIdentityImageAnverso;					
 						isFailed = true;
@@ -150,11 +158,6 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				}
 				
 					
-				
-			}else {
-				errorCode = Utility.codeNullType;
-				errorMessage = Utility.messageNullValidateIdentityType;
-				isFailed = true;
 			}
 			
 			
