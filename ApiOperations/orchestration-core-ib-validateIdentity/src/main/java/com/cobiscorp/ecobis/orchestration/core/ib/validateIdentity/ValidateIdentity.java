@@ -117,43 +117,47 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			 aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 			 
 			
-			 /* OPERACION 1 - VALIDAR DATOS DE ENTRADA---------------------------------------- */
-			if (anOriginalRequest.readValueParam(PARAMS_IN_TYPE) == null
-					|| anOriginalRequest.readValueParam(PARAMS_IN_TYPE).trim().equals("")) {
+			 /* OPERACION 1 - VALIDAR DATOS DE ENTRADA---------------------------------------- */		
+			
+			//Validacion a partir del type , para validar IMAGEANVERSO y IMAGEREVERSO con type INE, IMAGEANVERSO solo para type PAS y MIG
+			if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE)!=null && anOriginalRequest.readValueParam(PARAMS_IN_TYPE).isEmpty()) {
+				
+				if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("INE")) {
+					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) == null
+							&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {				
+						errorCode = Utility.codeEmptyImageReverso;
+						errorMessage = Utility.messageNullValidateIdentityImageReverso;					
+						isFailed = true;
+					}
+					
+					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
+							&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
+						errorCode = Utility.codeEmptyImageAnverso;
+						errorMessage = Utility.messageNullValidateIdentityImageAnverso;					
+						isFailed = true;
+					}
+				}
+				
+				if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("MIG") || 
+						anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("PAS")) {
+							
+					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
+							&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
+						errorCode = Utility.codeEmptyImageAnverso;
+						errorMessage = Utility.messageNullValidateIdentityImageAnverso;					
+						isFailed = true;
+					}
+				}
+				
+					
+				
+			}else {
 				errorCode = Utility.codeNullType;
 				errorMessage = Utility.messageNullValidateIdentityType;
 				isFailed = true;
-							
-			}
-			if (anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
-					|| anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {
-				errorCode = Utility.codeEmptyImageAnverso;
-				errorMessage = Utility.messageNullValidateIdentityImageAnverso;
-				isFailed = true;
-					
-				
-			}
-			if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) != null
-					&& !anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {
-				
-				if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) == null
-						&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {				
-					errorCode = Utility.codeEmptyImageReverso;
-					errorMessage = Utility.messageNullValidateIdentityImageReverso;					
-					isFailed = true;
-				}
 			}
 			
-			if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO) != null
-					&& !anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_REVERSO).trim().equals("")) {
-				
-				if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
-						&& anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {
-					errorCode = Utility.codeEmptyImageAnverso;
-					errorMessage = Utility.messageNullValidateIdentityImageAnverso;
-					isFailed = true;
-				}
-			}
+			
 			
 			/* OPERACION 2 - CONNECTOR------------------------------------------------------ */
 			if (!isFailed) {
@@ -340,58 +344,92 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			logger.logDebug("Datos ResulSet en Response ValidateIdentity: "+procedureResponse.getProcedureResponseAsString());
 
 			CSPUtil.copyHeaderFields((IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest"),procedureResponse);
+			logger.logDebug("Datos ResulSet en Response ValidateIdentity despues de copyHeaderFields: "+procedureResponse.getProcedureResponseAsString());	
+			Integer valorResult=0;	
+			
+			try {					
+				verificationNumber = String.valueOf(procedureResponse.readValueParam("@o_obId"));
+				eventName=String.valueOf(procedureResponse.readValueParam("@o_obToken"));
+				
+				String verificationNumber2 = String.valueOf(procedureResponse.readParam("@o_obId"));
+				String eventName2=String.valueOf(procedureResponse.readParam("@o_obToken"));
+				
+				logger.logDebug("Seteando la respuesta final ValidateIdentity readValueParams... verificationNumber: "+verificationNumber+" , eventName: "+eventName);
+				logger.logDebug("Seteando la respuesta final ValidateIdentity readParams... verificationNumber2: "+verificationNumber2+" , eventName2: "+eventName2);
+				
+				
+				if((eventName.isEmpty() ||eventName==null ) || (verificationNumber.isEmpty() || verificationNumber==null) ||
+						(eventName!=null && eventName.equals("null")) || (verificationNumber!=null && verificationNumber.equals("null")) ) {
+					logger.logDebug("Los valores de respuesta de eventName y verificationNumber vienen vacios o con la palabra null");
 					
-			if (procedureResponse != null && procedureResponse.readValueParam("@o_obResult").equals("true")) {
-				logger.logDebug("Datos ResulSet de la respuesta final ValidateIdentity : "+procedureResponse.getProcedureResponseAsString());
-				
-				try {					
-					verificationNumber = String.valueOf(procedureResponse.readValueParam("o_obId"));
-					eventName=String.valueOf(procedureResponse.readValueParam("o_obToken"));
-					logger.logDebug("Seteando la respuesta final ValidateIdentity... verificationNumber: "+verificationNumber+" , eventName: "+eventName);
-
-				}catch(Exception e) {					
-					verificationNumber=String.valueOf(1);
-					eventName=String.valueOf(1);				
-					logger.logDebug("Error en el seteo de la respuesta final ValidateIdentity... verificationNumber: "+verificationNumber+" , eventName: "+eventName);
-
+					valorResult=204;	
+					//Agregar Header bloque Success
+					rowSuccess.addRowData(1, new ResultSetRowColumnData(false, "false"));
+					dataSuccess.addRow(rowSuccess);
+					IResultSetBlock resultsetBlockSuccess = new ResultSetBlock(metaDataSuccess, dataSuccess);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockSuccess);
+					
+					
+					// Agregar Header bloque Message
+					
+					rowMessagge.addRowData(1, new ResultSetRowColumnData(false,Utility.codeEmptyValidateIdentity));
+					rowMessagge.addRowData(2, new ResultSetRowColumnData(false, Utility.messagEmptyValidateIdentity));
+					dataMessage.addRow(rowMessagge);
+					IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
+					
+					// Agregar Header bloque VerificationNumber
+					
+					rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, "0"));
+					dataVerificationNumber.addRow(rowVerificationNumber);
+					IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
+					
+					// Agregar Header bloque EventName
+					
+					rowEventName.addRowData(1, new ResultSetRowColumnData(false, "0"));
+					dataEventName.addRow(rowEventName);
+					IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
+				}else {
+					logger.logDebug("Los valores de respuesta de eventName y verificationNumber vienen correctos");
+					valorResult=200;
+					//Agregar Header bloque Success
+					rowSuccess.addRowData(1, new ResultSetRowColumnData(false, "true"));
+					dataSuccess.addRow(rowSuccess);
+					IResultSetBlock resultsetBlockSuccess = new ResultSetBlock(metaDataSuccess, dataSuccess);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockSuccess);
+					
+					
+					// Agregar Header bloque Message
+					
+					rowMessagge.addRowData(1, new ResultSetRowColumnData(false,"0"));
+					rowMessagge.addRowData(2, new ResultSetRowColumnData(false, "SUCCESS "));
+					dataMessage.addRow(rowMessagge);
+					IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
+					
+					// Agregar Header bloque VerificationNumber
+					
+					rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, verificationNumber));
+					dataVerificationNumber.addRow(rowVerificationNumber);
+					IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
+					
+					// Agregar Header bloque EventName
+					
+					rowEventName.addRowData(1, new ResultSetRowColumnData(false, eventName));
+					dataEventName.addRow(rowEventName);
+					IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
+					wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
 				}
-								
-				//Agregar Header bloque Success
-				rowSuccess.addRowData(1, new ResultSetRowColumnData(false, "true"));
-				dataSuccess.addRow(rowSuccess);
-				IResultSetBlock resultsetBlockSuccess = new ResultSetBlock(metaDataSuccess, dataSuccess);
-				wProcedureRespFinal.addResponseBlock(resultsetBlockSuccess);
 				
-				
-				// Agregar Header bloque Message
-				
-				rowMessagge.addRowData(1, new ResultSetRowColumnData(false,"0"));
-				rowMessagge.addRowData(2, new ResultSetRowColumnData(false, "SUCCESS "));
-				dataMessage.addRow(rowMessagge);
-				IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
-				wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
-				
-				// Agregar Header bloque VerificationNumber
-				
-				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, verificationNumber));
-				dataVerificationNumber.addRow(rowVerificationNumber);
-				IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
-				wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
-				
-				// Agregar Header bloque EventName
-				
-				rowEventName.addRowData(1, new ResultSetRowColumnData(false, eventName));
-				dataEventName.addRow(rowEventName);
-				IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
-				wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
-				
-				wProcedureRespFinal.setReturnCode(200);
-				wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
-				return wProcedureRespFinal;
-				
-			}else {
-				logger.logDebug("Sin datos ResulSet de la respuesta final ValidateIdentity");
-
+			
+			}catch(Exception e) {					
+				verificationNumber=String.valueOf(0);
+				eventName=String.valueOf(0);				
+				logger.logDebug("Error en el seteo de la respuesta final ValidateIdentity... verificationNumber: "+verificationNumber+" , eventName: "+eventName);
+				valorResult=500;
 				//Agregar Header bloque Success
 				rowSuccess.addRowData(1, new ResultSetRowColumnData(false, "false"));
 				dataSuccess.addRow(rowSuccess);
@@ -401,8 +439,8 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				
 				// Agregar Header bloque Message
 				
-				rowMessagge.addRowData(1, new ResultSetRowColumnData(false,"40008"));
-				rowMessagge.addRowData(2, new ResultSetRowColumnData(false, "There is no information for the ValidateIdentity"));
+				rowMessagge.addRowData(1, new ResultSetRowColumnData(false,Utility.codeInternalError));
+				rowMessagge.addRowData(2, new ResultSetRowColumnData(false, Utility.messagInternalError));
 				dataMessage.addRow(rowMessagge);
 				IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
 				wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
@@ -421,13 +459,17 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
 				wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
 				
-				wProcedureRespFinal.setReturnCode(204);
-				wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.ERROR_EXECUTION_SERVICE);
-				return wProcedureRespFinal;	
+			
 			}
-	
-				
-				//return wProcedureRespFinal;
+							
+			
+			
+			wProcedureRespFinal.setReturnCode(valorResult);
+			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, String.valueOf(valorResult));
+			
+			return wProcedureRespFinal;
+			
+			
 		}
 			
 			

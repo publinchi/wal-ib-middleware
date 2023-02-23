@@ -17,6 +17,7 @@
           <field type="String" name="dTOAlias" value="returnResponseValidateIdentity" />
           <field type="String" name="dTOPropertyName" value="success" />
           <field type="String" name="dataType" value="boolean?" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -30,6 +31,7 @@
           <field type="String" name="dTOAlias" value="returnMessage" />
           <field type="String" name="dTOPropertyName" value="code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="1">
           <field type="int" name="position" value="1" />
@@ -37,6 +39,7 @@
           <field type="String" name="dTOAlias" value="returnMessage" />
           <field type="String" name="dTOPropertyName" value="message" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -48,8 +51,9 @@
           <field type="int" name="position" value="0" />
           <field type="String" name="columnName" value="verificationNumber" />
           <field type="String" name="dTOAlias" value="returnResponseValidateIdentity" />
-          <field type="String" name="dTOPropertyName" value="numeroVerficacion" />
+          <field type="String" name="dTOPropertyName" value="verificationNumber" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -61,8 +65,9 @@
           <field type="int" name="position" value="0" />
           <field type="String" name="columnName" value="eventName" />
           <field type="String" name="dTOAlias" value="returnResponseValidateIdentity" />
-          <field type="String" name="dTOPropertyName" value="nombreEvento" />
+          <field type="String" name="dTOPropertyName" value="eventName" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
