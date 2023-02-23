@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_getCustomer</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="registrationDate" />
+        <column name="modifyDate" />
+        <column name="completeName" />
+        <column name="entityType" />
+        <column name="identityCard" />
+        <column name="firstSurName" />
+        <column name="secondSurName" />
+        <column name="gender" />
+        <column name="birthDate" />
+        <column name="firstName" />
+        <column name="secondName" />
+        <column name="RFC" />
+        <column name="mail" />
+        <column name="phoneNumber" />
+        <column name="customerLevel" />
+        <column name="addressId" />
+        <column name="success" />
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT  "registrationDate" = XXX..customer.en_fecha_crea,"modifyDate" = XXX..customer.en_fecha_mod,"completeName" = XXX..customer.en_nomlar,"entityType" = XXX..customer.en_subtipo,"identityCard" = XXX..customer.en_ced_ruc,"firstSurName" = XXX..customer.p_p_apellido,"secondSurName" = XXX..customer.p_s_apellido,"gender" = XXX..customer.p_sexo,"birthDate" = XXX..customer.p_fecha_nac,"firstName" = XXX..customer.en_nombre,"secondName" = XXX..customer.p_s_nombre,"RFC" = XXX..customer.en_nit,"mail" = dir.di_descripcion,"phoneNumber" = tel.te_valor,"customerLevel" = XXX..customer.en_nivel,"addressId" = XXX..customer.en_direccion </queryText>
+    </query>
+  </queries>
+</procedure>

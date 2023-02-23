@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>administra_token</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="SUCCESS" />
+        <column name="CODE" />
+        <column name="MESSAGE" />
+      </columns>
+      <queryText>SELECT  "SUCCESS" = en_ente_mis,"CODE" = en_nombre,"MESSAGE" = en_pnombre </queryText>
+    </query>
+  </queries>
+</procedure>

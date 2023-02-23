@@ -1,0 +1,7 @@
+Bundle-SymbolicName: ${project.groupId}-${project.artifactId}-${project.version}
+Bundle-Name: ${project.groupId}-${project.artifactId}
+Bundle-Vendor: COBISCORP
+Bundle-ManifestVersion: 2
+Service-Component: OSGI-INF/serviceComponents.xml
+Excluded-Imports: org.apache.felix.scr.annotations
+Excluded-Exports: *.*

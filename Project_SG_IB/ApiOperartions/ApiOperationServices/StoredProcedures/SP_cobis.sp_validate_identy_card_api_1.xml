@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_validate_identy_card_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@curp" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"=success</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"mensaje"="success"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="externalCustomerId" />
+      </columns>
+      <queryText>SELECT "externalCustomerId"=1</queryText>
+    </query>
+  </queries>
+</procedure>

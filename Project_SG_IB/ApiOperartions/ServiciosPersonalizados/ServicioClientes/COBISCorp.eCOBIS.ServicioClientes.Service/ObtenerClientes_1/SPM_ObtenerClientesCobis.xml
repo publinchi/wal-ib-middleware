@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMapping" id="1">
+  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureBase" id="2" name="storedProcedure">
+    <field type="String" name="database" value="cobis" />
+    <field type="String" name="name" value="sp_obtener_clientes" />
+    <field type="String" name="version" value="1" />
+  </class>
+  <field type="String" name="procedureName" value="cobis..sp_obtener_clientes" />
+  <collection type="List" length="3" id="3" name="queries">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="4" index="0">
+      <field type="int" name="order" value="1" />
+      <field type="boolean" name="mapReturn" value="true" />
+      <collection type="List" length="1" id="5" name="columns">
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="6" index="0">
+          <field type="int" name="position" value="0" />
+          <field type="String" name="columnName" value="success" />
+          <field type="String" name="dTOAlias" value="returnClientesResponse" />
+          <field type="String" name="dTOPropertyName" value="success" />
+          <field type="String" name="dataType" value="boolean" />
+          <field type="String" name="format" value="" />
+        </class>
+      </collection>
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="7" index="1">
+      <field type="int" name="order" value="2" />
+      <field type="boolean" name="mapReturn" value="true" />
+      <collection type="List" length="2" id="8" name="columns">
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="9" index="0">
+          <field type="int" name="position" value="0" />
+          <field type="String" name="columnName" value="code" />
+          <field type="String" name="dTOAlias" value="returnMessage" />
+          <field type="String" name="dTOPropertyName" value="code" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="1">
+          <field type="int" name="position" value="1" />
+          <field type="String" name="columnName" value="mensaje" />
+          <field type="String" name="dTOAlias" value="returnMessage" />
+          <field type="String" name="dTOPropertyName" value="message" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+      </collection>
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="11" index="2">
+      <field type="int" name="order" value="3" />
+      <field type="boolean" name="mapReturn" value="true" />
+      <collection type="List" length="4" id="12" name="columns">
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="13" index="0">
+          <field type="int" name="position" value="0" />
+          <field type="String" name="columnName" value="en_ente " />
+          <field type="String" name="dTOAlias" value="returnDatosClientes" />
+          <field type="String" name="dTOPropertyName" value="ente" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="14" index="1">
+          <field type="int" name="position" value="1" />
+          <field type="String" name="columnName" value="en_nombre " />
+          <field type="String" name="dTOAlias" value="returnDatosClientes" />
+          <field type="String" name="dTOPropertyName" value="nombre" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="15" index="2">
+          <field type="int" name="position" value="2" />
+          <field type="String" name="columnName" value="en_ced_ruc " />
+          <field type="String" name="dTOAlias" value="returnDatosClientes" />
+          <field type="String" name="dTOPropertyName" value="cedula" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="16" index="3">
+          <field type="int" name="position" value="3" />
+          <field type="String" name="columnName" value="en_fecha_crea " />
+          <field type="String" name="dTOAlias" value="returnDatosClientes" />
+          <field type="String" name="dTOPropertyName" value="fechaCrea" />
+          <field type="String" name="dataType" value="dateTime" />
+          <field type="String" name="format" value="" />
+        </class>
+      </collection>
+    </class>
+  </collection>
+  <collection type="List" length="3" id="17" name="parameters">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="18" index="0">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="19" name="parameter">
+        <field type="String" name="name" value="@limite" />
+        <field type="String" name="dataType" value="int" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inClientesRequest" />
+      <field type="String" name="dTOPropertyName" value="limite" />
+      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="20" index="1">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="21" name="parameter">
+        <field type="String" name="name" value="@salida" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="22" index="2">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="23" name="parameter">
+        <field type="String" name="name" value="@salida" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outClientesResponse" />
+      <field type="String" name="dTOPropertyName" value="success" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+  </collection>
+  <collection type="List" length="0" id="24" name="parametersOpenApi">
+  </collection>
+  <field type="String" name="trnCode" value="185085" />
+  <collection type="List" length="5" id="25" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="26" index="0">
+      <field type="String" name="dTOName" value="ClientesRequest" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.ClientesDTO.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="inClientesRequest" />
+      <field type="String" name="direction" value="in" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="27" index="1">
+      <field type="String" name="dTOName" value="ClientesResponse" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.ClientesDTO.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="returnClientesResponse" />
+      <field type="String" name="direction" value="return" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="28" index="2">
+      <field type="String" name="dTOName" value="Message" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.ClientesDTO.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="returnMessage" />
+      <field type="String" name="direction" value="return" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="29" index="3">
+      <field type="String" name="dTOName" value="DatosClientes" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.ClientesDTO.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="returnDatosClientes" />
+      <field type="String" name="direction" value="return" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="30" index="4">
+      <field type="String" name="dTOName" value="ClientesResponse" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.ClientesDTO.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="outClientesResponse" />
+      <field type="String" name="direction" value="out" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+  </collection>
+  <collection type="Map" length="2" id="31" name="mappingProperties">
+    <entry>
+      <key type="String" value="Path" />
+      <value type="String" value="Lista/Clientes" />
+    </entry>
+    <entry>
+      <key type="String" value="HTTPMethod" />
+      <value type="String" value="POST" />
+    </entry>
+  </collection>
+  <field type="String" name="stateParams" value="" />
+</class>

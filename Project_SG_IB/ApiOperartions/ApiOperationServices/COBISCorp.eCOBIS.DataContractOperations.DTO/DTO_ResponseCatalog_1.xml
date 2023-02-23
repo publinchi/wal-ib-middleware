@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
+  <collection type="List" length="3" id="2" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
+      <field type="String" name="name" value="catalogueItems" />
+      <field type="String" name="type" value="CatalogueItems" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="4" name="dtoType">
+        <field type="String" name="name" value="CatalogueItems" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="true" />
+      <field type="String" name="collectionType" value="Array" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="5" index="1">
+      <field type="String" name="name" value="success" />
+      <field type="String" name="type" value="boolean?" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="2">
+      <field type="String" name="name" value="message" />
+      <field type="String" name="type" value="Message" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="7" name="dtoType">
+        <field type="String" name="name" value="Message" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+  </collection>
+  <field type="String" name="name" value="ResponseCatalog" />
+  <collection type="Map" length="0" id="8" name="templatesProperties">
+  </collection>
+  <field type="String" name="version" value="1" />
+  <field type="String" name="stateDTO" value="" />
+</class>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_obtener_clientes</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@limite" dataType="int" direction="in" />
+    <parameter name="@salida" dataType="varchar" direction="out" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"=1,"code"=0,"mensaje"="SUCCESSFULL"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="mensaje" />
+      </columns>
+      <queryText>SELECT  en_ente = en_ente,en_nombre = en_nombre,en_ced_ruc = en_ced_ruc,en_fecha_crea = en_fecha_crea </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="en_ente " />
+        <column name="en_nombre " />
+        <column name="en_ced_ruc " />
+        <column name="en_fecha_crea " />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>
