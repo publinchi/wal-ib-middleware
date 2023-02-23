@@ -327,309 +327,310 @@ components:
         message:
           $ref: '#/components/schemas/Message'    
     CreateCustomerRequest:
-      properties:
-        externalCustomerId:
-          maxLength: 12
-          type: integer
-          description: External Customer Id
-          example: 220
-        firtname:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: firts name customer
-          example: Jose
-        secondName:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: second name customer
-          example: Carlos
-        lastName:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: last name customer
-          example: Olmos
-        secondLastName:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: second last name customer
-          example: Solis
-        idNumber:
-          maxLength: 18
-          minLength: 1
-          type: string
-          description: id number
-          example: OOSC861001HMCLLR05
-        idType:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: id type
-          example: CURP
-        birthDate:
-          maxLength: 10
-          minLength: 10
-          type: string
-          description: yyyy-MM-dd
-          format: date
-          example: 0986-10-01
-        validityDate:
-          maxLength: 10
-          minLength: 10
-          type: string
-          description: yyyy-MM-dd
-          format: date
-          example: 0986-10-01
-        gender:
-          maxLength: 1
-          minLength: 1
-          type: string
-          description: M for male and F for female
-          example: M
-        email:
-          maxLength: 35
-          minLength: 1
-          type: string
-          description: Customer email
-          format: email
-          example: jcolmos@cobis.com
-        identificationType:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: Type identity
-          example: INE
-        identificationNumber:
-          maxLength: 40
-          minLength: 1
-          type: string
-          description: id number identification, for example 54544565245674
-          example: "54544565245674"
-        phoneCode:
-          maxLength: 3
-          minLength: 2
-          type: string
-          description: Customer code country, for example 52 Mexico
-          example: "52"
-        phoneNumber:
-          maxLength: 10
-          minLength: 10
-          type: string
-          description: Customer number phone
-          example: "5568576731"
-        country:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: Country of Residence ID(Use the "getCatalog" service with table cl_pais)
-          example: "52"
-        zipcode:
-          maxLength: 5
-          minLength: 5
-          type: string
-          description: Zip code
-          example: "10000"
-        province:
-          maxLength: 2
-          minLength: 1
-          type: string
-          description: Province ID, (Use the "getCatalog" service with table cl_pais)
-          example: "9"
-        city:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: City of residence ID,for example 9011 (Use the "getCatalog" service with table cl_ciudad)
-          example: "9011"
-        subdivisioncode:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: Id of colony or parish of residence,  (Use the "getCatalog" service with table cl_parroquia)
-          example: "90111959"
-        townCode:
-          maxLength: 6
-          minLength: 1
-          type: string
-          description: Id of locality of residence (Use the service searchLocationCatalogwith City of residence ID)
-          example: "146"
-        street:
-          maxLength: 25
-          minLength: 1
-          type: string
-          description: street name of the customer's home
-          example: my street
-        externalNumber:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: External number of the customer's home
-          example: "10"
-        internalNumber:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Inside number of the customer's home  (NA is always 0 )
-          example: "0"
-        referenceAddress:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: Reference Address
-          example: street park
-        timeCurrentRecide:
-          maxLength: 3
-          minLength: 1
-          type: string
-          description: Customer time current residence
-          example: "3"
-        AddressTypeCode:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Customer type address (Use the "getCatalog" service with table cl_tdireccion)
-          example: AE
-        propertyTypeCode:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Type of provider where you live (Use the "getCatalog" service with table cl_tpropiedad)
-          example: PRO
-        anotherAddress:
-          maxLength: 15
-          minLength: 1
-          type: string
-          description: Description of the other type of addres
-          example: my type address
-        nationality:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Client nationality (Use the "getCatalog" service with table cl_pais)
-          example: "484"
-        countryBirth:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Country of birth of the client (Use the "getCatalog" service with table cl_pais)
-          example: "484"
-        proviceBirth:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Type of occupation performed (Use the "getCatalog" service with table cl_provincia)
-          example: "9"
-        occupation:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Customer occupation(Use the "getCatalog" service with table cl_ocupacion)
-          example: EMP
-        activity:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: Type of activity do you? (Use the "getCatalog" service with table cl_actividad_ec)
-          example: "90001"
-        incomeLevel:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: ncome Level Type (Use the "getCatalog" service with table cl_ingresos)
-          example: "10742"
-        legalIncomeSource:
-          maxLength: 1
-          minLength: 1
-          type: string
-          description: Indicates whether the customer's revenue comes from a legal source(S or N)
-          example: S
-        noConnectionIllegalNetworks:
-          maxLength: 1
-          minLength: 1
-          type: string
-          description: Indicates if the client has connections to illegal networks(S or N)
-          example: S
-        companyName:
-          maxLength: 15
-          minLength: 1
-          type: string
-          description: Name of the client's work company
-          example: my company
-        incomeLevelEntity:
-          maxLength: 5
-          minLength: 1
-          type: string
-          description: Customer's primary revenue city ID  (Use the "getCatalog" service with table cl_provincia)
-          example: "9"
-        otherMexicanAccount:
-          maxLength: 1
-          minLength: 1
-          type: string
-          description: Indicates if the client has another account in the Mexican financial system(S or N)
-          example: "N"
-        paymentCard:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: From the new savings account. Estimated
-          example: "20"
-        paymentRecharge:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: From the new savings account. Estimated percentage that will be allocated to telephone top
-          example: "20"
-        provisionCash:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: From the new savings account. Estimated percentage that will be allocated to savings
-          example: "20"
-        electronicTransfer:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: From the new savings account. Estimated percentage that will be used to pay for services
-          example: "20"
-        averageBalance:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: Id of the range corresponding to the estimated average monthly balance of the new savings account(Use the "getCatalog" service with table cl_sdo_prom_mes_n2)
-          example: MTMM2
-        amountTransaction:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: d of the range corresponding to the estimated average monthly transactional amount of the new savings account(Use the "getCatalog" service with table cl_mto_trn_mes_n2)
-          example: MTMM2
-        numberTransaction:
-          maxLength: 10
-          minLength: 1
-          type: string
-          description: Id of the range corresponding to the estimated average number of transactions in the new savings account(Use the "getCatalog" service with table cl_num_trn_mes_n2)
-          example: NTMB2
-        geolocalizationLongitude:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: Longitude from where the client registration is made
-          example: "-99.0517687"
-        geolocalizationLatitude:
-          maxLength: 20
-          minLength: 1
-          type: string
-          description: Latitude from where customer registration takes place
-          example: "19.281447"
-        isMati:
-          maxLength: 1
-          minLength: 1
-          type: string
-          description: ndicates whether the customer's identity document was verified by the META/MATI provider (S or N)
-          example: S
+        properties:
+          firtname:
+            type: string
+            description:  firts name customer
+            example: Jose
+            minLength: 1
+            maxLength: 20
+          secondName:
+            type: string
+            description:  second name customer
+            minLength: 1
+            maxLength: 20
+            example: Carlos  
+          lastName:
+            type: string
+            description:  last name customer
+            minLength: 1
+            maxLength: 20
+            example: Olmos
+          secondLastName:
+            type: string
+            description:  second last name customer
+            minLength: 1
+            maxLength: 20
+            example: Solis
+          gender:
+            type: string
+            description: M for male and F for female
+            minLength: 1
+            maxLength: 1
+            example: M
+          birthDate:
+            type: string
+            description: Birthdate (yyyy-MM-dd)
+            example: 1986-10-01 
+            format: date
+            minLength: 10
+            maxLength: 10
+          nationality:
+            type: string
+            description:  Client nationality (Use the "getCatalog" service with table cl_pais)
+            minLength: 1
+            maxLength: 5
+            example: 484
+          proviceBirth:
+            type: string
+            description:  Type of occupation performed (Use the "getCatalog" service with table cl_provincia)
+            minLength: 1
+            maxLength: 5
+            example: 9  
+          civilStatus:
+            type: string
+            description: Civil status (Use the "getCatalog" service with table cl_ecivil)
+            minLength: 1
+            maxLength: 5
+            example: CA
+          idNumber:
+            type: string
+            description: Id number (CURP)
+            minLength: 1
+            maxLength: 18
+            example: 'OOSC861001HMCLLR05'
+          idType:
+            type: string
+            description: Id type
+            minLength: 1
+            maxLength: 5
+            example: CURP
+          rfc:
+            type: string
+            description: RFC number
+            minLength: 1
+            maxLength: 30
+            example: 'BAVC700223U18'
+          identificationType:
+            type: string
+            description:  Type identity
+            minLength: 1
+            maxLength: 10
+            example: INE
+          identificationNumber:
+            type: string
+            description: Id number identification, for example 54544565245674
+            minLength: 1
+            maxLength: 40
+            example: 54544565245674
+          activity:
+            type: string
+            description:  Type of activity do you? (Use the "getCatalog" service with table cl_actividad_ec)
+            minLength: 1
+            maxLength: 10
+            example: 90001
+          companyName:
+            type: string
+            description:  Name of the client's work company
+            minLength: 1
+            maxLength: 15
+            example: My company
+          operationType:
+            type: string
+            description:  Type of activity do you? (Use the "getCatalog" service with table )
+            minLength: 1
+            maxLength: 10
+            example: 2
+          incomeLevelEntity:
+            type: string
+            description:  Customer's primary revenue city ID  (Use the "getCatalog" service with table cl_provincia)
+            minLength: 1
+            maxLength: 10
+            example: 9
+          legalIncomeSource:
+            type: string
+            description:  Indicates whether the customer's revenue comes from a legal source(S or N)
+            minLength: 1
+            maxLength: 1
+            example: S
+          noConnectionIllegalNetworks:
+            type: string
+            description:  Indicates if the client has connections to illegal networks(S or N)
+            minLength: 1
+            maxLength: 1
+            example: S
+          validityDate:
+            type: string
+            description:  yyyy-MM-dd
+            example: 986-10-01 
+            format: date
+            minLength: 10
+            maxLength: 10  
+          email:
+            type: string
+            description:  Customer email
+            format: email
+            minLength: 1
+            maxLength: 35
+            example: jcolmos@cobis.com
+          phoneNumber:
+            type: string
+            description: Customer number phone
+            minLength: 10
+            maxLength: 10     
+            example: 5568576731
+          zipcode:
+            type: string
+            description:  Zip code
+            minLength: 5
+            maxLength: 5
+            example: 10000
+          province:
+            type: string
+            description: Province ID, (Use the "getCatalog" service with table cl_pais)
+            minLength: 1
+            maxLength: 10
+            example: 9
+          townCode:
+            type: string
+            description:  Id of locality of residence (Use the service searchLocationCatalogwith City of residence ID)
+            minLength: 1
+            maxLength: 10
+            example: 146
+          city:
+            type: string
+            description:  City of residence ID,for example 9011 (Use the "getCatalog" service with table cl_ciudad)
+            minLength: 1
+            maxLength: 10
+            example: 9011
+          subdivisioncode:
+            type: string
+            description:  Id of colony or parish of residence,  (Use the "getCatalog" service with table cl_parroquia)
+            minLength: 1
+            maxLength: 10
+            example: 90111959
+          street:
+            type: string
+            description:  street name of the customer's home
+            minLength: 1
+            maxLength: 30
+            example: My street
+          externalNumber:
+            type: string
+            description:  External number of the customer's home 
+            minLength: 1
+            maxLength: 10
+            example: 10
+          internalNumber:
+            type: string
+            description:  Inside number of the customer's home  (NA is always 0 )
+            minLength: 1
+            maxLength: 10
+            example: 0
+          referenceAddress:
+            type: string
+            description: Reference Address
+            minLength: 1
+            maxLength: 20
+            example: Street park
+          timeCurrentRecide:
+            type: integer
+            description:  Customer time current residence (years)
+            minLength: 1
+            maxLength: 10
+            example: 3
+          addressTypeCode:
+            type: string
+            description:  Customer type address (Use the "getCatalog" service with table cl_tdireccion)
+            minLength: 1
+            maxLength: 10
+            example: AE
+          propertyTypeCode:
+            type: string
+            description:  Type of provider where you live (Use the "getCatalog" service with table cl_tpropiedad)
+            minLength: 1
+            maxLength: 10
+            example: PRO
+          countryBirth:
+            type: string
+            description:  Country of birth of the client (Use the "getCatalog" service with table cl_pais)
+            minLength: 1
+            maxLength: 10
+            example: 484
+          occupation:
+            type: string
+            description:  Customer occupation(Use the "getCatalog" service with table cl_ocupacion)
+            minLength: 1
+            maxLength: 10
+            example: EMP
+          incomeLevel:
+            type: string
+            description:  ncome Level Type (Use the "getCatalog" service with table cl_ingresos)
+            minLength: 1
+            maxLength: 10   
+            example: 10742
+          otherMexicanAccount:
+            type: string
+            description:  Indicates if the client has another account in the Mexican financial system(S or N)
+            minLength: 1
+            maxLength: 1
+            example: N
+          paymentCard:
+            type: integer
+            description:  From the new savings account. Estimated percentage
+            minLength: 1
+            maxLength: 10
+            example: 20
+          paymentRecharge:
+            type: integer
+            description:  From the new savings account. Estimated percentage that will be allocated to telephone top
+            minLength: 1
+            maxLength: 10
+            example: 20
+          provisionCash:
+            type: integer
+            description:  From the new savings account. Estimated percentage that will be allocated to savings
+            minLength: 1
+            maxLength: 10
+            example: 20
+          electronicTransfer:
+            type: integer
+            description:  From the new savings account. Estimated percentage that will be used to pay for services
+            minLength: 1
+            maxLength: 10
+            example: 20
+          servicesPay:
+            type: integer
+            description:  From the new savings account. Estimated percentage that will be used to pay for services
+            minLength: 1
+            maxLength: 10
+            example: 20
+          averageBalance:
+            type: string
+            description:  Id of the range corresponding to the estimated average monthly balance of the new savings account(Use the "getCatalog" service with table cl_sdo_prom_mes_n2)
+            minLength: 1
+            maxLength: 10
+            example: MTMM2
+          amountTransaction:
+            type: string
+            description:  d of the range corresponding to the estimated average monthly transactional amount of the new savings account(Use the "getCatalog" service with table cl_mto_trn_mes_n2)
+            minLength: 1
+            maxLength: 10
+            example: MTMM2
+          numberTransaction:
+            type: string
+            description:  Id of the range corresponding to the estimated average number of transactions in the new savings account(Use the "getCatalog" service with table cl_num_trn_mes_n2)
+            minLength: 1
+            maxLength: 10
+            example: NTMB2
+          geolocalizationLongitude:
+            type: string
+            description:  Longitude from where the client registration is made
+            minLength: 1
+            maxLength: 24
+            example: -99.0517687
+          geolocalizationLatitude:
+            type: string
+            description:  Latitude from where customer registration takes place
+            minLength: 1
+            maxLength: 24
+            example: 19.281447
+          identityValidated:
+            type: string
+            description: Indicates whether the customer's identity document was verified by the META/MATI provider (S or N)
+            minLength: 1
+            maxLength: 1
+            example: S
     CreateCustomerResponse:
       properties:
         customerCobisCode:
