@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_api_create_customer</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_activity_code" dataType="varchar" direction="in" />
+    <parameter name="@i_address" dataType="varchar" direction="in" />
+    <parameter name="@i_address_type_code" dataType="varchar" direction="in" />
+    <parameter name="@i_amount_transaction" dataType="varchar" direction="in" />
+    <parameter name="@i_average_balance" dataType="varchar" direction="in" />
+    <parameter name="@i_birthdate" dataType="datetime" direction="in" />
+    <parameter name="@i_city_code" dataType="int" direction="in" />
+    <parameter name="@i_countrybirth_code" dataType="int" direction="in" />
+    <parameter name="@i_civil_status" dataType="varchar" direction="in" />
+    <parameter name="@i_company_name" dataType="varchar" direction="in" />
+    <parameter name="@i_electronic_transfer" dataType="int" direction="in" />
+    <parameter name="@i_externalnumber" dataType="int" direction="in" />
+    <parameter name="@i_gender_code" dataType="char" direction="in" />
+    <parameter name="@i_geolocatization_latitude" dataType="decimal" direction="in" />
+    <parameter name="@i_geolocatization_longitude" dataType="decimal" direction="in" />
+    <parameter name="@i_identification_number" dataType="varchar" direction="in" />
+    <parameter name="@i_identification_type_code" dataType="varchar" direction="in" />
+    <parameter name="@i_identity_validated" dataType="char" direction="in" />
+    <parameter name="@i_incomelevel" dataType="varchar" direction="in" />
+    <parameter name="@i_incomelevel_entity" dataType="varchar" direction="in" />
+    <parameter name="@i_internalnumber" dataType="int" direction="in" />
+    <parameter name="@i_lastname" dataType="varchar" direction="in" />
+    <parameter name="@i_legalincomesource" dataType="char" direction="in" />
+    <parameter name="@i_mail" dataType="varchar" direction="in" />
+    <parameter name="@i_name" dataType="varchar" direction="in" />
+    <parameter name="@i_nationality" dataType="varchar" direction="in" />
+    <parameter name="@i_noconnectiontoillegalnetworks" dataType="char" direction="in" />
+    <parameter name="@i_number" dataType="varchar" direction="in" />
+    <parameter name="@i_number_transaction" dataType="varchar" direction="in" />
+    <parameter name="@i_occupation_code" dataType="varchar" direction="in" />
+    <parameter name="@i_operation_type" dataType="varchar" direction="in" />
+    <parameter name="@i_other_mexican_account" dataType="varchar" direction="in" />
+    <parameter name="@i_otherlastname" dataType="varchar" direction="in" />
+    <parameter name="@i_othername" dataType="varchar" direction="in" />
+    <parameter name="@i_payment_card" dataType="int" direction="in" />
+    <parameter name="@i_payment_recharge" dataType="int" direction="in" />
+    <parameter name="@i_payment_service" dataType="int" direction="in" />
+    <parameter name="@i_propertytype_code" dataType="varchar" direction="in" />
+    <parameter name="@i_province_code" dataType="smallint" direction="in" />
+    <parameter name="@i_provincebirth_code" dataType="smallint" direction="in" />
+    <parameter name="@i_provision_cash" dataType="int" direction="in" />
+    <parameter name="@i_rfc" dataType="varchar" direction="in" />
+    <parameter name="@i_secondaryidentification_number" dataType="varchar" direction="in" />
+    <parameter name="@i_secondaryidentification_type_code" dataType="varchar" direction="in" />
+    <parameter name="@i_street" dataType="varchar" direction="in" />
+    <parameter name="@i_subdivision_code" dataType="int" direction="in" />
+    <parameter name="@i_timeincurrentresidence" dataType="int" direction="in" />
+    <parameter name="@i_town_code" dataType="varchar" direction="in" />
+    <parameter name="@i_validity_date" dataType="datetime" direction="in" />
+    <parameter name="@i_zipcode_code" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"=1</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="mensaje" />
+      </columns>
+      <queryText>SELECT "code"=0,"mensaje"="SUCCESSFULL"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="externalCustomerId " />
+      </columns>
+      <queryText>SELECT  externalCustomerId = 0 </queryText>
+    </query>
+  </queries>
+</procedure>

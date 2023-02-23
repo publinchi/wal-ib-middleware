@@ -34,19 +34,105 @@ import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperat
 @CTSService
 public class ServiceContractOperationsApi extends CTSAbstractService implements IServiceContractOperationsApi {
 
+	@CTSProcedure(
+		name = "cobis..sp_api_create_customer",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inCreateCustomerRequest",
+				input = {
+				
+					@CTSInputParam(field = "activity", param = "@i_activity_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "referenceAddress", param = "@i_address", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "addressTypeCode", param = "@i_address_type_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "amountTransaction", param = "@i_amount_transaction", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "averageBalance", param = "@i_average_balance", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "birthDate", param = "@i_birthdate", dataType = ICTSTypes.SQLDATETIME),
+					@CTSInputParam(field = "city", param = "@i_city_code", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "countryBirth", param = "@i_countrybirth_code", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "civilStatus", param = "@i_civil_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "companyName", param = "@i_company_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "electronicTransfer", param = "@i_electronic_transfer", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "externalNumber", param = "@i_externalnumber", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "gender", param = "@i_gender_code", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "geolocalizationLatitude", param = "@i_geolocatization_latitude", dataType = ICTSTypes.SQLDECIMAL),
+					@CTSInputParam(field = "geolocalizationLongitude", param = "@i_geolocatization_longitude", dataType = ICTSTypes.SQLDECIMAL),
+					@CTSInputParam(field = "idNumber", param = "@i_identification_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "idType", param = "@i_identification_type_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "identityValidated", param = "@i_identity_validated", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "incomeLevel", param = "@i_incomelevel", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "incomeLevelEntity", param = "@i_incomelevel_entity", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "internalNumber", param = "@i_internalnumber", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "lastName", param = "@i_lastname", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "legalIncomeSource", param = "@i_legalincomesource", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "email", param = "@i_mail", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "firtname", param = "@i_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "nationality", param = "@i_nationality", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "noConnectionIllegalNetworks", param = "@i_noconnectiontoillegalnetworks", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "phoneNumber", param = "@i_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "numberTransaction", param = "@i_number_transaction", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "occupation", param = "@i_occupation_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "operationType", param = "@i_operation_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "otherMexicanAccount", param = "@i_other_mexican_account", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "secondLastName", param = "@i_otherlastname", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "secondName", param = "@i_othername", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "paymentCard", param = "@i_payment_card", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "paymentRecharge", param = "@i_payment_recharge", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "servicesPay", param = "@i_payment_service", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "propertyTypeCode", param = "@i_propertytype_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "province", param = "@i_province_code", dataType = ICTSTypes.SQLINT2),
+					@CTSInputParam(field = "proviceBirth", param = "@i_provincebirth_code", dataType = ICTSTypes.SQLINT2),
+					@CTSInputParam(field = "provisionCash", param = "@i_provision_cash", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "rfc", param = "@i_rfc", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "identificationNumber", param = "@i_secondaryidentification_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "identificationType", param = "@i_secondaryidentification_type_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "street", param = "@i_street", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "subdivisioncode", param = "@i_subdivision_code", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "timeCurrentRecide", param = "@i_timeincurrentresidence", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "townCode", param = "@i_town_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "validityDate", param = "@i_validity_date", dataType = ICTSTypes.SQLDATETIME),
+					@CTSInputParam(field = "zipcode", param = "@i_zipcode_code", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500094")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnCreateCustomerResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnCreateCustomerResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnCreateCustomerResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
+      columns = {
+		    @CTSColumn(field = "customerCobisCode", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
   /**
   * {@inheritDoc}
   */
       public ServiceResponseTO createCustomer(ServiceRequestTO requestTO) {
-        ServiceResponseTO responseTO = new ServiceResponseTO();
-        
-		    /*-- Input DTOs --
-		    CreateCustomerRequest inCreateCustomerRequest = (CreateCustomerRequest)requestTO.getValue("inCreateCustomerRequest");
-          
-		     */
-		    
-    	  responseTO.setSuccess(true);
-        return responseTO;
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
       }
     
 	@CTSProcedure(
