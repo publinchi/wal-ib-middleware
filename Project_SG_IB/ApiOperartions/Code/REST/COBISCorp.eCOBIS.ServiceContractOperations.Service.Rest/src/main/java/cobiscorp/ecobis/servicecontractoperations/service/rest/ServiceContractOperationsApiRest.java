@@ -289,6 +289,33 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
+      if(outResponseValidateCustomerIdentityCard.getMessage()!=null 
+    		  && outResponseValidateCustomerIdentityCard.getMessage().getCode()>0
+    		  ) {
+    	  
+    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40009) {
+    	  
+    		  return Response.status(420).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
+    	  }
+    	  
+    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40010) {
+        	  
+    		  return Response.status(421).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
+    	  }
+    	  
+    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40011) {
+        	  
+    		  return Response.status(422).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
+    	  }
+    	  
+    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40013) {
+        	  
+    		  return Response.status(423).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
+    	  }
+      }
+      
+      outResponseValidateCustomerIdentityCard.setSuccess(true);
+      
           LOGGER.logDebug("Ends service execution REST: validateCustomerIdentityCard");
           return Response.ok(outResponseValidateCustomerIdentityCard).build();
         

@@ -585,7 +585,7 @@ throw new CTSRestException("404",null);
                         return dto;
                         }
                         },false);
-                        outResponseValidateCustomerIdentityCard=returnResponseValidateCustomerIdentityCard;
+                        outResponseValidateCustomerIdentityCard.setSuccess(returnResponseValidateCustomerIdentityCard.isSuccess());
             }else {
             mapBlank++;
 
@@ -633,6 +633,9 @@ throw new CTSRestException("404",null);
             mapBlank++;
 
             }
+            
+            
+            
           
       //End map returns
       if(mapBlank!=0&&mapBlank==mapTotal){

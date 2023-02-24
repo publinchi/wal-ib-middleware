@@ -29,8 +29,8 @@ import java.util.HashMap;
 
 public class ResponseValidateIdentity implements Serializable {
   private Boolean success;
-  private String numeroVerficacion;
-  private String nombreEvento;
+  private String verificationNumber;
+  private String eventName;
   private Message message;
   public Boolean isSuccess(){
     return this.success;
@@ -38,17 +38,17 @@ public class ResponseValidateIdentity implements Serializable {
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public String getNumeroVerficacion(){
-    return this.numeroVerficacion;
+  public String getVerificationNumber(){
+    return this.verificationNumber;
   }
-  public void setNumeroVerficacion(String numeroVerficacion ){
-    this.numeroVerficacion=numeroVerficacion;
+  public void setVerificationNumber(String verificationNumber ){
+    this.verificationNumber=verificationNumber;
   }
-  public String getNombreEvento(){
-    return this.nombreEvento;
+  public String getEventName(){
+    return this.eventName;
   }
-  public void setNombreEvento(String nombreEvento ){
-    this.nombreEvento=nombreEvento;
+  public void setEventName(String eventName ){
+    this.eventName=eventName;
   }
   public Message messageInstance(){
 	if(this.message==null){
