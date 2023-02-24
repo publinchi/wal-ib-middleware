@@ -2,16 +2,6 @@
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
   <collection type="List" length="50" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
-      <field type="String" name="name" value="externalCustomerId" />
-      <field type="String" name="type" value="int?" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
       <field type="String" name="name" value="firtname" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -21,7 +11,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="5" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
       <field type="String" name="name" value="secondName" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -31,7 +21,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="3">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="5" index="2">
       <field type="String" name="name" value="lastName" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -41,7 +31,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="4">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="3">
       <field type="String" name="name" value="secondLastName" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -51,47 +41,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="8" index="5">
-      <field type="String" name="name" value="idNumber" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="18" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="9" index="6">
-      <field type="String" name="name" value="idType" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="5" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="10" index="7">
-      <field type="String" name="name" value="birthDate" />
-      <field type="String" name="type" value="date?" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="11" index="8">
-      <field type="String" name="name" value="validityDate" />
-      <field type="String" name="type" value="date?" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="12" index="9">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="4">
       <field type="String" name="name" value="gender" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -101,197 +51,17 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="13" index="10">
-      <field type="String" name="name" value="email" />
-      <field type="String" name="type" value="string" />
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="8" index="5">
+      <field type="String" name="name" value="birthDate" />
+      <field type="String" name="type" value="date?" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="35" />
+      <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="14" index="11">
-      <field type="String" name="name" value="identificationType" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="15" index="12">
-      <field type="String" name="name" value="identificationNumber" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="40" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="16" index="13">
-      <field type="String" name="name" value="phoneCode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="3" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="17" index="14">
-      <field type="String" name="name" value="phoneNumber" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="18" index="15">
-      <field type="String" name="name" value="country" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="19" index="16">
-      <field type="String" name="name" value="zipcode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="5" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="20" index="17">
-      <field type="String" name="name" value="province" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="2" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="21" index="18">
-      <field type="String" name="name" value="city" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="22" index="19">
-      <field type="String" name="name" value="subdivisioncode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="23" index="20">
-      <field type="String" name="name" value="townCode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="6" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="24" index="21">
-      <field type="String" name="name" value="street" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="25" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="25" index="22">
-      <field type="String" name="name" value="externalNumber" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="26" index="23">
-      <field type="String" name="name" value="internalNumber" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="5" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="27" index="24">
-      <field type="String" name="name" value="referenceAddress" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="20" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="28" index="25">
-      <field type="String" name="name" value="timeCurrentRecide" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="3" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="29" index="26">
-      <field type="String" name="name" value="addressTypeCode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="5" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="30" index="27">
-      <field type="String" name="name" value="propertyTypeCode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="5" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="31" index="28">
-      <field type="String" name="name" value="anotherAddress" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="15" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="32" index="29">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="9" index="6">
       <field type="String" name="name" value="nationality" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -301,17 +71,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="33" index="30">
-      <field type="String" name="name" value="countryBirth" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="5" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="34" index="31">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="10" index="7">
       <field type="String" name="name" value="proviceBirth" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -321,8 +81,8 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="35" index="32">
-      <field type="String" name="name" value="occupation" />
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="11" index="8">
+      <field type="String" name="name" value="civilStatus" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="5" />
@@ -331,7 +91,57 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="36" index="33">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="12" index="9">
+      <field type="String" name="name" value="idNumber" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="18" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="13" index="10">
+      <field type="String" name="name" value="idType" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="5" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="14" index="11">
+      <field type="String" name="name" value="rfc" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="30" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="15" index="12">
+      <field type="String" name="name" value="identificationType" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="16" index="13">
+      <field type="String" name="name" value="identificationNumber" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="40" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="17" index="14">
       <field type="String" name="name" value="activity" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -341,37 +151,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="37" index="34">
-      <field type="String" name="name" value="incomeLevel" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="38" index="35">
-      <field type="String" name="name" value="legalIncomeSource" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="1" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="39" index="36">
-      <field type="String" name="name" value="noConnectionIllegalNetworks" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="1" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="40" index="37">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="18" index="15">
       <field type="String" name="name" value="companyName" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -381,8 +161,78 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="41" index="38">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="19" index="16">
+      <field type="String" name="name" value="operationType" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="20" index="17">
       <field type="String" name="name" value="incomeLevelEntity" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="21" index="18">
+      <field type="String" name="name" value="legalIncomeSource" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="1" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="22" index="19">
+      <field type="String" name="name" value="noConnectionIllegalNetworks" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="1" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="23" index="20">
+      <field type="String" name="name" value="validityDate" />
+      <field type="String" name="type" value="date?" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="24" index="21">
+      <field type="String" name="name" value="email" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="35" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="25" index="22">
+      <field type="String" name="name" value="phoneNumber" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="26" index="23">
+      <field type="String" name="name" value="zipcode" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="5" />
@@ -391,7 +241,147 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="42" index="39">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="27" index="24">
+      <field type="String" name="name" value="province" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="28" index="25">
+      <field type="String" name="name" value="townCode" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="29" index="26">
+      <field type="String" name="name" value="city" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="30" index="27">
+      <field type="String" name="name" value="subdivisioncode" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="31" index="28">
+      <field type="String" name="name" value="street" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="30" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="32" index="29">
+      <field type="String" name="name" value="externalNumber" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="33" index="30">
+      <field type="String" name="name" value="internalNumber" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="34" index="31">
+      <field type="String" name="name" value="referenceAddress" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="20" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="35" index="32">
+      <field type="String" name="name" value="timeCurrentRecide" />
+      <field type="String" name="type" value="int?" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="36" index="33">
+      <field type="String" name="name" value="addressTypeCode" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="37" index="34">
+      <field type="String" name="name" value="propertyTypeCode" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="38" index="35">
+      <field type="String" name="name" value="countryBirth" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="39" index="36">
+      <field type="String" name="name" value="occupation" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="40" index="37">
+      <field type="String" name="name" value="incomeLevel" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="10" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="41" index="38">
       <field type="String" name="name" value="otherMexicanAccount" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -401,41 +391,51 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="43" index="40">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="42" index="39">
       <field type="String" name="name" value="paymentCard" />
-      <field type="String" name="type" value="string" />
+      <field type="String" name="type" value="int?" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="43" index="40">
+      <field type="String" name="name" value="paymentRecharge" />
+      <field type="String" name="type" value="int?" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="44" index="41">
-      <field type="String" name="name" value="paymentRecharge" />
-      <field type="String" name="type" value="string" />
+      <field type="String" name="name" value="provisionCash" />
+      <field type="String" name="type" value="int?" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
+      <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="45" index="42">
-      <field type="String" name="name" value="provisionCash" />
-      <field type="String" name="type" value="string" />
+      <field type="String" name="name" value="electronicTransfer" />
+      <field type="String" name="type" value="int?" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
+      <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="46" index="43">
-      <field type="String" name="name" value="electronicTransfer" />
-      <field type="String" name="type" value="string" />
+      <field type="String" name="name" value="servicesPay" />
+      <field type="String" name="type" value="int?" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="10" />
+      <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
@@ -475,7 +475,7 @@
       <field type="String" name="name" value="geolocalizationLongitude" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="20" />
+      <field type="int" name="maxLength" value="24" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
@@ -485,14 +485,14 @@
       <field type="String" name="name" value="geolocalizationLatitude" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="20" />
+      <field type="int" name="maxLength" value="24" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="52" index="49">
-      <field type="String" name="name" value="isMati" />
+      <field type="String" name="name" value="identityValidated" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="1" />
