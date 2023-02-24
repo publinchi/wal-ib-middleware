@@ -103,6 +103,17 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
+      if(outCreateCustomerResponse.getMessage()!=null 
+    		  && outCreateCustomerResponse.getMessage().getCode()>0
+    		  ) {   	  
+    	
+    	  outCreateCustomerResponse.setSuccess(false);
+    	  
+    		  return Response.status(400).entity(outCreateCustomerResponse).build();
+          }
+      
+      outCreateCustomerResponse.setSuccess(true);
+      
           LOGGER.logDebug("Ends service execution REST: createCustomer");
           return Response.ok(outCreateCustomerResponse).build();
         
@@ -141,6 +152,16 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
+      if(outSingleResponseEncriptData.get(0).getMessage()!=null 
+    		  && outSingleResponseEncriptData.get(0).getMessage().getCode()>0
+    		  ) {   	  
+    	
+    	  outSingleResponseEncriptData.get(0).setSuccess(false);
+    		  return Response.status(400).entity(outSingleResponseEncriptData.get(0)).build();
+          }
+      
+      
+      outSingleResponseEncriptData.get(0).setSuccess(true);
           LOGGER.logDebug("Ends service execution REST: encryptData");
           return Response.ok(outSingleResponseEncriptData).build();
         
@@ -179,7 +200,18 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
+      
+      
+      if(outSingleResponseOtp.get(0).getMessage()!=null 
+    		  && outSingleResponseOtp.get(0).getMessage().getCode()>0
+    		  ) {   	  
+    	
+    	  outSingleResponseOtp.get(0).setSuccess(false);
+    		  return Response.status(400).entity(outSingleResponseOtp.get(0)).build();
+          }
           LOGGER.logDebug("Ends service execution REST: generateTransactionFactor");
+          
+          outSingleResponseOtp.get(0).setSuccess(true);
           return Response.ok(outSingleResponseOtp).build();
         
       }
@@ -217,6 +249,16 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
+      
+      if(outResponseCatalog.getMessage()!=null 
+    		  && outResponseCatalog.getMessage().getCode()>0
+    		  ) {   	  
+    	
+    	  outResponseCatalog.setSuccess(false);
+    		  return Response.status(400).entity(outResponseCatalog).build();
+          }
+      
+      outResponseCatalog.setSuccess(true);
           LOGGER.logDebug("Ends service execution REST: getCatalog");
           return Response.ok(outResponseCatalog).build();
         
@@ -256,6 +298,18 @@
       }
       
           LOGGER.logDebug("Ends service execution REST: getUserEntityInformation");
+          
+          
+          if(outResponseGetUserEntityInformation.getMessage()!=null 
+        		  && outResponseGetUserEntityInformation.getMessage().getCode()>0
+        		  ) {   	  
+        	
+        	  outResponseGetUserEntityInformation.setSuccess(false);
+        		  return Response.status(400).entity(outResponseGetUserEntityInformation).build();
+          }
+          
+          outResponseGetUserEntityInformation.setSuccess(true);
+          
           return Response.ok(outResponseGetUserEntityInformation).build();
         
       }
@@ -291,27 +345,10 @@
       
       if(outResponseValidateCustomerIdentityCard.getMessage()!=null 
     		  && outResponseValidateCustomerIdentityCard.getMessage().getCode()>0
-    		  ) {
-    	  
-    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40009) {
-    	  
-    		  return Response.status(420).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
-    	  }
-    	  
-    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40010) {
-        	  
-    		  return Response.status(421).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
-    	  }
-    	  
-    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40011) {
-        	  
-    		  return Response.status(422).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
-    	  }
-    	  
-    	  if(outResponseValidateCustomerIdentityCard.getMessage().getCode()==40013) {
-        	  
-    		  return Response.status(423).entity(outResponseValidateCustomerIdentityCard.getMessage()).build();
-    	  }
+    		  ) {   	  
+    	
+    	  outResponseValidateCustomerIdentityCard.setSuccess(false);
+    		  return Response.status(400).entity(outResponseValidateCustomerIdentityCard).build();
       }
       
       outResponseValidateCustomerIdentityCard.setSuccess(true);
@@ -354,6 +391,15 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
+      if(outResponseValidateIdentity.getMessage()!=null 
+    		  && outResponseValidateIdentity.getMessage().getCode()>0
+    		  ) {   	  
+    	
+    	  outResponseValidateIdentity.setSuccess(false);
+    		  return Response.status(400).entity(outResponseValidateIdentity).build();
+      }
+      
+      outResponseValidateIdentity.setSuccess(true);
           LOGGER.logDebug("Ends service execution REST: validateIdentity");
           return Response.ok(outResponseValidateIdentity).build();
         
