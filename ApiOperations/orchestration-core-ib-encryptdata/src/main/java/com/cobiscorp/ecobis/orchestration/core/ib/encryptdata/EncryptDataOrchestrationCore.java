@@ -101,7 +101,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		{
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, ""));
-			row.addRowData(3, new ResultSetRowColumnData(false, "Password must not be empty"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "Data must not be empty"));
 			row.addRowData(4, new ResultSetRowColumnData(false, "40001"));
 			data.addRow(row);
 
@@ -121,7 +121,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		{
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, ""));
-			row.addRowData(3, new ResultSetRowColumnData(false, "Error encrypting password"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "Error encrypting data"));
 			row.addRowData(4, new ResultSetRowColumnData(false, "50001"));
 			data.addRow(row);
 
