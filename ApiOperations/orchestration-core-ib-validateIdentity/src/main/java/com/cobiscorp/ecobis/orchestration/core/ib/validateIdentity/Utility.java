@@ -14,6 +14,6 @@ public class Utility {
 	public static final String codeInternalError="50003";
 	public static final String messagInternalError="Error retrieving ValidateIdentity information";
 	
-	public static final String  codeEmptyImageReverso ="400010";
+	public static final String  codeEmptyImageReverso ="40014";//400010
 	public static final String messageNullValidateIdentityImageReverso="The value of imageReverso is required";
 }
