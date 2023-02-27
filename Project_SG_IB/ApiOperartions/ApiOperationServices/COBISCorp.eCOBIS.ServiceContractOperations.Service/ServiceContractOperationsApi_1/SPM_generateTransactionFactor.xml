@@ -78,7 +78,11 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="4" id="16" name="mappingProperties">
+  <collection type="Map" length="5" id="16" name="mappingProperties">
+    <entry>
+      <key type="String" value="singleResult1" />
+      <value type="String" value="true" />
+    </entry>
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />

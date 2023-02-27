@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 
 public class CreateCustomerRequest implements Serializable {
-  private String firtname;
+  private String firstName;
   private String secondName;
   private String lastName;
   private String secondLastName;
@@ -78,11 +78,12 @@ public class CreateCustomerRequest implements Serializable {
   private String geolocalizationLongitude;
   private String geolocalizationLatitude;
   private String identityValidated;
-  public String getFirtname(){
-    return this.firtname;
+  private String economicSector;
+  public String getFirstName(){
+    return this.firstName;
   }
-  public void setFirtname(String firtname ){
-    this.firtname=firtname;
+  public void setFirstName(String firstName ){
+    this.firstName=firstName;
   }
   public String getSecondName(){
     return this.secondName;
@@ -377,5 +378,11 @@ public class CreateCustomerRequest implements Serializable {
   }
   public void setIdentityValidated(String identityValidated ){
     this.identityValidated=identityValidated;
+  }
+  public String getEconomicSector(){
+    return this.economicSector;
+  }
+  public void setEconomicSector(String economicSector ){
+    this.economicSector=economicSector;
   }
 }

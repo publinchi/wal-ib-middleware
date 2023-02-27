@@ -55,6 +55,7 @@
     <parameter name="@i_town_code" dataType="varchar" direction="in" />
     <parameter name="@i_validity_date" dataType="datetime" direction="in" />
     <parameter name="@i_zipcode_code" dataType="varchar" direction="in" />
+    <parameter name="@i_economic_sector" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
