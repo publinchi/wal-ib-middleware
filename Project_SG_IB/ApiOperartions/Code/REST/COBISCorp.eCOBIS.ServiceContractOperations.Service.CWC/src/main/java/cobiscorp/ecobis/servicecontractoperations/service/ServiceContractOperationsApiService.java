@@ -94,7 +94,7 @@ procedureRequestAS.addInputParam("@i_internalnumber",ICTSTypes.SQLINT4,String.va
 procedureRequestAS.addInputParam("@i_lastname",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getLastName());
 procedureRequestAS.addInputParam("@i_legalincomesource",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getLegalIncomeSource()));
 procedureRequestAS.addInputParam("@i_mail",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getEmail());
-procedureRequestAS.addInputParam("@i_name",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getFirtname());
+procedureRequestAS.addInputParam("@i_name",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getFirstName());
 procedureRequestAS.addInputParam("@i_nationality",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getNationality());
 procedureRequestAS.addInputParam("@i_noconnectiontoillegalnetworks",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getNoConnectionIllegalNetworks()));
 procedureRequestAS.addInputParam("@i_number",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getPhoneNumber());
@@ -120,6 +120,7 @@ procedureRequestAS.addInputParam("@i_timeincurrentresidence",ICTSTypes.SQLINT4,S
 procedureRequestAS.addInputParam("@i_town_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getTownCode());
 procedureRequestAS.addInputParam("@i_validity_date",ICTSTypes.SQLDATETIME,String.valueOf(ConverterUtil.calendarToString(inCreateCustomerRequest.getValidityDate())));
 procedureRequestAS.addInputParam("@i_zipcode_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getZipcode());
+procedureRequestAS.addInputParam("@i_economic_sector",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getEconomicSector());
 
 //execute procedure
 ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -287,10 +288,10 @@ throw new CTSRestException("404",null);
           * Service to generate and send an OTP to the client
           */
          @Override
-			// Return List
-			public  List<ResponseOtp>  generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException{
+			// Have only one return single result
+			public  ResponseOtp generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException{
 	  LOGGER.logDebug("Start service execution: generateTransactionFactor");
-      List<ResponseOtp> outSingleResponseOtp  = new ArrayList<>();
+      ResponseOtp outSingleResponseOtp  = new ResponseOtp();
           
       //create procedure
       ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..administra_token");
@@ -319,8 +320,8 @@ throw new CTSRestException("404",null);
       
             mapTotal++;
             if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
-                    //----------------Assume Array return
-                    List<ResponseOtp> returnResponseOtp = MapperResultUtil.mapToList(response.getResultSets().get(0), new RowMapper<ResponseOtp>() { 
+                    //----------------Assume SingleResult
+                    ResponseOtp returnResponseOtp = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseOtp>() { 
                     @Override
                     public ResponseOtp mapRow(ResultSetMapper resultSetMapper, int index) {
                     ResponseOtp dto = new ResponseOtp();

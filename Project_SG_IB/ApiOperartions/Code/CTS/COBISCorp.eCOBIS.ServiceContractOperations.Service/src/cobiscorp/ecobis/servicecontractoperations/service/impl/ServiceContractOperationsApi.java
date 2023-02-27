@@ -91,7 +91,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "timeCurrentRecide", param = "@i_timeincurrentresidence", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "townCode", param = "@i_town_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "validityDate", param = "@i_validity_date", dataType = ICTSTypes.SQLDATETIME),
-					@CTSInputParam(field = "zipcode", param = "@i_zipcode_code", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "zipcode", param = "@i_zipcode_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "economicSector", param = "@i_economic_sector", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -197,6 +198,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
     @CTSResponse(
       name = "returnResponseOtp",
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp.class,
+      singleResult = true,
       columns = {
 		    @CTSColumn(field = "success", columnIndex = 1),
 		    @CTSColumn(field = "message.code", columnIndex = 2),

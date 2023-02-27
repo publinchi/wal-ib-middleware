@@ -59,7 +59,7 @@
           */
         
 			// Return list
-			public  List<ResponseOtp>  generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
+			public  ResponseOtp  generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
           /**
           * Get catalog
           */
