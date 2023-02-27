@@ -152,12 +152,14 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				
 				if(anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("MIG") || 
 						anOriginalRequest.readValueParam(PARAMS_IN_TYPE).toUpperCase().equals("PAS")) {
-					logger.logInfo(CLASS_NAME + " el valor de type es MIG o PAS" );			
+					logger.logInfo(CLASS_NAME + " el valor de type es MIG o PAS: "+ anOriginalRequest.readValueParam(PARAMS_IN_TYPE));			
 					if(anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO) == null
 							|| anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO).trim().equals("")) {				
 						errorCode = Utility.codeEmptyImageAnverso;
 						errorMessage = Utility.messageNullValidateIdentityImageAnverso;					
 						isFailed = true;
+					}else{
+						logger.logInfo(CLASS_NAME + " el valor de imageAnverso: "+ anOriginalRequest.readValueParam(PARAMS_IN_IMAGE_ANVERSO));
 					}
 				}
 				
@@ -169,7 +171,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			/* OPERACION 2 - CONNECTOR------------------------------------------------------ */
 			if (!isFailed) {
 				logger.logInfo(CLASS_NAME + " el valor de isFailed es false" );	
-				aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+				//aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 				if (connectorExecution(aBagSPJavaOrchestration, anOriginalRequest)) {
 					if (logger.isInfoEnabled()) {
 						logger.logDebug("Finaliza Orchestration ValidateIdentity");
@@ -226,7 +228,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			 
 		 }catch (Exception e) {
 			
-			logger.logError(CLASS_NAME +" *********  Error in " + e.getMessage(), e);
+			logger.logError(CLASS_NAME +" *********  Error in connectorExecution: " + e.getMessage(), e);
 			
 			e.printStackTrace();
 						
