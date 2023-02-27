@@ -203,14 +203,14 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				
 				// Agregar Header bloque VerificationNumber
 				
-				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, Utility.zero));
 				dataVerificationNumber.addRow(rowVerificationNumber);
 				IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
 				wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
 				
 				// Agregar Header bloque EventName
 				
-				rowEventName.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				rowEventName.addRowData(1, new ResultSetRowColumnData(false, Utility.zero));
 				dataEventName.addRow(rowEventName);
 				IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
 				wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
@@ -252,14 +252,14 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			
 			// Agregar Header bloque VerificationNumber
 			
-			rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, "0"));
+			rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, Utility.zero));
 			dataVerificationNumber.addRow(rowVerificationNumber);
 			IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
 			wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
 			
 			// Agregar Header bloque EventName
 			
-			rowEventName.addRowData(1, new ResultSetRowColumnData(false, "0"));
+			rowEventName.addRowData(1, new ResultSetRowColumnData(false, Utility.zero));
 			dataEventName.addRow(rowEventName);
 			IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
 			wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
@@ -414,8 +414,8 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 					
 					// Agregar Header bloque Message
 					
-					rowMessagge.addRowData(1, new ResultSetRowColumnData(false,"0"));
-					rowMessagge.addRowData(2, new ResultSetRowColumnData(false, "SUCCESS "));
+					rowMessagge.addRowData(1, new ResultSetRowColumnData(false,Utility.codeSuccess));
+					rowMessagge.addRowData(2, new ResultSetRowColumnData(false, Utility.SuccessValidateIdentity));
 					dataMessage.addRow(rowMessagge);
 					IResultSetBlock resultsetBlockMessage = new ResultSetBlock(metaDataMessage, dataMessage);
 					wProcedureRespFinal.addResponseBlock(resultsetBlockMessage);
@@ -458,14 +458,14 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 				
 				// Agregar Header bloque VerificationNumber
 				
-				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				rowVerificationNumber.addRowData(1, new ResultSetRowColumnData(false,Utility.zero));
 				dataVerificationNumber.addRow(rowVerificationNumber);
 				IResultSetBlock resultsetBlockVerificationNumber= new ResultSetBlock(metaDataVerificationNumber, dataVerificationNumber);
 				wProcedureRespFinal.addResponseBlock(resultsetBlockVerificationNumber);
 				
 				// Agregar Header bloque EventName
 				
-				rowEventName.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				rowEventName.addRowData(1, new ResultSetRowColumnData(false, Utility.zero));
 				dataEventName.addRow(rowEventName);
 				IResultSetBlock resultsetBlockEventName= new ResultSetBlock(metaDataEventName, dataEventName);
 				wProcedureRespFinal.addResponseBlock(resultsetBlockEventName);
