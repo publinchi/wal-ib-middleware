@@ -171,7 +171,7 @@ public class ValidateIdentity extends SPJavaOrchestrationBase {
 			/* OPERACION 2 - CONNECTOR------------------------------------------------------ */
 			if (!isFailed) {
 				logger.logInfo(CLASS_NAME + " el valor de isFailed es false" );	
-				//aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+				aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 				if (connectorExecution(aBagSPJavaOrchestration, anOriginalRequest)) {
 					if (logger.isInfoEnabled()) {
 						logger.logDebug("Finaliza Orchestration ValidateIdentity");
