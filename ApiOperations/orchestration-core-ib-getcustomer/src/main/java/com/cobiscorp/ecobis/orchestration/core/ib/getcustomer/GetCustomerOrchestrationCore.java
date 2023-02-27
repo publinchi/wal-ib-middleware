@@ -146,7 +146,7 @@ public class GetCustomerOrchestrationCore extends SPJavaOrchestrationBase {// SP
 			row.addRowData(16, new ResultSetRowColumnData(false, columns[15].getValue()));
 			row.addRowData(17, new ResultSetRowColumnData(false, "true"));
 			row.addRowData(18, new ResultSetRowColumnData(false, "0"));
-			row.addRowData(19, new ResultSetRowColumnData(false, "SUCCESS"));
+			row.addRowData(19, new ResultSetRowColumnData(false, "Success"));
 			data.addRow(row);
 
 			IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);

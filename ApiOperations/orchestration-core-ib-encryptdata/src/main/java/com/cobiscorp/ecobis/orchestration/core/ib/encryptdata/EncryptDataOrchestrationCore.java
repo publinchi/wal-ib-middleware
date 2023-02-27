@@ -136,7 +136,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		} else {
 			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
 			row.addRowData(2, new ResultSetRowColumnData(false, passEncrypt));
-			row.addRowData(3, new ResultSetRowColumnData(false, "SUCCESS"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "Success"));
 			row.addRowData(4, new ResultSetRowColumnData(false, "0"));
 			data.addRow(row);
 
