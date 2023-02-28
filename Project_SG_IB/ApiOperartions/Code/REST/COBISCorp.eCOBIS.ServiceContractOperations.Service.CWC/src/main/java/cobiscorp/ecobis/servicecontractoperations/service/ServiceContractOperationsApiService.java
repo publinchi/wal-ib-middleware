@@ -544,6 +544,75 @@ throw new CTSRestException("404",null);
         //returns data
         return outResponseGetUserEntityInformation;
       }
+
+          /**
+          * Service to Update Profile
+          */
+         @Override
+			// Return List
+			public  List<ResponseUpdateProfile>  updateProfile(RequestUpdateProfile inRequestUpdateProfile  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: updateProfile");
+      List<ResponseUpdateProfile> outSingleResponseUpdateProfile  = new ArrayList<>();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_updateProfile");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500095");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateProfile.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_email",ICTSTypes.SQLVARCHAR,inRequestUpdateProfile.getEmail());
+      procedureRequestAS.addInputParam("@i_phoneNumber",ICTSTypes.SQLVARCHAR,inRequestUpdateProfile.getPhoneNumber());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    List<ResponseUpdateProfile> returnResponseUpdateProfile = MapperResultUtil.mapToList(response.getResultSets().get(0), new RowMapper<ResponseUpdateProfile>() { 
+                    @Override
+                    public ResponseUpdateProfile mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseUpdateProfile dto = new ResponseUpdateProfile();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseUpdateProfile=returnResponseUpdateProfile ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: updateProfile");
+        //returns data
+        return outSingleResponseUpdateProfile;
+      }
+      
      @Override
 			//Have DTO
 			public ResponseValidateCustomerIdentityCard validateCustomerIdentityCard(RequestValidateCustomerIdentityCard inRequestValidateCustomerIdentityCard  )throws CTSRestException{
