@@ -36,6 +36,8 @@
     import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
+    import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
@@ -313,6 +315,45 @@
           return Response.ok(outResponseGetUserEntityInformation).build();
         
       }
+
+     /**
+          * Service to Update Profile
+          */
+        @POST
+      @Path("/apiOperations/enrollment/updateProfile")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  updateProfile(RequestUpdateProfile inRequestUpdateProfile ){
+	  LOGGER.logDebug("Start service execution REST: updateProfile");
+      List<ResponseUpdateProfile> outSingleResponseUpdateProfile  = new ArrayList<>();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateProfile.getExternalCustomerId()), new Data("email", inRequestUpdateProfile.getEmail()), new Data("phoneNumber", inRequestUpdateProfile.getPhoneNumber()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleResponseUpdateProfile=iServiceContractOperationsApiService.updateProfile( inRequestUpdateProfile );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: updateProfile");
+          return Response.ok(outSingleResponseUpdateProfile).build();
+        
+      }
+
     @POST
       @Path("/apiOperations/onbording/validateCustomerIdentityCard")
       @Consumes({"application/json"})

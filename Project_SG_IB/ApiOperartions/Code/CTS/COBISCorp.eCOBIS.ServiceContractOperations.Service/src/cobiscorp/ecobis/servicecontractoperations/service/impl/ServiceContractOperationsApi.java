@@ -323,6 +323,47 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+	  @CTSProcedure(
+		name = "cob_procesador..sp_updateProfile", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestUpdateProfile",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "email", param = "@i_email", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "phoneNumber", param = "@i_phoneNumber", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500095")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseUpdateProfile",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2),
+		    @CTSColumn(field = "message.code", columnIndex = 3)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO updateProfile(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
     
 	@CTSProcedure(
 		name = "cobis..sp_validate_identity_card_api", dbms = "SQLCTS",  
