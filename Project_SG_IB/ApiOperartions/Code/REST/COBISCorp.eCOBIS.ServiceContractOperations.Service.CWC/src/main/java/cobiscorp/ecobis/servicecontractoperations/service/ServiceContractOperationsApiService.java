@@ -108,7 +108,7 @@ procedureRequestAS.addInputParam("@i_payment_recharge",ICTSTypes.SQLINT4,String.
 procedureRequestAS.addInputParam("@i_payment_service",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getServicesPay()));
 procedureRequestAS.addInputParam("@i_propertytype_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getPropertyTypeCode());
 procedureRequestAS.addInputParam("@i_province_code",ICTSTypes.SQLINT2,String.valueOf(inCreateCustomerRequest.getProvince()));
-procedureRequestAS.addInputParam("@i_provincebirth_code",ICTSTypes.SQLINT2,String.valueOf(inCreateCustomerRequest.getProviceBirth()));
+procedureRequestAS.addInputParam("@i_provincebirth_code",ICTSTypes.SQLINT2,String.valueOf(inCreateCustomerRequest.getProvinceBirth()));
 procedureRequestAS.addInputParam("@i_provision_cash",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getProvisionCash()));
 procedureRequestAS.addInputParam("@i_rfc",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getRfc());
 procedureRequestAS.addInputParam("@i_secondaryidentification_number",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIdentificationNumber());

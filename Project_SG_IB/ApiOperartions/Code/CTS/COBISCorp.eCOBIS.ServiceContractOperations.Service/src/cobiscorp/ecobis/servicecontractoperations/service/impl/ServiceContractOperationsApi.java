@@ -80,7 +80,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "servicesPay", param = "@i_payment_service", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "propertyTypeCode", param = "@i_propertytype_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "province", param = "@i_province_code", dataType = ICTSTypes.SQLINT2),
-					@CTSInputParam(field = "proviceBirth", param = "@i_provincebirth_code", dataType = ICTSTypes.SQLINT2),
+					@CTSInputParam(field = "provinceBirth", param = "@i_provincebirth_code", dataType = ICTSTypes.SQLINT2),
 					@CTSInputParam(field = "provisionCash", param = "@i_provision_cash", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "rfc", param = "@i_rfc", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "identificationNumber", param = "@i_secondaryidentification_number", dataType = ICTSTypes.SQLVARCHAR),

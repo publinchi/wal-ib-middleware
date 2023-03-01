@@ -35,7 +35,7 @@ public class CreateCustomerRequest implements Serializable {
   private String gender;
   private java.util.Calendar birthDate;
   private String nationality;
-  private String proviceBirth;
+  private String provinceBirth;
   private String civilStatus;
   private String idNumber;
   private String rfc;
@@ -120,11 +120,11 @@ public class CreateCustomerRequest implements Serializable {
   public void setNationality(String nationality ){
     this.nationality=nationality;
   }
-  public String getProviceBirth(){
-    return this.proviceBirth;
+  public String getProvinceBirth(){
+    return this.provinceBirth;
   }
-  public void setProviceBirth(String proviceBirth ){
-    this.proviceBirth=proviceBirth;
+  public void setProvinceBirth(String provinceBirth ){
+    this.provinceBirth=provinceBirth;
   }
   public String getCivilStatus(){
     return this.civilStatus;
