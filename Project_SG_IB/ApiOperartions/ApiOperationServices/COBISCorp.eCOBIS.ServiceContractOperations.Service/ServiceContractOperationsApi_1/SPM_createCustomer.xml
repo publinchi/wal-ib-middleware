@@ -575,7 +575,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
-      <field type="String" name="dTOPropertyName" value="proviceBirth" />
+      <field type="String" name="dTOPropertyName" value="provinceBirth" />
       <field type="String" name="cTSDataType" value="SQLINT2" />
       <field type="boolean" name="allowNull" value="false" />
     </class>

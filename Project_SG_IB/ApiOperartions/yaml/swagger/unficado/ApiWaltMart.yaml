@@ -328,131 +328,132 @@ components:
           $ref: '#/components/schemas/Message'    
     CreateCustomerRequest:
         properties:
-          firtname:
+          firstName:
             type: string
-            description:  firts name customer
+            description:  firts name customer   THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             example: Jose
             minLength: 1
             maxLength: 20
-          secondName:
-            type: string
-            description:  second name customer
-            minLength: 1
-            maxLength: 20
-            example: Carlos  
           lastName:
             type: string
-            description:  last name customer
+            description:  last name customer    THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             minLength: 1
             maxLength: 20
             example: Olmos
           secondLastName:
-            type: string
-            description:  second last name customer
+            type: string 
+            description:  second last name customer  THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             minLength: 1
             maxLength: 20
             example: Solis
           gender:
             type: string
-            description: M for male and F for female
+            description: M for male and F for female    THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             minLength: 1
             maxLength: 1
             example: M
           birthDate:
             type: string
-            description: Birthdate (yyyy-MM-dd)
+            description: Birthdate (yyyy-MM-dd)          THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             example: 1986-10-01 
             format: date
             minLength: 10
             maxLength: 10
           nationality:
             type: string
-            description:  Client nationality (Use the "getCatalog" service with table cl_pais)
+            description:  Client nationality (Use the "getCatalog" service with table cl_pais)  THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             minLength: 1
             maxLength: 5
             example: 484
           proviceBirth:
             type: string
-            description:  Type of occupation performed (Use the "getCatalog" service with table cl_provincia)
+            description:  Type of occupation performed (Use the "getCatalog" service with table cl_provincia)  THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             minLength: 1
             maxLength: 5
             example: 9  
           civilStatus:
             type: string
-            description: Civil status (Use the "getCatalog" service with table cl_ecivil)
+            description: Civil status (Use the "getCatalog" service with table cl_ecivil)   THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 5
             example: CA
           idNumber:
             type: string
-            description: Id number (CURP)
+            description: Id number (CURP)    THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 18
             example: 'OOSC861001HMCLLR05'
-          idType:
-            type: string
-            description: Id type
-            minLength: 1
-            maxLength: 5
-            example: CURP
           rfc:
             type: string
-            description: RFC number
+            description: RFC number      THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 30
             example: 'BAVC700223U18'
           identificationType:
             type: string
-            description:  Type identity
+            description:  Type identity     THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 10
             example: INE
           identificationNumber:
             type: string
-            description: Id number identification, for example 54544565245674
+            description: Id number identification, for example 54544565245674     THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 40
             example: 54544565245674
           activity:
             type: string
-            description:  Type of activity do you? (Use the "getCatalog" service with table cl_actividad_ec)
+            description:  Type of activity do you? (Use the "getCatalog" service with table cl_actividad_ec)    THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 10
-            example: 90001
+            example: 90001 
+          incomeLevel:
+            type: string
+            description:  ncome Level Type (Use the "getCatalog" service with table cl_ingresos)
+            minLength: 1
+            maxLength: 10   
+            example: 3
           companyName:
             type: string
-            description:  Name of the client's work company
+            description:  Name of the client's work company    THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 15
             example: My company
           operationType:
             type: string
-            description:  Type of activity do you? (Use the "getCatalog" service with table )
+            description:  Type of activity do you? (L or "E:" L for LOCAL and E for foreign) THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 10
-            example: 2
+            example: L
           incomeLevelEntity:
             type: string
-            description:  Customer's primary revenue city ID  (Use the "getCatalog" service with table cl_provincia)
+            description:  Customer's primary revenue city ID  (Use the "getCatalog" service with table cl_provincia)  THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 10
             example: 9
           legalIncomeSource:
             type: string
-            description:  Indicates whether the customer's revenue comes from a legal source(S or N)
+            description:  Indicates whether the customer's revenue comes from a legal source(S or N)  THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 1
             example: S
           noConnectionIllegalNetworks:
             type: string
-            description:  Indicates if the client has connections to illegal networks(S or N)
+            description:  Indicates if the client has connections to illegal networks(S or N)  THIS FIELD IS REQUIRED FOR LEVEL 2
             minLength: 1
             maxLength: 1
             example: S
+
+          secondName:
+            type: string
+            description:  second name customer
+            minLength: 1
+            maxLength: 20
+            example: Carlos  
           validityDate:
             type: string
             description:  yyyy-MM-dd
-            example: 986-10-01 
+            example: 1986-10-01 
             format: date
             minLength: 10
             maxLength: 10  
@@ -474,31 +475,31 @@ components:
             description:  Zip code
             minLength: 5
             maxLength: 5
-            example: 10000
+            example: 13278
           province:
             type: string
-            description: Province ID, (Use the "getCatalog" service with table cl_pais)
+            description: Province ID, (Use the "getCatalog" service with table cl_provincia)
             minLength: 1
             maxLength: 10
             example: 9
           townCode:
             type: string
-            description:  Id of locality of residence (Use the service searchLocationCatalogwith City of residence ID)
+            description:  Id of locality of residence (Use the with table cl_parroquia)
             minLength: 1
             maxLength: 10
-            example: 146
+            example: 90111959
           city:
             type: string
             description:  City of residence ID,for example 9011 (Use the "getCatalog" service with table cl_ciudad)
             minLength: 1
             maxLength: 10
-            example: 9011
+            example: 9010
           subdivisioncode:
             type: string
-            description:  Id of colony or parish of residence,  (Use the "getCatalog" service with table cl_parroquia)
+            description: Id of colony or parish of residence,  (Use the with table cl_colonia)
             minLength: 1
             maxLength: 10
-            example: 90111959
+            example: 146
           street:
             type: string
             description:  street name of the customer's home
@@ -516,7 +517,7 @@ components:
             description:  Inside number of the customer's home  (NA is always 0 )
             minLength: 1
             maxLength: 10
-            example: 0
+            example: 23
           referenceAddress:
             type: string
             description: Reference Address
@@ -553,12 +554,6 @@ components:
             minLength: 1
             maxLength: 10
             example: EMP
-          incomeLevel:
-            type: string
-            description:  ncome Level Type (Use the "getCatalog" service with table cl_ingresos)
-            minLength: 1
-            maxLength: 10   
-            example: 10742
           otherMexicanAccount:
             type: string
             description:  Indicates if the client has another account in the Mexican financial system(S or N)
@@ -600,10 +595,10 @@ components:
             description:  Id of the range corresponding to the estimated average monthly balance of the new savings account(Use the "getCatalog" service with table cl_sdo_prom_mes_n2)
             minLength: 1
             maxLength: 10
-            example: MTMM2
+            example: SPMA2
           amountTransaction:
             type: string
-            description:  d of the range corresponding to the estimated average monthly transactional amount of the new savings account(Use the "getCatalog" service with table cl_mto_trn_mes_n2)
+            description:  Id of the range corresponding to the estimated average monthly transactional amount of the new savings account(Use the "getCatalog" service with table cl_mto_trn_mes_n2)
             minLength: 1
             maxLength: 10
             example: MTMM2
@@ -625,12 +620,19 @@ components:
             minLength: 1
             maxLength: 24
             example: 19.281447
+          economicSector:
+            type: string
+            description: Indicates the economic sector of the client's economic activity (Use the "getCatalog" service with table cl_sector_economico)
+            minLength: 1
+            maxLength: 1
+            example: II
           identityValidated:
             type: string
             description: Indicates whether the customer's identity document was verified by the META/MATI provider (S or N)
             minLength: 1
             maxLength: 1
             example: S
+          
     CreateCustomerResponse:
       properties:
         customerCobisCode:
