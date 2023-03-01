@@ -50,6 +50,11 @@ public interface IServiceContractOperationsApi{
   */
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  
 
+  /**
+  * Service to Update Profile
+  */
+  ServiceResponseTO updateProfile(ServiceRequestTO requestTO); 
+
   ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO);  
 
   /**
