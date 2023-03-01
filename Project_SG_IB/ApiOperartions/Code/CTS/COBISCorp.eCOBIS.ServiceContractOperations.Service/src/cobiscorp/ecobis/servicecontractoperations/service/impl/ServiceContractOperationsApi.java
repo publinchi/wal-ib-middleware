@@ -57,8 +57,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "gender", param = "@i_gender_code", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "geolocalizationLatitude", param = "@i_geolocatization_latitude", dataType = ICTSTypes.SQLDECIMAL),
 					@CTSInputParam(field = "geolocalizationLongitude", param = "@i_geolocatization_longitude", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "idNumber", param = "@i_identification_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "idType", param = "@i_identification_type_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "idNumber", param = "@i_identification_number", dataType = ICTSTypes.SQLVARCHAR)
 					@CTSInputParam(field = "identityValidated", param = "@i_identity_validated", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "incomeLevel", param = "@i_incomelevel", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "incomeLevelEntity", param = "@i_incomelevel_entity", dataType = ICTSTypes.SQLVARCHAR),

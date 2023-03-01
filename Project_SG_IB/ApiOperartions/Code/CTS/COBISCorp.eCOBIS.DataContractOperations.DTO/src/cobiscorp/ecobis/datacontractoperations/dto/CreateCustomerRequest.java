@@ -38,7 +38,6 @@ public class CreateCustomerRequest implements Serializable {
   private String proviceBirth;
   private String civilStatus;
   private String idNumber;
-  private String idType;
   private String rfc;
   private String identificationType;
   private String identificationNumber;
@@ -138,12 +137,6 @@ public class CreateCustomerRequest implements Serializable {
   }
   public void setIdNumber(String idNumber ){
     this.idNumber=idNumber;
-  }
-  public String getIdType(){
-    return this.idType;
-  }
-  public void setIdType(String idType ){
-    this.idType=idType;
   }
   public String getRfc(){
     return this.rfc;
