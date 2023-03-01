@@ -12,16 +12,16 @@
     <parameter name="@i_average_balance" dataType="varchar" direction="in" />
     <parameter name="@i_birthdate" dataType="datetime" direction="in" />
     <parameter name="@i_city_code" dataType="int" direction="in" />
-    <parameter name="@i_countrybirth_code" dataType="int" direction="in" />
     <parameter name="@i_civil_status" dataType="varchar" direction="in" />
     <parameter name="@i_company_name" dataType="varchar" direction="in" />
+    <parameter name="@i_countrybirth_code" dataType="int" direction="in" />
+    <parameter name="@i_economic_sector" dataType="varchar" direction="in" />
     <parameter name="@i_electronic_transfer" dataType="int" direction="in" />
     <parameter name="@i_externalnumber" dataType="int" direction="in" />
     <parameter name="@i_gender_code" dataType="char" direction="in" />
     <parameter name="@i_geolocatization_latitude" dataType="decimal" direction="in" />
     <parameter name="@i_geolocatization_longitude" dataType="decimal" direction="in" />
     <parameter name="@i_identification_number" dataType="varchar" direction="in" />
-    <parameter name="@i_identification_type_code" dataType="varchar" direction="in" />
     <parameter name="@i_identity_validated" dataType="char" direction="in" />
     <parameter name="@i_incomelevel" dataType="varchar" direction="in" />
     <parameter name="@i_incomelevel_entity" dataType="varchar" direction="in" />
@@ -55,7 +55,6 @@
     <parameter name="@i_town_code" dataType="varchar" direction="in" />
     <parameter name="@i_validity_date" dataType="datetime" direction="in" />
     <parameter name="@i_zipcode_code" dataType="varchar" direction="in" />
-    <parameter name="@i_economic_sector" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

@@ -86,7 +86,6 @@ procedureRequestAS.addInputParam("@i_gender_code",ICTSTypes.SQLCHAR,String.value
 procedureRequestAS.addInputParam("@i_geolocatization_latitude",ICTSTypes.SQLDECIMAL,String.valueOf(inCreateCustomerRequest.getGeolocalizationLatitude()));
 procedureRequestAS.addInputParam("@i_geolocatization_longitude",ICTSTypes.SQLDECIMAL,String.valueOf(inCreateCustomerRequest.getGeolocalizationLongitude()));
 procedureRequestAS.addInputParam("@i_identification_number",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIdNumber());
-procedureRequestAS.addInputParam("@i_identification_type_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIdType());
 procedureRequestAS.addInputParam("@i_identity_validated",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getIdentityValidated()));
 procedureRequestAS.addInputParam("@i_incomelevel",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIncomeLevel());
 procedureRequestAS.addInputParam("@i_incomelevel_entity",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIncomeLevelEntity());
