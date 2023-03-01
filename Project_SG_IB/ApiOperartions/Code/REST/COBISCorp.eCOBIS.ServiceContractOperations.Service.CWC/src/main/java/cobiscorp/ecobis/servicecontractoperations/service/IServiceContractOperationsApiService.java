@@ -22,16 +22,18 @@
     package  cobiscorp.ecobis.servicecontractoperations.service;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
+    import   cobiscorp.ecobis.datacontractoperations.dto.Message;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
-    import   cobiscorp.ecobis.datacontractoperations.dto.Message;
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
@@ -72,6 +74,12 @@
         
 			//Have DTO
 			public ResponseGetUserEntityInformation getUserEntityInformation(RequestGetUserEntityInformation inRequestGetUserEntityInformation  )throws CTSRestException;
+          /**
+          * Service to Update Profile
+          */
+        
+			// Return list
+			public  List<ResponseUpdateProfile>  updateProfile(RequestUpdateProfile inRequestUpdateProfile  )throws CTSRestException;
 			//Have DTO
 			public ResponseValidateCustomerIdentityCard validateCustomerIdentityCard(RequestValidateCustomerIdentityCard inRequestValidateCustomerIdentityCard  )throws CTSRestException;
           /**
