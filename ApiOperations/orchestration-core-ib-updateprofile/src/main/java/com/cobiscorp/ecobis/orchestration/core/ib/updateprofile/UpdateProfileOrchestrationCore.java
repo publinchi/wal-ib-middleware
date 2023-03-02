@@ -3,6 +3,7 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.updateprofile;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -55,45 +56,131 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, UpdateProfileOrchestrationCore start.");
-		boolean wQueryUpdateProfile;
+		logger.logDebug("Begin flow, UpdateProfileOrchestrationCore start.");		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-		wQueryUpdateProfile = queryUpdateProfile(aBagSPJavaOrchestration);
-		
-		if (wQueryUpdateProfile) {
-			logger.logDebug("Ending flow, executeJavaOrchestration failed.");
-			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-		}
-		
-		logger.logDebug("Ending flow, executeJavaOrchestration success.");
+		queryUpdateProfile(aBagSPJavaOrchestration);
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 	
-	private Boolean queryUpdateProfile(Map<String, Object> aBagSPJavaOrchestration) {
+	private void queryUpdateProfile(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest wQueryUpdateProfileRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		String idCustomer = wQueryUpdateProfileRequest.readValueParam("@i_externalCustomerId");
+		String mail = wQueryUpdateProfileRequest.readValueParam("@i_email");
+		String phone = wQueryUpdateProfileRequest.readValueParam("@i_phoneNumber");
 		
-		if (idCustomer.equals(""))
-			return true;
+		if (mail.isEmpty()) {
+			aBagSPJavaOrchestration.put("40037", "email must not be empty");
+			return;
+		}
+			
+		if (phone.isEmpty()) {
+			aBagSPJavaOrchestration.put("40038", "phoneNumber must not  be empty");
+			return;
+		}
+		
+		if (phone.length() != 10) {
+			aBagSPJavaOrchestration.put("40039", "phoneNumber must be 10 characters");	
+			return;
+		}
+	
 		logger.logDebug("Begin flow, queryUpdateProfile with id: " + idCustomer);
 		
-		IProcedureRequest reqTMP = (initProcedureRequest(wQueryUpdateProfileRequest));
-		reqTMP.setSpName("cobis..sp_updateProfile");
-		reqTMP.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMP.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500092");
-		reqTMP.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT1, idCustomer);
-		IProcedureResponse wProcedureResponse = executeCoreBanking(reqTMP);
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryUpdateProfileRequest));
+		reqTMPCentral.setSpName("cobis..sp_updateProfile");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500095");
+		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT1, idCustomer);
+		reqTMPCentral.addInputParam("@i_email", ICTSTypes.SQLVARCHAR, mail);
+		reqTMPCentral.addInputParam("@i_phoneNumber", ICTSTypes.SQLVARCHAR, phone);
+		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		if (logger.isInfoEnabled()) {
-			logger.logDebug("Ending flow, queryUpdateProfile with wProcedureResponse: " + wProcedureResponse.getProcedureResponseAsString());
+			logger.logDebug("Ending flow, queryUpdateProfile with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
-		aBagSPJavaOrchestration.put("wQueryUpdateProfileResp", wProcedureResponse);
-		return wProcedureResponse.hasError();		
+		
+		IProcedureResponse wProcedureResponseLocal;
+		if (!wProcedureResponseCentral.hasError()) {
+			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
+			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
+			
+			if (columns[0].getValue().equals("true")) {
+				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryUpdateProfileRequest));
+				reqTMPLocal.setSpName("cob_bvirtual..sp_updateProfile");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500095");
+				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT1, idCustomer);
+				reqTMPLocal.addInputParam("@i_email", ICTSTypes.SQLVARCHAR, mail);
+				reqTMPLocal.addInputParam("@i_phoneNumber", ICTSTypes.SQLVARCHAR, phone);
+				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+				if (logger.isInfoEnabled()) {
+					logger.logDebug("Ending flow, queryUpdateProfile with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
+				}
+
+				if (!wProcedureResponseLocal.hasError()) {
+					resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
+					columns = resultSetRow.getColumnsAsArray();
+					
+					if (columns[0].getValue().equals("true")) {
+						aBagSPJavaOrchestration.put("0", "Success");
+						return;
+						
+					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
+						
+						aBagSPJavaOrchestration.put("40012", "Customer with externalCustomerId: " + idCustomer + " does not exist");
+						return;
+					}					
+				} else {
+					
+					aBagSPJavaOrchestration.put("50004", "Error updating information about the customer");
+					return;
+				}
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
+				
+				aBagSPJavaOrchestration.put("40012", "Customer with externalCustomerId: " + idCustomer + " does not exist");
+				return;
+				
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40038")) {
+				
+				aBagSPJavaOrchestration.put("40040", "phoneNumber is repeated");
+				return;
+			}
+			 
+			
+		} else {
+			aBagSPJavaOrchestration.put("50004", "Error updating information about the customer");
+			return;
+		}
 	}
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		return null;
+		ArrayList<String> keyList = new ArrayList<String>(aBagSPJavaOrchestration.keySet());
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		IResultSetRow row = new ResultSetRow();
+		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT2, 2));
+		
+		if (keyList.get(0).equals("0")) {
+			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
+			row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+			data.addRow(row);
+
+		} else {
+			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
+			row.addRowData(3, new ResultSetRowColumnData(false,  keyList.get(0)));
+			data.addRow(row);
+		}
+		
+		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
+		wProcedureResponse.addResponseBlock(resultBlock);			
+		return wProcedureResponse;
 	}
 }
