@@ -153,7 +153,7 @@
                     }
                     },false);
 
-					outCreateCustomerResponse = returnCreateCustomerResponse;
+                    outCreateCustomerResponse.setSuccess(returnCreateCustomerResponse.isSuccess());
                         // break;
                       
             }else {
@@ -549,7 +549,7 @@
                     }
                     },false);
 
-                    outResponseCatalog=returnResponseCatalog;
+                    outResponseCatalog.setSuccess(returnResponseCatalog.isSuccess());
                         // break;
                       
             }else {
@@ -761,7 +761,7 @@
                         return dto;
                         }
                         },false);
-                        outResponseValidateCustomerIdentityCard.setSuccess(returnResponseValidateCustomerIdentityCard.isSuccess());
+                        outResponseValidateCustomerIdentityCard=returnResponseValidateCustomerIdentityCard;
             }else {
             mapBlank++;
 
