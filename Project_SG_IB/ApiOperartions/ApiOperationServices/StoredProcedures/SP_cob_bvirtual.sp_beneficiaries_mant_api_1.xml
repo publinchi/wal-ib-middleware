@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_bvirtual</database>
+  <name>sp_beneficiaries_mant_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_apellido_m" dataType="varchar" direction="in" />
+    <parameter name="@i_apellido_p" dataType="varchar" direction="in" />
+    <parameter name="@i_calle" dataType="varchar" direction="in" />
+    <parameter name="@i_ciudad" dataType="smallint" direction="in" />
+    <parameter name="@i_codpostal" dataType="char" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_fecha_nac" dataType="datetime" direction="in" />
+    <parameter name="@i_localidad" dataType="varchar" direction="in" />
+    <parameter name="@i_nombres" dataType="varchar" direction="in" />
+    <parameter name="@i_numero_externo" dataType="varchar" direction="in" />
+    <parameter name="@i_numero_interno" dataType="varchar" direction="in" />
+    <parameter name="@i_numero_producto" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_parentesco" dataType="varchar" direction="in" />
+    <parameter name="@i_parroquia" dataType="int" direction="in" />
+    <parameter name="@i_porcentaje" dataType="int" direction="in" />
+    <parameter name="@i_producto" dataType="smallint" direction="in" />
+    <parameter name="@i_provincia" dataType="smallint" direction="in" />
+    <parameter name="@i_telefono" dataType="varchar" direction="in" />
+    <parameter name="@i_json_beneficiaries" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"=true</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
+    </query>
+  </queries>
+</procedure>

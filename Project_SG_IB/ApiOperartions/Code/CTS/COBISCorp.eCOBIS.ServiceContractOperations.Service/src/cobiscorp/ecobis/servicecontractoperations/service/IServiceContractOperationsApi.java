@@ -51,9 +51,14 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  
 
   /**
+  * Register Beneficiary Saving Account
+  */
+  ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO);  
+
+  /**
   * Service to Update Profile
   */
-  ServiceResponseTO updateProfile(ServiceRequestTO requestTO); 
+  ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  
 
   ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO);  
 

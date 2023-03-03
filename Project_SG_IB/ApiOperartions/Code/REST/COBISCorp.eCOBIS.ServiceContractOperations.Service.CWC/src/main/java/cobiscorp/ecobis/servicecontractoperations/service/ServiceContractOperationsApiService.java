@@ -34,7 +34,9 @@
     import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
     import com.cobiscorp.cobis.cwc.cts.rest.ICTSRestIntegrationService;
     import com.cobiscorp.cobis.jaxrs.publisher.SessionManager;
-    import org.apache.felix.scr.annotations.*;
+import com.google.gson.Gson;
+
+import org.apache.felix.scr.annotations.*;
     import java.math.BigDecimal;
     import java.util.ArrayList;
     import java.util.List;
@@ -544,6 +546,100 @@ throw new CTSRestException("404",null);
         return outResponseGetUserEntityInformation;
       }
 
+  		/**
+          * Register Beneficiary Saving Account
+          */
+         @Override
+			//Have DTO
+			public RegisterBeneficiaryResponse registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: registerBeneficiary");
+      RegisterBeneficiaryResponse outRegisterBeneficiaryResponse  = new RegisterBeneficiaryResponse();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500096");
+      procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRegisterBeneficiaryRequest.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_numero_producto",ICTSTypes.SQLVARCHAR,inRegisterBeneficiaryRequest.getAccount());
+      procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"I");
+      
+      Gson gson = new Gson();
+      String JSON = gson.toJson(inRegisterBeneficiaryRequest.getBeneficiaries());
+      procedureRequestAS.addInputParam("@i_json_beneficiaries",ICTSTypes.SQLVARCHAR,JSON);
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								RegisterBeneficiaryResponse returnRegisterBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<RegisterBeneficiaryResponse>() { 
+                    @Override
+                    public RegisterBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                    RegisterBeneficiaryResponse dto = new RegisterBeneficiaryResponse();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outRegisterBeneficiaryResponse.setSuccess(returnRegisterBeneficiaryResponse.isSuccess());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								RegisterBeneficiaryResponse returnRegisterBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<RegisterBeneficiaryResponse>() { 
+                    @Override
+                    public RegisterBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                    RegisterBeneficiaryResponse dto = new RegisterBeneficiaryResponse();
+                    
+							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+
+                    outRegisterBeneficiaryResponse.setMessage(returnRegisterBeneficiaryResponse.getMessage());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: registerBeneficiary");
+        //returns data
+        return outRegisterBeneficiaryResponse;
+      }         
+         
           /**
           * Service to Update Profile
           */
