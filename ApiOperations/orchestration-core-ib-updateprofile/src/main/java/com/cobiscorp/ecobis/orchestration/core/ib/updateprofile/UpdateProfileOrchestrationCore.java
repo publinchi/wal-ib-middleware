@@ -65,6 +65,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 	private void queryUpdateProfile(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest wQueryUpdateProfileRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+		aBagSPJavaOrchestration.clear();
 		String idCustomer = wQueryUpdateProfileRequest.readValueParam("@i_externalCustomerId");
 		String mail = wQueryUpdateProfileRequest.readValueParam("@i_email");
 		String phone = wQueryUpdateProfileRequest.readValueParam("@i_phoneNumber");
@@ -74,7 +75,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 			return;
 		}
 			
-		if (phone.isEmpty()) {
+		if (phone.isEmpty()) {			
 			aBagSPJavaOrchestration.put("40038", "phoneNumber must not  be empty");
 			return;
 		}
@@ -139,7 +140,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 				aBagSPJavaOrchestration.put("40012", "Customer with externalCustomerId: " + idCustomer + " does not exist");
 				return;
 				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40038")) {
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40040")) {
 				
 				aBagSPJavaOrchestration.put("40040", "phoneNumber is repeated");
 				return;
