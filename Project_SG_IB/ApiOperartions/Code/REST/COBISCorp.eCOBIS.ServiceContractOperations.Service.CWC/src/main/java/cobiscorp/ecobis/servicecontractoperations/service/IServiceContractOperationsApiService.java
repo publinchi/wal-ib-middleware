@@ -23,6 +23,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.Message;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
@@ -52,6 +54,12 @@
         
 			//Have DTO
 			public CreateCustomerResponse createCustomer(CreateCustomerRequest inCreateCustomerRequest  )throws CTSRestException;
+          /**
+          * Service to create a savings account for an existing customer
+          */
+        
+			//Have DTO
+			public ResponseCreateSavingAccount createSavingAccount(RequestCreateSavingAccount inRequestCreateSavingAccount  )throws CTSRestException;
           /**
           * Encrypt Data
           */

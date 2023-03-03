@@ -31,6 +31,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO createCustomer(ServiceRequestTO requestTO);  
 
   /**
+  * Service to create a savings account for an existing customer
+  */
+  ServiceResponseTO createSavingAccount(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
