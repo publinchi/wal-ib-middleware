@@ -195,6 +195,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseGetUserEntityInformation'
       security:
+      - bearerAuth: []   
+  apiOperations/onboarding/registerBeneficiary:
+    post:
+      tags:
+      - Register Beneficiary
+      summary: Register Beneficiary Saving Account
+      operationId: registerBeneficiary
+      requestBody:
+        description: Search Zip Code
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBeneficiaryRequest'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Response Create Customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterBeneficiaryResponse'
+      security:
       - bearerAuth: []      
 components:
   schemas:
@@ -365,7 +395,7 @@ components:
             minLength: 1
             maxLength: 5
             example: 484
-          proviceBirth:
+          provinceBirth:
             type: string
             description:  Type of occupation performed (Use the "getCatalog" service with table cl_provincia)  THIS FIELD IS REQUIRED FOR LEVEL 2 CLIENT
             minLength: 1
@@ -496,7 +526,7 @@ components:
             example: 9010
           subdivisioncode:
             type: string
-            description: Id of colony or parish of residence,  (Use the with table cl_colonia)
+            description: Locality id, (Use the cl_localidad table)
             minLength: 1
             maxLength: 10
             example: 146
@@ -632,6 +662,7 @@ components:
             minLength: 1
             maxLength: 1
             example: S
+
           
     CreateCustomerResponse:
       properties:
@@ -744,6 +775,145 @@ components:
           example: 520
         message:
           $ref: '#/components/schemas/Message'          
+          
+    RegisterBeneficiaryRequest:
+      required:
+      - account
+      - externalCustomerId
+      type: object
+      properties:
+        externalCustomerId:
+          maxLength: 12
+          type: integer
+          description: External Customer Id
+          example: 220
+        account:
+          maxLength: 20
+          minLength: 10
+          type: string
+          description: account number
+          example: "402653207"
+        Beneficiaries:
+          $ref: '#/components/schemas/Beneficiaries'
+    RegisterBeneficiaryResponse:
+      properties:
+        success:
+          type: boolean
+          description: result process
+          example: true
+        message:
+          $ref: '#/components/schemas/Message'
+          
+    Beneficiaries:
+      required:
+      - birthDate
+      - city
+      - colony
+      - externalNumber
+      - lastName
+      - location
+      - names
+      - percentage
+      - phoneNumber
+      - province
+      - relationship
+      - secondLastName
+      - street
+      - zipcode
+      type: object
+      properties:
+        names:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: firts name customer
+          example: Jose Carlos
+        lastName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: last name customer
+          example: Olmos
+        secondLastName:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: second last name customer
+          example: Solis
+        birthDate:
+          maxLength: 10
+          minLength: 10
+          type: string
+          description: Birthdate (yyyy-MM-dd)
+          format: date
+          example: 1986-10-07
+        relationship:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Relationship with owner account
+          example: "8"
+        phoneNumber:
+          maxLength: 10
+          minLength: 10
+          type: string
+          description: Customer number phone
+          example: "5568576731"
+        zipcode:
+          maxLength: 5
+          minLength: 5
+          type: string
+          description: Zip code
+          example: "512"
+        province:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Province ID, (Use the "getCatalog" service with table cl_provincia)
+          example: "9"
+        city:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: City of residence ID,for example 9011 (Use the "getCatalog" service with table cl_ciudad)
+          example: "9011"
+        colony:
+          maxLength: 20
+          type: string
+          description: LocalidadID (Use the cl_localidad table to get the name)
+          example: "90100001"
+        location:
+          maxLength: 40
+          type: string
+          description: Locality id, (Use the cl_localidad table)
+          example: "71"
+        street:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: Street name of the customer's home
+          example: My street
+        externalNumber:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: External number of the customer's home
+          example: "10"
+        internalNumber:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Inside number of the customer's home  (NA is always 0 )
+          example: "23"
+        percentage:
+          maximum: 100
+          minimum: 1
+          maxLength: 3
+          minLength: 1
+          type: integer
+          description: Percentage amount beneficiary
+          example: 100
+          
   responses:
     Unauthorized:
       description: Unauthorized service
@@ -770,3 +940,4 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+

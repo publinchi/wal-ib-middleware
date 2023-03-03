@@ -49,15 +49,16 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "averageBalance", param = "@i_average_balance", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "birthDate", param = "@i_birthdate", dataType = ICTSTypes.SQLDATETIME),
 					@CTSInputParam(field = "city", param = "@i_city_code", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "countryBirth", param = "@i_countrybirth_code", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "civilStatus", param = "@i_civil_status", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "companyName", param = "@i_company_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "countryBirth", param = "@i_countrybirth_code", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "economicSector", param = "@i_economic_sector", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "electronicTransfer", param = "@i_electronic_transfer", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "externalNumber", param = "@i_externalnumber", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "gender", param = "@i_gender_code", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "geolocalizationLatitude", param = "@i_geolocatization_latitude", dataType = ICTSTypes.SQLDECIMAL),
 					@CTSInputParam(field = "geolocalizationLongitude", param = "@i_geolocatization_longitude", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "idNumber", param = "@i_identification_number", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "idNumber", param = "@i_identification_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "identityValidated", param = "@i_identity_validated", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "incomeLevel", param = "@i_incomelevel", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "incomeLevelEntity", param = "@i_incomelevel_entity", dataType = ICTSTypes.SQLVARCHAR),
@@ -65,7 +66,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "lastName", param = "@i_lastname", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "legalIncomeSource", param = "@i_legalincomesource", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "email", param = "@i_mail", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "firtname", param = "@i_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "firstName", param = "@i_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nationality", param = "@i_nationality", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "noConnectionIllegalNetworks", param = "@i_noconnectiontoillegalnetworks", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "phoneNumber", param = "@i_number", dataType = ICTSTypes.SQLVARCHAR),
@@ -90,8 +91,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "timeCurrentRecide", param = "@i_timeincurrentresidence", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "townCode", param = "@i_town_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "validityDate", param = "@i_validity_date", dataType = ICTSTypes.SQLDATETIME),
-					@CTSInputParam(field = "zipcode", param = "@i_zipcode_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "economicSector", param = "@i_economic_sector", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "zipcode", param = "@i_zipcode_code", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -323,8 +323,55 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
-	  @CTSProcedure(
+    
+	@CTSProcedure(
+		name = "cob_bvirtual..sp_beneficiaries_mant_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRegisterBeneficiaryRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "account", param = "@i_numero_producto", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500096"),
+				@CTSDefaultInputParam(value = "I", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnRegisterBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnRegisterBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_updateProfile", dbms = "SQLCTS",  
 		objectRequest = {
 		
@@ -456,14 +503,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       name = "returnResponseValidateIdentity",
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity.class,
       columns = {
-		    @CTSColumn(field = "numeroVerficacion", columnIndex = 1)
+		    @CTSColumn(field = "verificationNumber", columnIndex = 1)
       }
     ),
     @CTSResponse(
       name = "returnResponseValidateIdentity",
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity.class,
       columns = {
-		    @CTSColumn(field = "nombreEvento", columnIndex = 1)
+		    @CTSColumn(field = "eventName", columnIndex = 1)
       }
     )
   }
