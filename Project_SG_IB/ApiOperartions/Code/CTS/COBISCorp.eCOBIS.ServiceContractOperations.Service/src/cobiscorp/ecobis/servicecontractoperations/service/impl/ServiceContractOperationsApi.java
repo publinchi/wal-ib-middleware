@@ -136,6 +136,58 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cobis..sp_apertura_aut_bv_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestCreateSavingAccount",
+				input = {
+				
+					@CTSInputParam(field = "customerId", param = "@i_cli", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500097")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseCreateSavingAccount",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnMessage",
+      type = cobiscorp.ecobis.datacontractoperations.dto.Message.class,
+      columns = {
+		    @CTSColumn(field = "code", columnIndex = 1),
+		    @CTSColumn(field = "message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseCreateSavingAccount",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO createSavingAccount(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_encryptData", dbms = "SQLCTS",  
 		objectRequest = {
 		

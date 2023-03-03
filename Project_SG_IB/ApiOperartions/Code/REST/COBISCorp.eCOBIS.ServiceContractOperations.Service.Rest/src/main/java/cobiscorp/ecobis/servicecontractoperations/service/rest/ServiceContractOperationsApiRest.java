@@ -27,9 +27,9 @@
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.Message;
-import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
+    import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
@@ -38,6 +38,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
+    import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
@@ -85,7 +87,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
 	  LOGGER.logDebug("Start service execution REST: createCustomer");
       CreateCustomerResponse outCreateCustomerResponse  = new CreateCustomerResponse();
           
-      if(!validateMandatory(new Data("activity", inCreateCustomerRequest.getActivity()), new Data("referenceAddress", inCreateCustomerRequest.getReferenceAddress()), new Data("addressTypeCode", inCreateCustomerRequest.getAddressTypeCode()), new Data("amountTransaction", inCreateCustomerRequest.getAmountTransaction()), new Data("averageBalance", inCreateCustomerRequest.getAverageBalance()), new Data("birthDate", inCreateCustomerRequest.getBirthDate()), new Data("city", inCreateCustomerRequest.getCity()), new Data("countryBirth", inCreateCustomerRequest.getCountryBirth()), new Data("civilStatus", inCreateCustomerRequest.getCivilStatus()), new Data("companyName", inCreateCustomerRequest.getCompanyName()), new Data("electronicTransfer", inCreateCustomerRequest.getElectronicTransfer()), new Data("externalNumber", inCreateCustomerRequest.getExternalNumber()), new Data("gender", inCreateCustomerRequest.getGender()), new Data("geolocalizationLatitude", inCreateCustomerRequest.getGeolocalizationLatitude()), new Data("geolocalizationLongitude", inCreateCustomerRequest.getGeolocalizationLongitude()), new Data("idNumber", inCreateCustomerRequest.getIdNumber()), new Data("identityValidated", inCreateCustomerRequest.getIdentityValidated()), new Data("incomeLevel", inCreateCustomerRequest.getIncomeLevel()), new Data("incomeLevelEntity", inCreateCustomerRequest.getIncomeLevelEntity()), new Data("internalNumber", inCreateCustomerRequest.getInternalNumber()), new Data("lastName", inCreateCustomerRequest.getLastName()), new Data("legalIncomeSource", inCreateCustomerRequest.getLegalIncomeSource()), new Data("email", inCreateCustomerRequest.getEmail()), new Data("firstName", inCreateCustomerRequest.getFirstName()), new Data("nationality", inCreateCustomerRequest.getNationality()), new Data("noConnectionIllegalNetworks", inCreateCustomerRequest.getNoConnectionIllegalNetworks()), new Data("phoneNumber", inCreateCustomerRequest.getPhoneNumber()), new Data("numberTransaction", inCreateCustomerRequest.getNumberTransaction()), new Data("occupation", inCreateCustomerRequest.getOccupation()), new Data("operationType", inCreateCustomerRequest.getOperationType()), new Data("otherMexicanAccount", inCreateCustomerRequest.getOtherMexicanAccount()), new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()), new Data("secondName", inCreateCustomerRequest.getSecondName()), new Data("paymentCard", inCreateCustomerRequest.getPaymentCard()), new Data("paymentRecharge", inCreateCustomerRequest.getPaymentRecharge()), new Data("servicesPay", inCreateCustomerRequest.getServicesPay()), new Data("propertyTypeCode", inCreateCustomerRequest.getPropertyTypeCode()), new Data("province", inCreateCustomerRequest.getProvince()), new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()), new Data("provisionCash", inCreateCustomerRequest.getProvisionCash()), new Data("rfc", inCreateCustomerRequest.getRfc()), new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()), new Data("identificationType", inCreateCustomerRequest.getIdentificationType()), new Data("street", inCreateCustomerRequest.getStreet()), new Data("subdivisioncode", inCreateCustomerRequest.getSubdivisioncode()), new Data("timeCurrentRecide", inCreateCustomerRequest.getTimeCurrentRecide()), new Data("townCode", inCreateCustomerRequest.getTownCode()), new Data("validityDate", inCreateCustomerRequest.getValidityDate()), new Data("zipcode", inCreateCustomerRequest.getZipcode()), new Data("economicSector", inCreateCustomerRequest.getEconomicSector()))) {
+      if(!validateMandatory(new Data("activity", inCreateCustomerRequest.getActivity()), new Data("referenceAddress", inCreateCustomerRequest.getReferenceAddress()), new Data("addressTypeCode", inCreateCustomerRequest.getAddressTypeCode()), new Data("amountTransaction", inCreateCustomerRequest.getAmountTransaction()), new Data("averageBalance", inCreateCustomerRequest.getAverageBalance()), new Data("birthDate", inCreateCustomerRequest.getBirthDate()), new Data("city", inCreateCustomerRequest.getCity()), new Data("civilStatus", inCreateCustomerRequest.getCivilStatus()), new Data("companyName", inCreateCustomerRequest.getCompanyName()), new Data("countryBirth", inCreateCustomerRequest.getCountryBirth()), new Data("economicSector", inCreateCustomerRequest.getEconomicSector()), new Data("electronicTransfer", inCreateCustomerRequest.getElectronicTransfer()), new Data("externalNumber", inCreateCustomerRequest.getExternalNumber()), new Data("gender", inCreateCustomerRequest.getGender()), new Data("geolocalizationLatitude", inCreateCustomerRequest.getGeolocalizationLatitude()), new Data("geolocalizationLongitude", inCreateCustomerRequest.getGeolocalizationLongitude()), new Data("idNumber", inCreateCustomerRequest.getIdNumber()), new Data("identityValidated", inCreateCustomerRequest.getIdentityValidated()), new Data("incomeLevel", inCreateCustomerRequest.getIncomeLevel()), new Data("incomeLevelEntity", inCreateCustomerRequest.getIncomeLevelEntity()), new Data("internalNumber", inCreateCustomerRequest.getInternalNumber()), new Data("lastName", inCreateCustomerRequest.getLastName()), new Data("legalIncomeSource", inCreateCustomerRequest.getLegalIncomeSource()), new Data("email", inCreateCustomerRequest.getEmail()), new Data("firstName", inCreateCustomerRequest.getFirstName()), new Data("nationality", inCreateCustomerRequest.getNationality()), new Data("noConnectionIllegalNetworks", inCreateCustomerRequest.getNoConnectionIllegalNetworks()), new Data("phoneNumber", inCreateCustomerRequest.getPhoneNumber()), new Data("numberTransaction", inCreateCustomerRequest.getNumberTransaction()), new Data("occupation", inCreateCustomerRequest.getOccupation()), new Data("operationType", inCreateCustomerRequest.getOperationType()), new Data("otherMexicanAccount", inCreateCustomerRequest.getOtherMexicanAccount()), new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()), new Data("secondName", inCreateCustomerRequest.getSecondName()), new Data("paymentCard", inCreateCustomerRequest.getPaymentCard()), new Data("paymentRecharge", inCreateCustomerRequest.getPaymentRecharge()), new Data("servicesPay", inCreateCustomerRequest.getServicesPay()), new Data("propertyTypeCode", inCreateCustomerRequest.getPropertyTypeCode()), new Data("province", inCreateCustomerRequest.getProvince()), new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()), new Data("provisionCash", inCreateCustomerRequest.getProvisionCash()), new Data("rfc", inCreateCustomerRequest.getRfc()), new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()), new Data("identificationType", inCreateCustomerRequest.getIdentificationType()), new Data("street", inCreateCustomerRequest.getStreet()), new Data("subdivisioncode", inCreateCustomerRequest.getSubdivisioncode()), new Data("timeCurrentRecide", inCreateCustomerRequest.getTimeCurrentRecide()), new Data("townCode", inCreateCustomerRequest.getTownCode()), new Data("validityDate", inCreateCustomerRequest.getValidityDate()), new Data("zipcode", inCreateCustomerRequest.getZipcode()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
@@ -107,19 +109,46 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-      if(outCreateCustomerResponse.getMessage()!=null 
-    		  && outCreateCustomerResponse.getMessage().getCode()>0
-    		  ) {   	  
-    	
-    	  outCreateCustomerResponse.setSuccess(false);
-    	  
-    		  return Response.status(400).entity(outCreateCustomerResponse).build();
-          }
-      
-      outCreateCustomerResponse.setSuccess(true);
-      
           LOGGER.logDebug("Ends service execution REST: createCustomer");
           return Response.ok(outCreateCustomerResponse).build();
+        
+      }
+    
+          /**
+          * Service to create a savings account for an existing customer
+          */
+        @POST
+      @Path("/apiOperations/customer/createSavingAccount")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  createSavingAccount(RequestCreateSavingAccount inRequestCreateSavingAccount ){
+	  LOGGER.logDebug("Start service execution REST: createSavingAccount");
+      ResponseCreateSavingAccount outResponseCreateSavingAccount  = new ResponseCreateSavingAccount();
+          
+      if(!validateMandatory(new Data("customerId", inRequestCreateSavingAccount.getCustomerId()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outResponseCreateSavingAccount=iServiceContractOperationsApiService.createSavingAccount( inRequestCreateSavingAccount );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: createSavingAccount");
+          return Response.ok(outResponseCreateSavingAccount).build();
         
       }
     
@@ -156,16 +185,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-      if(outSingleResponseEncriptData.get(0).getMessage()!=null 
-    		  && outSingleResponseEncriptData.get(0).getMessage().getCode()>0
-    		  ) {   	  
-    	
-    	  outSingleResponseEncriptData.get(0).setSuccess(false);
-    		  return Response.status(400).entity(outSingleResponseEncriptData.get(0)).build();
-          }
-      
-      
-      outSingleResponseEncriptData.get(0).setSuccess(true);
           LOGGER.logDebug("Ends service execution REST: encryptData");
           return Response.ok(outSingleResponseEncriptData).build();
         
@@ -204,18 +223,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-      
-      
-      if(outSingleResponseOtp.getMessage()!=null 
-    		  && outSingleResponseOtp.getMessage().getCode()>0
-    		  ) {   	  
-    	
-    	  outSingleResponseOtp.setSuccess(false);
-    		  return Response.status(400).entity(outSingleResponseOtp).build();
-          }
           LOGGER.logDebug("Ends service execution REST: generateTransactionFactor");
-          
-          outSingleResponseOtp.setSuccess(true);
           return Response.ok(outSingleResponseOtp).build();
         
       }
@@ -253,16 +261,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-      
-      if(outResponseCatalog.getMessage()!=null 
-    		  && outResponseCatalog.getMessage().getCode()>0
-    		  ) {   	  
-    	
-    	  outResponseCatalog.setSuccess(false);
-    		  return Response.status(400).entity(outResponseCatalog).build();
-          }
-      
-      outResponseCatalog.setSuccess(true);
           LOGGER.logDebug("Ends service execution REST: getCatalog");
           return Response.ok(outResponseCatalog).build();
         
@@ -302,61 +300,49 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       }
       
           LOGGER.logDebug("Ends service execution REST: getUserEntityInformation");
-          
-          
-          if(outResponseGetUserEntityInformation.getMessage()!=null 
-        		  && outResponseGetUserEntityInformation.getMessage().getCode()>0
-        		  ) {   	  
-        	
-        	  outResponseGetUserEntityInformation.setSuccess(false);
-        		  return Response.status(400).entity(outResponseGetUserEntityInformation).build();
-          }
-          
-          outResponseGetUserEntityInformation.setSuccess(true);
-          
           return Response.ok(outResponseGetUserEntityInformation).build();
         
       }
-        
-        /**
-        * Register Beneficiary Saving Account
-        */
-      @POST
-	    @Path("/apiOperations/onboarding/registerBeneficiary")
-	    @Consumes({"application/json"})
-	    @Produces({"application/json"})
-	     public Response  registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest ){
-		  LOGGER.logDebug("Start service execution REST: registerBeneficiary");
-	    RegisterBeneficiaryResponse outRegisterBeneficiaryResponse  = new RegisterBeneficiaryResponse();
-	        
-	    if(!validateMandatory(new Data("externalCustomerId", inRegisterBeneficiaryRequest.getExternalCustomerId()), new Data("account", inRegisterBeneficiaryRequest.getAccount()))) {
-	      LOGGER.logDebug("400 is returned - Required fields are missing");
-	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-	    }
-		    
-	    try {
-	    outRegisterBeneficiaryResponse=iServiceContractOperationsApiService.registerBeneficiary( inRegisterBeneficiaryRequest );
-	    } catch (CTSRestException e) {
-	    LOGGER.logError("CTSRestException",e);
-	    if ("404".equals(e.getMessage())) {
-	    LOGGER.logDebug("404 is returned - No data found");
-	    return Response.status(404).entity("No data found").build();
-	    }
-	
-	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-	    return Response.status(409).entity(e.getMessageBlockList()).build();
-	    } catch (Exception e){
-	    LOGGER.logDebug("500 is returned - Code exception");
-	    LOGGER.logError("Exception",e);
-	    return Response.status(500).entity(e.getMessage()).build();
-	    }
+    
+          /**
+          * Register Beneficiary Saving Account
+          */
+        @POST
+      @Path("/apiOperations/onboarding/registerBeneficiary")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest ){
+	  LOGGER.logDebug("Start service execution REST: registerBeneficiary");
+      RegisterBeneficiaryResponse outRegisterBeneficiaryResponse  = new RegisterBeneficiaryResponse();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inRegisterBeneficiaryRequest.getExternalCustomerId()), new Data("account", inRegisterBeneficiaryRequest.getAccount()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
 	    
-	        LOGGER.logDebug("Ends service execution REST: registerBeneficiary");
-	        return Response.ok(outRegisterBeneficiaryResponse).build();
-	      
-	    }
+      try {
+      outRegisterBeneficiaryResponse=iServiceContractOperationsApiService.registerBeneficiary( inRegisterBeneficiaryRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
 
-     /**
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: registerBeneficiary");
+          return Response.ok(outRegisterBeneficiaryResponse).build();
+        
+      }
+    
+          /**
           * Service to Update Profile
           */
         @POST
@@ -393,7 +379,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
           return Response.ok(outSingleResponseUpdateProfile).build();
         
       }
-
     @POST
       @Path("/apiOperations/onbording/validateCustomerIdentityCard")
       @Consumes({"application/json"})
@@ -423,16 +408,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       LOGGER.logError("Exception",e);
       return Response.status(500).entity(e.getMessage()).build();
       }
-      
-      if(outResponseValidateCustomerIdentityCard.getMessage()!=null 
-    		  && outResponseValidateCustomerIdentityCard.getMessage().getCode()>0
-    		  ) {   	  
-    	
-    	  outResponseValidateCustomerIdentityCard.setSuccess(false);
-    		  return Response.status(400).entity(outResponseValidateCustomerIdentityCard).build();
-      }
-      
-      outResponseValidateCustomerIdentityCard.setSuccess(true);
       
           LOGGER.logDebug("Ends service execution REST: validateCustomerIdentityCard");
           return Response.ok(outResponseValidateCustomerIdentityCard).build();
@@ -472,15 +447,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-      if(outResponseValidateIdentity.getMessage()!=null 
-    		  && outResponseValidateIdentity.getMessage().getCode()>0
-    		  ) {   	  
-    	
-    	  outResponseValidateIdentity.setSuccess(false);
-    		  return Response.status(400).entity(outResponseValidateIdentity).build();
-      }
-      
-      outResponseValidateIdentity.setSuccess(true);
           LOGGER.logDebug("Ends service execution REST: validateIdentity");
           return Response.ok(outResponseValidateIdentity).build();
         
