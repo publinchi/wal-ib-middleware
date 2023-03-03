@@ -26,5 +26,5 @@
   <collection type="Map" length="0" id="5" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
-  <field type="String" name="stateDTO" value="REMOVE" />
+  <field type="String" name="stateDTO" value="" />
 </class>
