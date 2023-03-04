@@ -26,11 +26,14 @@ import java.io.Serializable;
 
 import java.util.HashMap;
 
+import com.cobiscorp.cobis.cts.sdf.procedure.annotation.EncryptedParam;
+
 
 public class RegisterBeneficiaryRequest implements Serializable {
   private Integer externalCustomerId;
   private String account;
-  private Beneficiaries beneficiaries;
+ @EncryptedParam
+  private Beneficiaries[] beneficiaries;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -43,16 +46,10 @@ public class RegisterBeneficiaryRequest implements Serializable {
   public void setAccount(String account ){
     this.account=account;
   }
-  public Beneficiaries beneficiariesInstance(){
-	if(this.beneficiaries==null){
-	this.beneficiaries=new Beneficiaries();
-	}
-	return this.beneficiaries;
-  }
-  public Beneficiaries getBeneficiaries(){
+  public Beneficiaries[] getBeneficiaries(){
     return this.beneficiaries;
   }
-  public void setBeneficiaries(Beneficiaries beneficiaries ){
+  public void setBeneficiaries(Beneficiaries[] beneficiaries ){
     this.beneficiaries=beneficiaries;
   }
 }
