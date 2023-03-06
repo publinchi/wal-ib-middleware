@@ -40,6 +40,8 @@
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
+    import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
+    import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
@@ -339,6 +341,44 @@
       
           LOGGER.logDebug("Ends service execution REST: registerBeneficiary");
           return Response.ok(outRegisterBeneficiaryResponse).build();
+        
+      }
+
+      /**
+          * Search Zip Code API
+          */
+        @POST
+      @Path("/onboarding/sarchZipCode")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  sarchZipCode(SearchZipCodeRequest inSearchZipCodeRequest ){
+	  LOGGER.logDebug("Start service execution REST: sarchZipCode");
+      SearchZipCodeResponse outSingleSearchZipCodeResponse  = new SearchZipCodeResponse();
+          
+      if(!validateMandatory(new Data("zipCode", inSearchZipCodeRequest.getZipCode()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleSearchZipCodeResponse=iServiceContractOperationsApiService.sarchZipCode( inSearchZipCodeRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: sarchZipCode");
+          return Response.ok(outSingleSearchZipCodeResponse).build();
         
       }
     

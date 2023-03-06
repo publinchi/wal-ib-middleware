@@ -61,6 +61,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO);  
 
   /**
+  * Search Zip Code API
+  */
+  ServiceResponseTO sarchZipCode(ServiceRequestTO requestTO);  
+
+  /**
   * Service to Update Profile
   */
   ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  
