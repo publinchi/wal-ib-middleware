@@ -475,7 +475,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   /**
   * {@inheritDoc}
   */
-      public ServiceResponseTO sarchZipCode(ServiceRequestTO requestTO) {
+      public ServiceResponseTO searchZipCode(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
