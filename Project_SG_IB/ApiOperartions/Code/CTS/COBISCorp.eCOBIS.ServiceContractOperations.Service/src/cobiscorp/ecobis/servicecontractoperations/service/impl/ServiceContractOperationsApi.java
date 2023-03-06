@@ -384,8 +384,23 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				name = "inRegisterBeneficiaryRequest",
 				input = {
 				
+					@CTSInputParam(field = "beneficiaries.lastName", param = "@i_apellido_m", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.secondLastName", param = "@i_apellido_p", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.street", param = "@i_calle", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.city", param = "@i_ciudad", dataType = ICTSTypes.SQLINT2),
+					@CTSInputParam(field = "beneficiaries.zipcode", param = "@i_codpostal", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "account", param = "@i_numero_producto", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "beneficiaries.birthDate", param = "@i_fecha_nac", dataType = ICTSTypes.SQLDATETIME),
+					@CTSInputParam(field = "beneficiaries.location", param = "@i_localidad", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.names", param = "@i_nombres", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.externalNumber", param = "@i_numero_externo", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.internalNumber", param = "@i_numero_interno", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "account", param = "@i_numero_producto", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.relationship", param = "@i_parentesco", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "beneficiaries.colony", param = "@i_parroquia", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "beneficiaries.percentage", param = "@i_porcentaje", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "beneficiaries.province", param = "@i_provincia", dataType = ICTSTypes.SQLINT2),
+					@CTSInputParam(field = "beneficiaries.phoneNumber", param = "@i_telefono", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
