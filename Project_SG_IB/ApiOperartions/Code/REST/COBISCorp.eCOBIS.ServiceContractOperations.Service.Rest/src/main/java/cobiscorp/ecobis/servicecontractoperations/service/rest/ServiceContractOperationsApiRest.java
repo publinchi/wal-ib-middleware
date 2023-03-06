@@ -348,7 +348,7 @@
           * Search Zip Code API
           */
         @POST
-      @Path("/onboarding/sarchZipCode")
+      @Path("/onboarding/searchZipCode")
       @Consumes({"application/json"})
       @Produces({"application/json"})
        public Response  sarchZipCode(SearchZipCodeRequest inSearchZipCodeRequest ){
