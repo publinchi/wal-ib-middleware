@@ -63,7 +63,7 @@ public interface IServiceContractOperationsApi{
   /**
   * Search Zip Code API
   */
-  ServiceResponseTO sarchZipCode(ServiceRequestTO requestTO);  
+  ServiceResponseTO searchZipCode(ServiceRequestTO requestTO);  
 
   /**
   * Service to Update Profile

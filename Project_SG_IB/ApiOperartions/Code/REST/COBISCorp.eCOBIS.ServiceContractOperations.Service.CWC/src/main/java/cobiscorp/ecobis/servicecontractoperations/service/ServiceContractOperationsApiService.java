@@ -646,8 +646,8 @@ throw new CTSRestException("404",null);
           */
          @Override
 			// Return DTO
-			public  SearchZipCodeResponse  sarchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException{
-	    LOGGER.logDebug("Start service execution: sarchZipCode");
+			public  SearchZipCodeResponse  searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException{
+	    LOGGER.logDebug("Start service execution: searchZipCode");
       SearchZipCodeResponse outSingleSearchZipCodeResponse  = new SearchZipCodeResponse();
     
       //create procedure

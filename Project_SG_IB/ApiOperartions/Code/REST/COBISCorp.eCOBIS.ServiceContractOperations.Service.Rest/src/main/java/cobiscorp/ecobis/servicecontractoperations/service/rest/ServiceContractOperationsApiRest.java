@@ -351,8 +351,8 @@
       @Path("/onboarding/searchZipCode")
       @Consumes({"application/json"})
       @Produces({"application/json"})
-       public Response  sarchZipCode(SearchZipCodeRequest inSearchZipCodeRequest ){
-	  LOGGER.logDebug("Start service execution REST: sarchZipCode");
+       public Response  searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest ){
+	  LOGGER.logDebug("Start service execution REST: searchZipCode");
       SearchZipCodeResponse outSingleSearchZipCodeResponse  = new SearchZipCodeResponse();
           
       if(!validateMandatory(new Data("zipCode", inSearchZipCodeRequest.getZipCode()))) {
@@ -361,7 +361,7 @@
       }
 	    
       try {
-      outSingleSearchZipCodeResponse=iServiceContractOperationsApiService.sarchZipCode( inSearchZipCodeRequest );
+      outSingleSearchZipCodeResponse=iServiceContractOperationsApiService.searchZipCode( inSearchZipCodeRequest );
       } catch (CTSRestException e) {
       LOGGER.logError("CTSRestException",e);
       if ("404".equals(e.getMessage())) {
@@ -377,7 +377,7 @@
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-          LOGGER.logDebug("Ends service execution REST: sarchZipCode");
+          LOGGER.logDebug("Ends service execution REST: searchZipCode");
           return Response.ok(outSingleSearchZipCodeResponse).build();
         
       }
