@@ -97,7 +97,7 @@
           */
         
 			// Return DTO
-			public SearchZipCodeResponse  sarchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
+			public SearchZipCodeResponse  searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
           /**
           * Service to Update Profile
           */
