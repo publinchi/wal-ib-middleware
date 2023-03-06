@@ -36,6 +36,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
+    import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
@@ -90,6 +92,12 @@
         
 			//Have DTO
 			public RegisterBeneficiaryResponse registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest  )throws CTSRestException;
+            /**
+          * Search Zip Code API
+          */
+        
+			// Return DTO
+			public SearchZipCodeResponse  sarchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
           /**
           * Service to Update Profile
           */

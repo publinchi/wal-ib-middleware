@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_search_zipcode</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_zipCode" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="codeColony" />
+        <column name="cityCode" />
+        <column name="provinceCode" />
+        <column name="success" />
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT  "codeColony" = tab.codeColony,"cityCode" = tab.cityCode,"provinceCode" = tab.provinceCode,"success" = tab.success,"code" = tab.code,"message" = tab.message </queryText>
+    </query>
+  </queries>
+</procedure>

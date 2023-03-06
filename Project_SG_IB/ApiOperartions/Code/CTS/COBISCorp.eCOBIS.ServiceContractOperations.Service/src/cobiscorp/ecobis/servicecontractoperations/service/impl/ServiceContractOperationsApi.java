@@ -437,6 +437,49 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+	@CTSProcedure(
+		name = "cobis..sp_search_zipcode", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inSearchZipCodeRequest",
+				input = {
+				
+					@CTSInputParam(field = "zipCode", param = "@i_zipCode", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500098")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnSearchZipCodeResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse.class,
+      columns = {
+		    @CTSColumn(field = "codeColony", columnIndex = 1),
+		    @CTSColumn(field = "cityCode", columnIndex = 2),
+		    @CTSColumn(field = "provinceCode", columnIndex = 3),
+		    @CTSColumn(field = "success", columnIndex = 4),
+		    @CTSColumn(field = "message.code", columnIndex = 5),
+		    @CTSColumn(field = "message.message", columnIndex = 6)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO sarchZipCode(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_updateProfile", dbms = "SQLCTS",  
