@@ -23,6 +23,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.Message;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
@@ -32,6 +34,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
@@ -51,6 +55,12 @@
 			//Have DTO
 			public CreateCustomerResponse createCustomer(CreateCustomerRequest inCreateCustomerRequest  )throws CTSRestException;
           /**
+          * Service to create a savings account for an existing customer
+          */
+        
+			//Have DTO
+			public ResponseCreateSavingAccount createSavingAccount(RequestCreateSavingAccount inRequestCreateSavingAccount  )throws CTSRestException;
+          /**
           * Encrypt Data
           */
         
@@ -60,8 +70,8 @@
           * Service to generate and send an OTP to the client
           */
         
-			// Return list
-			public  ResponseOtp  generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
+			// Have only one return single result
+			public  ResponseOtp generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
           /**
           * Get catalog
           */
@@ -74,6 +84,12 @@
         
 			//Have DTO
 			public ResponseGetUserEntityInformation getUserEntityInformation(RequestGetUserEntityInformation inRequestGetUserEntityInformation  )throws CTSRestException;
+          /**
+          * Register Beneficiary Saving Account
+          */
+        
+			//Have DTO
+			public RegisterBeneficiaryResponse registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest  )throws CTSRestException;
           /**
           * Service to Update Profile
           */

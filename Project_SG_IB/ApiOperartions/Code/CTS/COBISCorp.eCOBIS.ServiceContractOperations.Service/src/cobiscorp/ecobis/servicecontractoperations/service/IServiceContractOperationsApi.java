@@ -31,6 +31,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO createCustomer(ServiceRequestTO requestTO);  
 
   /**
+  * Service to create a savings account for an existing customer
+  */
+  ServiceResponseTO createSavingAccount(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
@@ -51,9 +56,14 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  
 
   /**
+  * Register Beneficiary Saving Account
+  */
+  ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO);  
+
+  /**
   * Service to Update Profile
   */
-  ServiceResponseTO updateProfile(ServiceRequestTO requestTO); 
+  ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  
 
   ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO);  
 
