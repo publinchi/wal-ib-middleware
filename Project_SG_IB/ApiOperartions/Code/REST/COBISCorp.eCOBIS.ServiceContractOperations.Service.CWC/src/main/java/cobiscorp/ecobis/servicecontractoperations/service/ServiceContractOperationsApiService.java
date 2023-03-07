@@ -1020,11 +1020,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		outResponseCreateSavingAccount.setMessage(message);
 		outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", response.getParams()));
 		
-		if(outResponseCreateSavingAccount.getAccountNumber()!=null && outResponseCreateSavingAccount.getAccountNumber()!="") {
+		if(outResponseCreateSavingAccount.getAccountNumber()!=null && outResponseCreateSavingAccount.getAccountNumber()!="" && message.getCode()==0) {
 			
 			outResponseCreateSavingAccount.setSuccess(true);
 			
-		}	
+		}else
+		{
+			
+			outResponseCreateSavingAccount.setSuccess(false);
+			
+		}
 		
 		
 

@@ -91,7 +91,7 @@
           
       if(!validateMandatory(new Data("activity", inCreateCustomerRequest.getActivity()), new Data("referenceAddress", inCreateCustomerRequest.getReferenceAddress()), new Data("addressTypeCode", inCreateCustomerRequest.getAddressTypeCode()), new Data("amountTransaction", inCreateCustomerRequest.getAmountTransaction()), new Data("averageBalance", inCreateCustomerRequest.getAverageBalance()), new Data("birthDate", inCreateCustomerRequest.getBirthDate()), new Data("city", inCreateCustomerRequest.getCity()), new Data("civilStatus", inCreateCustomerRequest.getCivilStatus()), new Data("companyName", inCreateCustomerRequest.getCompanyName()), new Data("countryBirth", inCreateCustomerRequest.getCountryBirth()), new Data("economicSector", inCreateCustomerRequest.getEconomicSector()), new Data("electronicTransfer", inCreateCustomerRequest.getElectronicTransfer()), new Data("externalNumber", inCreateCustomerRequest.getExternalNumber()), new Data("gender", inCreateCustomerRequest.getGender()), new Data("geolocalizationLatitude", inCreateCustomerRequest.getGeolocalizationLatitude()), new Data("geolocalizationLongitude", inCreateCustomerRequest.getGeolocalizationLongitude()), new Data("idNumber", inCreateCustomerRequest.getIdNumber()), new Data("identityValidated", inCreateCustomerRequest.getIdentityValidated()), new Data("incomeLevel", inCreateCustomerRequest.getIncomeLevel()), new Data("incomeLevelEntity", inCreateCustomerRequest.getIncomeLevelEntity()), new Data("internalNumber", inCreateCustomerRequest.getInternalNumber()), new Data("lastName", inCreateCustomerRequest.getLastName()), new Data("legalIncomeSource", inCreateCustomerRequest.getLegalIncomeSource()), new Data("email", inCreateCustomerRequest.getEmail()), new Data("firstName", inCreateCustomerRequest.getFirstName()), new Data("nationality", inCreateCustomerRequest.getNationality()), new Data("noConnectionIllegalNetworks", inCreateCustomerRequest.getNoConnectionIllegalNetworks()), new Data("phoneNumber", inCreateCustomerRequest.getPhoneNumber()), new Data("numberTransaction", inCreateCustomerRequest.getNumberTransaction()), new Data("occupation", inCreateCustomerRequest.getOccupation()), new Data("operationType", inCreateCustomerRequest.getOperationType()), new Data("otherMexicanAccount", inCreateCustomerRequest.getOtherMexicanAccount()), new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()), new Data("secondName", inCreateCustomerRequest.getSecondName()), new Data("paymentCard", inCreateCustomerRequest.getPaymentCard()), new Data("paymentRecharge", inCreateCustomerRequest.getPaymentRecharge()), new Data("servicesPay", inCreateCustomerRequest.getServicesPay()), new Data("propertyTypeCode", inCreateCustomerRequest.getPropertyTypeCode()), new Data("province", inCreateCustomerRequest.getProvince()), new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()), new Data("provisionCash", inCreateCustomerRequest.getProvisionCash()), new Data("rfc", inCreateCustomerRequest.getRfc()), new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()), new Data("identificationType", inCreateCustomerRequest.getIdentificationType()), new Data("street", inCreateCustomerRequest.getStreet()), new Data("subdivisioncode", inCreateCustomerRequest.getSubdivisioncode()), new Data("timeCurrentRecide", inCreateCustomerRequest.getTimeCurrentRecide()), new Data("townCode", inCreateCustomerRequest.getTownCode()), new Data("validityDate", inCreateCustomerRequest.getValidityDate()), new Data("zipcode", inCreateCustomerRequest.getZipcode()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -129,8 +129,8 @@
           
       if(!validateMandatory(new Data("customerId", inRequestCreateSavingAccount.getCustomerId()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-      }
+        return Response.status(400).entity("The request message is not properly formatted").build();
+      }//The request message is not properly formatted
 	    
       try {
       outResponseCreateSavingAccount=iServiceContractOperationsApiService.createSavingAccount( inRequestCreateSavingAccount );
@@ -167,7 +167,7 @@
           
       if(!validateMandatory(new Data("externalCustomerId", inRequestEncriptData.getExternalCustomerId()), new Data("password", inRequestEncriptData.getPassword()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -205,7 +205,7 @@
           
       if(!validateMandatory(new Data("externalCustomerId", inRequestOtp.getExternalCustomerId()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -243,7 +243,7 @@
           
       if(!validateMandatory(new Data("catalogueTable", inRequestCatalog.getCatalogueTable()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -281,7 +281,7 @@
           
       if(!validateMandatory(new Data("externalCustomerId", inRequestGetUserEntityInformation.getExternalCustomerId()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -319,7 +319,7 @@
           
       if(!validateMandatory(new Data("beneficiaries.lastName", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.secondLastName", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.street", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.city", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.zipcode", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("externalCustomerId", inRegisterBeneficiaryRequest.getExternalCustomerId()), new Data("beneficiaries.birthDate", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.location", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.names", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.externalNumber", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.internalNumber", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("account", inRegisterBeneficiaryRequest.getAccount()), new Data("beneficiaries.relationship", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.colony", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.percentage", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.province", inRegisterBeneficiaryRequest.getBeneficiaries()), new Data("beneficiaries.phoneNumber", inRegisterBeneficiaryRequest.getBeneficiaries()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -357,7 +357,7 @@
           
       if(!validateMandatory(new Data("zipCode", inSearchZipCodeRequest.getZipCode()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -395,7 +395,7 @@
           
       if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateProfile.getExternalCustomerId()), new Data("email", inRequestUpdateProfile.getEmail()), new Data("phoneNumber", inRequestUpdateProfile.getPhoneNumber()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -429,7 +429,7 @@
           
       if(!validateMandatory(new Data("identityCard", inRequestValidateCustomerIdentityCard.getIdentityCard()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
@@ -467,7 +467,7 @@
           
       if(!validateMandatory(new Data("type", inRequestValidateIdentity.getType()), new Data("imageAnverso", inRequestValidateIdentity.getImageAnverso()), new Data("imageReverso", inRequestValidateIdentity.getImageReverso()), new Data("imageDomicile", inRequestValidateIdentity.getImageDomicile()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+        return Response.status(400).entity("The request message is not properly formatted").build();
       }
 	    
       try {
