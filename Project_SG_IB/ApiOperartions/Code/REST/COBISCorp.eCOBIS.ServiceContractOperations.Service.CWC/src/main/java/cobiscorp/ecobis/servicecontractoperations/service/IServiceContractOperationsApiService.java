@@ -29,6 +29,9 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
+    import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
+    import   cobiscorp.ecobis.datacontractoperations.dto.BeneficiariesResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
@@ -74,6 +77,12 @@
         
 			// Have only one return single result
 			public  ResponseOtp generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
+          /**
+          * Get Beneficiary Saving Account
+          */
+        
+			//Have DTO
+			public GetBeneficiaryResponse getBeneficiary(GetBeneficiaryRequest inGetBeneficiaryRequest  )throws CTSRestException;
           /**
           * Get catalog
           */

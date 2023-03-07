@@ -400,6 +400,133 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outSingleResponseOtp;
 	}
 
+	    /**
+	    * Get Beneficiary Saving Account
+	    */
+	   @Override
+		//Have DTO
+		public GetBeneficiaryResponse getBeneficiary(GetBeneficiaryRequest inGetBeneficiaryRequest  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: getBeneficiary");
+		GetBeneficiaryResponse outGetBeneficiaryResponse  = new GetBeneficiaryResponse();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500099");
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inGetBeneficiaryRequest.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_numero_producto",ICTSTypes.SQLVARCHAR,inGetBeneficiaryRequest.getAccount());
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"S");
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+
+		Integer index = response.getResultSets().size();
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(index - 2).getData().getRows().size()>0) {	
+									//---------NO Array
+									GetBeneficiaryResponse returnGetBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(index - 2), new RowMapper<GetBeneficiaryResponse>() { 
+		              @Override
+		              public GetBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		              GetBeneficiaryResponse dto = new GetBeneficiaryResponse();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outGetBeneficiaryResponse.setSuccess(returnGetBeneficiaryResponse.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(index - 1).getData().getRows().size()>0) {	
+									//---------NO Array
+									GetBeneficiaryResponse returnGetBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(index - 1), new RowMapper<GetBeneficiaryResponse>() { 
+		              @Override
+		              public GetBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		              GetBeneficiaryResponse dto = new GetBeneficiaryResponse();
+		              
+								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outGetBeneficiaryResponse.setMessage(returnGetBeneficiaryResponse.getMessage());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		      
+		      if(index==3){
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									BeneficiariesResponse[] returnGetBeneficiaryResponse = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<BeneficiariesResponse>() { 
+		              @Override
+		              public BeneficiariesResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		            	  BeneficiariesResponse dto = new BeneficiariesResponse();
+		              
+		            	  		dto.setNames(resultSetMapper.getString(1));
+		            	  		dto.setLastName(resultSetMapper.getString(2));
+								dto.setSecondLastName(resultSetMapper.getString(3));
+								dto.setBirthDate(resultSetMapper.getDate(4).toString());
+								dto.setRelationship(resultSetMapper.getString(5));
+								dto.setPhoneNumber(resultSetMapper.getString(6));
+								dto.setZipcode(resultSetMapper.getString(7));
+								dto.setProvince(resultSetMapper.getString(8));
+								dto.setCity(resultSetMapper.getString(9));
+								dto.setColony(resultSetMapper.getString(10));
+								dto.setLocation(resultSetMapper.getString(11));
+								dto.setAddress(resultSetMapper.getString(12));
+								dto.setPercentage(resultSetMapper.getInteger(13));
+		              return dto;
+		              }
+		              },false);
+		
+		              outGetBeneficiaryResponse.setBeneficiaries(returnGetBeneficiaryResponse);
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  LOGGER.logDebug("Ends service execution: getBeneficiary");
+		  //returns data
+		  return outGetBeneficiaryResponse;
+		}
+
+	
 	/**
 	 * Get catalog
 	 */

@@ -29,16 +29,34 @@
   <queries>
     <query>
       <columns>
-        <column name="success" />
+        <column name="names" />
+        <column name="lasstName" />
+        <column name="secodLasstName" />
+        <column name="birthDate" />
+        <column name="relationship" />
+        <column name="phoneNumber" />
+        <column name="zipcode" />
+        <column name="province" />
+        <column name="city" />
+        <column name="colony" />
+        <column name="location" />
+        <column name="address" />
+        <column name="percentage" />
       </columns>
       <queryText>SELECT "success"=true</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
     </query>
     <query>
       <columns>
         <column name="code" />
         <column name="message" />
       </columns>
-      <queryText>SELECT "code"=0,"message"="Success"</queryText>
+      <queryText></queryText>
     </query>
   </queries>
 </procedure>

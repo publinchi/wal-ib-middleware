@@ -26,7 +26,9 @@
     import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
-    import cobiscorp.ecobis.datacontractoperations.dto.Message;
+import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
+import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
@@ -229,6 +231,44 @@
           return Response.ok(outSingleResponseOtp).build();
         
       }
+        
+        /**
+        * Get Beneficiary Saving Account
+        */
+      @POST
+	    @Path("/apiOperations/onboarding/getBeneficiary")
+	    @Consumes({"application/json"})
+	    @Produces({"application/json"})
+	     public Response  getBeneficiary(GetBeneficiaryRequest inGetBeneficiaryRequest ){
+		  LOGGER.logDebug("Start service execution REST: getBeneficiary");
+	    GetBeneficiaryResponse outGetBeneficiaryResponse  = new GetBeneficiaryResponse();
+	        
+	    if(!validateMandatory(new Data("externalCustomerId", inGetBeneficiaryRequest.getExternalCustomerId()), new Data("account", inGetBeneficiaryRequest.getAccount()))) {
+	      LOGGER.logDebug("400 is returned - Required fields are missing");
+	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    }
+		    
+	    try {
+	    outGetBeneficiaryResponse=iServiceContractOperationsApiService.getBeneficiary( inGetBeneficiaryRequest );
+	    } catch (CTSRestException e) {
+	    LOGGER.logError("CTSRestException",e);
+	    if ("404".equals(e.getMessage())) {
+	    LOGGER.logDebug("404 is returned - No data found");
+	    return Response.status(404).entity("No data found").build();
+	    }
+	
+	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	    return Response.status(409).entity(e.getMessageBlockList()).build();
+	    } catch (Exception e){
+	    LOGGER.logDebug("500 is returned - Code exception");
+	    LOGGER.logError("Exception",e);
+	    return Response.status(500).entity(e.getMessage()).build();
+	    }
+	    
+	        LOGGER.logDebug("Ends service execution REST: getBeneficiary");
+	        return Response.ok(outGetBeneficiaryResponse).build();
+	      
+	    }
     
           /**
           * Get catalog

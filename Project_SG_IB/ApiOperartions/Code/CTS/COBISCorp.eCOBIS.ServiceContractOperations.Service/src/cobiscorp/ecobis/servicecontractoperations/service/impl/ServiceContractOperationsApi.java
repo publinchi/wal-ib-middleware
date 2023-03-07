@@ -269,6 +269,72 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_bvirtual..sp_beneficiaries_mant_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inGetBeneficiaryRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "account", param = "@i_numero_producto", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500099"),
+				@CTSDefaultInputParam(value = "S", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnGetBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "beneficiaries.names", columnIndex = 1),
+		    @CTSColumn(field = "beneficiaries.lastName", columnIndex = 2),
+		    @CTSColumn(field = "beneficiaries.secondLastName", columnIndex = 3),
+		    @CTSColumn(field = "beneficiaries.birthDate", columnIndex = 4),
+		    @CTSColumn(field = "beneficiaries.relationship", columnIndex = 5),
+		    @CTSColumn(field = "beneficiaries.phoneNumber", columnIndex = 6),
+		    @CTSColumn(field = "beneficiaries.zipcode", columnIndex = 7),
+		    @CTSColumn(field = "beneficiaries.province", columnIndex = 8),
+		    @CTSColumn(field = "beneficiaries.city", columnIndex = 9),
+		    @CTSColumn(field = "beneficiaries.colony", columnIndex = 10),
+		    @CTSColumn(field = "beneficiaries.location", columnIndex = 11),
+		    @CTSColumn(field = "beneficiaries.address", columnIndex = 12),
+		    @CTSColumn(field = "beneficiaries.percentage", columnIndex = 13)
+      }
+    ),
+    @CTSResponse(
+      name = "returnGetBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnGetBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getBeneficiary(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_get_catalog_data", dbms = "SQLCTS",  
 		objectRequest = {
 		
