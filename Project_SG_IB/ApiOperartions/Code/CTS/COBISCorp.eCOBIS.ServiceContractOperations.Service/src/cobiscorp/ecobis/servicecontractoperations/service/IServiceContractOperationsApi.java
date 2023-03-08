@@ -26,6 +26,11 @@ import cobiscorp.ecobis.commons.dto.ServiceResponseTO;
 public interface IServiceContractOperationsApi{
 
   /**
+  * Afiliate Customer
+  */
+  ServiceResponseTO affiliateCustomer(ServiceRequestTO requestTO);  
+
+  /**
   * Create new customers
   */
   ServiceResponseTO createCustomer(ServiceRequestTO requestTO);  
