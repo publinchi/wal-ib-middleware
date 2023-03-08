@@ -20,6 +20,8 @@
     /************************************************************/
     
     package  cobiscorp.ecobis.servicecontractoperations.service;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.Message;
@@ -52,6 +54,13 @@
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
+
+      /**
+          * Afiliate Customer
+          */
+        
+			// Return Dto
+			public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer  )throws CTSRestException;
     
           /**
           * Create new customers

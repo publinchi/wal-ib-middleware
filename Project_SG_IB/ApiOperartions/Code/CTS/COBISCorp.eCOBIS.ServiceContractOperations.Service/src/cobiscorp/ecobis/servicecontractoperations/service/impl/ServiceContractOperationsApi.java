@@ -35,6 +35,48 @@ import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperat
 public class ServiceContractOperationsApi extends CTSAbstractService implements IServiceContractOperationsApi {
 
 	@CTSProcedure(
+		name = "cob_procesador..sp_affiliate_customer", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestAffiliateCustomer",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500101")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseAffiliateCustomer",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer.class,
+      columns = {
+		    @CTSColumn(field = "loginId", columnIndex = 1),
+		    @CTSColumn(field = "userCreated", columnIndex = 2),
+		    @CTSColumn(field = "success", columnIndex = 3),
+		    @CTSColumn(field = "message.message", columnIndex = 4),
+		    @CTSColumn(field = "message.code", columnIndex = 5)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO affiliateCustomer(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+
+	@CTSProcedure(
 		name = "cobis..sp_api_create_customer",   
 		objectRequest = {
 		

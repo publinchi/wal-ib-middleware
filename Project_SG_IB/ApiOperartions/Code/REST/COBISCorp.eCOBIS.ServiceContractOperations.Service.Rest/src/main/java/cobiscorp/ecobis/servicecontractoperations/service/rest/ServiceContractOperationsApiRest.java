@@ -24,6 +24,8 @@
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     
     import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
+    import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
+    import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
@@ -79,6 +81,44 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
     protected void unsetiServiceContractOperationsApiService(IServiceContractOperationsApiService iServiceContractOperationsApiService){
     this.iServiceContractOperationsApiService = null;
     }
+
+    /**
+          * Afiliate Customer
+          */
+        @POST
+      @Path("/apiOperations/onbording/affiliateCustomer")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer ){
+	  LOGGER.logDebug("Start service execution REST: affiliateCustomer");
+      ResponseAffiliateCustomer outSingleResponseAffiliateCustomer  = new ResponseAffiliateCustomer();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inRequestAffiliateCustomer.getExternalCustomerId()), new Data("accountNumber", inRequestAffiliateCustomer.getAccountNumber()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleResponseAffiliateCustomer=iServiceContractOperationsApiService.affiliateCustomer( inRequestAffiliateCustomer );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: affiliateCustomer");
+          return Response.ok(outSingleResponseAffiliateCustomer).build();
+        
+      }
     
           /**
           * Create new customers
