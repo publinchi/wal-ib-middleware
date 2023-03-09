@@ -256,6 +256,40 @@ paths:
                 $ref: '#/components/schemas/GetBeneficiaryResponse'
       security:
       - bearerAuth: []      
+  apiOperations/customer/updateCustomerAddress:
+    post:
+      tags:
+      - Update Customer's
+      summary: Update customer address
+      operationId: updateCustomerAddress
+      requestBody:
+        description: Request to update customer address
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerAddressRequest'
+        required: true
+      responses:
+        "400":
+          description: Description of errors regarding the execution of the service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Response update customer address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCustomerAddressResponse'
+      security:
+      - bearerAuth: []
 components:
   schemas:
     Message:
@@ -1053,6 +1087,110 @@ components:
           type: integer
           description: Percentage amount beneficiary
           example: 100
+          
+    UpdateCustomerAddressRequest:
+      required:
+      - addressTypeCode
+      - anotherAddress
+      - city
+      - country
+      - externalCustomerId
+      - externalNumber
+      - internalNumberl
+      - propertyTypeCode
+      - province
+      - referenceAddress
+      - street
+      - subdivisioncode
+      - timeCurrentRecide
+      - townCode
+      - zipcode
+      properties:
+        externalCustomerId:
+          maxLength: 12
+          type: integer
+          description: External Customer Id
+          example: 220
+        zipcode:
+          maximum: 5
+          minimum: 5
+          type: string
+          description: Zip code
+          example: "10000"
+        province:
+          maximum: 2
+          minimum: 1
+          type: string
+          description: Province ID, (Use the "getCatalog" service with table cl_pais)
+          example: "9"
+        city:
+          maximum: 10
+          minimum: 1
+          type: string
+          description: City of residence ID,for example 9011 (Use the "getCatalog" service with table cl_ciudad)
+          example: "9011"
+        subdivisioncode:
+          maximum: 10
+          minimum: 1
+          type: string
+          description: Id of colony or parish of residence,  (Use the "getCatalog" service with table cl_parroquia)
+          example: "90111959"
+        townCode:
+          maximum: 6
+          minimum: 1
+          type: string
+          description: Id of locality of residence (Use the service searchLocationCatalogwith City of residence ID)
+          example: "146"
+        street:
+          maximum: 25
+          minimum: 1
+          type: string
+          description: street name of the customer's home
+          example: my street
+        externalNumber:
+          maximum: 10
+          minimum: 1
+          type: string
+          description: External number of the customer's home
+          example: "10"
+        internalNumber:
+          maximum: 5
+          minimum: 1
+          type: string
+          description: Inside number of the customer's home  (NA is always 0 )
+          example: "0"
+        referenceAddress:
+          maximum: 20
+          minimum: 1
+          type: string
+          description: Reference Address
+          example: street park
+        timeCurrentRecide:
+          maximum: 3
+          minimum: 1
+          type: string
+          description: Customer time current residence
+          example: "3"
+        addressTypeCode:
+          maximum: 5
+          minimum: 1
+          type: string
+          description: Customer type address (Use the "getCatalog" service with table cl_tdireccion)
+          example: AE
+        propertyTypeCode:
+          maximum: 5
+          minimum: 1
+          type: string
+          description: Type of provider where you live (Use the "getCatalog" service with table cl_tpropiedad)
+          example: PRO
+    UpdateCustomerAddressResponse:
+      properties:
+        success:
+          type: boolean
+          description: result process
+          example: true
+        message:
+          $ref: '#/components/schemas/Message'          
           
   responses:
     Unauthorized:
