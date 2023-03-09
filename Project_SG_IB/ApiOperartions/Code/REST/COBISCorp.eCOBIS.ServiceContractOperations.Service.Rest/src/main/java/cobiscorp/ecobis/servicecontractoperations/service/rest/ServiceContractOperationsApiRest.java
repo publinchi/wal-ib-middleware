@@ -428,7 +428,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
           * Search Zip Code API
           */
         @POST
-      @Path("/onboarding/searchZipCode")
+      @Path("/apiOperations/onboarding/searchZipCode")
       @Consumes({"application/json"})
       @Produces({"application/json"})
        public Response  searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest ){
