@@ -82,7 +82,7 @@ public class GetCustomerOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		reqTMP.setSpName("cobis..sp_getCustomer");
 		reqTMP.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMP.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500092");
-		reqTMP.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT1, idCustomer);
+		reqTMP.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		IProcedureResponse wProcedureResponse = executeCoreBanking(reqTMP);
 		if (logger.isInfoEnabled()) {
 			logger.logDebug("Ending flow, queryGetCustomer with wProcedureResponse: " + wProcedureResponse.getProcedureResponseAsString());
@@ -118,7 +118,7 @@ public class GetCustomerOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("addressId", ICTSTypes.SYBINT2, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT2, 2));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		
 		if (wQueryGetCustomerResp != null && !wQueryGetCustomerResp.hasError() && wQueryGetCustomerResp.getResultSet(1).getData().getRowsAsArray().length > 0) {
 			IResultSetRow resultSetRow = wQueryGetCustomerResp.getResultSet(1).getData().getRowsAsArray()[0];

@@ -91,7 +91,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		reqTMPCentral.setSpName("cobis..sp_updateProfile");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500095");
-		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT1, idCustomer);
+		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_email", ICTSTypes.SQLVARCHAR, mail);
 		reqTMPCentral.addInputParam("@i_phoneNumber", ICTSTypes.SQLVARCHAR, phone);
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
@@ -109,7 +109,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 				reqTMPLocal.setSpName("cob_bvirtual..sp_updateProfile");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500095");
-				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT1, idCustomer);
+				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_email", ICTSTypes.SQLVARCHAR, mail);
 				reqTMPLocal.addInputParam("@i_phoneNumber", ICTSTypes.SQLVARCHAR, phone);
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
@@ -142,7 +142,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 				
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40040")) {
 				
-				aBagSPJavaOrchestration.put("40040", "phoneNumber is repeated");
+				aBagSPJavaOrchestration.put("40040", "The phone number was already registered with another customer");
 				return;
 			}
 			 
@@ -163,7 +163,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT2, 2));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		
 		if (keyList.get(0).equals("0")) {
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
