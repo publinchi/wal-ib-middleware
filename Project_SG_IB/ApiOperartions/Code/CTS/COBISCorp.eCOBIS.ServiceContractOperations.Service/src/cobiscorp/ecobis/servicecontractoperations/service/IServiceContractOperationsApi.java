@@ -76,6 +76,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO searchZipCode(ServiceRequestTO requestTO);  
 
   /**
+  * Update customer address
+  */
+  ServiceResponseTO updateCustomerAddress(ServiceRequestTO requestTO);  
+
+  /**
   * Service to Update Profile
   */
   ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  

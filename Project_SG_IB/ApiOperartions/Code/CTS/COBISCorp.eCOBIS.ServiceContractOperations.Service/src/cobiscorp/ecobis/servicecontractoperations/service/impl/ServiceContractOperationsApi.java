@@ -75,7 +75,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
 	@CTSProcedure(
 		name = "cobis..sp_api_create_customer",   
 		objectRequest = {
@@ -545,7 +545,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
 	@CTSProcedure(
 		name = "cobis..sp_search_zipcode", dbms = "SQLCTS",  
 		objectRequest = {
@@ -587,7 +587,66 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
+	@CTSProcedure(
+		name = "cobis..sp_direccion_dml_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inUpdateCustomerAddressRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "referenceAddress", param = "@i_descripcion", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "addressTypeCode", param = "@i_tipo", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "townCode", param = "@i_parroquia", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "city", param = "@i_ciudad", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "province", param = "@i_provincia", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "propertyTypeCode", param = "@i_tipo_prop", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "zipcode", param = "@i_codpostal", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "street", param = "@i_calle", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "timeCurrentRecide", param = "@i_tiempo_reside", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "externalNumber", param = "@i_nro", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "internalNumber", param = "@i_nro_interno", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "subdivisioncode", param = "@i_localidad", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500100"),
+				@CTSDefaultInputParam(value = "U", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR),
+				@CTSDefaultInputParam(value = "1", param = "@i_oficina", dataType = ICTSTypes.SQLINT2),
+				@CTSDefaultInputParam(value = "S", param = "@i_direct", dataType = ICTSTypes.SQLVARCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnUpdateCustomerAddressResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnUpdateCustomerAddressResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO updateCustomerAddress(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_updateProfile", dbms = "SQLCTS",  

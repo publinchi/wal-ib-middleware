@@ -970,6 +970,109 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		// returns data
 		return outSingleSearchZipCodeResponse;
 	}
+	
+	    /**
+	    * Update customer address
+	    */
+	   @Override
+		//Have DTO
+		public UpdateCustomerAddressResponse updateCustomerAddress(UpdateCustomerAddressRequest inUpdateCustomerAddressRequest  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: updateCustomerAddress");
+		UpdateCustomerAddressResponse outUpdateCustomerAddressResponse  = new UpdateCustomerAddressResponse();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_direccion_dml_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500100");
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"U");
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_descripcion",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getReferenceAddress());
+		procedureRequestAS.addInputParam("@i_tipo",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getAddressTypeCode());
+		procedureRequestAS.addInputParam("@i_parroquia",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getTownCode()));
+		procedureRequestAS.addInputParam("@i_ciudad",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getCity()));
+		procedureRequestAS.addInputParam("@i_oficina",ICTSTypes.SQLINT2,"1");
+		procedureRequestAS.addInputParam("@i_provincia",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getProvince()));
+		procedureRequestAS.addInputParam("@i_tipo_prop",ICTSTypes.SQLCHAR,String.valueOf(inUpdateCustomerAddressRequest.getPropertyTypeCode()));
+		procedureRequestAS.addInputParam("@i_codpostal",ICTSTypes.SQLCHAR,String.valueOf(inUpdateCustomerAddressRequest.getZipcode()));
+		procedureRequestAS.addInputParam("@i_calle",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getStreet());
+		procedureRequestAS.addInputParam("@i_tiempo_reside",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getTimeCurrentRecide()));
+		procedureRequestAS.addInputParam("@i_nro",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getExternalNumber());
+		procedureRequestAS.addInputParam("@i_nro_interno",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getInternalNumber());
+		procedureRequestAS.addInputParam("@i_localidad",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getSubdivisioncode());
+		procedureRequestAS.addInputParam("@i_direct",ICTSTypes.SQLVARCHAR,"S");
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateCustomerAddressResponse returnUpdateCustomerAddressResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<UpdateCustomerAddressResponse>() { 
+		              @Override
+		              public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		              UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outUpdateCustomerAddressResponse.setSuccess(returnUpdateCustomerAddressResponse.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateCustomerAddressResponse returnUpdateCustomerAddressResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<UpdateCustomerAddressResponse>() { 
+		              @Override
+		              public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		              UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
+		              
+								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outUpdateCustomerAddressResponse.setMessage(returnUpdateCustomerAddressResponse.getMessage());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  LOGGER.logDebug("Ends service execution: updateCustomerAddress");
+		  //returns data
+		  return outUpdateCustomerAddressResponse;
+		}
 
 	/**
 	 * Service to Update Profile
