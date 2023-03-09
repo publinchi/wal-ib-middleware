@@ -27,7 +27,7 @@
       <field type="String" name="packageTypeName" value="Jar" />
     </class>
   </collection>
-  <collection type="List" length="30" id="9" name="dTOs">
+  <collection type="List" length="32" id="9" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="10" index="0">
       <field type="String" name="name" value="Beneficiaries" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
@@ -178,20 +178,35 @@
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="40" index="30">
+      <field type="String" name="name" value="UpdateCustomerAddressRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" index="31">
+      <field type="String" name="name" value="UpdateCustomerAddressResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
   </collection>
-  <collection type="List" length="0" id="40" name="properties">
+  <collection type="List" length="1" id="42" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="43" index="0">
+      <field type="String" name="name" value="UseNamingConvention" />
+      <field type="String" name="value" value="false" />
+      <field type="char" name="type" value="\u0000" />
+    </class>
   </collection>
   <field type="String" name="documentation" value="Dtos" />
   <field type="boolean" name="autoSelectDTO" value="false" />
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="0" id="41" name="references">
+  <collection type="List" length="0" id="44" name="references">
   </collection>
-  <collection type="List" length="0" id="42" name="externalReferences">
+  <collection type="List" length="0" id="45" name="externalReferences">
   </collection>
-  <collection type="List" length="1" id="43" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="44" index="0">
+  <collection type="List" length="1" id="46" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="47" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobis" />
       <field type="String" name="keyPassword" value="cobisadminadmin" />
@@ -200,10 +215,10 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
     </class>
   </collection>
-  <collection type="List" length="0" id="45" name="templateCommands">
+  <collection type="List" length="0" id="48" name="templateCommands">
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />

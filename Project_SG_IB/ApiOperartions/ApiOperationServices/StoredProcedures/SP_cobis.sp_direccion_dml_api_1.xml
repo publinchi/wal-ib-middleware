@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_direccion_dml_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@i_direccion" dataType="tinyint" direction="in" />
+    <parameter name="@i_descripcion" dataType="varchar" direction="in" />
+    <parameter name="@i_tipo" dataType="varchar" direction="in" />
+    <parameter name="@i_sector" dataType="varchar" direction="in" />
+    <parameter name="@i_parroquia" dataType="int" direction="in" />
+    <parameter name="@i_barrio" dataType="char" direction="in" />
+    <parameter name="@i_zona" dataType="varchar" direction="in" />
+    <parameter name="@i_ciudad" dataType="int" direction="in" />
+    <parameter name="@i_oficina" dataType="smallint" direction="in" />
+    <parameter name="@i_principal" dataType="char" direction="in" />
+    <parameter name="@i_provincia" dataType="int" direction="in" />
+    <parameter name="@i_pais" dataType="smallint" direction="in" />
+    <parameter name="@i_tipo_prop" dataType="char" direction="in" />
+    <parameter name="@i_codpostal" dataType="char" direction="in" />
+    <parameter name="@i_define" dataType="char" direction="in" />
+    <parameter name="@i_casa" dataType="varchar" direction="in" />
+    <parameter name="@i_calle" dataType="varchar" direction="in" />
+    <parameter name="@i_tiempo_reside" dataType="int" direction="in" />
+    <parameter name="@i_nro" dataType="varchar" direction="in" />
+    <parameter name="@i_nro_interno" dataType="varchar" direction="in" />
+    <parameter name="@i_ci_poblacion" dataType="varchar" direction="in" />
+    <parameter name="@i_referencias_dom" dataType="varchar" direction="in" />
+    <parameter name="@i_otro_tipo" dataType="varchar" direction="in" />
+    <parameter name="@i_localidad" dataType="varchar" direction="in" />
+    <parameter name="@i_direct" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
+    </query>
+  </queries>
+</procedure>

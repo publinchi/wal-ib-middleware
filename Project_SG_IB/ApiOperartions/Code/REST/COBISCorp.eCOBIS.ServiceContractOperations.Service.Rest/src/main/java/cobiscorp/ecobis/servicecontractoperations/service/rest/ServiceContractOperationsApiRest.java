@@ -46,7 +46,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
-    import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
+import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
@@ -461,6 +463,44 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
           return Response.ok(outSingleSearchZipCodeResponse).build();
         
       }
+        
+        /**
+        * Update customer address
+        */
+      @POST
+	    @Path("/apiOperations/customer/updateCustomerAddress")
+	    @Consumes({"application/json"})
+	    @Produces({"application/json"})
+	     public Response  updateCustomerAddress(UpdateCustomerAddressRequest inUpdateCustomerAddressRequest ){
+		  LOGGER.logDebug("Start service execution REST: updateCustomerAddress");
+	    UpdateCustomerAddressResponse outUpdateCustomerAddressResponse  = new UpdateCustomerAddressResponse();
+	        
+	    if(!validateMandatory(new Data("externalCustomerId", inUpdateCustomerAddressRequest.getExternalCustomerId()), new Data("referenceAddress", inUpdateCustomerAddressRequest.getReferenceAddress()), new Data("addressTypeCode", inUpdateCustomerAddressRequest.getAddressTypeCode()), new Data("townCode", inUpdateCustomerAddressRequest.getTownCode()), new Data("city", inUpdateCustomerAddressRequest.getCity()), new Data("province", inUpdateCustomerAddressRequest.getProvince()), new Data("propertyTypeCode", inUpdateCustomerAddressRequest.getPropertyTypeCode()), new Data("zipcode", inUpdateCustomerAddressRequest.getZipcode()), new Data("street", inUpdateCustomerAddressRequest.getStreet()), new Data("timeCurrentRecide", inUpdateCustomerAddressRequest.getTimeCurrentRecide()), new Data("externalNumber", inUpdateCustomerAddressRequest.getExternalNumber()), new Data("internalNumber", inUpdateCustomerAddressRequest.getInternalNumber()), new Data("subdivisioncode", inUpdateCustomerAddressRequest.getSubdivisioncode()))) {
+	      LOGGER.logDebug("400 is returned - Required fields are missing");
+	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    }
+		    
+	    try {
+	    outUpdateCustomerAddressResponse=iServiceContractOperationsApiService.updateCustomerAddress( inUpdateCustomerAddressRequest );
+	    } catch (CTSRestException e) {
+	    LOGGER.logError("CTSRestException",e);
+	    if ("404".equals(e.getMessage())) {
+	    LOGGER.logDebug("404 is returned - No data found");
+	    return Response.status(404).entity("No data found").build();
+	    }
+	
+	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	    return Response.status(409).entity(e.getMessageBlockList()).build();
+	    } catch (Exception e){
+	    LOGGER.logDebug("500 is returned - Code exception");
+	    LOGGER.logError("Exception",e);
+	    return Response.status(500).entity(e.getMessage()).build();
+	    }
+	    
+	        LOGGER.logDebug("Ends service execution REST: updateCustomerAddress");
+	        return Response.ok(outUpdateCustomerAddressResponse).build();
+	      
+	    }
     
           /**
           * Service to Update Profile
