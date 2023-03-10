@@ -178,47 +178,25 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
-		name = "cobis..sp_apertura_aut_bv_api",   
+		name = "cobis..sp_apertura_aut_bv_api", dbms = "SQLCTS",  
 		objectRequest = {
 		
 			@CTSRequest(
 				name = "inRequestCreateSavingAccount",
 				input = {
 				
-					@CTSInputParam(field = "customerId", param = "@i_cli", dataType = ICTSTypes.SQLINT4)
+					@CTSInputParam(field = "customerId", param = "@i_customer", dataType = ICTSTypes.SQLINT4)
 				}
 			)
 		},
 		defaultRequest = {
     
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500097")
-		},
-  response = {
-  
-    @CTSResponse(
-      name = "returnResponseCreateSavingAccount",
-      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount.class,
-      columns = {
-		    @CTSColumn(field = "success", columnIndex = 1)
-      }
-    ),
-    @CTSResponse(
-      name = "returnMessage",
-      type = cobiscorp.ecobis.datacontractoperations.dto.Message.class,
-      columns = {
-		    @CTSColumn(field = "code", columnIndex = 1),
-		    @CTSColumn(field = "message", columnIndex = 2)
-      }
-    ),
-    @CTSResponse(
-      name = "returnResponseCreateSavingAccount",
-      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount.class,
-      columns = {
-		    @CTSColumn(field = "success", columnIndex = 1)
-      }
-    )
-  }
-  
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500097"),
+				@CTSDefaultInputParam(value = "XXXX", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "00000", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "00000", param = "@o_account", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+		}
 	)
 	
   /**
@@ -565,15 +543,12 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   response = {
   
     @CTSResponse(
-      name = "returnSearchZipCodeResponse",
-      type = cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse.class,
+      name = "returnListZipCode",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ListZipCode.class,
       columns = {
 		    @CTSColumn(field = "codeColony", columnIndex = 1),
 		    @CTSColumn(field = "cityCode", columnIndex = 2),
-		    @CTSColumn(field = "provinceCode", columnIndex = 3),
-		    @CTSColumn(field = "success", columnIndex = 4),
-		    @CTSColumn(field = "message.code", columnIndex = 5),
-		    @CTSColumn(field = "message.message", columnIndex = 6)
+		    @CTSColumn(field = "provinceCode", columnIndex = 3)
       }
     )
   }

@@ -27,32 +27,26 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class SearchZipCodeResponse implements Serializable {
-  private Boolean success;
-  private Message message;
-  private ListZipCode[] zipList;
-  public Boolean isSuccess(){
-    return this.success;
+public class ListZipCode implements Serializable {
+  private String provinceCode;
+  private String cityCode;
+  private String codeColony;
+  public String getProvinceCode(){
+    return this.provinceCode;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setProvinceCode(String provinceCode ){
+    this.provinceCode=provinceCode;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
-	}
-	return this.message;
+  public String getCityCode(){
+    return this.cityCode;
   }
-  public Message getMessage(){
-    return this.message;
+  public void setCityCode(String cityCode ){
+    this.cityCode=cityCode;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public String getCodeColony(){
+    return this.codeColony;
   }
-  public ListZipCode[] getZipList(){
-    return this.zipList;
-  }
-  public void setZipList(ListZipCode[] zipList ){
-    this.zipList=zipList;
+  public void setCodeColony(String codeColony ){
+    this.codeColony=codeColony;
   }
 }
