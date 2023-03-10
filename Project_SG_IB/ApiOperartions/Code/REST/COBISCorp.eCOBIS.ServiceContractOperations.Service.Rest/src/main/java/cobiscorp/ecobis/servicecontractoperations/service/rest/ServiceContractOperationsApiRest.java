@@ -88,7 +88,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
           * Afiliate Customer
           */
         @POST
-      @Path("/apiOperations/onbording/affiliateCustomer")
+      @Path("/apiOperations/onboarding/affiliateCustomer")
       @Consumes({"application/json"})
       @Produces({"application/json"})
        public Response  affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer ){
