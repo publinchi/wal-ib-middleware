@@ -912,8 +912,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
  SearchZipCodeResponse toReturn=new SearchZipCodeResponse();
  
  
-   procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500098");
- procedureRequestAS.addInputParam("@i_zipCode",ICTSTypes.SQLVARCHAR,inSearchZipCodeRequest.getZipCode());
+ procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500098");
+procedureRequestAS.addInputParam("@i_zipCode",ICTSTypes.SQLVARCHAR,inSearchZipCodeRequest.getZipCode());
+procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"false");
+procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"XXXX");
+procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"000");
  
  //execute procedure
  ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -970,6 +973,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
  Message message=new Message();
  message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
  message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+ 
+ if(message!=null && message.getCode()==0) {
+	 toReturn.setSuccess(true);
+	 
+ } else toReturn.setSuccess(false);
+ 
  toReturn.setMessage(message);
        
    LOGGER.logDebug("Ends service execution: searchZipCode");
