@@ -96,7 +96,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("password", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT2, 2));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		if (password.equals(""))
 		{
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
