@@ -1269,6 +1269,17 @@ procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"000");
 			mapBlank++;
 
 		}
+		
+		Message message=outResponseValidateCustomerIdentityCard.getMessage();
+		
+		if(message==null || message.getCode()>0 ) {
+			
+			outResponseValidateCustomerIdentityCard.setSuccess(false);
+		}else {
+			
+			outResponseValidateCustomerIdentityCard.setSuccess(true);
+		}
+		
 
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {
