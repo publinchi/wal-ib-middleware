@@ -1,0 +1,94 @@
+<csp-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="coreBanking" xsi:noNamespaceSchemaLocation="configuracion-transaccion.xsd">
+	<!-- 18500090 ORQUESTACION GENERATED OTP-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para generacion de OTP">
+		<conditions>
+		  <condition param="trn">
+			<value>18500090</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GeneratedTransactionFactorOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+
+	<!-- 18500088 ORQUESTACION ENCRYPTDATA-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo EncryptData">
+		<conditions>
+		  <condition param="trn">
+			<value>18500088</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=EncryptDataOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	<!-- 18500087 ORQUESTACION GetCatalog-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion Get Catalog">
+		<conditions>
+		  <condition param="trn">
+			<value>18500087</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetCatalogue)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	<!-- 18500092 ORQUESTACION GETCUSTOMER-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetCustomer">
+		<conditions>
+		  <condition param="trn">
+			<value>18500092</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetCustomerOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	<!-- 18500095 ORQUESTACION UPDATEPROFILE-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo UpdateProfile">
+		<conditions>
+		  <condition param="trn">
+			<value>18500095</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=UpdateProfileOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	<!-- 18500101 ORQUESTACION AFFILIATECUSTOMER-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AffiliateCustomer">
+		<conditions>
+		  <condition param="trn">
+			<value>18500101</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AffiliateCustomerOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+
+</csp-config>

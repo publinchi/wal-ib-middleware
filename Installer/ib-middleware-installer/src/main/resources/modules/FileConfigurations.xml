@@ -195,6 +195,22 @@
 			   path="../plugins/IB" version="4.6.1.0" />
 		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
 			   path="../plugins/IB" version="4.6.1.0" />
+
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/ApiWalMart" version="4.6.1.0" />
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />	
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
+		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
+			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
+			   			   			   		   			   			   			   			   
 	</plan-config>
 	
 	<orchestrationsTemplate>
@@ -344,6 +360,14 @@
     <staff id="75" name="orchestration-core-ib-activate-card" version="4.6.1.0" />
     <staff id="76" name="orchestration-ib-expenses-accounts" version="4.6.1.0" />
 	<staff id="77" name="orchestration-core-ib-spei-in" version="4.6.1.0" />
+	
+	<staff id="78" name="orchestration-core-ib-affiliatecustomer" version="4.6.1.0" />
+	<staff id="79" name="orchestration-core-ib-encryptdata" version="4.6.1.0" />
+	<staff id="80" name="orchestration-core-ib-getCatalogue" version="4.6.1.0" />
+	<staff id="81" name="orchestration-core-ib-getcustomer" version="4.6.1.0" />
+	<staff id="82" name="orchestration-core-ib-query-generate-transaction-factor" version="4.6.1.0" />
+	<staff id="83" name="orchestration-core-ib-updateprofile" version="4.6.1.0" />
+	<staff id="84" name="orchestration-core-ib-validateIdentity" version="4.6.1.0" />
 	</orchestrations>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
@@ -392,6 +416,7 @@
 		<staff id="2" name="configuracion-executor-channel-admin.xml" />
 		<staff id="3" name="configuracion-ruteo-servicios-batch.xml" />
 		<staff id="4" name="Configuracion-ORQSPEI-IN.xml" />
+		<staff id="4" name="configuracion-ruteo-servicios.xml" />
 	</ctstransformation>
 	<adm-channels>
 		<staff id="1" name="channel-adm-commons" version="1.0.1"

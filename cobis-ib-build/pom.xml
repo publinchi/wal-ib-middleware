@@ -6,9 +6,6 @@
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <url>http://www.cobiscorp.com/</url>
-
-
-
   <properties>
     <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -176,6 +173,14 @@
 		<module>../Expenses/orchestration-ib-expenses-accounts-template</module>
         <module>../Expenses/orchestration-ib-expenses-accounts</module>
         <module>../Offline/orchestration-core-ib-spei-in</module>
+        
+        <module>../ApiOperations/orchestration-core-ib-affiliatecustomer</module>
+        <module>../ApiOperations/orchestration-core-ib-encryptdata</module>
+        <module>../ApiOperations/orchestration-core-ib-getCatalogue</module>
+        <module>../ApiOperations/orchestration-core-ib-getcustomer</module>
+        <module>../ApiOperations/orchestration-core-ib-query-generate-transaction-factor</module>
+        <module>../ApiOperations/orchestration-core-ib-updateprofile</module>
+        <module>../ApiOperations/orchestration-core-ib-validateIdentity</module>
 
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
