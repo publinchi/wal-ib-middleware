@@ -51,6 +51,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO generateTransactionFactor(ServiceRequestTO requestTO);  
 
   /**
+  * Check Account Details
+  */
+  ServiceResponseTO getBalancesDetail(ServiceRequestTO requestTO);  
+
+  /**
   * Get Beneficiary Saving Account
   */
   ServiceResponseTO getBeneficiary(ServiceRequestTO requestTO);  

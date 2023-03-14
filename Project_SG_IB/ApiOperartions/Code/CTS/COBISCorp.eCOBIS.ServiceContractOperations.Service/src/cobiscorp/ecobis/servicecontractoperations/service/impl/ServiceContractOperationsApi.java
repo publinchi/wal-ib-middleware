@@ -353,6 +353,71 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+
+	@CTSProcedure(
+		name = "cobis..sp_get_balances_detail_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestGetBalancesDetail",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500102")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseGetBalancesDetail",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3),
+		    @CTSColumn(field = "accountName", columnIndex = 4),
+		    @CTSColumn(field = "accountStatus", columnIndex = 5),
+		    @CTSColumn(field = "availableBalance", columnIndex = 6),
+		    @CTSColumn(field = "averageBalance", columnIndex = 7),
+		    @CTSColumn(field = "currencyId", columnIndex = 8),
+		    @CTSColumn(field = "deliveryAddress", columnIndex = 9),
+		    @CTSColumn(field = "freezingsNumber", columnIndex = 10),
+		    @CTSColumn(field = "frozenAmount", columnIndex = 11),
+		    @CTSColumn(field = "lastCutoffBalance", columnIndex = 12),
+		    @CTSColumn(field = "lastOperationDate", columnIndex = 13),
+		    @CTSColumn(field = "openingDate", columnIndex = 14),
+		    @CTSColumn(field = "overdraftAmount", columnIndex = 15),
+		    @CTSColumn(field = "productBalance", columnIndex = 16),
+		    @CTSColumn(field = "productId", columnIndex = 17),
+		    @CTSColumn(field = "reserveBalance", columnIndex = 18),
+		    @CTSColumn(field = "restrainedAmount", columnIndex = 19),
+		    @CTSColumn(field = "toDrawBalance", columnIndex = 20),
+		    @CTSColumn(field = "accountingBalance", columnIndex = 21),
+		    @CTSColumn(field = "ofical", columnIndex = 22),
+		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 23),
+		    @CTSColumn(field = "idDebitCard", columnIndex = 24),
+		    @CTSColumn(field = "debitCardNumber", columnIndex = 25),
+		    @CTSColumn(field = "stateDebitCard", columnIndex = 26)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getBalancesDetail(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+	
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_get_catalog_data", dbms = "SQLCTS",  

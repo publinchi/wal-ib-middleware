@@ -31,6 +31,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.BeneficiariesResponse;
@@ -82,12 +84,22 @@
         
 			// Return list
 			public  List<ResponseEncriptData>  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
+               
           /**
           * Service to generate and send an OTP to the client
           */
         
 			// Have only one return single result
 			public  ResponseOtp generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
+
+
+      /**
+          * Check Account Details
+          */
+        
+			// Return DTO
+			public  ResponseGetBalancesDetail getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException;
+
           /**
           * Get Beneficiary Saving Account
           */

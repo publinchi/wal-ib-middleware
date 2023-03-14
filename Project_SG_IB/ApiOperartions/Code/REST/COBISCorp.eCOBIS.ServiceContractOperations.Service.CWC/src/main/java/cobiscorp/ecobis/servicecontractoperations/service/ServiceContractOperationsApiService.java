@@ -469,6 +469,96 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outSingleResponseOtp;
 	}
 
+	/**
+          * Check Account Details
+          */
+         @Override
+			// Return DTO
+			public  ResponseGetBalancesDetail  getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: getBalancesDetail");
+      ResponseGetBalancesDetail outSingleResponseGetBalancesDetail  = new ResponseGetBalancesDetail();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_balances_detail_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500102");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestGetBalancesDetail.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestGetBalancesDetail.getAccountNumber());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    ResponseGetBalancesDetail returnResponseGetBalancesDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetBalancesDetail>() { 
+                    @Override
+                    public ResponseGetBalancesDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseGetBalancesDetail dto = new ResponseGetBalancesDetail();
+                    
+                          dto.setSuccess(resultSetMapper.getString(1));
+                          dto.setAccountName(resultSetMapper.getString(4));
+                          dto.setAccountStatus(resultSetMapper.getString(5));
+                          dto.setAvailableBalance(resultSetMapper.getBigDecimal(6));
+                          dto.setAverageBalance(resultSetMapper.getBigDecimal(7));
+                          dto.setCurrencyId(resultSetMapper.getInteger(8));
+                          dto.setDeliveryAddress(resultSetMapper.getString(9));
+                          dto.setFreezingsNumber(resultSetMapper.getString(10));
+                          dto.setFrozenAmount(resultSetMapper.getBigDecimal(11));
+                          dto.setLastCutoffBalance(resultSetMapper.getBigDecimal(12));
+                          dto.setLastOperationDate(resultSetMapper.getString(13));
+                          dto.setOpeningDate(resultSetMapper.getString(14));
+                          dto.setOverdraftAmount(resultSetMapper.getBigDecimal(15));
+                          dto.setProductBalance(resultSetMapper.getBigDecimal(16));
+                          dto.setProductId(resultSetMapper.getInteger(17));
+                          dto.setReserveBalance(resultSetMapper.getBigDecimal(18));
+                          dto.setRestrainedAmount(resultSetMapper.getBigDecimal(19));
+                          dto.setToDrawBalance(resultSetMapper.getBigDecimal(20));
+                          dto.setAccountingBalance(resultSetMapper.getBigDecimal(21));
+                          dto.setOfical(resultSetMapper.getString(22));
+                          dto.setClabeAccountNumber(resultSetMapper.getString(23));
+                          dto.setIdDebitCard(resultSetMapper.getInteger(24));
+                          dto.setDebitCardNumber(resultSetMapper.getString(25));
+                          dto.setStateDebitCard(resultSetMapper.getString(26));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
+							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseGetBalancesDetail=returnResponseGetBalancesDetail ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: getBalancesDetail");
+        //returns data
+        return outSingleResponseGetBalancesDetail;
+      }
+
 	    /**
 	    * Get Beneficiary Saving Account
 	    */
