@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <procedure>
-  <database>cobis</database>
+  <database>cob_procesador</database>
   <name>sp_get_balances_detail_api</name>
   <type>SYBASE</type>
   <version>1</version>
