@@ -290,6 +290,36 @@ paths:
                 $ref: '#/components/schemas/UpdateCustomerAddressResponse'
       security:
       - bearerAuth: []
+      
+  apiOperations/accounts/getOwnAccountsView:
+    post:
+      tags:
+      - Get Own Accounts View
+      summary: Get Own Accounts View
+      operationId: getOwnAccountsView
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOwnAccountsView'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Own accounts view
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseOwnAccountsView'
+      security:
+      - bearerAuth: []
 components:
   schemas:
     Message:
@@ -1191,6 +1221,129 @@ components:
           example: true
         message:
           $ref: '#/components/schemas/Message'          
+
+    RequestOwnAccountsView:
+      required:
+      - externalCustomerId
+      type: object
+      properties:
+        externalCustomerId:
+          maxLength: 12
+          type: integer
+          description: External Customer Id
+          example: 220
+    ResponseOwnAccountsView:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the service was executed
+          example: true
+        message:
+          $ref: '#/components/schemas/Message'
+        accountsArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountsArray'
+    AccountsArray:
+      type: object
+      properties:
+        availableBalance:
+          maxLength: 10
+          minLength: 1
+          type: number
+          description: Available balance
+          example: 999804.34
+        drawBalance:
+          maxLength: 40
+          minLength: 1
+          type: number
+          description: Draw balance
+          example: 999804.34
+        currencyId:
+          maxLength: 2
+          minLength: 1
+          type: integer
+          description: Id of currency
+          example: 0
+        currencySymbol:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Symbol of currency
+          example: MXN
+        currencyName:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Symbol of currency
+          example: PESOS MEXICANOS
+        productAlias:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Product alias
+          example: CTAAHO_0027
+        productId:
+          maxLength: 2
+          minLength: 1
+          type: integer
+          description: Id of product
+          example: 4
+        productNumber:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Product number
+          example: "03000000027"
+        productName:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Product name
+          example: CUENTA MXN
+        productAbbreviation:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Product abbreviation
+          example: ""
+        accountingBalance:
+          maxLength: 40
+          minLength: 1
+          type: number
+          description: Accounting balance
+          example: 999804.34
+        aliasName:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Alias name
+          example: CTAAHO_0027
+        expirationDate:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Expiration date
+          example: 10/02/2022
+        rate:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Rate
+          example: I
+        totalCredit:
+          maxLength: 40
+          minLength: 1
+          type: number
+          description: Accounting balance
+          example: 8301.83
+        clabeInterBank:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: Interbank key
+          example: "646180283000000020"
           
   responses:
     Unauthorized:
