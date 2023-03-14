@@ -471,6 +471,73 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+	@CTSProcedure(
+		name = "cob_procesador..sp_consulta_cuentas", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestOwnAccountsView",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_customer_id", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500103")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseOwnAccountsView",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseOwnAccountsView",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseOwnAccountsView",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView.class,
+      columns = {
+		    @CTSColumn(field = "accountsArray[0].availableBalance", columnIndex = 1),
+		    @CTSColumn(field = "accountsArray[0].drawBalance", columnIndex = 2),
+		    @CTSColumn(field = "accountsArray[0].currencyId", columnIndex = 3),
+		    @CTSColumn(field = "accountsArray[0].currencySymbol", columnIndex = 4),
+		    @CTSColumn(field = "accountsArray[0].currencyName", columnIndex = 5),
+		    @CTSColumn(field = "accountsArray[0].productAlias", columnIndex = 6),
+		    @CTSColumn(field = "accountsArray[0].productId", columnIndex = 7),
+		    @CTSColumn(field = "accountsArray[0].productNumber", columnIndex = 8),
+		    @CTSColumn(field = "accountsArray[0].productName", columnIndex = 9),
+		    @CTSColumn(field = "accountsArray[0].productAbbreviation", columnIndex = 10),
+		    @CTSColumn(field = "accountsArray[0].accountingBalance", columnIndex = 11),
+		    @CTSColumn(field = "accountsArray[0].aliasName", columnIndex = 12),
+		    @CTSColumn(field = "accountsArray[0].expirationDate", columnIndex = 13),
+		    @CTSColumn(field = "accountsArray[0].rate", columnIndex = 14),
+		    @CTSColumn(field = "accountsArray[0].totalCredit", columnIndex = 15),
+		    @CTSColumn(field = "accountsArray[0].clabeInterBank", columnIndex = 16)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getOwnAccountsView(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_getCustomer",   

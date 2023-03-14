@@ -66,6 +66,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getCatalog(ServiceRequestTO requestTO);  
 
   /**
+  * Get Own Accounts View
+  */
+  ServiceResponseTO getOwnAccountsView(ServiceRequestTO requestTO);  
+
+  /**
   * View Customer Information
   */
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  

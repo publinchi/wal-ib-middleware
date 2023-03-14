@@ -39,12 +39,16 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
+    import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -58,8 +62,8 @@
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
-
-      /**
+    
+          /**
           * Afiliate Customer
           */
         
@@ -84,16 +88,13 @@
         
 			// Return list
 			public  List<ResponseEncriptData>  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
-               
           /**
           * Service to generate and send an OTP to the client
           */
         
 			// Have only one return single result
 			public  ResponseOtp generateTransactionFactor(RequestOtp inRequestOtp  )throws CTSRestException;
-
-
-      /**
+          /**
           * Check Account Details
           */
         
@@ -112,6 +113,12 @@
         
 			//Have DTO
 			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException;
+          /**
+          * Get Own Accounts View
+          */
+        
+			//Have DTO
+			public ResponseOwnAccountsView getOwnAccountsView(RequestOwnAccountsView inRequestOwnAccountsView  )throws CTSRestException;
           /**
           * View Customer Information
           */
