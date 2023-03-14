@@ -173,7 +173,7 @@
 		<module>../Expenses/orchestration-ib-expenses-accounts-template</module>
         <module>../Expenses/orchestration-ib-expenses-accounts</module>
         <module>../Offline/orchestration-core-ib-spei-in</module>
-        
+        <!-- API WALMART-->
         <module>../ApiOperations/orchestration-core-ib-affiliatecustomer</module>
         <module>../ApiOperations/orchestration-core-ib-encryptdata</module>
         <module>../ApiOperations/orchestration-core-ib-getCatalogue</module>
