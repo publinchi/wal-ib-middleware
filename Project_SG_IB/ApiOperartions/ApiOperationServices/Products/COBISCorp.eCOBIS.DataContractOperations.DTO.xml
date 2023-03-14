@@ -27,175 +27,200 @@
       <field type="String" name="packageTypeName" value="Jar" />
     </class>
   </collection>
-  <collection type="List" length="33" id="9" name="dTOs">
+  <collection type="List" length="38" id="9" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="10" index="0">
-      <field type="String" name="name" value="Beneficiaries" />
+      <field type="String" name="name" value="AccountsArray" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="11" index="1">
-      <field type="String" name="name" value="BeneficiariesResponse" />
+      <field type="String" name="name" value="Beneficiaries" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="12" index="2">
-      <field type="String" name="name" value="CatalogueItems" />
+      <field type="String" name="name" value="BeneficiariesResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="13" index="3">
-      <field type="String" name="name" value="CreateCustomerRequest" />
+      <field type="String" name="name" value="CatalogueItems" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="14" index="4">
-      <field type="String" name="name" value="CreateCustomerResponse" />
+      <field type="String" name="name" value="CreateCustomerRequest" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="15" index="5">
-      <field type="String" name="name" value="GetBeneficiaryRequest" />
+      <field type="String" name="name" value="CreateCustomerResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="16" index="6">
-      <field type="String" name="name" value="GetBeneficiaryResponse" />
+      <field type="String" name="name" value="GetBeneficiaryRequest" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="17" index="7">
-      <field type="String" name="name" value="Message" />
+      <field type="String" name="name" value="GetBeneficiaryResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="18" index="8">
-      <field type="String" name="name" value="RegisterBeneficiaryRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="19" index="9">
-      <field type="String" name="name" value="RegisterBeneficiaryResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="20" index="10">
-      <field type="String" name="name" value="RequestAffiliateCustomer" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="21" index="11">
-      <field type="String" name="name" value="RequestCatalog" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="22" index="12">
-      <field type="String" name="name" value="RequestCreateSavingAccount" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="23" index="13">
-      <field type="String" name="name" value="RequestEncriptData" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="24" index="14">
-      <field type="String" name="name" value="RequestGetUserEntityInformation" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="25" index="15">
-      <field type="String" name="name" value="RequestOtp" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="26" index="16">
-      <field type="String" name="name" value="RequestUpdateProfile" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="27" index="17">
-      <field type="String" name="name" value="RequestValidateCustomerIdentityCard" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="28" index="18">
-      <field type="String" name="name" value="RequestValidateIdentity" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="29" index="19">
-      <field type="String" name="name" value="ResponseAffiliateCustomer" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="30" index="20">
-      <field type="String" name="name" value="ResponseCatalog" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="31" index="21">
-      <field type="String" name="name" value="ResponseCreateSavingAccount" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="32" index="22">
-      <field type="String" name="name" value="ResponseEncriptData" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="33" index="23">
-      <field type="String" name="name" value="ResponseGetUserEntityInformation" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="34" index="24">
-      <field type="String" name="name" value="ResponseOtp" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="35" index="25">
-      <field type="String" name="name" value="ResponseUpdateProfile" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="36" index="26">
-      <field type="String" name="name" value="ResponseValidateCustomerIdentityCard" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="37" index="27">
-      <field type="String" name="name" value="ResponseValidateIdentity" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="38" index="28">
-      <field type="String" name="name" value="SearchZipCodeRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="39" index="29">
-      <field type="String" name="name" value="SearchZipCodeResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="40" index="30">
-      <field type="String" name="name" value="UpdateCustomerAddressRequest" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" index="31">
-      <field type="String" name="name" value="UpdateCustomerAddressResponse" />
-      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="version" value="1" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="42" index="32">
       <field type="String" name="name" value="ListZipCode" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="19" index="9">
+      <field type="String" name="name" value="Message" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="20" index="10">
+      <field type="String" name="name" value="RegisterBeneficiaryRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="21" index="11">
+      <field type="String" name="name" value="RegisterBeneficiaryResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="22" index="12">
+      <field type="String" name="name" value="RequestAffiliateCustomer" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="23" index="13">
+      <field type="String" name="name" value="RequestCatalog" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="24" index="14">
+      <field type="String" name="name" value="RequestCreateSavingAccount" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="25" index="15">
+      <field type="String" name="name" value="RequestEncriptData" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="26" index="16">
+      <field type="String" name="name" value="RequestGetBalancesDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="27" index="17">
+      <field type="String" name="name" value="RequestGetUserEntityInformation" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="28" index="18">
+      <field type="String" name="name" value="RequestOtp" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="29" index="19">
+      <field type="String" name="name" value="RequestOwnAccountsView" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="30" index="20">
+      <field type="String" name="name" value="RequestUpdateProfile" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="31" index="21">
+      <field type="String" name="name" value="RequestValidateCustomerIdentityCard" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="32" index="22">
+      <field type="String" name="name" value="RequestValidateIdentity" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="33" index="23">
+      <field type="String" name="name" value="ResponseAffiliateCustomer" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="34" index="24">
+      <field type="String" name="name" value="ResponseCatalog" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="35" index="25">
+      <field type="String" name="name" value="ResponseCreateSavingAccount" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="36" index="26">
+      <field type="String" name="name" value="ResponseEncriptData" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="37" index="27">
+      <field type="String" name="name" value="ResponseGetBalancesDetail" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="38" index="28">
+      <field type="String" name="name" value="ResponseGetUserEntityInformation" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="39" index="29">
+      <field type="String" name="name" value="ResponseOtp" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="40" index="30">
+      <field type="String" name="name" value="ResponseOwnAccountsView" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" index="31">
+      <field type="String" name="name" value="ResponseUpdateProfile" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="42" index="32">
+      <field type="String" name="name" value="ResponseValidateCustomerIdentityCard" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="43" index="33">
+      <field type="String" name="name" value="ResponseValidateIdentity" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="44" index="34">
+      <field type="String" name="name" value="SearchZipCodeRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="45" index="35">
+      <field type="String" name="name" value="SearchZipCodeResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="46" index="36">
+      <field type="String" name="name" value="UpdateCustomerAddressRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="47" index="37">
+      <field type="String" name="name" value="UpdateCustomerAddressResponse" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
   </collection>
-  <collection type="List" length="1" id="43" name="properties">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="44" index="0">
+  <collection type="List" length="1" id="48" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="49" index="0">
       <field type="String" name="name" value="UseNamingConvention" />
       <field type="String" name="value" value="false" />
       <field type="char" name="type" value="\u0000" />
@@ -206,12 +231,12 @@
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="0" id="45" name="references">
+  <collection type="List" length="0" id="50" name="references">
   </collection>
-  <collection type="List" length="0" id="46" name="externalReferences">
+  <collection type="List" length="0" id="51" name="externalReferences">
   </collection>
-  <collection type="List" length="1" id="47" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="48" index="0">
+  <collection type="List" length="1" id="52" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="53" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobis" />
       <field type="String" name="keyPassword" value="cobisadminadmin" />
@@ -224,7 +249,7 @@
       <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
     </class>
   </collection>
-  <collection type="List" length="0" id="49" name="templateCommands">
+  <collection type="List" length="0" id="54" name="templateCommands">
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />

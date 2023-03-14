@@ -36,8 +36,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
-    import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
-    import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
@@ -389,6 +391,45 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
           return Response.ok(outResponseCatalog).build();
         
       }
+        
+        /**
+        * Get Own Accounts View
+        */
+      @POST
+	    @Path("/apiOperations/accounts/getOwnAccountsView")
+	    @Consumes({"application/json"})
+	    @Produces({"application/json"})
+	     public Response  getOwnAccountsView(RequestOwnAccountsView inRequestOwnAccountsView ){
+		  LOGGER.logDebug("Start service execution REST: getOwnAccountsView");
+	    ResponseOwnAccountsView outResponseOwnAccountsView  = new ResponseOwnAccountsView();
+	        
+	    if(!validateMandatory(new Data("externalCustomerId", inRequestOwnAccountsView.getExternalCustomerId()))) {
+	      LOGGER.logDebug("400 is returned - Required fields are missing");
+	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    }
+		    
+	    try {
+	    outResponseOwnAccountsView=iServiceContractOperationsApiService.getOwnAccountsView( inRequestOwnAccountsView );
+	    } catch (CTSRestException e) {
+	    LOGGER.logError("CTSRestException",e);
+	    if ("404".equals(e.getMessage())) {
+	    LOGGER.logDebug("404 is returned - No data found");
+	    return Response.status(404).entity("No data found").build();
+	    }
+	
+	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	    return Response.status(409).entity(e.getMessageBlockList()).build();
+	    } catch (Exception e){
+	    LOGGER.logDebug("500 is returned - Code exception");
+	    LOGGER.logError("Exception",e);
+	    return Response.status(500).entity(e.getMessage()).build();
+	    }
+	    
+	        LOGGER.logDebug("Ends service execution REST: getOwnAccountsView");
+	        return Response.ok(outResponseOwnAccountsView).build();
+	      
+	    }
+
     
           /**
           * View Customer Information
