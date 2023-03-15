@@ -44,12 +44,12 @@ import com.cobiscorp.cobis.commons.components.ComponentLocator;
  * @since Sep 2, 2014
  * @version 1.0.0
  */
-@Component(name = "AffiliateCustomerOrchestrationCore", immediate = false)
+@Component(name = "GetBalancesDetailOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
-@Properties(value = { @Property(name = "service.description", value = "AffiliateCustomerOrchestrationCore"),
+@Properties(value = { @Property(name = "service.description", value = "GetBalancesDetailOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
-		@Property(name = "service.identifier", value = "AffiliateCustomerOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_affiliate_customer")
+		@Property(name = "service.identifier", value = "GetBalancesDetailOrchestrationCore"),
+		@Property(name = "service.spName", value = "cob_procesador..sp_get_balances_detail_api")
 })
 public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
 	
