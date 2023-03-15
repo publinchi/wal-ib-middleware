@@ -356,7 +356,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 
 
 	@CTSProcedure(
-		name = "cobis..sp_get_balances_detail_api", dbms = "SQLCTS",  
+		name = "cob_procesador..sp_get_balances_detail_api", dbms = "SQLCTS",  
 		objectRequest = {
 		
 			@CTSRequest(

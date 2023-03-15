@@ -479,7 +479,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       ResponseGetBalancesDetail outSingleResponseGetBalancesDetail  = new ResponseGetBalancesDetail();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_balances_detail_api");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_balances_detail_api");
       
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500102");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestGetBalancesDetail.getExternalCustomerId()));
