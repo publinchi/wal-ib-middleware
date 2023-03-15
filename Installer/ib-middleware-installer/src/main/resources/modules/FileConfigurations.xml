@@ -195,21 +195,6 @@
 			   path="../plugins/IB" version="4.6.1.0" />
 		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
 			   path="../plugins/IB" version="4.6.1.0" />
-
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/ApiWalMart" version="4.6.1.0" />
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />	
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
-		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service"
-			   path="../plugins/plugins/ApiWalMart" version="4.6.1.0" />
 			   			   			   		   			   			   			   			   
 	</plan-config>
 	
