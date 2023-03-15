@@ -393,17 +393,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "lastOperationDate", columnIndex = 13),
 		    @CTSColumn(field = "openingDate", columnIndex = 14),
 		    @CTSColumn(field = "overdraftAmount", columnIndex = 15),
-		    @CTSColumn(field = "productBalance", columnIndex = 16),
-		    @CTSColumn(field = "productId", columnIndex = 17),
-		    @CTSColumn(field = "reserveBalance", columnIndex = 18),
-		    @CTSColumn(field = "restrainedAmount", columnIndex = 19),
-		    @CTSColumn(field = "toDrawBalance", columnIndex = 20),
-		    @CTSColumn(field = "accountingBalance", columnIndex = 21),
-		    @CTSColumn(field = "ofical", columnIndex = 22),
-		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 23),
-		    @CTSColumn(field = "idDebitCard", columnIndex = 24),
-		    @CTSColumn(field = "debitCardNumber", columnIndex = 25),
-		    @CTSColumn(field = "stateDebitCard", columnIndex = 26)
+		    @CTSColumn(field = "productId", columnIndex = 16),
+		    @CTSColumn(field = "toDrawBalance", columnIndex = 17),
+		    @CTSColumn(field = "accountingBalance", columnIndex = 18),
+		    @CTSColumn(field = "ofical", columnIndex = 19),
+		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 20),
+		    @CTSColumn(field = "idDebitCard", columnIndex = 21),
+		    @CTSColumn(field = "debitCardNumber", columnIndex = 22),
+		    @CTSColumn(field = "stateDebitCard", columnIndex = 23)
       }
     )
   }
