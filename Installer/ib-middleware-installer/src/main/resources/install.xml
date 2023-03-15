@@ -117,7 +117,7 @@
 			<fileset dir="modules/CIS/SERVICES/plugins/IBOrchestration/With_Offline/"
 				targetdir="$INSTALL_PATH/CIS/SERVICES/plugins/IBOrchestration/" override="true" />
 				
-			<fileset dir="modules/CIS/SERVICES/plugins/IBOrchestration/API_WALMART/"
+			<fileset dir="modules/CIS/SERVICES/plugins/API_WALMART/"
 				targetdir="$INSTALL_PATH/CIS/SERVICES/plugins/ApiWalmart/" override="true" />				
 				
 		</pack>

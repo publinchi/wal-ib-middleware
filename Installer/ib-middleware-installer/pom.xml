@@ -1428,7 +1428,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/ApiWalmart</outputDirectory>
+							<outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/API_WALMART</outputDirectory>
 							<stripVersion>false</stripVersion>
 							<includeArtifactIds>						
 							orchestration-core-ib-affiliatecustomer,
