@@ -277,6 +277,7 @@ public class InstallJarsJob extends AbstractProcessJob {
 						updateConfigurations.removePlanConfigCIS(ctsPlanConfig,"IB-CIS");
 						updateConfigurations.removePlanConfigCIS(ctsPlanConfig,"IB-TEMPLATES");
 						updateConfigurations.removePlanConfigCIS(ctsPlanConfig,"IB-AUTHENTICATE");
+						updateConfigurations.removePlanConfigCIS(ctsPlanConfig,"api-rest-orchestrations");
 												
 						logger.info("Paso 36");
 						fileConfigurations.close();
@@ -292,6 +293,12 @@ public class InstallJarsJob extends AbstractProcessJob {
 						fileConfigurations.close();
 						fileConfigurations = getClass().getResourceAsStream("/modules/FileConfigurations.xml");
 						updateConfigurations.editPlanConfigCIS(ctsPlanConfig, fileConfigurations, "IB-AUTHENTICATE", "orchestrationsAuthenticate");
+				
+						logger.info("Paso 39");
+						fileConfigurations.close();
+						fileConfigurations = getClass().getResourceAsStream("/modules/FileConfigurations.xml");
+						updateConfigurations.editPlanConfigCISApiRest(ctsPlanConfig, fileConfigurations, "api-rest-orchestrations", "api-rest-orchest");						
+					
 					}
 					
 					logger.info("Paso 39");					
