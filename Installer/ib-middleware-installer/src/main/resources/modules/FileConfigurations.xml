@@ -312,6 +312,7 @@
 		<staff id="1" name="configuracion-ruteo-servicios.xml" />
 		<staff id="2" name="configuracion-executor-channel-admin.xml" />
 		<staff id="3" name="configuracion-ruteo-servicios-batch.xml" />
+		<staff id="4" name="configuracion-ruteo-api-walmart.xml" />
 		<staff id="4" name="Configuracion-ORQSPEI-IN.xml" />
 		<staff id="4" name="configuracion-ruteo-servicios.xml" />
 	</ctstransformation>
