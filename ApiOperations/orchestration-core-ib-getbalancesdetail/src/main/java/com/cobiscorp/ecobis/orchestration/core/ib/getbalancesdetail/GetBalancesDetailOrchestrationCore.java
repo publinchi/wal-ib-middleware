@@ -83,7 +83,7 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 				
 		logger.logDebug("Begin flow, queryGetBalancesDetail with id: " + idCustomer);
 		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
 		reqTMPCentral.setSpName("cobis..sp_get_balances_detail_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500102");
@@ -122,7 +122,7 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 			 
 			
 		} else {
-			aBagSPJavaOrchestration.put("50007", "Error get balances detail");
+			aBagSPJavaOrchestration.put("50009", "Error get balances detail");
 			return;
 		}
 	}
@@ -188,29 +188,29 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 
 		} else {
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
-			row.addRowData(1, new ResultSetRowColumnData(false, this.columnsToReturn[0].getValue()));
-			row.addRowData(2, new ResultSetRowColumnData(false, this.columnsToReturn[1].getValue()));
-			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
-			row.addRowData(4, new ResultSetRowColumnData(false, this.columnsToReturn[3].getValue()));
-			row.addRowData(5, new ResultSetRowColumnData(false, this.columnsToReturn[4].getValue()));
-			row.addRowData(6, new ResultSetRowColumnData(false, this.columnsToReturn[5].getValue()));
-			row.addRowData(7, new ResultSetRowColumnData(false, this.columnsToReturn[6].getValue()));
-			row.addRowData(8, new ResultSetRowColumnData(false, this.columnsToReturn[7].getValue()));
-			row.addRowData(9, new ResultSetRowColumnData(false, this.columnsToReturn[8].getValue()));
-			row.addRowData(10, new ResultSetRowColumnData(false, this.columnsToReturn[9].getValue()));
-			row.addRowData(11, new ResultSetRowColumnData(false, this.columnsToReturn[10].getValue()));
-			row.addRowData(12, new ResultSetRowColumnData(false, this.columnsToReturn[11].getValue()));
-			row.addRowData(13, new ResultSetRowColumnData(false, this.columnsToReturn[12].getValue()));
-			row.addRowData(14, new ResultSetRowColumnData(false, this.columnsToReturn[13].getValue()));
-			row.addRowData(15, new ResultSetRowColumnData(false, this.columnsToReturn[14].getValue()));
-			row.addRowData(16, new ResultSetRowColumnData(false, this.columnsToReturn[15].getValue()));
-			row.addRowData(17, new ResultSetRowColumnData(false, this.columnsToReturn[16].getValue()));
-			row.addRowData(18, new ResultSetRowColumnData(false, this.columnsToReturn[17].getValue()));
-			row.addRowData(19, new ResultSetRowColumnData(false, this.columnsToReturn[18].getValue()));
-			row.addRowData(20, new ResultSetRowColumnData(false, this.columnsToReturn[19].getValue()));
-			row.addRowData(21, new ResultSetRowColumnData(false, this.columnsToReturn[20].getValue()));
-			row.addRowData(22, new ResultSetRowColumnData(false, this.columnsToReturn[21].getValue()));
-			row.addRowData(23, new ResultSetRowColumnData(false, this.columnsToReturn[22].getValue()));
+			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(2, new ResultSetRowColumnData(false, keyList.get(0)));
+			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
+			row.addRowData(4, new ResultSetRowColumnData(false, null));
+			row.addRowData(5, new ResultSetRowColumnData(false, null));
+			row.addRowData(6, new ResultSetRowColumnData(false, null));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
+			row.addRowData(8, new ResultSetRowColumnData(false, null));
+			row.addRowData(9, new ResultSetRowColumnData(false, null));
+			row.addRowData(10, new ResultSetRowColumnData(false, null));
+			row.addRowData(11, new ResultSetRowColumnData(false, null));
+			row.addRowData(12, new ResultSetRowColumnData(false, null));
+			row.addRowData(13, new ResultSetRowColumnData(false, null));
+			row.addRowData(14, new ResultSetRowColumnData(false, null));
+			row.addRowData(15, new ResultSetRowColumnData(false, null));
+			row.addRowData(16, new ResultSetRowColumnData(false, null));
+			row.addRowData(17, new ResultSetRowColumnData(false, null));
+			row.addRowData(18, new ResultSetRowColumnData(false, null));
+			row.addRowData(19, new ResultSetRowColumnData(false, null));
+			row.addRowData(20, new ResultSetRowColumnData(false, null));
+			row.addRowData(21, new ResultSetRowColumnData(false, null));
+			row.addRowData(22, new ResultSetRowColumnData(false, null));
+			row.addRowData(23, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
 		}
 		
