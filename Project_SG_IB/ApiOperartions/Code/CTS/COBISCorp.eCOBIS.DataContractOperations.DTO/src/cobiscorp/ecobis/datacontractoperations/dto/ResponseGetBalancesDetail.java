@@ -35,7 +35,7 @@ public class ResponseGetBalancesDetail implements Serializable {
   private java.math.BigDecimal averageBalance;
   private Integer currencyId;
   private String deliveryAddress;
-  private Integer freezingsNumber;
+  private int freezingsNumber;
   private java.math.BigDecimal frozenAmount;
   private String lastCutoffBalance;
   private String lastOperationDate;
@@ -44,7 +44,7 @@ public class ResponseGetBalancesDetail implements Serializable {
   private Integer productId;
   private java.math.BigDecimal toDrawBalance;
   private java.math.BigDecimal accountingBalance;
-  private Integer ofical;
+  private int ofical;
   private String clabeAccountNumber;
   private Integer idDebitCard;
   private String debitCardNumber;
@@ -92,10 +92,10 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setDeliveryAddress(String deliveryAddress ){
     this.deliveryAddress=deliveryAddress;
   }
-  public Integer getFreezingsNumber(){
+  public int getFreezingsNumber(){
     return this.freezingsNumber;
   }
-  public void setFreezingsNumber(Integer freezingsNumber ){
+  public void setFreezingsNumber(int freezingsNumber ){
     this.freezingsNumber=freezingsNumber;
   }
   public java.math.BigDecimal getFrozenAmount(){
@@ -146,10 +146,10 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setAccountingBalance(java.math.BigDecimal accountingBalance ){
     this.accountingBalance=accountingBalance;
   }
-  public Integer getOfical(){
+  public int getOfical(){
     return this.ofical;
   }
-  public void setOfical(Integer ofical ){
+  public void setOfical(int ofical ){
     this.ofical=ofical;
   }
   public String getClabeAccountNumber(){
