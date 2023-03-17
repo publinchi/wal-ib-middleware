@@ -268,9 +268,9 @@
 		<staff id="4" name="orchestration-core-ib-getcustomer" version="4.6.1.0" />
 		<staff id="5" name="orchestration-core-ib-query-generate-transaction-factor" version="4.6.1.0" />
 		<staff id="6" name="orchestration-core-ib-updateprofile" version="4.6.1.0" />
-		<staff id="7" name="orchestration-core-ib-validateIdentity" version="4.6.1.0" />
-		<staff id="7" name="orchestration-core-ib-getbalancesdetail" version="4.6.1.0" />
-		<staff id="7" name="orchestration-core-ib-query-get-own-accounts-view" version="4.6.1.0" />		
+		<staff id="8" name="orchestration-core-ib-validateIdentity" version="4.6.1.0" />
+		<staff id="9" name="orchestration-core-ib-getbalancesdetail" version="4.6.1.0" />
+		<staff id="10" name="orchestration-core-ib-query-get-own-accounts-view" version="4.6.1.0" />		
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
