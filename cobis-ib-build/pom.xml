@@ -181,6 +181,7 @@
         <module>../ApiOperations/orchestration-core-ib-query-generate-transaction-factor</module>
         <module>../ApiOperations/orchestration-core-ib-updateprofile</module>
         <module>../ApiOperations/orchestration-core-ib-validateIdentity</module>
+        <module>../ApiOperations/orchestration-core-ib-getbalancesdetail</module>
 
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
