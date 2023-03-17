@@ -39,7 +39,6 @@ public class AccountsArray implements Serializable {
   private String productName;
   private String productAbbreviation;
   private java.math.BigDecimal accountingBalance;
-  private String aliasName;
   private String expirationDate;
   private String rate;
   private java.math.BigDecimal totalCredit;
@@ -109,12 +108,6 @@ public class AccountsArray implements Serializable {
   }
   public void setAccountingBalance(java.math.BigDecimal accountingBalance ){
     this.accountingBalance=accountingBalance;
-  }
-  public String getAliasName(){
-    return this.aliasName;
-  }
-  public void setAliasName(String aliasName ){
-    this.aliasName=aliasName;
   }
   public String getExpirationDate(){
     return this.expirationDate;

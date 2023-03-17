@@ -35,7 +35,6 @@
         <column name="productName" />
         <column name="productAbbreviation" />
         <column name="accountingBalance" />
-        <column name="aliasName" />
         <column name="expirationDate" />
         <column name="rate" />
         <column name="totalCredit" />
