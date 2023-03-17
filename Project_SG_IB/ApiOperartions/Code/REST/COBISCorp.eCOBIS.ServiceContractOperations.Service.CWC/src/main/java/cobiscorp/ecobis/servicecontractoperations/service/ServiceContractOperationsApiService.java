@@ -893,11 +893,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							dto.setProductName(resultSetMapper.getString(9));
 							dto.setProductAbbreviation(resultSetMapper.getString(10));
 							dto.setAccountingBalance(resultSetMapper.getBigDecimal(11));
-							dto.setAliasName(resultSetMapper.getString(12));
-							dto.setExpirationDate(resultSetMapper.getString(13));
-							dto.setRate(resultSetMapper.getString(14));
-							dto.setTotalCredit(resultSetMapper.getBigDecimal(15));
-							dto.setClabeInterBank(resultSetMapper.getString(16));
+							dto.setExpirationDate(resultSetMapper.getString(12));
+							dto.setRate(resultSetMapper.getString(13));
+							dto.setTotalCredit(resultSetMapper.getBigDecimal(14));
+							dto.setClabeInterBank(resultSetMapper.getString(15));
 	                 return dto;
 	                 }
 	                 },false);

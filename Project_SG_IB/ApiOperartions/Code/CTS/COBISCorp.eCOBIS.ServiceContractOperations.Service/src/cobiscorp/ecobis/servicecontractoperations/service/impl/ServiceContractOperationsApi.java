@@ -517,11 +517,10 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "accountsArray[0].productName", columnIndex = 9),
 		    @CTSColumn(field = "accountsArray[0].productAbbreviation", columnIndex = 10),
 		    @CTSColumn(field = "accountsArray[0].accountingBalance", columnIndex = 11),
-		    @CTSColumn(field = "accountsArray[0].aliasName", columnIndex = 12),
-		    @CTSColumn(field = "accountsArray[0].expirationDate", columnIndex = 13),
-		    @CTSColumn(field = "accountsArray[0].rate", columnIndex = 14),
-		    @CTSColumn(field = "accountsArray[0].totalCredit", columnIndex = 15),
-		    @CTSColumn(field = "accountsArray[0].clabeInterBank", columnIndex = 16)
+		    @CTSColumn(field = "accountsArray[0].expirationDate", columnIndex = 12),
+		    @CTSColumn(field = "accountsArray[0].rate", columnIndex = 13),
+		    @CTSColumn(field = "accountsArray[0].totalCredit", columnIndex = 14),
+		    @CTSColumn(field = "accountsArray[0].clabeInterBank", columnIndex = 15)
       }
     )
   }

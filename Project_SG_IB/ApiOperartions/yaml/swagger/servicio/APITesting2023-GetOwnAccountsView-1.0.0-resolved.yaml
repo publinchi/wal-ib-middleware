@@ -157,12 +157,6 @@ components:
           type: number
           description: Accounting balance
           example: 999804.34
-        aliasName:
-          maxLength: 2
-          minLength: 1
-          type: string
-          description: Alias name
-          example: CTAAHO_0027
         expirationDate:
           maxLength: 2
           minLength: 1
