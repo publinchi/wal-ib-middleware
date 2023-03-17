@@ -1082,7 +1082,12 @@
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-getbalancesdetail</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>		
+		</dependency>	
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-query-get-own-accounts-view</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>	
 	</dependencies>
 	<build>
 		<plugins>
@@ -1443,7 +1448,8 @@
 							orchestration-core-ib-query-generated-transaction-factor,
 							orchestration-core-ib-updateprofile,
 							orchestration-core-ib-validateIdentity,
-							orchestration-core-ib-getbalancesdetail
+							orchestration-core-ib-getbalancesdetail,
+							orchestration-core-ib-query-get-own-accounts-view
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
