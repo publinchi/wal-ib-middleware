@@ -54,6 +54,7 @@ import com.cobiscorp.cobis.commons.components.ComponentLocator;
 public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
 	
 	private ILogger logger = (ILogger) this.getLogger();
+	private IResultSetRowColumnData[] columnsToReturn;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -82,7 +83,7 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 				
 		logger.logDebug("Begin flow, queryGetBalancesDetail with id: " + idCustomer);
 		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
 		reqTMPCentral.setSpName("cobis..sp_get_balances_detail_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500102");
@@ -93,36 +94,35 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logDebug("Ending flow, queryGetBalancesDetail with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
-		IProcedureResponse wProcedureResponseLocal;
+
 		if (!wProcedureResponseCentral.hasError()) {
 			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
-				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
-				logger.logDebug("The accountName is: " + columns[3]);
-				
-				
-				
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				this.columnsToReturn = columns;
+				return;
+								
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
 				
-				aBagSPJavaOrchestration.put("40012", "Customer with externalCustomerId: " + idCustomer + " does not exist");
+				aBagSPJavaOrchestration.put(columns[1].getValue(), "Customer with externalCustomerId: " + idCustomer + " does not exist");
 				return;
 				
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40080")) {
 				
-				aBagSPJavaOrchestration.put("40080", "accountNumber does not exist");
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
 				
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40081")) {
 				
-				aBagSPJavaOrchestration.put("40081", "The account number does not correspond to the customer id");
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
 			}
 			 
 			
 		} else {
-			aBagSPJavaOrchestration.put("50007", "Error get balances detail");
+			aBagSPJavaOrchestration.put("50009", "Error get balances detail");
 			return;
 		}
 	}
@@ -135,7 +135,87 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetRow row = new ResultSetRow();
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		
-			
-		return wProcedureResponse;
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("accountName", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("accountStatus", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("availableBalance", ICTSTypes.SYBDECIMAL, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("averageBalance", ICTSTypes.SYBDECIMAL, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("currencyId", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("deliveryAddress", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("freezingsNumber", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("frozenAmount", ICTSTypes.SYBDECIMAL, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("lastCutoffBalance", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("lastOperationDate", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("openingDate", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("overdraftAmount", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("productId", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("toDrawBalance", ICTSTypes.SYBDECIMAL, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("accountingBalance", ICTSTypes.SYBDECIMAL, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("ofical", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeAccountNumber", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("idDebitCard", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardNumber", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("stateDebitCard", ICTSTypes.SYBVARCHAR, 255));
+
+		if (keyList.get(0).equals("0")) {
+			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+			row.addRowData(1, new ResultSetRowColumnData(false, this.columnsToReturn[0].getValue()));
+			row.addRowData(2, new ResultSetRowColumnData(false, this.columnsToReturn[1].getValue()));
+			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
+			row.addRowData(4, new ResultSetRowColumnData(false, this.columnsToReturn[3].getValue()));
+			row.addRowData(5, new ResultSetRowColumnData(false, this.columnsToReturn[4].getValue()));
+			row.addRowData(6, new ResultSetRowColumnData(false, this.columnsToReturn[5].getValue()));
+			row.addRowData(7, new ResultSetRowColumnData(false, this.columnsToReturn[6].getValue()));
+			row.addRowData(8, new ResultSetRowColumnData(false, this.columnsToReturn[7].getValue()));
+			row.addRowData(9, new ResultSetRowColumnData(false, this.columnsToReturn[8].getValue()));
+			row.addRowData(10, new ResultSetRowColumnData(false, this.columnsToReturn[9].getValue()));
+			row.addRowData(11, new ResultSetRowColumnData(false, this.columnsToReturn[10].getValue()));
+			row.addRowData(12, new ResultSetRowColumnData(false, this.columnsToReturn[11].getValue()));
+			row.addRowData(13, new ResultSetRowColumnData(false, this.columnsToReturn[12].getValue()));
+			row.addRowData(14, new ResultSetRowColumnData(false, this.columnsToReturn[13].getValue()));
+			row.addRowData(15, new ResultSetRowColumnData(false, this.columnsToReturn[14].getValue()));
+			row.addRowData(16, new ResultSetRowColumnData(false, this.columnsToReturn[15].getValue()));
+			row.addRowData(17, new ResultSetRowColumnData(false, this.columnsToReturn[16].getValue()));
+			row.addRowData(18, new ResultSetRowColumnData(false, this.columnsToReturn[17].getValue()));
+			row.addRowData(19, new ResultSetRowColumnData(false, this.columnsToReturn[18].getValue()));
+			row.addRowData(20, new ResultSetRowColumnData(false, this.columnsToReturn[19].getValue()));
+			row.addRowData(21, new ResultSetRowColumnData(false, this.columnsToReturn[20].getValue()));
+			row.addRowData(22, new ResultSetRowColumnData(false, this.columnsToReturn[21].getValue()));
+			row.addRowData(23, new ResultSetRowColumnData(false, this.columnsToReturn[22].getValue()));
+			data.addRow(row);
+
+		} else {
+			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(2, new ResultSetRowColumnData(false, keyList.get(0)));
+			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
+			row.addRowData(4, new ResultSetRowColumnData(false, null));
+			row.addRowData(5, new ResultSetRowColumnData(false, null));
+			row.addRowData(6, new ResultSetRowColumnData(false, null));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
+			row.addRowData(8, new ResultSetRowColumnData(false, null));
+			row.addRowData(9, new ResultSetRowColumnData(false, null));
+			row.addRowData(10, new ResultSetRowColumnData(false, null));
+			row.addRowData(11, new ResultSetRowColumnData(false, null));
+			row.addRowData(12, new ResultSetRowColumnData(false, null));
+			row.addRowData(13, new ResultSetRowColumnData(false, null));
+			row.addRowData(14, new ResultSetRowColumnData(false, null));
+			row.addRowData(15, new ResultSetRowColumnData(false, null));
+			row.addRowData(16, new ResultSetRowColumnData(false, null));
+			row.addRowData(17, new ResultSetRowColumnData(false, null));
+			row.addRowData(18, new ResultSetRowColumnData(false, null));
+			row.addRowData(19, new ResultSetRowColumnData(false, null));
+			row.addRowData(20, new ResultSetRowColumnData(false, null));
+			row.addRowData(21, new ResultSetRowColumnData(false, null));
+			row.addRowData(22, new ResultSetRowColumnData(false, null));
+			row.addRowData(23, new ResultSetRowColumnData(false, null));
+			data.addRow(row);
+		}
+		
+		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
+		wProcedureResponse.addResponseBlock(resultBlock);			
+		return wProcedureResponse;		
 	}
 }
