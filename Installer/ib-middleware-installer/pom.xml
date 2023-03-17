@@ -1078,6 +1078,11 @@
 			<artifactId>orchestration-core-ib-validateIdentity</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-getbalancesdetail</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>		
 	</dependencies>
 	<build>
 		<plugins>
@@ -1437,7 +1442,8 @@
 							orchestration-core-ib-getcustomer,
 							orchestration-core-ib-query-generated-transaction-factor,
 							orchestration-core-ib-updateprofile,
-							orchestration-core-ib-validateIdentity
+							orchestration-core-ib-validateIdentity,
+							orchestration-core-ib-getbalancesdetail
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
