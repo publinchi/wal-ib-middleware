@@ -434,7 +434,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       
       
 		/**
-		 * Find State By zip Code API
+		 * Find State By getStateByzipCode
 		 */
 		@POST
 		@Path("/apiOperations/onboarding/getStateByzipCode")

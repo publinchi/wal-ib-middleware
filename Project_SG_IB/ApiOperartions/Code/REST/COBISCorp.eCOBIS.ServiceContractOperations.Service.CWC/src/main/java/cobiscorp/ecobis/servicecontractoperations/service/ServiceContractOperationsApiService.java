@@ -933,6 +933,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_getzip_codestate_api");
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500104");
 			procedureRequestAS.addInputParam("@i_zip_code", ICTSTypes.SQLVARCHAR, inStateByZipCodeRequest.getZipCode());
 			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXX");
 			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");

@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMapping" id="1">
+  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureBase" id="2" name="storedProcedure">
+    <field type="String" name="database" value="cobis" />
+    <field type="String" name="name" value="sp_getzip_codestate_api" />
+    <field type="String" name="version" value="1" />
+  </class>
+  <field type="String" name="procedureName" value="cobis..sp_getzip_codestate_api" />
+  <collection type="List" length="0" id="3" name="queries">
+  </collection>
+  <collection type="List" length="11" id="4" name="parameters">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="5" index="0">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="6" name="parameter">
+        <field type="String" name="name" value="@i_zip_code" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inStateByZipCodeRequest" />
+      <field type="String" name="dTOPropertyName" value="zipCode" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="7" index="1">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="8" name="parameter">
+        <field type="String" name="name" value="@o_message" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="XXX" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="9" index="2">
+      <reference id="8" name="parameter" />
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outStateByZipCodeResponse" />
+      <field type="String" name="dTOPropertyName" value="message.message" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="10" index="3">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="11" name="parameter">
+        <field type="String" name="name" value="@o_code" />
+        <field type="String" name="dataType" value="int" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="12" index="4">
+      <reference id="11" name="parameter" />
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outStateByZipCodeResponse" />
+      <field type="String" name="dTOPropertyName" value="message.code" />
+      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="13" index="5">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="14" name="parameter">
+        <field type="String" name="name" value="@o_id_state" />
+        <field type="String" name="dataType" value="int" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="15" index="6">
+      <reference id="14" name="parameter" />
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outStateByZipCodeResponse" />
+      <field type="String" name="dTOPropertyName" value="stateId" />
+      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="16" index="7">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="17" name="parameter">
+        <field type="String" name="name" value="@o_desc_state" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="XXX" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="18" index="8">
+      <reference id="17" name="parameter" />
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outStateByZipCodeResponse" />
+      <field type="String" name="dTOPropertyName" value="stateDescription" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="19" index="9">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="20" name="parameter">
+        <field type="String" name="name" value="@o_success" />
+        <field type="String" name="dataType" value="bit" />
+        <field type="String" name="direction" value="in out" />
+      </class>
+      <field type="String" name="mappingTypeName" value="CONSTANT" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="constantValue" value="0" />
+      <field type="String" name="cTSDataType" value="SQLBIT" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="21" index="10">
+      <reference id="20" name="parameter" />
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="out" />
+      <field type="String" name="dTOAlias" value="outStateByZipCodeResponse" />
+      <field type="String" name="dTOPropertyName" value="success" />
+      <field type="String" name="cTSDataType" value="SQLBIT" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+  </collection>
+  <collection type="List" length="0" id="22" name="parametersOpenApi">
+  </collection>
+  <field type="String" name="trnCode" value="18500104" />
+  <collection type="List" length="2" id="23" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="24" index="0">
+      <field type="String" name="dTOName" value="StateByZipCodeRequest" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="inStateByZipCodeRequest" />
+      <field type="String" name="direction" value="in" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="25" index="1">
+      <field type="String" name="dTOName" value="StateByZipCodeResponse" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="outStateByZipCodeResponse" />
+      <field type="String" name="direction" value="out" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+  </collection>
+  <collection type="Map" length="4" id="26" name="mappingProperties">
+    <entry>
+      <key type="String" value="singleResult1" />
+      <value type="String" value="true" />
+    </entry>
+    <entry>
+      <key type="String" value="dbms" />
+      <value type="String" value="SQLCTS" />
+    </entry>
+    <entry>
+      <key type="String" value="Path" />
+      <value type="String" value="apiOperations/onboarding/getStateByzipCode" />
+    </entry>
+    <entry>
+      <key type="String" value="HTTPMethod" />
+      <value type="String" value="POST" />
+    </entry>
+  </collection>
+  <field type="String" name="stateParams" value="" />
+</class>
