@@ -90,5 +90,34 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
-
+      <!-- 18500103 ORQUESTACION GET OWN ACCOUNT VIEW-->
+   <config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetOwnAccountsView">
+	<conditions>
+		<condition param="trn">
+			<value>18500103</value>
+		</condition>
+	</conditions>
+	<indicators>
+		<indicator name="externalProvider" value="0"/>
+		<indicator name="serviceMethodName" value="executeTransaction"/>
+		<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetOwnAccountsViewQueryOrchestationCore)"/>
+		<indicator name="t_corr" value=""/>
+	</indicators>
+	<mappings keepMode="1"/>
+   </config>
+	<!-- 18500102 ORQUESTACION GETBALANCESDETAIL-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetBalancesDetail">
+		<conditions>
+		  <condition param="trn">
+			<value>18500102</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetBalancesDetailOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>
