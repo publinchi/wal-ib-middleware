@@ -42,15 +42,15 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
-    import   cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
-    import   cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
+import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -69,8 +69,9 @@
           * Afiliate Customer
           */
         
-			// Return list
-			public  List<ResponseAffiliateCustomer>  affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer  )throws CTSRestException;
+			// Return Dto
+			public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer  )throws CTSRestException;
+    
           /**
           * Create new customers
           */
@@ -99,8 +100,9 @@
           * Check Account Details
           */
         
-			// Return list
-			public  List<ResponseGetBalancesDetail>  getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException;
+			// Return DTO
+			public  ResponseGetBalancesDetail getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException;
+
           /**
           * Get Beneficiary Saving Account
           */
@@ -119,13 +121,15 @@
         
 			//Have DTO
 			public ResponseOwnAccountsView getOwnAccountsView(RequestOwnAccountsView inRequestOwnAccountsView  )throws CTSRestException;
-          /**
-          * Find State By zip Code API
-          */
-        
+          
+	          /**
+	          * Find State By zip Code API
+	          */
+	        
 			//Have DTO
 			public StateByZipCodeResponse getStateByZipCode(StateByZipCodeRequest inStateByZipCodeRequest  )throws CTSRestException;
-          /**
+			
+	       /**
           * View Customer Information
           */
         
@@ -141,8 +145,8 @@
           * Search Zip Code API
           */
         
-			//Have DTO
-			public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
+			// Return DTO
+			public SearchZipCodeResponse  searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
           /**
           * Update customer address
           */

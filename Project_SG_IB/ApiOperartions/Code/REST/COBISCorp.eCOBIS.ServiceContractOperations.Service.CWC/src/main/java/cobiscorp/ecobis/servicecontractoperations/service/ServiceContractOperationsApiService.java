@@ -919,6 +919,75 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	     //returns data
 	     return outResponseOwnAccountsView;
 	   }
+	   
+	   
+		/**
+		 * Find State By zip Code API
+		 */
+		@Override
+		// Have DTO
+		public StateByZipCodeResponse getStateByZipCode(StateByZipCodeRequest inStateByZipCodeRequest)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: getStateByZipCode");
+			StateByZipCodeResponse outStateByZipCodeResponse = new StateByZipCodeResponse();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_getzip_codestate_api");
+			procedureRequestAS.addInputParam("@i_zip_code", ICTSTypes.SQLVARCHAR, inStateByZipCodeRequest.getZipCode());
+			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXX");
+			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_id_state", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_desc_state", ICTSTypes.SQLVARCHAR, "XXX");
+			procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			Message message=new Message();
+			
+			message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
+			message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+			outStateByZipCodeResponse.setMessage(message);
+			outStateByZipCodeResponse.setStateId(getOutValue(String.class, "@o_id_state", response.getParams()));
+			outStateByZipCodeResponse
+					.setStateDescription(getOutValue(String.class, "@o_desc_state", response.getParams()));
+			outStateByZipCodeResponse.setSuccess(getOutValue(Boolean.class, "@o_success", response.getParams()));
+			
+			if (message != null && message.getCode() == 0) {
+				outStateByZipCodeResponse.setSuccess(true);
+
+			} else
+				outStateByZipCodeResponse.setSuccess(false);
+		
+			
+
+			LOGGER.logDebug("Ends service execution: getStateByZipCode");
+			// returns data
+			return outStateByZipCodeResponse;
+		}   
 
 	/**
 	 * View Customer Information
@@ -1111,92 +1180,89 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outRegisterBeneficiaryResponse;
 	}
 
-    @Override
-		//Have DTO
-		public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException{
- LOGGER.logDebug("Start service execution: searchZipCode");
- 
- //create procedure
- ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_search_zipcode");
- 
- SearchZipCodeResponse toReturn=new SearchZipCodeResponse();
- 
- 
- procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500098");
-procedureRequestAS.addInputParam("@i_zipCode",ICTSTypes.SQLVARCHAR,inSearchZipCodeRequest.getZipCode());
-procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"false");
-procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"XXXX");
-procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"000");
- 
- //execute procedure
- ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+	@Override
+	// Have DTO
+	public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest) throws CTSRestException {
+		LOGGER.logDebug("Start service execution: searchZipCode");
 
- List<MessageBlock> errors = ErrorUtil.getErrors(response);
- //throw error
- if(errors!= null && errors.size()> 0){
- LOGGER.logDebug("Procedure execution returns error");
- if ( LOGGER.isDebugEnabled() ) {
- for (int i = 0; i < errors.size(); i++) {
- LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
- }
- }
- throw new CTSRestException("Procedure Response has errors", null, errors);
- }
- LOGGER.logDebug("Procedure ok");
- //Init map returns
- int mapTotal=0;
- int mapBlank=0;
- 
-       mapTotal++;
-       if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
-							//---------NO Array
-							ListZipCode [] returnListZipCode = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<ListZipCode>() { 
-               @Override
-               public ListZipCode mapRow(ResultSetMapper resultSetMapper, int index) {
-               ListZipCode dto = new ListZipCode();
-               
-                     dto.setProvinceCode(resultSetMapper.getString(3));
-                     dto.setCityCode(resultSetMapper.getString(2));
-                     dto.setCodeColony(resultSetMapper.getString(1));
-               return dto;
-               }
-               },false);
-							
-				toReturn.setZipList(returnListZipCode);
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_search_zipcode");
 
-          
-                 
-       }else {
-       mapBlank++;
+		SearchZipCodeResponse toReturn = new SearchZipCodeResponse();
 
-       }
-     
- //End map returns
- if(mapBlank!=0&&mapBlank==mapTotal){
- LOGGER.logDebug("No data found");
- throw new CTSRestException("404",null);
- }
- 
- 
- 
- toReturn.setSuccess(getOutValue(boolean.class, "@o_success", response.getParams()));
- Message message=new Message();
- message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
- message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
- 
- if(message!=null && message.getCode()==0) {
-	 toReturn.setSuccess(true);
-	 
- } else toReturn.setSuccess(false);
- 
- toReturn.setMessage(message);
-       
-   LOGGER.logDebug("Ends service execution: searchZipCode");
-       
-  return toReturn;
-       
-   
- }
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500098");
+		procedureRequestAS.addInputParam("@i_zipCode", ICTSTypes.SQLVARCHAR, inSearchZipCodeRequest.getZipCode());
+		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "false");
+		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXXX");
+		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "000");
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ListZipCode[] returnListZipCode = MapperResultUtil.mapToArray(response.getResultSets().get(0),
+					new RowMapper<ListZipCode>() {
+						@Override
+						public ListZipCode mapRow(ResultSetMapper resultSetMapper, int index) {
+							ListZipCode dto = new ListZipCode();
+
+							dto.setProvinceCode(resultSetMapper.getString(3));
+							dto.setCityCode(resultSetMapper.getString(2));
+							dto.setCodeColony(resultSetMapper.getString(1));
+							return dto;
+						}
+					}, false);
+
+			toReturn.setZipList(returnListZipCode);
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		toReturn.setSuccess(getOutValue(boolean.class, "@o_success", response.getParams()));
+		Message message = new Message();
+		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
+		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+
+		if (message != null && message.getCode() == 0) {
+			toReturn.setSuccess(true);
+
+		} else
+			toReturn.setSuccess(false);
+
+		toReturn.setMessage(message);
+
+		LOGGER.logDebug("Ends service execution: searchZipCode");
+
+		return toReturn;
+
+	}
 	
 	    /**
 	    * Update customer address

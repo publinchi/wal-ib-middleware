@@ -71,6 +71,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getOwnAccountsView(ServiceRequestTO requestTO);  
 
   /**
+  * Find State By zip Code API
+  */
+  ServiceResponseTO getStateByZipCode(ServiceRequestTO requestTO);  
+
+  /**
   * View Customer Information
   */
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  
