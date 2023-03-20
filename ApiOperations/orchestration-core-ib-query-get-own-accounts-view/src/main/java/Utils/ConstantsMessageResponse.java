@@ -3,7 +3,7 @@ package Utils;
 public enum ConstantsMessageResponse {
 
 	MSG000("Success",0), 
-	MSG40020("Non-existent client ID",40020),
+	MSG400099("The entered customer code does not exist",400099),
 	MSG40021("The client does not have main means of contact",40021),
 	MSG204("The request has been completed successfully but your response has no content",204); 
 	
