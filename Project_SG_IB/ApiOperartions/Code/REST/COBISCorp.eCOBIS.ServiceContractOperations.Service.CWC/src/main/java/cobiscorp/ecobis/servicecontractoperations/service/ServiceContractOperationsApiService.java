@@ -875,7 +875,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	         }
 	       
 	         mapTotal++;
-	         if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+	         if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
 									//---------NO Array
 									AccountsArray[] returnResponseOwnAccountsView = MapperResultUtil.mapToArray(response.getResultSets().get(2), new RowMapper<AccountsArray>() { 
 	                 @Override
