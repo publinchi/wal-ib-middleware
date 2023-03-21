@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_tr04_cons_mov_ah_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_prod" dataType="tinyint" direction="in" />
+    <parameter name="@i_cta" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_ini" dataType="varchar" direction="in" />
+    <parameter name="@i_fecha_fin" dataType="varchar" direction="in" />
+    <parameter name="@i_sec_unico" dataType="int" direction="in" />
+    <parameter name="@i_tipo" dataType="char" direction="in" />
+    <parameter name="@i_servicio" dataType="tinyint" direction="in" />
+    <parameter name="@i_cliente" dataType="int" direction="in" />
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_nro_registros" dataType="int" direction="in" />
+    <parameter name="@i_mov_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="numberOfResults" />
+      </columns>
+      <queryText>SELECT "account"="ref","accountingBalance"="ref","alternateCode"="ref","amount"="ref","availableBalance"="ref","cause"="ref","causeId"="ref","concept"="ref","creditsAmount"="ref","debitsAmount"="ref","description"="ref","documentNumber"="ref","hour"="ref","image"="ref","tracking"="ref","internationalChecksBalance"="ref","localChecksBalance"="ref","numberOfMovements"="ref","office"="ref","operationType"="ref","ownChecksBalance"="ref","reference"="ref","sequential"="ref","signDC"="ref","totalChecksBalance"="ref","transactionDate"="ref","uniqueSequential"="ref","processDate"="ref","tarjetNumber"="ref","destinyAccount"="ref","typeAccount"="ref","beneficiary"="ref","referenceNumber"="ref","commission"="ref","iva"="ref"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="accountingBalance" />
+        <column name="alternateCode" />
+        <column name="amount" />
+        <column name="availableBalance" />
+        <column name="concept" />
+        <column name="description" />
+        <column name="hour" />
+        <column name="image" />
+        <column name="tracking" />
+        <column name="operationType" />
+        <column name="reference" />
+        <column name="sequential" />
+        <column name="signDC" />
+        <column name="transactionDate" />
+        <column name="uniqueSequential" />
+        <column name="processDate" />
+        <column name="tarjetNumber" />
+        <column name="destinyAccount" />
+        <column name="typeAccount" />
+        <column name="beneficiary" />
+        <column name="referenceNumber" />
+        <column name="commission" />
+        <column name="iva" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>
