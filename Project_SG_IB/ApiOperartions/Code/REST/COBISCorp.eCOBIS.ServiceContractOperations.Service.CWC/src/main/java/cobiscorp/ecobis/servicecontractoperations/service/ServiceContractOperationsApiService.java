@@ -519,7 +519,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                           dto.setAverageBalance(resultSetMapper.getBigDecimal(7));
                           dto.setCurrencyId(resultSetMapper.getInteger(8));
                           dto.setDeliveryAddress(resultSetMapper.getString(9));
-                          dto.setFreezingsNumber(resultSetMapper.getInt(10));
+                          dto.setFreezingsNumber(resultSetMapper.getInteger(10));
                           dto.setFrozenAmount(resultSetMapper.getBigDecimal(11));
                           dto.setLastCutoffBalance(resultSetMapper.getString(12));
                           dto.setLastOperationDate(resultSetMapper.getString(13));
@@ -528,7 +528,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                           dto.setProductId(resultSetMapper.getInteger(16));
                           dto.setToDrawBalance(resultSetMapper.getBigDecimal(17));
                           dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
-                          dto.setOfficial(resultSetMapper.getInt(19));
+                          dto.setOfficial(resultSetMapper.getInteger(19));
                           dto.setClabeAccountNumber(resultSetMapper.getString(20));
                           dto.setIdDebitCard(resultSetMapper.getInteger(21));
                           dto.setDebitCardNumber(resultSetMapper.getString(22));
