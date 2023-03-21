@@ -35,21 +35,22 @@ public class ResponseGetBalancesDetail implements Serializable {
   private java.math.BigDecimal averageBalance;
   private Integer currencyId;
   private String deliveryAddress;
-  private int freezingsNumber;
+  private Integer freezingsNumber;
   private java.math.BigDecimal frozenAmount;
-  private String lastCutoffBalance;
-  private String lastOperationDate;
-  private String openingDate;
+  private java.util.Calendar lastCutoffBalance;
+  private java.util.Calendar lastOperationDate;
+  private java.util.Calendar openingDate;
   private java.math.BigDecimal overdraftAmount;
   private Integer productId;
   private java.math.BigDecimal toDrawBalance;
   private java.math.BigDecimal accountingBalance;
-  private int ofical;
+  private Integer official;
   private String clabeAccountNumber;
   private Integer idDebitCard;
   private String debitCardNumber;
   private String stateDebitCard;
   private Message message;
+  
   public String getSuccess(){
     return this.success;
   }
@@ -92,10 +93,10 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setDeliveryAddress(String deliveryAddress ){
     this.deliveryAddress=deliveryAddress;
   }
-  public int getFreezingsNumber(){
+  public Integer getFreezingsNumber(){
     return this.freezingsNumber;
   }
-  public void setFreezingsNumber(int freezingsNumber ){
+  public void setFreezingsNumber(Integer freezingsNumber ){
     this.freezingsNumber=freezingsNumber;
   }
   public java.math.BigDecimal getFrozenAmount(){
@@ -104,22 +105,22 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setFrozenAmount(java.math.BigDecimal frozenAmount ){
     this.frozenAmount=frozenAmount;
   }
-  public String getLastCutoffBalance(){
+  public java.util.Calendar getLastCutoffBalance(){
     return this.lastCutoffBalance;
   }
-  public void setLastCutoffBalance(String lastCutoffBalance ){
+  public void setLastCutoffBalance(java.util.Calendar lastCutoffBalance ){
     this.lastCutoffBalance=lastCutoffBalance;
   }
-  public String getLastOperationDate(){
+  public java.util.Calendar getLastOperationDate(){
     return this.lastOperationDate;
   }
-  public void setLastOperationDate(String lastOperationDate ){
+  public void setLastOperationDate(java.util.Calendar lastOperationDate ){
     this.lastOperationDate=lastOperationDate;
   }
-  public String getOpeningDate(){
+  public java.util.Calendar getOpeningDate(){
     return this.openingDate;
   }
-  public void setOpeningDate(String openingDate ){
+  public void setOpeningDate(java.util.Calendar openingDate ){
     this.openingDate=openingDate;
   }
   public java.math.BigDecimal getOverdraftAmount(){
@@ -146,11 +147,11 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setAccountingBalance(java.math.BigDecimal accountingBalance ){
     this.accountingBalance=accountingBalance;
   }
-  public int getOfical(){
-    return this.ofical;
+  public Integer getOfficial(){
+    return this.official;
   }
-  public void setOfical(int ofical ){
-    this.ofical=ofical;
+  public void setOfficial(Integer official ){
+    this.official=official;
   }
   public String getClabeAccountNumber(){
     return this.clabeAccountNumber;

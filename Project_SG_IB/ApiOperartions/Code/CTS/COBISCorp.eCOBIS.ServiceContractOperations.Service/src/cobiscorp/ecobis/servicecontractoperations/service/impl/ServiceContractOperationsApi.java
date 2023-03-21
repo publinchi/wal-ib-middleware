@@ -329,7 +329,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "productId", columnIndex = 16),
 		    @CTSColumn(field = "toDrawBalance", columnIndex = 17),
 		    @CTSColumn(field = "accountingBalance", columnIndex = 18),
-		    @CTSColumn(field = "ofical", columnIndex = 19),
+		    @CTSColumn(field = "official", columnIndex = 19),
 		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 20),
 		    @CTSColumn(field = "idDebitCard", columnIndex = 21),
 		    @CTSColumn(field = "debitCardNumber", columnIndex = 22),
@@ -347,6 +347,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+    
     
 	@CTSProcedure(
 		name = "cob_bvirtual..sp_beneficiaries_mant_api",   
