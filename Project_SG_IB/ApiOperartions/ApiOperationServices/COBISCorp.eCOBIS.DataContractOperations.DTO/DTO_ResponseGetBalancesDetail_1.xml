@@ -93,7 +93,7 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="12" index="9">
       <field type="String" name="name" value="lastCutoffBalance" />
-      <field type="String" name="type" value="date?" />
+      <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="false" />
@@ -103,7 +103,7 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="13" index="10">
       <field type="String" name="name" value="lastOperationDate" />
-      <field type="String" name="type" value="date?" />
+      <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="false" />
@@ -113,7 +113,7 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="14" index="11">
       <field type="String" name="name" value="openingDate" />
-      <field type="String" name="type" value="date?" />
+      <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="false" />

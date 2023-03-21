@@ -157,7 +157,7 @@
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="24" index="18">
           <field type="int" name="position" value="18" />
-          <field type="String" name="columnName" value="ofical" />
+          <field type="String" name="columnName" value="official" />
           <field type="String" name="dTOAlias" value="returnResponseGetBalancesDetail" />
           <field type="String" name="dTOPropertyName" value="official" />
           <field type="String" name="dataType" value="int?" />
