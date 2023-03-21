@@ -88,7 +88,7 @@
           <field type="String" name="columnName" value="freezingsNumber" />
           <field type="String" name="dTOAlias" value="returnResponseGetBalancesDetail" />
           <field type="String" name="dTOPropertyName" value="freezingsNumber" />
-          <field type="String" name="dataType" value="string" />
+          <field type="String" name="dataType" value="int?" />
           <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="16" index="10">
@@ -104,7 +104,7 @@
           <field type="String" name="columnName" value="lastCutoffBalance" />
           <field type="String" name="dTOAlias" value="returnResponseGetBalancesDetail" />
           <field type="String" name="dTOPropertyName" value="lastCutoffBalance" />
-          <field type="String" name="dataType" value="decimal?" />
+          <field type="String" name="dataType" value="date?" />
           <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="18" index="12">
@@ -159,8 +159,8 @@
           <field type="int" name="position" value="18" />
           <field type="String" name="columnName" value="ofical" />
           <field type="String" name="dTOAlias" value="returnResponseGetBalancesDetail" />
-          <field type="String" name="dTOPropertyName" value="ofical" />
-          <field type="String" name="dataType" value="string" />
+          <field type="String" name="dTOPropertyName" value="official" />
+          <field type="String" name="dataType" value="int?" />
           <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="25" index="19">
