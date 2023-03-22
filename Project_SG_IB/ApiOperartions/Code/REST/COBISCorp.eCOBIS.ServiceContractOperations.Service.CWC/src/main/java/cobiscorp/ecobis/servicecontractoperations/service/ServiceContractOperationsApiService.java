@@ -528,7 +528,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                           dto.setProductId(resultSetMapper.getInteger(16));
                           dto.setToDrawBalance(resultSetMapper.getBigDecimal(17));
                           dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
-                          dto.setOfical(resultSetMapper.getInt(19));
+                          dto.setOfficial(resultSetMapper.getInt(19));
                           dto.setClabeAccountNumber(resultSetMapper.getString(20));
                           dto.setIdDebitCard(resultSetMapper.getInteger(21));
                           dto.setDebitCardNumber(resultSetMapper.getString(22));
