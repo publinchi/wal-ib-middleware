@@ -329,7 +329,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "productId", columnIndex = 16),
 		    @CTSColumn(field = "toDrawBalance", columnIndex = 17),
 		    @CTSColumn(field = "accountingBalance", columnIndex = 18),
-		    @CTSColumn(field = "official", columnIndex = 19),
+		    @CTSColumn(field = "ofical", columnIndex = 19),
 		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 20),
 		    @CTSColumn(field = "idDebitCard", columnIndex = 21),
 		    @CTSColumn(field = "debitCardNumber", columnIndex = 22),
@@ -466,15 +466,15 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-    
+
 	@CTSProcedure(
-		name = "cob_procesador..sp_tr04_cons_mov_ah_api", dbms = "SQLCTS",  
+		name = "cob_procesador..sp_tr04_cons_mov_ah_api", dbms = "SQLCTS",
 		objectRequest = {
-		
+
 			@CTSRequest(
 				name = "inRequestGetMovementsDetail",
 				input = {
-				
+
 					@CTSInputParam(field = "accountNumber", param = "@i_cta", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "minDate", param = "@i_fecha_ini", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "maxDate", param = "@i_fecha_fin", dataType = ICTSTypes.SQLVARCHAR),
@@ -486,14 +486,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 			)
 		},
 		defaultRequest = {
-    
+
 				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500106"),
 				@CTSDefaultInputParam(value = "T", param = "@i_tipo", dataType = ICTSTypes.SQLCHAR),
 				@CTSDefaultInputParam(value = "8", param = "@i_servicio", dataType = ICTSTypes.SQLINT1),
 				@CTSDefaultInputParam(value = "A", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
 		},
   response = {
-  
+
     @CTSResponse(
       name = "returnResponseGetMovementsDetail",
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
@@ -546,9 +546,9 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     )
   }
-  
+
 	)
-	
+
   /**
   * {@inheritDoc}
   */
@@ -556,7 +556,48 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-    
+
+	@CTSProcedure(
+		name = "cobis..sp_get_municipality_state_api", dbms = "SQLCTS",
+		objectRequest = {
+
+			@CTSRequest(
+				name = "inRequestMunicipalityByState",
+				input = {
+
+					@CTSInputParam(field = "stateId", param = "@i_state_id", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500105"),
+				@CTSDefaultInputParam(value = "XXX", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+		},
+  response = {
+
+    @CTSResponse(
+      name = "returnResponseMunicipalityByState",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState.class,
+      columns = {
+		    @CTSColumn(field = "municipalitiesItems[0].idMunicipality", columnIndex = 1),
+		    @CTSColumn(field = "municipalitiesItems[0].municipality", columnIndex = 2)
+      }
+    )
+  }
+
+	)
+
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getMunicipalityByState(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+
 	@CTSProcedure(
 		name = "cob_procesador..sp_consulta_cuentas", dbms = "SQLCTS",  
 		objectRequest = {
