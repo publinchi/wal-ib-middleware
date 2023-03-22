@@ -50,7 +50,6 @@ public class ResponseGetBalancesDetail implements Serializable {
   private String debitCardNumber;
   private String stateDebitCard;
   private Message message;
-  
   public String getSuccess(){
     return this.success;
   }
