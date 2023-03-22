@@ -39,6 +39,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
@@ -117,6 +119,12 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
         
 			//Have DTO
 			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException;
+          /**
+          * Service to obtain the detail of movements of an existing savings account
+          */
+        
+			//Have DTO
+			public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail  )throws CTSRestException;
           /**
           * Get Own Accounts View
           */

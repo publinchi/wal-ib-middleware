@@ -68,7 +68,12 @@ public interface IServiceContractOperationsApi{
   /**
   * Municipality By State
   */
-  ServiceResponseTO getMunicipalityByState(ServiceRequestTO requestTO);  
+  ServiceResponseTO getMunicipalityByState(ServiceRequestTO requestTO);
+  /**
+  * Service to obtain the detail of movements of an existing savings account
+  */
+  ServiceResponseTO getMovementsDetail(ServiceRequestTO requestTO);
+
 
   /**
   * Get Own Accounts View
