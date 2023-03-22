@@ -289,6 +289,66 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_get_balances_detail_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestGetBalancesDetail",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500102")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseGetBalancesDetail",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3),
+		    @CTSColumn(field = "accountName", columnIndex = 4),
+		    @CTSColumn(field = "accountStatus", columnIndex = 5),
+		    @CTSColumn(field = "availableBalance", columnIndex = 6),
+		    @CTSColumn(field = "averageBalance", columnIndex = 7),
+		    @CTSColumn(field = "currencyId", columnIndex = 8),
+		    @CTSColumn(field = "deliveryAddress", columnIndex = 9),
+		    @CTSColumn(field = "freezingsNumber", columnIndex = 10),
+		    @CTSColumn(field = "frozenAmount", columnIndex = 11),
+		    @CTSColumn(field = "lastCutoffBalance", columnIndex = 12),
+		    @CTSColumn(field = "lastOperationDate", columnIndex = 13),
+		    @CTSColumn(field = "openingDate", columnIndex = 14),
+		    @CTSColumn(field = "overdraftAmount", columnIndex = 15),
+		    @CTSColumn(field = "productId", columnIndex = 16),
+		    @CTSColumn(field = "toDrawBalance", columnIndex = 17),
+		    @CTSColumn(field = "accountingBalance", columnIndex = 18),
+		    @CTSColumn(field = "official", columnIndex = 19),
+		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 20),
+		    @CTSColumn(field = "idDebitCard", columnIndex = 21),
+		    @CTSColumn(field = "debitCardNumber", columnIndex = 22),
+		    @CTSColumn(field = "stateDebitCard", columnIndex = 23)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getBalancesDetail(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_bvirtual..sp_beneficiaries_mant_api",   
 		objectRequest = {
 		
@@ -353,68 +413,6 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
-
-	@CTSProcedure(
-		name = "cob_procesador..sp_get_balances_detail_api", dbms = "SQLCTS",  
-		objectRequest = {
-		
-			@CTSRequest(
-				name = "inRequestGetBalancesDetail",
-				input = {
-				
-					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
-				}
-			)
-		},
-		defaultRequest = {
-    
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500102")
-		},
-  response = {
-  
-    @CTSResponse(
-      name = "returnResponseGetBalancesDetail",
-      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail.class,
-      columns = {
-		    @CTSColumn(field = "success", columnIndex = 1),
-		    @CTSColumn(field = "message.code", columnIndex = 2),
-		    @CTSColumn(field = "message.message", columnIndex = 3),
-		    @CTSColumn(field = "accountName", columnIndex = 4),
-		    @CTSColumn(field = "accountStatus", columnIndex = 5),
-		    @CTSColumn(field = "availableBalance", columnIndex = 6),
-		    @CTSColumn(field = "averageBalance", columnIndex = 7),
-		    @CTSColumn(field = "currencyId", columnIndex = 8),
-		    @CTSColumn(field = "deliveryAddress", columnIndex = 9),
-		    @CTSColumn(field = "freezingsNumber", columnIndex = 10),
-		    @CTSColumn(field = "frozenAmount", columnIndex = 11),
-		    @CTSColumn(field = "lastCutoffBalance", columnIndex = 12),
-		    @CTSColumn(field = "lastOperationDate", columnIndex = 13),
-		    @CTSColumn(field = "openingDate", columnIndex = 14),
-		    @CTSColumn(field = "overdraftAmount", columnIndex = 15),
-		    @CTSColumn(field = "productId", columnIndex = 16),
-		    @CTSColumn(field = "toDrawBalance", columnIndex = 17),
-		    @CTSColumn(field = "accountingBalance", columnIndex = 18),
-		    @CTSColumn(field = "ofical", columnIndex = 19),
-		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 20),
-		    @CTSColumn(field = "idDebitCard", columnIndex = 21),
-		    @CTSColumn(field = "debitCardNumber", columnIndex = 22),
-		    @CTSColumn(field = "stateDebitCard", columnIndex = 23)
-      }
-    )
-  }
-  
-	)
-	
-  /**
-  * {@inheritDoc}
-  */
-      public ServiceResponseTO getBalancesDetail(ServiceRequestTO requestTO) {
-      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
-      return responseTO;
-      }
-	
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_get_catalog_data", dbms = "SQLCTS",  
@@ -468,7 +466,97 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_tr04_cons_mov_ah_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestGetMovementsDetail",
+				input = {
+				
+					@CTSInputParam(field = "accountNumber", param = "@i_cta", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "minDate", param = "@i_fecha_ini", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "maxDate", param = "@i_fecha_fin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "sequential", param = "@i_sec_unico", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "externalCustomerId", param = "@i_cliente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "numberOfMovements", param = "@i_nro_registros", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "movementId", param = "@i_mov_id", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500106"),
+				@CTSDefaultInputParam(value = "T", param = "@i_tipo", dataType = ICTSTypes.SQLCHAR),
+				@CTSDefaultInputParam(value = "8", param = "@i_servicio", dataType = ICTSTypes.SQLINT1),
+				@CTSDefaultInputParam(value = "A", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseGetMovementsDetail",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseGetMovementsDetail",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseGetMovementsDetail",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
+      columns = {
+		    @CTSColumn(field = "numberOfResults", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseGetMovementsDetail",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
+      columns = {
+		    @CTSColumn(field = "accountStatementArray.accountingBalance", columnIndex = 1),
+		    @CTSColumn(field = "accountStatementArray.alternateCode", columnIndex = 2),
+		    @CTSColumn(field = "accountStatementArray.amount", columnIndex = 3),
+		    @CTSColumn(field = "accountStatementArray.availableBalance", columnIndex = 4),
+		    @CTSColumn(field = "accountStatementArray.concept", columnIndex = 5),
+		    @CTSColumn(field = "accountStatementArray.description", columnIndex = 6),
+		    @CTSColumn(field = "accountStatementArray.hour", columnIndex = 7),
+		    @CTSColumn(field = "accountStatementArray.image", columnIndex = 8),
+		    @CTSColumn(field = "accountStatementArray.tracking", columnIndex = 9),
+		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 10),
+		    @CTSColumn(field = "accountStatementArray.reference", columnIndex = 11),
+		    @CTSColumn(field = "accountStatementArray.sequential", columnIndex = 12),
+		    @CTSColumn(field = "accountStatementArray.signDC", columnIndex = 13),
+		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 14),
+		    @CTSColumn(field = "accountStatementArray.uniqueSequential", columnIndex = 15),
+		    @CTSColumn(field = "accountStatementArray.processDate", columnIndex = 16),
+		    @CTSColumn(field = "accountStatementArray.tarjetNumber", columnIndex = 17),
+		    @CTSColumn(field = "accountStatementArray.destinyAccount", columnIndex = 18),
+		    @CTSColumn(field = "accountStatementArray.typeAccount", columnIndex = 19),
+		    @CTSColumn(field = "accountStatementArray.beneficiary", columnIndex = 20),
+		    @CTSColumn(field = "accountStatementArray.referenceNumber", columnIndex = 21),
+		    @CTSColumn(field = "accountStatementArray.commission", columnIndex = 22),
+		    @CTSColumn(field = "accountStatementArray.iva", columnIndex = 23)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getMovementsDetail(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
 	@CTSProcedure(
 		name = "cob_procesador..sp_consulta_cuentas", dbms = "SQLCTS",  
 		objectRequest = {
@@ -531,6 +619,36 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO getOwnAccountsView(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cobis..sp_getzip_codestate_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inStateByZipCodeRequest",
+				input = {
+				
+					@CTSInputParam(field = "zipCode", param = "@i_zip_code", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(value = "XXX", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_id_state", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "XXX", param = "@o_desc_state", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+		}
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getStateByZipCode(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }

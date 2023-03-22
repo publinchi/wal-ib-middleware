@@ -39,6 +39,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
@@ -48,7 +50,9 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
+import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -114,12 +118,26 @@
 			//Have DTO
 			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException;
           /**
+          * Service to obtain the detail of movements of an existing savings account
+          */
+        
+			//Have DTO
+			public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail  )throws CTSRestException;
+          /**
           * Get Own Accounts View
           */
         
 			//Have DTO
 			public ResponseOwnAccountsView getOwnAccountsView(RequestOwnAccountsView inRequestOwnAccountsView  )throws CTSRestException;
-          /**
+          
+	          /**
+	          * Find State By zip Code API
+	          */
+	        
+			//Have DTO
+			public StateByZipCodeResponse getStateByZipCode(StateByZipCodeRequest inStateByZipCodeRequest  )throws CTSRestException;
+			
+	       /**
           * View Customer Information
           */
         

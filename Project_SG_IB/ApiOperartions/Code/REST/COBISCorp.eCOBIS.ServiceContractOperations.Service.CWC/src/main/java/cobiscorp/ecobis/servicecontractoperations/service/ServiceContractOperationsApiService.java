@@ -519,7 +519,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                           dto.setAverageBalance(resultSetMapper.getBigDecimal(7));
                           dto.setCurrencyId(resultSetMapper.getInteger(8));
                           dto.setDeliveryAddress(resultSetMapper.getString(9));
-                          dto.setFreezingsNumber(resultSetMapper.getInt(10));
+                          dto.setFreezingsNumber(resultSetMapper.getInteger(10));
                           dto.setFrozenAmount(resultSetMapper.getBigDecimal(11));
                           dto.setLastCutoffBalance(resultSetMapper.getString(12));
                           dto.setLastOperationDate(resultSetMapper.getString(13));
@@ -528,7 +528,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                           dto.setProductId(resultSetMapper.getInteger(16));
                           dto.setToDrawBalance(resultSetMapper.getBigDecimal(17));
                           dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
-                          dto.setOfical(resultSetMapper.getInt(19));
+                          dto.setOfficial(resultSetMapper.getInteger(19));
                           dto.setClabeAccountNumber(resultSetMapper.getString(20));
                           dto.setIdDebitCard(resultSetMapper.getInteger(21));
                           dto.setDebitCardNumber(resultSetMapper.getString(22));
@@ -797,6 +797,168 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outResponseCatalog;
 	}
 	
+	    /**
+	    * Service to obtain the detail of movements of an existing savings account
+	    */
+	   @Override
+		//Have DTO
+		public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: getMovementsDetail");
+		ResponseGetMovementsDetail outResponseGetMovementsDetail  = new ResponseGetMovementsDetail();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_tr04_cons_mov_ah_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500106");
+		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestGetMovementsDetail.getAccountNumber());
+		procedureRequestAS.addInputParam("@i_fecha_ini",ICTSTypes.SQLVARCHAR,inRequestGetMovementsDetail.getMinDate());
+		procedureRequestAS.addInputParam("@i_fecha_fin",ICTSTypes.SQLVARCHAR,inRequestGetMovementsDetail.getMaxDate());
+		procedureRequestAS.addInputParam("@i_sec_unico",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getSequential()));
+		procedureRequestAS.addInputParam("@i_tipo",ICTSTypes.SQLCHAR,"T");
+		procedureRequestAS.addInputParam("@i_servicio",ICTSTypes.SQLINT1,"8");
+		procedureRequestAS.addInputParam("@i_cliente",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"A");
+		procedureRequestAS.addInputParam("@i_nro_registros",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getNumberOfMovements()));
+		procedureRequestAS.addInputParam("@i_mov_id",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getMovementId()));
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetMovementsDetail>() { 
+		              @Override
+		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseGetMovementsDetail.setSuccess(returnResponseGetMovementsDetail.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetMovementsDetail>() { 
+		              @Override
+		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+		              
+								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseGetMovementsDetail.setMessage(returnResponseGetMovementsDetail.getMessage());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseGetMovementsDetail>() { 
+		              @Override
+		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+		              
+		                    dto.setNumberOfResults(resultSetMapper.getInteger(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseGetMovementsDetail.setNumberOfResults(returnResponseGetMovementsDetail.getNumberOfResults());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {	
+									//---------NO Array
+		      	AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil.mapToArray(response.getResultSets().get(3), new RowMapper<AccountStatementArray>() { 
+		              @Override
+		              public AccountStatementArray mapRow(ResultSetMapper resultSetMapper, int index) {
+		              	AccountStatementArray dto = new AccountStatementArray();
+		              
+								dto.setAccountingBalance(resultSetMapper.getBigDecimal(1));
+								dto.setAlternateCode(resultSetMapper.getInteger(2));
+								dto.setAmount(resultSetMapper.getBigDecimal(3));
+								dto.setAvailableBalance(resultSetMapper.getBigDecimal(4));
+								dto.setConcept(resultSetMapper.getString(5));
+								dto.setDescription(resultSetMapper.getString(6));
+								dto.setHour(resultSetMapper.getString(7));
+								dto.setImage(resultSetMapper.getString(8));
+								dto.setTracking(resultSetMapper.getString(9));
+								dto.setOperationType(resultSetMapper.getString(10));
+								dto.setReference(resultSetMapper.getInteger(11));
+								dto.setSequential(resultSetMapper.getInteger(12));
+								dto.setSignDC(resultSetMapper.getString(13));
+								dto.setTransactionDate(resultSetMapper.getString(14));
+								dto.setUniqueSequential(resultSetMapper.getInteger(15));
+								dto.setProcessDate(resultSetMapper.getString(16));
+								dto.setTarjetNumber(resultSetMapper.getString(17));
+								dto.setDestinyAccount(resultSetMapper.getString(18));
+								dto.setTypeAccount(resultSetMapper.getString(19));
+								dto.setBeneficiary(resultSetMapper.getString(20));
+								dto.setReferenceNumber(resultSetMapper.getInteger(21));
+								dto.setCommission(resultSetMapper.getBigDecimal(22));
+								dto.setIva(resultSetMapper.getBigDecimal(23));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseGetMovementsDetail.setAccountStatementArray(returnResponseGetMovementsDetail);
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  LOGGER.logDebug("Ends service execution: getMovementsDetail");
+		  //returns data
+		  return outResponseGetMovementsDetail;
+		}
+	   
+	
     /**
     * Get Own Accounts View
     */
@@ -919,6 +1081,76 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	     //returns data
 	     return outResponseOwnAccountsView;
 	   }
+	   
+	   
+		/**
+		 * Find State By zip Code API
+		 */
+		@Override
+		// Have DTO
+		public StateByZipCodeResponse getStateByZipCode(StateByZipCodeRequest inStateByZipCodeRequest)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: getStateByZipCode");
+			StateByZipCodeResponse outStateByZipCodeResponse = new StateByZipCodeResponse();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_getzip_codestate_api");
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500104");
+			procedureRequestAS.addInputParam("@i_zip_code", ICTSTypes.SQLVARCHAR, inStateByZipCodeRequest.getZipCode());
+			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXX");
+			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_id_state", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_desc_state", ICTSTypes.SQLVARCHAR, "XXX");
+			procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			Message message=new Message();
+			
+			message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
+			message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+			outStateByZipCodeResponse.setMessage(message);
+			outStateByZipCodeResponse.setStateId(getOutValue(String.class, "@o_id_state", response.getParams()));
+			outStateByZipCodeResponse
+					.setStateDescription(getOutValue(String.class, "@o_desc_state", response.getParams()));
+			outStateByZipCodeResponse.setSuccess(getOutValue(Boolean.class, "@o_success", response.getParams()));
+			
+			if (message != null && message.getCode() == 0) {
+				outStateByZipCodeResponse.setSuccess(true);
+
+			} else
+				outStateByZipCodeResponse.setSuccess(false);
+		
+			
+
+			LOGGER.logDebug("Ends service execution: getStateByZipCode");
+			// returns data
+			return outStateByZipCodeResponse;
+		}   
 
 	/**
 	 * View Customer Information
@@ -1111,92 +1343,89 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outRegisterBeneficiaryResponse;
 	}
 
-    @Override
-		//Have DTO
-		public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException{
- LOGGER.logDebug("Start service execution: searchZipCode");
- 
- //create procedure
- ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_search_zipcode");
- 
- SearchZipCodeResponse toReturn=new SearchZipCodeResponse();
- 
- 
- procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500098");
-procedureRequestAS.addInputParam("@i_zipCode",ICTSTypes.SQLVARCHAR,inSearchZipCodeRequest.getZipCode());
-procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"false");
-procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"XXXX");
-procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"000");
- 
- //execute procedure
- ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+	@Override
+	// Have DTO
+	public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest) throws CTSRestException {
+		LOGGER.logDebug("Start service execution: searchZipCode");
 
- List<MessageBlock> errors = ErrorUtil.getErrors(response);
- //throw error
- if(errors!= null && errors.size()> 0){
- LOGGER.logDebug("Procedure execution returns error");
- if ( LOGGER.isDebugEnabled() ) {
- for (int i = 0; i < errors.size(); i++) {
- LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
- }
- }
- throw new CTSRestException("Procedure Response has errors", null, errors);
- }
- LOGGER.logDebug("Procedure ok");
- //Init map returns
- int mapTotal=0;
- int mapBlank=0;
- 
-       mapTotal++;
-       if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
-							//---------NO Array
-							ListZipCode [] returnListZipCode = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<ListZipCode>() { 
-               @Override
-               public ListZipCode mapRow(ResultSetMapper resultSetMapper, int index) {
-               ListZipCode dto = new ListZipCode();
-               
-                     dto.setProvinceCode(resultSetMapper.getString(3));
-                     dto.setCityCode(resultSetMapper.getString(2));
-                     dto.setCodeColony(resultSetMapper.getString(1));
-               return dto;
-               }
-               },false);
-							
-				toReturn.setZipList(returnListZipCode);
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_search_zipcode");
 
-          
-                 
-       }else {
-       mapBlank++;
+		SearchZipCodeResponse toReturn = new SearchZipCodeResponse();
 
-       }
-     
- //End map returns
- if(mapBlank!=0&&mapBlank==mapTotal){
- LOGGER.logDebug("No data found");
- throw new CTSRestException("404",null);
- }
- 
- 
- 
- toReturn.setSuccess(getOutValue(boolean.class, "@o_success", response.getParams()));
- Message message=new Message();
- message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
- message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
- 
- if(message!=null && message.getCode()==0) {
-	 toReturn.setSuccess(true);
-	 
- } else toReturn.setSuccess(false);
- 
- toReturn.setMessage(message);
-       
-   LOGGER.logDebug("Ends service execution: searchZipCode");
-       
-  return toReturn;
-       
-   
- }
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500098");
+		procedureRequestAS.addInputParam("@i_zipCode", ICTSTypes.SQLVARCHAR, inSearchZipCodeRequest.getZipCode());
+		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "false");
+		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXXX");
+		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "000");
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ListZipCode[] returnListZipCode = MapperResultUtil.mapToArray(response.getResultSets().get(0),
+					new RowMapper<ListZipCode>() {
+						@Override
+						public ListZipCode mapRow(ResultSetMapper resultSetMapper, int index) {
+							ListZipCode dto = new ListZipCode();
+
+							dto.setProvinceCode(resultSetMapper.getString(3));
+							dto.setCityCode(resultSetMapper.getString(2));
+							dto.setCodeColony(resultSetMapper.getString(1));
+							return dto;
+						}
+					}, false);
+
+			toReturn.setZipList(returnListZipCode);
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		toReturn.setSuccess(getOutValue(boolean.class, "@o_success", response.getParams()));
+		Message message = new Message();
+		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
+		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+
+		if (message != null && message.getCode() == 0) {
+			toReturn.setSuccess(true);
+
+		} else
+			toReturn.setSuccess(false);
+
+		toReturn.setMessage(message);
+
+		LOGGER.logDebug("Ends service execution: searchZipCode");
+
+		return toReturn;
+
+	}
 	
 	    /**
 	    * Update customer address

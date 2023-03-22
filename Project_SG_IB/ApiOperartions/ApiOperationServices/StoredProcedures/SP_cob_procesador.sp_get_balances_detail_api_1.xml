@@ -29,7 +29,7 @@
         <column name="productId" />
         <column name="toDrawBalance" />
         <column name="accountingBalance" />
-        <column name="ofical" />
+        <column name="official" />
         <column name="clabeAccountNumber" />
         <column name="idDebitCard" />
         <column name="debitCardNumber" />

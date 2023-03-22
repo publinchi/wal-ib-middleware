@@ -40,8 +40,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
-    import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
-    import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
@@ -50,6 +52,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -429,6 +433,85 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 	        return Response.ok(outResponseOwnAccountsView).build();
 	      
 	    }
+      
+	      /**
+	      * Service to obtain the detail of movements of an existing savings account
+	      */
+	    @POST
+		  @Path("/apiOperations/accounts/getMovementsDetail")
+		  @Consumes({"application/json"})
+		  @Produces({"application/json"})
+		   public Response  getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail ){
+		  LOGGER.logDebug("Start service execution REST: getMovementsDetail");
+		  ResponseGetMovementsDetail outResponseGetMovementsDetail  = new ResponseGetMovementsDetail();
+		      
+		  if(!validateMandatory(new Data("accountNumber", inRequestGetMovementsDetail.getAccountNumber()), new Data("minDate", inRequestGetMovementsDetail.getMinDate()), new Data("maxDate", inRequestGetMovementsDetail.getMaxDate()), new Data("sequential", inRequestGetMovementsDetail.getSequential()), new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()), new Data("numberOfMovements", inRequestGetMovementsDetail.getNumberOfMovements()), new Data("movementId", inRequestGetMovementsDetail.getMovementId()))) {
+		    LOGGER.logDebug("400 is returned - Required fields are missing");
+		    return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+		  }
+		    
+		  try {
+		  outResponseGetMovementsDetail=iServiceContractOperationsApiService.getMovementsDetail( inRequestGetMovementsDetail );
+		  } catch (CTSRestException e) {
+		  LOGGER.logError("CTSRestException",e);
+		  if ("404".equals(e.getMessage())) {
+		  LOGGER.logDebug("404 is returned - No data found");
+		  return Response.status(404).entity("No data found").build();
+		  }
+		
+		  LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+		  return Response.status(409).entity(e.getMessageBlockList()).build();
+		  } catch (Exception e){
+		  LOGGER.logDebug("500 is returned - Code exception");
+		  LOGGER.logError("Exception",e);
+		  return Response.status(500).entity(e.getMessage()).build();
+		  }
+		  
+		      LOGGER.logDebug("Ends service execution REST: getMovementsDetail");
+		      return Response.ok(outResponseGetMovementsDetail).build();
+		    
+		  }
+		      
+      
+		/**
+		 * Find State By getStateByzipCode
+		 */
+		@POST
+		@Path("/apiOperations/onboarding/getStateByzipCode")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response getStateByZipCode(StateByZipCodeRequest inStateByZipCodeRequest) {
+			LOGGER.logDebug("Start service execution REST: getStateByZipCode");
+			StateByZipCodeResponse outStateByZipCodeResponse = new StateByZipCodeResponse();
+
+			if (!validateMandatory(new Data("zipCode", inStateByZipCodeRequest.getZipCode()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+
+			try {
+				outStateByZipCodeResponse = iServiceContractOperationsApiService
+						.getStateByZipCode(inStateByZipCodeRequest);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: getStateByZipCode");
+			return Response.ok(outStateByZipCodeResponse).build();
+
+		}
 
     
           /**

@@ -66,9 +66,19 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getCatalog(ServiceRequestTO requestTO);  
 
   /**
+  * Service to obtain the detail of movements of an existing savings account
+  */
+  ServiceResponseTO getMovementsDetail(ServiceRequestTO requestTO);  
+
+  /**
   * Get Own Accounts View
   */
   ServiceResponseTO getOwnAccountsView(ServiceRequestTO requestTO);  
+
+  /**
+  * Find State By zip Code API
+  */
+  ServiceResponseTO getStateByZipCode(ServiceRequestTO requestTO);  
 
   /**
   * View Customer Information
