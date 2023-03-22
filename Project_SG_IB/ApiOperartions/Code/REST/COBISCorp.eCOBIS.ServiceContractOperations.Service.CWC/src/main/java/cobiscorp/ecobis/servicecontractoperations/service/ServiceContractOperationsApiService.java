@@ -797,6 +797,94 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outResponseCatalog;
 	}
 	
+	
+	/**
+	 * Municipality By State
+	 */
+	@Override
+	// Have DTO
+	public ResponseMunicipalityByState getMunicipalityByState(RequestMunicipalityByState inRequestMunicipalityByState)throws CTSRestException {
+		LOGGER.logDebug("Start service execution: getMunicipalityByState");
+		ResponseMunicipalityByState outResponseMunicipalityByState = new ResponseMunicipalityByState();
+
+//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_municipality_state_api");
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500105");
+		procedureRequestAS.addInputParam("@i_state_id", ICTSTypes.SQLVARCHAR,inRequestMunicipalityByState.getStateId());
+		procedureRequestAS.addInputParam("@i_zip_code", ICTSTypes.SQLVARCHAR, inRequestMunicipalityByState.getZipCode());
+		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXX");
+		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
+
+//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+//throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+//Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size()>0  && 
+				response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			MunicipalitiesItems[]  municipalities = MapperResultUtil
+					.mapToArray(response.getResultSets().get(0), new RowMapper<MunicipalitiesItems>() {
+						@Override
+						public MunicipalitiesItems mapRow(ResultSetMapper resultSetMapper, int index) {
+							MunicipalitiesItems dto = new MunicipalitiesItems();						
+							dto.setIdMunicipality(resultSetMapper.getString(1));
+							dto.setMunicipality(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseMunicipalityByState.setMunicipalitiesItems(municipalities);
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+
+		
+		Message message=new Message();		
+		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
+		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));		
+		outResponseMunicipalityByState.setMessage(message);
+		
+		if (message != null && message.getCode() == 0) {
+			outResponseMunicipalityByState.setSuccess(true);
+
+		} else
+			outResponseMunicipalityByState.setSuccess(false);
+	
+		
+		
+		
+	
+
+		LOGGER.logDebug("Ends service execution: getMunicipalityByState");
+		// returns data
+		return outResponseMunicipalityByState;
+	}
+	
+	
+	
     /**
     * Get Own Accounts View
     */

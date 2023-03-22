@@ -45,8 +45,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
-    import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
-    import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
+import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
@@ -431,6 +433,50 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 	        return Response.ok(outResponseOwnAccountsView).build();
 	      
 	    }
+      
+
+      
+      
+      /**
+      * Municipality By State
+      */
+    @POST
+  @Path("/apiOperations/onbording/getMunicipalityByState")
+  @Consumes({"application/json"})
+  @Produces({"application/json"})
+   public Response  getMunicipalityByState(RequestMunicipalityByState inRequestMunicipalityByState ){
+  LOGGER.logDebug("Start service execution REST: getMunicipalityByState");
+  ResponseMunicipalityByState outResponseMunicipalityByState  = new ResponseMunicipalityByState();
+      
+  if(!validateMandatory(new Data("stateId", inRequestMunicipalityByState.getStateId()))) {
+    LOGGER.logDebug("400 is returned - Required fields are missing");
+    return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+  }
+    
+  try {
+  outResponseMunicipalityByState=iServiceContractOperationsApiService.getMunicipalityByState( inRequestMunicipalityByState );
+  } catch (CTSRestException e) {
+  LOGGER.logError("CTSRestException",e);
+  if ("404".equals(e.getMessage())) {
+  LOGGER.logDebug("404 is returned - No data found");
+  return Response.status(404).entity("No data found").build();
+  }
+
+  LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+  return Response.status(409).entity(e.getMessageBlockList()).build();
+  } catch (Exception e){
+  LOGGER.logDebug("500 is returned - Code exception");
+  LOGGER.logError("Exception",e);
+  return Response.status(500).entity(e.getMessage()).build();
+  }
+  
+      LOGGER.logDebug("Ends service execution REST: getMunicipalityByState");
+      return Response.ok(outResponseMunicipalityByState).build();
+    
+  }      
+      
+      
+      
       
       
 		/**

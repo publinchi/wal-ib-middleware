@@ -66,6 +66,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getCatalog(ServiceRequestTO requestTO);  
 
   /**
+  * Municipality By State
+  */
+  ServiceResponseTO getMunicipalityByState(ServiceRequestTO requestTO);  
+
+  /**
   * Get Own Accounts View
   */
   ServiceResponseTO getOwnAccountsView(ServiceRequestTO requestTO);  

@@ -468,6 +468,47 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cobis..sp_get_municipality_state_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestMunicipalityByState",
+				input = {
+				
+					@CTSInputParam(field = "stateId", param = "@i_state_id", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500105"),
+				@CTSDefaultInputParam(value = "XXX", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseMunicipalityByState",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState.class,
+      columns = {
+		    @CTSColumn(field = "municipalitiesItems[0].idMunicipality", columnIndex = 1),
+		    @CTSColumn(field = "municipalitiesItems[0].municipality", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getMunicipalityByState(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_consulta_cuentas", dbms = "SQLCTS",  
 		objectRequest = {
 		
@@ -547,6 +588,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		},
 		defaultRequest = {
     
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500104"),
 				@CTSDefaultInputParam(value = "XXX", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
 				@CTSDefaultInputParam(value = "0", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
 				@CTSDefaultInputParam(value = "0", param = "@o_id_state", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),

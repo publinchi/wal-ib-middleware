@@ -43,8 +43,10 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
-    import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
+import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
@@ -167,6 +169,16 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
         
 			//Have DTO
 			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
+			
+			
+			/**
+			 * Municipality By State
+			 */
+
+			// Have DTO
+			public ResponseMunicipalityByState getMunicipalityByState(
+					RequestMunicipalityByState inRequestMunicipalityByState) throws CTSRestException;
+			
     }
 
   
