@@ -35,6 +35,56 @@ import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperat
 public class ServiceContractOperationsApi extends CTSAbstractService implements IServiceContractOperationsApi {
 
 	@CTSProcedure(
+		name = "cob_procesador..sp_account_credit_operation_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inCreditAccountRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "amount", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "description", param = "@i_description", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "ownerName", param = "@i_ownerName", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "commission", param = "@i_commission", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "latitude", param = "@i_latitude", dataType = ICTSTypes.SQLFLT8i),
+					@CTSInputParam(field = "longitude", param = "@i_longitude", dataType = ICTSTypes.SQLFLT8i),
+					@CTSInputParam(field = "referenceNumber", param = "@i_referenceNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "creditConcept", param = "@i_creditConcept", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originCode", param = "@i_originCode", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500107")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnCreditAccountResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3),
+		    @CTSColumn(field = "referenceCode", columnIndex = 4)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO accountCreditOperation(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+
+	@CTSProcedure(
 		name = "cob_procesador..sp_affiliate_customer", dbms = "SQLCTS",  
 		objectRequest = {
 		
