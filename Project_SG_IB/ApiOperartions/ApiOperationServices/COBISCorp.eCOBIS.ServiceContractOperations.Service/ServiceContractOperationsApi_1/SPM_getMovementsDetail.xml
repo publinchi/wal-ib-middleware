@@ -153,7 +153,7 @@
           <field type="int" name="position" value="11" />
           <field type="String" name="columnName" value="sequential" />
           <field type="String" name="dTOAlias" value="returnResponseGetMovementsDetail" />
-          <field type="String" name="dTOPropertyName" value="accountStatementArray.sequential" />
+          <field type="String" name="dTOPropertyName" value="accountStatementArray.movementId" />
           <field type="String" name="dataType" value="int?" />
           <field type="String" name="format" value="" />
         </class>
