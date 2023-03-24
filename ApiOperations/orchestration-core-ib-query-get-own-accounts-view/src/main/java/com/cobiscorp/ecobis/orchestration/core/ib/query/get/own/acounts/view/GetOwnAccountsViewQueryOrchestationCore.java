@@ -181,8 +181,8 @@ public class GetOwnAccountsViewQueryOrchestationCore extends SPJavaOrchestration
 		IResultSetRow row = new ResultSetRow();
 
 		row.addRowData(1,
-				new ResultSetRowColumnData(false, String.valueOf(ConstantsMessageResponse.MSG400099.getIdMessage())));
-		row.addRowData(2, new ResultSetRowColumnData(false, ConstantsMessageResponse.MSG400099.getDescriptionMessage()));
+				new ResultSetRowColumnData(false, String.valueOf(ConstantsMessageResponse.MSG400141.getIdMessage())));
+		row.addRowData(2, new ResultSetRowColumnData(false, ConstantsMessageResponse.MSG400141.getDescriptionMessage()));
 
 		data.addRow(row);
 

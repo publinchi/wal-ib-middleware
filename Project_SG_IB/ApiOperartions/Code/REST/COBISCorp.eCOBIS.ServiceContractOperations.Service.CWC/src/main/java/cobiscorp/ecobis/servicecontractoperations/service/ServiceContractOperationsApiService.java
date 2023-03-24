@@ -56,6 +56,84 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private ICTSRestIntegrationService ctsRestIntegrationService;
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 
+	/**
+          * Service to apply crerdit account
+          */
+         @Override
+			// Return DTO
+			public  CreditAccountResponse  accountCreditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: accountCreditOperation");
+      CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_account_credit_operation_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500107");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCreditAccountRequest.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getAccountNumber());
+      procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLMONEY,String.valueOf(inCreditAccountRequest.getAmount()));
+      procedureRequestAS.addInputParam("@i_description",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getDescription());
+      procedureRequestAS.addInputParam("@i_ownerName",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getOwnerName());
+      procedureRequestAS.addInputParam("@i_commission",ICTSTypes.SQLMONEY,String.valueOf(inCreditAccountRequest.getCommission()));
+      procedureRequestAS.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i,String.valueOf(inCreditAccountRequest.getLatitude()));
+      procedureRequestAS.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i,String.valueOf(inCreditAccountRequest.getLongitude()));
+      procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getReferenceNumber());
+      procedureRequestAS.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getCreditConcept());
+      procedureRequestAS.addInputParam("@i_originCode",ICTSTypes.SQLINT4,String.valueOf(inCreditAccountRequest.getOriginCode()));
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    CreditAccountResponse returnCreditAccountResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<CreditAccountResponse>() { 
+                    @Override
+                    public CreditAccountResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CreditAccountResponse dto = new CreditAccountResponse();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                          dto.setReferenceCode(resultSetMapper.getString(4));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
+							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleCreditAccountResponse=returnCreditAccountResponse ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: accountCreditOperation");
+        //returns data
+        return outSingleCreditAccountResponse;
+      }
+
+
 	 /**
           * Afiliate Customer
           */

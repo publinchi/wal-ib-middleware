@@ -24,6 +24,8 @@
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     
     import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
+    import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
+    import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
     import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
@@ -93,6 +95,44 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     protected void unsetiServiceContractOperationsApiService(IServiceContractOperationsApiService iServiceContractOperationsApiService){
     this.iServiceContractOperationsApiService = null;
     }
+
+    /**
+          * Service to apply credit account
+          */
+        @POST
+      @Path("/apiOperations/accountCreditOperation")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  accountCreditOperation(CreditAccountRequest inCreditAccountRequest ){
+	  LOGGER.logDebug("Start service execution REST: accountCreditOperation");
+      CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("description", inCreditAccountRequest.getDescription()), new Data("ownerName", inCreditAccountRequest.getOwnerName()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()), new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleCreditAccountResponse=iServiceContractOperationsApiService.accountCreditOperation( inCreditAccountRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: accountCreditOperation");
+          return Response.ok(outSingleCreditAccountResponse).build();
+        
+      }
 
     /**
           * Afiliate Customer
