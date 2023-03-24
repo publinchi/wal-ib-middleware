@@ -1001,7 +1001,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setTracking(resultSetMapper.getString(9));
 								dto.setOperationType(resultSetMapper.getString(10));
 								dto.setReference(resultSetMapper.getInteger(11));
-								dto.setSequential(resultSetMapper.getInteger(12));
+								dto.setMovementId(resultSetMapper.getInteger(12));
 								dto.setSignDC(resultSetMapper.getString(13));
 								dto.setTransactionDate(resultSetMapper.getString(14));
 								dto.setUniqueSequential(resultSetMapper.getInteger(15));
