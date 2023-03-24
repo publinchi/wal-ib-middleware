@@ -20,6 +20,8 @@
     /************************************************************/
     
     package  cobiscorp.ecobis.servicecontractoperations.service;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
@@ -68,6 +70,13 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
+
+          /**
+          * Service to apply crerdit account
+          */
+        
+			// Return DTO
+			public CreditAccountResponse accountCreditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
     
           /**
           * Afiliate Customer
