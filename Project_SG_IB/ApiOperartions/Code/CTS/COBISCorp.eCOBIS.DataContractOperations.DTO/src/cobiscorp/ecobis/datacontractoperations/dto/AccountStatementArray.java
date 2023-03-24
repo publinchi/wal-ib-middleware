@@ -39,7 +39,7 @@ public class AccountStatementArray implements Serializable {
   private String tracking;
   private String operationType;
   private Integer reference;
-  private Integer sequential;
+  private Integer movementId;
   private String signDC;
   private String transactionDate;
   private Integer uniqueSequential;
@@ -117,11 +117,11 @@ public class AccountStatementArray implements Serializable {
   public void setReference(Integer reference ){
     this.reference=reference;
   }
-  public Integer getSequential(){
-    return this.sequential;
+  public Integer getMovementId(){
+    return this.movementId;
   }
-  public void setSequential(Integer sequential ){
-    this.sequential=sequential;
+  public void setMovementId(Integer movementId ){
+    this.movementId=movementId;
   }
   public String getSignDC(){
     return this.signDC;

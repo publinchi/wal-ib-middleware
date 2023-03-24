@@ -581,7 +581,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "accountStatementArray.tracking", columnIndex = 9),
 		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 10),
 		    @CTSColumn(field = "accountStatementArray.reference", columnIndex = 11),
-		    @CTSColumn(field = "accountStatementArray.sequential", columnIndex = 12),
+		    @CTSColumn(field = "accountStatementArray.movementId", columnIndex = 12),
 		    @CTSColumn(field = "accountStatementArray.signDC", columnIndex = 13),
 		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 14),
 		    @CTSColumn(field = "accountStatementArray.uniqueSequential", columnIndex = 15),
