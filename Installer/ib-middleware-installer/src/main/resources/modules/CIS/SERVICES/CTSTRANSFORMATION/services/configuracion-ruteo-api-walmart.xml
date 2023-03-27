@@ -120,4 +120,19 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<!-- 18500106 ORQUESTACION GETMOVEMENTSDETAIL-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetBalancesDetail">
+		<conditions>
+		  <condition param="trn">
+			<value>18500106</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetMovementsDetailQueryOrchestationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>
