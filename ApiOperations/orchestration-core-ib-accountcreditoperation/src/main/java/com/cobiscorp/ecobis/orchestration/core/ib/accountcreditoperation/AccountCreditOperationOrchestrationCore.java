@@ -75,23 +75,11 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		aBagSPJavaOrchestration.clear();
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
-		String description = wQueryRequest.readValueParam("@i_description");
-		String ownerName = wQueryRequest.readValueParam("@i_ownerName");
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
 		String creditConcept = wQueryRequest.readValueParam("@i_creditConcept");
 		
 		if (accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("40082", "accountNumber must not be empty");
-			return;
-		}
-		
-		if (description.isEmpty()) {
-			aBagSPJavaOrchestration.put("40090", "description must not be empty");
-			return;
-		}
-		
-		if (ownerName.isEmpty()) {
-			aBagSPJavaOrchestration.put("40091", "ownerName must not be empty");
 			return;
 		}
 		
@@ -113,9 +101,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500107");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
-		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
-		reqTMPCentral.addInputParam("@i_description",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_description"));
-		reqTMPCentral.addInputParam("@i_ownerName",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_ownerName"));
+		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLNUMERIC, wQueryRequest.readValueParam("@i_amount"));
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
 		reqTMPCentral.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
 		reqTMPCentral.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));

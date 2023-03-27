@@ -44,9 +44,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "amount", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
-					@CTSInputParam(field = "description", param = "@i_description", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "ownerName", param = "@i_ownerName", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "amount", param = "@i_amount", dataType = ICTSTypes.SQLNUMERIC),
 					@CTSInputParam(field = "commission", param = "@i_commission", dataType = ICTSTypes.SQLMONEY),
 					@CTSInputParam(field = "latitude", param = "@i_latitude", dataType = ICTSTypes.SQLFLT8i),
 					@CTSInputParam(field = "longitude", param = "@i_longitude", dataType = ICTSTypes.SQLFLT8i),
