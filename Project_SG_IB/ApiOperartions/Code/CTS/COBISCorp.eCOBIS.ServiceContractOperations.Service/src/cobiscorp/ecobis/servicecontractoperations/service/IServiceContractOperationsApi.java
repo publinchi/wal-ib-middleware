@@ -26,7 +26,7 @@ import cobiscorp.ecobis.commons.dto.ServiceResponseTO;
 public interface IServiceContractOperationsApi{
 
   /**
-  * Service to apply crerdit account
+  * Service to apply credit account
   */
   ServiceResponseTO accountCreditOperation(ServiceRequestTO requestTO);  
 
