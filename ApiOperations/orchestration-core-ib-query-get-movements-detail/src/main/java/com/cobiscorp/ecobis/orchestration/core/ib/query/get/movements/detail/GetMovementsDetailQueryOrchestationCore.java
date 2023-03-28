@@ -343,25 +343,36 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				if(null!= columns[16].getValue() && !"".equals(columns[16].getValue())) {
 					String[] strBeneficiary = columns[16].getValue().split("\\|");
-					
+				
 				    if(strBeneficiary.length>0)
 				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, strBeneficiary[0]));
-		        	
+				    else
+				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, " "));
+				    
 				    if(strBeneficiary.length>1)
 				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, strBeneficiary[1]));
+				    else
+				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, " "));
 				    
 				    if(strBeneficiary.length>2)
-					
 				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, strBeneficiary[2]));
+				    else
+				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, " "));
+				    
 				    if(strBeneficiary.length>3)
-					
 				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, strBeneficiary[3]));
+				    else
+				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, "0"));
+				    
 				    if(strBeneficiary.length>4)
-					
 				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, strBeneficiary[4]));
+				    else
+				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, "0"));
+				    
 				    if(strBeneficiary.length>5)
-					
 				    	rowDat.addRowData(23, new ResultSetRowColumnData(false, strBeneficiary[5]));
+				    else
+				    	rowDat.addRowData(23, new ResultSetRowColumnData(false, "0"));
 				}
 				else{
 					rowDat.addRowData(18, new ResultSetRowColumnData(false, " "));

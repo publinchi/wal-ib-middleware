@@ -48,9 +48,9 @@ public class AccountStatementArray implements Serializable {
   private String destinyAccount;
   private String typeAccount;
   private String beneficiary;
-  private Integer referenceNumber;
-  private java.math.BigDecimal commission;
-  private java.math.BigDecimal iva;
+  private String referenceNumber;
+  private String commission;
+  private String iva;
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
@@ -171,22 +171,22 @@ public class AccountStatementArray implements Serializable {
   public void setBeneficiary(String beneficiary ){
     this.beneficiary=beneficiary;
   }
-  public Integer getReferenceNumber(){
+  public String getReferenceNumber(){
     return this.referenceNumber;
   }
-  public void setReferenceNumber(Integer referenceNumber ){
+  public void setReferenceNumber(String referenceNumber ){
     this.referenceNumber=referenceNumber;
   }
-  public java.math.BigDecimal getCommission(){
+  public String getCommission(){
     return this.commission;
   }
-  public void setCommission(java.math.BigDecimal commission ){
+  public void setCommission(String commission ){
     this.commission=commission;
   }
-  public java.math.BigDecimal getIva(){
+  public String getIva(){
     return this.iva;
   }
-  public void setIva(java.math.BigDecimal iva ){
+  public void setIva(String iva ){
     this.iva=iva;
   }
 }

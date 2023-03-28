@@ -225,8 +225,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				inCreateCustomerRequest.getAmountTransaction());
 		procedureRequestAS.addInputParam("@i_average_balance", ICTSTypes.SQLVARCHAR,
 				inCreateCustomerRequest.getAverageBalance());
-		procedureRequestAS.addInputParam("@i_birthdate", ICTSTypes.SQLDATETIME,
-				String.valueOf(ConverterUtil.calendarToString(inCreateCustomerRequest.getBirthDate())));
+		procedureRequestAS.addInputParam("@i_birthdate", ICTSTypes.SQLVARCHAR, 
+				inCreateCustomerRequest.getBirthDate());
 		procedureRequestAS.addInputParam("@i_city_code", ICTSTypes.SQLINT4,
 				String.valueOf(inCreateCustomerRequest.getCity()));
 		procedureRequestAS.addInputParam("@i_countrybirth_code", ICTSTypes.SQLINT4,
@@ -301,8 +301,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_timeincurrentresidence", ICTSTypes.SQLINT4,
 				String.valueOf(inCreateCustomerRequest.getTimeCurrentRecide()));
 		procedureRequestAS.addInputParam("@i_town_code", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getTownCode());
-		procedureRequestAS.addInputParam("@i_validity_date", ICTSTypes.SQLDATETIME,
-				String.valueOf(ConverterUtil.calendarToString(inCreateCustomerRequest.getValidityDate())));
+		procedureRequestAS.addInputParam("@i_validity_date", ICTSTypes.SQLVARCHAR, 
+				inCreateCustomerRequest.getValidityDate());
 		procedureRequestAS.addInputParam("@i_zipcode_code", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getZipcode());
 		procedureRequestAS.addInputParam("@i_economic_sector", ICTSTypes.SQLVARCHAR,
 				inCreateCustomerRequest.getEconomicSector());
@@ -1008,9 +1008,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setDestinyAccount(resultSetMapper.getString(18));
 								dto.setTypeAccount(resultSetMapper.getString(19));
 								dto.setBeneficiary(resultSetMapper.getString(20));
-								dto.setReferenceNumber(resultSetMapper.getInteger(21));
-								dto.setCommission(resultSetMapper.getBigDecimal(22));
-								dto.setIva(resultSetMapper.getBigDecimal(23));
+								dto.setReferenceNumber(resultSetMapper.getString(21));
+								dto.setCommission(resultSetMapper.getString(22));
+								dto.setIva(resultSetMapper.getString(23));
 		              return dto;
 		              }
 		              },false);
