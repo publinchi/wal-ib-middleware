@@ -33,7 +33,7 @@ public class CreateCustomerRequest implements Serializable {
   private String lastName;
   private String secondLastName;
   private String gender;
-  private java.util.Calendar birthDate;
+  private String birthDate;
   private String nationality;
   private String provinceBirth;
   private String civilStatus;
@@ -47,7 +47,7 @@ public class CreateCustomerRequest implements Serializable {
   private String incomeLevelEntity;
   private String legalIncomeSource;
   private String noConnectionIllegalNetworks;
-  private java.util.Calendar validityDate;
+  private String validityDate;
   private String email;
   private String phoneNumber;
   private String zipcode;
@@ -108,10 +108,10 @@ public class CreateCustomerRequest implements Serializable {
   public void setGender(String gender ){
     this.gender=gender;
   }
-  public java.util.Calendar getBirthDate(){
+  public String getBirthDate(){
     return this.birthDate;
   }
-  public void setBirthDate(java.util.Calendar birthDate ){
+  public void setBirthDate(String birthDate ){
     this.birthDate=birthDate;
   }
   public String getNationality(){
@@ -192,10 +192,10 @@ public class CreateCustomerRequest implements Serializable {
   public void setNoConnectionIllegalNetworks(String noConnectionIllegalNetworks ){
     this.noConnectionIllegalNetworks=noConnectionIllegalNetworks;
   }
-  public java.util.Calendar getValidityDate(){
+  public String getValidityDate(){
     return this.validityDate;
   }
-  public void setValidityDate(java.util.Calendar validityDate ){
+  public void setValidityDate(String validityDate ){
     this.validityDate=validityDate;
   }
   public String getEmail(){

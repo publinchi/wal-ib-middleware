@@ -31,7 +31,7 @@ public class Beneficiaries implements Serializable {
   private String names;
   private String lastName;
   private String secondLastName;
-  private java.util.Calendar birthDate;
+  private String birthDate;
   private String relationship;
   private String phoneNumber;
   private String zipcode;
@@ -61,10 +61,10 @@ public class Beneficiaries implements Serializable {
   public void setSecondLastName(String secondLastName ){
     this.secondLastName=secondLastName;
   }
-  public java.util.Calendar getBirthDate(){
+  public String getBirthDate(){
     return this.birthDate;
   }
-  public void setBirthDate(java.util.Calendar birthDate ){
+  public void setBirthDate(String birthDate ){
     this.birthDate=birthDate;
   }
   public String getRelationship(){
