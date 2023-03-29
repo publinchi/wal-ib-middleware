@@ -96,7 +96,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		logger.logDebug("Begin flow, queryAccountCreditOperation with id: " + idCustomer);
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
-		reqTMPCentral.setSpName("cobis..sp_get_balances_detail_api");
+		reqTMPCentral.setSpName("cobis..sp_account_credit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500107");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
@@ -138,7 +138,12 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
-			}
+				
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
+				
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				return;
+			} 
 			 
 			
 		} else {

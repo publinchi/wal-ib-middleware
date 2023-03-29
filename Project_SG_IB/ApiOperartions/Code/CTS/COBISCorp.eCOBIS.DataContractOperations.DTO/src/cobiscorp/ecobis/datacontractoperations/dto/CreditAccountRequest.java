@@ -31,14 +31,14 @@ public class CreditAccountRequest implements Serializable {
   private Integer externalCustomerId;
   private String accountNumber;
   private java.math.BigDecimal amount;
-  private String description;
-  private String ownerName;
   private java.math.BigDecimal commission;
   private java.math.BigDecimal latitude;
   private java.math.BigDecimal longitude;
   private String referenceNumber;
   private String creditConcept;
   private Integer originCode;
+  private String description;
+  private String ownerName;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -56,18 +56,6 @@ public class CreditAccountRequest implements Serializable {
   }
   public void setAmount(java.math.BigDecimal amount ){
     this.amount=amount;
-  }
-  public String getDescription(){
-    return this.description;
-  }
-  public void setDescription(String description ){
-    this.description=description;
-  }
-  public String getOwnerName(){
-    return this.ownerName;
-  }
-  public void setOwnerName(String ownerName ){
-    this.ownerName=ownerName;
   }
   public java.math.BigDecimal getCommission(){
     return this.commission;
@@ -104,5 +92,17 @@ public class CreditAccountRequest implements Serializable {
   }
   public void setOriginCode(Integer originCode ){
     this.originCode=originCode;
+  }
+  public String getDescription(){
+    return this.description;
+  }
+  public void setDescription(String description ){
+    this.description=description;
+  }
+  public String getOwnerName(){
+    return this.ownerName;
+  }
+  public void setOwnerName(String ownerName ){
+    this.ownerName=ownerName;
   }
 }
