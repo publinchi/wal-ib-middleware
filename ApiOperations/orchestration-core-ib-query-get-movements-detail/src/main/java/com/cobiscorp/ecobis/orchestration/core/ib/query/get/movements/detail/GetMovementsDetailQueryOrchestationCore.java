@@ -254,7 +254,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		
 		IResultSetRow row = new ResultSetRow();
 		row.addRowData(1, new ResultSetRowColumnData(false, "0"));
-		row.addRowData(2, new ResultSetRowColumnData(false, "success"));
+		row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 		data.addRow(row);
 
 		IResultSetRow row2 = new ResultSetRow();
