@@ -406,75 +406,71 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	}
 
 	/**
-	 * Encrypt Data
-	 */
-	@Override
-	// Return List
-	public List<ResponseEncriptData> encryptData(RequestEncriptData inRequestEncriptData) throws CTSRestException {
-		LOGGER.logDebug("Start service execution: encryptData");
-		List<ResponseEncriptData> outSingleResponseEncriptData = new ArrayList<>();
+          * Encrypt Data
+          */
+         @Override
+			// Return List
+			public  ResponseEncriptData  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: encryptData");
+      ResponseEncriptData outSingleResponseEncriptData  = new ResponseEncriptData();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_encryptData");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500088");
+      procedureRequestAS.addInputParam("@i_password",ICTSTypes.SQLVARCHAR,inRequestEncriptData.getPassword());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_encryptData");
-
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500088");
-		procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
-				String.valueOf(inRequestEncriptData.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_password", ICTSTypes.SQLVARCHAR, inRequestEncriptData.getPassword());
-
-		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
-
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		// throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-				}
-			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
-		}
-		LOGGER.logDebug("Procedure ok");
-		// Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ----------------Assume Array return
-			List<ResponseEncriptData> returnResponseEncriptData = MapperResultUtil
-					.mapToList(response.getResultSets().get(0), new RowMapper<ResponseEncriptData>() {
-						@Override
-						public ResponseEncriptData mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseEncriptData dto = new ResponseEncriptData();
-
-							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.setPassword(resultSetMapper.getString(2));
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                	ResponseEncriptData returnResponseEncriptData = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseEncriptData>() { 
+                    @Override
+                    public ResponseEncriptData mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseEncriptData dto = new ResponseEncriptData();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                          dto.setPassword(resultSetMapper.getString(2));
 							dto.messageInstance().setMessage(resultSetMapper.getString(3));
 							dto.messageInstance().setCode(resultSetMapper.getInteger(4));
-							return dto;
-						}
-					}, false);
-			outSingleResponseEncriptData = returnResponseEncriptData;
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseEncriptData=returnResponseEncriptData ;
+                    
+            }else {
+            mapBlank++;
 
-		} else {
-			mapBlank++;
-
-		}
-
-		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
-
-		LOGGER.logDebug("Ends service execution: encryptData");
-		// returns data
-		return outSingleResponseEncriptData;
-	}
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: encryptData");
+        //returns data
+        return outSingleResponseEncriptData;
+      }
 
 	/**
 	 * Service to generate and send an OTP to the client

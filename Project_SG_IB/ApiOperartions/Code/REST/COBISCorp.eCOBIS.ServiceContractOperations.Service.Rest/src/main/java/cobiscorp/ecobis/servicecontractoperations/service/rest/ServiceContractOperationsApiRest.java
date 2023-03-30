@@ -257,9 +257,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       @Produces({"application/json"})
        public Response  encryptData(RequestEncriptData inRequestEncriptData ){
 	  LOGGER.logDebug("Start service execution REST: encryptData");
-      List<ResponseEncriptData> outSingleResponseEncriptData  = new ArrayList<>();
+      ResponseEncriptData outSingleResponseEncriptData  = new ResponseEncriptData();
           
-      if(!validateMandatory(new Data("externalCustomerId", inRequestEncriptData.getExternalCustomerId()), new Data("password", inRequestEncriptData.getPassword()))) {
+      if(!validateMandatory(new Data("password", inRequestEncriptData.getPassword()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("The request message is not properly formatted").build();
       }

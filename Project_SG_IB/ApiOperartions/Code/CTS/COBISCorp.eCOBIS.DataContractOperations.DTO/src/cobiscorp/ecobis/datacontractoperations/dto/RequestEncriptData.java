@@ -28,14 +28,7 @@ import java.util.HashMap;
 
 
 public class RequestEncriptData implements Serializable {
-  private Integer externalCustomerId;
   private String password;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
-  }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
   public String getPassword(){
     return this.password;
   }

@@ -101,8 +101,8 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
           * Encrypt Data
           */
         
-			// Return list
-			public  List<ResponseEncriptData>  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
+			// Return DTO
+			public  ResponseEncriptData encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
           /**
           * Service to generate and send an OTP to the client
           */
