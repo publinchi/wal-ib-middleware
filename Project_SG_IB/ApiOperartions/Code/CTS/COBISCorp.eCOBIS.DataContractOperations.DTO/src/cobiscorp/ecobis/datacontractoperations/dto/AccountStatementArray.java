@@ -35,7 +35,6 @@ public class AccountStatementArray implements Serializable {
   private String concept;
   private String description;
   private String hour;
-  private String image;
   private String tracking;
   private String operationType;
   private Integer reference;
@@ -92,12 +91,6 @@ public class AccountStatementArray implements Serializable {
   }
   public void setHour(String hour ){
     this.hour=hour;
-  }
-  public String getImage(){
-    return this.image;
-  }
-  public void setImage(String image ){
-    this.image=image;
   }
   public String getTracking(){
     return this.tracking;

@@ -46,7 +46,6 @@
         <column name="concept" />
         <column name="description" />
         <column name="hour" />
-        <column name="image" />
         <column name="tracking" />
         <column name="operationType" />
         <column name="reference" />
