@@ -81,7 +81,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
 	@CTSProcedure(
 		name = "cob_procesador..sp_affiliate_customer", dbms = "SQLCTS",  
 		objectRequest = {
@@ -575,22 +575,21 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "accountStatementArray.concept", columnIndex = 5),
 		    @CTSColumn(field = "accountStatementArray.description", columnIndex = 6),
 		    @CTSColumn(field = "accountStatementArray.hour", columnIndex = 7),
-		    @CTSColumn(field = "accountStatementArray.image", columnIndex = 8),
-		    @CTSColumn(field = "accountStatementArray.tracking", columnIndex = 9),
-		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 10),
-		    @CTSColumn(field = "accountStatementArray.reference", columnIndex = 11),
-		    @CTSColumn(field = "accountStatementArray.movementId", columnIndex = 12),
-		    @CTSColumn(field = "accountStatementArray.signDC", columnIndex = 13),
-		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 14),
-		    @CTSColumn(field = "accountStatementArray.uniqueSequential", columnIndex = 15),
-		    @CTSColumn(field = "accountStatementArray.processDate", columnIndex = 16),
-		    @CTSColumn(field = "accountStatementArray.tarjetNumber", columnIndex = 17),
-		    @CTSColumn(field = "accountStatementArray.destinyAccount", columnIndex = 18),
-		    @CTSColumn(field = "accountStatementArray.typeAccount", columnIndex = 19),
-		    @CTSColumn(field = "accountStatementArray.beneficiary", columnIndex = 20),
-		    @CTSColumn(field = "accountStatementArray.referenceNumber", columnIndex = 21),
-		    @CTSColumn(field = "accountStatementArray.commission", columnIndex = 22),
-		    @CTSColumn(field = "accountStatementArray.iva", columnIndex = 23)
+		    @CTSColumn(field = "accountStatementArray.tracking", columnIndex = 8),
+		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 9),
+		    @CTSColumn(field = "accountStatementArray.reference", columnIndex = 10),
+		    @CTSColumn(field = "accountStatementArray.movementId", columnIndex = 11),
+		    @CTSColumn(field = "accountStatementArray.signDC", columnIndex = 12),
+		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 13),
+		    @CTSColumn(field = "accountStatementArray.uniqueSequential", columnIndex = 14),
+		    @CTSColumn(field = "accountStatementArray.processDate", columnIndex = 15),
+		    @CTSColumn(field = "accountStatementArray.tarjetNumber", columnIndex = 16),
+		    @CTSColumn(field = "accountStatementArray.destinyAccount", columnIndex = 17),
+		    @CTSColumn(field = "accountStatementArray.typeAccount", columnIndex = 18),
+		    @CTSColumn(field = "accountStatementArray.beneficiary", columnIndex = 19),
+		    @CTSColumn(field = "accountStatementArray.referenceNumber", columnIndex = 20),
+		    @CTSColumn(field = "accountStatementArray.commission", columnIndex = 21),
+		    @CTSColumn(field = "accountStatementArray.iva", columnIndex = 22)
       }
     )
   }
