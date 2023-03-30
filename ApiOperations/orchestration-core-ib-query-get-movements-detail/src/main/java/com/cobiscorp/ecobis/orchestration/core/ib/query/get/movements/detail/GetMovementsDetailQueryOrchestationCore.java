@@ -264,9 +264,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IResultSetRow row3 = new ResultSetRow();
 		row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue()));
 		data3.addRow(row3);
-		
-		logger.logInfo("XDC NUM" + anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue());
-		
+				
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
@@ -282,11 +280,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				logger.logInfo(
 						CLASS_NAME + " Response final: " + anOriginalProcedureResponse.getProcedureResponseAsString());
 			}
-			// anOriginalProcedureResponse.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT,
-			// ICOBISTS.HEADER_STRING_TYPE,
-			// ICSP.ERROR_EXECUTION_SERVICE);
-
-			// anOriginalProcedureResponse = new ProcedureResponseAS();
 
 			IResultSetHeader metaData0 = new ResultSetHeader();
 			
@@ -297,7 +290,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("concept", ICTSTypes.SQLVARCHAR, 20));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("description", ICTSTypes.SQLVARCHAR, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("hour", ICTSTypes.SQLVARCHAR, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("image", ICTSTypes.SQLVARCHAR, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("tracking", ICTSTypes.SQLVARCHAR, 32));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("operationType", ICTSTypes.SQLVARCHAR, 5));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reference", ICTSTypes.SQLINT4, 12));
@@ -327,60 +319,59 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[9].getValue()));
 				rowDat.addRowData(3, new ResultSetRowColumnData(false, columns[5].getValue()));
 				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[7].getValue()));
-				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[13].getValue()));
+				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[12].getValue()));
 				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[1].getValue().trim()));
 				rowDat.addRowData(7, new ResultSetRowColumnData(false, columns[10].getValue()));
-				rowDat.addRowData(8, new ResultSetRowColumnData(false, columns[12].getValue()));
-				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[14].getValue()));
-				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[2].getValue()));
-				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[3].getValue()));
-				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[8].getValue()));
-				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[4].getValue()));
-				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[0].getValue()));
-				rowDat.addRowData(15, new ResultSetRowColumnData(false, columns[11].getValue()));
-				rowDat.addRowData(16, new ResultSetRowColumnData(false, columns[0].getValue()));
-				rowDat.addRowData(17, new ResultSetRowColumnData(false, columns[15].getValue()));
+				rowDat.addRowData(8, new ResultSetRowColumnData(false, columns[13].getValue()));
+				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[2].getValue()));
+				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[3].getValue()));
+				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[8].getValue()));
+				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[4].getValue()));
+				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[0].getValue()));
+				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[11].getValue()));
+				rowDat.addRowData(15, new ResultSetRowColumnData(false, columns[0].getValue()));
+				rowDat.addRowData(16, new ResultSetRowColumnData(false, columns[14].getValue()));
 				
-				if(null!= columns[16].getValue() && !"".equals(columns[16].getValue())) {
-					String[] strBeneficiary = columns[16].getValue().split("\\|");
+				if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
+					String[] strBeneficiary = columns[15].getValue().split("\\|");
 				
 				    if(strBeneficiary.length>0)
-				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, strBeneficiary[0]));
+				    	rowDat.addRowData(17, new ResultSetRowColumnData(false, strBeneficiary[0]));
+				    else
+				    	rowDat.addRowData(17, new ResultSetRowColumnData(false, " "));
+				    
+				    if(strBeneficiary.length>1)
+				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, strBeneficiary[1]));
 				    else
 				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, " "));
 				    
-				    if(strBeneficiary.length>1)
-				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, strBeneficiary[1]));
+				    if(strBeneficiary.length>2)
+				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, strBeneficiary[2]));
 				    else
 				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, " "));
 				    
-				    if(strBeneficiary.length>2)
-				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, strBeneficiary[2]));
-				    else
-				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, " "));
-				    
 				    if(strBeneficiary.length>3)
-				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, strBeneficiary[3]));
+				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, strBeneficiary[3]));
+				    else
+				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, "0"));
+				    
+				    if(strBeneficiary.length>4)
+				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, strBeneficiary[4]));
 				    else
 				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, "0"));
 				    
-				    if(strBeneficiary.length>4)
-				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, strBeneficiary[4]));
+				    if(strBeneficiary.length>5)
+				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, strBeneficiary[5]));
 				    else
 				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, "0"));
-				    
-				    if(strBeneficiary.length>5)
-				    	rowDat.addRowData(23, new ResultSetRowColumnData(false, strBeneficiary[5]));
-				    else
-				    	rowDat.addRowData(23, new ResultSetRowColumnData(false, "0"));
 				}
 				else{
+					rowDat.addRowData(17, new ResultSetRowColumnData(false, " "));
 					rowDat.addRowData(18, new ResultSetRowColumnData(false, " "));
 					rowDat.addRowData(19, new ResultSetRowColumnData(false, " "));
-					rowDat.addRowData(20, new ResultSetRowColumnData(false, " "));
+					rowDat.addRowData(20, new ResultSetRowColumnData(false, "0"));
 					rowDat.addRowData(21, new ResultSetRowColumnData(false, "0"));
 					rowDat.addRowData(22, new ResultSetRowColumnData(false, "0"));
-					rowDat.addRowData(23, new ResultSetRowColumnData(false, "0"));
 				}
 
 				data0.addRow(rowDat);
