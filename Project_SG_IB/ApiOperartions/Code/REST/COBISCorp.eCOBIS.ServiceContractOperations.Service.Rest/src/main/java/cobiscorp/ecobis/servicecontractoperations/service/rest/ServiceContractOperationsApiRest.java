@@ -39,8 +39,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
@@ -487,7 +489,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 		  LOGGER.logDebug("Start service execution REST: getMovementsDetail");
 		  ResponseGetMovementsDetail outResponseGetMovementsDetail  = new ResponseGetMovementsDetail();
 
-		  if(!validateMandatory(new Data("accountNumber", inRequestGetMovementsDetail.getAccountNumber()), new Data("minDate", inRequestGetMovementsDetail.getMinDate()), new Data("maxDate", inRequestGetMovementsDetail.getMaxDate()), new Data("sequential", inRequestGetMovementsDetail.getSequential()), new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()), new Data("numberOfMovements", inRequestGetMovementsDetail.getNumberOfMovements()), new Data("movementId", inRequestGetMovementsDetail.getMovementId()))) {
+		  if(!validateMandatory(new Data("accountNumber", inRequestGetMovementsDetail.getAccountNumber()), new Data("minDate", inRequestGetMovementsDetail.getMinDate()), new Data("maxDate", inRequestGetMovementsDetail.getMaxDate()), new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()), new Data("numberOfMovements", inRequestGetMovementsDetail.getNumberOfMovements()))) {
 		    LOGGER.logDebug("400 is returned - Required fields are missing");
 		    return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
 		  }
@@ -631,6 +633,44 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
           return Response.ok(outResponseGetUserEntityInformation).build();
         
       }
+        
+        /**
+        * Service to register beneficiaries for spei transfers.
+        */
+      @POST
+	    @Path("/apiOperations/accounts/registerAccount")
+	    @Consumes({"application/json"})
+	    @Produces({"application/json"})
+	     public Response  registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei ){
+		  LOGGER.logDebug("Start service execution REST: registerAccount");
+	    ResponseRegisterAccountSpei outResponseRegisterAccountSpei  = new ResponseRegisterAccountSpei();
+	        
+	    if(!validateMandatory(new Data("accountNumberDestination", inRequestRegisterAccountSpei.getAccountNumberDestination()), new Data("accountNumber", inRequestRegisterAccountSpei.getAccountNumber()), new Data("typeDestinationId", inRequestRegisterAccountSpei.getTypeDestinationId()), new Data("externalCustomerId", inRequestRegisterAccountSpei.getExternalCustomerId()))) {
+	      LOGGER.logDebug("400 is returned - Required fields are missing");
+	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    }
+		    
+	    try {
+	    outResponseRegisterAccountSpei=iServiceContractOperationsApiService.registerAccount( inRequestRegisterAccountSpei );
+	    } catch (CTSRestException e) {
+	    LOGGER.logError("CTSRestException",e);
+	    if ("404".equals(e.getMessage())) {
+	    LOGGER.logDebug("404 is returned - No data found");
+	    return Response.status(404).entity("No data found").build();
+	    }
+	
+	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	    return Response.status(409).entity(e.getMessageBlockList()).build();
+	    } catch (Exception e){
+	    LOGGER.logDebug("500 is returned - Code exception");
+	    LOGGER.logError("Exception",e);
+	    return Response.status(500).entity(e.getMessage()).build();
+	    }
+	    
+	        LOGGER.logDebug("Ends service execution REST: registerAccount");
+	        return Response.ok(outResponseRegisterAccountSpei).build();
+	      
+	    }
     
           /**
           * Register Beneficiary Saving Account
