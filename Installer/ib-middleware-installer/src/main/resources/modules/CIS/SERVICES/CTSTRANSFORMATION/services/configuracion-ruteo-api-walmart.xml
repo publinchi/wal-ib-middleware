@@ -139,7 +139,7 @@
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AccountCreditOperation">
 		<conditions>
 		  <condition param="trn">
-			<value>18500107</value>      
+			<value>18500111</value>      
 		  </condition>
 		</conditions>
 		<indicators>

@@ -49,7 +49,7 @@ import com.cobiscorp.cobis.commons.components.ComponentLocator;
 @Properties(value = { @Property(name = "service.description", value = "AccountCreditOperationOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "AccountCreditOperationOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_account_credit_operation_api")
+		@Property(name = "service.spName", value = "cob_procesador..sp_credit_operation_api")
 })
 public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
 	

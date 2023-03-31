@@ -71,12 +71,12 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
 
     public interface IServiceContractOperationsApiService{
 
-          /**
-          * Service to apply crerdit account
+        /**
+          * Service to apply credit account
           */
         
-			// Return DTO
-			public CreditAccountResponse accountCreditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
+			// Return Dto
+			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
     
           /**
           * Afiliate Customer

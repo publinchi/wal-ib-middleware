@@ -269,37 +269,31 @@
       <field type="String" name="version" value="1" />
     </class>
   </collection>
-  <collection type="List" length="1" id="58" name="properties">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="59" index="0">
-      <field type="String" name="name" value="UseNamingConvention" />
-      <field type="String" name="value" value="false" />
-      <field type="char" name="type" value="\u0000" />
-    </class>
+  <collection type="List" length="0" id="58" name="properties">
   </collection>
-  <field type="String" name="documentation" value="dtps's" />
+  <field type="String" name="documentation" value="dtos" />
   <field type="boolean" name="autoSelectDTO" value="false" />
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="0" id="60" name="references">
+  <collection type="List" length="0" id="59" name="references">
   </collection>
-  <collection type="List" length="0" id="61" name="externalReferences">
+  <collection type="List" length="0" id="60" name="externalReferences">
   </collection>
-  <collection type="List" length="1" id="62" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="63" index="0">
+  <collection type="List" length="1" id="61" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="62" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobis" />
       <field type="String" name="keyPassword" value="cobisadminadmin" />
       <field type="String" name="keyCertificatePassword" value="cobisadmin" />
       <field type="String" name="keyFileName" value="cobis.keystore" />
       <field type="boolean" name="relativeFolder" value="true" />
-      <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
     </class>
   </collection>
-  <collection type="List" length="0" id="64" name="templateCommands">
+  <collection type="List" length="0" id="63" name="templateCommands">
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />

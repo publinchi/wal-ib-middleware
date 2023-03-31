@@ -57,18 +57,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 
 	/**
-          * Service to apply crerdit account
+          * Service to apply credit account
           */
          @Override
-			// Return DTO
-			public  CreditAccountResponse  accountCreditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException{
-	  LOGGER.logDebug("Start service execution: accountCreditOperation");
+			// Return Dto
+			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: creditOperation");
       CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_account_credit_operation_api");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_credit_operation_api");
       
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500107");
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500111");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCreditAccountRequest.getExternalCustomerId()));
       procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getAccountNumber());
       procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLNUMERIC,String.valueOf(inCreditAccountRequest.getAmount()));
@@ -126,7 +126,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       throw new CTSRestException("404",null);
       }
       
-        LOGGER.logDebug("Ends service execution: accountCreditOperation");
+        LOGGER.logDebug("Ends service execution: creditOperation");
         //returns data
         return outSingleCreditAccountResponse;
       }
