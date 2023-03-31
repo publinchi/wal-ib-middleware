@@ -514,15 +514,15 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
 	@CTSProcedure(
-		name = "cob_procesador..sp_tr04_cons_mov_ah_api", dbms = "SQLCTS",
+		name = "cob_procesador..sp_tr04_cons_mov_ah_api", dbms = "SQLCTS",  
 		objectRequest = {
-
+		
 			@CTSRequest(
 				name = "inRequestGetMovementsDetail",
 				input = {
-
+				
 					@CTSInputParam(field = "accountNumber", param = "@i_cta", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "minDate", param = "@i_fecha_ini", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "maxDate", param = "@i_fecha_fin", dataType = ICTSTypes.SQLVARCHAR),
@@ -534,14 +534,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 			)
 		},
 		defaultRequest = {
-
+    
 				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500106"),
 				@CTSDefaultInputParam(value = "T", param = "@i_tipo", dataType = ICTSTypes.SQLCHAR),
 				@CTSDefaultInputParam(value = "8", param = "@i_servicio", dataType = ICTSTypes.SQLINT1),
 				@CTSDefaultInputParam(value = "A", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
 		},
   response = {
-
+  
     @CTSResponse(
       name = "returnResponseGetMovementsDetail",
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
@@ -634,9 +634,9 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     )
   }
-
+  
 	)
-
+	
   /**
   * {@inheritDoc}
   */
@@ -644,7 +644,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
-
+    
 	@CTSProcedure(
 		name = "cob_procesador..sp_consulta_cuentas", dbms = "SQLCTS",  
 		objectRequest = {
@@ -792,6 +792,61 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_register_account_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestRegisterAccountSpei",
+				input = {
+				
+					@CTSInputParam(field = "accountNumberDestination", param = "@i_cta_des", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "accountNumber", param = "@i_prod", dataType = ICTSTypes.SQLINT1),
+					@CTSInputParam(field = "typeDestinationId", param = "@i_tipo_tercero", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500110")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseRegisterAccountSpei",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei.class,
+      columns = {
+		    @CTSColumn(field = "statusRegister", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseRegisterAccountSpei",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseRegisterAccountSpei",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO registerAccount(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
