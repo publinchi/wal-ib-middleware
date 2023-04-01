@@ -34,8 +34,10 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
-    import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
+import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.BeneficiariesResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
@@ -195,7 +197,12 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
 			// Have DTO
 			public ResponseMunicipalityByState getMunicipalityByState(
 					RequestMunicipalityByState inRequestMunicipalityByState) throws CTSRestException;
-			
+	        /**
+	          * Get Colony by Municipality
+	          */
+	        
+				//Have DTO
+				public ResponseGetColonyByMunicipality getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality  )throws CTSRestException;
     }
 
   

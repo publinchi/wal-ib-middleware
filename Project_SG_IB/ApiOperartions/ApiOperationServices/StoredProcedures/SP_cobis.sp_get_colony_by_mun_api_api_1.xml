@@ -7,8 +7,6 @@
   <parameters>
     <parameter name="@i_zip_code" dataType="varchar" direction="in" />
     <parameter name="@i_city_code" dataType="varchar" direction="in" />
-    <parameter name="@o_code_colony" dataType="int" direction="out" />
-    <parameter name="@o_colony" dataType="varchar" direction="in" />
     <parameter name="@o_code" dataType="int" direction="out" />
     <parameter name="@o_message" dataType="varchar" direction="out" />
     <parameter name="@o_success" dataType="bit" direction="out" />
