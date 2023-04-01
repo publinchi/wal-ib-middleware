@@ -23,7 +23,6 @@
     
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     
-    import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
     import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
@@ -39,6 +38,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
@@ -52,6 +52,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
@@ -60,6 +61,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
+import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
@@ -95,6 +97,47 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     protected void unsetiServiceContractOperationsApiService(IServiceContractOperationsApiService iServiceContractOperationsApiService){
     this.iServiceContractOperationsApiService = null;
     }
+    
+	/**
+	 * Catalogue Of Locations
+	 */
+	@POST
+	@Path("/apiOperations/onboarding/searchLocationCatalog")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response searchLocationCatalog(RequestSearchLocationCatalog inRequestSearchLocationCatalog) {
+		LOGGER.logDebug("Start service execution REST: searchLocationCatalog");
+		
+		ResponseSearchLocationCatalog outResponseSearchLocationCatalog = new ResponseSearchLocationCatalog();
+
+		if (!validateMandatory(new Data("city", inRequestSearchLocationCatalog.getCity()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseSearchLocationCatalog = iServiceContractOperationsApiService
+					.searchLocationCatalog(inRequestSearchLocationCatalog);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: searchLocationCatalog");
+		return Response.ok(outResponseSearchLocationCatalog).build();
+
+	}
 
     /**
           * Service to apply credit account

@@ -6,8 +6,6 @@
   <version>1</version>
   <parameters>
     <parameter name="@i_city_code" dataType="varchar" direction="in" />
-    <parameter name="@o_id_location" dataType="varchar" direction="in" />
-    <parameter name="@o_location_name" dataType="varchar" direction="in" />
     <parameter name="@o_success" dataType="bit" direction="out" />
     <parameter name="@o_code" dataType="int" direction="out" />
     <parameter name="@o_message" dataType="varchar" direction="out" />

@@ -28,7 +28,6 @@
       <groupId>COBISCorp.eCOBIS.ServiceContractOperations.Service</groupId>
       <artifactId>COBISCorp.eCOBIS.ServiceContractOperations.Service</artifactId>
       <version>1.0.0.0</version>
-      <scope>system</scope>
       <systemPath>
             ${project.basedir}/../COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/target/COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar
           </systemPath>
@@ -79,6 +78,15 @@
       <scope>system</scope>
       <systemPath>C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cts-integration-rest-2.0.2.jar
           </systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>
+    		COBISCorp.eCOBIS.ServiceContractOperations.Service
+    	</groupId>
+    	<artifactId>
+    		COBISCorp.eCOBIS.ServiceContractOperations.Service
+    	</artifactId>
+    	<version>1.0.0.0</version>
     </dependency>
   </dependencies>
   <build>

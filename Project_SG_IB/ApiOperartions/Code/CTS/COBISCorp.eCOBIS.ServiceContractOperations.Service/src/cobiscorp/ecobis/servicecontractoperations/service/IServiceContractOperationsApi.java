@@ -26,7 +26,7 @@ import cobiscorp.ecobis.commons.dto.ServiceResponseTO;
 public interface IServiceContractOperationsApi{
 
   /**
-  * Service to apply credit account
+  * Service to apply crerdit account
   */
   ServiceResponseTO accountCreditOperation(ServiceRequestTO requestTO);  
 
@@ -99,6 +99,11 @@ public interface IServiceContractOperationsApi{
   * Register Beneficiary Saving Account
   */
   ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO);  
+
+  /**
+  * Catalogue Of Locations
+  */
+  ServiceResponseTO searchLocationCatalog(ServiceRequestTO requestTO);  
 
   /**
   * Search Zip Code API

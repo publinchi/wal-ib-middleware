@@ -44,8 +44,10 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
-    import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
+import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
 import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
@@ -70,6 +72,13 @@ import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
+    	
+    	/**
+         * Catalogue Of Locations
+         */
+       
+			//Have DTO
+			public ResponseSearchLocationCatalog searchLocationCatalog(RequestSearchLocationCatalog inRequestSearchLocationCatalog  )throws CTSRestException;
 
           /**
           * Service to apply crerdit account
