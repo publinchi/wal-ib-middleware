@@ -36,26 +36,26 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
+import dto.Account;
+import dto.AccountsResponse;
 
 /**
- * Generated Transaction Factor
+ * Register Account
  * 
- * @since Mar 14, 2023
+ * @since Abr 1, 2023
  * @author dcollaguazo
  * @version 1.0.0
  * 
  */
-@Component(name = "GetMovementsDetailQueryOrchestationCore", immediate = false)
+@Component(name = "RegisterAccountQueryOrchestationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
-@Properties(value = { @Property(name = "service.description", value = "GetMovementsDetailQueryOrchestationCore"),
+@Properties(value = { @Property(name = "service.description", value = "RegisterAccountQueryOrchestationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
-		@Property(name = "service.identifier", value = "GetMovementsDetailQueryOrchestationCore") })
-public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestrationBase {
+		@Property(name = "service.identifier", value = "RegisterAccountQueryOrchestationCore") })
+public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBase {
 
-	private static ILogger logger = LogFactory.getLogger(GetMovementsDetailQueryOrchestationCore.class);
-	private static final String CLASS_NAME = "GetMovementsDetailQueryOrchestationCore--->";
-	// private static final String SERVICE_OUTPUT_VALUES =
-	// "com.cobiscorp.cobis.cts.service.response.output";
+	private static ILogger logger = LogFactory.getLogger(RegisterAccountQueryOrchestationCore.class);
+	private static final String CLASS_NAME = "RegisterAccountQueryOrchestationCore--->";
 
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
@@ -117,7 +117,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		anProcedureResponse = getMovementsDetail(anOriginalRequest);
+		anProcedureResponse = registerAccount(anOriginalRequest);
 		
 		if (anProcedureResponse.getResultSets().size()>2) {
 			
@@ -169,45 +169,124 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	}
 
 
-	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest) {
+	private IProcedureResponse registerAccount(IProcedureRequest aRequest) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getMovementsDetail");
+			logger.logInfo(CLASS_NAME + " Entrando en registerAccount");
+		}
+		
+		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+
+		wAccountsResp = getAccounts(aRequest);
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de registerAccount");
 		}
 
-		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
+		return wAccountsResp;
+	}
+	
+	private IProcedureResponse getAccounts(IProcedureRequest aRequest) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getAccounts");
+		}
+
+		request.setSpName("cob_bvirtual..sp_busca_terceros_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_CENTRAL);
+				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
-		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "A");
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
-		request.addInputParam("@t_online", ICTSTypes.SYBCHAR, "S");
-		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
-		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
-		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
-		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
-		request.addInputParam("@i_operacion",  ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_operacion"));
-		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
-		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_tipo"));
-		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fecha_ini"));
-		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fecha_fin"));
-		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
-		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
+		request.addInputParam("@i_cuenta_origen", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
+		IResultSetBlock resulsetOrigin = wProductsQueryResp.getResultSet(0);
+		IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
+		
+		AccountsResponse accoutsResponseArray = new AccountsResponse();
+		Account[] accountArray =new Account[rowsTemp.length];
+		
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			int index= 0;
+			Account account = new Account();
+			
+			account.setCodigo(Integer.parseInt(columns[0].getValue()));
+			account.setNombre(columns[1].getValue());
+			account.setNombre(columns[2].getValue());
+			account.setProducto(Integer.parseInt(columns[3].getValue()));
+			account.setProducto(Integer.parseInt(columns[4].getValue()));
+			account.setNombre(columns[5].getValue());
+			account.setNombre(columns[6].getValue());
+			
+			accountArray[index] = account;
+
+		}
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de getMovementsDetail");
+			logger.logInfo(CLASS_NAME + " Saliendo de getAccounts");
+		}
+
+		return wProductsQueryResp;
+	}
+
+	private IProcedureResponse getCurpByAccount(IProcedureRequest aRequest) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getCurpByAccount");
+		}
+
+		request.setSpName("cobis..sp_bv_valida_destino");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
+		request.addInputParam("@i_cuenta_origen", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		IResultSetBlock resulsetOrigin = wProductsQueryResp.getResultSet(0);
+		IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
+		
+		AccountsResponse accoutsResponseArray = new AccountsResponse();
+		Account[] accountArray =new Account[rowsTemp.length];
+		
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			int index= 0;
+			Account account = new Account();
+			
+			account.setCodigo(Integer.parseInt(columns[0].getValue()));
+			account.setNombre(columns[1].getValue());
+			account.setNombre(columns[2].getValue());
+			account.setProducto(Integer.parseInt(columns[3].getValue()));
+			account.setProducto(Integer.parseInt(columns[4].getValue()));
+			account.setNombre(columns[5].getValue());
+			account.setNombre(columns[6].getValue());
+			
+			accountArray[index] = account;
+
+		}
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getCurpByAccount");
 		}
 
 		return wProductsQueryResp;
