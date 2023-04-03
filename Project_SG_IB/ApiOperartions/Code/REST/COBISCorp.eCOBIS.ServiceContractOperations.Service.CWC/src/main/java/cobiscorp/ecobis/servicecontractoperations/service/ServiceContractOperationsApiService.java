@@ -584,7 +584,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     public ResponseGetBalancesDetail mapRow(ResultSetMapper resultSetMapper, int index) {
                     ResponseGetBalancesDetail dto = new ResponseGetBalancesDetail();
                     
-                          dto.setSuccess(resultSetMapper.getString(1));
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
                           dto.setAccountName(resultSetMapper.getString(4));
                           dto.setAccountStatus(resultSetMapper.getString(5));
                           dto.setAvailableBalance(resultSetMapper.getBigDecimal(6));
