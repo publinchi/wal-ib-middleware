@@ -96,6 +96,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  
 
   /**
+  * Service to register beneficiaries for spei transfers.
+  */
+  ServiceResponseTO registerAccount(ServiceRequestTO requestTO);  
+
+  /**
   * Register Beneficiary Saving Account
   */
   ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO);  

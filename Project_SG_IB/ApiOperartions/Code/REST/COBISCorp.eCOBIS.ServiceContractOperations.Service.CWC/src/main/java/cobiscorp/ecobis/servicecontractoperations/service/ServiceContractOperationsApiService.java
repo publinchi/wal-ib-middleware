@@ -1884,6 +1884,118 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		// returns data
 		return outResponseValidateCustomerIdentityCard;
 	}
+	
+		    /**
+		    * Service to register beneficiaries for spei transfers.
+		    */
+		   @Override
+				//Have DTO
+				public ResponseRegisterAccountSpei registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: registerAccount");
+		ResponseRegisterAccountSpei outResponseRegisterAccountSpei  = new ResponseRegisterAccountSpei();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_register_account_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500110");
+		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getAccountNumberDestination());
+		procedureRequestAS.addInputParam("@i_prod",ICTSTypes.SQLINT1,String.valueOf(inRequestRegisterAccountSpei.getAccountNumber()));
+		procedureRequestAS.addInputParam("@i_tipo_tercero",ICTSTypes.SQLCHAR,String.valueOf(inRequestRegisterAccountSpei.getTypeDestinationId()));
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestRegisterAccountSpei.getExternalCustomerId()));
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterAccountSpei>() { 
+		              @Override
+		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
+		              
+		                    dto.setStatusRegister(resultSetMapper.getString(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseRegisterAccountSpei.setStatusRegister(returnResponseRegisterAccountSpei.getStatusRegister());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterAccountSpei>() { 
+		              @Override
+		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseRegisterAccountSpei.setSuccess(returnResponseRegisterAccountSpei.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterAccountSpei>() { 
+		              @Override
+		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
+		              
+								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseRegisterAccountSpei.setMessage(returnResponseRegisterAccountSpei.getMessage());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  LOGGER.logDebug("Ends service execution: registerAccount");
+		  //returns data
+		  return outResponseRegisterAccountSpei;
+		}
 
 	/**
 	 * Service to create a savings account for an existing customer
