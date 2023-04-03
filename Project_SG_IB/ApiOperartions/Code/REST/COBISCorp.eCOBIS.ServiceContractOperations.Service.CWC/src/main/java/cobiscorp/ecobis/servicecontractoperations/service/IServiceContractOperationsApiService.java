@@ -72,13 +72,13 @@
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
-    
-          /**
-          * Service to apply crerdit account
+
+        /**
+          * Service to apply credit account
           */
         
-			// Return DTO
-			public CreditAccountResponse accountCreditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
+			// Return Dto
+			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
     
           /**
           * Afiliate Customer
@@ -103,8 +103,8 @@
           * Encrypt Data
           */
         
-			// Return list
-			public  List<ResponseEncriptData>  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
+			// Return DTO
+			public  ResponseEncriptData encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
           /**
           * Service to generate and send an OTP to the client
           */

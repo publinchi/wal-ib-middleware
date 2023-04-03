@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 
 public class ResponseGetBalancesDetail implements Serializable {
-  private String success;
+  private boolean success;
   private String accountName;
   private String accountStatus;
   private java.math.BigDecimal availableBalance;
@@ -50,10 +50,10 @@ public class ResponseGetBalancesDetail implements Serializable {
   private String debitCardNumber;
   private String stateDebitCard;
   private Message message;
-  public String getSuccess(){
+  public boolean isSuccess(){
     return this.success;
   }
-  public void setSuccess(String success ){
+  public void setSuccess(boolean success ){
     this.success=success;
   }
   public String getAccountName(){

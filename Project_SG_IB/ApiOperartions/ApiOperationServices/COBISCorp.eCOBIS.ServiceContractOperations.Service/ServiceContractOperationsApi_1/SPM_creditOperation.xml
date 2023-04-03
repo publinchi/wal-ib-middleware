@@ -2,10 +2,10 @@
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMapping" id="1">
   <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureBase" id="2" name="storedProcedure">
     <field type="String" name="database" value="cob_procesador" />
-    <field type="String" name="name" value="sp_account_credit_operation_api" />
+    <field type="String" name="name" value="sp_credit_operation_api" />
     <field type="String" name="version" value="1" />
   </class>
-  <field type="String" name="procedureName" value="cob_procesador..sp_account_credit_operation_api" />
+  <field type="String" name="procedureName" value="cob_procesador..sp_credit_operation_api" />
   <collection type="List" length="1" id="3" name="queries">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="4" index="0">
       <field type="int" name="order" value="1" />
@@ -163,7 +163,7 @@
   </collection>
   <collection type="List" length="0" id="29" name="parametersOpenApi">
   </collection>
-  <field type="String" name="trnCode" value="18500107" />
+  <field type="String" name="trnCode" value="18500111" />
   <collection type="List" length="2" id="30" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="31" index="0">
       <field type="String" name="dTOName" value="CreditAccountRequest" />
@@ -193,7 +193,7 @@
     </entry>
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="apiOperations/accountCreditOperation" />
+      <value type="String" value="apiOperations/accounts/creditOperation" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />

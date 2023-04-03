@@ -98,15 +98,15 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     this.iServiceContractOperationsApiService = null;
     }
 
-    /**
+     /**
           * Service to apply credit account
           */
         @POST
-      @Path("/apiOperations/accountCreditOperation")
+      @Path("/apiOperations/accounts/creditOperation")
       @Consumes({"application/json"})
       @Produces({"application/json"})
-       public Response  accountCreditOperation(CreditAccountRequest inCreditAccountRequest ){
-	  LOGGER.logDebug("Start service execution REST: accountCreditOperation");
+       public Response  creditOperation(CreditAccountRequest inCreditAccountRequest ){
+	  LOGGER.logDebug("Start service execution REST: creditOperation");
       CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
           
       if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()), new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
@@ -115,7 +115,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       }
 	    
       try {
-      outSingleCreditAccountResponse=iServiceContractOperationsApiService.accountCreditOperation( inCreditAccountRequest );
+      outSingleCreditAccountResponse=iServiceContractOperationsApiService.creditOperation( inCreditAccountRequest );
       } catch (CTSRestException e) {
       LOGGER.logError("CTSRestException",e);
       if ("404".equals(e.getMessage())) {
@@ -131,7 +131,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-          LOGGER.logDebug("Ends service execution REST: accountCreditOperation");
+          LOGGER.logDebug("Ends service execution REST: creditOperation");
           return Response.ok(outSingleCreditAccountResponse).build();
         
       }
@@ -259,9 +259,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       @Produces({"application/json"})
        public Response  encryptData(RequestEncriptData inRequestEncriptData ){
 	  LOGGER.logDebug("Start service execution REST: encryptData");
-      List<ResponseEncriptData> outSingleResponseEncriptData  = new ArrayList<>();
+      ResponseEncriptData outSingleResponseEncriptData  = new ResponseEncriptData();
           
-      if(!validateMandatory(new Data("externalCustomerId", inRequestEncriptData.getExternalCustomerId()), new Data("password", inRequestEncriptData.getPassword()))) {
+      if(!validateMandatory(new Data("password", inRequestEncriptData.getPassword()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("The request message is not properly formatted").build();
       }

@@ -49,7 +49,7 @@ import com.cobiscorp.cobis.commons.components.ComponentLocator;
 @Properties(value = { @Property(name = "service.description", value = "AccountCreditOperationOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "AccountCreditOperationOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_account_credit_operation_api")
+		@Property(name = "service.spName", value = "cob_procesador..sp_credit_operation_api")
 })
 public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
 	
@@ -98,7 +98,8 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
 		reqTMPCentral.setSpName("cobis..sp_account_credit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500107");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
+		reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLNUMERIC, wQueryRequest.readValueParam("@i_amount"));
@@ -147,7 +148,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			 
 			
 		} else {
-			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
+			aBagSPJavaOrchestration.put("50041", "Error account credit operation orchestration");
 			return;
 		}
 	}

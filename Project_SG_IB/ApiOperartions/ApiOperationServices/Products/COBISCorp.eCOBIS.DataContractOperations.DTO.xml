@@ -286,7 +286,7 @@
       <field type="char" name="type" value="\u0000" />
     </class>
   </collection>
-  <field type="String" name="documentation" value="dtps's" />
+  <field type="String" name="documentation" value="dtos" />
   <field type="boolean" name="autoSelectDTO" value="false" />
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
@@ -305,7 +305,7 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
     </class>
   </collection>
   <collection type="List" length="0" id="66" name="templateCommands">

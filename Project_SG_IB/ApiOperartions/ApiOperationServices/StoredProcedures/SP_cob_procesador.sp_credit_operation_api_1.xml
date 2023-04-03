@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <procedure>
   <database>cob_procesador</database>
-  <name>sp_account_credit_operation_api</name>
+  <name>sp_credit_operation_api</name>
   <type>SYBASE</type>
   <version>1</version>
   <parameters>
