@@ -37,6 +37,8 @@ public class CreditAccountRequest implements Serializable {
   private String referenceNumber;
   private String creditConcept;
   private Integer originCode;
+  private String description;
+  private String ownerName;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -90,5 +92,17 @@ public class CreditAccountRequest implements Serializable {
   }
   public void setOriginCode(Integer originCode ){
     this.originCode=originCode;
+  }
+  public String getDescription(){
+    return this.description;
+  }
+  public void setDescription(String description ){
+    this.description=description;
+  }
+  public String getOwnerName(){
+    return this.ownerName;
+  }
+  public void setOwnerName(String ownerName ){
+    this.ownerName=ownerName;
   }
 }
