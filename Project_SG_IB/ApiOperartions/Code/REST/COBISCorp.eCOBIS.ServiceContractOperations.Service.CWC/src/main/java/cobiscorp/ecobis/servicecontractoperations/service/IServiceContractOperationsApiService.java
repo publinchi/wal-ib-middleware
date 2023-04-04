@@ -34,8 +34,10 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
-    import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
+import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.BeneficiariesResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
@@ -43,22 +45,20 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
-    import   cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
     import   cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
-    import   cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
-    import   cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
-    import   cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
-    import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
+import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
+import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -73,12 +73,12 @@
 
     public interface IServiceContractOperationsApiService{
 
-        /**
-          * Service to apply credit account
+          /**
+          * Service to apply crerdit account
           */
         
-			// Return Dto
-			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
+			// Return DTO
+			public CreditAccountResponse accountCreditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
     
           /**
           * Afiliate Customer
@@ -103,8 +103,8 @@
           * Encrypt Data
           */
         
-			// Return DTO
-			public  ResponseEncriptData encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
+			// Return list
+			public  List<ResponseEncriptData>  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
           /**
           * Service to generate and send an OTP to the client
           */
@@ -137,35 +137,25 @@
 			//Have DTO
 			public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail  )throws CTSRestException;
           /**
-          * Municipality By State
-          */
-        
-			//Have DTO
-			public ResponseMunicipalityByState getMunicipalityByState(RequestMunicipalityByState inRequestMunicipalityByState  )throws CTSRestException;
-          /**
           * Get Own Accounts View
           */
         
 			//Have DTO
 			public ResponseOwnAccountsView getOwnAccountsView(RequestOwnAccountsView inRequestOwnAccountsView  )throws CTSRestException;
-          /**
-          * Find State By zip Code API
-          */
-        
+          
+	          /**
+	          * Find State By zip Code API
+	          */
+	        
 			//Have DTO
 			public StateByZipCodeResponse getStateByZipCode(StateByZipCodeRequest inStateByZipCodeRequest  )throws CTSRestException;
-          /**
+			
+	       /**
           * View Customer Information
           */
         
 			//Have DTO
 			public ResponseGetUserEntityInformation getUserEntityInformation(RequestGetUserEntityInformation inRequestGetUserEntityInformation  )throws CTSRestException;
-          /**
-          * Service to register beneficiaries for spei transfers.
-          */
-        
-			//Have DTO
-			public ResponseRegisterAccountSpei registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei  )throws CTSRestException;
           /**
           * Register Beneficiary Saving Account
           */
@@ -198,6 +188,21 @@
         
 			//Have DTO
 			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
+			
+			
+			/**
+			 * Municipality By State
+			 */
+
+			// Have DTO
+			public ResponseMunicipalityByState getMunicipalityByState(
+					RequestMunicipalityByState inRequestMunicipalityByState) throws CTSRestException;
+	        /**
+	          * Get Colony by Municipality
+	          */
+	        
+				//Have DTO
+				public ResponseGetColonyByMunicipality getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality  )throws CTSRestException;
     }
 
   

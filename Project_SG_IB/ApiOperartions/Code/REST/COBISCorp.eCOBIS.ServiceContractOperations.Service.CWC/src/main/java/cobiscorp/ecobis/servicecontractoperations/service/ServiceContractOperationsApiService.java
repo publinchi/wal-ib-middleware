@@ -550,6 +550,93 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		// returns data
 		return outSingleResponseOtp;
 	}
+	
+	
+    /**
+    * Get Colony by Municipality
+    */
+   @Override
+		//Have DTO
+		public ResponseGetColonyByMunicipality getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality  )throws CTSRestException{
+LOGGER.logDebug("Start service execution: getColonyByMunicipality");
+ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality  = new ResponseGetColonyByMunicipality();
+    
+//create procedure
+ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_colony_by_mun_api");
+
+  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500108");
+procedureRequestAS.addInputParam("@i_zip_code",ICTSTypes.SQLVARCHAR,inRequestGetColonyByMunicipality.getZipCode());
+procedureRequestAS.addInputParam("@i_city_code",ICTSTypes.SQLVARCHAR,inRequestGetColonyByMunicipality.getMunicipality());
+      procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"0");
+      procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"XXX");
+      procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"1");
+
+//execute procedure
+ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+List<MessageBlock> errors = ErrorUtil.getErrors(response);
+//throw error
+if(errors!= null && errors.size()> 0){
+LOGGER.logDebug("Procedure execution returns error");
+if ( LOGGER.isDebugEnabled() ) {
+for (int i = 0; i < errors.size(); i++) {
+LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+}
+}
+throw new CTSRestException("Procedure Response has errors", null, errors);
+}
+LOGGER.logDebug("Procedure ok");
+//Init map returns
+int mapTotal=0;
+int mapBlank=0;
+
+      mapTotal++;
+      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+							//---------NO Array
+							AddressTypeItems [] returnAddressTypeItems = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<AddressTypeItems>() { 
+              @Override
+              public AddressTypeItems mapRow(ResultSetMapper resultSetMapper, int index) {
+              AddressTypeItems dto = new AddressTypeItems();
+              
+                    dto.setCode(resultSetMapper.getString(1));
+                    dto.setValue(resultSetMapper.getString(2));
+              return dto;
+              }
+              },false);
+
+              outResponseGetColonyByMunicipality.setAddressTypeItems(returnAddressTypeItems);
+                  // break;
+                
+      }else {
+      mapBlank++;
+
+      }
+    
+//End map returns
+if(mapBlank!=0&&mapBlank==mapTotal){
+LOGGER.logDebug("No data found");
+throw new CTSRestException("404",null);
+}
+
+
+
+ Message message=new Message();
+ message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+ message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));   
+	if (message != null && message.getCode() == 0) {
+		outResponseGetColonyByMunicipality.setSuccess(true);
+
+	} else
+		outResponseGetColonyByMunicipality.setSuccess(false);
+      
+    
+      
+  LOGGER.logDebug("Ends service execution: getColonyByMunicipality");
+  //returns data
+  return outResponseGetColonyByMunicipality;
+}
+
+
 
 	/**
           * Check Account Details

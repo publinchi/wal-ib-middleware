@@ -71,6 +71,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getCatalog(ServiceRequestTO requestTO);  
 
   /**
+  * Get Colony by Municipality
+  */
+  ServiceResponseTO getColonyByMunicipality(ServiceRequestTO requestTO);  
+
+  /**
   * Service to obtain the detail of movements of an existing savings account
   */
   ServiceResponseTO getMovementsDetail(ServiceRequestTO requestTO);  
@@ -104,6 +109,11 @@ public interface IServiceContractOperationsApi{
   * Register Beneficiary Saving Account
   */
   ServiceResponseTO registerBeneficiary(ServiceRequestTO requestTO);  
+
+  /**
+  * Catalogue Of Locations
+  */
+  ServiceResponseTO searchLocationCatalog(ServiceRequestTO requestTO);  
 
   /**
   * Search Zip Code API

@@ -44,8 +44,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
@@ -922,6 +924,44 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       }
       return res;
     }
+    
+    /**
+    * Get Colony by Municipality
+    */
+  @GET
+@Path("/apiOperations/onbording/getColonyByMunicipality")
+@Consumes({"application/json"})
+@Produces({"application/json"})
+ public Response  getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality ){
+LOGGER.logDebug("Start service execution REST: getColonyByMunicipality");
+ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality  = new ResponseGetColonyByMunicipality();
+    
+if(!validateMandatory(new Data("zipCode", inRequestGetColonyByMunicipality.getZipCode()), new Data("municipality", inRequestGetColonyByMunicipality.getMunicipality()))) {
+  LOGGER.logDebug("400 is returned - Required fields are missing");
+  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+}
+  
+try {
+outResponseGetColonyByMunicipality=iServiceContractOperationsApiService.getColonyByMunicipality( inRequestGetColonyByMunicipality );
+} catch (CTSRestException e) {
+LOGGER.logError("CTSRestException",e);
+if ("404".equals(e.getMessage())) {
+LOGGER.logDebug("404 is returned - No data found");
+return Response.status(404).entity("No data found").build();
+}
+
+LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+return Response.status(409).entity(e.getMessageBlockList()).build();
+} catch (Exception e){
+LOGGER.logDebug("500 is returned - Code exception");
+LOGGER.logError("Exception",e);
+return Response.status(500).entity(e.getMessage()).build();
+}
+
+    LOGGER.logDebug("Ends service execution REST: getColonyByMunicipality");
+    return Response.ok(outResponseGetColonyByMunicipality).build();
+  
+}
     
     }
   
