@@ -20,8 +20,6 @@
     /************************************************************/
     
     package  cobiscorp.ecobis.servicecontractoperations.service;
-    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
-    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
@@ -29,6 +27,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.Message;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
@@ -41,6 +41,9 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
+    import   cobiscorp.ecobis.datacontractoperations.dto.AddressTypeItems;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
@@ -56,6 +59,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
@@ -72,21 +77,13 @@
     import java.util.List;
 
     public interface IServiceContractOperationsApiService{
-
-        /**
-          * Service to apply credit account
-          */
-        
-			// Return Dto
-			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
     
           /**
           * Afiliate Customer
           */
         
-			// Return Dto
-			public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer  )throws CTSRestException;
-    
+			// Return list
+			public  ResponseAffiliateCustomer  affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer  )throws CTSRestException;
           /**
           * Create new customers
           */
@@ -100,11 +97,17 @@
 			//Have DTO
 			public ResponseCreateSavingAccount createSavingAccount(RequestCreateSavingAccount inRequestCreateSavingAccount  )throws CTSRestException;
           /**
+          * Service to apply credit account
+          */
+        
+			// Return list
+			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException;
+          /**
           * Encrypt Data
           */
         
-			// Return DTO
-			public  ResponseEncriptData encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
+			// Return list
+			public  ResponseEncriptData  encryptData(RequestEncriptData inRequestEncriptData  )throws CTSRestException;
           /**
           * Service to generate and send an OTP to the client
           */
@@ -115,9 +118,8 @@
           * Check Account Details
           */
         
-			// Return DTO
-			public  ResponseGetBalancesDetail getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException;
-
+			// Return list
+			public ResponseGetBalancesDetail  getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException;
           /**
           * Get Beneficiary Saving Account
           */
@@ -130,6 +132,12 @@
         
 			//Have DTO
 			public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog  )throws CTSRestException;
+          /**
+          * Get Colony by Municipality
+          */
+        
+			//Have DTO
+			public ResponseGetColonyByMunicipality getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality  )throws CTSRestException;
           /**
           * Service to obtain the detail of movements of an existing savings account
           */
@@ -173,11 +181,17 @@
 			//Have DTO
 			public RegisterBeneficiaryResponse registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest  )throws CTSRestException;
           /**
+          * Catalogue Of Locations
+          */
+        
+			//Have DTO
+			public ResponseSearchLocationCatalog searchLocationCatalog(RequestSearchLocationCatalog inRequestSearchLocationCatalog  )throws CTSRestException;
+          /**
           * Search Zip Code API
           */
         
-			// Return DTO
-			public SearchZipCodeResponse  searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
+			//Have DTO
+			public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
           /**
           * Update customer address
           */
@@ -198,6 +212,9 @@
         
 			//Have DTO
 			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
+			
+			
+			
     }
 
   
