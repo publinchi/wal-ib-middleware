@@ -928,7 +928,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     /**
     * Get Colony by Municipality
     */
-  @GET
+  @POST
 @Path("/apiOperations/onbording/getColonyByMunicipality")
 @Consumes({"application/json"})
 @Produces({"application/json"})
