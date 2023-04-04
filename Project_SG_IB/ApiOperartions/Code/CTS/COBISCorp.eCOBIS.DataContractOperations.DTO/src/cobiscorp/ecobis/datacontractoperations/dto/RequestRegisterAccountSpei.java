@@ -32,6 +32,8 @@ public class RequestRegisterAccountSpei implements Serializable {
   private String accountNumberDestination;
   private Integer typeDestinationId;
   private Integer externalCustomerId;
+  private int bankId;
+  private String productAlias;
   public String getAccountNumber(){
     return this.accountNumber;
   }
@@ -55,5 +57,17 @@ public class RequestRegisterAccountSpei implements Serializable {
   }
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
+  }
+  public int getBankId(){
+    return this.bankId;
+  }
+  public void setBankId(int bankId ){
+    this.bankId=bankId;
+  }
+  public String getProductAlias(){
+    return this.productAlias;
+  }
+  public void setProductAlias(String productAlias ){
+    this.productAlias=productAlias;
   }
 }

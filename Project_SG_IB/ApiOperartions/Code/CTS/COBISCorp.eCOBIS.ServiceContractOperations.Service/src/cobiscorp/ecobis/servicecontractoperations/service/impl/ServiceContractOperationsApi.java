@@ -904,7 +904,58 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+	@CTSProcedure(
+		name = "cob_procesador..sp_register_account_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestRegisterAccountSpei",
+				input = {
+				
+					@CTSInputParam(field = "accountNumberDestination", param = "@i_cta_des", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "productAlias", param = "@i_product_alias", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "bankId", param = "@i_banco", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_cta", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "typeDestinationId", param = "@i_tipo_tercero", dataType = ICTSTypes.SQLCHAR),
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
     
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500110"),
+				@CTSDefaultInputParam(value = "I", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseRegisterAccountSpei",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseRegisterAccountSpei",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO registerAccount(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+	  
 	@CTSProcedure(
 		name = "cob_procesador..sp_get_catalog_data",   
 		objectRequest = {
