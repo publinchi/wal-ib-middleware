@@ -6,10 +6,10 @@
     <version>1.0.0</version>
   </parent>
   <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-  <artifactId>orchestration-core-ib-query-generated-transaction-factor</artifactId>
+  <artifactId>orchestration-core-ib-query-generate-transaction-factor</artifactId>
   <version>4.6.1.0</version>
   <packaging>jar</packaging>
-  <name>orchestration-core-ib-query-generated-transaction-factor</name>
+  <name>orchestration-core-ib-query-generate-transaction-factor</name>
   <url>http://maven.apache.org</url>
   <properties>
     <version.project>${project.version}</version.project>
