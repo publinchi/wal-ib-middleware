@@ -37,8 +37,6 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
-import dto.Account;
-import dto.AccountsResponse;
 
 /**
  * Register Account
