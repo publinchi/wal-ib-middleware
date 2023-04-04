@@ -23,6 +23,7 @@
     
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     
+    import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
     import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
@@ -38,9 +39,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
@@ -52,7 +54,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
@@ -61,7 +62,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
-import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
@@ -97,66 +97,25 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     protected void unsetiServiceContractOperationsApiService(IServiceContractOperationsApiService iServiceContractOperationsApiService){
     this.iServiceContractOperationsApiService = null;
     }
-    
-	/**
-	 * Catalogue Of Locations
-	 */
-	@POST
-	@Path("/apiOperations/onboarding/searchLocationCatalog")
-	@Consumes({ "application/json" })
-	@Produces({ "application/json" })
-	public Response searchLocationCatalog(RequestSearchLocationCatalog inRequestSearchLocationCatalog) {
-		LOGGER.logDebug("Start service execution REST: searchLocationCatalog");
-		
-		ResponseSearchLocationCatalog outResponseSearchLocationCatalog = new ResponseSearchLocationCatalog();
 
-		if (!validateMandatory(new Data("city", inRequestSearchLocationCatalog.getCity()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
-		}
-
-		try {
-			outResponseSearchLocationCatalog = iServiceContractOperationsApiService
-					.searchLocationCatalog(inRequestSearchLocationCatalog);
-		} catch (CTSRestException e) {
-			LOGGER.logError("CTSRestException", e);
-			if ("404".equals(e.getMessage())) {
-				LOGGER.logDebug("404 is returned - No data found");
-				return Response.status(404).entity("No data found").build();
-			}
-
-			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-			return Response.status(409).entity(e.getMessageBlockList()).build();
-		} catch (Exception e) {
-			LOGGER.logDebug("500 is returned - Code exception");
-			LOGGER.logError("Exception", e);
-			return Response.status(500).entity(e.getMessage()).build();
-		}
-
-		LOGGER.logDebug("Ends service execution REST: searchLocationCatalog");
-		return Response.ok(outResponseSearchLocationCatalog).build();
-
-	}
-
-    /**
+     /**
           * Service to apply credit account
           */
         @POST
-      @Path("/apiOperations/accountCreditOperation")
+      @Path("/apiOperations/accounts/creditOperation")
       @Consumes({"application/json"})
       @Produces({"application/json"})
-       public Response  accountCreditOperation(CreditAccountRequest inCreditAccountRequest ){
-	  LOGGER.logDebug("Start service execution REST: accountCreditOperation");
+       public Response  creditOperation(CreditAccountRequest inCreditAccountRequest ){
+	  LOGGER.logDebug("Start service execution REST: creditOperation");
       CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
           
-      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("description", inCreditAccountRequest.getDescription()), new Data("ownerName", inCreditAccountRequest.getOwnerName()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()), new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
+      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()), new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
 	    
       try {
-      outSingleCreditAccountResponse=iServiceContractOperationsApiService.accountCreditOperation( inCreditAccountRequest );
+      outSingleCreditAccountResponse=iServiceContractOperationsApiService.creditOperation( inCreditAccountRequest );
       } catch (CTSRestException e) {
       LOGGER.logError("CTSRestException",e);
       if ("404".equals(e.getMessage())) {
@@ -172,7 +131,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       return Response.status(500).entity(e.getMessage()).build();
       }
       
-          LOGGER.logDebug("Ends service execution REST: accountCreditOperation");
+          LOGGER.logDebug("Ends service execution REST: creditOperation");
           return Response.ok(outSingleCreditAccountResponse).build();
         
       }
@@ -226,7 +185,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 	  LOGGER.logDebug("Start service execution REST: createCustomer");
       CreateCustomerResponse outCreateCustomerResponse  = new CreateCustomerResponse();
           
-      if(!validateMandatory(new Data("activity", inCreateCustomerRequest.getActivity()), new Data("birthDate", inCreateCustomerRequest.getBirthDate()), new Data("gender", inCreateCustomerRequest.getGender()), new Data("idNumber", inCreateCustomerRequest.getIdNumber()), new Data("lastName", inCreateCustomerRequest.getLastName()), new Data("firstName", inCreateCustomerRequest.getFirstName()), new Data("nationality", inCreateCustomerRequest.getNationality()), new Data("operationType", inCreateCustomerRequest.getOperationType()), new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()), new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()), new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()), new Data("identificationType", inCreateCustomerRequest.getIdentificationType()))) {
+      if(!validateMandatory(new Data("activity", inCreateCustomerRequest.getActivity()), new Data("birthDate", inCreateCustomerRequest.getBirthDate()), new Data("gender", inCreateCustomerRequest.getGender()), new Data("idNumber", inCreateCustomerRequest.getIdNumber()), new Data("lastName", inCreateCustomerRequest.getLastName()), new Data("firstName", inCreateCustomerRequest.getFirstName()), new Data("nationality", inCreateCustomerRequest.getNationality()), new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()), new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()), new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()), new Data("identificationType", inCreateCustomerRequest.getIdentificationType()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("The request message is not properly formatted").build();
       }
@@ -300,9 +259,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       @Produces({"application/json"})
        public Response  encryptData(RequestEncriptData inRequestEncriptData ){
 	  LOGGER.logDebug("Start service execution REST: encryptData");
-      List<ResponseEncriptData> outSingleResponseEncriptData  = new ArrayList<>();
+      ResponseEncriptData outSingleResponseEncriptData  = new ResponseEncriptData();
           
-      if(!validateMandatory(new Data("externalCustomerId", inRequestEncriptData.getExternalCustomerId()), new Data("password", inRequestEncriptData.getPassword()))) {
+      if(!validateMandatory(new Data("password", inRequestEncriptData.getPassword()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("The request message is not properly formatted").build();
       }
@@ -530,7 +489,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 		  LOGGER.logDebug("Start service execution REST: getMovementsDetail");
 		  ResponseGetMovementsDetail outResponseGetMovementsDetail  = new ResponseGetMovementsDetail();
 
-		  if(!validateMandatory(new Data("accountNumber", inRequestGetMovementsDetail.getAccountNumber()), new Data("minDate", inRequestGetMovementsDetail.getMinDate()), new Data("maxDate", inRequestGetMovementsDetail.getMaxDate()), new Data("sequential", inRequestGetMovementsDetail.getSequential()), new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()), new Data("numberOfMovements", inRequestGetMovementsDetail.getNumberOfMovements()), new Data("movementId", inRequestGetMovementsDetail.getMovementId()))) {
+		  if(!validateMandatory(new Data("accountNumber", inRequestGetMovementsDetail.getAccountNumber()), new Data("minDate", inRequestGetMovementsDetail.getMinDate()), new Data("maxDate", inRequestGetMovementsDetail.getMaxDate()), new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()), new Data("numberOfMovements", inRequestGetMovementsDetail.getNumberOfMovements()))) {
 		    LOGGER.logDebug("400 is returned - Required fields are missing");
 		    return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
 		  }
@@ -674,6 +633,44 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
           return Response.ok(outResponseGetUserEntityInformation).build();
         
       }
+        
+        /**
+        * Service to register beneficiaries for spei transfers.
+        */
+      @POST
+	    @Path("/apiOperations/accounts/registerAccount")
+	    @Consumes({"application/json"})
+	    @Produces({"application/json"})
+	     public Response  registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei ){
+		  LOGGER.logDebug("Start service execution REST: registerAccount");
+	    ResponseRegisterAccountSpei outResponseRegisterAccountSpei  = new ResponseRegisterAccountSpei();
+	        
+	    if(!validateMandatory(new Data("accountNumberDestination", inRequestRegisterAccountSpei.getAccountNumberDestination()), new Data("accountNumber", inRequestRegisterAccountSpei.getAccountNumber()), new Data("typeDestinationId", inRequestRegisterAccountSpei.getTypeDestinationId()), new Data("externalCustomerId", inRequestRegisterAccountSpei.getExternalCustomerId()))) {
+	      LOGGER.logDebug("400 is returned - Required fields are missing");
+	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    }
+		    
+	    try {
+	    outResponseRegisterAccountSpei=iServiceContractOperationsApiService.registerAccount( inRequestRegisterAccountSpei );
+	    } catch (CTSRestException e) {
+	    LOGGER.logError("CTSRestException",e);
+	    if ("404".equals(e.getMessage())) {
+	    LOGGER.logDebug("404 is returned - No data found");
+	    return Response.status(404).entity("No data found").build();
+	    }
+	
+	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	    return Response.status(409).entity(e.getMessageBlockList()).build();
+	    } catch (Exception e){
+	    LOGGER.logDebug("500 is returned - Code exception");
+	    LOGGER.logError("Exception",e);
+	    return Response.status(500).entity(e.getMessage()).build();
+	    }
+	    
+	        LOGGER.logDebug("Ends service execution REST: registerAccount");
+	        return Response.ok(outResponseRegisterAccountSpei).build();
+	      
+	    }
     
           /**
           * Register Beneficiary Saving Account
