@@ -7,7 +7,7 @@
   <parameters>
     <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
     <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
-    <parameter name="@i_amount" dataType="numeric" direction="in" />
+    <parameter name="@i_amount" dataType="money" direction="in" />
     <parameter name="@i_commission" dataType="money" direction="in" />
     <parameter name="@i_latitude" dataType="float" direction="in" />
     <parameter name="@i_longitude" dataType="float" direction="in" />

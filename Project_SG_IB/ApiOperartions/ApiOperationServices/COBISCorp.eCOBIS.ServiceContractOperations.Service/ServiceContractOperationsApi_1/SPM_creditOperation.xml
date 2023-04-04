@@ -17,6 +17,7 @@
           <field type="String" name="dTOAlias" value="returnCreditAccountResponse" />
           <field type="String" name="dTOPropertyName" value="success" />
           <field type="String" name="dataType" value="boolean?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="7" index="1">
           <field type="int" name="position" value="1" />
@@ -24,6 +25,7 @@
           <field type="String" name="dTOAlias" value="returnCreditAccountResponse" />
           <field type="String" name="dTOPropertyName" value="message.code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="8" index="2">
           <field type="int" name="position" value="2" />
@@ -31,6 +33,7 @@
           <field type="String" name="dTOAlias" value="returnCreditAccountResponse" />
           <field type="String" name="dTOPropertyName" value="message.message" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="9" index="3">
           <field type="int" name="position" value="3" />
@@ -38,6 +41,7 @@
           <field type="String" name="dTOAlias" value="returnCreditAccountResponse" />
           <field type="String" name="dTOPropertyName" value="referenceCode" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -79,7 +83,7 @@
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inCreditAccountRequest" />
       <field type="String" name="dTOPropertyName" value="amount" />
-      <field type="String" name="cTSDataType" value="SQLNUMERIC" />
+      <field type="String" name="cTSDataType" value="SQLMONEY" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="17" index="3">
