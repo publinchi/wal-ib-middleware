@@ -121,13 +121,13 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 					resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
 					columns = resultSetRow.getColumnsAsArray();
 					
-					if (columns[0].getValue().equals("true")) {
+					if (columns[1].getValue().equals("0")) {
 						aBagSPJavaOrchestration.put("0", "Success");
 						return;
 						
-					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
+					} else if (columns[1].getValue().equals("18053")) {
 						
-						aBagSPJavaOrchestration.put("40012", "Customer with externalCustomerId: " + idCustomer + " does not exist");
+						aBagSPJavaOrchestration.put("18053", "The customer is updated but only in central");
 						return;
 					}					
 				} else {
@@ -165,11 +165,11 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		
-		if (keyList.get(0).equals("0")) {
+		if (keyList.get(0).equals("0") || keyList.get(0).equals("10001")) {
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
 			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
 			row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-			row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(3, new ResultSetRowColumnData(false, keyList.get(0)));
 			data.addRow(row);
 
 		} else {

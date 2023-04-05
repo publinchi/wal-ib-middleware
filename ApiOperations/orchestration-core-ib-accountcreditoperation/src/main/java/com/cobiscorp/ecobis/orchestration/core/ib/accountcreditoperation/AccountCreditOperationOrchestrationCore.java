@@ -88,6 +88,11 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			return;
 		}
 		
+		if (referenceNumber.length() != 6) {
+			aBagSPJavaOrchestration.put("40104", "referenceNumber must have 6 digits");
+			return;
+		}
+		
 		if (creditConcept.isEmpty()) {
 			aBagSPJavaOrchestration.put("40093", "creditConcept must not be empty");
 			return;
@@ -99,14 +104,10 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		reqTMPCentral.setSpName("cobis..sp_account_credit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
-		reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
-		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLNUMERIC, wQueryRequest.readValueParam("@i_amount"));
-		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
-		reqTMPCentral.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
-		reqTMPCentral.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
-	    reqTMPCentral.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_referenceNumber"));
+		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
+		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
 	    reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
@@ -115,15 +116,54 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			logger.logDebug("Ending flow, queryAccountCreditOperation with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
-
-		if (!wProcedureResponseCentral.hasError()) {
+		IProcedureResponse wProcedureResponseLocal;
+		if (!wProcedureResponseCentral.hasError()) {			
 			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				this.columnsToReturn = columns;
-				return;
+				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
+	
+				reqTMPLocal.setSpName("cob_bvirtual..sp_account_credit_operation_local_api");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
+				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
+				reqTMPLocal.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
+				reqTMPLocal.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
+				reqTMPLocal.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
+				reqTMPLocal.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
+				reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
+				reqTMPLocal.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_referenceNumber"));
+				reqTMPLocal.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
+				reqTMPLocal.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
+				
+				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+				if (logger.isInfoEnabled()) {
+					logger.logDebug("Ending flow, queryAccountCreditOperation with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
+				}
+
+				if (!wProcedureResponseLocal.hasError()) {
+					
+					resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
+					columns = resultSetRow.getColumnsAsArray();
+					
+					if (columns[0].getValue().equals("true")) {
+						
+						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+						this.columnsToReturn = columns;
+						return;
+						
+					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
+						
+						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+						return;
+					} 
+					
+				} else {
+					
+					aBagSPJavaOrchestration.put("50041", "Error account credit operation");
+					return;
+				}
 								
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
 				
@@ -144,11 +184,15 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
+				
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50042")) {
+				
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				return;
 			} 
 			 
-			
 		} else {
-			aBagSPJavaOrchestration.put("50041", "Error account credit operation orchestration");
+			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
 			return;
 		}
 	}

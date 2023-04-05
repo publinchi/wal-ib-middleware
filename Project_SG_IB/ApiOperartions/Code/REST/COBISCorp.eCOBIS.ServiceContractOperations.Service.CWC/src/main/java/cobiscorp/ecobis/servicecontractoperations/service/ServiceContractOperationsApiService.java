@@ -70,7 +70,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500111");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCreditAccountRequest.getExternalCustomerId()));
       procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inCreditAccountRequest.getAccountNumber());
-      procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLNUMERIC,String.valueOf(inCreditAccountRequest.getAmount()));
+      procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLMONEY,String.valueOf(inCreditAccountRequest.getAmount()));
       procedureRequestAS.addInputParam("@i_commission",ICTSTypes.SQLMONEY,String.valueOf(inCreditAccountRequest.getCommission()));
       procedureRequestAS.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i,String.valueOf(inCreditAccountRequest.getLatitude()));
       procedureRequestAS.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i,String.valueOf(inCreditAccountRequest.getLongitude()));
