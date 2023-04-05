@@ -27,12 +27,6 @@
   <queries>
     <query>
       <columns>
-        <column name="statusRegister" />
-      </columns>
-      <queryText>SELECT "statusRegister"="exist"</queryText>
-    </query>
-    <query>
-      <columns>
         <column name="success" />
       </columns>
       <queryText>SELECT "success"="true"</queryText>

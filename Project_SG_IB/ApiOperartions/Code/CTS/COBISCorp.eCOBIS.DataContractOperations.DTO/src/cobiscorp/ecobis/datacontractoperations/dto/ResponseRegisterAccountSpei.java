@@ -29,19 +29,12 @@ import java.util.HashMap;
 
 public class ResponseRegisterAccountSpei implements Serializable {
   private Boolean success;
-  private String statusRegister;
   private Message message;
   public Boolean isSuccess(){
     return this.success;
   }
   public void setSuccess(Boolean success ){
     this.success=success;
-  }
-  public String getStatusRegister(){
-    return this.statusRegister;
-  }
-  public void setStatusRegister(String statusRegister ){
-    this.statusRegister=statusRegister;
   }
   public Message messageInstance(){
 	if(this.message==null){

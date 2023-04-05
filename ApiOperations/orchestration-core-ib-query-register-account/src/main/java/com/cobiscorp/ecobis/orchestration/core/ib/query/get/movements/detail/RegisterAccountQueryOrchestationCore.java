@@ -5,8 +5,6 @@ import java.util.Map;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
@@ -25,7 +23,6 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -34,10 +31,6 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
-
-import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
-import dto.Account;
-import dto.AccountsResponse;
 
 /**
  * Register Account
@@ -59,33 +52,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
-	protected static final int CHANNEL_REQUEST = 8;
-
-	/**
-	 * Instance of ICTSServiceIntegration
-	 */
-	@Reference(bind = "setServiceIntegration", unbind = "unsetServiceIntegration", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
-	private ICTSServiceIntegration serviceIntegration;
-
-	/**
-	 * Method that set the instance of ICTSServiceIntegration
-	 * 
-	 * @param serviceIntegration
-	 *            Instance of ICTSServiceIntegration
-	 */
-	public void setServiceIntegration(ICTSServiceIntegration serviceIntegration) {
-		this.serviceIntegration = serviceIntegration;
-	}
-
-	/**
-	 * Method that unset the instance of ICTSServiceIntegration
-	 * 
-	 * @param serviceIntegration
-	 *            Instance of ICTSServiceIntegration
-	 */
-	public void unsetServiceIntegration(ICTSServiceIntegration serviceIntegration) {
-		this.serviceIntegration = null;
-	}
+	protected static final String CHANNEL_REQUEST = "8";
 
 	/**
 	 * Read configuration of parent component
@@ -117,18 +84,14 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		anProcedureResponse = registerAccount(anOriginalRequest);
 		
-		if (anProcedureResponse.getResultSets().size()>2) {
-			
-			return processTransformationResponse(anProcedureResponse);
-		} else {
-			return processResponseError(anProcedureResponse);
-		}
+		anProcedureResponse = registerAccount(anOriginalRequest, aBagSPJavaOrchestration);
+		
+		return processResponseRegister(anProcedureResponse);
 
 	}
 
-	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
+	public IProcedureResponse processResponseRegister(IProcedureResponse anOriginalProcedureRes) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processResponseAccounts--->");
 		}
@@ -169,78 +132,95 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 	}
 
 
-	private IProcedureResponse registerAccount(IProcedureRequest aRequest) {
-
-		IProcedureRequest request = new ProcedureRequestAS();
+	private IProcedureResponse registerAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en registerAccount");
 		}
 		
+		String type = aRequest.readValueParam("@i_banco");
+		logger.logInfo(CLASS_NAME + " xdx" + aRequest.readValueParam("@i_banco"));
+		if (type.equals("0") || type == null)
+			type = "B";
+		else
+			type = "O";
+			
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-
-		wAccountsResp = getAccounts(aRequest);
+		
+		wAccountsResp = getCurpByAccount(aRequest, aBagSPJavaOrchestration, type);
+		
+		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+			IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
+			wAccountsRespInsert = insertAccount(aRequest, aBagSPJavaOrchestration, type);
+			return wAccountsRespInsert; 
+		}
+		
 
 		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de registerAccount");
 		}
 
 		return wAccountsResp;
 	}
 	
-	private IProcedureResponse getAccounts(IProcedureRequest aRequest) {
+	private IProcedureResponse insertAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String type) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
+		String curp, beneficiary, product = null;
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getAccounts");
+			logger.logInfo(CLASS_NAME + " Entrando en insertAccount");
+			logger.logInfo(CLASS_NAME + " CURP: " + aBagSPJavaOrchestration.get("o_curp"));
+			logger.logInfo(CLASS_NAME + " BENEFICIARY: " + aBagSPJavaOrchestration.get("o_beneficiary"));
+			logger.logInfo(CLASS_NAME + " PRODUCT: " + aBagSPJavaOrchestration.get("o_producto"));
 		}
 
-		request.setSpName("cob_bvirtual..sp_busca_terceros_api");
+		curp = (String) aBagSPJavaOrchestration.get("o_curp");
+		beneficiary = (String) aBagSPJavaOrchestration.get("o_beneficiary");
+		product = (String) aBagSPJavaOrchestration.get("o_producto");
+		
+		request.setSpName("cob_bvirtual..sp_registra_tercero_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
-		request.addInputParam("@i_cuenta_origen", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+		request.addInputParam("@i_tipo_des", ICTSTypes.SQLVARCHAR, type);
+		request.addInputParam("@s_servicio", ICTSTypes.SQLCHAR, CHANNEL_REQUEST);
+		request.addInputParam("@t_trn", ICTSTypes.SQLCHAR, "18500110");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+		request.addInputParam("@i_lote", ICTSTypes.SQLVARCHAR, "0");
+		if (type.equals("B")){
+		request.addInputParam("@i_beneficiario", ICTSTypes.SQLVARCHAR, beneficiary.trim());
+		request.addInputParam("@i_id_beneficiario", ICTSTypes.SQLVARCHAR, curp.trim());
+		request.addInputParam("@i_banco", ICTSTypes.SQLINTN, "0");
+		}
+		else{
+		request.addInputParam("@i_tipo_transf", ICTSTypes.SQLVARCHAR, "A");
+		request.addInputParam("@i_nombre", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_product_alias"));
+		request.addInputParam("@i_banco", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_banco"));
+		}
+		request.addInputParam("@i_prod", ICTSTypes.SQLVARCHAR, product);
+		request.addInputParam("@i_prod_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_tipo_tercero"));
+				
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
-		IResultSetBlock resulsetOrigin = wProductsQueryResp.getResultSet(0);
-		IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
-		
-		AccountsResponse accoutsResponseArray = new AccountsResponse();
-		Account[] accountArray =new Account[rowsTemp.length];
-		
-		for (IResultSetRow iResultSetRow : rowsTemp) {
-			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
-			int index= 0;
-			Account account = new Account();
-			
-			account.setCodigo(Integer.parseInt(columns[0].getValue()));
-			account.setNombre(columns[1].getValue());
-			account.setNombre(columns[2].getValue());
-			account.setProducto(Integer.parseInt(columns[3].getValue()));
-			account.setProducto(Integer.parseInt(columns[4].getValue()));
-			account.setNombre(columns[5].getValue());
-			account.setNombre(columns[6].getValue());
-			
-			accountArray[index] = account;
-
-		}
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de getAccounts");
+			logger.logInfo(CLASS_NAME + " Saliendo de insertAccount");
 		}
 
 		return wProductsQueryResp;
 	}
 
-	private IProcedureResponse getCurpByAccount(IProcedureRequest aRequest) {
+	private IProcedureResponse getCurpByAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String typeOp) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -248,39 +228,27 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 			logger.logInfo(CLASS_NAME + " Entrando en getCurpByAccount");
 		}
 
-		request.setSpName("cobis..sp_bv_valida_destino");
+		request.setSpName("cobis..sp_bv_valida_destino_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
-		request.addInputParam("@i_cuenta_origen", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-
+		
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_type_option", ICTSTypes.SQLCHAR, typeOp);
+		request.addOutputParam("@o_curp", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_beneficiary", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_producto", ICTSTypes.SQLVARCHAR, "X");
+		request.addInputParam("@i_prod_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_tipo_tercero"));
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-
-		IResultSetBlock resulsetOrigin = wProductsQueryResp.getResultSet(0);
-		IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
 		
-		AccountsResponse accoutsResponseArray = new AccountsResponse();
-		Account[] accountArray =new Account[rowsTemp.length];
+		aBagSPJavaOrchestration.put("o_curp", wProductsQueryResp.readValueParam("@o_curp"));
+		aBagSPJavaOrchestration.put("o_beneficiary", wProductsQueryResp.readValueParam("@o_beneficiary"));
+		aBagSPJavaOrchestration.put("o_producto", wProductsQueryResp.readValueParam("@o_producto"));
 		
-		for (IResultSetRow iResultSetRow : rowsTemp) {
-			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
-			int index= 0;
-			Account account = new Account();
-			
-			account.setCodigo(Integer.parseInt(columns[0].getValue()));
-			account.setNombre(columns[1].getValue());
-			account.setNombre(columns[2].getValue());
-			account.setProducto(Integer.parseInt(columns[3].getValue()));
-			account.setProducto(Integer.parseInt(columns[4].getValue()));
-			account.setNombre(columns[5].getValue());
-			account.setNombre(columns[6].getValue());
-			
-			accountArray[index] = account;
-
-		}
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
@@ -298,173 +266,5 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 
 		return null;
 	}
-
-	public IProcedureResponse processTransformationResponse(IProcedureResponse anOriginalProcedureRes) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(" start processTransformationResponse--->");
-		}
-
-		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-
-		if (anOriginalProcedureRes != null) {
-
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " ProcessResponse original anOriginalProcedureRes:"
-						+ anOriginalProcedureRes.getProcedureResponseAsString());
-			}
-
-		}
-
-		IResultSetHeader metaData = new ResultSetHeader();
-		IResultSetData data = new ResultSetData();
-
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-
-		// Agregar Header 2
-		IResultSetHeader metaData2 = new ResultSetHeader();
-		IResultSetData data2 = new ResultSetData();
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
-		IResultSetHeader metaData3 = new ResultSetHeader();
-		IResultSetData data3 = new ResultSetData();
-		metaData3.addColumnMetaData(new ResultSetHeaderColumn("numberOfResults", ICTSTypes.SQLINT4, 5));
-		
-		
-		IResultSetRow row = new ResultSetRow();
-		row.addRowData(1, new ResultSetRowColumnData(false, "0"));
-		row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-		data.addRow(row);
-
-		IResultSetRow row2 = new ResultSetRow();
-		row2.addRowData(1, new ResultSetRowColumnData(false, "true"));
-		data2.addRow(row2);
-
-		IResultSetRow row3 = new ResultSetRow();
-		row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue()));
-		data3.addRow(row3);
-				
-		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
-		anOriginalProcedureResponse.setReturnCode(200);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
-
-		if (anOriginalProcedureRes != null
-				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
-
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(
-						CLASS_NAME + " Response final: " + anOriginalProcedureResponse.getProcedureResponseAsString());
-			}
-
-			IResultSetHeader metaData0 = new ResultSetHeader();
-			
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("accountingBalance", ICTSTypes.SQLMONEY, 25));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("alternateCode", ICTSTypes.SQLINT4, 5));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("amount", ICTSTypes.SQLMONEY, 25));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("availableBalance", ICTSTypes.SQLMONEY, 25));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("concept", ICTSTypes.SQLVARCHAR, 20));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("description", ICTSTypes.SQLVARCHAR, 64));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("hour", ICTSTypes.SQLVARCHAR, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("tracking", ICTSTypes.SQLVARCHAR, 32));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("operationType", ICTSTypes.SQLVARCHAR, 5));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reference", ICTSTypes.SQLINT4, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("sequential", ICTSTypes.SQLINT4, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("signDC", ICTSTypes.SQLVARCHAR, 5));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionDate", ICTSTypes.SQLVARCHAR, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("uniqueSequential", ICTSTypes.SQLINT4, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("processDate", ICTSTypes.SQLVARCHAR, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("tarjetNumber", ICTSTypes.SQLVARCHAR, 64));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("destinyAccount", ICTSTypes.SQLVARCHAR, 12));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccount", ICTSTypes.SQLVARCHAR, 5));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("beneficiary", ICTSTypes.SQLVARCHAR, 32));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("referenceNumber", ICTSTypes.SQLINT4, 64));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("commission", ICTSTypes.SQLMONEY, 25));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("iva", ICTSTypes.SQLMONEY, 25));
-
-			IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
-			IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
-			IResultSetData data0 = new ResultSetData();
-
-			for (IResultSetRow iResultSetRow : rowsTemp) {
-				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
-
-				IResultSetRow rowDat = new ResultSetRow();
-
-				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
-				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[9].getValue()));
-				rowDat.addRowData(3, new ResultSetRowColumnData(false, columns[5].getValue()));
-				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[7].getValue()));
-				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[12].getValue()));
-				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[1].getValue().trim()));
-				rowDat.addRowData(7, new ResultSetRowColumnData(false, columns[10].getValue()));
-				rowDat.addRowData(8, new ResultSetRowColumnData(false, columns[13].getValue()));
-				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[2].getValue()));
-				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[3].getValue()));
-				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[8].getValue()));
-				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[4].getValue()));
-				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[0].getValue()));
-				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[11].getValue()));
-				rowDat.addRowData(15, new ResultSetRowColumnData(false, columns[0].getValue()));
-				rowDat.addRowData(16, new ResultSetRowColumnData(false, columns[14].getValue()));
-				
-				if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
-					String[] strBeneficiary = columns[15].getValue().split("\\|");
-				
-				    if(strBeneficiary.length>0)
-				    	rowDat.addRowData(17, new ResultSetRowColumnData(false, strBeneficiary[0]));
-				    else
-				    	rowDat.addRowData(17, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>1)
-				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, strBeneficiary[1]));
-				    else
-				    	rowDat.addRowData(18, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>2)
-				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, strBeneficiary[2]));
-				    else
-				    	rowDat.addRowData(19, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>3)
-				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, strBeneficiary[3]));
-				    else
-				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, "0"));
-				    
-				    if(strBeneficiary.length>4)
-				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, strBeneficiary[4]));
-				    else
-				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, "0"));
-				    
-				    if(strBeneficiary.length>5)
-				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, strBeneficiary[5]));
-				    else
-				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, "0"));
-				}
-				else{
-					rowDat.addRowData(17, new ResultSetRowColumnData(false, " "));
-					rowDat.addRowData(18, new ResultSetRowColumnData(false, " "));
-					rowDat.addRowData(19, new ResultSetRowColumnData(false, " "));
-					rowDat.addRowData(20, new ResultSetRowColumnData(false, "0"));
-					rowDat.addRowData(21, new ResultSetRowColumnData(false, "0"));
-					rowDat.addRowData(22, new ResultSetRowColumnData(false, "0"));
-				}
-
-				data0.addRow(rowDat);
-
-			}
-
-			IResultSetBlock resultsetBlock0 = new ResultSetBlock(metaData0, data0);
-			anOriginalProcedureResponse.addResponseBlock(resultsetBlock0);
-
-		}
-
-		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
-		return anOriginalProcedureResponse;
-	}
-
 
 }
