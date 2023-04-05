@@ -50,6 +50,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipalit
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
