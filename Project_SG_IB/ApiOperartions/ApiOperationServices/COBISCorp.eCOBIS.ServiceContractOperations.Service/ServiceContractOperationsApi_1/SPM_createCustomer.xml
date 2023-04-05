@@ -51,9 +51,8 @@
           <field type="int" name="position" value="0" />
           <field type="String" name="columnName" value="externalCustomerId " />
           <field type="String" name="dTOAlias" value="returnCreateCustomerResponse" />
-          <field type="String" name="dTOPropertyName" value="customerCobisCode" />
+          <field type="String" name="dTOPropertyName" value="externalCustomerId" />
           <field type="String" name="dataType" value="int?" />
-          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>

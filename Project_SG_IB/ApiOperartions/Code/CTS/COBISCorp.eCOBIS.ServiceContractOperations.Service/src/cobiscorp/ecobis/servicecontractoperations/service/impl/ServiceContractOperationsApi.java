@@ -212,7 +212,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       name = "returnCreateCustomerResponse",
       type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
       columns = {
-		    @CTSColumn(field = "customerCobisCode", columnIndex = 1)
+		    @CTSColumn(field = "externalCustomerId", columnIndex = 1)
       }
     )
   }
