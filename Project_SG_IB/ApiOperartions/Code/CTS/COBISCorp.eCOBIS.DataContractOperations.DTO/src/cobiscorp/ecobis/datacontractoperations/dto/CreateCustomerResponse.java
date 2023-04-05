@@ -28,14 +28,14 @@ import java.util.HashMap;
 
 
 public class CreateCustomerResponse implements Serializable {
-  private Integer customerCobisCode;
+  private Integer externalCustomerId;
   private Boolean success;
   private Message message;
-  public Integer getCustomerCobisCode(){
-    return this.customerCobisCode;
+  public Integer getExternalCustomerId(){
+    return this.externalCustomerId;
   }
-  public void setCustomerCobisCode(Integer customerCobisCode ){
-    this.customerCobisCode=customerCobisCode;
+  public void setExternalCustomerId(Integer externalCustomerId ){
+    this.externalCustomerId=externalCustomerId;
   }
   public Boolean isSuccess(){
     return this.success;

@@ -380,12 +380,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 						public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 							CreateCustomerResponse dto = new CreateCustomerResponse();
 
-							dto.setCustomerCobisCode(resultSetMapper.getInteger(1));
+							dto.setExternalCustomerId(resultSetMapper.getInteger(1));
 							return dto;
 						}
 					}, false);
 
-			outCreateCustomerResponse.setCustomerCobisCode(returnCreateCustomerResponse.getCustomerCobisCode());
+			outCreateCustomerResponse.setExternalCustomerId(returnCreateCustomerResponse.getExternalCustomerId());
 			// break;
 
 		} else {
