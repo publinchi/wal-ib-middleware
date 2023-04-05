@@ -153,11 +153,6 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 						this.columnsToReturn = columns;
 						return;
 						
-					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50042")) {
-						
-						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-						return;
-						
 					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
 						
 						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
@@ -189,9 +184,13 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
+				
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50042")) {
+				
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				return;
 			} 
 			 
-			
 		} else {
 			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
 			return;
