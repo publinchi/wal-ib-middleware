@@ -925,6 +925,46 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
       return res;
     }
     
+	/**
+	 * Catalogue Of Locations
+	 */
+	@POST
+	@Path("/apiOperations/onboarding/searchLocationCatalog")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response searchLocationCatalog(RequestSearchLocationCatalog inRequestSearchLocationCatalog) {
+		LOGGER.logDebug("Start service execution REST: searchLocationCatalog");
+		ResponseSearchLocationCatalog outResponseSearchLocationCatalog = new ResponseSearchLocationCatalog();
+
+		if (!validateMandatory(new Data("city", inRequestSearchLocationCatalog.getCity()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseSearchLocationCatalog = iServiceContractOperationsApiService
+					.searchLocationCatalog(inRequestSearchLocationCatalog);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: searchLocationCatalog");
+		return Response.ok(outResponseSearchLocationCatalog).build();
+
+	}
+    
     /**
     * Get Colony by Municipality
     */
