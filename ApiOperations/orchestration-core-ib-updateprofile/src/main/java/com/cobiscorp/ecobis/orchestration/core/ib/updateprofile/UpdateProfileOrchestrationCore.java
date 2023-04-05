@@ -127,7 +127,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 						
 					} else if (columns[1].getValue().equals("18053")) {
 						
-						aBagSPJavaOrchestration.put("18053", "The customer is updated but only in central");
+						aBagSPJavaOrchestration.put("18053", "The customer information has been updated but it is not affiliated");
 						return;
 					}					
 				} else {
@@ -165,10 +165,10 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		
-		if (keyList.get(0).equals("0") || keyList.get(0).equals("10001")) {
+		if (keyList.get(0).equals("0") || keyList.get(0).equals("18053")) {
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
 			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
+			row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(3, new ResultSetRowColumnData(false, keyList.get(0)));
 			data.addRow(row);
 

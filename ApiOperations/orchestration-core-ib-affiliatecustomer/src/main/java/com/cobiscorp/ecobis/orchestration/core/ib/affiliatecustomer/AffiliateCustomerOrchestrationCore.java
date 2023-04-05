@@ -173,7 +173,11 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				aBagSPJavaOrchestration.put("40081", "The account number does not correspond to the customer id");
 				return;
-			}
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40105")) {
+				
+				aBagSPJavaOrchestration.put("40105", "phoneNumber or mail is empty, you must update the information in the service updateProfile");
+				return;
+			} 
 			 
 			
 		} else {
