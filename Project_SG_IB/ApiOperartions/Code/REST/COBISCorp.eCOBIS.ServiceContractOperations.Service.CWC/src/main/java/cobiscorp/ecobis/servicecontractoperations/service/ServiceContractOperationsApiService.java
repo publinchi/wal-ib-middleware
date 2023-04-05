@@ -1971,12 +1971,12 @@ throw new CTSRestException("404",null);
 		return outResponseValidateCustomerIdentityCard;
 	}
 	
-		    /**
-		    * Service to register beneficiaries for spei transfers.
-		    */
-		   @Override
-				//Have DTO
-				public ResponseRegisterAccountSpei registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei  )throws CTSRestException{
+	    /**
+	    * Service to register beneficiaries for spei transfers.
+	    */
+	   @Override
+			//Have DTO
+			public ResponseRegisterAccountSpei registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei  )throws CTSRestException{
 		LOGGER.logDebug("Start service execution: registerAccount");
 		ResponseRegisterAccountSpei outResponseRegisterAccountSpei  = new ResponseRegisterAccountSpei();
 		    
@@ -1985,8 +1985,11 @@ throw new CTSRestException("404",null);
 		
 		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500110");
 		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getAccountNumberDestination());
-		procedureRequestAS.addInputParam("@i_prod",ICTSTypes.SQLINT1,String.valueOf(inRequestRegisterAccountSpei.getAccountNumber()));
+		procedureRequestAS.addInputParam("@i_product_alias",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getProductAlias());
+		procedureRequestAS.addInputParam("@i_banco",ICTSTypes.SQLINT4,String.valueOf(inRequestRegisterAccountSpei.getBankId()));
+		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getAccountNumber());
 		procedureRequestAS.addInputParam("@i_tipo_tercero",ICTSTypes.SQLCHAR,String.valueOf(inRequestRegisterAccountSpei.getTypeDestinationId()));
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"I");
 		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestRegisterAccountSpei.getExternalCustomerId()));
 		
 		//execute procedure
@@ -2016,27 +2019,6 @@ throw new CTSRestException("404",null);
 		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
 		              
-		                    dto.setStatusRegister(resultSetMapper.getString(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseRegisterAccountSpei.setStatusRegister(returnResponseRegisterAccountSpei.getStatusRegister());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterAccountSpei>() { 
-		              @Override
-		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
-		              
 		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
 		              return dto;
 		              }
@@ -2051,9 +2033,9 @@ throw new CTSRestException("404",null);
 		      }
 		    
 		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
 									//---------NO Array
-									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterAccountSpei>() { 
+									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterAccountSpei>() { 
 		              @Override
 		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
