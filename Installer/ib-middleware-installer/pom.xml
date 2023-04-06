@@ -1449,7 +1449,8 @@
 							orchestration-core-ib-updateprofile,
 							orchestration-core-ib-validateIdentity,
 							orchestration-core-ib-getbalancesdetail,
-							orchestration-core-ib-query-get-own-accounts-view
+							orchestration-core-ib-query-get-own-accounts-view,
+							orchestration-core-ib-query-register-account
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
