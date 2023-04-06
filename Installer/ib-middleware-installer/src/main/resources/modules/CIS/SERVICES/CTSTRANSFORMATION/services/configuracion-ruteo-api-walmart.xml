@@ -150,4 +150,19 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+		<!-- 18500110 ORQUESTACION RESGISTER ACCOUNT-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AccountCreditOperation">
+		<conditions>
+		  <condition param="trn">
+			<value>18500110</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=RegisterAccountQueryOrchestationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>
