@@ -2142,7 +2142,7 @@ throw new CTSRestException("404",null);
 	/**
 	 * Catalogue Of Locations 
 	 */
-	@Override
+	@Override	
 	// Have DTO
 	public ResponseSearchLocationCatalog searchLocationCatalog(
 			RequestSearchLocationCatalog inRequestSearchLocationCatalog) throws CTSRestException {
@@ -2180,7 +2180,7 @@ throw new CTSRestException("404",null);
 		int mapBlank = 0;
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+		if (response.getResultSets() != null && response.getResultSets().size()>0 &&response.getResultSets().get(0).getData().getRows().size()>0) {
 			// ---------NO Array
 			ResponseSearchLocationCatalog_addressTypeItem [] returnResponseSearchLocationCatalog_addressTypeItem = MapperResultUtil
 					.mapToArray(response.getResultSets().get(0),
@@ -2197,7 +2197,7 @@ throw new CTSRestException("404",null);
 								}
 							}, false);
 
-			outResponseSearchLocationCatalog.setAddressTypeItem(returnResponseSearchLocationCatalog_addressTypeItem);
+			outResponseSearchLocationCatalog.setResponseSearchLocationCatalog_addressTypeItem(returnResponseSearchLocationCatalog_addressTypeItem);
 			// break;
 
 		} else {
@@ -2206,10 +2206,7 @@ throw new CTSRestException("404",null);
 		}
 
 		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
+		
 		
 		Message message = new Message();
 		
