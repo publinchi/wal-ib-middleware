@@ -28,14 +28,7 @@ import java.util.HashMap;
 
 
 public class RequestSearchLocationCatalog implements Serializable {
-  private Integer externalCustomerId;
   private String city;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
-  }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
   public String getCity(){
     return this.city;
   }

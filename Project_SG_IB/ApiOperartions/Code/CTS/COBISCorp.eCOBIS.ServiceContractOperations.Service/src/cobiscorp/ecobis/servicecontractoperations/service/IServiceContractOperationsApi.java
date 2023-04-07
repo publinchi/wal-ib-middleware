@@ -26,11 +26,6 @@ import cobiscorp.ecobis.commons.dto.ServiceResponseTO;
 public interface IServiceContractOperationsApi{
 
   /**
-  * Service to apply credit account
-  */
-  ServiceResponseTO accountCreditOperation(ServiceRequestTO requestTO);  
-
-  /**
   * Afiliate Customer
   */
   ServiceResponseTO affiliateCustomer(ServiceRequestTO requestTO);  
@@ -44,6 +39,11 @@ public interface IServiceContractOperationsApi{
   * Service to create a savings account for an existing customer
   */
   ServiceResponseTO createSavingAccount(ServiceRequestTO requestTO);  
+
+  /**
+  * Service to apply credit account
+  */
+  ServiceResponseTO creditOperation(ServiceRequestTO requestTO);  
 
   /**
   * Encrypt Data

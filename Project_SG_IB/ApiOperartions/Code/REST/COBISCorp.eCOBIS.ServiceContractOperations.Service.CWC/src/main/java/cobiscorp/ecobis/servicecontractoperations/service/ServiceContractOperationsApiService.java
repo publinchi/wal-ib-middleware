@@ -2180,7 +2180,7 @@ throw new CTSRestException("404",null);
 		int mapBlank = 0;
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size()>0 &&response.getResultSets().get(0).getData().getRows().size()>0) {
+		if (response.getResultSets() != null && response.getResultSets().size()>0 && response.getResultSets().get(0).getData().getRows().size()>0) {
 			// ---------NO Array
 			ResponseSearchLocationCatalog_addressTypeItem [] returnResponseSearchLocationCatalog_addressTypeItem = MapperResultUtil
 					.mapToArray(response.getResultSets().get(0),
@@ -2197,7 +2197,7 @@ throw new CTSRestException("404",null);
 								}
 							}, false);
 
-			outResponseSearchLocationCatalog.setResponseSearchLocationCatalog_addressTypeItem(returnResponseSearchLocationCatalog_addressTypeItem);
+			outResponseSearchLocationCatalog.setAddressTypeItem(returnResponseSearchLocationCatalog_addressTypeItem);
 			// break;
 
 		} else {
