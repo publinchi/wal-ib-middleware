@@ -1092,6 +1092,11 @@
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-register-account</artifactId>
 			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-accountcreditoperation</artifactId>
+			<version>4.6.1.0</version>
 		</dependency>	
 	</dependencies>
 	<build>
@@ -1455,7 +1460,8 @@
 							orchestration-core-ib-validateIdentity,
 							orchestration-core-ib-getbalancesdetail,
 							orchestration-core-ib-query-get-own-accounts-view,
-							orchestration-core-ib-query-register-account
+							orchestration-core-ib-query-register-account,
+							orchestration-core-ib-accountcreditoperation
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
