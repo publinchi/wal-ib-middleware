@@ -73,7 +73,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="XXX" />
+      <field type="String" name="constantValue" value="0" />
       <field type="String" name="cTSDataType" value="SQLINT4" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -94,7 +94,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="1" />
+      <field type="String" name="constantValue" value="X" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
