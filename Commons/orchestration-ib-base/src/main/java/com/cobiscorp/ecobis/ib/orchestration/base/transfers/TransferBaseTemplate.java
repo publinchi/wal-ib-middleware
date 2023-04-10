@@ -621,11 +621,11 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, anOriginalRequest.readValueParam("@s_servicio"));
 
 		request.addInputParam("@i_graba_log", ICTSTypes.SQLVARCHAR, "S");
-		
+
 		if (anOriginalRequest.readValueParam("@i_latitud") != null) {
 			request.addInputParam("@i_latitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_latitud"));
 		}
-		
+
 		if (anOriginalRequest.readValueParam("@i_longitud") != null) {
 			request.addInputParam("@i_longitud", ICTSTypes.SQLFLT8i, anOriginalRequest.readValueParam("@i_longitud"));
 		}
@@ -637,7 +637,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_cta", anOriginalRequest, request);
 		Utils.copyParam("@i_prod", anOriginalRequest, request);
 		Utils.copyParam("@i_mon", anOriginalRequest, request);
-		
+
 		// Datos de cuenta destino
 		Integer t_trn = Integer.parseInt(anOriginalRequest.readValueParam("@t_trn"));
 		if (!Utils.isNull(anOriginalRequest.readValueParam("@i_cta_des")) && !Utils.isNull(anOriginalRequest.readValueParam("@i_prod_des"))
@@ -645,49 +645,52 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 
 			if (logger.isInfoEnabled())
 				logger.logInfo(CLASS_NAME + "t_trn a evaluar: " + t_trn);
-			
-			try { 
-				
-				
-			
-			
-			switch (t_trn) {
-			case 1800012:
-				if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nom_cliente_benef"))) {
-					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_beneficiary"));//pa_beneficiario
-					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_cliente_benef"));//pa_nombre_cr
+
+			try {
+
+
+				switch (t_trn) {
+					case 1800012:
+						if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nom_cliente_benef"))) {
+							request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_beneficiary"));//pa_beneficiario
+							request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nom_cliente_benef"));//pa_nombre_cr
+						}
+						break;
+					case 1800015:
+					case 1800016:
+					case 1870001:
+					case 1870013:
+						request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
+						if (bag != null && bag.containsKey("@i_banco_dest"))
+							request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
+						if (bag != null && bag.containsKey("@i_clave_rastreo"))
+							request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+						logger.logInfo("Flag Registra Spei? " + bag.get("@i_bandera_spei"));
+						if (bag.containsKey("@i_bandera_spei")) {
+							request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, (String) bag.get("@i_bandera_spei"));
+						} else {
+							request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
+						}
+						request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
+						request.addInputParam("@i_mensaje_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_mensaje_acc") != null ? bag.get("@i_mensaje_acc").toString() : "");
+						request.addInputParam("@i_id_spei_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_id_spei_acc") != null ? bag.get("@i_id_spei_acc").toString() : "");
+						request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc").toString());
+						request.addInputParam("@i_transaccion_spei", ICTSTypes.SQLINT4, bag.get("@i_transaccion_spei") != null ? bag.get("@i_transaccion_spei").toString() : "");
+						request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, (bag.get("@o_spei_request") != null) ? bag.get("@o_spei_request").toString() : "");
+						request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response") != null ? bag.get("@o_spei_response").toString() : "");
+						request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch").toString());
+						if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nombre_benef"))) {
+							request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_beneficiario
+							request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_nombre_cr
+						}
+						break;
+					default:
+						request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "S");
+						break;
 				}
-				break;
-			case 1800015:
-			case 1800016:
-			case 1870001:
-			case 1870013:
-				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
-				if(bag!=null && bag.containsKey("@i_banco_dest"))
-				request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
-				if(bag!=null && bag.containsKey("@i_clave_rastreo"))
-				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
-				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
-				request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
-				request.addInputParam("@i_mensaje_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_mensaje_acc")!=null? bag.get("@i_mensaje_acc").toString():"");
-				request.addInputParam("@i_id_spei_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_id_spei_acc")!=null?bag.get("@i_id_spei_acc").toString():"");
-				request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc").toString());
-				request.addInputParam("@i_transaccion_spei", ICTSTypes.SQLINT4, bag.get("@i_transaccion_spei")!=null?bag.get("@i_transaccion_spei").toString():"");
-				request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, (bag.get("@o_spei_request")!=null)?bag.get("@o_spei_request").toString():"");
-				request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response")!=null?bag.get("@o_spei_response").toString():""  );
-				request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch").toString());
-				if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nombre_benef"))) {
-					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_beneficiario
-					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_nombre_cr
-				}
-				break;
-			default:
-				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "S");
-				break;
-			}
-			
-			}catch(Exception xe) {
-				
+
+			} catch (Exception xe) {
+
 				xe.printStackTrace();
 			}
 
@@ -699,25 +702,25 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		}
 
 		switch (t_trn) {
-		case 1800009:
-			request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "F");
-			break;
-		case 1800012:
-			request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "T");
-			break;
-		case 1800015:
-			request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "H");
-			Utils.copyParam("@i_ip_proveedor", anOriginalRequest, request);
-			request.addInputParam("@i_nom_banco_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_banco_origen"));
-			request.addInputParam("@i_nom_banco_des", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_banco_destino"));
-			break;
-		case 18862:
-		case 1800016:
-			request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "I");
-			break;
-		default:
-			request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "F");
-			break;
+			case 1800009:
+				request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "F");
+				break;
+			case 1800012:
+				request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "T");
+				break;
+			case 1800015:
+				request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "H");
+				Utils.copyParam("@i_ip_proveedor", anOriginalRequest, request);
+				request.addInputParam("@i_nom_banco_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_banco_origen"));
+				request.addInputParam("@i_nom_banco_des", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_banco_destino"));
+				break;
+			case 18862:
+			case 1800016:
+				request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "I");
+				break;
+			default:
+				request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "F");
+				break;
 		}
 
 		if (anOriginalRequest.readValueParam("@i_recurr_id") != null) {

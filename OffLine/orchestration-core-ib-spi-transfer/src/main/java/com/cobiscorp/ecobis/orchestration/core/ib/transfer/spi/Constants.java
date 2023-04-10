@@ -32,6 +32,10 @@ public class Constants {
 
     public static final String COMPANY_ID = "COMPID";
     public static final String TRACKING_KEY_PREFIX = "BANKPREFIX";
+    public static final String ALGN_URI = "ALGNURI";
+    public static final String CERT_URI = "CERTURI";
+    public static final String SPEI_DUMMY = "SPEIDUMMY";
+    public static final String TIME_INIT_DAY = "TIMEINIT";
 
     /*------------------ SPEI -----------------------------------*/
     //ENTRADAS
