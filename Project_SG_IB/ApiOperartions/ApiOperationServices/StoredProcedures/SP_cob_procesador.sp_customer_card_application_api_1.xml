@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_customer_card_application_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
+    <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+        <column name="code" />
+        <column name="message" />
+        <column name="cardId" />
+        <column name="cardNumber" />
+        <column name="customerName" />
+        <column name="cardApplication" />
+      </columns>
+      <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message,"cardId" = tab.cardId,"cardNumber" = tab.cardNumber,"customerName" = tab.customerName,"cardApplication" = tab.cardApplication </queryText>
+    </query>
+  </queries>
+</procedure>
