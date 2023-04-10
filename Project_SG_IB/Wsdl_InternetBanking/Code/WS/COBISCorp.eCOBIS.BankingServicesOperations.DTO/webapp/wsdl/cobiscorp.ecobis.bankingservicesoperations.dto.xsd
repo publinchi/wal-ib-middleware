@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"  targetNamespace="http://dto.bankingservicesoperations.ecobis.cobiscorp" xmlns:dto="http://dto.bankingservicesoperations.ecobis.cobiscorp" xmlns:dto2="http://dto2.sdf.cts.cobis.cobiscorp.com">
+  <import schemaLocation="commonDTO2.xsd" namespace="http://dto2.sdf.cts.cobis.cobiscorp.com" /><simpleType name="char"><restriction base="string"><length value="1" /></restriction></simpleType><complexType name="PayOrderDetailRequest"><sequence><element name="dataFrame" type="string" minOccurs="0" /></sequence></complexType><complexType name="PayOrderDetailResponse"><complexContent><extension base="dto2:CTSServiceResponseTO"><sequence><element name="replay" type="string" minOccurs="0" /></sequence></extension></complexContent></complexType>
+</schema>
+    

@@ -1,0 +1,3 @@
+<?xml version='1.0' encoding='utf-8'?>
+<DTOs><dto name="PayOrderDetailRequest" package="cobiscorp.ecobis.bankingservicesoperation.dto"><encryptedAttibutes><element name="dataFrame" type="string" nillable="true" maxOccurs="unbounded" minOccurs="0"></element></encryptedAttibutes></dto><dto name="PayOrderDetailResponse" package="cobiscorp.ecobis.bankingservicesoperation.dto"><encryptedAttibutes></encryptedAttibutes></dto></DTOs>
+    

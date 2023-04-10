@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<javaee:handler-chains xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ms="urn:schemas-microsoft-com:xslt" xmlns:js="urn:the-xml-files:xslt">
+  <javaee:handler-chain />
+</javaee:handler-chains>

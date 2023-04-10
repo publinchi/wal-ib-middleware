@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="sign-archive" name="COBISCorp.eCOBIS.BankingServicesOperations.Service" xmlns:ms="urn:schemas-microsoft-com:xslt" xmlns:js="urn:the-xml-files:xslt">
+  <property file="build.properties" />
+  <property name="root.dir" location="C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/COBISConstruction" />
+  <import file="${root.dir}/cobis.xml" />
+  <target name="compile">
+    <javac srcdir="${build.src.dir}" destdir="${build.classes.dir}" debug="true" encoding="utf-8" source="1.8" target="1.8" includeantruntime="false">
+      <classpath refid="compile.classpath" />
+    </javac>
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${build.src.dir}" includes="**/*.xml,**/*.properties" />
+    </copy>
+  </target>
+  <target name="classpath">
+    <path id="compile.classpath">
+      <fileset dir="${root.dir}/lib">
+        <include name="**/*.jar" />
+      </fileset>
+      <fileset dir="..\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\dist">
+        <include name="**/*.jar" />
+      </fileset>
+    </path>
+    <path id="test.compile.classpath" />
+  </target>
+  <target name="archive" depends="archive-cts-service,archive-cts-serviceNoImport" />
+  <target name="sign-archive" depends="archive">
+    <signjar alias="cobis" jar="${dist.dir}/${ant.project.name}-${project.version}.jar" keystore="C:/Trafalgar/middleware_22/trf-ib-middleware/Project_SG_IB/Wsdl_InternetBanking/WebServiceWsdl/Products/COBISCorp.eCOBIS.BankingServicesOperations.Service/cobis.keystore" storepass="cobisadminadminq" keypass="cobisadmin" />
+  </target>
+</project>

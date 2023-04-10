@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema elementFormDefault="qualified" targetNamespace="http://dto2.commons.ecobis.cobiscorp" xmlns="http://www.w3.org/2001/XMLSchema">
+  <complexType name="MessageTO">
+    <sequence>
+      <element name="code" minOccurs="0" type="string" />
+      <element name="message" minOccurs="0" type="string" />
+      <element name="type" minOccurs="0" type="string" />
+    </sequence>
+  </complexType>
+  <complexType name="ServiceError">
+    <sequence>
+      <element name="code" minOccurs="0" type="string" />
+      <element name="message" minOccurs="0" type="string" />
+      <element name="type" minOccurs="0" type="string" />
+    </sequence>
+  </complexType>
+  <complexType name="Cobis-Header">
+    <sequence>
+      <element name="applicationId" type="string" minOccurs="0" />
+      <element name="backendId" type="string" minOccurs="0" />
+      <element name="user" type="string" minOccurs="0" />
+      <element name="password" type="string" minOccurs="0" />
+    </sequence>
+  </complexType>
+</schema>

@@ -1,0 +1,45 @@
+---BUILD---
+
+Generating jar File
+JAVA_HOME="C:\Program Files\Java\jdk1.8.0_202"
+java -jar ANTEXECUTOR2.jar -t "C:\Program Files\Java\jdk1.8.0_202"\lib\tools.jar -f "C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build.xml" "sign-archive" 
+INIT Add class
+File jar add->C:/Program Files/Java/jdk1.8.0_202/lib/tools.jar
+/C:/Program%20Files/COBIS/COBIS%20Services%20Generator%204/Packager/Java/ANT/ANTEXECUTOR2.jar
+/C:/Program%20Files/Java/jdk1.8.0_202/lib/tools.jar
+END Add class
+Buildfile: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build.xml
+     [echo] Building C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build.xml
+     [echo] Version 1.0.0.0
+clean:
+   [delete] Deleting directory C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build
+classpath:
+init:
+    [mkdir] Created dir: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\src
+    [mkdir] Created dir: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\classes
+    [mkdir] Created dir: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\dist
+    [mkdir] Created dir: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\cobertura\instrumented
+prepare-dto:
+    [mkdir] Created dir: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\resources
+     [copy] Copying 2 files to C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\src
+mark-version-impl:
+     [echo] marking the version: 1.0.0.0
+     [echo] using the dbprovider: DataSource
+compile:
+    [javac] Compiling 2 source files to C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\classes
+archive-impl-lib-create:
+    [mkdir] Created dir: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\classes\OSGI-INF\lib
+archive-impl-lib-copy:
+archive-cts-dto:
+      [jar] Building jar: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\dist\COBISCorp.eCOBIS.BankingServicesOperations.DTO-1.0.0.0.jar
+archive:
+sign-archive:
+  [signjar] Signing JAR: C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\dist\COBISCorp.eCOBIS.BankingServicesOperations.DTO-1.0.0.0.jar to C:\Trafalgar\middleware_22\trf-ib-middleware\Project_SG_IB\Wsdl_InternetBanking\Code\CTS\COBISCorp.eCOBIS.BankingServicesOperations.DTO\build\dist\COBISCorp.eCOBIS.BankingServicesOperations.DTO-1.0.0.0.jar as cobis
+  [signjar] jar signed.
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer's certificate is self-signed.
+  [signjar] Enter Passphrase for keystore: Enter key password for cobis: 
+BUILD SUCCESSFUL
+Total time: 3 seconds
+FIN
