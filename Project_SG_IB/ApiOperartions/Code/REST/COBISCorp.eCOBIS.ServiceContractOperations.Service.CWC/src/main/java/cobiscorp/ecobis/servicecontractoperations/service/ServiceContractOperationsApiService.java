@@ -2432,7 +2432,74 @@ throw new CTSRestException("404",null);
 		return null;
 	}
 
+	/**
+          * Customer Card Application API
+          */
+         @Override
+			// Return Dto
+			public  CardApplicationResponse  customerCardApplication(CardApplicationRequest inCardApplicationRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: customerCardApplication");
+      CardApplicationResponse outSingleCardApplicationResponse  = new CardApplicationResponse();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_customer_card_application_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500112");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCardApplicationRequest.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getAccountNumber());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    CardApplicationResponse returnCardApplicationResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<CardApplicationResponse>() { 
+                    @Override
+                    public CardApplicationResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CardApplicationResponse dto = new CardApplicationResponse();
+                    
+                          dto.setCardId(resultSetMapper.getInteger(4));
+                          dto.setCardNumber(resultSetMapper.getString(5));
+                          dto.setCustomerName(resultSetMapper.getString(6));
+                          dto.setCardApplication(resultSetMapper.getInteger(7));
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
+							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleCardApplicationResponse=returnCardApplicationResponse ;
+                    
+            }else {
+            mapBlank++;
 
-
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: customerCardApplication");
+        //returns data
+        return outSingleCardApplicationResponse;
+      }
 }

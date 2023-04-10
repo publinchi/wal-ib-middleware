@@ -213,7 +213,8 @@
 			//Have DTO
 			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
 			
-			
+			// Return DTO
+			public  CardApplicationResponse customerCardApplication(CardApplicationRequest inCardApplicationRequest  )throws CTSRestException;
 			
     }
 
