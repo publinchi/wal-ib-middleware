@@ -187,6 +187,7 @@
 		<module>../ApiOperations/orchestration-core-ib-query-get-movements-detail</module>
 		<module>../ApiOperations/orchestration-core-ib-accountcreditoperation</module>
 		<module>../ApiOperations/orchestration-core-ib-query-register-account</module>
+		<module>../ApiOperations/orchestration-core-ib-customercardapplication</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>
