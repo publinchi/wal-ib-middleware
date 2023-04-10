@@ -2156,8 +2156,8 @@ throw new CTSRestException("404",null);
 		procedureRequestAS.addInputParam("@i_city_code", ICTSTypes.SQLVARCHAR,
 				inRequestSearchLocationCatalog.getCity());
 		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
-		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "XXX");
-		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "1");
+		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
