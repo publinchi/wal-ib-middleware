@@ -2142,7 +2142,7 @@ throw new CTSRestException("404",null);
 	/**
 	 * Catalogue Of Locations 
 	 */
-	@Override
+	@Override	
 	// Have DTO
 	public ResponseSearchLocationCatalog searchLocationCatalog(
 			RequestSearchLocationCatalog inRequestSearchLocationCatalog) throws CTSRestException {
@@ -2156,8 +2156,8 @@ throw new CTSRestException("404",null);
 		procedureRequestAS.addInputParam("@i_city_code", ICTSTypes.SQLVARCHAR,
 				inRequestSearchLocationCatalog.getCity());
 		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
-		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "XXX");
-		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "1");
+		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -2180,7 +2180,7 @@ throw new CTSRestException("404",null);
 		int mapBlank = 0;
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+		if (response.getResultSets() != null && response.getResultSets().size()>0 && response.getResultSets().get(0).getData().getRows().size()>0) {
 			// ---------NO Array
 			ResponseSearchLocationCatalog_addressTypeItem [] returnResponseSearchLocationCatalog_addressTypeItem = MapperResultUtil
 					.mapToArray(response.getResultSets().get(0),
@@ -2206,10 +2206,7 @@ throw new CTSRestException("404",null);
 		}
 
 		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
+		
 		
 		Message message = new Message();
 		

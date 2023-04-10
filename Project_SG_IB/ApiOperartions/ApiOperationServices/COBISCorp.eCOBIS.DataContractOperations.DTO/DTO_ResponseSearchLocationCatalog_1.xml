@@ -8,6 +8,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
@@ -22,6 +23,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="2">
@@ -37,6 +39,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
   </collection>
@@ -44,5 +47,5 @@
   <collection type="Map" length="0" id="8" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
-  <field type="String" name="stateDTO" value="REMOVE" />
+  <field type="String" name="stateDTO" value="" />
 </class>
