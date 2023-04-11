@@ -2442,7 +2442,7 @@ throw new CTSRestException("404",null);
       CardApplicationResponse outSingleCardApplicationResponse  = new CardApplicationResponse();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_customer_card_application_api");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_card_application_api");
       
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500112");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCardApplicationRequest.getExternalCustomerId()));

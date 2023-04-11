@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <procedure>
   <database>cob_procesador</database>
-  <name>sp_customer_card_application_api</name>
+  <name>sp_card_application_api</name>
   <type>SYBASE</type>
   <version>1</version>
   <parameters>
