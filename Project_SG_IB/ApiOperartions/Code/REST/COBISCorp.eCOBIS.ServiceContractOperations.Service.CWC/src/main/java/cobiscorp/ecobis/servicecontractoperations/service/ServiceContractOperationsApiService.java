@@ -619,10 +619,9 @@ throw new CTSRestException("404",null);
  Message message=new Message();
  message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
  message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));   
+	outResponseGetColonyByMunicipality.setMessage(message);
 	if (message != null && message.getCode() == 0) {
 		outResponseGetColonyByMunicipality.setSuccess(true);
-		outResponseGetColonyByMunicipality.setMessage(message);
-
 	} else
 		outResponseGetColonyByMunicipality.setSuccess(false);
       
