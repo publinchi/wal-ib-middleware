@@ -41,10 +41,12 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
@@ -828,6 +830,45 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
           return Response.ok(outSingleResponseUpdateProfile).build();
         
       }
+        
+        /**
+        * Service for transfer to a third party account
+        */
+      @POST
+	    @Path("/apiOperations/transfer/transferThirdPartyAccount")
+	    @Consumes({"application/json"})
+	    @Produces({"application/json"})
+	     public Response  transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount ){
+		  LOGGER.logDebug("Start service execution REST: transferThirdPartyAccount");
+	    ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount  = new ResponseTransferThirdPartyAccount();
+	        
+	    if(!validateMandatory(new Data("externalCustomerId", inRequestTransferThirdPartyAccount.getExternalCustomerId()), new Data("originAccountNumber", inRequestTransferThirdPartyAccount.getOriginAccountNumber()), new Data("destinationAccountNumber", inRequestTransferThirdPartyAccount.getDestinationAccountNumber()), new Data("amount", inRequestTransferThirdPartyAccount.getAmount()), new Data("description", inRequestTransferThirdPartyAccount.getDescription()), new Data("latitude", inRequestTransferThirdPartyAccount.getLatitude()), new Data("longitude", inRequestTransferThirdPartyAccount.getLongitude()))) {
+	      LOGGER.logDebug("400 is returned - Required fields are missing");
+	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    }
+		    
+	    try {
+	    outResponseTransferThirdPartyAccount=iServiceContractOperationsApiService.transferThirdPartyAccount( inRequestTransferThirdPartyAccount );
+	    } catch (CTSRestException e) {
+	    LOGGER.logError("CTSRestException",e);
+	    if ("404".equals(e.getMessage())) {
+	    LOGGER.logDebug("404 is returned - No data found");
+	    return Response.status(404).entity("No data found").build();
+	    }
+	
+	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	    return Response.status(409).entity(e.getMessageBlockList()).build();
+	    } catch (Exception e){
+	    LOGGER.logDebug("500 is returned - Code exception");
+	    LOGGER.logError("Exception",e);
+	    return Response.status(500).entity(e.getMessage()).build();
+	    }
+	    
+	        LOGGER.logDebug("Ends service execution REST: transferThirdPartyAccount");
+	        return Response.ok(outResponseTransferThirdPartyAccount).build();
+	      
+	    }
+      
     @POST
       @Path("/apiOperations/onbording/validateCustomerIdentityCard")
       @Consumes({"application/json"})
@@ -972,7 +1013,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     * Get Colony by Municipality
     */
   @POST
-@Path("/apiOperations/onbording/getColonyByMunicipality")
+@Path("/apiOperations/onboarding/getColonyByMunicipality")
 @Consumes({"application/json"})
 @Produces({"application/json"})
  public Response  getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality ){

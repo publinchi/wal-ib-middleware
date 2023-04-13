@@ -121,6 +121,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO searchZipCode(ServiceRequestTO requestTO);  
 
   /**
+  * Service for transfer to a third party account
+  */
+  ServiceResponseTO transferThirdPartyAccount(ServiceRequestTO requestTO);  
+
+  /**
   * Update customer address
   */
   ServiceResponseTO updateCustomerAddress(ServiceRequestTO requestTO);  

@@ -1036,6 +1036,66 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_transf_third_account_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestTransferThirdPartyAccount",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "originAccountNumber", param = "@i_cta", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "destinationAccountNumber", param = "@i_cta_des", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "amount", param = "@i_val", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "description", param = "@i_concepto", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "commission", param = "@i_comision", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "latitude", param = "@i_latitud", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "longitude", param = "@i_longitud", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "detail", param = "@i_detalle", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500114")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseTransferThirdPartyAccount",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferThirdPartyAccount",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferThirdPartyAccount",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount.class,
+      columns = {
+		    @CTSColumn(field = "referenceCode", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO transferThirdPartyAccount(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cobis..sp_direccion_dml_api",   
 		objectRequest = {
 		
