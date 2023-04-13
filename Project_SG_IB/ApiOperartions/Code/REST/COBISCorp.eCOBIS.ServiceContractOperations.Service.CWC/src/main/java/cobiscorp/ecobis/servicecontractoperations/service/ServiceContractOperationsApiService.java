@@ -2227,6 +2227,124 @@ throw new CTSRestException("404",null);
 		// returns data
 		return outResponseSearchLocationCatalog;
 	}
+	
+	    /**
+	    * Service for transfer to a third party account
+	    */
+	   @Override
+		//Have DTO
+		public ResponseTransferThirdPartyAccount transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: transferThirdPartyAccount");
+		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount  = new ResponseTransferThirdPartyAccount();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transf_third_account_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500114");
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getOriginAccountNumber());
+		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationAccountNumber());
+		procedureRequestAS.addInputParam("@i_val",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
+		procedureRequestAS.addInputParam("@i_concepto",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDescription());
+		procedureRequestAS.addInputParam("@i_comision",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
+		procedureRequestAS.addInputParam("@i_latitud",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getLatitude()));
+		procedureRequestAS.addInputParam("@i_longitud",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
+		procedureRequestAS.addInputParam("@i_detalle",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDetail());
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseTransferThirdPartyAccount>() { 
+		              @Override
+		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseTransferThirdPartyAccount.setSuccess(returnResponseTransferThirdPartyAccount.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseTransferThirdPartyAccount>() { 
+		              @Override
+		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+		              
+								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseTransferThirdPartyAccount.setMessage(returnResponseTransferThirdPartyAccount.getMessage());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseTransferThirdPartyAccount>() { 
+		              @Override
+		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+		              
+		                    dto.setReferenceCode(resultSetMapper.getString(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseTransferThirdPartyAccount.setReferenceCode(returnResponseTransferThirdPartyAccount.getReferenceCode());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  LOGGER.logDebug("Ends service execution: transferThirdPartyAccount");
+		  //returns data
+		  return outResponseTransferThirdPartyAccount;
+		}
+	   
 
 	/**
 	 * Validate Identity
