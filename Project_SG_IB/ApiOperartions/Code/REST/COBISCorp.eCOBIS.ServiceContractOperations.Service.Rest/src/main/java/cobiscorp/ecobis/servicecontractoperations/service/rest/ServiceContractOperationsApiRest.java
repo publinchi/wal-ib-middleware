@@ -75,6 +75,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
     
     import org.apache.felix.scr.annotations.*;
     import com.cobiscorp.cobis.commons.log.ILogger;

@@ -101,43 +101,8 @@ public class CustomerCardApplicationOrchestrationCore extends SPJavaOrchestratio
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
-				String cardApplication = "0";
-				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
-				
-				reqTMPLocal.setSpName("cob_atm..sp_atm_graba_sol_tmp");
-				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
-				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "16558");
-				reqTMPLocal.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16558");
-				reqTMPLocal.addInputParam("@i_categoria", ICTSTypes.SQLCHAR, "C");
-				reqTMPLocal.addInputParam("@i_tipo_solicitud", ICTSTypes.SQLCHAR, "ETI");
-				reqTMPLocal.addInputParam("@i_tarjeta_prn", ICTSTypes.SQLINT4, "0");
-				reqTMPLocal.addInputParam("@i_cliente", ICTSTypes.SQLINT4, idCustomer);
-				reqTMPLocal.addInputParam("@i_ofi_org", ICTSTypes.SQLINT4, "1");
-				reqTMPLocal.addInputParam("@i_comentario", ICTSTypes.SQLVARCHAR, "CREADO DESDE BM");
-				reqTMPLocal.addInputParam("@i_periodo", ICTSTypes.SQLVARCHAR, "D");
-				reqTMPLocal.addInputParam("@i_persona_retira", ICTSTypes.SQLVARCHAR, "PROPIETARIO");
-				reqTMPLocal.addOutputParam("@o_numero", ICTSTypes.SQLINT4, cardApplication);
-				
-				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
-				if (logger.isInfoEnabled()) {
-					logger.logDebug("Ending flow, queryAccountCreditOperation with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
-				}
-
-				if (!wProcedureResponseLocal.hasError()) {
-					if (!cardApplication.equals("0")) {
-						aBagSPJavaOrchestration.put("0", cardApplication);
-						
-					} else {
-						
-						aBagSPJavaOrchestration.put("", "Error customer card application");
-						return;
-					}
-					
-				} else {
-					
-					aBagSPJavaOrchestration.put("", "Error customer card application local");
-					return;
-				}
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				return;
 				
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
 				
@@ -175,12 +140,12 @@ public class CustomerCardApplicationOrchestrationCore extends SPJavaOrchestratio
 		if (keyList.get(0).equals("0")) {
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
 			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			row.addRowData(2, new ResultSetRowColumnData(false, "0"));
-			row.addRowData(3, new ResultSetRowColumnData(false, "Success"));
+			row.addRowData(2, new ResultSetRowColumnData(false, keyList.get(0)));
+			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(4, new ResultSetRowColumnData(false, null));
 			row.addRowData(5, new ResultSetRowColumnData(false, null));
 			row.addRowData(6, new ResultSetRowColumnData(false, null));
-			row.addRowData(7, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
 
 		} else {
