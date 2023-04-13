@@ -114,7 +114,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 	  LOGGER.logDebug("Start service execution REST: creditOperation");
       CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
           
-      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()), new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
+      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
