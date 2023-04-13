@@ -64,6 +64,8 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
+    import   cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -193,6 +195,12 @@
 			//Have DTO
 			public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
           /**
+          * Service for transfer to a third party account
+          */
+        
+			//Have DTO
+			public ResponseTransferThirdPartyAccount transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount  )throws CTSRestException;
+          /**
           * Update customer address
           */
         
@@ -212,9 +220,6 @@
         
 			//Have DTO
 			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
-			
-			
-			
     }
 
   
