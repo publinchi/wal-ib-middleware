@@ -75,6 +75,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
     
     import org.apache.felix.scr.annotations.*;
     import com.cobiscorp.cobis.commons.log.ILogger;
@@ -116,7 +118,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 	  LOGGER.logDebug("Start service execution REST: creditOperation");
       CreditAccountResponse outSingleCreditAccountResponse  = new CreditAccountResponse();
           
-      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()), new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
+      if(!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()), new Data("accountNumber", inCreditAccountRequest.getAccountNumber()), new Data("amount", inCreditAccountRequest.getAmount()), new Data("commission", inCreditAccountRequest.getCommission()), new Data("latitude", inCreditAccountRequest.getLatitude()), new Data("longitude", inCreditAccountRequest.getLongitude()), new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()), new Data("creditConcept", inCreditAccountRequest.getCreditConcept()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
@@ -1046,6 +1048,44 @@ return Response.status(500).entity(e.getMessage()).build();
     return Response.ok(outResponseGetColonyByMunicipality).build();
   
 }
+
+   /**
+          * Customer Card Application API
+          */
+        @POST
+      @Path("/apiOperations/customer/customerCardApplication")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  customerCardApplication(CardApplicationRequest inCardApplicationRequest ){
+	  LOGGER.logDebug("Start service execution REST: customerCardApplication");
+      CardApplicationResponse outSingleCardApplicationResponse  = new CardApplicationResponse();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inCardApplicationRequest.getExternalCustomerId()), new Data("accountNumber", inCardApplicationRequest.getAccountNumber()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleCardApplicationResponse=iServiceContractOperationsApiService.customerCardApplication( inCardApplicationRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: customerCardApplication");
+          return Response.ok(outSingleCardApplicationResponse).build();
+        
+      }
     
     }
   

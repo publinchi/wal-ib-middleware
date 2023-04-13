@@ -74,6 +74,9 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
+    
     
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
     import java.util.List;
@@ -220,6 +223,10 @@
         
 			//Have DTO
 			public ResponseValidateIdentity validateIdentity(RequestValidateIdentity inRequestValidateIdentity  )throws CTSRestException;
+			
+			// Return DTO
+			public  CardApplicationResponse customerCardApplication(CardApplicationRequest inCardApplicationRequest  )throws CTSRestException;
+			
     }
 
   

@@ -3,6 +3,7 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.accountcreditoperation;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -77,6 +78,18 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
 		String creditConcept = wQueryRequest.readValueParam("@i_creditConcept");
+		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
+		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));
+		
+		if (amount.compareTo(new BigDecimal("0")) != 1) {
+			aBagSPJavaOrchestration.put("50043", "amount must be greater than 0");
+			return;
+		}
+		
+		if (commission.compareTo(new BigDecimal("0")) != 1) {
+			aBagSPJavaOrchestration.put("50044", "commission must be greater than 0");
+			return;
+		}
 		
 		if (accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("40082", "accountNumber must not be empty");
