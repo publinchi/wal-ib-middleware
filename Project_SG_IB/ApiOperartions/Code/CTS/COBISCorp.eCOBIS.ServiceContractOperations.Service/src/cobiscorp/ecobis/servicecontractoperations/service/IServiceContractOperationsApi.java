@@ -46,6 +46,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO creditOperation(ServiceRequestTO requestTO);  
 
   /**
+  * Customer Card Application API
+  */
+  ServiceResponseTO customerCardApplication(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
@@ -119,6 +124,11 @@ public interface IServiceContractOperationsApi{
   * Search Zip Code API
   */
   ServiceResponseTO searchZipCode(ServiceRequestTO requestTO);  
+
+  /**
+  * Transfer Spei
+  */
+  ServiceResponseTO transferSpei(ServiceRequestTO requestTO);  
 
   /**
   * Service for transfer to a third party account
