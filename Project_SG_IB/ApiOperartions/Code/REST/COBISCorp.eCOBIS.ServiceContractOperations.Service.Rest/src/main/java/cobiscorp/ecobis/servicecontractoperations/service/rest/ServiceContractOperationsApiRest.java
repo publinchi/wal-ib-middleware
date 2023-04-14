@@ -41,12 +41,14 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferSpi;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
@@ -832,6 +834,62 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
           return Response.ok(outSingleResponseUpdateProfile).build();
         
       }
+        
+		/**
+		 * Transfer Spei
+		 */
+		@POST
+		@Path("/apiOperations/transfer/transferSpei")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response transferSpei(RequestTransferSpi inRequestTransferSpi) {
+			LOGGER.logDebug("Start service execution REST: transferSpei");
+			ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
+
+			if (!validateMandatory(new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
+					new Data("originAccountNumber", inRequestTransferSpi.getOriginAccountNumber()),
+					new Data("destinationAccountNumber", inRequestTransferSpi.getDestinationAccountNumber()),
+					new Data("originAccountAlias", inRequestTransferSpi.getOriginAccountAlias()),
+					new Data("destinationAccountAlias", inRequestTransferSpi.getDestinationAccountAlias()),
+					new Data("destinationBeneficiaryName", inRequestTransferSpi.getDestinationBeneficiaryName()),
+					new Data("amount", inRequestTransferSpi.getAmount()),
+					new Data("description", inRequestTransferSpi.getDescription()),
+					new Data("bankId", inRequestTransferSpi.getBankId()),
+					new Data("bankName", inRequestTransferSpi.getBankName()),
+					new Data("destinationAccountOwnerName", inRequestTransferSpi.getDestinationAccountOwnerName()),
+					new Data("destinationTypeAccount", inRequestTransferSpi.getDestinationTypeAccount()),
+					new Data("ownerName", inRequestTransferSpi.getOwnerName()),
+					new Data("detail", inRequestTransferSpi.getDetail()),
+					new Data("commission", inRequestTransferSpi.getCommission()),
+					new Data("latitude", inRequestTransferSpi.getLatitude()),
+					new Data("longitude", inRequestTransferSpi.getLongitude()),
+					new Data("originAccountNumber", inRequestTransferSpi.getOriginAccountNumber()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+
+			try {
+				outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(inRequestTransferSpi);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: transferSpei");
+			return Response.ok(outResponseTransferSpi).build();
+
+		}
         
         /**
         * Service for transfer to a third party account

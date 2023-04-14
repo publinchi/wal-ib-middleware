@@ -256,6 +256,50 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_card_application_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inCardApplicationRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500112")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnCardApplicationResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3),
+		    @CTSColumn(field = "cardId", columnIndex = 4),
+		    @CTSColumn(field = "cardNumber", columnIndex = 5),
+		    @CTSColumn(field = "customerName", columnIndex = 6),
+		    @CTSColumn(field = "cardApplication", columnIndex = 7)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO customerCardApplication(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_encryptData", dbms = "SQLCTS",  
 		objectRequest = {
 		
@@ -968,8 +1012,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
     
 				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500109"),
 				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
-				@CTSDefaultInputParam(value = "XXX", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
-				@CTSDefaultInputParam(value = "1", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+				@CTSDefaultInputParam(value = "0", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "X", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
 		},
   response = {
   
@@ -1031,6 +1075,82 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO searchZipCode(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_transfer_spei_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestTransferSpi",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "originAccountNumber", param = "@i_origin_account_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "destinationAccountNumber", param = "@i_destination_account_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originAccountAlias", param = "@i_origin_account_alias", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "destinationAccountAlias", param = "@i_destination_account_alias", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "destinationBeneficiaryName", param = "@i_destination_beneficiary_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "amount", param = "@i_amount", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "description", param = "@i_description", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "bankId", param = "@i_bank_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "bankName", param = "@i_bank_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "destinationAccountOwnerName", param = "@i_destination_account_owner_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "destinationTypeAccount", param = "@i_destination_type_account", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "ownerName", param = "@i_owner_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "detail", param = "@i_detail", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "commission", param = "@i_commission", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "latitude", param = "@i_latitude", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "longitude", param = "@i_longitude", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "originAccountNumber", param = "@i_reference_number", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500115")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "referenceCode", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "trackingKey", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO transferSpei(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
