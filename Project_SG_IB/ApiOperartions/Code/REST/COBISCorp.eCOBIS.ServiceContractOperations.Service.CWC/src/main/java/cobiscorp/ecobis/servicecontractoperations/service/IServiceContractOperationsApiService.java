@@ -60,8 +60,10 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
-    import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferSpi;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi;
+import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
@@ -197,6 +199,14 @@
         
 			//Have DTO
 			public SearchZipCodeResponse searchZipCode(SearchZipCodeRequest inSearchZipCodeRequest  )throws CTSRestException;
+
+		  /**
+		  * Transfer Spei
+		  */
+			
+			//Have DTO
+			public ResponseTransferSpi transferSpei(RequestTransferSpi inRequestTransferSpi  )throws CTSRestException;
+			
           /**
           * Service for transfer to a third party account
           */
