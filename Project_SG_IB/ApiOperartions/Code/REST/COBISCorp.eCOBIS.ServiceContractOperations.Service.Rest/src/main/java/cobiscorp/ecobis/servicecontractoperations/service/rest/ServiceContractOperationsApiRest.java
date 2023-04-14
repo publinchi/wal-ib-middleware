@@ -1080,10 +1080,6 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
 LOGGER.logDebug("Start service execution REST: getColonyByMunicipality");
 ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality  = new ResponseGetColonyByMunicipality();
     
-if(!validateMandatory(new Data("zipCode", inRequestGetColonyByMunicipality.getZipCode()), new Data("municipality", inRequestGetColonyByMunicipality.getMunicipality()))) {
-  LOGGER.logDebug("400 is returned - Required fields are missing");
-  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-}
   
 try {
 outResponseGetColonyByMunicipality=iServiceContractOperationsApiService.getColonyByMunicipality( inRequestGetColonyByMunicipality );
