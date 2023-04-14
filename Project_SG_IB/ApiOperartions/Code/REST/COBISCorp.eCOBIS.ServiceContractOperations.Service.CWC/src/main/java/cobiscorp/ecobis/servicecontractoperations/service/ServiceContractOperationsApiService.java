@@ -2307,7 +2307,7 @@ throw new CTSRestException("404",null);
 						}
 					}, false);
 
-			outResponseTransferSpi.set(returnResponseTransferSpi);
+			outResponseTransferSpi.setSuccess(returnResponseTransferSpi.isSuccess());
 			// break;
 
 		} else {
@@ -2330,7 +2330,7 @@ throw new CTSRestException("404",null);
 						}
 					}, false);
 
-			outResponseTransferSpi.set(returnResponseTransferSpi);
+			outResponseTransferSpi.setMessage(returnResponseTransferSpi.getMessage());
 			// break;
 
 		} else {
@@ -2339,7 +2339,7 @@ throw new CTSRestException("404",null);
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+		if (response.getResultSets() != null && response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size() > 0) {
 			// ---------NO Array
 			ResponseTransferSpi returnResponseTransferSpi = MapperResultUtil
 					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseTransferSpi>() {
@@ -2352,7 +2352,7 @@ throw new CTSRestException("404",null);
 						}
 					}, false);
 
-			outResponseTransferSpi.set(returnResponseTransferSpi);
+			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
 			// break;
 
 		} else {
@@ -2361,7 +2361,7 @@ throw new CTSRestException("404",null);
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(3).getData().getRows().size() > 0) {
+		if (response.getResultSets() != null && response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size() > 0) {
 			// ---------NO Array
 			ResponseTransferSpi returnResponseTransferSpi = MapperResultUtil
 					.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseTransferSpi>() {
@@ -2374,7 +2374,7 @@ throw new CTSRestException("404",null);
 						}
 					}, false);
 
-			outResponseTransferSpi.set(returnResponseTransferSpi);
+			outResponseTransferSpi.setTrackingKey(returnResponseTransferSpi.getTrackingKey());
 			// break;
 
 		} else {
