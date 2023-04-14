@@ -600,15 +600,8 @@ int mapBlank=0;
       mapBlank++;
 
       }
-    
-//End map returns
-if(mapBlank!=0&&mapBlank==mapTotal){
-LOGGER.logDebug("No data found");
-throw new CTSRestException("404",null);
-}
-
-
-
+      
+      
  Message message=new Message();
  message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
  message.setMessage(getOutValue(String.class, "@o_message", response.getParams())); 
