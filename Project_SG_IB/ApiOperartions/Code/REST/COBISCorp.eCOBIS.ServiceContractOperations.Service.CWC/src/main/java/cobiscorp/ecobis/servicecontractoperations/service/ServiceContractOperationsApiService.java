@@ -580,7 +580,9 @@ int mapTotal=0;
 int mapBlank=0;
 
       mapTotal++;
-      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+      
+  		if (response.getResultSets() != null && response.getResultSets().size()>0  &&
+				response.getResultSets().get(0).getData().getRows().size() > 0) {
 							//---------NO Array
 							AddressTypeItems [] returnAddressTypeItems = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<AddressTypeItems>() { 
               @Override
