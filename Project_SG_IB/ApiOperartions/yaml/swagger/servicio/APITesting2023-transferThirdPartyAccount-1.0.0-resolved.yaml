@@ -68,17 +68,17 @@ components:
           minLength: 1
           type: integer
           description: External Customer Id
-          example: 220
+          example: 3
         originAccountNumber:
           maxLength: 20
           type: string
           description: Origin Account Number
-          example: "402653207"
+          example: "03000000027"
         destinationAccountNumber:
           maxLength: 20
           type: string
           description: Destination Account Number
-          example: "03000000028"
+          example: "03000009502"
         amount:
           maxLength: 10
           type: number
@@ -117,13 +117,13 @@ components:
           type: boolean
           description: Indicates whether the service was executed.
           example: true
+        message:
+          $ref: '#/components/schemas/Message'
         referenceCode:
           maxLength: 20
           type: string
           description: Reference Code
           example: "20463327"
-        message:
-          $ref: '#/components/schemas/Message'
     Message:
       type: object
       properties:
