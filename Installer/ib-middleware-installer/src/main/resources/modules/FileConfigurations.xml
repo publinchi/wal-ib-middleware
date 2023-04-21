@@ -273,7 +273,8 @@
 		<staff id="11" name="orchestration-core-ib-query-get-movements-detail" version="4.6.1.0" />		
 		<staff id="12" name="orchestration-core-ib-accountcreditoperation" version="4.6.1.0" />	
 		<staff id="13" name="orchestration-core-ib-query-register-account" version="4.6.1.0" />		
-		<staff id="14" name="orchestration-core-ib-customercardapplication" version="4.6.1.0" />		
+		<staff id="14" name="orchestration-core-ib-customercardapplication" version="4.6.1.0" />
+		<staff id="14" name="orchestration-core-ib-transfer-third-party-account-api" version="4.6.1.0" />
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
