@@ -18,6 +18,7 @@ import org.apache.felix.scr.annotations.Service;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
+import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
@@ -36,9 +37,11 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
-
+import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.cobis.crypt.ICobisCrypt;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
+
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 
 /**
  * @author cecheverria
@@ -66,6 +69,14 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logDebug("Begin flow, AccountCreditOperation start.");		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+		
+		/*if (true) {
+			saveReentry(anOriginalRequest);
+			aBagSPJavaOrchestration.clear();
+			aBagSPJavaOrchestration.put("40004","Server is offline");
+			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+		}*/
+		
 		queryAccountCreditOperation(aBagSPJavaOrchestration);
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
@@ -80,6 +91,12 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		String creditConcept = wQueryRequest.readValueParam("@i_creditConcept");
 		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
 		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));
+		
+		/*String originCode = wQueryRequest.readValueParam("@i_originCode");
+		
+		if (originCode == null) {
+			wQueryRequest.setValueParam("@i_originCode", "");
+		}*/
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("50043", "amount must be greater than 0");
@@ -244,4 +261,48 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		wProcedureResponse.addResponseBlock(resultBlock);			
 		return wProcedureResponse;		
 	}
+	
+	public IProcedureResponse saveReentry(IProcedureRequest wQueryRequest) {
+		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
+		IProcedureRequest request = wQueryRequest.clone();
+		ComponentLocator componentLocator = null;
+	    IReentryPersister reentryPersister = null;
+	    componentLocator = ComponentLocator.getInstance(this);
+	    
+	    String originCode = request.readValueParam("@i_originCode");
+	    logger.logDebug("@i_originCode = " + originCode);
+		if (originCode == null) {
+			logger.logDebug("Entre @i_originCode");
+			request.addInputParam("@i_originCode",ICTSTypes.SQLINT4, "");
+		}
+	    
+	    Utils.addInputParam(request, "@i_externalCustomerId", ICTSTypes.SQLINT4,  request.readValueParam("@i_externalCustomerId"));
+        
+	    reentryPersister = (IReentryPersister) componentLocator.find(IReentryPersister.class, REENTRY_FILTER);
+        if (reentryPersister == null)
+            throw new COBISInfrastructureRuntimeException("Service IReentryPersister was not found");
+        
+        request.removeFieldInHeader("sessionId");
+        request.addFieldInHeader("reentryPriority", 'S', "5");
+        request.addFieldInHeader("REENTRY_SSN_TRX", 'S', request.readValueFieldInHeader("ssn"));
+        request.addFieldInHeader("targetId", 'S', "local");
+        request.removeFieldInHeader("serviceMethodName");
+        request.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', request.readValueFieldInHeader("trn"));
+        request.removeParam("@t_rty");
+        
+        Boolean reentryResponse = reentryPersister.addTransaction(request);
+
+        IProcedureResponse response = initProcedureResponse(request);
+        if (!reentryResponse.booleanValue()) {
+        	logger.logDebug("Ending flow, saveReentry failed");
+            response.addFieldInHeader("executionResult", 'S', "1");
+            response.addMessage(1, "Ocurrio un error al tratar de registrar la transaccion en el Reentry CORE COBIS");
+        } else {
+        	logger.logDebug("Ending flow, saveReentry success");
+            response.addFieldInHeader("executionResult", 'S', "0");
+        }
+
+        return response;
+	}
+
 }
