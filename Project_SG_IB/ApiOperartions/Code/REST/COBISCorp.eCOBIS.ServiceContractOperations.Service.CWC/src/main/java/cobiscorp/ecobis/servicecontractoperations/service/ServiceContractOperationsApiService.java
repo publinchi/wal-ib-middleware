@@ -580,7 +580,9 @@ int mapTotal=0;
 int mapBlank=0;
 
       mapTotal++;
-      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+      
+  		if (response.getResultSets() != null && response.getResultSets().size()>0  &&
+				response.getResultSets().get(0).getData().getRows().size() > 0) {
 							//---------NO Array
 							AddressTypeItems [] returnAddressTypeItems = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<AddressTypeItems>() { 
               @Override
@@ -600,15 +602,8 @@ int mapBlank=0;
       mapBlank++;
 
       }
-    
-//End map returns
-if(mapBlank!=0&&mapBlank==mapTotal){
-LOGGER.logDebug("No data found");
-throw new CTSRestException("404",null);
-}
-
-
-
+      
+      
  Message message=new Message();
  message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
  message.setMessage(getOutValue(String.class, "@o_message", response.getParams())); 
@@ -2228,6 +2223,170 @@ throw new CTSRestException("404",null);
 		return outResponseSearchLocationCatalog;
 	}
 	
+	/**
+	 * Transfer Spei
+	 */
+	@Override
+	// Have DTO
+	public ResponseTransferSpi transferSpei(RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
+		LOGGER.logDebug("Start service execution: transferSpei");
+		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
+
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transfer_spei_api");
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500115");
+		procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestTransferSpi.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getOriginAccountNumber());
+		procedureRequestAS.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getDestinationAccountNumber());
+		procedureRequestAS.addInputParam("@i_origin_account_alias", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getOriginAccountAlias());
+		procedureRequestAS.addInputParam("@i_destination_account_alias", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getDestinationAccountAlias());
+		procedureRequestAS.addInputParam("@i_destination_beneficiary_name", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getDestinationBeneficiaryName());
+		procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestTransferSpi.getAmount()));
+		procedureRequestAS.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getDescription());
+		procedureRequestAS.addInputParam("@i_bank_id", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getBankId());
+		procedureRequestAS.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getBankName());
+		procedureRequestAS.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getDestinationAccountOwnerName());
+		procedureRequestAS.addInputParam("@i_destination_type_account", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestTransferSpi.getDestinationTypeAccount()));
+		procedureRequestAS.addInputParam("@i_owner_name", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getOwnerName());
+		procedureRequestAS.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getDetail());
+		procedureRequestAS.addInputParam("@i_commission", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferSpi.getCommission()));
+		procedureRequestAS.addInputParam("@i_latitude", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferSpi.getLatitude()));
+		procedureRequestAS.addInputParam("@i_longitude", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferSpi.getLongitude()));
+		procedureRequestAS.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getOriginAccountNumber());
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferSpi returnResponseTransferSpi = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseTransferSpi>() {
+						@Override
+						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseTransferSpi dto = new ResponseTransferSpi();
+
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseTransferSpi.setSuccess(returnResponseTransferSpi.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferSpi returnResponseTransferSpi = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseTransferSpi>() {
+						@Override
+						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseTransferSpi dto = new ResponseTransferSpi();
+
+							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseTransferSpi.setMessage(returnResponseTransferSpi.getMessage());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferSpi returnResponseTransferSpi = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseTransferSpi>() {
+						@Override
+						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseTransferSpi dto = new ResponseTransferSpi();
+
+							dto.setReferenceCode(resultSetMapper.getString(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferSpi returnResponseTransferSpi = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseTransferSpi>() {
+						@Override
+						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseTransferSpi dto = new ResponseTransferSpi();
+
+							dto.setTrackingKey(resultSetMapper.getString(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseTransferSpi.setTrackingKey(returnResponseTransferSpi.getTrackingKey());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		LOGGER.logDebug("Ends service execution: transferSpei");
+		// returns data
+		return outResponseTransferSpi;
+	}
 	    /**
 	    * Service for transfer to a third party account
 	    */

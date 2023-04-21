@@ -258,8 +258,7 @@
 		<staff id="75" name="orchestration-core-ib-activate-card" version="4.6.1.0" />
 		<staff id="76" name="orchestration-ib-expenses-accounts" version="4.6.1.0" />
 		<staff id="77" name="orchestration-core-ib-spei-in" version="4.6.1.0" />
-
-
+		<staff id="78" name="orchestration-core-ib-dispacher-spei" version="4.6.1.0" />
 	</orchestrations>
 	<api-rest-orchest>
 		<staff id="1" name="orchestration-core-ib-affiliatecustomer" version="4.6.1.0" />
