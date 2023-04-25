@@ -206,6 +206,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		}
 		request.addInputParam("@i_prod", ICTSTypes.SQLVARCHAR, product);
 		request.addInputParam("@i_prod_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_tipo_tercero"));
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 				
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
