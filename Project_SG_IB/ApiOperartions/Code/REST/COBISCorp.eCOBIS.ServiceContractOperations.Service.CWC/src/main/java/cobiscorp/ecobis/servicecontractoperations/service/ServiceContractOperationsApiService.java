@@ -2780,4 +2780,79 @@ int mapBlank=0;
         //returns data
         return outSingleCardApplicationResponse;
       }
+
+	  /**
+          * Service to apply debit account
+          */
+         @Override
+			// Return DTO
+			public  DebitAccountResponse  debitOperation(DebitAccountRequest inDebitAccountRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: debitOperation");
+      DebitAccountResponse outSingleDebitAccountResponse  = new DebitAccountResponse();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_debit_operation_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getAccountNumber());
+      procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLMONEY,String.valueOf(inDebitAccountRequest.getAmount()));
+      procedureRequestAS.addInputParam("@i_commission",ICTSTypes.SQLMONEY,String.valueOf(inDebitAccountRequest.getCommission()));
+      procedureRequestAS.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i,String.valueOf(inDebitAccountRequest.getLatitude()));
+      procedureRequestAS.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i,String.valueOf(inDebitAccountRequest.getLongitude()));
+      procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getReferenceNumber());
+      procedureRequestAS.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitConcept());
+      procedureRequestAS.addInputParam("@i_originCode",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getOriginCode()));
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    DebitAccountResponse returnDebitAccountResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<DebitAccountResponse>() { 
+                    @Override
+                    public DebitAccountResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                    DebitAccountResponse dto = new DebitAccountResponse();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                          dto.setReferenceCode(resultSetMapper.getString(4));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
+							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleDebitAccountResponse=returnDebitAccountResponse ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: debitOperation");
+        //returns data
+        return outSingleDebitAccountResponse;
+      }
 }
