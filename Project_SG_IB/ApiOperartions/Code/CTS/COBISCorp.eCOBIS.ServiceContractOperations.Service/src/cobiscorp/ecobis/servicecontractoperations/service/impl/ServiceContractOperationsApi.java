@@ -35,6 +35,53 @@ import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperat
 public class ServiceContractOperationsApi extends CTSAbstractService implements IServiceContractOperationsApi {
 
 	@CTSProcedure(
+		name = "cobis..sp_activate_device_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestDeviceActivation",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "phoneNumber", param = "@i_phone_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "aliasDevice", param = "@i_alias_device", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500116")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseDeviceActivation",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseDeviceActivation",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO activateDevice(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_affiliate_customer", dbms = "SQLCTS",  
 		objectRequest = {
 		
