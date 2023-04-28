@@ -78,6 +78,8 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
+    import   cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
     
     
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
@@ -236,6 +238,13 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
 			
 			// Return DTO
 			public  CardApplicationResponse customerCardApplication(CardApplicationRequest inCardApplicationRequest  )throws CTSRestException;
+
+       /**
+          * Service to apply debit account
+          */
+        
+			// Return DTO
+			public  DebitAccountResponse  debitOperation(DebitAccountRequest inDebitAccountRequest  )throws CTSRestException;
 			
     }
 

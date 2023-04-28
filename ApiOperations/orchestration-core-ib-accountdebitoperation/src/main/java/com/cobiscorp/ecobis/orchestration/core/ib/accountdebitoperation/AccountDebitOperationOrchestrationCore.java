@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cobiscorp.ecobis.orchestration.core.ib.accountcreditoperation;
+package com.cobiscorp.ecobis.orchestration.core.ib.accountdebitoperation;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -48,14 +48,14 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
  * @since Sep 2, 2014
  * @version 1.0.0
  */
-@Component(name = "AccountCreditOperationOrchestrationCore", immediate = false)
+@Component(name = "AccountDebitOperationOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
-@Properties(value = { @Property(name = "service.description", value = "AccountCreditOperationOrchestrationCore"),
+@Properties(value = { @Property(name = "service.description", value = "AccountDebitOperationOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
-		@Property(name = "service.identifier", value = "AccountCreditOperationOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_credit_operation_api")
+		@Property(name = "service.identifier", value = "AccountDebitOperationOrchestrationCore"),
+		@Property(name = "service.spName", value = "cob_procesador..sp_debit_operation_api")
 })
-public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
+public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
@@ -67,7 +67,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AccountCreditOperation start.");		
+		logger.logDebug("Begin flow, AccountDebitOperation start.");		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
 		/*if (true) {
@@ -77,18 +77,18 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 		}*/
 		
-		queryAccountCreditOperation(aBagSPJavaOrchestration);
+		queryAccountDebitOperation(aBagSPJavaOrchestration);
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 	
-	private void queryAccountCreditOperation(Map<String, Object> aBagSPJavaOrchestration) {
+	private void queryAccountDebitOperation(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest wQueryRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		aBagSPJavaOrchestration.clear();
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
-		String creditConcept = wQueryRequest.readValueParam("@i_creditConcept");
+		String debitConcept = wQueryRequest.readValueParam("@i_debitConcept");
 		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
 		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));
 		
@@ -123,27 +123,27 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			return;
 		}
 		
-		if (creditConcept.isEmpty()) {
-			aBagSPJavaOrchestration.put("40093", "creditConcept must not be empty");
+		if (debitConcept.isEmpty()) {
+			aBagSPJavaOrchestration.put("40106", "debitConcept must not be empty");
 			return;
 		}
 				
-		logger.logDebug("Begin flow, queryAccountCreditOperation with id: " + idCustomer);
+		logger.logDebug("Begin flow, queryAccountDebitOperation with id: " + idCustomer);
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
-		reqTMPCentral.setSpName("cobis..sp_account_credit_operation_central_api");
+		reqTMPCentral.setSpName("cobis..sp_account_debit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
-	    reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
+	    reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isInfoEnabled()) {
-			logger.logDebug("Ending flow, queryAccountCreditOperation with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+			logger.logDebug("Ending flow, queryAccountDebitOperation with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
 		IProcedureResponse wProcedureResponseLocal;
@@ -154,9 +154,9 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			if (columns[0].getValue().equals("true")) {
 				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
 	
-				reqTMPLocal.setSpName("cob_bvirtual..sp_account_credit_operation_local_api");
+				reqTMPLocal.setSpName("cob_bvirtual..sp_account_debit_operation_local_api");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
-				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 				reqTMPLocal.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
@@ -164,12 +164,12 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 				reqTMPLocal.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
 				reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
 				reqTMPLocal.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_referenceNumber"));
-				reqTMPLocal.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
+				reqTMPLocal.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 				reqTMPLocal.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 				
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
 				if (logger.isInfoEnabled()) {
-					logger.logDebug("Ending flow, queryAccountCreditOperation with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
+					logger.logDebug("Ending flow, queryAccountDebitOperation with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
 				}
 
 				if (!wProcedureResponseLocal.hasError()) {
@@ -183,7 +183,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 						this.columnsToReturn = columns;
 						return;
 						
-					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
+					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50045")) {
 						
 						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 						return;
@@ -191,7 +191,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 					
 				} else {
 					
-					aBagSPJavaOrchestration.put("50041", "Error account credit operation");
+					aBagSPJavaOrchestration.put("50045", "Error account debit operation");
 					return;
 				}
 								
@@ -199,30 +199,14 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), "Customer with externalCustomerId: " + idCustomer + " does not exist");
 				return;
-				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40080")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40081")) {
+			} else {
 				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
-				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50042")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-			} 
+			}
 			 
 		} else {
-			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
+			aBagSPJavaOrchestration.put("50045", "Error account debit operation");
 			return;
 		}
 	}

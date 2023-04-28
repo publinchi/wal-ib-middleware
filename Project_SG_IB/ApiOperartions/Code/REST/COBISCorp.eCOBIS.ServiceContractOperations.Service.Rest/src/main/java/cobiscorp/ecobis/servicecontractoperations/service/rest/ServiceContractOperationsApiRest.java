@@ -79,6 +79,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
+    import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
+    import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
     
     import org.apache.felix.scr.annotations.*;
     import com.cobiscorp.cobis.commons.log.ILogger;
@@ -1138,6 +1140,44 @@ return Response.status(500).entity(e.getMessage()).build();
       
           LOGGER.logDebug("Ends service execution REST: customerCardApplication");
           return Response.ok(outSingleCardApplicationResponse).build();
+        
+      }
+
+      /**
+          * Service to apply debit account
+          */
+        @POST
+      @Path("/apiOperations/accounts/debitOperation")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  debitOperation(DebitAccountRequest inDebitAccountRequest ){
+	  LOGGER.logDebug("Start service execution REST: debitOperation");
+      DebitAccountResponse outSingleDebitAccountResponse  = new DebitAccountResponse();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inDebitAccountRequest.getExternalCustomerId()), new Data("accountNumber", inDebitAccountRequest.getAccountNumber()), new Data("amount", inDebitAccountRequest.getAmount()), new Data("commission", inDebitAccountRequest.getCommission()), new Data("latitude", inDebitAccountRequest.getLatitude()), new Data("longitude", inDebitAccountRequest.getLongitude()), new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()), new Data("debitConcept", inDebitAccountRequest.getDebitConcept()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleDebitAccountResponse=iServiceContractOperationsApiService.debitOperation( inDebitAccountRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: debitOperation");
+          return Response.ok(outSingleDebitAccountResponse).build();
         
       }
     
