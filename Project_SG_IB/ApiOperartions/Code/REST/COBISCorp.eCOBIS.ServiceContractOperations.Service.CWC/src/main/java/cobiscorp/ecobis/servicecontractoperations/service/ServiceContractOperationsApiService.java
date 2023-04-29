@@ -2732,7 +2732,7 @@ int mapBlank=0;
 				inRequestDeviceActivation.getAliasDevice());
 
 		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "SQLCANALES",
 				procedureRequestAS);
 
 		List<MessageBlock> errors = ErrorUtil.getErrors(response);

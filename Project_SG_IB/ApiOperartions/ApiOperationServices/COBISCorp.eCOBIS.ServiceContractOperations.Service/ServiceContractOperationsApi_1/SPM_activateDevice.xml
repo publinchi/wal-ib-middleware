@@ -123,7 +123,7 @@
   <collection type="Map" length="4" id="23" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
-      <value type="String" value="SQLCTS" />
+      <value type="String" value="SQLCANALES" />
     </entry>
     <entry>
       <key type="String" value="CISservice" />
