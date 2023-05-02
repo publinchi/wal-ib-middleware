@@ -75,8 +75,10 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
-    import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateDeviceActivation;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateDeviceActivation;
+import   cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
@@ -239,6 +241,14 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
 			// Have DTO
 			public ResponseDeviceActivation activateDevice(RequestDeviceActivation inRequestDeviceActivation)
 					throws CTSRestException;
+			
+		/**
+		 * Validate Device Activation
+		 */
+
+			// Have DTO
+			public ResponseValidateDeviceActivation validateDeviceActivation(
+					RequestValidateDeviceActivation inRequestValidateDeviceActivation) throws CTSRestException;
 			
           /**
           * Validate Identity

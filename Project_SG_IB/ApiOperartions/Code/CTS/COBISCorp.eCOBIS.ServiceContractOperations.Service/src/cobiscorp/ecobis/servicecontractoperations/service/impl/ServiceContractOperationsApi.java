@@ -35,7 +35,7 @@ import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperat
 public class ServiceContractOperationsApi extends CTSAbstractService implements IServiceContractOperationsApi {
 
 	@CTSProcedure(
-		name = "cobis..sp_activate_device_api", dbms = "SQLCTS",  
+		name = "cobis..sp_activate_device_api", dbms = "SQLCANALES",  
 		objectRequest = {
 		
 			@CTSRequest(
@@ -342,6 +342,54 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO customerCardApplication(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_debit_operation_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inDebitAccountRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "amount", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "commission", param = "@i_commission", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "latitude", param = "@i_latitude", dataType = ICTSTypes.SQLFLT8i),
+					@CTSInputParam(field = "longitude", param = "@i_longitude", dataType = ICTSTypes.SQLFLT8i),
+					@CTSInputParam(field = "referenceNumber", param = "@i_referenceNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "debitConcept", param = "@i_debitConcept", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originCode", param = "@i_originCode", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500118")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnDebitAccountResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3),
+		    @CTSColumn(field = "referenceCode", columnIndex = 4)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO debitOperation(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
@@ -1409,6 +1457,52 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 	)
 	
       public ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cobis..sp_val_device_activation_api", dbms = "SQLCANALES",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestValidateDeviceActivation",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "phoneNumber", param = "@i_phone_number", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500117")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseValidateDeviceActivation",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateDeviceActivation.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseValidateDeviceActivation",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateDeviceActivation.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO validateDeviceActivation(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
