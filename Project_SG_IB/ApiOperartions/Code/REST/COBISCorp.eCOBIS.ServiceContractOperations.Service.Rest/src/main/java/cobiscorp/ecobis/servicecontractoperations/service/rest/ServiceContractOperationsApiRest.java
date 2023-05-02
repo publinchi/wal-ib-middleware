@@ -83,6 +83,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
     import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
     import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
+    import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
+    import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
     
     import org.apache.felix.scr.annotations.*;
     import com.cobiscorp.cobis.commons.log.ILogger;
@@ -1222,6 +1224,44 @@ return Response.status(500).entity(e.getMessage()).build();
       
           LOGGER.logDebug("Ends service execution REST: debitOperation");
           return Response.ok(outSingleDebitAccountResponse).build();
+        
+      }
+
+      /**
+          * Valdate token transaction factor API
+          */
+        @POST
+      @Path("/apiOperations/password/validateTransactionFactor")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  validateTransactionFactor(ValidateTokenRequest inValidateTokenRequest ){
+	  LOGGER.logDebug("Start service execution REST: validateTransactionFactor");
+      ValidateTokenResponse outSingleValidateTokenResponse  = new ValidateTokenResponse();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inValidateTokenRequest.getExternalCustomerId()), new Data("token", inValidateTokenRequest.getToken()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleValidateTokenResponse=iServiceContractOperationsApiService.validateTransactionFactor( inValidateTokenRequest );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: validateTransactionFactor");
+          return Response.ok(outSingleValidateTokenResponse).build();
         
       }
     
