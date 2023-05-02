@@ -26,6 +26,11 @@ import cobiscorp.ecobis.commons.dto.ServiceResponseTO;
 public interface IServiceContractOperationsApi{
 
   /**
+  * Activate Device
+  */
+  ServiceResponseTO activateDevice(ServiceRequestTO requestTO);  
+
+  /**
   * Afiliate Customer
   */
   ServiceResponseTO affiliateCustomer(ServiceRequestTO requestTO);  

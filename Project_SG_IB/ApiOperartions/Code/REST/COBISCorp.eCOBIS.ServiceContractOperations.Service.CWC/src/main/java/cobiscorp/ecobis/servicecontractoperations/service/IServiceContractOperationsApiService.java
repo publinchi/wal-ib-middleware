@@ -26,8 +26,10 @@
     import   cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.Message;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
-    import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
-    import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation;
+import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import   cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
@@ -229,6 +231,15 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
 			public  List<ResponseUpdateProfile>  updateProfile(RequestUpdateProfile inRequestUpdateProfile  )throws CTSRestException;
 			//Have DTO
 			public ResponseValidateCustomerIdentityCard validateCustomerIdentityCard(RequestValidateCustomerIdentityCard inRequestValidateCustomerIdentityCard  )throws CTSRestException;
+			
+		  /**
+		  * Activate Device
+		  */
+
+			// Have DTO
+			public ResponseDeviceActivation activateDevice(RequestDeviceActivation inRequestDeviceActivation)
+					throws CTSRestException;
+			
           /**
           * Validate Identity
           */

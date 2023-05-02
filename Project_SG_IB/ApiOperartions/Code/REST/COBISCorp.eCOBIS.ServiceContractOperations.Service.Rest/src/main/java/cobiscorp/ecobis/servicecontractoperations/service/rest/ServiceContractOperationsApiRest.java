@@ -34,7 +34,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
-    import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
@@ -49,6 +50,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
@@ -1104,6 +1106,48 @@ return Response.status(500).entity(e.getMessage()).build();
     return Response.ok(outResponseGetColonyByMunicipality).build();
   
 }
+  
+	/**
+	 * Activate Device
+	 */
+	@POST
+	@Path("/apiOperations/enrollment/deviceActivation")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response activateDevice(RequestDeviceActivation inRequestDeviceActivation) {
+		LOGGER.logDebug("Start service execution REST: activateDevice");
+		ResponseDeviceActivation outResponseDeviceActivation = new ResponseDeviceActivation();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestDeviceActivation.getExternalCustomerId()),
+				new Data("phoneNumber", inRequestDeviceActivation.getPhoneNumber()),
+				new Data("aliasDevice", inRequestDeviceActivation.getAliasDevice()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseDeviceActivation = iServiceContractOperationsApiService
+					.activateDevice(inRequestDeviceActivation);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: activateDevice");
+		return Response.ok(outResponseDeviceActivation).build();
+
+	}
 
    /**
           * Customer Card Application API
