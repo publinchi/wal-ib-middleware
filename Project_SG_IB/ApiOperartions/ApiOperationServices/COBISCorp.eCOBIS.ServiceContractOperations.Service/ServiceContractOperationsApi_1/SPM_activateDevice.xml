@@ -13,11 +13,10 @@
       <collection type="List" length="1" id="5" name="columns">
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="6" index="0">
           <field type="int" name="position" value="0" />
-          <field type="String" name="columnName" value="succes" />
+          <field type="String" name="columnName" value="success" />
           <field type="String" name="dTOAlias" value="returnResponseDeviceActivation" />
           <field type="String" name="dTOPropertyName" value="success" />
           <field type="String" name="dataType" value="boolean?" />
-          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>

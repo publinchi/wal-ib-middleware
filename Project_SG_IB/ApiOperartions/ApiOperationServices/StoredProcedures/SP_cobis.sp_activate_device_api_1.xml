@@ -12,7 +12,7 @@
   <queries>
     <query>
       <columns>
-        <column name="succes" />
+        <column name="success" />
       </columns>
       <queryText>SELECT "succes"="true"</queryText>
     </query>
