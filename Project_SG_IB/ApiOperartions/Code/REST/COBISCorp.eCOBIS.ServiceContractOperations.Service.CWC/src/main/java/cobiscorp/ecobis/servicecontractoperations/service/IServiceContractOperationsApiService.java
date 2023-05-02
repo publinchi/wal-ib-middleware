@@ -82,6 +82,8 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
     import   cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
     import   cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
+     import   cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
+    import   cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
     
     
     import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
@@ -256,6 +258,13 @@ import   cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
         
 			// Return DTO
 			public  DebitAccountResponse  debitOperation(DebitAccountRequest inDebitAccountRequest  )throws CTSRestException;
+
+      /**
+          * Valdate token transaction factor API
+          */
+        
+			// Return DTO
+			public  ValidateTokenResponse  validateTransactionFactor(ValidateTokenRequest inValidateTokenRequest  )throws CTSRestException;
 			
     }
 
