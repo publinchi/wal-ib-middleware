@@ -104,7 +104,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		}
 		
 		if (commission.compareTo(new BigDecimal("0")) != 1 && commission.compareTo(new BigDecimal("0")) != 0) {
-			aBagSPJavaOrchestration.put("50044", "commission must be greater or equals than 0");
+			aBagSPJavaOrchestration.put("50044", "commission must be greater than or equal to 0");
 			return;
 		}
 		
