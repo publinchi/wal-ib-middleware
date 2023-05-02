@@ -180,6 +180,23 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
+	<!-- 18500114 ORQUESTACION TRANSFER THRID ACCOUNT-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo TransferThridAccount">
+		<conditions>
+		  <condition param="trn">
+			<value>18500114</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=TransferThirdPartyAccountApiOrchestationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+
 	<!-- 18500118 ORQUESTACION ACCOUNTDEBITOPERATION-->
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AccountDebitOperation">
 		<conditions>
