@@ -99,12 +99,12 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		}*/
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
-			aBagSPJavaOrchestration.put("50043", "amount must be greater than 0");
+			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
 			return;
 		}
 		
 		if (commission.compareTo(new BigDecimal("0")) != 1 && commission.compareTo(new BigDecimal("0")) != 0) {
-			aBagSPJavaOrchestration.put("50044", "commission must be greater or equals than 0");
+			aBagSPJavaOrchestration.put("40108", "commission must be greater than or equal to 0");
 			return;
 		}
 		
