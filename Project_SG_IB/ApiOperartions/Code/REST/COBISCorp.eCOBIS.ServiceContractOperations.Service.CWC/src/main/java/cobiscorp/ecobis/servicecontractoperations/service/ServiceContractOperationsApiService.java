@@ -3051,4 +3051,71 @@ int mapBlank=0;
         //returns data
         return outSingleDebitAccountResponse;
       }
+
+	  /**
+          * Valdate token transaction factor API
+          */
+         @Override
+			// Return DTO
+			public  ValidateTokenResponse validateTransactionFactor(ValidateTokenRequest inValidateTokenRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: validateTransactionFactor");
+      ValidateTokenResponse outSingleValidateTokenResponse  = new ValidateTokenResponse();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_validate_otp");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500120");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inValidateTokenRequest.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_token",ICTSTypes.SQLVARCHAR,inValidateTokenRequest.getToken());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    ValidateTokenResponse returnValidateTokenResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ValidateTokenResponse>() { 
+                    @Override
+                    public ValidateTokenResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ValidateTokenResponse dto = new ValidateTokenResponse();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
+							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleValidateTokenResponse=returnValidateTokenResponse ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: validateTransactionFactor");
+        //returns data
+        return outSingleValidateTokenResponse;
+      }
 }
