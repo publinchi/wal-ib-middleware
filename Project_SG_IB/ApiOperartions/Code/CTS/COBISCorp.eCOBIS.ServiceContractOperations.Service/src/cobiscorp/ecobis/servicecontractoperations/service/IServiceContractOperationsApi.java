@@ -56,6 +56,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO customerCardApplication(ServiceRequestTO requestTO);  
 
   /**
+  * Service to apply debit account
+  */
+  ServiceResponseTO debitOperation(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
@@ -151,6 +156,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  
 
   ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO);  
+
+  /**
+  * Validate Device Activation
+  */
+  ServiceResponseTO validateDeviceActivation(ServiceRequestTO requestTO);  
 
   /**
   * Validate Identity

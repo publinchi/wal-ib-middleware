@@ -76,7 +76,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
-    import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateDeviceActivation;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateDeviceActivation;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
     import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
     import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
     import   cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
@@ -1146,6 +1148,48 @@ return Response.status(500).entity(e.getMessage()).build();
 
 		LOGGER.logDebug("Ends service execution REST: activateDevice");
 		return Response.ok(outResponseDeviceActivation).build();
+
+	}
+	
+	/**
+	 * Validate Device Activation
+	 */
+	@POST
+	@Path("/apiOperations/enrollment/validateDeviceActivation")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response validateDeviceActivation(RequestValidateDeviceActivation inRequestValidateDeviceActivation) {
+		LOGGER.logDebug("Start service execution REST: validateDeviceActivation");
+		ResponseValidateDeviceActivation outResponseValidateDeviceActivation = new ResponseValidateDeviceActivation();
+
+		if (!validateMandatory(
+				new Data("externalCustomerId", inRequestValidateDeviceActivation.getExternalCustomerId()),
+				new Data("phoneNumber", inRequestValidateDeviceActivation.getPhoneNumber()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseValidateDeviceActivation = iServiceContractOperationsApiService
+					.validateDeviceActivation(inRequestValidateDeviceActivation);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: validateDeviceActivation");
+		return Response.ok(outResponseValidateDeviceActivation).build();
 
 	}
 
