@@ -148,7 +148,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		
 		IProcedureResponse wProcedureResponseLocal;
 		if (!wProcedureResponseCentral.hasError()) {			
-			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
+			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(wProcedureResponseCentral.getResultSetListSize()).getData().getRowsAsArray()[0];
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
