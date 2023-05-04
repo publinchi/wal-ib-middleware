@@ -21,12 +21,12 @@ init:
     [mkdir] Created dir: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\cobertura\instrumented
 prepare-dto:
     [mkdir] Created dir: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\resources
-     [copy] Copying 68 files to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\src
+     [copy] Copying 74 files to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\src
 mark-version-impl:
      [echo] marking the version: 1.0.0.0
      [echo] using the dbprovider: DataSource
 compile:
-    [javac] Compiling 68 source files to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\classes
+    [javac] Compiling 74 source files to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\classes
 archive-impl-lib-create:
     [mkdir] Created dir: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\classes\OSGI-INF\lib
 archive-impl-lib-copy:

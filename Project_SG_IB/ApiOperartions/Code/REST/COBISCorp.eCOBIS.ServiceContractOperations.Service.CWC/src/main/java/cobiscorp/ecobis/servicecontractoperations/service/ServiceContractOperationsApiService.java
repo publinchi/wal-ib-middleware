@@ -3051,6 +3051,142 @@ int mapBlank=0;
         //returns data
         return outSingleDebitAccountResponse;
       }
+         
+         	/**
+			 * Get All Customer Questions
+			 */
+         @Override
+			//Have DTO
+			public ResponseAllCustomerQuestions getAllCustomerQuestions(
+					RequestAllCustomerQuestions inRequestAllCustomerQuestions  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: getAllCustomerQuestions");
+      ResponseAllCustomerQuestions outResponseAllCustomerQuestions  = new ResponseAllCustomerQuestions();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_all_cust_questions");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500121");
+      procedureRequestAS.addInputParam("@i_external_customer_id",ICTSTypes.SQLINT4,String.valueOf(inRequestAllCustomerQuestions.getExternalCustomerId()));
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseAllCustomerQuestions returnResponseAllCustomerQuestions = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAllCustomerQuestions>() { 
+                    @Override
+                    public ResponseAllCustomerQuestions mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseAllCustomerQuestions dto = new ResponseAllCustomerQuestions();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseAllCustomerQuestions.setSuccess(returnResponseAllCustomerQuestions.isSuccess());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseAllCustomerQuestions returnResponseAllCustomerQuestions = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseAllCustomerQuestions>() { 
+                    @Override
+                    public ResponseAllCustomerQuestions mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseAllCustomerQuestions dto = new ResponseAllCustomerQuestions();
+                    
+							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseAllCustomerQuestions.setMessage(returnResponseAllCustomerQuestions.getMessage());
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+								//---------NO Array
+								CstmrQuestions [] returnCstmrQuestions = MapperResultUtil.mapToArray(response.getResultSets().get(2), new RowMapper<CstmrQuestions>() { 
+                    @Override
+                    public CstmrQuestions mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CstmrQuestions dto = new CstmrQuestions();
+                    
+                          dto.setId(resultSetMapper.getInteger(1));
+                          dto.setDescription(resultSetMapper.getString(2));
+                          dto.setCategory(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseAllCustomerQuestions.setCstmrQuestionsList(returnCstmrQuestions);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(3).getData().getRows().size()>0) {	
+								//---------NO Array
+								CstmrAnswers [] returnCstmrAnswers = MapperResultUtil.mapToArray(response.getResultSets().get(3), new RowMapper<CstmrAnswers>() { 
+                    @Override
+                    public CstmrAnswers mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CstmrAnswers dto = new CstmrAnswers();
+                    
+                          dto.setQuestionId(resultSetMapper.getInteger(1));
+                          dto.setResponseId(resultSetMapper.getInteger(2));
+                          dto.setDescription(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseAllCustomerQuestions.setCstmrAnswersList(returnCstmrAnswers);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: getAllCustomerQuestions");
+        //returns data
+        return outResponseAllCustomerQuestions;
+      }
+         
 
 	  /**
           * Valdate token transaction factor API

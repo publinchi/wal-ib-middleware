@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cobis</database>
+  <name>sp_get_all_cust_questions</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="id" />
+        <column name="description" />
+        <column name="category" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="questionId" />
+        <column name="responseId" />
+        <column name="description" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>
