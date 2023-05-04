@@ -232,10 +232,10 @@ public class EnvironmentValidator extends AbstractDataValidator{
 			}
 			
 			// VALIDATE INSTALL OTP			
-			if (!ValidateInstallOTP(cobisHome)) {				
+		/*	if (!ValidateInstallOTP(cobisHome)) {				
 				this.setErrorId(Constants.ERROR_18000);
 				return Status.ERROR;
-			}
+			}*/
 			
 			logger.info("======= FINISH VALIDATE REQUIRED FILES =======");				
 			return Status.OK;
