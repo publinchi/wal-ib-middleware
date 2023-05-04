@@ -71,6 +71,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO generateTransactionFactor(ServiceRequestTO requestTO);  
 
   /**
+  * Get All Customer Questions
+  */
+  ServiceResponseTO getAllCustomerQuestions(ServiceRequestTO requestTO);  
+
+  /**
   * Check Account Details
   */
   ServiceResponseTO getBalancesDetail(ServiceRequestTO requestTO);  
@@ -166,6 +171,11 @@ public interface IServiceContractOperationsApi{
   * Validate Identity
   */
   ServiceResponseTO validateIdentity(ServiceRequestTO requestTO);  
+
+  /**
+  * Valdate token transaction factor API
+  */
+  ServiceResponseTO validateTransactionFactor(ServiceRequestTO requestTO);  
 
 }
 
