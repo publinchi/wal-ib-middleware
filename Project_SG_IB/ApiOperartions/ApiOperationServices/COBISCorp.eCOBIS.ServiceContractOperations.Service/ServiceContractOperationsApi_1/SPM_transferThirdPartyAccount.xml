@@ -17,6 +17,7 @@
           <field type="String" name="dTOAlias" value="returnResponseTransferThirdPartyAccount" />
           <field type="String" name="dTOPropertyName" value="success" />
           <field type="String" name="dataType" value="boolean?" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -30,6 +31,7 @@
           <field type="String" name="dTOAlias" value="returnResponseTransferThirdPartyAccount" />
           <field type="String" name="dTOPropertyName" value="message.code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="1">
           <field type="int" name="position" value="1" />
@@ -37,6 +39,7 @@
           <field type="String" name="dTOAlias" value="returnResponseTransferThirdPartyAccount" />
           <field type="String" name="dTOPropertyName" value="message.message" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -50,6 +53,7 @@
           <field type="String" name="dTOAlias" value="returnResponseTransferThirdPartyAccount" />
           <field type="String" name="dTOPropertyName" value="referenceCode" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -144,7 +148,7 @@
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
       <field type="String" name="dTOPropertyName" value="latitude" />
       <field type="String" name="cTSDataType" value="SQLMONEY" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="29" index="7">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="30" name="parameter">
@@ -157,7 +161,7 @@
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
       <field type="String" name="dTOPropertyName" value="longitude" />
       <field type="String" name="cTSDataType" value="SQLMONEY" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="31" index="8">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="32" name="parameter">

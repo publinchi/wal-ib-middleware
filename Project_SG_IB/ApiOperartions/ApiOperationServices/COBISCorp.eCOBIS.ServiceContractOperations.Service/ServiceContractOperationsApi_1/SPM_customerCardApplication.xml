@@ -123,10 +123,14 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="3" id="22" name="mappingProperties">
+  <collection type="Map" length="4" id="22" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />
+    </entry>
+    <entry>
+      <key type="String" value="CISservice" />
+      <value type="String" value="true" />
     </entry>
     <entry>
       <key type="String" value="Path" />
