@@ -190,6 +190,7 @@
 		<module>../ApiOperations/orchestration-core-ib-customercardapplication</module>
 		<module>../ApiOperations/orchestration-core-ib-transfer-third-party-account-api</module>
 		<module>../ApiOperations/orchestration-core-ib-accountdebitoperation</module>
+		<module>../ApiOperations/orchestration-core-ib-query-validate-transaction-factor</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>

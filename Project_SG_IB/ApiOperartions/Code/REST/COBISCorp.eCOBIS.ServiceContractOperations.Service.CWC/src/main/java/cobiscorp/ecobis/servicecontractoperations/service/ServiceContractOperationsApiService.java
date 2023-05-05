@@ -3051,6 +3051,108 @@ int mapBlank=0;
         //returns data
         return outSingleDebitAccountResponse;
       }
+         
+
+         
+         
+         /**
+          * Get All Customer Questions
+          */
+         @Override
+			//Have DTO
+			public ResponseAllCustomerQuestions getAllCustomerQuestions(RequestAllCustomerQuestions inRequestAllCustomerQuestions  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: getAllCustomerQuestions");
+      ResponseAllCustomerQuestions outResponseAllCustomerQuestions  = new ResponseAllCustomerQuestions();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_get_all_quest_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500122");
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local",procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								CstmrQuestions [] returnCstmrQuestions = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<CstmrQuestions>() { 
+                    @Override
+                    public CstmrQuestions mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CstmrQuestions dto = new CstmrQuestions();
+                    
+                          dto.setId(resultSetMapper.getInteger(1));
+                          dto.setDescription(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseAllCustomerQuestions.setCstmrQuestionsList(returnCstmrQuestions);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								CstmrAnswers [] returnCstmrAnswers = MapperResultUtil.mapToArray(response.getResultSets().get(1), new RowMapper<CstmrAnswers>() { 
+                    @Override
+                    public CstmrAnswers mapRow(ResultSetMapper resultSetMapper, int index) {
+                    CstmrAnswers dto = new CstmrAnswers();
+                    
+                          dto.setQuestionId(resultSetMapper.getInteger(1));
+                          dto.setResponseId(resultSetMapper.getInteger(2));
+                          dto.setDescription(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+
+                    outResponseAllCustomerQuestions.setCstmrAnswersList(returnCstmrAnswers);
+                        // break;
+                      
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+      Message message=new Message();
+      message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+      message.setMessage(getOutValue(String.class, "@o_message", response.getParams())); 
+      outResponseAllCustomerQuestions.setMessage(message);
+
+     	if (message != null && message.getCode() == 0) {
+     		outResponseAllCustomerQuestions.setSuccess(true);
+     	} else
+     		outResponseAllCustomerQuestions.setSuccess(false);   
+        LOGGER.logDebug("Ends service execution: getAllCustomerQuestions");
+        //returns data
+        return outResponseAllCustomerQuestions;
+      }         
+         
 
 	  /**
           * Valdate token transaction factor API
@@ -3062,7 +3164,7 @@ int mapBlank=0;
       ValidateTokenResponse outSingleValidateTokenResponse  = new ValidateTokenResponse();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_validate_otp");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_validate_otp");
       
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500120");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inValidateTokenRequest.getExternalCustomerId()));

@@ -475,6 +475,52 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_bvirtual..sp_get_all_quest_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestAllCustomerQuestions",
+				input = {
+				
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500122")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnCstmrQuestions",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CstmrQuestions.class,
+      columns = {
+		    @CTSColumn(field = "id", columnIndex = 1),
+		    @CTSColumn(field = "description", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnCstmrAnswers",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CstmrAnswers.class,
+      columns = {
+		    @CTSColumn(field = "questionId", columnIndex = 1),
+		    @CTSColumn(field = "responseId", columnIndex = 2),
+		    @CTSColumn(field = "description", columnIndex = 3)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getAllCustomerQuestions(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_get_balances_detail_api", dbms = "SQLCTS",  
 		objectRequest = {
 		
@@ -1566,6 +1612,46 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO validateIdentity(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_validate_otp", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inValidateTokenRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "token", param = "@i_token", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500120")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnValidateTokenResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO validateTransactionFactor(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }

@@ -212,4 +212,20 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
+	<!-- 18500120 ORQUESTACION VALIDATEOTP-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo Validate OTP">
+		<conditions>
+		  <condition param="trn">
+			<value>18500120</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=ValidateTransactionFactorOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>
