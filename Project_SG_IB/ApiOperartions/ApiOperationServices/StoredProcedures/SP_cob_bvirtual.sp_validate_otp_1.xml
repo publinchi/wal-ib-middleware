@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <procedure>
-  <database>cob_bvirtual</database>
+  <database>cob_procesador</database>
   <name>sp_validate_otp</name>
   <type>SYBASE</type>
   <version>1</version>

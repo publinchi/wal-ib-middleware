@@ -3198,7 +3198,7 @@ int mapBlank=0;
       ValidateTokenResponse outSingleValidateTokenResponse  = new ValidateTokenResponse();
           
       //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_validate_otp");
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_validate_otp");
       
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500120");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inValidateTokenRequest.getExternalCustomerId()));
