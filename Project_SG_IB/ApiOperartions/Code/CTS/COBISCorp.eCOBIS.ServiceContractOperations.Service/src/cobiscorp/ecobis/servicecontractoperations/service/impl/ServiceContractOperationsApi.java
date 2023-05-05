@@ -475,45 +475,28 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
-		name = "cobis..sp_get_all_cust_questions", dbms = "SQLCANALES",  
+		name = "cob_bvirtual..sp_get_all_quest_api",   
 		objectRequest = {
 		
 			@CTSRequest(
 				name = "inRequestAllCustomerQuestions",
 				input = {
 				
-					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4)
 				}
 			)
 		},
 		defaultRequest = {
     
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500121")
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500122")
 		},
   response = {
   
-    @CTSResponse(
-      name = "returnResponseAllCustomerQuestions",
-      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions.class,
-      columns = {
-		    @CTSColumn(field = "success", columnIndex = 1)
-      }
-    ),
-    @CTSResponse(
-      name = "returnResponseAllCustomerQuestions",
-      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions.class,
-      columns = {
-		    @CTSColumn(field = "message.code", columnIndex = 1),
-		    @CTSColumn(field = "message.message", columnIndex = 2)
-      }
-    ),
     @CTSResponse(
       name = "returnCstmrQuestions",
       type = cobiscorp.ecobis.datacontractoperations.dto.CstmrQuestions.class,
       columns = {
 		    @CTSColumn(field = "id", columnIndex = 1),
-		    @CTSColumn(field = "description", columnIndex = 2),
-		    @CTSColumn(field = "category", columnIndex = 3)
+		    @CTSColumn(field = "description", columnIndex = 2)
       }
     ),
     @CTSResponse(
@@ -1634,7 +1617,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
-		name = "cob_bvirtual..sp_validate_otp", dbms = "SQLCTS",  
+		name = "cob_procesador..sp_validate_otp", dbms = "SQLCTS",  
 		objectRequest = {
 		
 			@CTSRequest(
