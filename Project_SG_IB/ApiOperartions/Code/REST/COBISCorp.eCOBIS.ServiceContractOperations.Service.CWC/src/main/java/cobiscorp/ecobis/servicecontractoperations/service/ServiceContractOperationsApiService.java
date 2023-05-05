@@ -3055,6 +3055,7 @@ int mapBlank=0;
 
          
          
+         
          /**
           * Get All Customer Questions
           */
@@ -3067,7 +3068,11 @@ int mapBlank=0;
       //create procedure
       ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_get_all_quest_api");
       
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500122");
+      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500122");
+      procedureRequestAS.addInputParam("@i_customer",ICTSTypes.SQLINT4,String.valueOf(inRequestAllCustomerQuestions.getExternalCustomerId()));
+      procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"0");
+      procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"1");
+      procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"X");
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local",procedureRequestAS);
@@ -3152,6 +3157,7 @@ int mapBlank=0;
         //returns data
         return outResponseAllCustomerQuestions;
       }         
+           
          
 
 	  /**
