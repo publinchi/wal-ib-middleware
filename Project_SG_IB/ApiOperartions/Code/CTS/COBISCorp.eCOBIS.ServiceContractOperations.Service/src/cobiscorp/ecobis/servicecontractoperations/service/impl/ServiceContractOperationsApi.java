@@ -482,12 +482,16 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				name = "inRequestAllCustomerQuestions",
 				input = {
 				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_customer", dataType = ICTSTypes.SQLINT4)
 				}
 			)
 		},
 		defaultRequest = {
     
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500122")
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500122"),
+				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "1", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "X", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
 		},
   response = {
   
