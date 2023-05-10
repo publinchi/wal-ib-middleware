@@ -3094,7 +3094,7 @@ int mapBlank=0;
       int mapBlank=0;
       
             mapTotal++;
-            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+            if (response.getResultSets()!=null && response.getResultSets().size()>0  &&response.getResultSets().get(0).getData().getRows().size()>0) {	
 								//---------NO Array
 								CstmrQuestions [] returnCstmrQuestions = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<CstmrQuestions>() { 
                     @Override
@@ -3116,7 +3116,7 @@ int mapBlank=0;
             }
           
             mapTotal++;
-            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+            if (response.getResultSets()!=null&& response.getResultSets().size()>1 &&response.getResultSets().get(1).getData().getRows().size()>0) {	
 								//---------NO Array
 								CstmrAnswers [] returnCstmrAnswers = MapperResultUtil.mapToArray(response.getResultSets().get(1), new RowMapper<CstmrAnswers>() { 
                     @Override
@@ -3138,11 +3138,7 @@ int mapBlank=0;
 
             }
           
-      //End map returns
-      if(mapBlank!=0&&mapBlank==mapTotal){
-      LOGGER.logDebug("No data found");
-      throw new CTSRestException("404",null);
-      }
+
       
       Message message=new Message();
       message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
