@@ -89,6 +89,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
+import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
 
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 import java.util.List;
@@ -325,5 +327,12 @@ public interface IServiceContractOperationsApiService {
 	// Return DTO
 	public ValidateTokenResponse validateTransactionFactor(ValidateTokenRequest inValidateTokenRequest)
 			throws CTSRestException;
+
+	/**
+	* Service to Update Credentials
+    */
+        
+	// Return DTO
+	public ResponseUpdateCredentials updateCredentials(RequestUpdateCredentials inRequestUpdateCredentials  )throws CTSRestException;
 
 }
