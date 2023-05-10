@@ -89,6 +89,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
 
 import org.apache.felix.scr.annotations.*;
 import com.cobiscorp.cobis.commons.log.ILogger;
@@ -1458,5 +1460,43 @@ public class ServiceContractOperationsApiRest {
 		return Response.ok(outSingleValidateTokenResponse).build();
 
 	}
+
+	/**
+          * Service to Update Credentials
+          */
+        @POST
+      @Path("/apiOperations/enrollment/updateCredentials")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  updateCredentials(RequestUpdateCredentials inRequestUpdateCredentials ){
+	  LOGGER.logDebug("Start service execution REST: updateCredentials");
+      ResponseUpdateCredentials outSingleResponseUpdateCredentials  = new ResponseUpdateCredentials();
+          
+      if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateCredentials.getExternalCustomerId()), new Data("userName", inRequestUpdateCredentials.getUserName()), new Data("password", inRequestUpdateCredentials.getPassword()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleResponseUpdateCredentials=iServiceContractOperationsApiService.updateCredentials( inRequestUpdateCredentials );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: updateCredentials");
+          return Response.ok(outSingleResponseUpdateCredentials).build();
+        
+      }
 
 }
