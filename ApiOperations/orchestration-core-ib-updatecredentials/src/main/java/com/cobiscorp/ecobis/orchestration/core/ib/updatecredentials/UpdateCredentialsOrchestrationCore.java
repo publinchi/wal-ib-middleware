@@ -103,33 +103,33 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 			return;
 		}
 		
-		if (userName.length() >= 5) {
+		if (userName.length() < 5) {
 			aBagSPJavaOrchestration.put("40111", "userName must be at least 5 characters");
 			return;
 		}
 		
-		if (userName.length() <= 12) {
+		if (userName.length() > 12) {
 			aBagSPJavaOrchestration.put("40112", "userName must have a maximum of 12 characters");
 			return;
 		}
 		
-		if (password.length() >= 4) {
+		if (password.length() < 4) {
 			aBagSPJavaOrchestration.put("40113", "password must be at least 4 characters");
 			return;
 		}
 		
-		if (password.length() <= 12) {
+		if (password.length() > 12) {
 			aBagSPJavaOrchestration.put("40114", "password must have a maximum of 12 characters");
-			return;
-		}
-		
-		if (!checkStringHasAtLeastOneCapitalLetter(password)) {
-			aBagSPJavaOrchestration.put("50051", "password must have at least one capital letter");
 			return;
 		}
 		
 		if (!containsDigit(password)) {
 			aBagSPJavaOrchestration.put("50052", "password must have at least one number");
+			return;
+		}
+		
+		if (!checkStringHasAtLeastOneCapitalLetter(password)) {
+			aBagSPJavaOrchestration.put("50051", "password must have at least one capital letter");
 			return;
 		}
 		
@@ -237,24 +237,9 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 	}
 	
 	public boolean checkStringHasAtLeastOneCapitalLetter(String str) {
-	    char ch;
-	    boolean capitalFlag = false;
-	    boolean lowerCaseFlag = false;
-	    boolean numberFlag = false;
-	    for(int i=0;i < str.length();i++) {
-	        ch = str.charAt(i);
-	        if( Character.isDigit(ch)) {
-	            numberFlag = true;
-	        }
-	        else if (Character.isUpperCase(ch)) {
-	            capitalFlag = true;
-	        } else if (Character.isLowerCase(ch)) {
-	            lowerCaseFlag = true;
-	        }
-	        if(numberFlag && capitalFlag && lowerCaseFlag)
-	            return true;
-	    }
-	    return false;
+		Pattern p = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$");
+		Matcher m = p.matcher(str);
+		return m.find();
 	}
 	
 	public boolean containsDigit(String s) {

@@ -3226,4 +3226,73 @@ int mapBlank=0;
         //returns data
         return outSingleValidateTokenResponse;
       }
+
+	  /**
+          * Service to Update Credentials
+          */
+         @Override
+			// Return Dto
+			public  ResponseUpdateCredentials  updateCredentials(RequestUpdateCredentials inRequestUpdateCredentials  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: updateCredentials");
+      ResponseUpdateCredentials outSingleResponseUpdateCredentials  = new ResponseUpdateCredentials();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_updateCredentials");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500125");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateCredentials.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_userName",ICTSTypes.SQLVARCHAR,inRequestUpdateCredentials.getUserName());
+      procedureRequestAS.addInputParam("@i_password",ICTSTypes.SQLVARCHAR,inRequestUpdateCredentials.getPassword());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    ResponseUpdateCredentials returnResponseUpdateCredentials = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateCredentials>() { 
+                    @Override
+                    public ResponseUpdateCredentials mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseUpdateCredentials dto = new ResponseUpdateCredentials();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
+							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseUpdateCredentials=returnResponseUpdateCredentials ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: updateCredentials");
+        //returns data
+        return outSingleResponseUpdateCredentials;
+      }
+    
 }
