@@ -395,6 +395,59 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_define_security_qa_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestDefineSecurityQA",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer1", param = "@i_question_1_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer1", param = "@i_answer_1_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer2", param = "@i_question_2_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer2", param = "@i_answer_2_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer3", param = "@i_question_3_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer3", param = "@i_question_3_desc", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cstmrAnswer3", param = "@i_answer_3_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrAnswer3", param = "@i_answer_3_desc", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500123")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseDefineSecurityQA",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseDefineSecurityQA",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO defineSecurityQA(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_encryptData", dbms = "SQLCTS",  
 		objectRequest = {
 		
@@ -1356,6 +1409,47 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO transferThirdPartyAccount(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_updateCredentials", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestUpdateCredentials",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "userName", param = "@i_userName", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "password", param = "@i_password", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500125")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseUpdateCredentials",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1),
+		    @CTSColumn(field = "message.code", columnIndex = 2),
+		    @CTSColumn(field = "message.message", columnIndex = 3)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO updateCredentials(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }

@@ -36,6 +36,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
@@ -1417,6 +1419,54 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: getAllCustomerQuestions");
 		return Response.ok(outResponseAllCustomerQuestions).build();
+
+	}
+	
+	/**
+	 * Define Security Question and Answer
+	 */
+	@POST
+	@Path("/apiOperations/questions/defineSecurityQA")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response defineSecurityQA(RequestDefineSecurityQA inRequestDefineSecurityQA) {
+		LOGGER.logDebug("Start service execution REST: defineSecurityQA");
+		ResponseDefineSecurityQA outResponseDefineSecurityQA = new ResponseDefineSecurityQA();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestDefineSecurityQA.getExternalCustomerId()),
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseDefineSecurityQA = iServiceContractOperationsApiService
+					.defineSecurityQA(inRequestDefineSecurityQA);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: defineSecurityQA");
+		return Response.ok(outResponseDefineSecurityQA).build();
 
 	}
 
