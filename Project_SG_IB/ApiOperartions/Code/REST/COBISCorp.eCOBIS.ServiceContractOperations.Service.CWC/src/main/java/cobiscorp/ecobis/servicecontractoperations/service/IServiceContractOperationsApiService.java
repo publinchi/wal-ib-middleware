@@ -29,8 +29,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
@@ -312,6 +314,14 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseAllCustomerQuestions getAllCustomerQuestions(
 			RequestAllCustomerQuestions inRequestAllCustomerQuestions) throws CTSRestException;
+	
+	/**
+	 * Define Security Question and Answer
+	 */
+
+	// Have DTO
+	public ResponseDefineSecurityQA defineSecurityQA(RequestDefineSecurityQA inRequestDefineSecurityQA)
+			throws CTSRestException;
 
 	/**
 	 * Service to apply debit account
