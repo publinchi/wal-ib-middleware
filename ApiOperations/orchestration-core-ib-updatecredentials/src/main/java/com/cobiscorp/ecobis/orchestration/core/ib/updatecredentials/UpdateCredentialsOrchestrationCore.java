@@ -70,7 +70,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
-	private SimpleRSA crypto = new SimpleRSA();	
+	private ICobisCrypt cobisCrypt;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -163,7 +163,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500125");
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_userName",ICTSTypes.SQLVARCHAR, userName);
-				reqTMPLocal.addInputParam("@i_password",ICTSTypes.SQLVARCHAR, encryptPassword(password));
+				reqTMPLocal.addInputParam("@i_password",ICTSTypes.SQLVARCHAR, createKey(userName, password));
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
 				if (logger.isInfoEnabled()) {
 					logger.logDebug("Ending flow, queryUpdateCredentials with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
@@ -262,51 +262,10 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		return m.find();
 	}
 	
-	public String encryptPassword(String password)
-	{
-		logger.logDebug("Begin flow, encryptPassword start.");
-		String publickey = getPublicKey();
-		if (!publickey.equals(""))
-		{
-			try {			
-				String encrypt = crypto.encrypt(password, publickey);
-				logger.logDebug("Ending flow, encryptPassword encrypt: " + encrypt);
-				return encrypt;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block	
-				e.printStackTrace();
-			}
-		}
-		
-		logger.logDebug("Ending flow, encryptPassword failed");
-		return "";
-	}
-	
-	public String getPublicKey() 
-	{
-		logger.logDebug("Begin flow, getPublicKey start.");
-		File xmlFile = new File("/cobis/cobishome/CTS_MF/services-as/securityBM/security-config.xml");
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder;
-		try {
-			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFile);
-			String publickey = doc.getElementsByTagName("public-keyrsa").item(0).getTextContent();
-			logger.logDebug("Ending flow, getPublicKey publickey: " + publickey);
-			return publickey;
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.logDebug("Ending flow, getPublicKey failed.");
-		return "";
+	private String createKey(String user, String password) {
+		ComponentLocator componentLocator = ComponentLocator.getInstance(getClass());
+		cobisCrypt = componentLocator.find(ICobisCrypt.class);
+		return cobisCrypt.enCrypt(user, password);
 	}
 
 }
