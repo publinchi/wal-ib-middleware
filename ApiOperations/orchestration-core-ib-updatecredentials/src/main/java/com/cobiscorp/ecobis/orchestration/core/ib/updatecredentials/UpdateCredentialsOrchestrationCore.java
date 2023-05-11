@@ -94,12 +94,12 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		String password = wQueryRequest.readValueParam("@i_password");
 		
 		if (userName.isEmpty()) {
-			aBagSPJavaOrchestration.put("40109", "userName must be not be empty");
+			aBagSPJavaOrchestration.put("40109", "userName must not be empty");
 			return;
 		}
 		
 		if (password.isEmpty()) {
-			aBagSPJavaOrchestration.put("40110", "password must be not be empty");
+			aBagSPJavaOrchestration.put("40110", "password must not be empty");
 			return;
 		}
 		
