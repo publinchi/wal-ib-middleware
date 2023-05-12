@@ -45,8 +45,8 @@ import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 		@Property(name = "service.spName", value = "cob_procesador..sp_define_security_qa_api") })
 public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBase {
 
-	private static ILogger logger = LogFactory.getLogger(DefineSecurityQAApiOrchestrationCore.class);
-	private static final String CLASS_NAME = "DefineSecurityQAApiOrchestrationCore--->";
+	ILogger logger = this.getLogger();
+	private static final String CLASS_NAME = "GetCatalogue";
 	private String errorCode;
 	private String errorMessage;
 	
