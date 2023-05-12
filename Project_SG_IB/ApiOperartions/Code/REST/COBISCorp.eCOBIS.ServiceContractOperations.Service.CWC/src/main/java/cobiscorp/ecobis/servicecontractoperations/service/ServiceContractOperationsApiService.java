@@ -3178,13 +3178,9 @@ int mapBlank=0;
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2()));
 			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2()));
-			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
-			procedureRequestAS.addInputParam("@i_question_3_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
-			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
-			procedureRequestAS.addInputParam("@i_answer_3_desc", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
 			
 
@@ -3252,6 +3248,28 @@ int mapBlank=0;
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseDefineSecurityQA returnResponseDefineSecurityQA = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseDefineSecurityQA>() {
+							@Override
+							public ResponseDefineSecurityQA mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseDefineSecurityQA dto = new ResponseDefineSecurityQA();
+
+								dto.setCustomQuestionId(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseDefineSecurityQA.setCustomQuestionId(returnResponseDefineSecurityQA.getCustomQuestionId());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -3263,8 +3281,7 @@ int mapBlank=0;
 			// returns data
 			return outResponseDefineSecurityQA;
 		}
-           
-         
+              
 
 	  /**
           * Valdate token transaction factor API

@@ -12,6 +12,7 @@ Buildfile: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartio
      [echo] Building C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build.xml
      [echo] Version 1.0.0.0
 clean:
+   [delete] Deleting directory C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build
 classpath:
 init:
     [mkdir] Created dir: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\src

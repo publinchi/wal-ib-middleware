@@ -10,10 +10,8 @@
     <parameter name="@i_answer_1_id" dataType="int" direction="in" />
     <parameter name="@i_question_2_id" dataType="int" direction="in" />
     <parameter name="@i_answer_2_id" dataType="int" direction="in" />
-    <parameter name="@i_question_3_id" dataType="int" direction="in" />
-    <parameter name="@i_question_3_desc" dataType="varchar" direction="in" />
-    <parameter name="@i_answer_3_id" dataType="int" direction="in" />
-    <parameter name="@i_answer_3_desc" dataType="varchar" direction="in" />
+    <parameter name="@i_question_desc" dataType="varchar" direction="in" />
+    <parameter name="@i_answer_desc" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
@@ -28,6 +26,12 @@
         <column name="message" />
       </columns>
       <queryText>SELECT "code"=0,"message"="success"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="customQuestionId" />
+      </columns>
+      <queryText></queryText>
     </query>
   </queries>
 </procedure>
