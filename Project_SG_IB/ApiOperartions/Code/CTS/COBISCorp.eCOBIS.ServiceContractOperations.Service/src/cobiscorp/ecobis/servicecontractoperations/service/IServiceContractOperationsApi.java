@@ -61,6 +61,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO debitOperation(ServiceRequestTO requestTO);  
 
   /**
+  * Define Security Question and Answer
+  */
+  ServiceResponseTO defineSecurityQA(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
@@ -149,6 +154,11 @@ public interface IServiceContractOperationsApi{
   * Service for transfer to a third party account
   */
   ServiceResponseTO transferThirdPartyAccount(ServiceRequestTO requestTO);  
+
+  /**
+  * Service to Update Credentials
+  */
+  ServiceResponseTO updateCredentials(ServiceRequestTO requestTO);  
 
   /**
   * Update customer address
