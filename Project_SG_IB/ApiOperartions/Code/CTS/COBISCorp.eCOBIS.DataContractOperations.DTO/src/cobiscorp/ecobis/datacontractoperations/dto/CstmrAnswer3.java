@@ -28,27 +28,13 @@ import java.util.HashMap;
 
 
 public class CstmrAnswer3 implements Serializable {
-  private Integer questionId;
   private String questionDescription;
-  private Integer responseId;
   private String responseDescription;
-  public Integer getQuestionId(){
-    return this.questionId;
-  }
-  public void setQuestionId(Integer questionId ){
-    this.questionId=questionId;
-  }
   public String getQuestionDescription(){
     return this.questionDescription;
   }
   public void setQuestionDescription(String questionDescription ){
     this.questionDescription=questionDescription;
-  }
-  public Integer getResponseId(){
-    return this.responseId;
-  }
-  public void setResponseId(Integer responseId ){
-    this.responseId=responseId;
   }
   public String getResponseDescription(){
     return this.responseDescription;
