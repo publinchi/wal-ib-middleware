@@ -92,6 +92,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String userName = wQueryRequest.readValueParam("@i_userName");
 		String password = wQueryRequest.readValueParam("@i_password");
+		String oldPassword = wQueryRequest.readValueParam("@i_oldPassword");
 		
 		if (userName.isEmpty()) {
 			aBagSPJavaOrchestration.put("40109", "userName must not be empty");
@@ -100,6 +101,11 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		if (password.isEmpty()) {
 			aBagSPJavaOrchestration.put("40110", "password must not be empty");
+			return;
+		}
+		
+		if (oldPassword.isEmpty()) {
+			aBagSPJavaOrchestration.put("40115", "oldPassword must not be empty");
 			return;
 		}
 		
@@ -123,6 +129,16 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 			return;
 		}
 		
+		if (oldPassword.length() < 4) {
+			aBagSPJavaOrchestration.put("40116", "oldPassword must be at least 4 characters");
+			return;
+		}
+		
+		if (oldPassword.length() > 12) {
+			aBagSPJavaOrchestration.put("40117", "oldPassword must have a maximum of 12 characters");
+			return;
+		}
+		
 		if (!containsDigit(password)) {
 			aBagSPJavaOrchestration.put("50052", "password must have at least one number");
 			return;
@@ -135,6 +151,26 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		if (!containsSpecialCharacters(password)) {
 			aBagSPJavaOrchestration.put("50053", "password must have at least one special character");
+			return;
+		}
+		
+		if (!containsDigit(oldPassword)) {
+			aBagSPJavaOrchestration.put("50054", "oldPassword must have at least one number");
+			return;
+		}
+		
+		if (!checkStringHasAtLeastOneCapitalLetter(oldPassword)) {
+			aBagSPJavaOrchestration.put("50055", "oldPassword must have at least one capital letter");
+			return;
+		}
+		
+		if (!containsSpecialCharacters(oldPassword)) {
+			aBagSPJavaOrchestration.put("50056", "oldPassword must have at least one special character");
+			return;
+		}
+		
+		if (oldPassword.equals(password)) {
+			aBagSPJavaOrchestration.put("50057", "The new password must be different to the previous one");
 			return;
 		}
 

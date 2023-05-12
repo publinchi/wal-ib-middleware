@@ -1522,7 +1522,7 @@ public class ServiceContractOperationsApiRest {
 	  LOGGER.logDebug("Start service execution REST: updateCredentials");
       ResponseUpdateCredentials outSingleResponseUpdateCredentials  = new ResponseUpdateCredentials();
           
-      if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateCredentials.getExternalCustomerId()), new Data("userName", inRequestUpdateCredentials.getUserName()), new Data("password", inRequestUpdateCredentials.getPassword()))) {
+      if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateCredentials.getExternalCustomerId()), new Data("userName", inRequestUpdateCredentials.getUserName()), new Data("password", inRequestUpdateCredentials.getPassword()), new Data("oldPassword", inRequestUpdateCredentials.getOldPassword()))) {
         LOGGER.logDebug("400 is returned - Required fields are missing");
         return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
       }
