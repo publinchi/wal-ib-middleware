@@ -28,35 +28,35 @@ import java.util.HashMap;
 
 
 public class CardApplicationResponse implements Serializable {
-  private Integer cardId;
-  private String cardNumber;
-  private String customerName;
-  private Integer cardApplication;
+  private String cardId;
+  private String personId;
+  private String accountId;
+  private String assignmentDate;
   private Boolean success;
   private Message message;
-  public Integer getCardId(){
+  public String getCardId(){
     return this.cardId;
   }
-  public void setCardId(Integer cardId ){
+  public void setCardId(String cardId ){
     this.cardId=cardId;
   }
-  public String getCardNumber(){
-    return this.cardNumber;
+  public String getPersonId(){
+    return this.personId;
   }
-  public void setCardNumber(String cardNumber ){
-    this.cardNumber=cardNumber;
+  public void setPersonId(String personId ){
+    this.personId=personId;
   }
-  public String getCustomerName(){
-    return this.customerName;
+  public String getAccountId(){
+    return this.accountId;
   }
-  public void setCustomerName(String customerName ){
-    this.customerName=customerName;
+  public void setAccountId(String accountId ){
+    this.accountId=accountId;
   }
-  public Integer getCardApplication(){
-    return this.cardApplication;
+  public String getAssignmentDate(){
+    return this.assignmentDate;
   }
-  public void setCardApplication(Integer cardApplication ){
-    this.cardApplication=cardApplication;
+  public void setAssignmentDate(String assignmentDate ){
+    this.assignmentDate=assignmentDate;
   }
   public Boolean isSuccess(){
     return this.success;

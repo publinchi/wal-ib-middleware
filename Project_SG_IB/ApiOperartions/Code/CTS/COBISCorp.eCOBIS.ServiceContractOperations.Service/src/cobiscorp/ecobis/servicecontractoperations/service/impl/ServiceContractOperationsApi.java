@@ -311,7 +311,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				input = {
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "street", param = "@i_street", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "complement", param = "@i_complement", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "number", param = "@i_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "city", param = "@i_city", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "administrativeAreaCode", param = "@i_administrative_area_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "countryCode", param = "@i_country_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "postalCode", param = "@i_postal_code", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -324,14 +331,15 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
     @CTSResponse(
       name = "returnCardApplicationResponse",
       type = cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse.class,
+      singleResult = true,
       columns = {
 		    @CTSColumn(field = "success", columnIndex = 1),
 		    @CTSColumn(field = "message.code", columnIndex = 2),
 		    @CTSColumn(field = "message.message", columnIndex = 3),
 		    @CTSColumn(field = "cardId", columnIndex = 4),
-		    @CTSColumn(field = "cardNumber", columnIndex = 5),
-		    @CTSColumn(field = "customerName", columnIndex = 6),
-		    @CTSColumn(field = "cardApplication", columnIndex = 7)
+		    @CTSColumn(field = "personId", columnIndex = 5),
+		    @CTSColumn(field = "accountId", columnIndex = 6),
+		    @CTSColumn(field = "assignmentDate", columnIndex = 7)
       }
     )
   }
