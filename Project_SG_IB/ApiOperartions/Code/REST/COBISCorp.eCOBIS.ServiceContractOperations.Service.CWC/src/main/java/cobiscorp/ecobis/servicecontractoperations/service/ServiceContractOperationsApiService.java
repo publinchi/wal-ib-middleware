@@ -2906,76 +2906,85 @@ int mapBlank=0;
 		return outResponseValidateDeviceActivation;
 	}
 
-	/**
-          * Customer Card Application API
-          */
-         @Override
+		/**
+	     * Customer Card Application API
+	     */
+	    @Override
 			// Return Dto
 			public  CardApplicationResponse  customerCardApplication(CardApplicationRequest inCardApplicationRequest  )throws CTSRestException{
-	  LOGGER.logDebug("Start service execution: customerCardApplication");
-      CardApplicationResponse outSingleCardApplicationResponse  = new CardApplicationResponse();
-          
-      //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_card_application_api");
-      
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500112");
-      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCardApplicationRequest.getExternalCustomerId()));
-      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getAccountNumber());
-      
-      //execute procedure
-      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
-
-      List<MessageBlock> errors = ErrorUtil.getErrors(response);
-      //throw error
-      if(errors!= null && errors.size()> 0){
-      LOGGER.logDebug("Procedure execution returns error");
-      if ( LOGGER.isDebugEnabled() ) {
-      for (int i = 0; i < errors.size(); i++) {
-      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-      }
-      }
-      throw new CTSRestException("Procedure Response has errors", null, errors);
-      }
-      LOGGER.logDebug("Procedure ok");
-      //Init map returns
-      int mapTotal=0;
-      int mapBlank=0;
-      
-            mapTotal++;
-            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
-                    //----------------Assume Array return
-                    CardApplicationResponse returnCardApplicationResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<CardApplicationResponse>() { 
-                    @Override
-                    public CardApplicationResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-                    CardApplicationResponse dto = new CardApplicationResponse();
-                    
-                          dto.setCardId(resultSetMapper.getInteger(4));
-                          dto.setCardNumber(resultSetMapper.getString(5));
-                          dto.setCustomerName(resultSetMapper.getString(6));
-                          dto.setCardApplication(resultSetMapper.getInteger(7));
-                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		 LOGGER.logDebug("Start service execution: customerCardApplication");
+		 CardApplicationResponse outSingleCardApplicationResponse  = new CardApplicationResponse();
+		     
+		 //create procedure
+		 ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_card_application_api");
+		 
+		   procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500112");
+		 procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inCardApplicationRequest.getExternalCustomerId()));
+		 procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getAccountNumber());
+		 procedureRequestAS.addInputParam("@i_street",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getStreet());
+		 procedureRequestAS.addInputParam("@i_complement",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getComplement());
+		 procedureRequestAS.addInputParam("@i_number",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getNumber());
+		 procedureRequestAS.addInputParam("@i_city",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getCity());
+		 procedureRequestAS.addInputParam("@i_administrative_area_code",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getAdministrativeAreaCode());
+		 procedureRequestAS.addInputParam("@i_country_code",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getCountryCode());
+		 procedureRequestAS.addInputParam("@i_postal_code",ICTSTypes.SQLVARCHAR,inCardApplicationRequest.getPostalCode());
+		 
+		 //execute procedure
+		 ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		 List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		 //throw error
+		 if(errors!= null && errors.size()> 0){
+		 LOGGER.logDebug("Procedure execution returns error");
+		 if ( LOGGER.isDebugEnabled() ) {
+		 for (int i = 0; i < errors.size(); i++) {
+		 LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		 }
+		 }
+		 throw new CTSRestException("Procedure Response has errors", null, errors);
+		 }
+		 LOGGER.logDebug("Procedure ok");
+		 //Init map returns
+		 int mapTotal=0;
+		 int mapBlank=0;
+		 
+		       mapTotal++;
+		       if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+		               //----------------Assume Array return
+		               CardApplicationResponse returnCardApplicationResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<CardApplicationResponse>() { 
+		               @Override
+		               public CardApplicationResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		               CardApplicationResponse dto = new CardApplicationResponse();
+		               LOGGER.logInfo("result xcxc" + resultSetMapper.toString());
+		               if(resultSetMapper.getInteger(2)==0){
+		            	   dto.setCardId(resultSetMapper.getString(4));
+		                    dto.setPersonId(resultSetMapper.getString(5));
+		                    dto.setAccountId(resultSetMapper.getString(6));
+		                    dto.setAssignmentDate(resultSetMapper.getString(7));
+		               }
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
 							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
 							dto.messageInstance().setMessage(resultSetMapper.getString(3));
-                    return dto;
-                    }
-                    },false);
-                    outSingleCardApplicationResponse=returnCardApplicationResponse ;
-                    
-            }else {
-            mapBlank++;
-
-            }
-          
-      //End map returns
-      if(mapBlank!=0&&mapBlank==mapTotal){
-      LOGGER.logDebug("No data found");
-      throw new CTSRestException("404",null);
-      }
-      
-        LOGGER.logDebug("Ends service execution: customerCardApplication");
-        //returns data
-        return outSingleCardApplicationResponse;
-      }
+		               return dto;
+		               }
+		               },false);
+		               outSingleCardApplicationResponse=returnCardApplicationResponse ;
+		               
+		       }else {
+		       mapBlank++;
+		
+		       }
+		     
+		 //End map returns
+		 if(mapBlank!=0&&mapBlank==mapTotal){
+		 LOGGER.logDebug("No data found");
+		 throw new CTSRestException("404",null);
+		 }
+		 
+		   LOGGER.logDebug("Ends service execution: customerCardApplication");
+		   //returns data
+		   return outSingleCardApplicationResponse;
+		 }
 
 	  /**
           * Service to apply debit account
