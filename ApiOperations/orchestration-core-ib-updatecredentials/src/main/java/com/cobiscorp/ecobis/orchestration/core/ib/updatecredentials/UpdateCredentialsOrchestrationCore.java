@@ -155,21 +155,6 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 			return;
 		}
 		
-		if (!containsDigit(oldPassword)) {
-			aBagSPJavaOrchestration.put("50054", "oldPassword must have at least one number");
-			return;
-		}
-		
-		if (!checkStringHasAtLeastOneCapitalLetter(oldPassword)) {
-			aBagSPJavaOrchestration.put("50055", "oldPassword must have at least one capital letter");
-			return;
-		}
-		
-		if (!containsSpecialCharacters(oldPassword)) {
-			aBagSPJavaOrchestration.put("50056", "oldPassword must have at least one special character");
-			return;
-		}
-		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
 		reqTMPCentral.setSpName("cobis..sp_updateCredentials_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
