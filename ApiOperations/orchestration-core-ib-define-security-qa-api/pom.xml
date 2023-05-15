@@ -28,22 +28,33 @@
     <dependency>
       <groupId>com.cobiscorp.cobis.cts</groupId>
       <artifactId>cts-commons</artifactId>
-      <version>1.0.7.9</version>
+      <version>1.0.7.5</version>
     </dependency>
     <dependency>
       <groupId>com.cobiscorp.cobis.cts</groupId>
       <artifactId>cts-services</artifactId>
-      <version>1.0.6</version>
+      <version>1.0.6.5</version>
     </dependency>
     <dependency>
       <groupId>com.cobiscorp.cobis.cis</groupId>
       <artifactId>sp-java-orchestration-base-simple</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
       <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>1.4.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.collections</artifactId>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
@@ -61,9 +72,44 @@
       <version>4.6.1.0</version>
     </dependency>
     <dependency>
-      <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-      <artifactId>orchestration-ib-base</artifactId>
-      <version>4.6.1.0</version>
+      <groupId>com.cobiscorp.cobis</groupId>
+      <artifactId>cobisv-commons</artifactId>
+      <version>1.0.3</version>
     </dependency>
+    <dependency>
+      <groupId>com.cobiscorp.ecobis</groupId>
+      <artifactId>cobis-admintoken</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.cobiscorp</groupId>
+      <artifactId>cobis-mb-services-dtos</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+	<dependency>
+	  <groupId>com.cobiscorp.channels.ib</groupId>
+	  <artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</artifactId>
+	  <version>4.6.1.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.cobiscorp.cobis.cts</groupId>
+	  <artifactId>cts-service-integration</artifactId>
+	  <version>1.0.3.1</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.cobiscorp.channels.ib</groupId>
+	  <artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO</artifactId>
+	  <version>4.6.1.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.cobiscorp.channels.ib</groupId>
+	  <artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO</artifactId>
+	  <version>4.6.1.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>com.cobiscorp.ecobis.cts</groupId>
+	  <artifactId>cobis-osgi-jaxrs-connector</artifactId>
+	  <version>1.0.0.5</version>
+	</dependency>
   </dependencies>
 </project>
