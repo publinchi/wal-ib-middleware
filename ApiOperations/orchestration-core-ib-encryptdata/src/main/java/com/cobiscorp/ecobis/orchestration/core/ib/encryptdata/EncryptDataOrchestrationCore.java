@@ -178,28 +178,6 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 	
 	public String getPublicKey() 
 	{
-		logger.logDebug("Begin flow, getPublicKey start.");
-		File xmlFile = new File("/opt/cobis/cobishome/CTS_MF/services-as/securityBM/security-config.xml");
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder;
-		try {
-			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFile);
-			String publickey = doc.getElementsByTagName("public-keyrsa").item(0).getTextContent();
-			logger.logDebug("Ending flow, getPublicKey publickey: " + publickey);
-			return publickey;
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.logDebug("Ending flow, getPublicKey failed.");
-		return "";
+		return Utils.PUBLIC_KEY;
 	}
 }
