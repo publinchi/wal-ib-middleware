@@ -31,6 +31,7 @@ public class RequestUpdateCredentials implements Serializable {
   private Integer externalCustomerId;
   private String userName;
   private String password;
+  private String oldPassword;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -48,5 +49,11 @@ public class RequestUpdateCredentials implements Serializable {
   }
   public void setPassword(String password ){
     this.password=password;
+  }
+  public String getOldPassword(){
+    return this.oldPassword;
+  }
+  public void setOldPassword(String oldPassword ){
+    this.oldPassword=oldPassword;
   }
 }
