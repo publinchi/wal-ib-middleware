@@ -1,19 +1,23 @@
 
 package com.cobiscorp.ecobis.orchestration.core.ib.define.security.qa.api;
 
-import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
+import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
-import com.cobiscorp.cobis.commons.domains.log.ILogger;
-import com.cobiscorp.cobis.csp.domains.ICSP;
+import com.cobiscorp.cobis.commons.log.ILogger;
+import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
@@ -23,7 +27,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
-import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
@@ -31,12 +35,17 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
-import com.cobiscorp.ecobis.ib.orchestration.dtos.Currency;
-import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
-import com.cobiscorp.ecobis.ib.orchestration.dtos.QueryProducts;
-import com.cobiscorp.ecobis.orchestration.core.ib.define.security.qa.api.Util;
-import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 
+import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
+
+/**
+ * Generated Transaction Factor
+ * 
+ * @since May 15, 2023
+ * @author sochoa
+ * @version 1.0.0
+ * 
+ */
 @Component(name = "DefineSecurityQAApiOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
 @Properties(value = { @Property(name = "service.description", value = "DefineSecurityQAApiOrchestrationCore"),
@@ -45,13 +54,36 @@ import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 		@Property(name = "service.spName", value = "cob_procesador..sp_define_security_qa_api") })
 public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBase {
 
-	ILogger logger = this.getLogger();
-	private static final String CLASS_NAME = "GetCatalogue";
-	private String errorCode;
-	private String errorMessage;
+	private static ILogger logger = LogFactory.getLogger(DefineSecurityQAApiOrchestrationCore.class);
+	private static final String CLASS_NAME = "DefineSecurityQAApiOrchestrationCore--->";
+	
+	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 	
 	protected static final String CHANNEL_REQUEST = "8";
+	
+	/**
+	 * Instance of ICTSServiceIntegration
+	 */
+	@Reference(bind = "setServiceIntegration", unbind = "unsetServiceIntegration", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
+	private ICTSServiceIntegration serviceIntegration;
+	
+	/**
+	 * Method that set the instance of ICTSServiceIntegration
+	 */
+	public void setServiceIntegration(ICTSServiceIntegration serviceIntegration) {
+		this.serviceIntegration = serviceIntegration;
+	}
+	
+	/**
+	 * Method that unset the instance of ICTSServiceIntegration
+	 */
+	public void unsetServiceIntegration(ICTSServiceIntegration serviceIntegration) {
+		this.serviceIntegration = null;
+	}
 
+	/**
+	 * Read configuration of parent component
+	 */
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 
 	}
@@ -59,262 +91,198 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		boolean isFailed = false;
+		
+		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Start-executeJavaOrchestration---> encryptdata");
-		}
-
-		try {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " Request original:" + anOriginalRequest.getProcedureRequestAsString());
-			}
-
-			if (anOriginalRequest.readValueParam("@i_catalog") == null
-					|| anOriginalRequest.readValueParam("@i_catalog").trim().equals("")) {
-
-				errorCode = Util.codeNullTable;
-				errorMessage = Util.messageNullTable;
-				isFailed = true;
-			}
-
-			if (!isFailed) {
-				aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-				isFailed = getCatalogData(aBagSPJavaOrchestration);
-			}
-
-			if (!isFailed) {
-
-				IProcedureResponse registros = (IProcedureResponse) aBagSPJavaOrchestration.get("responseCatalog");
-				if (registros == null || registros.getResultSetListSize() <= 0
-						|| registros.getResultSet(1).getData().getRowsAsArray().length <= 0) {
-
-					errorCode = Util.codeEmptyCatalog;
-					errorMessage = Util.messagEmptyCatalog;
-					isFailed = true;
-				}
-			}
-			if (isFailed) {
-
-				logger.logError(CLASS_NAME + " Error isFailed getCatalogData");
-				return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-
-			}
-			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-
-		} catch (Exception e) {
-
-			logger.logError(CLASS_NAME + " *********  Error in " + e.getMessage(), e);
-
-			e.printStackTrace();
-
-			IProcedureResponse wProcedureRespFinal = initProcedureResponse(anOriginalRequest);
-			// Agregar Header
-			IResultSetHeader metaData = new ResultSetHeader();
-			IResultSetData data = new ResultSetData();
-
-			ResultSetHeader metaData2 = new ResultSetHeader();
-			IResultSetData data2 = new ResultSetData();
-
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-
-			metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
-			IResultSetRow row = new ResultSetRow();
-			row.addRowData(2, new ResultSetRowColumnData(false, Util.codeInternalError));
-			row.addRowData(1, new ResultSetRowColumnData(false, Util.messagInternalError));
-
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
-
-			IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-			IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-
-			wProcedureRespFinal.setReturnCode(500);
-
-			wProcedureRespFinal.addResponseBlock(resultsetBlock);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock2);
-
-			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE,
-					ICSP.ERROR_EXECUTION_SERVICE);
-			return wProcedureRespFinal;
+		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		anProcedureResponse = defineSecurityQa(anOriginalRequest);
+		
+		if (anProcedureResponse.getResultSets().size()>2) {
+			
+			return processTransformationResponse(anProcedureResponse);
+		} else {
+			return processResponseError(anProcedureResponse);
 		}
 
 	}
+	
+	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" start processResponseDefineSecurityQA--->");
+		}
 
-	private Boolean getCatalogData(java.util.Map<String, Object> aBagSPJavaOrchestration) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " getCatalogData");
-		}
-		IProcedureRequest iProcedureRequest = ((IProcedureRequest) (aBagSPJavaOrchestration.get("anOriginalRequest")));
-		IProcedureRequest reqTMP = (initProcedureRequest(iProcedureRequest));
-		reqTMP.setSpName("cob_bvirtual..sp_define_security_qa_api");
-		reqTMP.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
-		reqTMP.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500123");
-		reqTMP.addInputParam("@i_catalog", ICTSTypes.SQLVARCHAR, iProcedureRequest.readValueParam("@i_catalog"));
-		IProcedureResponse responseCatalog = executeCoreBanking(reqTMP);
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(
-					CLASS_NAME + " Response executeCoreBanking:" + responseCatalog.getProcedureResponseAsString());
-		}
-		aBagSPJavaOrchestration.put("responseCatalog", responseCatalog);
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " getCatalogData Final");
-		}
-		return responseCatalog.hasError();
+		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		
+		// Agregar Header 1
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+	
+		// Agregar Header 2
+		IResultSetHeader metaData2 = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+		
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		
+		/***************************************success***************************************/
+
+		IResultSetRow row = new ResultSetRow();
+		
+		row.addRowData(1, 
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue()));
+		
+		data.addRow(row);
+		
+		/***************************************code/message************************************/
+		
+		IResultSetRow row2 = new ResultSetRow();
+
+		row2.addRowData(1,
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
+		row2.addRowData(2, 
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue()));
+
+		data2.addRow(row2);
+		
+		
+		//return
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+	
+		
+		anOriginalProcedureResponse.setReturnCode(200);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+
+
+		return anOriginalProcedureResponse;
 	}
 
+	private IProcedureResponse defineSecurityQa(IProcedureRequest aRequest) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en defineSecurityQa");
+		}
+	
+		request.setSpName("cob_bvirtual..sp_define_security_qa_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		
+		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		
+		request.addInputParam("@i_question_1_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_question_1_id"));
+		request.addInputParam("@i_answer_1_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_answer_1_id"));
+		
+		request.addInputParam("@i_question_2_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_question_2_id"));
+		request.addInputParam("@i_answer_2_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_answer_2_id"));
+		
+		request.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_desc"));
+		request.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_desc"));
+		
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de defineSecurityQa");
+		}
+
+		return wProductsQueryResp;
+	}
+	
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 			Map<String, Object> aBagSPJavaOrchestration) {
+
+		return null;
+	}
+
+	public IProcedureResponse processTransformationResponse(IProcedureResponse anOriginalProcedureRes) {
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(" start processResponse--->");
+			logger.logInfo(" start processTransformationResponse--->");
 		}
 
-		IProcedureResponse wProcedureRespFinal = ((IProcedureResponse) (aBagSPJavaOrchestration
-				.get("responseCatalog")));
+		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 
-		if (wProcedureRespFinal != null) {
+		if (anOriginalProcedureRes != null) {
 
 			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " ProcessResponse wProcedureRespFinal:"
-						+ wProcedureRespFinal.getProcedureResponseAsString());
+				logger.logInfo(CLASS_NAME + " ProcessResponse original anOriginalProcedureRes:"
+						+ anOriginalProcedureRes.getProcedureResponseAsString());
 			}
 
 		}
-		// Agregar Header 1
 
-		// IResultSetHeader metaData0 = new ResultSetHeader();
-		// metaData0.addColumnMetaData(new ResultSetHeaderColumn("codigo",
-		// ICTSTypes.SQLVARCHAR, 100));
-		// metaData0.addColumnMetaData(new ResultSetHeaderColumn("valor",
-		// ICTSTypes.SQLVARCHAR, 100));
-		// IResultSetData data0 = new ResultSetData();
-
+		//Agregar Header 1
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
-
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
 
 		// Agregar Header 2
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
-		if (wProcedureRespFinal != null && wProcedureRespFinal.getResultSet(1).getData().getRowsAsArray().length > 0) {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " wProcedureRespFinal is not null");
-			}
-
-			IResultSetRow row = new ResultSetRow();
-
-			row.addRowData(1, new ResultSetRowColumnData(false, "0"));
-			row.addRowData(2, new ResultSetRowColumnData(false, "success"));
-
-			data.addRow(row);
-
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			data2.addRow(row2);
-
-			IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-			IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-			wProcedureRespFinal.setReturnCode(200);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock2);
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " Response final: " + wProcedureRespFinal.getProcedureResponseAsString());
-			}
-			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE,
-					ICSP.ERROR_EXECUTION_SERVICE);
-		} else if (this.errorCode != null) {
-
-			logger.logWarning(CLASS_NAME + " wProcedureRespFinal is null");
-
-			// IResultSetBlock resultsetBlock0 = new ResultSetBlock(metaData0,data0);
-			// IResultSetRow row0 = new ResultSetRow();
-			// data0.addRow(row0);
-			if(wProcedureRespFinal==null) {
-				  wProcedureRespFinal = new ProcedureResponseAS();
-				  
-					 IResultSetHeader metaData0 = new ResultSetHeader();
-					 metaData0.addColumnMetaData(new ResultSetHeaderColumn("codigo",
-					 ICTSTypes.SQLVARCHAR, 100));
-					 metaData0.addColumnMetaData(new ResultSetHeaderColumn("valor",
-					 ICTSTypes.SQLVARCHAR, 100));
-					 IResultSetData data0 = new ResultSetData();
-				 
-					 IResultSetBlock resultsetBlock0 = new ResultSetBlock(metaData0,data0);					 
-					 wProcedureRespFinal.addResponseBlock(resultsetBlock0);
-			}
-			
-			
-
-			IResultSetRow row = new ResultSetRow();
-
-			row.addRowData(1, new ResultSetRowColumnData(false, this.errorCode));
-			row.addRowData(2, new ResultSetRowColumnData(false, this.errorMessage));
-
-			data.addRow(row);
-
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			data2.addRow(row2);
-
-			IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-			IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-
 		
-			
-			
-			wProcedureRespFinal.setReturnCode(200);
-			// wProcedureRespFinal.addResponseBlock(resultsetBlock0);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock2);
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		// Agregar Header 3
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();
+		
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("customQuestionId", ICTSTypes.SQLINT4, 5));
+		
+		/***************************************success***************************************/
+		
+		IResultSetRow row = new ResultSetRow();
+		row.addRowData(1, new ResultSetRowColumnData(false, "true"));
+		data.addRow(row);
+		
+		/***************************************code/message************************************/
+		
+		IResultSetRow row2 = new ResultSetRow();
+		row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
+		row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
+		data2.addRow(row2);
+
+		/*************************************customQuestionId************************************/
+
+		IResultSetRow row3 = new ResultSetRow();
+		row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue()));
+		data3.addRow(row3);
+		
+		//return		
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+		
+		anOriginalProcedureResponse.setReturnCode(200);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
+
+		/*if (anOriginalProcedureRes != null
+				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
 
 			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " Response final: " + wProcedureRespFinal.getProcedureResponseAsString());
+				logger.logInfo(
+						CLASS_NAME + " Response final: " + anOriginalProcedureResponse.getProcedureResponseAsString());
 			}
-			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE,
-					ICSP.SUCCESS);
+		}*/
 
-		} else {
-
-			logger.logWarning(CLASS_NAME + " wProcedureRespFinal is null");
-
-			// IResultSetBlock resultsetBlock0 = new ResultSetBlock(metaData0,data0);
-
-			IResultSetRow row = new ResultSetRow();
-
-			row.addRowData(1, new ResultSetRowColumnData(false, Util.codeEmptyCatalog));
-			row.addRowData(2, new ResultSetRowColumnData(false, Util.messagEmptyCatalog));
-
-			data.addRow(row);
-
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
-			data2.addRow(row2);
-
-			IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-			IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-
-			wProcedureRespFinal.setReturnCode(200);
-			// wProcedureRespFinal.addResponseBlock(resultsetBlock0);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock);
-			wProcedureRespFinal.addResponseBlock(resultsetBlock2);
-
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " Response final: " + wProcedureRespFinal.getProcedureResponseAsString());
-			}
-			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE,
-					ICSP.SUCCESS);
-		}
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " processResponse Final");
-		}
-		return wProcedureRespFinal;
+		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
+		return anOriginalProcedureResponse;
 	}
 
 }
