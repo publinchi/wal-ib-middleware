@@ -3371,10 +3371,11 @@ int mapBlank=0;
       //create procedure
       ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_updateCredentials");
       
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500125");
+      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500125");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateCredentials.getExternalCustomerId()));
       procedureRequestAS.addInputParam("@i_userName",ICTSTypes.SQLVARCHAR,inRequestUpdateCredentials.getUserName());
       procedureRequestAS.addInputParam("@i_password",ICTSTypes.SQLVARCHAR,inRequestUpdateCredentials.getPassword());
+	  procedureRequestAS.addInputParam("@i_oldPassword",ICTSTypes.SQLVARCHAR,inRequestUpdateCredentials.getOldPassword());
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
