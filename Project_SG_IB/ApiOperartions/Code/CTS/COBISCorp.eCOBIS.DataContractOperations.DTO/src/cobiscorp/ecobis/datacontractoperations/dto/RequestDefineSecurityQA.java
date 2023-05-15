@@ -27,68 +27,51 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class CardApplicationRequest implements Serializable {
+public class RequestDefineSecurityQA implements Serializable {
   private Integer externalCustomerId;
-  private String accountNumber;
-  private String street;
-  private String complement;
-  private String number;
-  private String city;
-  private String administrativeAreaCode;
-  private String countryCode;
-  private String postalCode;
+  private CstmrAnswer1 cstmrAnswer1;
+  private CstmrAnswer2 cstmrAnswer2;
+  private CstmrAnswer3 cstmrAnswer3;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
   }
-  public String getAccountNumber(){
-    return this.accountNumber;
+  public CstmrAnswer1 cstmrAnswer1Instance(){
+	if(this.cstmrAnswer1==null){
+	this.cstmrAnswer1=new CstmrAnswer1();
+	}
+	return this.cstmrAnswer1;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public CstmrAnswer1 getCstmrAnswer1(){
+    return this.cstmrAnswer1;
   }
-  public String getStreet(){
-    return this.street;
+  public void setCstmrAnswer1(CstmrAnswer1 cstmrAnswer1 ){
+    this.cstmrAnswer1=cstmrAnswer1;
   }
-  public void setStreet(String street ){
-    this.street=street;
+  public CstmrAnswer2 cstmrAnswer2Instance(){
+	if(this.cstmrAnswer2==null){
+	this.cstmrAnswer2=new CstmrAnswer2();
+	}
+	return this.cstmrAnswer2;
   }
-  public String getComplement(){
-    return this.complement;
+  public CstmrAnswer2 getCstmrAnswer2(){
+    return this.cstmrAnswer2;
   }
-  public void setComplement(String complement ){
-    this.complement=complement;
+  public void setCstmrAnswer2(CstmrAnswer2 cstmrAnswer2 ){
+    this.cstmrAnswer2=cstmrAnswer2;
   }
-  public String getNumber(){
-    return this.number;
+  public CstmrAnswer3 cstmrAnswer3Instance(){
+	if(this.cstmrAnswer3==null){
+	this.cstmrAnswer3=new CstmrAnswer3();
+	}
+	return this.cstmrAnswer3;
   }
-  public void setNumber(String number ){
-    this.number=number;
+  public CstmrAnswer3 getCstmrAnswer3(){
+    return this.cstmrAnswer3;
   }
-  public String getCity(){
-    return this.city;
-  }
-  public void setCity(String city ){
-    this.city=city;
-  }
-  public String getAdministrativeAreaCode(){
-    return this.administrativeAreaCode;
-  }
-  public void setAdministrativeAreaCode(String administrativeAreaCode ){
-    this.administrativeAreaCode=administrativeAreaCode;
-  }
-  public String getCountryCode(){
-    return this.countryCode;
-  }
-  public void setCountryCode(String countryCode ){
-    this.countryCode=countryCode;
-  }
-  public String getPostalCode(){
-    return this.postalCode;
-  }
-  public void setPostalCode(String postalCode ){
-    this.postalCode=postalCode;
+  public void setCstmrAnswer3(CstmrAnswer3 cstmrAnswer3 ){
+    this.cstmrAnswer3=cstmrAnswer3;
   }
 }

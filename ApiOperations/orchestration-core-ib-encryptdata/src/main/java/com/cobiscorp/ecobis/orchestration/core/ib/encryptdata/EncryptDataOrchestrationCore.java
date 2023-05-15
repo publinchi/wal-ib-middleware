@@ -179,7 +179,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 	public String getPublicKey() 
 	{
 		logger.logDebug("Begin flow, getPublicKey start.");
-		File xmlFile = new File("/cobis/cobishome/CTS_MF/services-as/securityBM/security-config.xml");
+		File xmlFile = new File("/opt/cobis/cobishome/CTS_MF/services-as/securityBM/security-config.xml");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		try {

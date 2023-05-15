@@ -27,37 +27,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class CardApplicationResponse implements Serializable {
-  private String cardId;
-  private String personId;
-  private String accountId;
-  private String assignmentDate;
+public class ResponseDefineSecurityQA implements Serializable {
   private Boolean success;
   private Message message;
-  public String getCardId(){
-    return this.cardId;
-  }
-  public void setCardId(String cardId ){
-    this.cardId=cardId;
-  }
-  public String getPersonId(){
-    return this.personId;
-  }
-  public void setPersonId(String personId ){
-    this.personId=personId;
-  }
-  public String getAccountId(){
-    return this.accountId;
-  }
-  public void setAccountId(String accountId ){
-    this.accountId=accountId;
-  }
-  public String getAssignmentDate(){
-    return this.assignmentDate;
-  }
-  public void setAssignmentDate(String assignmentDate ){
-    this.assignmentDate=assignmentDate;
-  }
+  private Integer customQuestionId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -75,5 +48,11 @@ public class CardApplicationResponse implements Serializable {
   }
   public void setMessage(Message message ){
     this.message=message;
+  }
+  public Integer getCustomQuestionId(){
+    return this.customQuestionId;
+  }
+  public void setCustomQuestionId(Integer customQuestionId ){
+    this.customQuestionId=customQuestionId;
   }
 }

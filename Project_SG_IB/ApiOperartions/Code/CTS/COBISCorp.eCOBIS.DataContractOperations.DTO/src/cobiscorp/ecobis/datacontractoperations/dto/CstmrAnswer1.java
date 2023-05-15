@@ -27,53 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class CardApplicationResponse implements Serializable {
-  private String cardId;
-  private String personId;
-  private String accountId;
-  private String assignmentDate;
-  private Boolean success;
-  private Message message;
-  public String getCardId(){
-    return this.cardId;
+public class CstmrAnswer1 implements Serializable {
+  private Integer questionId;
+  private Integer responseId;
+  public Integer getQuestionId(){
+    return this.questionId;
   }
-  public void setCardId(String cardId ){
-    this.cardId=cardId;
+  public void setQuestionId(Integer questionId ){
+    this.questionId=questionId;
   }
-  public String getPersonId(){
-    return this.personId;
+  public Integer getResponseId(){
+    return this.responseId;
   }
-  public void setPersonId(String personId ){
-    this.personId=personId;
-  }
-  public String getAccountId(){
-    return this.accountId;
-  }
-  public void setAccountId(String accountId ){
-    this.accountId=accountId;
-  }
-  public String getAssignmentDate(){
-    return this.assignmentDate;
-  }
-  public void setAssignmentDate(String assignmentDate ){
-    this.assignmentDate=assignmentDate;
-  }
-  public Boolean isSuccess(){
-    return this.success;
-  }
-  public void setSuccess(Boolean success ){
-    this.success=success;
-  }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
-	}
-	return this.message;
-  }
-  public Message getMessage(){
-    return this.message;
-  }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponseId(Integer responseId ){
+    this.responseId=responseId;
   }
 }

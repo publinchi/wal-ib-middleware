@@ -27,68 +27,33 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class CardApplicationRequest implements Serializable {
+public class RequestUpdateCredentials implements Serializable {
   private Integer externalCustomerId;
-  private String accountNumber;
-  private String street;
-  private String complement;
-  private String number;
-  private String city;
-  private String administrativeAreaCode;
-  private String countryCode;
-  private String postalCode;
+  private String userName;
+  private String password;
+  private String oldPassword;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
   }
-  public String getAccountNumber(){
-    return this.accountNumber;
+  public String getUserName(){
+    return this.userName;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public void setUserName(String userName ){
+    this.userName=userName;
   }
-  public String getStreet(){
-    return this.street;
+  public String getPassword(){
+    return this.password;
   }
-  public void setStreet(String street ){
-    this.street=street;
+  public void setPassword(String password ){
+    this.password=password;
   }
-  public String getComplement(){
-    return this.complement;
+  public String getOldPassword(){
+    return this.oldPassword;
   }
-  public void setComplement(String complement ){
-    this.complement=complement;
-  }
-  public String getNumber(){
-    return this.number;
-  }
-  public void setNumber(String number ){
-    this.number=number;
-  }
-  public String getCity(){
-    return this.city;
-  }
-  public void setCity(String city ){
-    this.city=city;
-  }
-  public String getAdministrativeAreaCode(){
-    return this.administrativeAreaCode;
-  }
-  public void setAdministrativeAreaCode(String administrativeAreaCode ){
-    this.administrativeAreaCode=administrativeAreaCode;
-  }
-  public String getCountryCode(){
-    return this.countryCode;
-  }
-  public void setCountryCode(String countryCode ){
-    this.countryCode=countryCode;
-  }
-  public String getPostalCode(){
-    return this.postalCode;
-  }
-  public void setPostalCode(String postalCode ){
-    this.postalCode=postalCode;
+  public void setOldPassword(String oldPassword ){
+    this.oldPassword=oldPassword;
   }
 }

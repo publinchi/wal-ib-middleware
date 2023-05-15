@@ -70,7 +70,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
-	private SimpleRSA crypto = new SimpleRSA();	
+	private ICobisCrypt cobisCrypt;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -92,14 +92,21 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String userName = wQueryRequest.readValueParam("@i_userName");
 		String password = wQueryRequest.readValueParam("@i_password");
+		String oldPassword = wQueryRequest.readValueParam("@i_oldPassword");
+		String currentUser;
 		
 		if (userName.isEmpty()) {
-			aBagSPJavaOrchestration.put("40109", "userName must be not be empty");
+			aBagSPJavaOrchestration.put("40109", "userName must not be empty");
 			return;
 		}
 		
 		if (password.isEmpty()) {
-			aBagSPJavaOrchestration.put("40110", "password must be not be empty");
+			aBagSPJavaOrchestration.put("40110", "password must not be empty");
+			return;
+		}
+		
+		if (oldPassword.isEmpty()) {
+			aBagSPJavaOrchestration.put("40115", "oldPassword must not be empty");
 			return;
 		}
 		
@@ -123,6 +130,16 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 			return;
 		}
 		
+		if (oldPassword.length() < 4) {
+			aBagSPJavaOrchestration.put("40116", "oldPassword must be at least 4 characters");
+			return;
+		}
+		
+		if (oldPassword.length() > 12) {
+			aBagSPJavaOrchestration.put("40117", "oldPassword must have a maximum of 12 characters");
+			return;
+		}
+		
 		if (!containsDigit(password)) {
 			aBagSPJavaOrchestration.put("50052", "password must have at least one number");
 			return;
@@ -137,8 +154,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 			aBagSPJavaOrchestration.put("50053", "password must have at least one special character");
 			return;
 		}
-
-
+		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
 		reqTMPCentral.setSpName("cobis..sp_updateCredentials_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
@@ -157,13 +173,11 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 			
 			if (columns[0].getValue().equals("true")) {
 				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
-	
-				reqTMPLocal.setSpName("cob_bvirtual..sp_updateCredentials_local_api");
+				
+				reqTMPLocal.setSpName("cob_bvirtual..sp_validate_get_login_api");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500125");
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
-				reqTMPLocal.addInputParam("@i_userName",ICTSTypes.SQLVARCHAR, userName);
-				reqTMPLocal.addInputParam("@i_password",ICTSTypes.SQLVARCHAR, encryptPassword(password));
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
 				if (logger.isInfoEnabled()) {
 					logger.logDebug("Ending flow, queryUpdateCredentials with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
@@ -175,10 +189,82 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 					columns = resultSetRow.getColumnsAsArray();
 					
 					if (columns[0].getValue().equals("true")) {
+						currentUser = columns[3].getValue();
 						
-						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-						this.columnsToReturn = columns;
-						return;
+						reqTMPLocal = (initProcedureRequest(wQueryRequest));
+						
+						reqTMPLocal.setSpName("cob_bvirtual..sp_validate_credentials_api");
+						reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
+						reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500125");
+						reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
+						reqTMPLocal.addInputParam("@i_oldPassword",ICTSTypes.SQLVARCHAR, createKey(currentUser, oldPassword));
+						wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+						if (logger.isInfoEnabled()) {
+							logger.logDebug("Ending flow, queryUpdateCredentials with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
+						}
+
+						if (!wProcedureResponseLocal.hasError()) {
+							
+							resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
+							columns = resultSetRow.getColumnsAsArray();
+							
+							if (columns[0].getValue().equals("true")) {
+								String tokenOld = createKey(currentUser, oldPassword);
+								String tokenNew = createKey(currentUser, password);
+								
+								if (tokenOld.equals(tokenNew)) {
+									aBagSPJavaOrchestration.put("50057", "The new password must be different to the previous one");
+									return;
+								}
+								
+								reqTMPLocal = (initProcedureRequest(wQueryRequest));
+								
+								reqTMPLocal.setSpName("cob_bvirtual..sp_updateCredentials_local_api");
+								reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
+								reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500125");
+								reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
+								reqTMPLocal.addInputParam("@i_userName",ICTSTypes.SQLVARCHAR, userName);
+								reqTMPLocal.addInputParam("@i_password",ICTSTypes.SQLVARCHAR, createKey(userName, password));
+					
+								wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+								if (logger.isInfoEnabled()) {
+									logger.logDebug("Ending flow, queryUpdateCredentials with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
+								}
+
+								if (!wProcedureResponseLocal.hasError()) {
+									
+									resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
+									columns = resultSetRow.getColumnsAsArray();
+									
+									if (columns[0].getValue().equals("true")) {
+										
+										aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+										this.columnsToReturn = columns;
+										return;
+										
+									} else {
+										
+										aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+										return;
+									} 
+									
+								} else {
+									
+									aBagSPJavaOrchestration.put("50050", "Error updating credentials");
+									return;
+								}
+								
+							} else {
+								
+								aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+								return;
+							} 
+							
+						} else {
+							
+							aBagSPJavaOrchestration.put("50050", "Error updating credentials");
+							return;
+						}
 						
 					} else {
 						
@@ -262,51 +348,10 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		return m.find();
 	}
 	
-	public String encryptPassword(String password)
-	{
-		logger.logDebug("Begin flow, encryptPassword start.");
-		String publickey = getPublicKey();
-		if (!publickey.equals(""))
-		{
-			try {			
-				String encrypt = crypto.encrypt(password, publickey);
-				logger.logDebug("Ending flow, encryptPassword encrypt: " + encrypt);
-				return encrypt;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block	
-				e.printStackTrace();
-			}
-		}
-		
-		logger.logDebug("Ending flow, encryptPassword failed");
-		return "";
-	}
-	
-	public String getPublicKey() 
-	{
-		logger.logDebug("Begin flow, getPublicKey start.");
-		File xmlFile = new File("/cobis/cobishome/CTS_MF/services-as/securityBM/security-config.xml");
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder;
-		try {
-			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFile);
-			String publickey = doc.getElementsByTagName("public-keyrsa").item(0).getTextContent();
-			logger.logDebug("Ending flow, getPublicKey publickey: " + publickey);
-			return publickey;
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.logDebug("Ending flow, getPublicKey failed.");
-		return "";
+	private String createKey(String user, String password) {
+		ComponentLocator componentLocator = ComponentLocator.getInstance(getClass());
+		cobisCrypt = componentLocator.find(ICobisCrypt.class);
+		return cobisCrypt.enCrypt(user, password);
 	}
 
 }
