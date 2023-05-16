@@ -7,6 +7,13 @@
   <parameters>
     <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
     <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
+    <parameter name="@i_street" dataType="varchar" direction="in" />
+    <parameter name="@i_complement" dataType="varchar" direction="in" />
+    <parameter name="@i_number" dataType="varchar" direction="in" />
+    <parameter name="@i_city" dataType="varchar" direction="in" />
+    <parameter name="@i_administrative_area_code" dataType="varchar" direction="in" />
+    <parameter name="@i_country_code" dataType="varchar" direction="in" />
+    <parameter name="@i_postal_code" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
@@ -15,9 +22,9 @@
         <column name="code" />
         <column name="message" />
         <column name="cardId" />
-        <column name="cardNumber" />
-        <column name="customerName" />
-        <column name="cardApplication" />
+        <column name="personId" />
+        <column name="accountId" />
+        <column name="assignmentDate" />
       </columns>
       <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message,"cardId" = tab.cardId,"cardNumber" = tab.cardNumber,"customerName" = tab.customerName,"cardApplication" = tab.cardApplication </queryText>
     </query>

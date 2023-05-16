@@ -30,6 +30,13 @@ import java.util.HashMap;
 public class CardApplicationRequest implements Serializable {
   private Integer externalCustomerId;
   private String accountNumber;
+  private String street;
+  private String complement;
+  private String number;
+  private String city;
+  private String administrativeAreaCode;
+  private String countryCode;
+  private String postalCode;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -41,5 +48,47 @@ public class CardApplicationRequest implements Serializable {
   }
   public void setAccountNumber(String accountNumber ){
     this.accountNumber=accountNumber;
+  }
+  public String getStreet(){
+    return this.street;
+  }
+  public void setStreet(String street ){
+    this.street=street;
+  }
+  public String getComplement(){
+    return this.complement;
+  }
+  public void setComplement(String complement ){
+    this.complement=complement;
+  }
+  public String getNumber(){
+    return this.number;
+  }
+  public void setNumber(String number ){
+    this.number=number;
+  }
+  public String getCity(){
+    return this.city;
+  }
+  public void setCity(String city ){
+    this.city=city;
+  }
+  public String getAdministrativeAreaCode(){
+    return this.administrativeAreaCode;
+  }
+  public void setAdministrativeAreaCode(String administrativeAreaCode ){
+    this.administrativeAreaCode=administrativeAreaCode;
+  }
+  public String getCountryCode(){
+    return this.countryCode;
+  }
+  public void setCountryCode(String countryCode ){
+    this.countryCode=countryCode;
+  }
+  public String getPostalCode(){
+    return this.postalCode;
+  }
+  public void setPostalCode(String postalCode ){
+    this.postalCode=postalCode;
   }
 }

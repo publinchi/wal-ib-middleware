@@ -311,7 +311,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				input = {
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "street", param = "@i_street", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "complement", param = "@i_complement", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "number", param = "@i_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "city", param = "@i_city", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "administrativeAreaCode", param = "@i_administrative_area_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "countryCode", param = "@i_country_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "postalCode", param = "@i_postal_code", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -324,14 +331,15 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
     @CTSResponse(
       name = "returnCardApplicationResponse",
       type = cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse.class,
+      singleResult = true,
       columns = {
 		    @CTSColumn(field = "success", columnIndex = 1),
 		    @CTSColumn(field = "message.code", columnIndex = 2),
 		    @CTSColumn(field = "message.message", columnIndex = 3),
 		    @CTSColumn(field = "cardId", columnIndex = 4),
-		    @CTSColumn(field = "cardNumber", columnIndex = 5),
-		    @CTSColumn(field = "customerName", columnIndex = 6),
-		    @CTSColumn(field = "cardApplication", columnIndex = 7)
+		    @CTSColumn(field = "personId", columnIndex = 5),
+		    @CTSColumn(field = "accountId", columnIndex = 6),
+		    @CTSColumn(field = "assignmentDate", columnIndex = 7)
       }
     )
   }
@@ -407,10 +415,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "cstmrAnswer1", param = "@i_answer_1_id", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "cstmrAnswer2", param = "@i_question_2_id", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "cstmrAnswer2", param = "@i_answer_2_id", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "cstmrAnswer3", param = "@i_question_3_id", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "cstmrAnswer3", param = "@i_question_3_desc", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrAnswer3", param = "@i_answer_3_id", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "cstmrAnswer3", param = "@i_answer_3_desc", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "cstmrAnswer3", param = "@i_question_desc", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cstmrAnswer3", param = "@i_answer_desc", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -433,6 +439,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       columns = {
 		    @CTSColumn(field = "message.code", columnIndex = 1),
 		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseDefineSecurityQA",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA.class,
+      columns = {
+		    @CTSColumn(field = "customQuestionId", columnIndex = 1)
       }
     )
   }

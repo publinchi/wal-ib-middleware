@@ -1306,12 +1306,10 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: customerCardApplication");
 		CardApplicationResponse outSingleCardApplicationResponse = new CardApplicationResponse();
 
-		if (!validateMandatory(new Data("externalCustomerId", inCardApplicationRequest.getExternalCustomerId()),
-				new Data("accountNumber", inCardApplicationRequest.getAccountNumber()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
-		}
+		if(!validateMandatory(new Data("externalCustomerId", inCardApplicationRequest.getExternalCustomerId()), new Data("street", inCardApplicationRequest.getStreet()), new Data("number", inCardApplicationRequest.getNumber()), new Data("city", inCardApplicationRequest.getCity()), new Data("postalCode", inCardApplicationRequest.getPostalCode()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
 
 		try {
 			outSingleCardApplicationResponse = iServiceContractOperationsApiService
@@ -1438,8 +1436,6 @@ public class ServiceContractOperationsApiRest {
 				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
 				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
 				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
 				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
 				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");

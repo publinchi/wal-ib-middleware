@@ -3,38 +3,42 @@
   <collection type="List" length="6" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="cardId" />
-      <field type="String" name="type" value="int?" />
+      <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
+      <field type="int" name="maxLength" value="64" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
-      <field type="String" name="name" value="cardNumber" />
+      <field type="String" name="name" value="personId" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="20" />
+      <field type="int" name="maxLength" value="64" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="5" index="2">
-      <field type="String" name="name" value="customerName" />
+      <field type="String" name="name" value="accountId" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="60" />
+      <field type="int" name="maxLength" value="64" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="3">
-      <field type="String" name="name" value="cardApplication" />
-      <field type="String" name="type" value="int?" />
+      <field type="String" name="name" value="assignmentDate" />
+      <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
+      <field type="int" name="maxLength" value="32" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="4">
@@ -44,6 +48,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="8" index="5">
@@ -58,6 +63,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
   </collection>
@@ -65,5 +71,5 @@
   <collection type="Map" length="0" id="10" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
-  <field type="String" name="stateDTO" value="NEW" />
+  <field type="String" name="stateDTO" value="" />
 </class>

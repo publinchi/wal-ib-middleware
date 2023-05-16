@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class ResponseDefineSecurityQA implements Serializable {
   private Boolean success;
   private Message message;
+  private Integer customQuestionId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -47,5 +48,11 @@ public class ResponseDefineSecurityQA implements Serializable {
   }
   public void setMessage(Message message ){
     this.message=message;
+  }
+  public Integer getCustomQuestionId(){
+    return this.customQuestionId;
+  }
+  public void setCustomQuestionId(Integer customQuestionId ){
+    this.customQuestionId=customQuestionId;
   }
 }
