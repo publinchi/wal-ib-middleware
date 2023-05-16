@@ -1100,11 +1100,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-			<artifactId>orchestration-core-ib-customercardapplication</artifactId>
-			<version>4.6.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-dispacher-spei</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
@@ -1498,7 +1493,6 @@
 							orchestration-core-ib-query-get-own-accounts-view,
 							orchestration-core-ib-query-register-account,
 							orchestration-core-ib-accountcreditoperation,
-							orchestration-core-ib-customercardapplication,
 							orchestration-core-ib-transfer-third-party-account-api,
 							orchestration-core-ib-accountdebitoperation,
 							orchestration-core-ib-query-validate-transaction-factor,
