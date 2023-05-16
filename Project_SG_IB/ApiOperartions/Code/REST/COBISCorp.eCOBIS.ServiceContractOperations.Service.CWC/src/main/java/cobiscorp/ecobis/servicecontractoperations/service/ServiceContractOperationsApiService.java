@@ -174,7 +174,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
                     ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
                     
-                          dto.setSuccess(resultSetMapper.getString(3));
+                          dto.setSuccess(resultSetMapper.getBoolean(3));
                           dto.setLoginId(resultSetMapper.getInteger(1));
                           dto.setUserCreated(resultSetMapper.getString(2));
 							dto.messageInstance().setMessage(resultSetMapper.getString(4));

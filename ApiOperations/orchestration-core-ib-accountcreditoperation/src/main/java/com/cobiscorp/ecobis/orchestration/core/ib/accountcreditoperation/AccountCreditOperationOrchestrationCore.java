@@ -200,26 +200,12 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 				aBagSPJavaOrchestration.put(columns[1].getValue(), "Customer with externalCustomerId: " + idCustomer + " does not exist");
 				return;
 				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40080")) {
+			} else {
 				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
+			}
 				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40081")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50042")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-			} 
 			 
 		} else {
 			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
