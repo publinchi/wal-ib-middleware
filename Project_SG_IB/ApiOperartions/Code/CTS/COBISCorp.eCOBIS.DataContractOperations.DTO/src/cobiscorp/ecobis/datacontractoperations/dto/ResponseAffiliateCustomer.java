@@ -28,14 +28,14 @@ import java.util.HashMap;
 
 
 public class ResponseAffiliateCustomer implements Serializable {
-  private String success;
+  private boolean success;
   private Integer loginId;
   private String userCreated;
   private Message message;
-  public String getSuccess(){
+  public boolean isSuccess(){
     return this.success;
   }
-  public void setSuccess(String success ){
+  public void setSuccess(boolean success ){
     this.success=success;
   }
   public Integer getLoginId(){
