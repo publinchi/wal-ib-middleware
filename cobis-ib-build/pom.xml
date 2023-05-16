@@ -187,7 +187,6 @@
 		<module>../ApiOperations/orchestration-core-ib-query-get-movements-detail</module>
 		<module>../ApiOperations/orchestration-core-ib-accountcreditoperation</module>
 		<module>../ApiOperations/orchestration-core-ib-query-register-account</module>
-		<module>../ApiOperations/orchestration-core-ib-customercardapplication</module>
 		<module>../ApiOperations/orchestration-core-ib-transfer-third-party-account-api</module>
 		<module>../ApiOperations/orchestration-core-ib-accountdebitoperation</module>
 		<module>../ApiOperations/orchestration-core-ib-query-validate-transaction-factor</module>
