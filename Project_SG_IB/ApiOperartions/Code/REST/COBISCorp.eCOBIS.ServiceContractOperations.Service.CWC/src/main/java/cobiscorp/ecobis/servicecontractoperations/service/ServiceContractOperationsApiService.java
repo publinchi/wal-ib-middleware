@@ -3180,17 +3180,17 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestDefineSecurityQA.getExternalCustomerId()));
 			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()));
 			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()));
 			procedureRequestAS.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()));
 			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()));
 			
 
 			// execute procedure

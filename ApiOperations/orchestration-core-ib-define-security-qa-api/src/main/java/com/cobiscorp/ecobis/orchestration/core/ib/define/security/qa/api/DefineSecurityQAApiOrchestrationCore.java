@@ -49,7 +49,7 @@ import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
 @Component(name = "DefineSecurityQAApiOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
 @Properties(value = { @Property(name = "service.description", value = "DefineSecurityQAApiOrchestrationCore"),
-		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
+		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
 		@Property(name = "service.identifier", value = "DefineSecurityQAApiOrchestrationCore"),
 		@Property(name = "service.spName", value = "cob_procesador..sp_define_security_qa_api") })
 public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBase {
