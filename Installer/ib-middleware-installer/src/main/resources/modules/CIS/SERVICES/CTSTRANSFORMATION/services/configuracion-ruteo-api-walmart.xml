@@ -165,21 +165,6 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
-	<!-- 18500112 ORQUESTACION CUSTOMERCARDAPPLICATION-->
-	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo CustomerCardApplication">
-		<conditions>
-		  <condition param="trn">
-			<value>18500112</value>      
-		  </condition>
-		</conditions>
-		<indicators>
-		  <indicator name="externalProvider" value="0"/>
-		  <indicator name="serviceMethodName" value="executeTransaction"/>
-		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=CustomerCardApplicationOrchestrationCore)"/>
-		  <indicator name="t_corr" value=""/>
-		</indicators>
-		<mappings keepMode="1"/>
-	</config>
 	
 	<!-- 18500114 ORQUESTACION TRANSFER THRID ACCOUNT-->
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo TransferThridAccount">
@@ -244,8 +229,9 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
 	<!-- 18500123 DEFINE SECURITY QUESTIONS AND ANSWERS-->
-	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo Update credentials">
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo DefineSecurityQA">
 		<conditions>
 		  <condition param="trn">
 			<value>18500123</value>      
@@ -254,7 +240,7 @@
 		<indicators>
 		  <indicator name="externalProvider" value="0"/>
 		  <indicator name="serviceMethodName" value="executeTransaction"/>
-		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=UpdateCredentialsOrchestrationCore)"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=DefineSecurityQAApiOrchestrationCore)"/>
 		  <indicator name="t_corr" value=""/>
 		</indicators>
 		<mappings keepMode="1"/>
