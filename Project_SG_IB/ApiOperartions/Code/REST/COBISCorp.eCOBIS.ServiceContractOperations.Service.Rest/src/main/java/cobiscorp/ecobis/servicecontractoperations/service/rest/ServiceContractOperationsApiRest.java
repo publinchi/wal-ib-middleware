@@ -1432,12 +1432,12 @@ public class ServiceContractOperationsApiRest {
 		ResponseDefineSecurityQA outResponseDefineSecurityQA = new ResponseDefineSecurityQA();
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestDefineSecurityQA.getExternalCustomerId()),
-				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
-				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
-				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
-				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()))) {
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()),
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
