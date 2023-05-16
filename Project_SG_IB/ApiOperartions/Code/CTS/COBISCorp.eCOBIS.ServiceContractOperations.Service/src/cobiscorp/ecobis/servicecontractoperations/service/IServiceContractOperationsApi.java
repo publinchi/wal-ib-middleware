@@ -170,6 +170,11 @@ public interface IServiceContractOperationsApi{
   */
   ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  
 
+  /**
+  * Validate All Security Questions and Answers
+  */
+  ServiceResponseTO validateAllSecurityQA(ServiceRequestTO requestTO);  
+
   ServiceResponseTO validateCustomerIdentityCard(ServiceRequestTO requestTO);  
 
   /**

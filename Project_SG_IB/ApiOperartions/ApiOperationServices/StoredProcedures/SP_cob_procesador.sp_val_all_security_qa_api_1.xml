@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_val_all_security_qa_api</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+    <parameter name="@i_question_1_id" dataType="int" direction="in" />
+    <parameter name="@i_answer_1_id" dataType="int" direction="in" />
+    <parameter name="@i_question_2_id" dataType="int" direction="in" />
+    <parameter name="@i_answer_2_id" dataType="int" direction="in" />
+    <parameter name="@i_question_3_id" dataType="int" direction="in" />
+    <parameter name="@i_answer_3_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="succes" />
+      </columns>
+      <queryText>SELECT "succes"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="success"</queryText>
+    </query>
+  </queries>
+</procedure>

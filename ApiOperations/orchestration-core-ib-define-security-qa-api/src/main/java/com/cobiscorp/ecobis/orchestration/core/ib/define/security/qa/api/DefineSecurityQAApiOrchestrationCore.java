@@ -272,15 +272,6 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
-		/*if (anOriginalProcedureRes != null
-				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
-
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(
-						CLASS_NAME + " Response final: " + anOriginalProcedureResponse.getProcedureResponseAsString());
-			}
-		}*/
-
 		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
 		return anOriginalProcedureResponse;
 	}
