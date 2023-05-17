@@ -1436,7 +1436,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "userName", param = "@i_userName", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "password", param = "@i_password", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "password", param = "@i_password", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "oldPassword", param = "@i_oldPassword", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -1564,6 +1565,57 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO updateProfile(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_val_all_security_qa_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestValidateAllSecurityQA",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrVal1", param = "@i_question_1_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrVal1", param = "@i_answer_1_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrVal2", param = "@i_question_2_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrVal2", param = "@i_answer_2_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrVal3", param = "@i_question_3_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cstmrVal3", param = "@i_answer_3_id", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500124")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseValidateAllSecurityQA",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseValidateAllSecurityQA",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA.class,
+      columns = {
+		    @CTSColumn(field = "message.code", columnIndex = 1),
+		    @CTSColumn(field = "message.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO validateAllSecurityQA(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }

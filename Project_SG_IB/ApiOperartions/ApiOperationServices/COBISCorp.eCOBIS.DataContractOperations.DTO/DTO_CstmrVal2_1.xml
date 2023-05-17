@@ -22,7 +22,7 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
   </collection>
-  <field type="String" name="name" value="CstmrAnswer1" />
+  <field type="String" name="name" value="CstmrVal2" />
   <collection type="Map" length="0" id="5" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />

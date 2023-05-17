@@ -1128,6 +1128,11 @@
 			<artifactId>orchestration-core-ib-define-security-qa-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-validate-all-security-qa-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1497,7 +1502,8 @@
 							orchestration-core-ib-accountdebitoperation,
 							orchestration-core-ib-query-validate-transaction-factor,
 							orchestration-core-ib-updatecredentials,
-							orchestration-core-ib-define-security-qa-api
+							orchestration-core-ib-define-security-qa-api,
+							orchestration-core-ib-validate-all-security-qa-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>

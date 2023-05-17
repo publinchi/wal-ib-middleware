@@ -78,7 +78,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAcc
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
@@ -322,6 +324,14 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseDefineSecurityQA defineSecurityQA(RequestDefineSecurityQA inRequestDefineSecurityQA)
 			throws CTSRestException;
+	
+	/**
+	 * Validate All Security Questions and Answers
+	 */
+
+	// Have DTO
+	public ResponseValidateAllSecurityQA validateAllSecurityQA(
+			RequestValidateAllSecurityQA inRequestValidateAllSecurityQA) throws CTSRestException;
 
 	/**
 	 * Service to apply debit account
