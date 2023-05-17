@@ -36,6 +36,18 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+import javax.crypto.Cipher;
+
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
 
 /**
@@ -56,6 +68,9 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 
 	private static ILogger logger = LogFactory.getLogger(DefineSecurityQAApiOrchestrationCore.class);
 	private static final String CLASS_NAME = "DefineSecurityQAApiOrchestrationCore--->";
+	
+	public static final String ALGORITHM = "RSA";
+	private static final String UTF_8 = "UTF-8";
 	
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 	
@@ -275,5 +290,44 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
 		return anOriginalProcedureResponse;
 	}
+	
+	public String decrypt(String cifrado) throws Exception{		
+
+        byte[] privateKeyBytes =  Files.readAllBytes(Paths.get("/cobis/cobishome/CTS_MF/services-as/securityAPI"));
+        PKCS8EncodedKeySpec  keySpec = new PKCS8EncodedKeySpec (privateKeyBytes);
+      /*  KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);*/
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+		Cipher cipher = Cipher.getInstance(ALGORITHM);		
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);	
+		 byte[] encryptedBytes = Base64.getDecoder().decode(cifrado);
+		byte[] plainText = cipher.doFinal(encryptedBytes);
+	      String decryptedText = new String(plainText, StandardCharsets.UTF_8);
+
+		return decryptedText;
+	}	
+	
+	
+	public String encrypt(String plainText) throws Exception{ 
+			
+			
+	byte[] publicKeyBytes = Files.readAllBytes(Paths.get("/cobis/cobishome/CTS_MF/services-as/securityAPI"));
+	X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+	KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	PublicKey publicKey = keyFactory.generatePublic(keySpec);
+	
+	
+	Cipher cipher = Cipher.getInstance(ALGORITHM);
+	
+	//Initialize Cipher for ENCRYPT_MODE
+	cipher.init(Cipher.ENCRYPT_MODE,publicKey);
+	
+	//Perform Encryption
+		byte[] cipherText = cipher.doFinal(plainText.getBytes()) ;
+	
+		return Base64.getEncoder().encodeToString(cipherText);
+	
+	
+	} 
 
 }
