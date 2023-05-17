@@ -1,5 +1,5 @@
 
-package com.cobiscorp.ecobis.orchestration.core.ib.define.security.qa.api;
+package com.cobiscorp.ecobis.orchestration.core.ib.validate.all.security.qa.api;
 
 import java.util.Map;
 
@@ -46,16 +46,16 @@ import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
  * @version 1.0.0
  * 
  */
-@Component(name = "DefineSecurityQAApiOrchestrationCore", immediate = false)
+@Component(name = "ValidateAllSecurityQAApiOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
-@Properties(value = { @Property(name = "service.description", value = "DefineSecurityQAApiOrchestrationCore"),
+@Properties(value = { @Property(name = "service.description", value = "ValidateAllSecurityQAApiOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
-		@Property(name = "service.identifier", value = "DefineSecurityQAApiOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_define_security_qa_api") })
-public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBase {
+		@Property(name = "service.identifier", value = "ValidateAllSecurityQAApiOrchestrationCore"),
+		@Property(name = "service.spName", value = "cob_procesador..sp_val_all_security_qa_api") })
+public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBase {
 
-	private static ILogger logger = LogFactory.getLogger(DefineSecurityQAApiOrchestrationCore.class);
-	private static final String CLASS_NAME = "DefineSecurityQAApiOrchestrationCore--->";
+	private static ILogger logger = LogFactory.getLogger(ValidateAllSecurityQAApiOrchestrationCore.class);
+	private static final String CLASS_NAME = "ValidateAllSecurityQAApiOrchestrationCore--->";
 	
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 	
@@ -95,7 +95,7 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		anProcedureResponse = defineSecurityQa(anOriginalRequest);
+		anProcedureResponse = validateAllSecurityQa(anOriginalRequest);
 		
 		if (anProcedureResponse.getResultSets().size()>2) {
 			
@@ -161,15 +161,15 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		return anOriginalProcedureResponse;
 	}
 
-	private IProcedureResponse defineSecurityQa(IProcedureRequest aRequest) {
+	private IProcedureResponse validateAllSecurityQa(IProcedureRequest aRequest) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 		
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en defineSecurityQa");
+			logger.logInfo(CLASS_NAME + " Entrando en validateAllSecurityQa");
 		}
 	
-		request.setSpName("cob_bvirtual..sp_define_security_qa_api");
+		request.setSpName("cob_bvirtual..sp_val_all_security_qa_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
@@ -184,8 +184,8 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_2_id"));
 		request.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_2_id"));
 		
-		request.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_desc"));
-		request.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_desc"));
+		request.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_3_id"));
+		request.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_3_id"));
 		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -195,7 +195,7 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de defineSecurityQa");
+			logger.logInfo(CLASS_NAME + " Saliendo de validateAllSecurityQa");
 		}
 
 		return wProductsQueryResp;
@@ -236,13 +236,7 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-		
-		// Agregar Header 3
-		IResultSetHeader metaData3 = new ResultSetHeader();
-		IResultSetData data3 = new ResultSetData();
-		
-		metaData3.addColumnMetaData(new ResultSetHeaderColumn("customQuestionId", ICTSTypes.SQLINT4, 5));
-		
+			
 		/***************************************success***************************************/
 		
 		IResultSetRow row = new ResultSetRow();
@@ -255,23 +249,15 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
 		row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 		data2.addRow(row2);
-
-		/*************************************customQuestionId************************************/
-
-		IResultSetRow row3 = new ResultSetRow();
-		row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue()));
-		data3.addRow(row3);
 		
 		//return		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 		
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
-
+		
 		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
 		return anOriginalProcedureResponse;
 	}

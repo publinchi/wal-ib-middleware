@@ -174,7 +174,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
                     ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
                     
-                          dto.setSuccess(resultSetMapper.getString(3));
+                          dto.setSuccess(resultSetMapper.getBoolean(3));
                           dto.setLoginId(resultSetMapper.getInteger(1));
                           dto.setUserCreated(resultSetMapper.getString(2));
 							dto.messageInstance().setMessage(resultSetMapper.getString(4));
@@ -3179,18 +3179,18 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500123");
 			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestDefineSecurityQA.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1()));
-			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1()));
-			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2()));
-			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2()));
+			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()));
+			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()));
+			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()));
+			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()));
 			procedureRequestAS.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()));
 			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()));
 			
 
 			// execute procedure
@@ -3289,6 +3289,112 @@ int mapBlank=0;
 			LOGGER.logDebug("Ends service execution: defineSecurityQA");
 			// returns data
 			return outResponseDefineSecurityQA;
+		}
+		
+		/**
+		 * Validate All Security Questions and Answers
+		 */
+		@Override
+		// Have DTO
+		public ResponseValidateAllSecurityQA validateAllSecurityQA(
+				RequestValidateAllSecurityQA inRequestValidateAllSecurityQA) throws CTSRestException {
+			LOGGER.logDebug("Start service execution: validateAllSecurityQA");
+			ResponseValidateAllSecurityQA outResponseValidateAllSecurityQA = new ResponseValidateAllSecurityQA();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
+					"cob_procesador..sp_val_all_security_qa_api");
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500124");
+			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestValidateAllSecurityQA.getExternalCustomerId()));
+			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()));
+			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()));
+			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()));
+			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()));
+			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()));
+			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomResponseId()));
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseValidateAllSecurityQA returnResponseValidateAllSecurityQA = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(0), new RowMapper<ResponseValidateAllSecurityQA>() {
+							@Override
+							public ResponseValidateAllSecurityQA mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseValidateAllSecurityQA dto = new ResponseValidateAllSecurityQA();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseValidateAllSecurityQA.setSuccess(returnResponseValidateAllSecurityQA.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseValidateAllSecurityQA returnResponseValidateAllSecurityQA = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(1), new RowMapper<ResponseValidateAllSecurityQA>() {
+							@Override
+							public ResponseValidateAllSecurityQA mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseValidateAllSecurityQA dto = new ResponseValidateAllSecurityQA();
+
+								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
+								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseValidateAllSecurityQA.setMessage(returnResponseValidateAllSecurityQA.getMessage());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+
+			LOGGER.logDebug("Ends service execution: validateAllSecurityQA");
+			// returns data
+			return outResponseValidateAllSecurityQA;
 		}
               
 

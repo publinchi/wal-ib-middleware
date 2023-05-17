@@ -213,7 +213,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 								String tokenNew = createKey(currentUser, password);
 								
 								if (tokenOld.equals(tokenNew)) {
-									aBagSPJavaOrchestration.put("50057", "The new password must be different to the previous one");
+									aBagSPJavaOrchestration.put("50057", "The new password must be different from the previous one");
 									return;
 								}
 								

@@ -27,39 +27,51 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseAffiliateCustomer implements Serializable {
-  private boolean success;
-  private Integer loginId;
-  private String userCreated;
-  private Message message;
-  public boolean isSuccess(){
-    return this.success;
+public class RequestValidateAllSecurityQA implements Serializable {
+  private Integer externalCustomerId;
+  private CstmrVal1 cstmrVal1;
+  private CstmrVal2 cstmrVal2;
+  private CstmrVal3 cstmrVal3;
+  public Integer getExternalCustomerId(){
+    return this.externalCustomerId;
   }
-  public void setSuccess(boolean success ){
-    this.success=success;
+  public void setExternalCustomerId(Integer externalCustomerId ){
+    this.externalCustomerId=externalCustomerId;
   }
-  public Integer getLoginId(){
-    return this.loginId;
-  }
-  public void setLoginId(Integer loginId ){
-    this.loginId=loginId;
-  }
-  public String getUserCreated(){
-    return this.userCreated;
-  }
-  public void setUserCreated(String userCreated ){
-    this.userCreated=userCreated;
-  }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public CstmrVal1 cstmrVal1Instance(){
+	if(this.cstmrVal1==null){
+	this.cstmrVal1=new CstmrVal1();
 	}
-	return this.message;
+	return this.cstmrVal1;
   }
-  public Message getMessage(){
-    return this.message;
+  public CstmrVal1 getCstmrVal1(){
+    return this.cstmrVal1;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setCstmrVal1(CstmrVal1 cstmrVal1 ){
+    this.cstmrVal1=cstmrVal1;
+  }
+  public CstmrVal2 cstmrVal2Instance(){
+	if(this.cstmrVal2==null){
+	this.cstmrVal2=new CstmrVal2();
+	}
+	return this.cstmrVal2;
+  }
+  public CstmrVal2 getCstmrVal2(){
+    return this.cstmrVal2;
+  }
+  public void setCstmrVal2(CstmrVal2 cstmrVal2 ){
+    this.cstmrVal2=cstmrVal2;
+  }
+  public CstmrVal3 cstmrVal3Instance(){
+	if(this.cstmrVal3==null){
+	this.cstmrVal3=new CstmrVal3();
+	}
+	return this.cstmrVal3;
+  }
+  public CstmrVal3 getCstmrVal3(){
+    return this.cstmrVal3;
+  }
+  public void setCstmrVal3(CstmrVal3 cstmrVal3 ){
+    this.cstmrVal3=cstmrVal3;
   }
 }

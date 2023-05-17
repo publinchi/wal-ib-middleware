@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <procedure>
   <database>cob_procesador</database>
-  <name>sp_define_security_qa_api</name>
+  <name>sp_val_all_security_qa_api</name>
   <type>SQLSERVER</type>
   <version>1</version>
   <parameters>
@@ -10,15 +10,15 @@
     <parameter name="@i_answer_1_id" dataType="varchar" direction="in" />
     <parameter name="@i_question_2_id" dataType="varchar" direction="in" />
     <parameter name="@i_answer_2_id" dataType="varchar" direction="in" />
-    <parameter name="@i_question_desc" dataType="varchar" direction="in" />
-    <parameter name="@i_answer_desc" dataType="varchar" direction="in" />
+    <parameter name="@i_question_3_id" dataType="varchar" direction="in" />
+    <parameter name="@i_answer_3_id" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
       <columns>
-        <column name="success" />
+        <column name="succes" />
       </columns>
-      <queryText>SELECT "success"="true"</queryText>
+      <queryText>SELECT "succes"="true"</queryText>
     </query>
     <query>
       <columns>
@@ -26,12 +26,6 @@
         <column name="message" />
       </columns>
       <queryText>SELECT "code"=0,"message"="success"</queryText>
-    </query>
-    <query>
-      <columns>
-        <column name="customQuestionId" />
-      </columns>
-      <queryText></queryText>
     </query>
   </queries>
 </procedure>

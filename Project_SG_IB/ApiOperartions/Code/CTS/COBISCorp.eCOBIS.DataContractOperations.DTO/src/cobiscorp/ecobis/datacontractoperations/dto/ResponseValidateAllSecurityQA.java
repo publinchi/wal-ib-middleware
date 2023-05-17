@@ -27,28 +27,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseAffiliateCustomer implements Serializable {
-  private boolean success;
-  private Integer loginId;
-  private String userCreated;
+public class ResponseValidateAllSecurityQA implements Serializable {
+  private Boolean success;
   private Message message;
-  public boolean isSuccess(){
+  public Boolean isSuccess(){
     return this.success;
   }
-  public void setSuccess(boolean success ){
+  public void setSuccess(Boolean success ){
     this.success=success;
-  }
-  public Integer getLoginId(){
-    return this.loginId;
-  }
-  public void setLoginId(Integer loginId ){
-    this.loginId=loginId;
-  }
-  public String getUserCreated(){
-    return this.userCreated;
-  }
-  public void setUserCreated(String userCreated ){
-    this.userCreated=userCreated;
   }
   public Message messageInstance(){
 	if(this.message==null){

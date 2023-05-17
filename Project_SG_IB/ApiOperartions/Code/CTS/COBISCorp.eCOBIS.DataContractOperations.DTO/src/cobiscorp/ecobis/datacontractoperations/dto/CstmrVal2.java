@@ -27,39 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseAffiliateCustomer implements Serializable {
-  private boolean success;
-  private Integer loginId;
-  private String userCreated;
-  private Message message;
-  public boolean isSuccess(){
-    return this.success;
+public class CstmrVal2 implements Serializable {
+  private Integer questionId;
+  private Integer responseId;
+  public Integer getQuestionId(){
+    return this.questionId;
   }
-  public void setSuccess(boolean success ){
-    this.success=success;
+  public void setQuestionId(Integer questionId ){
+    this.questionId=questionId;
   }
-  public Integer getLoginId(){
-    return this.loginId;
+  public Integer getResponseId(){
+    return this.responseId;
   }
-  public void setLoginId(Integer loginId ){
-    this.loginId=loginId;
-  }
-  public String getUserCreated(){
-    return this.userCreated;
-  }
-  public void setUserCreated(String userCreated ){
-    this.userCreated=userCreated;
-  }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
-	}
-	return this.message;
-  }
-  public Message getMessage(){
-    return this.message;
-  }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponseId(Integer responseId ){
+    this.responseId=responseId;
   }
 }

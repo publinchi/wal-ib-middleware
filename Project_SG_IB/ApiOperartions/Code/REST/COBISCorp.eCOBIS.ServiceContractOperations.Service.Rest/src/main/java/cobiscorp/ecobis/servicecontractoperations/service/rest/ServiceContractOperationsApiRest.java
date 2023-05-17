@@ -38,6 +38,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
@@ -78,6 +79,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateDeviceActivation;
@@ -1432,12 +1434,12 @@ public class ServiceContractOperationsApiRest {
 		ResponseDefineSecurityQA outResponseDefineSecurityQA = new ResponseDefineSecurityQA();
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestDefineSecurityQA.getExternalCustomerId()),
-				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
-				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1()),
-				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
-				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3()))) {
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()),
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()),
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -1463,6 +1465,52 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: defineSecurityQA");
 		return Response.ok(outResponseDefineSecurityQA).build();
+
+	}
+	
+	/**
+	 * Validate All Security Questions and Answers
+	 */
+	@POST
+	@Path("/apiOperations/questions/validateAllSecurityQA")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response validateAllSecurityQA(RequestValidateAllSecurityQA inRequestValidateAllSecurityQA) {
+		LOGGER.logDebug("Start service execution REST: validateAllSecurityQA");
+		ResponseValidateAllSecurityQA outResponseValidateAllSecurityQA = new ResponseValidateAllSecurityQA();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestValidateAllSecurityQA.getExternalCustomerId()),
+				new Data("cstmrVal1", inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()),
+				new Data("cstmrVal1", inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()),
+				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()),
+				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()),
+				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()),
+				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomResponseId()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseValidateAllSecurityQA = iServiceContractOperationsApiService
+					.validateAllSecurityQA(inRequestValidateAllSecurityQA);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: validateAllSecurityQA");
+		return Response.ok(outResponseValidateAllSecurityQA).build();
 
 	}
 
