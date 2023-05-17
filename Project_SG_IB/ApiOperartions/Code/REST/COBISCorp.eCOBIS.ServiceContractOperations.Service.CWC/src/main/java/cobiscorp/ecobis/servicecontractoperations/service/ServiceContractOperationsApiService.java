@@ -3179,13 +3179,13 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500123");
 			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestDefineSecurityQA.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()));
-			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()));
 			procedureRequestAS.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()));
@@ -3308,17 +3308,17 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500124");
 			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestValidateAllSecurityQA.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()));
-			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()));
-			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomResponseId()));
 
 			// execute procedure

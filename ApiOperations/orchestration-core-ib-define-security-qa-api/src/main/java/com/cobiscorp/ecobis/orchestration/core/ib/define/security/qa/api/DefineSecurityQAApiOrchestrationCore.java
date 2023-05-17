@@ -178,11 +178,11 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		
-		request.addInputParam("@i_question_1_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_question_1_id"));
-		request.addInputParam("@i_answer_1_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_answer_1_id"));
+		request.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_1_id"));
+		request.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_1_id"));
 		
-		request.addInputParam("@i_question_2_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_question_2_id"));
-		request.addInputParam("@i_answer_2_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_answer_2_id"));
+		request.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_2_id"));
+		request.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_2_id"));
 		
 		request.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_desc"));
 		request.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_desc"));
