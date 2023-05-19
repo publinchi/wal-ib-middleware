@@ -111,5 +111,10 @@
 	  <artifactId>cobis-osgi-jaxrs-connector</artifactId>
 	  <version>1.0.0.5</version>
 	</dependency>
+	<dependency>
+	  <groupId>com.cobiscorp</groupId>
+      <artifactId>cobis-mb-services-impl</artifactId>
+      <version>1.0.1</version>
+	</dependency>
   </dependencies>
 </project>
