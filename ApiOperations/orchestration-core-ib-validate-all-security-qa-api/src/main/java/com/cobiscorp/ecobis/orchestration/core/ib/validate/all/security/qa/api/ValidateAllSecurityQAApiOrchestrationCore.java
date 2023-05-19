@@ -17,6 +17,7 @@ import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.configuration.CTSGeneralConfiguration;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
@@ -61,13 +62,17 @@ import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
 @Component(name = "ValidateAllSecurityQAApiOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
 @Properties(value = { @Property(name = "service.description", value = "ValidateAllSecurityQAApiOrchestrationCore"),
-		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
-		@Property(name = "service.identifier", value = "ValidateAllSecurityQAApiOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_val_all_security_qa_api") })
+	@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
+	@Property(name = "service.identifier", value = "ValidateAllSecurityQAApiOrchestrationCore"),
+	@Property(name = "service.spName", value = "cob_procesador..sp_val_all_security_qa_api") })
 public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBase {
 
 	private static ILogger logger = LogFactory.getLogger(ValidateAllSecurityQAApiOrchestrationCore.class);
 	private static final String CLASS_NAME = "ValidateAllSecurityQAApiOrchestrationCore--->";
+	
+	public static final String ALGORITHM = "RSA";
+	private static final String UTF_8 = "UTF-8";
+	private byte[] privateKey; 
 	
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 	
@@ -104,10 +109,29 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		
-		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+		//params decryption
+		
+		String dQuestion1= anOriginalRequest.readValueParam("@i_question_1_id");
+		String dQuestion2= anOriginalRequest.readValueParam("@i_question_3_id");		
+		String dQuestion3= anOriginalRequest.readValueParam("@i_question_3_id");
+		
+		try {
+			
+			dQuestion1 = decrypt(dQuestion1);
+			dQuestion2 = decrypt(dQuestion2);
+			dQuestion3 = decrypt(dQuestion3);
+			
+		} catch (Exception e){
+			
+			logger.logError(e);
+		}
+		
+		aBagSPJavaOrchestration.put("dQuestion1", dQuestion1);
+		aBagSPJavaOrchestration.put("dQuestion2", dQuestion2);
+		aBagSPJavaOrchestration.put("dQuestion3", dQuestion3);
 
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		anProcedureResponse = validateAllSecurityQa(anOriginalRequest);
+		anProcedureResponse = validateAllSecurityQa(anOriginalRequest, aBagSPJavaOrchestration);
 		
 		if (anProcedureResponse.getResultSets().size()>2) {
 			
@@ -115,12 +139,11 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		} else {
 			return processResponseError(anProcedureResponse);
 		}
-
 	}
 	
 	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(" start processResponseDefineSecurityQA--->");
+			logger.logInfo("Starting processResponseError validateAllSecurityQA--->");
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
@@ -173,12 +196,12 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		return anOriginalProcedureResponse;
 	}
 
-	private IProcedureResponse validateAllSecurityQa(IProcedureRequest aRequest) {
+	private IProcedureResponse validateAllSecurityQa(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 		
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en validateAllSecurityQa");
+			logger.logInfo(CLASS_NAME + " entering defineSecurityQa");
 		}
 	
 		request.setSpName("cob_bvirtual..sp_val_all_security_qa_api");
@@ -190,24 +213,24 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		
-		request.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_1_id"));
+		request.addInputParam("@i_question_1_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion1"));
 		request.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_1_id"));
 		
-		request.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_2_id"));
+		request.addInputParam("@i_question_2_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion2"));
 		request.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_2_id"));
 		
-		request.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_3_id"));
+		request.addInputParam("@i_question_3_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion3"));
 		request.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_3_id"));
 		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response validateAllSecurityQa corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de validateAllSecurityQa");
+			logger.logInfo(CLASS_NAME + " leaving validateAllSecurityQa");
 		}
 
 		return wProductsQueryResp;
@@ -222,7 +245,7 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 
 	public IProcedureResponse processTransformationResponse(IProcedureResponse anOriginalProcedureRes) {
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(" start processTransformationResponse--->");
+			logger.logInfo("Starting processTransformationResponse--->");
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
@@ -230,7 +253,7 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		if (anOriginalProcedureRes != null) {
 
 			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " ProcessResponse original anOriginalProcedureRes:"
+				logger.logInfo(CLASS_NAME + " processResponse original anOriginalProcedureRes"
 						+ anOriginalProcedureRes.getProcedureResponseAsString());
 			}
 
@@ -270,8 +293,35 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		
-		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
+		logger.logInfo(CLASS_NAME + " processTransformationResponse final DCO response" + anOriginalProcedureResponse.getProcedureResponseAsString());
 		return anOriginalProcedureResponse;
 	}
+	
+	public String decrypt(String cifrado) throws Exception {
 
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Starting decryption..., private Key ValidateAllSecurityQA path: "
+					+ CTSGeneralConfiguration.getEnvironmentVariable("COBIS_HOME", 0));
+		}
+
+		if (privateKey == null) {
+			privateKey = Files.readAllBytes(Paths.get(CTSGeneralConfiguration.getEnvironmentVariable("COBIS_HOME", 0)
+					+ "/CTS_MF/services-as/securityAPI/Questions_Private.key"));
+		}
+
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
+
+		PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+		Cipher cipher = Cipher.getInstance(ALGORITHM);
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+		byte[] encryptedBytes = Base64.getDecoder().decode(cifrado);
+		byte[] plainText = cipher.doFinal(encryptedBytes);
+
+		String decryptedText = new String(plainText, StandardCharsets.UTF_8);
+
+		logger.logDebug("Ending decryption, param decryption: " + decryptedText);
+
+		return decryptedText;
+	}
 }
