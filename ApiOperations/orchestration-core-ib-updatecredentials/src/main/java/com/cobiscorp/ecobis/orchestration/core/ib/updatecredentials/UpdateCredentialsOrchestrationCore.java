@@ -3,34 +3,35 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.updatecredentials;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.crypto.Cipher;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
+import com.cobiscorp.cobis.commons.components.ComponentLocator;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
-import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
 import com.cobiscorp.cobis.commons.log.ILogger;
+import com.cobiscorp.cobis.crypt.ICobisCrypt;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.configuration.CTSGeneralConfiguration;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
@@ -47,12 +48,6 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
-import com.cobiscorp.cts.reentry.api.IReentryPersister;
-import com.cobiscorp.cobis.crypt.ICobisCrypt;
-import com.cobiscorp.cobis.commons.components.ComponentLocator;
-
-import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
-import com.cobiscorp.mobile.services.impl.utils.SimpleRSA;
 
 /**
  * @author cecheverria
@@ -71,6 +66,8 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
 	private ICobisCrypt cobisCrypt;
+	private static final String ALGORITHM = "RSA";
+	private byte[] privateKey = null; 
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -95,7 +92,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		String oldPassword = wQueryRequest.readValueParam("@i_oldPassword");
 		String currentUser;
 		
-		if (userName.isEmpty()) {
+		if (userName.trim().isEmpty()) {
 			aBagSPJavaOrchestration.put("40109", "userName must not be empty");
 			return;
 		}
@@ -107,6 +104,24 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		if (oldPassword.isEmpty()) {
 			aBagSPJavaOrchestration.put("40115", "oldPassword must not be empty");
+			return;
+		}
+		
+		try {
+			password = decrypt(password);			
+		} catch (Exception e) {
+			
+			logger.logError(e);
+			aBagSPJavaOrchestration.put("50050", "Error updating credentials");
+			return;
+		}
+		
+		try {
+			oldPassword = decrypt(oldPassword);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.logError(e);
+			aBagSPJavaOrchestration.put("50050", "Error updating credentials");
 			return;
 		}
 		
@@ -352,6 +367,25 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		ComponentLocator componentLocator = ComponentLocator.getInstance(getClass());
 		cobisCrypt = componentLocator.find(ICobisCrypt.class);
 		return cobisCrypt.enCrypt(user, password);
+		
 	}
+	
+	public String decrypt(String cifrado) throws Exception{	
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, update credentials path: " + CTSGeneralConfiguration.getEnvironmentVariable("COBIS_HOME", 0) + "/CTS_MF/services-as/securityAPI/updateCredentials_Private.key");
+		}
 
+		if (privateKey == null) {
+			privateKey = Files.readAllBytes(Paths.get(CTSGeneralConfiguration.getEnvironmentVariable("COBIS_HOME", 0) + "/CTS_MF/services-as/securityAPI/updateCredentials_Private.key"));
+		}
+		
+        PKCS8EncodedKeySpec  keySpec = new PKCS8EncodedKeySpec (privateKey);
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+		Cipher cipher = Cipher.getInstance(ALGORITHM);		
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);	
+		byte[] encryptedBytes = Base64.getDecoder().decode(cifrado);
+		byte[] plainText = cipher.doFinal(encryptedBytes);
+	    String decryptedText = new String(plainText, StandardCharsets.UTF_8);
+		return decryptedText;
+	}	
 }
