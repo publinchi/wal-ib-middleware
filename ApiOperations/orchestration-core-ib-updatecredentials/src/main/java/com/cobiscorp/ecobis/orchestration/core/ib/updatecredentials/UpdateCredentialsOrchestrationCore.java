@@ -112,7 +112,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		} catch (Exception e) {
 			
 			logger.logError(e);
-			aBagSPJavaOrchestration.put("50050", "Error updating credentials");
+			aBagSPJavaOrchestration.put("40119", "password must be encrypted");
 			return;
 		}
 		
@@ -121,7 +121,7 @@ public class UpdateCredentialsOrchestrationCore extends SPJavaOrchestrationBase 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.logError(e);
-			aBagSPJavaOrchestration.put("50050", "Error updating credentials");
+			aBagSPJavaOrchestration.put("40120", "oldPassword must be encrypted");
 			return;
 		}
 		
