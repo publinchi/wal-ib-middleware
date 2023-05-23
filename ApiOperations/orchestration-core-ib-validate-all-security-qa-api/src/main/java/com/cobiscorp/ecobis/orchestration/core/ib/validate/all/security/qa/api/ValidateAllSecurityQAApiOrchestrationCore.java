@@ -112,7 +112,7 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		//params decryption
 		
 		String dQuestion1= anOriginalRequest.readValueParam("@i_question_1_id");
-		String dQuestion2= anOriginalRequest.readValueParam("@i_question_3_id");		
+		String dQuestion2= anOriginalRequest.readValueParam("@i_question_2_id");		
 		String dQuestion3= anOriginalRequest.readValueParam("@i_question_3_id");
 		
 		try {
