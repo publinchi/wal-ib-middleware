@@ -1485,7 +1485,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()),
 				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()),
 				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()),
-				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomResponseId()))) {
+				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getResponseDescription()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();

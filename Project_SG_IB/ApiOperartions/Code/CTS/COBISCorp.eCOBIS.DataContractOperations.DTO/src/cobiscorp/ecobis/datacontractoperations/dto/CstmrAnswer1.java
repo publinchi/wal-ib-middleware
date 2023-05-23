@@ -28,18 +28,18 @@ import java.util.HashMap;
 
 
 public class CstmrAnswer1 implements Serializable {
-  private Integer questionId;
-  private Integer responseId;
-  public Integer getQuestionId(){
+  private String questionId;
+  private String responseId;
+  public String getQuestionId(){
     return this.questionId;
   }
-  public void setQuestionId(Integer questionId ){
+  public void setQuestionId(String questionId ){
     this.questionId=questionId;
   }
-  public Integer getResponseId(){
+  public String getResponseId(){
     return this.responseId;
   }
-  public void setResponseId(Integer responseId ){
+  public void setResponseId(String responseId ){
     this.responseId=responseId;
   }
 }

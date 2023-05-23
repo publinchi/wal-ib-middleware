@@ -288,12 +288,24 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		String eAnswer1= (String) aBagSPJavaOrchestration.get("dAnswer1");
 		String eAnswer2= (String) aBagSPJavaOrchestration.get("dAnswer2");
 		String eAnswer3= (String) aBagSPJavaOrchestration.get("dAnswer3");
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Calling encryption method...");
+		}
 			
 		try {
 			
+			logger.logInfo(eAnswer1);
 			eAnswer1 = encrypt(eAnswer1);
+			logger.logInfo(eAnswer1);
+			
+			logger.logInfo(eAnswer2);
 			eAnswer2 = encrypt(eAnswer2);
+			logger.logInfo(eAnswer2);
+			
+			logger.logInfo(eAnswer3);
 			eAnswer3 = encrypt(eAnswer3);
+			logger.logInfo(eAnswer3);
 			
 		} catch (Exception e){
 			

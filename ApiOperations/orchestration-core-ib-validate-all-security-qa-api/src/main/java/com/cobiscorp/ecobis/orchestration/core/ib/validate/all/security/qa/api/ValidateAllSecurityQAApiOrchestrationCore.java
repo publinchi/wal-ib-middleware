@@ -115,11 +115,22 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 		String dQuestion2= anOriginalRequest.readValueParam("@i_question_2_id");		
 		String dQuestion3= anOriginalRequest.readValueParam("@i_question_3_id");
 		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Calling decryption method...");
+		}
+		
 		try {
-			
+			logger.logInfo(dQuestion1);	
 			dQuestion1 = decrypt(dQuestion1);
+			logger.logInfo(dQuestion1);
+			
+			logger.logInfo(dQuestion2);
 			dQuestion2 = decrypt(dQuestion2);
+			logger.logInfo(dQuestion2);
+			
+			logger.logInfo(dQuestion3);
 			dQuestion3 = decrypt(dQuestion3);
+			logger.logInfo(dQuestion3);
 			
 		} catch (Exception e){
 			
