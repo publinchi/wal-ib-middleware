@@ -3319,7 +3319,7 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomResponseId()));
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getResponseDescription()));
 
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
