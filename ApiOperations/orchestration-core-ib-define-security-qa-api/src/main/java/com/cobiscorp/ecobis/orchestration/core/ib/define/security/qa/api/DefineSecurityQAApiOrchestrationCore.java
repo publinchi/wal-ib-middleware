@@ -119,12 +119,37 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		String dQuestion2= anOriginalRequest.readValueParam("@i_question_2_id");
 		String dAnswer2= anOriginalRequest.readValueParam("@i_answer_2_id");
 		
-		try {
+		String dQuestion3= anOriginalRequest.readValueParam("@i_question_desc");
+		String dAnswer3= anOriginalRequest.readValueParam("@i_answer_desc");
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Calling decryption method...");
+		}
 			
+		try {
+			logger.logInfo(dQuestion1);			
 			dQuestion1 = decrypt(dQuestion1);
+			logger.logInfo(dQuestion1);
+			
+			logger.logInfo(dAnswer1);
 			dAnswer1 = decrypt(dAnswer1);
+			logger.logInfo(dAnswer1);
+			
+			logger.logInfo(dQuestion2);
 			dQuestion2 = decrypt(dQuestion2);
+			logger.logInfo(dQuestion2);
+			
+			logger.logInfo(dAnswer2);
 			dAnswer2 = decrypt(dAnswer2);
+			logger.logInfo(dAnswer2);
+			
+			logger.logInfo(dQuestion3);
+			dQuestion3 = decrypt(dQuestion3);
+			logger.logInfo(dQuestion3);
+			
+			logger.logInfo(dAnswer3);
+			dAnswer3 = decrypt(dAnswer3);
+			logger.logInfo(dAnswer3);
 			
 		} catch (Exception e){
 			
@@ -135,6 +160,8 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("dAnswer1", dAnswer1);
 		aBagSPJavaOrchestration.put("dQuestion2", dQuestion2);
 		aBagSPJavaOrchestration.put("dAnswer2", dAnswer2);
+		aBagSPJavaOrchestration.put("dQuestion3", dQuestion3);
+		aBagSPJavaOrchestration.put("dAnswer3", dAnswer3);
 
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		anProcedureResponse = defineSecurityQaVal(anOriginalRequest, aBagSPJavaOrchestration);
@@ -225,8 +252,8 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		valRequest.addInputParam("@i_question_2_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion2"));
 		valRequest.addInputParam("@i_answer_2_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dAnswer2"));
 		
-		valRequest.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_desc"));
-		valRequest.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_desc"));
+		valRequest.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dQuestion3"));
+		valRequest.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dAnswer3"));
 		
 		IProcedureResponse valProductsQueryResp = executeCoreBanking(valRequest);
 
@@ -260,13 +287,25 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		
 		String eAnswer1= (String) aBagSPJavaOrchestration.get("dAnswer1");
 		String eAnswer2= (String) aBagSPJavaOrchestration.get("dAnswer2");
-		String customAnswerId= (String) aBagSPJavaOrchestration.get("customAnswerId");
+		String eAnswer3= (String) aBagSPJavaOrchestration.get("dAnswer3");
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Calling encryption method...");
+		}
 			
 		try {
 			
+			logger.logInfo(eAnswer1);
 			eAnswer1 = encrypt(eAnswer1);
+			logger.logInfo(eAnswer1);
+			
+			logger.logInfo(eAnswer2);
 			eAnswer2 = encrypt(eAnswer2);
-			customAnswerId = encrypt(customAnswerId);
+			logger.logInfo(eAnswer2);
+			
+			logger.logInfo(eAnswer3);
+			eAnswer3 = encrypt(eAnswer3);
+			logger.logInfo(eAnswer3);
 			
 		} catch (Exception e){
 			
@@ -294,10 +333,8 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_question_2_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion2"));
 		request.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR, eAnswer2);
 		
-		request.addInputParam("@i_custom_question_id ", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("customQuestionId"));
-		request.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_question_desc"));
-		request.addInputParam("@i_custom_answer_id ", ICTSTypes.SQLVARCHAR, customAnswerId);
-		request.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_answer_desc"));
+		request.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dQuestion3"));
+		request.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, eAnswer3);
 		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
