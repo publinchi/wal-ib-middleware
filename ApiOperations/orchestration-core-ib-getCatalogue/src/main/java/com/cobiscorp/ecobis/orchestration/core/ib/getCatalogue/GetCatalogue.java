@@ -256,7 +256,7 @@ public class GetCatalogue extends SPJavaOrchestrationBase {
 			data.addRow(row);
 
 			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "true"));
+			row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			data2.addRow(row2);
 
 			IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
