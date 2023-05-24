@@ -932,7 +932,7 @@ int mapBlank=0;
 						}
 					}, false);
 
-			outResponseCatalog.setSuccess(true);
+			outResponseCatalog.setSuccess(returnResponseCatalog.isSuccess());
 			// break;
 
 		} else {
