@@ -163,7 +163,7 @@
     </entry>
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="apiOperations/onbording/getMunicipalityByState" />
+      <value type="String" value="apiOperations/onboarding/getMunicipalityByState" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />
