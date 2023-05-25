@@ -31,6 +31,7 @@
           <field type="String" name="dTOAlias" value="returnResponseDefineSecurityQA" />
           <field type="String" name="dTOPropertyName" value="response.code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="1">
           <field type="int" name="position" value="1" />
@@ -38,6 +39,7 @@
           <field type="String" name="dTOAlias" value="returnResponseDefineSecurityQA" />
           <field type="String" name="dTOPropertyName" value="response.message" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -79,8 +81,8 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer1" />
-      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer1.questionId" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="19" index="2">
@@ -92,8 +94,8 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer1" />
-      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer1.responseId" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="21" index="3">
@@ -105,8 +107,8 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer2" />
-      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer2.questionId" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="23" index="4">
@@ -118,8 +120,8 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer2" />
-      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer2.responseId" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="25" index="5">
@@ -131,7 +133,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer3" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer3.questionDescription" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -144,7 +146,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer3" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer3.responseDescription" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
