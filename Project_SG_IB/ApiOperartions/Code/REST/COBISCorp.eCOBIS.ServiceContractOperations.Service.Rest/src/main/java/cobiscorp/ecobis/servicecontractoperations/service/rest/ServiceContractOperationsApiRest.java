@@ -585,7 +585,7 @@ public class ServiceContractOperationsApiRest {
 	 * Municipality By State
 	 */
 	@POST
-	@Path("/apiOperations/onbording/getMunicipalityByState")
+	@Path("/apiOperations/onboarding/getMunicipalityByState")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response getMunicipalityByState(RequestMunicipalityByState inRequestMunicipalityByState) {
@@ -1031,7 +1031,7 @@ public class ServiceContractOperationsApiRest {
 	}
 
 	@POST
-	@Path("/apiOperations/onbording/validateCustomerIdentityCard")
+	@Path("/apiOperations/onboarding/validateCustomerIdentityCard")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response validateCustomerIdentityCard(
@@ -1071,7 +1071,7 @@ public class ServiceContractOperationsApiRest {
 	 * Validate Identity
 	 */
 	@POST
-	@Path("/apiOperations/onbording/sendImagesToMati")
+	@Path("/apiOperations/onboarding/sendImagesToMati")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response validateIdentity(RequestValidateIdentity inRequestValidateIdentity) {

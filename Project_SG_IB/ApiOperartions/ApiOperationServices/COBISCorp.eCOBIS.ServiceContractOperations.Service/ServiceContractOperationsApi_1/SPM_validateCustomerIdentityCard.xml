@@ -129,7 +129,7 @@
     </entry>
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="apiOperations/onbording/validateCustomerIdentityCard" />
+      <value type="String" value="apiOperations/onboarding/validateCustomerIdentityCard" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />
