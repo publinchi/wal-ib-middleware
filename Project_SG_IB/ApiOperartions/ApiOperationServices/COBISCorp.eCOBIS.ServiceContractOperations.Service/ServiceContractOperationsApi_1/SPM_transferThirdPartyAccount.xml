@@ -94,7 +94,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
-      <field type="String" name="dTOPropertyName" value="destinationAccountNumber" />
+      <field type="String" name="dTOPropertyName" value="destinationNumber" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>

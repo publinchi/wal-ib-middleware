@@ -999,7 +999,7 @@ public class ServiceContractOperationsApiRest {
 		if (!validateMandatory(
 				new Data("externalCustomerId", inRequestTransferThirdPartyAccount.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferThirdPartyAccount.getOriginAccountNumber()),
-				new Data("destinationAccountNumber", inRequestTransferThirdPartyAccount.getDestinationAccountNumber()),
+				new Data("destinationNumber", inRequestTransferThirdPartyAccount.getDestinationNumber()),
 				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()),
 				new Data("description", inRequestTransferThirdPartyAccount.getDescription()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
