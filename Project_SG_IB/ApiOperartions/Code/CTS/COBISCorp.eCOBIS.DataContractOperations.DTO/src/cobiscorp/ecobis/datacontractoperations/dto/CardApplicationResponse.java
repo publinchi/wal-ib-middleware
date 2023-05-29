@@ -33,7 +33,7 @@ public class CardApplicationResponse implements Serializable {
   private String accountId;
   private String assignmentDate;
   private Boolean success;
-  private Message message;
+  private Response response;
   public String getCardId(){
     return this.cardId;
   }
@@ -64,16 +64,16 @@ public class CardApplicationResponse implements Serializable {
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }

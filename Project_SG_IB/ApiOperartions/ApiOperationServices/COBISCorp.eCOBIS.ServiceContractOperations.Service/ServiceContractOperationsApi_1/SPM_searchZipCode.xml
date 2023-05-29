@@ -97,7 +97,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="out" />
-      <field type="String" name="dTOAlias" value="outMessage" />
+      <field type="String" name="dTOAlias" value="outResponse" />
       <field type="String" name="dTOPropertyName" value="message" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
@@ -122,7 +122,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="out" />
-      <field type="String" name="dTOAlias" value="outMessage" />
+      <field type="String" name="dTOAlias" value="outResponse" />
       <field type="String" name="dTOPropertyName" value="code" />
       <field type="String" name="cTSDataType" value="SQLINT4" />
       <field type="boolean" name="allowNull" value="false" />
@@ -153,22 +153,22 @@
       <field type="String" name="stateDTO" value="" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="28" index="2">
-      <field type="String" name="dTOName" value="Message" />
-      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="dTOVersion" value="1" />
-      <field type="int" name="repetition" value="0" />
-      <field type="String" name="alias" value="outMessage" />
-      <field type="String" name="direction" value="out" />
-      <field type="boolean" name="required" value="true" />
-      <field type="String" name="stateDTO" value="" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="29" index="3">
       <field type="String" name="dTOName" value="ListZipCode" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
       <field type="int" name="repetition" value="0" />
       <field type="String" name="alias" value="returnListZipCode" />
       <field type="String" name="direction" value="return" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="29" index="3">
+      <field type="String" name="dTOName" value="Response" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="outResponse" />
+      <field type="String" name="direction" value="out" />
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>

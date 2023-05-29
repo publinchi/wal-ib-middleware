@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 
 public class BeneficiariesResponse implements Serializable {
+  private Integer id;
   private String names;
   private String lastName;
   private String secondLastName;
@@ -41,6 +42,12 @@ public class BeneficiariesResponse implements Serializable {
   private String location;
   private String address;
   private Integer percentage;
+  public Integer getId(){
+    return this.id;
+  }
+  public void setId(Integer id ){
+    this.id=id;
+  }
   public String getNames(){
     return this.names;
   }

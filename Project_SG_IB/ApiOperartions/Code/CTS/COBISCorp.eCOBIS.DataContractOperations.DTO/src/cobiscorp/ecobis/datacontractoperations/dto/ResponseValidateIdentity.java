@@ -31,7 +31,7 @@ public class ResponseValidateIdentity implements Serializable {
   private Boolean success;
   private String verificationNumber;
   private String eventName;
-  private Message message;
+  private Response response;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -50,16 +50,16 @@ public class ResponseValidateIdentity implements Serializable {
   public void setEventName(String eventName ){
     this.eventName=eventName;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }

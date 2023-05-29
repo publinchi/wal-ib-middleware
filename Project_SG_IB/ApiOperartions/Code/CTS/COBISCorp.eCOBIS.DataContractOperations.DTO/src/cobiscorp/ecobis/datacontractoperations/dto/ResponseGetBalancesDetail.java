@@ -49,7 +49,7 @@ public class ResponseGetBalancesDetail implements Serializable {
   private Integer idDebitCard;
   private String debitCardNumber;
   private String stateDebitCard;
-  private Message message;
+  private Response response;
   public boolean isSuccess(){
     return this.success;
   }
@@ -176,16 +176,16 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setStateDebitCard(String stateDebitCard ){
     this.stateDebitCard=stateDebitCard;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }

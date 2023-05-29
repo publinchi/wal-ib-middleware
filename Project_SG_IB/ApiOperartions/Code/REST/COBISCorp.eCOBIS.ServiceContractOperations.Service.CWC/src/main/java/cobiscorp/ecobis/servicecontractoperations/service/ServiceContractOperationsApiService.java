@@ -107,8 +107,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
                           dto.setReferenceCode(resultSetMapper.getString(4));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
                     }
                     },false);
@@ -177,8 +177,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                           dto.setSuccess(resultSetMapper.getBoolean(3));
                           dto.setLoginId(resultSetMapper.getInteger(1));
                           dto.setUserCreated(resultSetMapper.getString(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(4));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(5));
+							dto.responseInstance().setMessage(resultSetMapper.getString(4));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(5));
                     return dto;
                     }
                     },false);
@@ -357,13 +357,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 						public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 							CreateCustomerResponse dto = new CreateCustomerResponse();
 
-							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
-			outCreateCustomerResponse.setMessage(returnCreateCustomerResponse.getMessage());
+			outCreateCustomerResponse.setResponse(returnCreateCustomerResponse.getResponse());
 			// break;
 
 		} else {
@@ -448,8 +448,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
                           dto.setPassword(resultSetMapper.getString(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(4));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(4));
                     return dto;
                     }
                     },false);
@@ -517,8 +517,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							ResponseOtp dto = new ResponseOtp();
 
 							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
 							return dto;
 						}
 					}, false);
@@ -561,9 +561,9 @@ procedureRequestAS.addInputParam("@i_city_code",ICTSTypes.SQLVARCHAR,inRequestGe
       procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"1");
 
 //execute procedure
-ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-List<MessageBlock> errors = ErrorUtil.getErrors(response);
+List<MessageBlock> errors = ErrorUtil.getErrors(resp);
 //throw error
 if(errors!= null && errors.size()> 0){
 LOGGER.logDebug("Procedure execution returns error");
@@ -581,10 +581,10 @@ int mapBlank=0;
 
       mapTotal++;
       
-  		if (response.getResultSets() != null && response.getResultSets().size()>0  &&
-				response.getResultSets().get(0).getData().getRows().size() > 0) {
+  		if (resp.getResultSets() != null && resp.getResultSets().size()>0  &&
+  				resp.getResultSets().get(0).getData().getRows().size() > 0) {
 							//---------NO Array
-							AddressTypeItems [] returnAddressTypeItems = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<AddressTypeItems>() { 
+							AddressTypeItems [] returnAddressTypeItems = MapperResultUtil.mapToArray(resp.getResultSets().get(0), new RowMapper<AddressTypeItems>() { 
               @Override
               public AddressTypeItems mapRow(ResultSetMapper resultSetMapper, int index) {
               AddressTypeItems dto = new AddressTypeItems();
@@ -604,12 +604,12 @@ int mapBlank=0;
       }
       
       
- Message message=new Message();
- message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
- message.setMessage(getOutValue(String.class, "@o_message", response.getParams())); 
- outResponseGetColonyByMunicipality.setMessage(message);
+ Response response=new Response();
+ response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+ response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+ outResponseGetColonyByMunicipality.setResponse(response);
 
-	if (message != null && message.getCode() == 0) {
+	if (response != null && response.getCode() == 0) {
 		outResponseGetColonyByMunicipality.setSuccess(true);
 	} else
 		outResponseGetColonyByMunicipality.setSuccess(false);
@@ -687,8 +687,8 @@ int mapBlank=0;
                           dto.setIdDebitCard(resultSetMapper.getInteger(21));
                           dto.setDebitCardNumber(resultSetMapper.getString(22));
                           dto.setStateDebitCard(resultSetMapper.getString(23));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
                     }
                     },false);
@@ -775,13 +775,13 @@ int mapBlank=0;
 		              public GetBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 		              GetBeneficiaryResponse dto = new GetBeneficiaryResponse();
 		              
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 		              return dto;
 		              }
 		              },false);
 		
-		              outGetBeneficiaryResponse.setMessage(returnGetBeneficiaryResponse.getMessage());
+		              outGetBeneficiaryResponse.setResponse(returnGetBeneficiaryResponse.getResponse());
 		                  // break;
 		                
 		      }else {
@@ -799,19 +799,21 @@ int mapBlank=0;
 		              public BeneficiariesResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 		            	  BeneficiariesResponse dto = new BeneficiariesResponse();
 		              
-		            	  		dto.setNames(resultSetMapper.getString(1));
-		            	  		dto.setLastName(resultSetMapper.getString(2));
-								dto.setSecondLastName(resultSetMapper.getString(3));
-								dto.setBirthDate(resultSetMapper.getDate(4).toString());
-								dto.setRelationship(resultSetMapper.getString(5));
-								dto.setPhoneNumber(resultSetMapper.getString(6));
-								dto.setZipcode(resultSetMapper.getString(7));
-								dto.setProvince(resultSetMapper.getString(8));
-								dto.setCity(resultSetMapper.getString(9));
-								dto.setColony(resultSetMapper.getString(10));
-								dto.setLocation(resultSetMapper.getString(11));
-								dto.setAddress(resultSetMapper.getString(12));
-								dto.setPercentage(resultSetMapper.getInteger(13));
+			            	  	dto.setId(resultSetMapper.getInteger(1));
+			            	  	dto.setNames(resultSetMapper.getString(2));
+								dto.setLastName(resultSetMapper.getString(3));
+								dto.setSecondLastName(resultSetMapper.getString(4));
+								dto.setBirthDate(resultSetMapper.getString(5));
+								dto.setRelationship(resultSetMapper.getString(6));
+								dto.setPhoneNumber(resultSetMapper.getString(7));
+								dto.setZipcode(resultSetMapper.getString(8));
+								dto.setProvince(resultSetMapper.getString(9));
+								dto.setCity(resultSetMapper.getString(10));
+								dto.setColony(resultSetMapper.getString(11));
+								dto.setLocation(resultSetMapper.getString(12));
+								dto.setAddress(resultSetMapper.getString(13));
+								dto.setPercentage(resultSetMapper.getInteger(14));
+							
 		              return dto;
 		              }
 		              },false);
@@ -898,11 +900,11 @@ int mapBlank=0;
 		mapTotal++;
 		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
 			// ---------NO Array
-			Message returnMessage = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1),
-					new RowMapper<Message>() {
+			Response returnResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1),
+					new RowMapper<Response>() {
 						@Override
-						public Message mapRow(ResultSetMapper resultSetMapper, int index) {
-							Message dto = new Message();
+						public Response mapRow(ResultSetMapper resultSetMapper, int index) {
+							Response dto = new Response();
 
 							dto.setCode(resultSetMapper.getInteger(1));
 							dto.setMessage(resultSetMapper.getString(2));
@@ -910,7 +912,7 @@ int mapBlank=0;
 						}
 					}, false);
 
-			outResponseCatalog.setMessage(returnMessage);
+			outResponseCatalog.setResponse(returnResponse);
 			// break;
 
 		} else {
@@ -1023,13 +1025,13 @@ int mapBlank=0;
 		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
 
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 		              return dto;
 		              }
 		              },false);
 
-		              outResponseGetMovementsDetail.setMessage(returnResponseGetMovementsDetail.getMessage());
+		              outResponseGetMovementsDetail.setResponse(returnResponseGetMovementsDetail.getResponse());
 		                  // break;
 
 		      }else {
@@ -1131,10 +1133,10 @@ int mapBlank=0;
 		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
 
 //execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+		ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 				procedureRequestAS);
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		List<MessageBlock> errors = ErrorUtil.getErrors(resp);
 //throw error
 		if (errors != null && errors.size() > 0) {
 			LOGGER.logDebug("Procedure execution returns error");
@@ -1151,11 +1153,11 @@ int mapBlank=0;
 		int mapBlank = 0;
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size()>0  &&
-				response.getResultSets().get(0).getData().getRows().size() > 0) {
+		if (resp.getResultSets() != null && resp.getResultSets().size()>0  &&
+				resp.getResultSets().get(0).getData().getRows().size() > 0) {
 			// ---------NO Array
 			MunicipalitiesItems[]  municipalities = MapperResultUtil
-					.mapToArray(response.getResultSets().get(0), new RowMapper<MunicipalitiesItems>() {
+					.mapToArray(resp.getResultSets().get(0), new RowMapper<MunicipalitiesItems>() {
 						@Override
 						public MunicipalitiesItems mapRow(ResultSetMapper resultSetMapper, int index) {
 							MunicipalitiesItems dto = new MunicipalitiesItems();
@@ -1175,20 +1177,16 @@ int mapBlank=0;
 
 
 
-		Message message=new Message();
-		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
-		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
-		outResponseMunicipalityByState.setMessage(message);
+		Response response=new Response();
+		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+		outResponseMunicipalityByState.setResponse(response);
 
-		if (message != null && message.getCode() == 0) {
+		if (response != null && response.getCode() == 0) {
 			outResponseMunicipalityByState.setSuccess(true);
 
 		} else
 			outResponseMunicipalityByState.setSuccess(false);
-
-
-
-
 
 
 		LOGGER.logDebug("Ends service execution: getMunicipalityByState");
@@ -1258,13 +1256,13 @@ int mapBlank=0;
 	                 public ResponseOwnAccountsView mapRow(ResultSetMapper resultSetMapper, int index) {
 	                 ResponseOwnAccountsView dto = new ResponseOwnAccountsView();
 	                 
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 	                 return dto;
 	                 }
 	                 },false);
 	
-	                 outResponseOwnAccountsView.setMessage(returnResponseOwnAccountsView.getMessage());
+	                 outResponseOwnAccountsView.setResponse(returnResponseOwnAccountsView.getResponse());
 	                     // break;
 	                   
 	         }else {
@@ -1340,10 +1338,10 @@ int mapBlank=0;
 			procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
 
 			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+			ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
 
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			List<MessageBlock> errors = ErrorUtil.getErrors(resp);
 			// throw error
 			if (errors != null && errors.size() > 0) {
 				LOGGER.logDebug("Procedure execution returns error");
@@ -1365,17 +1363,17 @@ int mapBlank=0;
 				throw new CTSRestException("404", null);
 			}
 			
-			Message message=new Message();
+			Response response=new Response();
 			
-			message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
-			message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
-			outStateByZipCodeResponse.setMessage(message);
-			outStateByZipCodeResponse.setStateId(getOutValue(String.class, "@o_id_state", response.getParams()));
+			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+			outStateByZipCodeResponse.setResponse(response);
+			outStateByZipCodeResponse.setStateId(getOutValue(String.class, "@o_id_state", resp.getParams()));
 			outStateByZipCodeResponse
-					.setStateDescription(getOutValue(String.class, "@o_desc_state", response.getParams()));
-			outStateByZipCodeResponse.setSuccess(getOutValue(Boolean.class, "@o_success", response.getParams()));
+					.setStateDescription(getOutValue(String.class, "@o_desc_state", resp.getParams()));
+			outStateByZipCodeResponse.setSuccess(getOutValue(Boolean.class, "@o_success", resp.getParams()));
 			
-			if (message != null && message.getCode() == 0) {
+			if (response != null && response.getCode() == 0) {
 				outStateByZipCodeResponse.setSuccess(true);
 
 			} else
@@ -1453,8 +1451,8 @@ int mapBlank=0;
 									dto.setPhoneNumber(resultSetMapper.getString(14));
 									dto.setCustomerLevel(resultSetMapper.getString(15));
 									dto.setAddressId(resultSetMapper.getInteger(16));
-									dto.messageInstance().setCode(resultSetMapper.getInteger(18));
-									dto.messageInstance().setMessage(resultSetMapper.getString(19));
+									dto.responseInstance().setCode(resultSetMapper.getInteger(18));
+									dto.responseInstance().setMessage(resultSetMapper.getString(19));
 									return dto;
 								}
 							}, false);
@@ -1554,13 +1552,13 @@ int mapBlank=0;
 						public RegisterBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 							RegisterBeneficiaryResponse dto = new RegisterBeneficiaryResponse();
 
-							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
-			outRegisterBeneficiaryResponse.setMessage(returnRegisterBeneficiaryResponse.getMessage());
+			outRegisterBeneficiaryResponse.setResponse(returnRegisterBeneficiaryResponse.getResponse());
 			// break;
 
 		} else {
@@ -1596,10 +1594,10 @@ int mapBlank=0;
 		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "000");
 
 		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+		ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 				procedureRequestAS);
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		List<MessageBlock> errors = ErrorUtil.getErrors(resp);
 		// throw error
 		if (errors != null && errors.size() > 0) {
 			LOGGER.logDebug("Procedure execution returns error");
@@ -1616,9 +1614,9 @@ int mapBlank=0;
 		int mapBlank = 0;
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+		if (resp .getResultSets() != null && resp.getResultSets().get(0).getData().getRows().size() > 0) {
 			// ---------NO Array
-			ListZipCode[] returnListZipCode = MapperResultUtil.mapToArray(response.getResultSets().get(0),
+			ListZipCode[] returnListZipCode = MapperResultUtil.mapToArray(resp.getResultSets().get(0),
 					new RowMapper<ListZipCode>() {
 						@Override
 						public ListZipCode mapRow(ResultSetMapper resultSetMapper, int index) {
@@ -1644,18 +1642,18 @@ int mapBlank=0;
 			throw new CTSRestException("404", null);
 		}
 
-		toReturn.setSuccess(getOutValue(boolean.class, "@o_success", response.getParams()));
-		Message message = new Message();
-		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
-		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
+		toReturn.setSuccess(getOutValue(boolean.class, "@o_success", resp.getParams()));
+		Response response = new Response();
+		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
 
-		if (message != null && message.getCode() == 0) {
+		if (response != null && response.getCode() == 0) {
 			toReturn.setSuccess(true);
 
 		} else
 			toReturn.setSuccess(false);
 
-		toReturn.setMessage(message);
+		toReturn.setResponse(response);
 
 		LOGGER.logDebug("Ends service execution: searchZipCode");
 
@@ -1741,13 +1739,13 @@ int mapBlank=0;
 		              public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 		              UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
 		              
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 		              return dto;
 		              }
 		              },false);
 		
-		              outUpdateCustomerAddressResponse.setMessage(returnUpdateCustomerAddressResponse.getMessage());
+		              outUpdateCustomerAddressResponse.setResponse(returnUpdateCustomerAddressResponse.getResponse());
 		                  // break;
 		                
 		      }else {
@@ -1816,8 +1814,8 @@ int mapBlank=0;
 							ResponseUpdateProfile dto = new ResponseUpdateProfile();
 
 							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.messageInstance().setMessage(resultSetMapper.getString(2));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(3));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(3));
 							return dto;
 						}
 					}, false);
@@ -1906,13 +1904,13 @@ int mapBlank=0;
 										int index) {
 									ResponseValidateCustomerIdentityCard dto = new ResponseValidateCustomerIdentityCard();
 
-									dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-									dto.messageInstance().setMessage(resultSetMapper.getString(2));
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
 									return dto;
 								}
 							}, false);
 
-			outResponseValidateCustomerIdentityCard.setMessage(returnResponseValidateCustomerIdentityCard.getMessage());
+			outResponseValidateCustomerIdentityCard.setResponse(returnResponseValidateCustomerIdentityCard.getResponse());
 			// break;
 
 		} else {
@@ -1945,9 +1943,9 @@ int mapBlank=0;
 
 		}
 		
-		Message message=outResponseValidateCustomerIdentityCard.getMessage();
+		Response resp=outResponseValidateCustomerIdentityCard.getResponse();
 		
-		if(message==null || message.getCode()>0 ) {
+		if(resp==null || resp.getCode()>0 ) {
 			
 			outResponseValidateCustomerIdentityCard.setSuccess(false);
 		}else {
@@ -2036,13 +2034,13 @@ int mapBlank=0;
 		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
 		              
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 		              return dto;
 		              }
 		              },false);
 		
-		              outResponseRegisterAccountSpei.setMessage(returnResponseRegisterAccountSpei.getMessage());
+		              outResponseRegisterAccountSpei.setResponse(returnResponseRegisterAccountSpei.getResponse());
 		                  // break;
 		                
 		      }else {
@@ -2072,8 +2070,8 @@ int mapBlank=0;
 
 		ResponseCreateSavingAccount outResponseCreateSavingAccount = new ResponseCreateSavingAccount();
 
-		Message message = new Message();
-		outResponseCreateSavingAccount.setMessage(message);
+		Response response = new Response();
+		outResponseCreateSavingAccount.setResponse(response);
 
 		// create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_apertura_aut_bv_api");
@@ -2087,10 +2085,10 @@ int mapBlank=0;
 		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
 
 		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+		ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 				procedureRequestAS);
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		List<MessageBlock> errors = ErrorUtil.getErrors(resp);
 		// throw error
 		if (errors != null && errors.size() > 0) {
 			LOGGER.logDebug("Procedure execution returns error");
@@ -2111,12 +2109,12 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
-		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
-		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
-		outResponseCreateSavingAccount.setMessage(message);
-		outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", response.getParams()));
+		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+		outResponseCreateSavingAccount.setResponse(response);
+		outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
 		
-		if(outResponseCreateSavingAccount.getAccountNumber()!=null && outResponseCreateSavingAccount.getAccountNumber()!="" && message.getCode()==0) {
+		if(outResponseCreateSavingAccount.getAccountNumber()!=null && outResponseCreateSavingAccount.getAccountNumber()!="" && response.getCode()==0) {
 			
 			outResponseCreateSavingAccount.setSuccess(true);
 			
@@ -2156,10 +2154,10 @@ int mapBlank=0;
 		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
 
 		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+		ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 				procedureRequestAS);
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		List<MessageBlock> errors = ErrorUtil.getErrors(resp);
 		// throw error
 		if (errors != null && errors.size() > 0) {
 			LOGGER.logDebug("Procedure execution returns error");
@@ -2176,10 +2174,10 @@ int mapBlank=0;
 		int mapBlank = 0;
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size()>0 && response.getResultSets().get(0).getData().getRows().size()>0) {
+		if (resp.getResultSets() != null && resp.getResultSets().size()>0 && resp.getResultSets().get(0).getData().getRows().size()>0) {
 			// ---------NO Array
 			ResponseSearchLocationCatalog_addressTypeItem [] returnResponseSearchLocationCatalog_addressTypeItem = MapperResultUtil
-					.mapToArray(response.getResultSets().get(0),
+					.mapToArray(resp.getResultSets().get(0),
 							new RowMapper<ResponseSearchLocationCatalog_addressTypeItem>() {
 								
 								@Override
@@ -2204,13 +2202,13 @@ int mapBlank=0;
 		// End map returns
 		
 		
-		Message message = new Message();
+		Response response = new Response();
 		
-		message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
-		message.setMessage(getOutValue(String.class, "@o_message", response.getParams()));
-		outResponseSearchLocationCatalog.setMessage(message);
+		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+		outResponseSearchLocationCatalog.setResponse(response);
 
-		if (message != null && message.getCode() == 0) {
+		if (response != null && response.getCode() == 0) {
 			outResponseSearchLocationCatalog.setSuccess(true);
 
 		} else
@@ -2319,13 +2317,13 @@ int mapBlank=0;
 						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
-							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
-			outResponseTransferSpi.setMessage(returnResponseTransferSpi.getMessage());
+			outResponseTransferSpi.setResponse(returnResponseTransferSpi.getResponse());
 			// break;
 
 		} else {
@@ -2402,7 +2400,7 @@ int mapBlank=0;
 		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500114");
 		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
 		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getOriginAccountNumber());
-		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationAccountNumber());
+		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationNumber());
 		procedureRequestAS.addInputParam("@i_val",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
 		procedureRequestAS.addInputParam("@i_concepto",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDescription());
 		procedureRequestAS.addInputParam("@i_comision",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
@@ -2458,13 +2456,13 @@ int mapBlank=0;
 		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
 		              
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 		              return dto;
 		              }
 		              },false);
 		
-		              outResponseTransferThirdPartyAccount.setMessage(returnResponseTransferThirdPartyAccount.getMessage());
+		              outResponseTransferThirdPartyAccount.setResponse(returnResponseTransferThirdPartyAccount.getResponse());
 		                  // break;
 		                
 		      }else {
@@ -2573,11 +2571,11 @@ int mapBlank=0;
 		mapTotal++;
 		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
 			// ---------NO Array
-			Message returnMessage = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1),
-					new RowMapper<Message>() {
+			Response returnResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1),
+					new RowMapper<Response>() {
 						@Override
-						public Message mapRow(ResultSetMapper resultSetMapper, int index) {
-							Message dto = new Message();
+						public Response mapRow(ResultSetMapper resultSetMapper, int index) {
+							Response dto = new Response();
 
 							dto.setCode(resultSetMapper.getInteger(1));
 							dto.setMessage(resultSetMapper.getString(2));
@@ -2585,7 +2583,7 @@ int mapBlank=0;
 						}
 					}, false);
 
-			outResponseValidateIdentity.setMessage(returnMessage);
+			outResponseValidateIdentity.setResponse(returnResponse);
 			// break;
 
 		} else {
@@ -2782,13 +2780,13 @@ int mapBlank=0;
 						public ResponseDeviceActivation mapRow(ResultSetMapper resultSetMapper, int index) {
 							ResponseDeviceActivation dto = new ResponseDeviceActivation();
 
-							dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-							dto.messageInstance().setMessage(resultSetMapper.getString(2));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
-			outResponseDeviceActivation.setMessage(returnResponseDeviceActivation.getMessage());
+			outResponseDeviceActivation.setResponse(returnResponseDeviceActivation.getResponse());
 			// break;
 
 		} else {
@@ -2881,13 +2879,13 @@ int mapBlank=0;
 										int index) {
 									ResponseValidateDeviceActivation dto = new ResponseValidateDeviceActivation();
 
-									dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-									dto.messageInstance().setMessage(resultSetMapper.getString(2));
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
 									return dto;
 								}
 							}, false);
 
-			outResponseValidateDeviceActivation.setMessage(returnResponseValidateDeviceActivation.getMessage());
+			outResponseValidateDeviceActivation.setResponse(returnResponseValidateDeviceActivation.getResponse());
 			// break;
 
 		} else {
@@ -2963,8 +2961,8 @@ int mapBlank=0;
 		                    dto.setAssignmentDate(resultSetMapper.getString(7));
 		               }
 		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
 		               return dto;
 		               }
 		               },false);
@@ -3038,8 +3036,8 @@ int mapBlank=0;
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
                           dto.setReferenceCode(resultSetMapper.getString(4));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
                     }
                     },false);
@@ -3084,9 +3082,9 @@ int mapBlank=0;
       procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"X");
       
       //execute procedure
-      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local",procedureRequestAS);
+      ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local",procedureRequestAS);
 
-      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      List<MessageBlock> errors = ErrorUtil.getErrors(resp);
       //throw error
       if(errors!= null && errors.size()> 0){
       LOGGER.logDebug("Procedure execution returns error");
@@ -3103,9 +3101,9 @@ int mapBlank=0;
       int mapBlank=0;
       
             mapTotal++;
-            if (response.getResultSets()!=null && response.getResultSets().size()>0  &&response.getResultSets().get(0).getData().getRows().size()>0) {	
+            if (resp.getResultSets()!=null && resp.getResultSets().size()>0  &&resp.getResultSets().get(0).getData().getRows().size()>0) {	
 								//---------NO Array
-								CstmrQuestions [] returnCstmrQuestions = MapperResultUtil.mapToArray(response.getResultSets().get(0), new RowMapper<CstmrQuestions>() { 
+								CstmrQuestions [] returnCstmrQuestions = MapperResultUtil.mapToArray(resp.getResultSets().get(0), new RowMapper<CstmrQuestions>() { 
                     @Override
                     public CstmrQuestions mapRow(ResultSetMapper resultSetMapper, int index) {
                     CstmrQuestions dto = new CstmrQuestions();
@@ -3125,9 +3123,9 @@ int mapBlank=0;
             }
           
             mapTotal++;
-            if (response.getResultSets()!=null&& response.getResultSets().size()>1 &&response.getResultSets().get(1).getData().getRows().size()>0) {	
+            if (resp.getResultSets()!=null&& resp.getResultSets().size()>1 &&resp.getResultSets().get(1).getData().getRows().size()>0) {	
 								//---------NO Array
-								CstmrAnswers [] returnCstmrAnswers = MapperResultUtil.mapToArray(response.getResultSets().get(1), new RowMapper<CstmrAnswers>() { 
+								CstmrAnswers [] returnCstmrAnswers = MapperResultUtil.mapToArray(resp.getResultSets().get(1), new RowMapper<CstmrAnswers>() { 
                     @Override
                     public CstmrAnswers mapRow(ResultSetMapper resultSetMapper, int index) {
                     CstmrAnswers dto = new CstmrAnswers();
@@ -3149,12 +3147,12 @@ int mapBlank=0;
           
 
       
-      Message message=new Message();
-      message.setCode(getOutValue(Integer.class, "@o_code", response.getParams()));
-      message.setMessage(getOutValue(String.class, "@o_message", response.getParams())); 
-      outResponseAllCustomerQuestions.setMessage(message);
+      Response response=new Response();
+      response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+      response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+      outResponseAllCustomerQuestions.setResponse(response);
 
-     	if (message != null && message.getCode() == 0) {
+     	if (response != null && response.getCode() == 0) {
      		outResponseAllCustomerQuestions.setSuccess(true);
      	} else
      		outResponseAllCustomerQuestions.setSuccess(false);   
@@ -3244,13 +3242,13 @@ int mapBlank=0;
 							public ResponseDefineSecurityQA mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseDefineSecurityQA dto = new ResponseDefineSecurityQA();
 
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 								return dto;
 							}
 						}, false);
 
-				outResponseDefineSecurityQA.setMessage(returnResponseDefineSecurityQA.getMessage());
+				outResponseDefineSecurityQA.setResponse(returnResponseDefineSecurityQA.getResponse());
 				// break;
 
 			} else {
@@ -3372,13 +3370,13 @@ int mapBlank=0;
 							public ResponseValidateAllSecurityQA mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseValidateAllSecurityQA dto = new ResponseValidateAllSecurityQA();
 
-								dto.messageInstance().setCode(resultSetMapper.getInteger(1));
-								dto.messageInstance().setMessage(resultSetMapper.getString(2));
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 								return dto;
 							}
 						}, false);
 
-				outResponseValidateAllSecurityQA.setMessage(returnResponseValidateAllSecurityQA.getMessage());
+				outResponseValidateAllSecurityQA.setResponse(returnResponseValidateAllSecurityQA.getResponse());
 				// break;
 
 			} else {
@@ -3442,8 +3440,8 @@ int mapBlank=0;
                     ValidateTokenResponse dto = new ValidateTokenResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
                     }
                     },false);
@@ -3511,8 +3509,8 @@ int mapBlank=0;
                     ResponseUpdateCredentials dto = new ResponseUpdateCredentials();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.messageInstance().setCode(resultSetMapper.getInteger(2));
-							dto.messageInstance().setMessage(resultSetMapper.getString(3));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
                     }
                     },false);
