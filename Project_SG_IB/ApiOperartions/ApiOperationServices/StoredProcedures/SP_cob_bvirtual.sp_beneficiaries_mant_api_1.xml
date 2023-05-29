@@ -29,6 +29,7 @@
   <queries>
     <query>
       <columns>
+        <column name="id" />
         <column name="names" />
         <column name="lasstName" />
         <column name="secodLasstName" />

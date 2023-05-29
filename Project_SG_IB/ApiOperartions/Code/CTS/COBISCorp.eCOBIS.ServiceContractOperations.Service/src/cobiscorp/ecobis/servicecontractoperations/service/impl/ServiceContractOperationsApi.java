@@ -674,6 +674,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       name = "returnGetBeneficiaryResponse",
       type = cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse.class,
       columns = {
+		    @CTSColumn(field = "beneficiaries.id", columnIndex = 1),
 		    @CTSColumn(field = "beneficiaries.names", columnIndex = 1),
 		    @CTSColumn(field = "beneficiaries.lastName", columnIndex = 2),
 		    @CTSColumn(field = "beneficiaries.secondLastName", columnIndex = 3),
