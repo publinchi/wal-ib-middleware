@@ -29,7 +29,7 @@ import java.util.HashMap;
 
 public class ResponseDefineSecurityQA implements Serializable {
   private Boolean success;
-  private Message message;
+  private Response response;
   private Integer customQuestionId;
   public Boolean isSuccess(){
     return this.success;
@@ -37,17 +37,17 @@ public class ResponseDefineSecurityQA implements Serializable {
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
   public Integer getCustomQuestionId(){
     return this.customQuestionId;

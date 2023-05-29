@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class ResponseCreateSavingAccount implements Serializable {
   private Boolean success;
   private String accountNumber;
-  private Message message;
+  private Response response;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -43,16 +43,16 @@ public class ResponseCreateSavingAccount implements Serializable {
   public void setAccountNumber(String accountNumber ){
     this.accountNumber=accountNumber;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }

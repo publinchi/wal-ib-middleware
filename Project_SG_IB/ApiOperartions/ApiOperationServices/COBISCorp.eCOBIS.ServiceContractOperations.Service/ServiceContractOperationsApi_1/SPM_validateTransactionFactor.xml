@@ -23,17 +23,15 @@
           <field type="int" name="position" value="1" />
           <field type="String" name="columnName" value="code" />
           <field type="String" name="dTOAlias" value="returnValidateTokenResponse" />
-          <field type="String" name="dTOPropertyName" value="message.code" />
+          <field type="String" name="dTOPropertyName" value="response.code" />
           <field type="String" name="dataType" value="int?" />
-          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="8" index="2">
           <field type="int" name="position" value="2" />
           <field type="String" name="columnName" value="message" />
           <field type="String" name="dTOAlias" value="returnValidateTokenResponse" />
-          <field type="String" name="dTOPropertyName" value="message.message" />
+          <field type="String" name="dTOPropertyName" value="response.message" />
           <field type="String" name="dataType" value="string" />
-          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>

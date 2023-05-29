@@ -27,32 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseMunicipalityByState implements Serializable {
-  private boolean success;
-  private MunicipalitiesItems[] municipalitiesItems;
-  private Response response;
-  public boolean isSuccess(){
-    return this.success;
+public class Response implements Serializable {
+  private Integer code;
+  private String message;
+  public Integer getCode(){
+    return this.code;
   }
-  public void setSuccess(boolean success ){
-    this.success=success;
+  public void setCode(Integer code ){
+    this.code=code;
   }
-  public MunicipalitiesItems[] getMunicipalitiesItems(){
-    return this.municipalitiesItems;
+  public String getMessage(){
+    return this.message;
   }
-  public void setMunicipalitiesItems(MunicipalitiesItems[] municipalitiesItems ){
-    this.municipalitiesItems=municipalitiesItems;
-  }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
-  }
-  public Response getResponse(){
-    return this.response;
-  }
-  public void setResponse(Response response ){
-    this.response=response;
+  public void setMessage(String message ){
+    this.message=message;
   }
 }

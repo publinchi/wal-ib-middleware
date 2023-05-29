@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class GetBeneficiaryResponse implements Serializable {
   private Boolean success;
   private BeneficiariesResponse[] beneficiaries;
-  private Message message;
+  private Response response;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -43,16 +43,16 @@ public class GetBeneficiaryResponse implements Serializable {
   public void setBeneficiaries(BeneficiariesResponse[] beneficiaries ){
     this.beneficiaries=beneficiaries;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }
