@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class RequestTransferThirdPartyAccount implements Serializable {
   private Integer externalCustomerId;
   private String originAccountNumber;
-  private String destinationAccountNumber;
+  private String destinationNumber;
   private java.math.BigDecimal amount;
   private String description;
   private String detail;
@@ -49,11 +49,11 @@ public class RequestTransferThirdPartyAccount implements Serializable {
   public void setOriginAccountNumber(String originAccountNumber ){
     this.originAccountNumber=originAccountNumber;
   }
-  public String getDestinationAccountNumber(){
-    return this.destinationAccountNumber;
+  public String getDestinationNumber(){
+    return this.destinationNumber;
   }
-  public void setDestinationAccountNumber(String destinationAccountNumber ){
-    this.destinationAccountNumber=destinationAccountNumber;
+  public void setDestinationNumber(String destinationNumber ){
+    this.destinationNumber=destinationNumber;
   }
   public java.math.BigDecimal getAmount(){
     return this.amount;

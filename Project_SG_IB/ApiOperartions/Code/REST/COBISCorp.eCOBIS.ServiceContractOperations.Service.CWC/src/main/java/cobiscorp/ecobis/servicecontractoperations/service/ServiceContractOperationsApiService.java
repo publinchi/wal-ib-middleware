@@ -2400,7 +2400,7 @@ int mapBlank=0;
 		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500114");
 		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
 		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getOriginAccountNumber());
-		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationAccountNumber());
+		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationNumber());
 		procedureRequestAS.addInputParam("@i_val",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
 		procedureRequestAS.addInputParam("@i_concepto",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDescription());
 		procedureRequestAS.addInputParam("@i_comision",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
