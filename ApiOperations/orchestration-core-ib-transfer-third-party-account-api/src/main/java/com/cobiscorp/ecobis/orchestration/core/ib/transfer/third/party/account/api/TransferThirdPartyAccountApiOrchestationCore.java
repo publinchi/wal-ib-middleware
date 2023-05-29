@@ -188,7 +188,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);		
 		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		
-		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+			aRequest.removeParam("@i_cta_des");
+			aRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
 			wAccountsRespVal = getValAccountReq(aRequest, aBagSPJavaOrchestration);		
 			logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
 		}
