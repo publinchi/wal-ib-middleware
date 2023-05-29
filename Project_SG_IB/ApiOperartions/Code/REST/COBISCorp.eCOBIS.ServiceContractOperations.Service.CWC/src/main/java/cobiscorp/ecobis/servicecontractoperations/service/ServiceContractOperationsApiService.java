@@ -799,19 +799,21 @@ int mapBlank=0;
 		              public BeneficiariesResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 		            	  BeneficiariesResponse dto = new BeneficiariesResponse();
 		              
-		            	  		dto.setNames(resultSetMapper.getString(1));
-		            	  		dto.setLastName(resultSetMapper.getString(2));
-								dto.setSecondLastName(resultSetMapper.getString(3));
-								dto.setBirthDate(resultSetMapper.getDate(4).toString());
-								dto.setRelationship(resultSetMapper.getString(5));
-								dto.setPhoneNumber(resultSetMapper.getString(6));
-								dto.setZipcode(resultSetMapper.getString(7));
-								dto.setProvince(resultSetMapper.getString(8));
-								dto.setCity(resultSetMapper.getString(9));
-								dto.setColony(resultSetMapper.getString(10));
-								dto.setLocation(resultSetMapper.getString(11));
-								dto.setAddress(resultSetMapper.getString(12));
-								dto.setPercentage(resultSetMapper.getInteger(13));
+			            	  	dto.setId(resultSetMapper.getInteger(1));
+			            	  	dto.setNames(resultSetMapper.getString(2));
+								dto.setLastName(resultSetMapper.getString(3));
+								dto.setSecondLastName(resultSetMapper.getString(4));
+								dto.setBirthDate(resultSetMapper.getString(5));
+								dto.setRelationship(resultSetMapper.getString(6));
+								dto.setPhoneNumber(resultSetMapper.getString(7));
+								dto.setZipcode(resultSetMapper.getString(8));
+								dto.setProvince(resultSetMapper.getString(9));
+								dto.setCity(resultSetMapper.getString(10));
+								dto.setColony(resultSetMapper.getString(11));
+								dto.setLocation(resultSetMapper.getString(12));
+								dto.setAddress(resultSetMapper.getString(13));
+								dto.setPercentage(resultSetMapper.getInteger(14));
+							
 		              return dto;
 		              }
 		              },false);
