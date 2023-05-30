@@ -28,6 +28,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
@@ -140,6 +142,13 @@ public interface IServiceContractOperationsApiService {
 	// Return list
 	public ResponseEncriptData encryptData(RequestEncriptData inRequestEncriptData) throws CTSRestException;
 
+	/**
+	 * Delete Beneficiary
+	 */
+	 
+	//Return
+	public ResponseDeleteBeneficiary deleteBeneficiary(RequestDeleteBeneficiary inRequestDeleteBeneficiary  )throws CTSRestException;
+	
 	/**
 	 * Service to generate and send an OTP to the client
 	 */

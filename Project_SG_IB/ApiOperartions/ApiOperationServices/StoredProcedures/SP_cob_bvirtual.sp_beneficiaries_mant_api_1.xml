@@ -25,6 +25,7 @@
     <parameter name="@i_provincia" dataType="smallint" direction="in" />
     <parameter name="@i_telefono" dataType="varchar" direction="in" />
     <parameter name="@i_json_beneficiaries" dataType="varchar" direction="in" />
+    <parameter name="@i_benf_id" dataType="int" direction="in" />
   </parameters>
   <queries>
     <query>

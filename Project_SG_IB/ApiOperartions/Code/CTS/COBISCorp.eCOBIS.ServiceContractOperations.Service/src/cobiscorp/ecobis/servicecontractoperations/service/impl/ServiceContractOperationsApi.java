@@ -459,7 +459,55 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+
+	@CTSProcedure(
+		name = "cob_bvirtual..sp_beneficiaries_mant_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestDeleteBeneficiary",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "beneficiaryId", param = "@i_benf_id", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
     
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500127"),
+				@CTSDefaultInputParam(value = "D", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseDeleteBeneficiary",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseDeleteBeneficiary",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary.class,
+      columns = {
+		    @CTSColumn(field = "response.code", columnIndex = 1),
+		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO deleteBeneficiary(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+	  
 	@CTSProcedure(
 		name = "cob_procesador..sp_encryptData", dbms = "SQLCTS",  
 		objectRequest = {
