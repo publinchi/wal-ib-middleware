@@ -66,6 +66,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO defineSecurityQA(ServiceRequestTO requestTO);  
 
   /**
+  * Service to  delete a beneficiary.
+  */
+  ServiceResponseTO deleteBeneficiary(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
