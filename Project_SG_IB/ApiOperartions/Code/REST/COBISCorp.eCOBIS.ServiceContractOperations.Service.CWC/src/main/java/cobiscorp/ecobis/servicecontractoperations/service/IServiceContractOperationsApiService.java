@@ -75,6 +75,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryRequest;
+import cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
@@ -261,6 +263,12 @@ public interface IServiceContractOperationsApiService {
 	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(
 			RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) throws CTSRestException;
 
+	/**
+    * Update Account Beneficiary
+    */
+	//Have DTO
+	public UpdateBeneficiaryResponse updateAccountBebeficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException;
+		  
 	/**
 	 * Update customer address
 	 */
