@@ -1426,6 +1426,53 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+
+	@CTSProcedure(
+		name = "cob_bvirtual..sp_beneficiaries_mant_api",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inUpdateBeneficiaryRequest",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "account", param = "@i_numero_producto", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500126"),
+				@CTSDefaultInputParam(value = "U", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnUpdateBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnUpdateBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "response.code", columnIndex = 1),
+		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO updateAccountBebeficiary(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_updateCredentials", dbms = "SQLCTS",  

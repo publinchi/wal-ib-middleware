@@ -2503,6 +2503,101 @@ int mapBlank=0;
 		}
 	   
 
+       /**
+       * Update Account Beneficiary
+       */
+	   @Override
+		//Have DTO
+		public UpdateBeneficiaryResponse updateAccountBebeficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException{
+		  LOGGER.logDebug("Start service execution: updateAccountBebeficiary");
+	   UpdateBeneficiaryResponse outUpdateBeneficiaryResponse  = new UpdateBeneficiaryResponse();
+	       
+	   //create procedure
+	   ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
+	   
+	     procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500126");
+	   procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
+	   procedureRequestAS.addInputParam("@i_numero_producto",ICTSTypes.SQLVARCHAR,inUpdateBeneficiaryRequest.getAccount());
+	   procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"U");
+	   
+	   Gson gson = new Gson();
+		String JSON = gson.toJson(inUpdateBeneficiaryRequest.getBeneficiaries());
+		procedureRequestAS.addInputParam("@i_json_beneficiaries", ICTSTypes.SQLVARCHAR, JSON);
+
+	   //execute procedure
+	   ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+	
+	   List<MessageBlock> errors = ErrorUtil.getErrors(response);
+	   //throw error
+	   if(errors!= null && errors.size()> 0){
+	   LOGGER.logDebug("Procedure execution returns error");
+	   if ( LOGGER.isDebugEnabled() ) {
+	   for (int i = 0; i < errors.size(); i++) {
+	   LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+	   }
+	   }
+	   throw new CTSRestException("Procedure Response has errors", null, errors);
+	   }
+	   LOGGER.logDebug("Procedure ok");
+	   //Init map returns
+	   int mapTotal=0;
+	   int mapBlank=0;
+	   
+	         mapTotal++;
+	         if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateBeneficiaryResponse returnUpdateBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<UpdateBeneficiaryResponse>() { 
+	                 @Override
+	                 public UpdateBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+	                 UpdateBeneficiaryResponse dto = new UpdateBeneficiaryResponse();
+	                 
+	                       dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+	                 return dto;
+	                 }
+	                 },false);
+	
+	                 outUpdateBeneficiaryResponse.setSuccess(returnUpdateBeneficiaryResponse.isSuccess());
+	                     // break;
+	                   
+	         }else {
+	         mapBlank++;
+	
+	         }
+	       
+	         mapTotal++;
+	         if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateBeneficiaryResponse returnUpdateBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<UpdateBeneficiaryResponse>() { 
+	                 @Override
+	                 public UpdateBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+	                 UpdateBeneficiaryResponse dto = new UpdateBeneficiaryResponse();
+	                 
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+	                 return dto;
+	                 }
+	                 },false);
+	
+	                 outUpdateBeneficiaryResponse.setResponse(returnUpdateBeneficiaryResponse.getResponse());
+	                     // break;
+	                   
+	         }else {
+	         mapBlank++;
+	
+	         }
+	       
+	   //End map returns
+	   if(mapBlank!=0&&mapBlank==mapTotal){
+	   LOGGER.logDebug("No data found");
+	   throw new CTSRestException("404",null);
+	   }
+	   
+	     LOGGER.logDebug("Ends service execution: updateAccountBebeficiary");
+	     //returns data
+	     return outUpdateBeneficiaryResponse;
+	   }
+
+	   
 	/**
 	 * Validate Identity
 	 */
