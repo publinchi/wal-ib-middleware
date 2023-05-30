@@ -156,6 +156,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO transferThirdPartyAccount(ServiceRequestTO requestTO);  
 
   /**
+  * Update Account Beneficiary
+  */
+  ServiceResponseTO updateAccountBebeficiary(ServiceRequestTO requestTO);  
+
+  /**
   * Service to Update Credentials
   */
   ServiceResponseTO updateCredentials(ServiceRequestTO requestTO);  
