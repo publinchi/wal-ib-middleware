@@ -253,12 +253,12 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 	    IReentryPersister reentryPersister = null;
 	    componentLocator = ComponentLocator.getInstance(this);
 	    
-	    String originCode = request.readValueParam("@i_originCode");
+	    /*String originCode = request.readValueParam("@i_originCode");
 	    logger.logDebug("@i_originCode = " + originCode);
 		if (originCode == null) {
 			logger.logDebug("Entre @i_originCode");
 			request.addInputParam("@i_originCode",ICTSTypes.SQLINT4, "");
-		}
+		}*/
 	    
 	    Utils.addInputParam(request, "@i_externalCustomerId", ICTSTypes.SQLINT4,  request.readValueParam("@i_externalCustomerId"));
         

@@ -144,8 +144,6 @@ public class ServiceContractOperationsApiRest {
 				new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
 				new Data("amount", inCreditAccountRequest.getAmount()),
 				new Data("commission", inCreditAccountRequest.getCommission()),
-				new Data("latitude", inCreditAccountRequest.getLatitude()),
-				new Data("longitude", inCreditAccountRequest.getLongitude()),
 				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
 				new Data("creditConcept", inCreditAccountRequest.getCreditConcept()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
@@ -1392,8 +1390,6 @@ public class ServiceContractOperationsApiRest {
 				new Data("accountNumber", inDebitAccountRequest.getAccountNumber()),
 				new Data("amount", inDebitAccountRequest.getAmount()),
 				new Data("commission", inDebitAccountRequest.getCommission()),
-				new Data("latitude", inDebitAccountRequest.getLatitude()),
-				new Data("longitude", inDebitAccountRequest.getLongitude()),
 				new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()),
 				new Data("debitConcept", inDebitAccountRequest.getDebitConcept()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
