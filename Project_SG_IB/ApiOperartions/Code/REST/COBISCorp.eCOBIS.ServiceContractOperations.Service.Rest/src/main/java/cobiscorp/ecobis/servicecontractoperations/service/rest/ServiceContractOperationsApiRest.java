@@ -37,7 +37,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
@@ -300,6 +302,44 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Ends service execution REST: createSavingAccount");
 		return Response.ok(outResponseCreateSavingAccount).build();
 
+	}
+
+    /**
+    * Service to  delete a beneficiary.
+    */
+  @POST
+	@Path("/apiOperations/onbording/deleteBeneficiary")
+	@Consumes({"application/json"})
+	@Produces({"application/json"})
+	 public Response  deleteBeneficiary(RequestDeleteBeneficiary inRequestDeleteBeneficiary ){
+	LOGGER.logDebug("Start service execution REST: deleteBeneficiary");
+	ResponseDeleteBeneficiary outResponseDeleteBeneficiary  = new ResponseDeleteBeneficiary();
+	    
+	if(!validateMandatory(new Data("externalCustomerId", inRequestDeleteBeneficiary.getExternalCustomerId()), new Data("beneficiaryId", inRequestDeleteBeneficiary.getBeneficiaryId()))) {
+	  LOGGER.logDebug("400 is returned - Required fields are missing");
+	  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	}
+	  
+	try {
+	outResponseDeleteBeneficiary=iServiceContractOperationsApiService.deleteBeneficiary( inRequestDeleteBeneficiary );
+	} catch (CTSRestException e) {
+	LOGGER.logError("CTSRestException",e);
+	if ("404".equals(e.getMessage())) {
+	LOGGER.logDebug("404 is returned - No data found");
+	return Response.status(404).entity("No data found").build();
+	}
+	
+	LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+	return Response.status(409).entity(e.getMessageBlockList()).build();
+	} catch (Exception e){
+	LOGGER.logDebug("500 is returned - Code exception");
+	LOGGER.logError("Exception",e);
+	return Response.status(500).entity(e.getMessage()).build();
+	}
+	
+	    LOGGER.logDebug("Ends service execution REST: deleteBeneficiary");
+	    return Response.ok(outResponseDeleteBeneficiary).build();
+	  
 	}
 
 	/**
