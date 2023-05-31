@@ -122,7 +122,7 @@
   <collection type="Map" length="2" id="23" name="mappingProperties">
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="apiOperations/onboarding/updateAccountBebeficiary" />
+      <value type="String" value="apiOperations/onboarding/updateAccountBeneficiary" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />

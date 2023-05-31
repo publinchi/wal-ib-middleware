@@ -2598,8 +2598,8 @@ int mapBlank=0;
        */
 	   @Override
 		//Have DTO
-		public UpdateBeneficiaryResponse updateAccountBebeficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException{
-		  LOGGER.logDebug("Start service execution: updateAccountBebeficiary");
+		public UpdateBeneficiaryResponse updateAccountBeneficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException{
+		  LOGGER.logDebug("Start service execution: updateAccountBeneficiary");
 	   UpdateBeneficiaryResponse outUpdateBeneficiaryResponse  = new UpdateBeneficiaryResponse();
 	       
 	   //create procedure

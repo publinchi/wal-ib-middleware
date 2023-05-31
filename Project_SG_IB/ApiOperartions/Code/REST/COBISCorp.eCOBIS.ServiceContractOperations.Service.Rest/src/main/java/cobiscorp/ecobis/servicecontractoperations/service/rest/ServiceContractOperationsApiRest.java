@@ -308,7 +308,7 @@ public class ServiceContractOperationsApiRest {
     * Service to  delete a beneficiary.
     */
   @POST
-	@Path("/apiOperations/onbording/deleteBeneficiary")
+	@Path("/apiOperations/onboarding/deleteBeneficiary")
 	@Consumes({"application/json"})
 	@Produces({"application/json"})
 	 public Response  deleteBeneficiary(RequestDeleteBeneficiary inRequestDeleteBeneficiary ){
@@ -1074,10 +1074,10 @@ public class ServiceContractOperationsApiRest {
 	    * Update Account Beneficiary
 	    */
 	  @POST
-		@Path("/apiOperations/onboarding/updateAccountBebeficiary")
+		@Path("/apiOperations/onboarding/updateAccountBeneficiary")
 		@Consumes({"application/json"})
 		@Produces({"application/json"})
-		 public Response  updateAccountBebeficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest ){
+		 public Response  updateAccountBeneficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest ){
 		LOGGER.logDebug("Start service execution REST: updateAccountBebeficiary");
 		UpdateBeneficiaryResponse outUpdateBeneficiaryResponse  = new UpdateBeneficiaryResponse();
 		    
@@ -1087,7 +1087,7 @@ public class ServiceContractOperationsApiRest {
 		}
 		  
 		try {
-		outUpdateBeneficiaryResponse=iServiceContractOperationsApiService.updateAccountBebeficiary( inUpdateBeneficiaryRequest );
+		outUpdateBeneficiaryResponse=iServiceContractOperationsApiService.updateAccountBeneficiary( inUpdateBeneficiaryRequest );
 		} catch (CTSRestException e) {
 		LOGGER.logError("CTSRestException",e);
 		if ("404".equals(e.getMessage())) {
