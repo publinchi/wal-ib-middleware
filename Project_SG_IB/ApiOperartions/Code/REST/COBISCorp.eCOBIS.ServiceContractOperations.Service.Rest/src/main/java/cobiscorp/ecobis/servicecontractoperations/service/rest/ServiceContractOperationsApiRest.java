@@ -51,6 +51,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferSpi;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateAccountStatus;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateAccountStatus;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
@@ -1106,6 +1108,47 @@ public class ServiceContractOperationsApiRest {
 		    LOGGER.logDebug("Ends service execution REST: updateAccountBebeficiary");
 		    return Response.ok(outUpdateBeneficiaryResponse).build();
 		  
+		}
+	  
+		/**
+		 * Update Account Status
+		 */
+		@POST
+		@Path("/apiOperations/onboarding/updateAccountStatus")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response updateAccountStatus(RequestUpdateAccountStatus inRequestUpdateAccountStatus) {
+			LOGGER.logDebug("Start service execution REST: updateAccountStatus");
+			ResponseUpdateAccountStatus outResponseUpdateAccountStatus = new ResponseUpdateAccountStatus();
+
+			if (!validateMandatory(new Data("externalCustomerId", inRequestUpdateAccountStatus.getExternalCustomerId()),
+					new Data("accountStatus", inRequestUpdateAccountStatus.getAccountStatus()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+
+			try {
+				outResponseUpdateAccountStatus = iServiceContractOperationsApiService
+						.updateAccountStatus(inRequestUpdateAccountStatus);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: updateAccountStatus");
+			return Response.ok(outResponseUpdateAccountStatus).build();
+
 		}
 
 	
