@@ -276,7 +276,7 @@ public interface IServiceContractOperationsApiService {
     * Update Account Beneficiary
     */
 	//Have DTO
-	public UpdateBeneficiaryResponse updateAccountBebeficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException;
+	public UpdateBeneficiaryResponse updateAccountBeneficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException;
 		  
 	/**
 	 * Update customer address

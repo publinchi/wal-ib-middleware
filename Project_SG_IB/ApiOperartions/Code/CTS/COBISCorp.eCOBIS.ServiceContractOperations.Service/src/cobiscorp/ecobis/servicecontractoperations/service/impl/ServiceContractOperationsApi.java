@@ -1517,7 +1517,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   /**
   * {@inheritDoc}
   */
-      public ServiceResponseTO updateAccountBebeficiary(ServiceRequestTO requestTO) {
+      public ServiceResponseTO updateAccountBeneficiary(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
