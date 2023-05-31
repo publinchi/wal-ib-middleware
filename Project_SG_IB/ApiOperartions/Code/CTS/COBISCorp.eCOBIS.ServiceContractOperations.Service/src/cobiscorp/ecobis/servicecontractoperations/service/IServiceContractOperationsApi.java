@@ -166,6 +166,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO updateAccountBebeficiary(ServiceRequestTO requestTO);  
 
   /**
+  * Update Account Status
+  */
+  ServiceResponseTO updateAccountStatus(ServiceRequestTO requestTO);  
+
+  /**
   * Service to Update Credentials
   */
   ServiceResponseTO updateCredentials(ServiceRequestTO requestTO);  

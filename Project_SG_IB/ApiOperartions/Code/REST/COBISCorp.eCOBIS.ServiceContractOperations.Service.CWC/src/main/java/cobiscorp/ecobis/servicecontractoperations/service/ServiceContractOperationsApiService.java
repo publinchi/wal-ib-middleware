@@ -2686,7 +2686,104 @@ int mapBlank=0;
 	     //returns data
 	     return outUpdateBeneficiaryResponse;
 	   }
+	   
+		/**
+		 * Update Account Status
+		 */
+		@Override
+		// Have DTO
+		public ResponseUpdateAccountStatus updateAccountStatus(RequestUpdateAccountStatus inRequestUpdateAccountStatus)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: updateAccountStatus");
+			ResponseUpdateAccountStatus outResponseUpdateAccountStatus = new ResponseUpdateAccountStatus();
 
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
+					"cob_procesador..sp_update_account_status_api");
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500128");
+			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestUpdateAccountStatus.getExternalCustomerId()));
+			procedureRequestAS.addInputParam("@i_account_status", ICTSTypes.SQLVARCHAR,
+					inRequestUpdateAccountStatus.getAccountStatus());
+			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
+					inRequestUpdateAccountStatus.getAccountNumber());
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(0), new RowMapper<ResponseUpdateAccountStatus>() {
+							@Override
+							public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseUpdateAccountStatus.setSuccess(returnResponseUpdateAccountStatus.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(1), new RowMapper<ResponseUpdateAccountStatus>() {
+							@Override
+							public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
+
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseUpdateAccountStatus.setResponse(returnResponseUpdateAccountStatus.getResponse());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+
+			LOGGER.logDebug("Ends service execution: updateAccountStatus");
+			// returns data
+			return outResponseUpdateAccountStatus;
+		}
 	   
 	/**
 	 * Validate Identity
