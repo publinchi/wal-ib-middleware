@@ -76,7 +76,9 @@ import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateAccountStatus;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateAccountStatus;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
@@ -349,6 +351,14 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseValidateAllSecurityQA validateAllSecurityQA(
 			RequestValidateAllSecurityQA inRequestValidateAllSecurityQA) throws CTSRestException;
+	
+	/**
+	 * Update Account Status
+	 */
+
+	// Have DTO
+	public ResponseUpdateAccountStatus updateAccountStatus(RequestUpdateAccountStatus inRequestUpdateAccountStatus)
+			throws CTSRestException;
 
 	/**
 	 * Service to apply debit account
