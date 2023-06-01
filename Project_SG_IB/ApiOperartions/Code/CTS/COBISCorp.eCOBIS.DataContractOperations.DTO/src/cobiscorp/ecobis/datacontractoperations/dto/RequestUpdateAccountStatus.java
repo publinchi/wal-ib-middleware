@@ -31,6 +31,7 @@ public class RequestUpdateAccountStatus implements Serializable {
   private Integer externalCustomerId;
   private String accountStatus;
   private String accountNumber;
+  private java.math.BigDecimal blockingValue;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -48,5 +49,11 @@ public class RequestUpdateAccountStatus implements Serializable {
   }
   public void setAccountNumber(String accountNumber ){
     this.accountNumber=accountNumber;
+  }
+  public java.math.BigDecimal getBlockingValue(){
+    return this.blockingValue;
+  }
+  public void setBlockingValue(java.math.BigDecimal blockingValue ){
+    this.blockingValue=blockingValue;
   }
 }
