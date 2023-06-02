@@ -2704,6 +2704,7 @@ int mapBlank=0;
 	procedureRequestAS.addInputParam("@i_accountStatus",ICTSTypes.SQLVARCHAR,inRequestUpdateAccountStatus.getAccountStatus());
 	procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestUpdateAccountStatus.getAccountNumber());
 	procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
+	procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
 	
 	//execute procedure
 	ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);

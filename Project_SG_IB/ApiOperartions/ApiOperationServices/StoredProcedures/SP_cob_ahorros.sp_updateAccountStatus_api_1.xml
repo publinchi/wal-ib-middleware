@@ -9,6 +9,7 @@
     <parameter name="@i_accountStatus" dataType="varchar" direction="in" />
     <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
     <parameter name="@i_blockingValue" dataType="money" direction="in" />
+    <parameter name="@i_period" dataType="int" direction="in" />
   </parameters>
   <queries>
     <query>
