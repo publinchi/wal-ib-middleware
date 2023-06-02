@@ -27,23 +27,29 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestUpdateAccountStatus implements Serializable {
+public class RequestUpdateCardStatus implements Serializable {
   private Integer externalCustomerId;
-  private String accountStatus;
+  private String cardStatus;
+  private String statusReason;
   private String accountNumber;
-  private java.math.BigDecimal blockingValue;
-  private Integer period;
+  private String typeCard;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
   }
-  public String getAccountStatus(){
-    return this.accountStatus;
+  public String getCardStatus(){
+    return this.cardStatus;
   }
-  public void setAccountStatus(String accountStatus ){
-    this.accountStatus=accountStatus;
+  public void setCardStatus(String cardStatus ){
+    this.cardStatus=cardStatus;
+  }
+  public String getStatusReason(){
+    return this.statusReason;
+  }
+  public void setStatusReason(String statusReason ){
+    this.statusReason=statusReason;
   }
   public String getAccountNumber(){
     return this.accountNumber;
@@ -51,16 +57,10 @@ public class RequestUpdateAccountStatus implements Serializable {
   public void setAccountNumber(String accountNumber ){
     this.accountNumber=accountNumber;
   }
-  public java.math.BigDecimal getBlockingValue(){
-    return this.blockingValue;
+  public String getTypeCard(){
+    return this.typeCard;
   }
-  public void setBlockingValue(java.math.BigDecimal blockingValue ){
-    this.blockingValue=blockingValue;
-  }
-  public Integer getPeriod(){
-    return this.period;
-  }
-  public void setPeriod(Integer period ){
-    this.period=period;
+  public void setTypeCard(String typeCard ){
+    this.typeCard=typeCard;
   }
 }

@@ -1,0 +1,131 @@
+---
+openapi: 3.0.0
+info:
+  title: Update Card Status
+  description: Service to update the client's card status.
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/APICobisCorp2023/GetBeneficiary/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://13.52.129.211:8080/CWCREST/services/resources/cobis/api/Waltmart/ServiceContractOperations
+  description: Development Server
+- url: http://35.85.134.250:8080/CWCREST/services/resources/cobis/api/Waltmart/ServiceContractOperations
+  description: Staging Server
+tags:
+- name: Update Card Status
+  description: Service to update the client's Card status
+paths:
+  /apiOperations/customer/updateCardStatus:
+    post:
+      tags:
+      - Update Card Status
+      summary: Update Card Status
+      operationId: updateCardStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateCardStatus'
+        required: true
+      responses:
+        "400":
+          description: The data sent is incorrect or corrupted
+        "500":
+          description: An error occurred on the server
+        "401":
+          description: Unauthorized service
+        "403":
+          description: The request has been denied.
+        "200":
+          description: Response Update Card Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+      security:
+      - OAuth2_Development: []
+      - OAuth2_Staging: []
+components:
+  schemas:
+    RequestUpdateCardStatus:
+      required:
+      - cardStatus
+      - externalCustomerId
+      type: object
+      properties:
+        externalCustomerId:
+          maxLength: 12
+          type: integer
+          description: External Customer Id
+          example: 4390
+        cardStatus:
+          maxLength: 10
+          type: string
+          description: "Card Status. Allowed values: [NORMAL, CANCELED, BLOCKED]"
+          example: BLOCKED
+        statusReason:
+          maxLength: 32
+          type: string
+          description: "The status reason will depend on the type of status and the type of card: [NORMAL, CANCELED, BLOCKED] , [Virtual Card, Physical Card]. (Use the \"getCatalog\" service with table:  Status= bv_status_card_dock; Reason status physical= bv_status_reason_physical_b, bv_status_reason_physical_b; Reason status virtual= bv_status_reason_physical_c, bv_status_reason_physical_c)"
+          example: TEMPORARILY
+        accountNumber:
+          maxLength: 24
+          type: string
+          description: Account Number
+          example: "03000038863"
+      description: Data to update the client's card status
+    ResponseUpdateCardStatus:
+      type: object
+      properties:
+        success:
+          maxLength: 40
+          type: string
+          description: Indicates whether the service was executed.
+          example: "true"
+        response:
+          $ref: '#/components/schemas/Response'
+      description: Result of the client´s card status update
+    Response:
+      type: object
+      properties:
+        code:
+          maxLength: 10
+          type: integer
+          description: Result Code
+          example: 0
+        message:
+          maxLength: 500
+          type: string
+          description: Result Mesagge Code
+          example: success
+    inline_response_200:
+      oneOf:
+      - $ref: '#/components/schemas/ResponseUpdateCardStatus'
+  responses:
+    Unauthorized:
+      description: Unauthorized service
+    NotFound:
+      description: The information does not exist
+    BadRequest:
+      description: The data sent is incorrect or corrupted
+    ServerError:
+      description: An error occurred on the server
+    "403Forbidden":
+      description: The request has been denied.
+  securitySchemes:
+    OAuth2_Staging:
+      type: oauth2
+      description: This API uses OAuth 2
+      flows:
+        clientCredentials:
+          tokenUrl: http://54.212.215.70:8080/realms/walmart/protocol/openid-connect/token
+          refreshUrl: http://54.212.215.70:8080/realms/walmart/protocol/openid-connect/token
+          scopes: {}
+    OAuth2_Development:
+      type: oauth2
+      description: This API uses OAuth 2
+      flows:
+        clientCredentials:
+          tokenUrl: http://54.176.194.249:8080/realms/walmart/protocol/openid-connect/token
+          refreshUrl: http://54.176.194.249:8080/realms/walmart/protocol/openid-connect/token
+          scopes: {}

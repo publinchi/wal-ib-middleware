@@ -1569,6 +1569,55 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_card_status_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestUpdateCardStatus",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_ente", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "cardStatus", param = "@i_card_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "statusReason", param = "@i_status_reason", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "accountNumber", param = "@i_account_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "typeCard", param = "@i_type_card", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500130")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseUpdateCardStatus",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCardStatus.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseUpdateCardStatus",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCardStatus.class,
+      columns = {
+		    @CTSColumn(field = "response.code", columnIndex = 1),
+		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO updateCardStatus(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cob_procesador..sp_updateCredentials", dbms = "SQLCTS",  
 		objectRequest = {
 		

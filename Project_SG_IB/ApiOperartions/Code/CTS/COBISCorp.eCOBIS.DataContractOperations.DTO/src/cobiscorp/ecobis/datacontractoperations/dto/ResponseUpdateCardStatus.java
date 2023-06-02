@@ -27,40 +27,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestUpdateAccountStatus implements Serializable {
-  private Integer externalCustomerId;
-  private String accountStatus;
-  private String accountNumber;
-  private java.math.BigDecimal blockingValue;
-  private Integer period;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class ResponseUpdateCardStatus implements Serializable {
+  private Boolean success;
+  private Response response;
+  public Boolean isSuccess(){
+    return this.success;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public void setSuccess(Boolean success ){
+    this.success=success;
   }
-  public String getAccountStatus(){
-    return this.accountStatus;
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
+	}
+	return this.response;
   }
-  public void setAccountStatus(String accountStatus ){
-    this.accountStatus=accountStatus;
+  public Response getResponse(){
+    return this.response;
   }
-  public String getAccountNumber(){
-    return this.accountNumber;
-  }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
-  }
-  public java.math.BigDecimal getBlockingValue(){
-    return this.blockingValue;
-  }
-  public void setBlockingValue(java.math.BigDecimal blockingValue ){
-    this.blockingValue=blockingValue;
-  }
-  public Integer getPeriod(){
-    return this.period;
-  }
-  public void setPeriod(Integer period ){
-    this.period=period;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }

@@ -163,12 +163,17 @@ public interface IServiceContractOperationsApi{
   /**
   * Update Account Beneficiary
   */
-  ServiceResponseTO updateAccountBebeficiary(ServiceRequestTO requestTO);  
+  ServiceResponseTO updateAccountBeneficiary(ServiceRequestTO requestTO);  
 
   /**
   * Update Account Status
   */
   ServiceResponseTO updateAccountStatus(ServiceRequestTO requestTO);  
+
+  /**
+  * Update Card Status
+  */
+  ServiceResponseTO updateCardStatus(ServiceRequestTO requestTO);  
 
   /**
   * Service to Update Credentials

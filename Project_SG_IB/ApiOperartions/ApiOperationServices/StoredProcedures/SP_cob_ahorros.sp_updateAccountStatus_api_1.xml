@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_ahorros</database>
+  <name>sp_updateAccountStatus_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
+    <parameter name="@i_accountStatus" dataType="varchar" direction="in" />
+    <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
+    <parameter name="@i_blockingValue" dataType="money" direction="in" />
+    <parameter name="@i_period" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message </queryText>
+    </query>
+  </queries>
+</procedure>
