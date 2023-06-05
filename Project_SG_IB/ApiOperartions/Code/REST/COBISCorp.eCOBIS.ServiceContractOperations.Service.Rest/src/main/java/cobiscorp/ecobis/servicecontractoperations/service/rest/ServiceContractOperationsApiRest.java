@@ -1123,7 +1123,7 @@ public class ServiceContractOperationsApiRest {
 		  LOGGER.logDebug("Start service execution REST: updateAccountStatus");
 		  ResponseUpdateAccountStatus outSingleResponseUpdateAccountStatus  = new ResponseUpdateAccountStatus();
 			  
-		  if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateAccountStatus.getExternalCustomerId()), new Data("accountStatus", inRequestUpdateAccountStatus.getAccountStatus()), new Data("accountNumber", inRequestUpdateAccountStatus.getAccountNumber()))) {
+		  if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateAccountStatus.getExternalCustomerId()), new Data("accountStatus", inRequestUpdateAccountStatus.getAccountStatus()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
 		  }

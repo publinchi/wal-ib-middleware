@@ -2697,14 +2697,12 @@ int mapBlank=0;
 	ResponseUpdateAccountStatus outSingleResponseUpdateAccountStatus  = new ResponseUpdateAccountStatus();
 		
 	//create procedure
-	ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_updateAccountStatus_api");
+	ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_account_status_api");
 	
-	  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500128");
+	  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500131");
 	procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getExternalCustomerId()));
 	procedureRequestAS.addInputParam("@i_accountStatus",ICTSTypes.SQLVARCHAR,inRequestUpdateAccountStatus.getAccountStatus());
 	procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestUpdateAccountStatus.getAccountNumber());
-	procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
-	procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
 	
 	//execute procedure
 	ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -2726,9 +2724,9 @@ int mapBlank=0;
 	int mapBlank=0;
 	
 		  mapTotal++;
-		  if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+		  if (response.getResultSets()!=null&&response.getResultSets().get(response.getResultSets().size()-1).getData().getRows().size()>0) {
 				  //----------------Assume Array return
-				  ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateAccountStatus>() { 
+				  ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(response.getResultSets().size()-1), new RowMapper<ResponseUpdateAccountStatus>() { 
 				  @Override
 				  public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
 				  ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
