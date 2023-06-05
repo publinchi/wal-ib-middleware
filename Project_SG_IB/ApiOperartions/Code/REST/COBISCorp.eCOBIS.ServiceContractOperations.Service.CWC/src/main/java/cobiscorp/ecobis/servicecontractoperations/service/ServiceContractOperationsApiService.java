@@ -2726,9 +2726,9 @@ int mapBlank=0;
 	int mapBlank=0;
 	
 		  mapTotal++;
-		  if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+		  if (response.getResultSets()!=null&&response.getResultSets().get(response.getResultSets().size()-1).getData().getRows().size()>0) {
 				  //----------------Assume Array return
-				  ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateAccountStatus>() { 
+				  ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(response.getResultSets().size()-1), new RowMapper<ResponseUpdateAccountStatus>() { 
 				  @Override
 				  public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
 				  ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
