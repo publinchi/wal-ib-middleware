@@ -2756,6 +2756,98 @@ int mapBlank=0;
 	  //returns data
 	  return outSingleResponseUpdateAccountStatus;
 	}
+		
+        /**
+        * Update Card Status
+        */
+			@Override
+			//Have DTO
+			public ResponseUpdateCardStatus updateCardStatus(RequestUpdateCardStatus inRequestUpdateCardStatus  )throws CTSRestException{
+			  LOGGER.logDebug("Start service execution: updateCardStatus");
+		    ResponseUpdateCardStatus outResponseUpdateCardStatus  = new ResponseUpdateCardStatus();
+		        
+		    //create procedure
+		    ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_card_status_api");
+		    
+		      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500130");
+		    procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateCardStatus.getExternalCustomerId()));
+		    procedureRequestAS.addInputParam("@i_card_status",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getCardStatus());
+		    procedureRequestAS.addInputParam("@i_status_reason",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getStatusReason());
+		    procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getAccountNumber());
+		    procedureRequestAS.addInputParam("@i_type_card",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getTypeCard());
+		    
+		    //execute procedure
+		    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		    List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		    //throw error
+		    if(errors!= null && errors.size()> 0){
+		    LOGGER.logDebug("Procedure execution returns error");
+		    if ( LOGGER.isDebugEnabled() ) {
+		    for (int i = 0; i < errors.size(); i++) {
+		    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		    }
+		    }
+		    throw new CTSRestException("Procedure Response has errors", null, errors);
+		    }
+		    LOGGER.logDebug("Procedure ok");
+		    //Init map returns
+		    int mapTotal=0;
+		    int mapBlank=0;
+		    
+		          mapTotal++;
+		          if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateCardStatus>() { 
+		                  @Override
+		                  public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+		                  ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
+		                  
+		                        dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		                  return dto;
+		                  }
+		                  },false);
+		
+		                  outResponseUpdateCardStatus.setSuccess(returnResponseUpdateCardStatus.isSuccess());
+		                      // break;
+		                    
+		          }else {
+		          mapBlank++;
+		
+		          }
+		        
+		          mapTotal++;
+		          if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseUpdateCardStatus>() { 
+		                  @Override
+		                  public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+		                  ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
+		                  
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		                  return dto;
+		                  }
+		                  },false);
+		
+		                  outResponseUpdateCardStatus.setResponse(returnResponseUpdateCardStatus.getResponse());
+		                      // break;
+		                    
+		          }else {
+		          mapBlank++;
+		
+		          }
+		        
+		    //End map returns
+		    if(mapBlank!=0&&mapBlank==mapTotal){
+		    LOGGER.logDebug("No data found");
+		    throw new CTSRestException("404",null);
+		    }
+		    
+		      LOGGER.logDebug("Ends service execution: updateCardStatus");
+		      //returns data
+		      return outResponseUpdateCardStatus;
+		    }
 	   
 	/**
 	 * Validate Identity
