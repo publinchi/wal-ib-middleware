@@ -1164,7 +1164,7 @@ public class ServiceContractOperationsApiRest {
 		  LOGGER.logDebug("Start service execution REST: updateCardStatus");
 	    ResponseUpdateCardStatus outResponseUpdateCardStatus  = new ResponseUpdateCardStatus();
 	        
-	    if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateCardStatus.getExternalCustomerId()), new Data("cardStatus", inRequestUpdateCardStatus.getCardStatus()), new Data("statusReason", inRequestUpdateCardStatus.getStatusReason()), new Data("typeCard", inRequestUpdateCardStatus.getTypeCard()))) {
+	    if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateCardStatus.getExternalCustomerId()), new Data("cardStatus", inRequestUpdateCardStatus.getCardStatus()), new Data("typeCard", inRequestUpdateCardStatus.getTypeCard()))) {
 	      LOGGER.logDebug("400 is returned - Required fields are missing");
 	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
 	    }
