@@ -2697,14 +2697,12 @@ int mapBlank=0;
 	ResponseUpdateAccountStatus outSingleResponseUpdateAccountStatus  = new ResponseUpdateAccountStatus();
 		
 	//create procedure
-	ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_updateAccountStatus_api");
+	ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_account_status_api");
 	
-	  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500128");
+	  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500131");
 	procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getExternalCustomerId()));
 	procedureRequestAS.addInputParam("@i_accountStatus",ICTSTypes.SQLVARCHAR,inRequestUpdateAccountStatus.getAccountStatus());
 	procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestUpdateAccountStatus.getAccountNumber());
-	procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
-	procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
 	
 	//execute procedure
 	ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
