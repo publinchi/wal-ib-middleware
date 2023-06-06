@@ -46,7 +46,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 @Properties(value = { @Property(name = "service.description", value = "UpdateAccountStatusDockOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "UpdateAccountStatusDockOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_card_application_api")
+		@Property(name = "service.spName", value = "	")
 })
 public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestrationBase {
 	
@@ -89,10 +89,20 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		logger.logInfo(CLASS_NAME + " code resp card dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
-			wAccountsRespConector = updateAccountStatusDockConector(aRequest, aBagSPJavaOrchestration);
 			
-			return wAccountsRespConector; 
+			IProcedureResponse wAccountsRespCobAhorros = new ProcedureResponseAS();
+			wAccountsRespCobAhorros = updateAccountStatusCobAhorros(aRequest, aBagSPJavaOrchestration);
+			
+			if (wAccountsRespCobAhorros.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+				
+				IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
+				wAccountsRespConector = updateAccountStatusDockConector(aRequest, aBagSPJavaOrchestration);
+				
+				return wAccountsRespConector; 
+			} else {
+				return wAccountsRespCobAhorros;
+			}
+			
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -128,6 +138,42 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
 		aBagSPJavaOrchestration.put("account", wProductsQueryResp.readValueParam("@o_account"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de valData");
+		}
+
+		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse updateAccountStatusCobAhorros(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateAccountStatusCobAhorros");
+		}
+		
+		String accountStatus = aRequest.readValueParam("@i_account_status");
+		
+		if (accountStatus.equals("B")) {
+			accountStatus = "I";
+		}
+
+		request.setSpName("cob_ahorros..sp_u_acc_status_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam(" @i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, accountStatus);
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("account"));
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
