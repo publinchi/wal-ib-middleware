@@ -126,7 +126,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam(" @i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_account_status", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
 		
@@ -134,6 +134,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("account dock(1) id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		}
 		
 		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
 		aBagSPJavaOrchestration.put("account", wProductsQueryResp.readValueParam("@o_account"));
@@ -168,7 +172,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam(" @i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, accountStatus);
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("account"));
 		
@@ -193,6 +197,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("account dock(2) id es " + aBagSPJavaOrchestration.get("accountDockId").toString());
+		}
+		
 		accountDockId = aBagSPJavaOrchestration.containsKey("accountDockId")? aBagSPJavaOrchestration.get("accountDockId").toString():null;;
 		
 		if (logger.isInfoEnabled()) {
@@ -210,7 +218,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			anOriginalRequest.addOutputParam("@o_desc_respuesta", ICTSTypes.SQLVARCHAR, "X");
 			
 			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
-					"(service.identifier=UpdateCardDockOrchestrationCore)");
+					"(service.identifier=UpdateAccountStatusDockOrchestrationCore)");
 			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
 			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
