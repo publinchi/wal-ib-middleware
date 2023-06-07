@@ -892,19 +892,7 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: updateCustomerAddress");
 		UpdateCustomerAddressResponse outUpdateCustomerAddressResponse = new UpdateCustomerAddressResponse();
 
-		if (!validateMandatory(new Data("externalCustomerId", inUpdateCustomerAddressRequest.getExternalCustomerId()),
-				new Data("referenceAddress", inUpdateCustomerAddressRequest.getReferenceAddress()),
-				new Data("addressTypeCode", inUpdateCustomerAddressRequest.getAddressTypeCode()),
-				new Data("townCode", inUpdateCustomerAddressRequest.getTownCode()),
-				new Data("city", inUpdateCustomerAddressRequest.getCity()),
-				new Data("province", inUpdateCustomerAddressRequest.getProvince()),
-				new Data("propertyTypeCode", inUpdateCustomerAddressRequest.getPropertyTypeCode()),
-				new Data("zipcode", inUpdateCustomerAddressRequest.getZipcode()),
-				new Data("street", inUpdateCustomerAddressRequest.getStreet()),
-				new Data("timeCurrentRecide", inUpdateCustomerAddressRequest.getTimeCurrentRecide()),
-				new Data("externalNumber", inUpdateCustomerAddressRequest.getExternalNumber()),
-				new Data("internalNumber", inUpdateCustomerAddressRequest.getInternalNumber()),
-				new Data("subdivisioncode", inUpdateCustomerAddressRequest.getSubdivisioncode()))) {
+		if(!validateMandatory(new Data("externalCustomerId", inUpdateCustomerAddressRequest.getExternalCustomerId()), new Data("addressTypeCode", inUpdateCustomerAddressRequest.getAddressTypeCode()), new Data("townCode", inUpdateCustomerAddressRequest.getTownCode()), new Data("city", inUpdateCustomerAddressRequest.getCity()), new Data("province", inUpdateCustomerAddressRequest.getProvince()), new Data("zipcode", inUpdateCustomerAddressRequest.getZipcode()), new Data("street", inUpdateCustomerAddressRequest.getStreet()), new Data("externalNumber", inUpdateCustomerAddressRequest.getExternalNumber()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
