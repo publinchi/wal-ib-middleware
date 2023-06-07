@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_get_account_status_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+    <parameter name="@i_account_status" dataType="varchar" direction="in" />
+    <parameter name="@i_account" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message </queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

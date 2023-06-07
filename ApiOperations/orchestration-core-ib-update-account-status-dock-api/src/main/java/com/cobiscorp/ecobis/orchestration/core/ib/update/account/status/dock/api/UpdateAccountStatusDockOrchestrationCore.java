@@ -46,8 +46,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 @Properties(value = { @Property(name = "service.description", value = "UpdateAccountStatusDockOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "UpdateAccountStatusDockOrchestrationCore"),
-		@Property(name = "service.spName", value = "	")
-})
+		@Property(name = "service.spName", value = "cob_procesador..sp_get_data_account_status_api")})
 public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	private ILogger logger = (ILogger) this.getLogger();
@@ -87,7 +86,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		wAccountsResp = valData(aRequest, aBagSPJavaOrchestration);
 		
-		logger.logInfo(CLASS_NAME + " code resp card dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+		logger.logInfo(CLASS_NAME + " code resp account dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
 			IProcedureResponse wAccountsRespCobAhorros = new ProcedureResponseAS();
@@ -189,14 +188,12 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	private IProcedureResponse updateAccountStatusDockConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureResponse connectorAccountResponse = null;
-		String accountDockId = null, accountGroupId = null, accountNumber = null;
+		String accountDockId = null, accountNumber = null;
 		
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 		
-		accountDockId = aBagSPJavaOrchestration.containsKey("accountDockId")? aBagSPJavaOrchestration.get("accountDockId").toString():null;
-		accountGroupId = "01870b49-526e-95c8-e15a-bebe5a1b46b3"
-		;
+		accountDockId = aBagSPJavaOrchestration.containsKey("accountDockId")? aBagSPJavaOrchestration.get("accountDockId").toString():null;;
 		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update " + accountNumber);
@@ -205,7 +202,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			// PARAMETROS DE ENTRADA
 			anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("externalCustomerId").toString());
 			anOriginalRequest.addInputParam("@i_account_dock_id", ICTSTypes.SQLVARCHAR, accountDockId);
-			anOriginalRequest.addInputParam("@i_account_group_id", ICTSTypes.SQLVARCHAR, accountGroupId);
 			anOriginalRequest.addInputParam("@i_status", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_account_status"));
 			anOriginalRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "UAS");
 			
