@@ -31,6 +31,7 @@
           <field type="String" name="dTOAlias" value="returnUpdateCustomerAddressResponse" />
           <field type="String" name="dTOPropertyName" value="response.code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="1">
           <field type="int" name="position" value="1" />
@@ -38,6 +39,7 @@
           <field type="String" name="dTOAlias" value="returnUpdateCustomerAddressResponse" />
           <field type="String" name="dTOPropertyName" value="response.message" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -79,7 +81,7 @@
       <field type="String" name="dTOAlias" value="inUpdateCustomerAddressRequest" />
       <field type="String" name="dTOPropertyName" value="referenceAddress" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="18" index="3">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="19" name="parameter">
@@ -156,7 +158,7 @@
       <field type="String" name="dTOAlias" value="inUpdateCustomerAddressRequest" />
       <field type="String" name="dTOPropertyName" value="propertyTypeCode" />
       <field type="String" name="cTSDataType" value="SQLCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="30" index="9">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="31" name="parameter">
@@ -195,7 +197,7 @@
       <field type="String" name="dTOAlias" value="inUpdateCustomerAddressRequest" />
       <field type="String" name="dTOPropertyName" value="timeCurrentRecide" />
       <field type="String" name="cTSDataType" value="SQLINT4" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="36" index="12">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="37" name="parameter">
@@ -221,7 +223,7 @@
       <field type="String" name="dTOAlias" value="inUpdateCustomerAddressRequest" />
       <field type="String" name="dTOPropertyName" value="internalNumber" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="40" index="14">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="41" name="parameter">
@@ -234,7 +236,7 @@
       <field type="String" name="dTOAlias" value="inUpdateCustomerAddressRequest" />
       <field type="String" name="dTOPropertyName" value="subdivisioncode" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="42" index="15">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="43" name="parameter">
