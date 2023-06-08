@@ -99,10 +99,12 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				
 				if (wAccountStatusCobAhorros.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 				
-					IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
+					/*IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
 					wAccountsRespConector = updateAccountStatusDockConector(aRequest, aBagSPJavaOrchestration);
 					
-					return wAccountsRespConector;
+					return wAccountsRespConector;*/
+					
+					return wAccountStatusCobAhorros; 
 					
 				} else {
 					
