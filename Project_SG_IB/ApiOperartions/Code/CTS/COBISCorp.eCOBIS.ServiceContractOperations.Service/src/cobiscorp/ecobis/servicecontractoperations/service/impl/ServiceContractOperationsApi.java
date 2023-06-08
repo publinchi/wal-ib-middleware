@@ -1242,6 +1242,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "response.code", columnIndex = 1),
 		    @CTSColumn(field = "response.message", columnIndex = 2)
       }
+    ),
+    @CTSResponse(
+      name = "returnRegisterBeneficiaryResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse.class,
+      columns = {
+		    @CTSColumn(field = "registeredBeneficiaries.id", columnIndex = 1),
+		    @CTSColumn(field = "registeredBeneficiaries.names", columnIndex = 2)
+      }
     )
   }
   
@@ -1522,7 +1530,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
-		name = "cob_procesador..sp_update_account_status_api", dbms = "SQLCTS",  
+		name = "cob_procesador..sp_get_account_status_api", dbms = "SQLCTS",  
 		objectRequest = {
 		
 			@CTSRequest(
@@ -1531,13 +1539,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "accountStatus", param = "@i_account_status", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "accountNumber", param = "@i_account_number", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "accountNumber", param = "@i_account", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
 		defaultRequest = {
     
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500128")
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500131")
 		},
   response = {
   
