@@ -27,26 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RegisterBeneficiaryRequest implements Serializable {
-  private Integer externalCustomerId;
-  private String account;
-  private Beneficiaries[] beneficiaries;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class RegisteredBeneficiaries implements Serializable {
+  private Integer id;
+  private String names;
+  public Integer getId(){
+    return this.id;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public void setId(Integer id ){
+    this.id=id;
   }
-  public String getAccount(){
-    return this.account;
+  public String getNames(){
+    return this.names;
   }
-  public void setAccount(String account ){
-    this.account=account;
-  }
-  public Beneficiaries[] getBeneficiaries(){
-    return this.beneficiaries;
-  }
-  public void setBeneficiaries(Beneficiaries[] beneficiaries ){
-    this.beneficiaries=beneficiaries;
+  public void setNames(String names ){
+    this.names=names;
   }
 }
