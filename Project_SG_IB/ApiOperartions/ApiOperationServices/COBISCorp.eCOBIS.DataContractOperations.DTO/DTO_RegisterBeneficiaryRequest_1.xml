@@ -33,7 +33,7 @@
       <field type="String" name="collectionType" value="Array" />
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
