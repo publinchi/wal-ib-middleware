@@ -57,7 +57,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
-		
 	}
 	
 	@Override
@@ -80,6 +79,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logInfo(CLASS_NAME + " Entrando en updateAccountStatusDock: ");
 		}
 		aBagSPJavaOrchestration.put("externalCustomerId", aRequest.readValueParam("@i_external_customer_id"));
+		aBagSPJavaOrchestration.put("accountStatus", aRequest.readValueParam("@i_account_status"));
 		aBagSPJavaOrchestration.put("accountNumber", aRequest.readValueParam("@i_account"));
 		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
@@ -229,7 +229,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	private IProcedureResponse updateAccountStatusDockConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureResponse connectorAccountResponse = null;
-		String accountDockId = null, accountNumber = null;
+		String accountDockId = null;
 		
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
@@ -241,13 +241,13 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		accountDockId = aBagSPJavaOrchestration.containsKey("accountDockId")? aBagSPJavaOrchestration.get("accountDockId").toString():null;;
 		
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update " + accountNumber);
+			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update ");
 		}
 		try {
 			// PARAMETROS DE ENTRADA
 			anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("externalCustomerId").toString());
 			anOriginalRequest.addInputParam("@i_account_dock_id", ICTSTypes.SQLVARCHAR, accountDockId);
-			anOriginalRequest.addInputParam("@i_status", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_account_status"));
+			anOriginalRequest.addInputParam("@i_status", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountStatus").toString());
 			anOriginalRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "UAS");
 			
 			// VARIABLES DE SALIDA
@@ -325,7 +325,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
         String fechaActual = fechaHoraActual.format(formato);
 		 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("externalCustomerId").toString());
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("account").toString());
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "UAS");
