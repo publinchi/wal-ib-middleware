@@ -1611,6 +1611,7 @@ int mapBlank=0;
 		int mapTotal = 0;
 		int mapBlank = 0;
 
+		Integer index = response.getResultSets().size();
 		mapTotal++;
 		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 			// ---------NO Array
@@ -1656,7 +1657,7 @@ int mapBlank=0;
 
 		}
 		mapTotal++;
-        if (response.getResultSets()!=null&& response.getResultSets().get(2)!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+        if (response.getResultSets()!=null&& response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
 							//---------NO Array
         			RegisteredBeneficiaries[] returnRegisterBeneficiaryResponse = MapperResultUtil.mapToArray(response.getResultSets().get(2), new RowMapper<RegisteredBeneficiaries>() { 
                 @Override

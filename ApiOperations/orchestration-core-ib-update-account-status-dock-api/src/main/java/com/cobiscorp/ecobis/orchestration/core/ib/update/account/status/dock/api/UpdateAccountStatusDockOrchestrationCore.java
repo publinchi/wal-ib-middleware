@@ -57,7 +57,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
-		
 	}
 	
 	@Override
@@ -80,26 +79,41 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logInfo(CLASS_NAME + " Entrando en updateAccountStatusDock: ");
 		}
 		aBagSPJavaOrchestration.put("externalCustomerId", aRequest.readValueParam("@i_external_customer_id"));
+		aBagSPJavaOrchestration.put("accountStatus", aRequest.readValueParam("@i_account_status"));
 		aBagSPJavaOrchestration.put("accountNumber", aRequest.readValueParam("@i_account"));
 		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		
-		wAccountsResp = valData(aRequest, aBagSPJavaOrchestration);
+		wAccountsResp = valDataCentral(aRequest, aBagSPJavaOrchestration);
 		
 		logger.logInfo(CLASS_NAME + " code resp account dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
-			IProcedureResponse wAccountsRespCobAhorros = new ProcedureResponseAS();
-			wAccountsRespCobAhorros = updateAccountStatusCobAhorros(aRequest, aBagSPJavaOrchestration);
+			IProcedureResponse wAccountsValDataLocal = new ProcedureResponseAS();
+			wAccountsValDataLocal = valDataLocal(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAccountsRespCobAhorros.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+			if (wAccountsValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 				
-				IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
-				wAccountsRespConector = updateAccountStatusDockConector(aRequest, aBagSPJavaOrchestration);
+				IProcedureResponse wAccountStatusCobAhorros = new ProcedureResponseAS();
+				wAccountStatusCobAhorros = updateAccountStatusCobAhorros(aRequest, aBagSPJavaOrchestration);
 				
-				return wAccountsRespConector; 
+				if (wAccountStatusCobAhorros.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+				
+					/*IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
+					wAccountsRespConector = updateAccountStatusDockConector(aRequest, aBagSPJavaOrchestration);
+					
+					return wAccountsRespConector;*/
+					
+					return wAccountStatusCobAhorros; 
+					
+				} else {
+					
+					return wAccountStatusCobAhorros; 
+				}
+				
 			} else {
-				return wAccountsRespCobAhorros;
+				
+				return wAccountsValDataLocal;
 			}
 			
 		}
@@ -112,7 +126,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		return wAccountsResp;
 	}
 	
-	private IProcedureResponse valData(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse valDataCentral(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -120,23 +134,56 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logInfo(CLASS_NAME + " Entrando en valData");
 		}
 
-		request.setSpName("cob_atm..sp_get_data_account_status_api");
+		request.setSpName("cob_ahorros..sp_val_acc_status_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de valData");
+		}
+
+		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse valDataLocal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en valData");
+		}
+
+		request.setSpName("cob_atm..sp_val_data_account_status_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam(" @i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_account_status", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
 		
-		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");
-		request.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("account dock(1) id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		}
+		
 		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
-		aBagSPJavaOrchestration.put("account", wProductsQueryResp.readValueParam("@o_account"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -156,21 +203,15 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logInfo(CLASS_NAME + " Entrando en updateAccountStatusCobAhorros");
 		}
 		
-		String accountStatus = aRequest.readValueParam("@i_account_status");
-		
-		if (accountStatus.equals("B")) {
-			accountStatus = "I";
-		}
-
 		request.setSpName("cob_ahorros..sp_u_acc_status_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam(" @i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
-		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, accountStatus);
-		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("account"));
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -188,21 +229,25 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	private IProcedureResponse updateAccountStatusDockConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureResponse connectorAccountResponse = null;
-		String accountDockId = null, accountNumber = null;
+		String accountDockId = null;
 		
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("account dock(2) id es " + aBagSPJavaOrchestration.get("accountDockId").toString());
+		}
+		
 		accountDockId = aBagSPJavaOrchestration.containsKey("accountDockId")? aBagSPJavaOrchestration.get("accountDockId").toString():null;;
 		
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update " + accountNumber);
+			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update ");
 		}
 		try {
 			// PARAMETROS DE ENTRADA
 			anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("externalCustomerId").toString());
 			anOriginalRequest.addInputParam("@i_account_dock_id", ICTSTypes.SQLVARCHAR, accountDockId);
-			anOriginalRequest.addInputParam("@i_status", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_account_status"));
+			anOriginalRequest.addInputParam("@i_status", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountStatus").toString());
 			anOriginalRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "UAS");
 			
 			// VARIABLES DE SALIDA
@@ -210,7 +255,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			anOriginalRequest.addOutputParam("@o_desc_respuesta", ICTSTypes.SQLVARCHAR, "X");
 			
 			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
-					"(service.identifier=UpdateCardDockOrchestrationCore)");
+					"(service.identifier=UpdateAccountStatusDockOrchestrationCore)");
 			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
 			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
@@ -280,7 +325,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
         String fechaActual = fechaHoraActual.format(formato);
 		 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("externalCustomerId").toString());
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("account").toString());
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "UAS");
@@ -307,47 +352,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		ArrayList<String> keyList = new ArrayList<String>(aBagSPJavaOrchestration.keySet());
-		IResultSetHeader metaData = new ResultSetHeader();
-		IResultSetData data = new ResultSetData();
-		IResultSetRow row = new ResultSetRow();
-		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
-		
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SYBINT4, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardNumber", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("customerName", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardApplication", ICTSTypes.SYBINT4, 255));
-		
-		if (keyList.get(0).equals("0")) {
-			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
-			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			row.addRowData(2, new ResultSetRowColumnData(false, "0"));
-			row.addRowData(3, new ResultSetRowColumnData(false, "Success"));
-			row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("o_cod_respuesta").toString()));
-			row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("o_desc_respuesta").toString()));
-			row.addRowData(6, new ResultSetRowColumnData(false, null));
-			row.addRowData(7, new ResultSetRowColumnData(false, null));
-			data.addRow(row);
-
-		} else {
-			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
-			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
-			row.addRowData(2, new ResultSetRowColumnData(false, keyList.get(0)));
-			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
-			row.addRowData(4, new ResultSetRowColumnData(false, null));
-			row.addRowData(5, new ResultSetRowColumnData(false, null));
-			row.addRowData(6, new ResultSetRowColumnData(false, null));
-			row.addRowData(7, new ResultSetRowColumnData(false, null));
-			data.addRow(row);
-		}
-		
-		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
-		wProcedureResponse.addResponseBlock(resultBlock);	
-		
-		return wProcedureResponse;		
+		return null;
 	}
 	
 	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
