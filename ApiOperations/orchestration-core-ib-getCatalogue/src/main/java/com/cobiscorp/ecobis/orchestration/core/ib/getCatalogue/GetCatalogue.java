@@ -198,8 +198,38 @@ public class GetCatalogue extends SPJavaOrchestrationBase {
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+		
+		if (wProcedureRespFinal != null && wProcedureRespFinal.getResultSet(1).getData().getRowsAsArray().length == 1) {
+			logger.logWarning(CLASS_NAME + " wProcedureRespFinal is null");
 
-		if (wProcedureRespFinal != null && wProcedureRespFinal.getResultSet(1).getData().getRowsAsArray().length > 0) {
+			// IResultSetBlock resultsetBlock0 = new ResultSetBlock(metaData0,data0);
+
+			IResultSetRow row = new ResultSetRow();
+
+			row.addRowData(1, new ResultSetRowColumnData(false, "10002"));
+			row.addRowData(2, new ResultSetRowColumnData(false, "The catalog is too large to be returned, please consult the shared information"));
+
+			data.addRow(row);
+
+			IResultSetRow row2 = new ResultSetRow();
+			row2.addRowData(1, new ResultSetRowColumnData(false, "true"));
+			data2.addRow(row2);
+
+			IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+			IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+
+			wProcedureRespFinal.setReturnCode(200);
+			// wProcedureRespFinal.addResponseBlock(resultsetBlock0);
+			wProcedureRespFinal.addResponseBlock(resultsetBlock);
+			wProcedureRespFinal.addResponseBlock(resultsetBlock2);
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + " Response final: " + wProcedureRespFinal.getProcedureResponseAsString());
+			}
+			wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE,
+					ICSP.SUCCESS);
+			return wProcedureRespFinal;
+		} else if (wProcedureRespFinal != null && wProcedureRespFinal.getResultSet(1).getData().getRowsAsArray().length > 0) {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(CLASS_NAME + " wProcedureRespFinal is not null");
 			}

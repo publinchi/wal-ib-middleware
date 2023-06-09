@@ -1611,6 +1611,7 @@ int mapBlank=0;
 		int mapTotal = 0;
 		int mapBlank = 0;
 
+		Integer index = response.getResultSets().size();
 		mapTotal++;
 		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 			// ---------NO Array
@@ -1655,6 +1656,27 @@ int mapBlank=0;
 			mapBlank++;
 
 		}
+		mapTotal++;
+        if (response.getResultSets()!=null&& response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+							//---------NO Array
+        			RegisteredBeneficiaries[] returnRegisterBeneficiaryResponse = MapperResultUtil.mapToArray(response.getResultSets().get(2), new RowMapper<RegisteredBeneficiaries>() { 
+                @Override
+                public RegisteredBeneficiaries mapRow(ResultSetMapper resultSetMapper, int index) {
+                	RegisteredBeneficiaries dto = new RegisteredBeneficiaries();
+                
+						dto.setId(resultSetMapper.getInteger(1));
+						dto.setNames(resultSetMapper.getString(2));
+                return dto;
+                }
+                },false);
+
+                outRegisterBeneficiaryResponse.setRegisteredBeneficiaries(returnRegisterBeneficiaryResponse);
+                    // break;
+                  
+        }else {
+        mapBlank++;
+
+        }
 
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {

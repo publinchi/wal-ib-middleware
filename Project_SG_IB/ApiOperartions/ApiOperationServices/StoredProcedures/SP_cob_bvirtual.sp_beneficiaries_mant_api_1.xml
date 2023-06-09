@@ -60,5 +60,12 @@
       </columns>
       <queryText></queryText>
     </query>
+    <query>
+      <columns>
+        <column name="id" />
+        <column name="names" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>

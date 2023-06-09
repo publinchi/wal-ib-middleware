@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class RegisterBeneficiaryResponse implements Serializable {
   private Boolean success;
   private Response response;
+  private RegisteredBeneficiaries[] registeredBeneficiaries;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -47,5 +48,11 @@ public class RegisterBeneficiaryResponse implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public RegisteredBeneficiaries[] getRegisteredBeneficiaries(){
+    return this.registeredBeneficiaries;
+  }
+  public void setRegisteredBeneficiaries(RegisteredBeneficiaries[] registeredBeneficiaries ){
+    this.registeredBeneficiaries=registeredBeneficiaries;
   }
 }
