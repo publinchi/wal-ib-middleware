@@ -59,7 +59,7 @@ public class CreateCustomerRequest implements Serializable {
   private String externalNumber;
   private String internalNumber;
   private String referenceAddress;
-  private Integer timeCurrentRecide;
+  private Integer timeCurrentReside;
   private String addressTypeCode;
   private String propertyTypeCode;
   private String countryBirth;
@@ -264,11 +264,11 @@ public class CreateCustomerRequest implements Serializable {
   public void setReferenceAddress(String referenceAddress ){
     this.referenceAddress=referenceAddress;
   }
-  public Integer getTimeCurrentRecide(){
-    return this.timeCurrentRecide;
+  public Integer getTimeCurrentReside(){
+    return this.timeCurrentReside;
   }
-  public void setTimeCurrentRecide(Integer timeCurrentRecide ){
-    this.timeCurrentRecide=timeCurrentRecide;
+  public void setTimeCurrentReside(Integer timeCurrentReside ){
+    this.timeCurrentReside=timeCurrentReside;
   }
   public String getAddressTypeCode(){
     return this.addressTypeCode;

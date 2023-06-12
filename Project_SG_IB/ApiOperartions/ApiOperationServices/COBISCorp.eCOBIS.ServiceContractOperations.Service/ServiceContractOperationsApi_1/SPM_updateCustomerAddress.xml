@@ -195,7 +195,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inUpdateCustomerAddressRequest" />
-      <field type="String" name="dTOPropertyName" value="timeCurrentRecide" />
+      <field type="String" name="dTOPropertyName" value="timeCurrentReside" />
       <field type="String" name="cTSDataType" value="SQLINT4" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
