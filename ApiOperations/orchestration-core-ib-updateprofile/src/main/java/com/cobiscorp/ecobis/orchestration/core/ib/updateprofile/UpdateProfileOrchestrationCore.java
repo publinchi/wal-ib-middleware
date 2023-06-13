@@ -5,6 +5,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.updateprofile;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -72,6 +73,11 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		
 		if (mail.isEmpty()) {
 			aBagSPJavaOrchestration.put("40037", "email must not be empty");
+			return;
+		}
+		
+		if (!isValidMail(mail)) {
+			aBagSPJavaOrchestration.put("40122", "email is not valid");
 			return;
 		}
 			
@@ -184,4 +190,17 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		wProcedureResponse.addResponseBlock(resultBlock);			
 		return wProcedureResponse;
 	}
+	
+	public boolean isValidMail(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                            "[a-zA-Z0-9_+&*-]+)*@" +
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                            "A-Z]{2,7}$";
+                              
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
 }
