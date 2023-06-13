@@ -298,7 +298,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_subdivision_code", ICTSTypes.SQLINT4,
 				String.valueOf(inCreateCustomerRequest.getSubdivisioncode()));
 		procedureRequestAS.addInputParam("@i_timeincurrentresidence", ICTSTypes.SQLINT4,
-				String.valueOf(inCreateCustomerRequest.getTimeCurrentRecide()));
+				String.valueOf(inCreateCustomerRequest.getTimeCurrentReside()));
 		procedureRequestAS.addInputParam("@i_town_code", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getTownCode());
 		procedureRequestAS.addInputParam("@i_validity_date", ICTSTypes.SQLVARCHAR, 
 				inCreateCustomerRequest.getValidityDate());
@@ -1797,7 +1797,7 @@ int mapBlank=0;
 		procedureRequestAS.addInputParam("@i_tipo_prop",ICTSTypes.SQLCHAR,String.valueOf(inUpdateCustomerAddressRequest.getPropertyTypeCode()));
 		procedureRequestAS.addInputParam("@i_codpostal",ICTSTypes.SQLCHAR,String.valueOf(inUpdateCustomerAddressRequest.getZipcode()));
 		procedureRequestAS.addInputParam("@i_calle",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getStreet());
-		procedureRequestAS.addInputParam("@i_tiempo_reside",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getTimeCurrentRecide()));
+		procedureRequestAS.addInputParam("@i_tiempo_reside",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getTimeCurrentReside()));
 		procedureRequestAS.addInputParam("@i_nro",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getExternalNumber());
 		procedureRequestAS.addInputParam("@i_nro_interno",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getInternalNumber());
 		procedureRequestAS.addInputParam("@i_localidad",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getSubdivisioncode());
