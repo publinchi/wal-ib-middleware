@@ -39,7 +39,7 @@ public class UpdateCustomerAddressRequest implements Serializable {
   private String externalNumber;
   private String internalNumber;
   private String referenceAddress;
-  private String timeCurrentRecide;
+  private String timeCurrentReside;
   private String addressTypeCode;
   private String propertyTypeCode;
   public Integer getExternalCustomerId(){
@@ -108,11 +108,11 @@ public class UpdateCustomerAddressRequest implements Serializable {
   public void setReferenceAddress(String referenceAddress ){
     this.referenceAddress=referenceAddress;
   }
-  public String getTimeCurrentRecide(){
-    return this.timeCurrentRecide;
+  public String getTimeCurrentReside(){
+    return this.timeCurrentReside;
   }
-  public void setTimeCurrentRecide(String timeCurrentRecide ){
-    this.timeCurrentRecide=timeCurrentRecide;
+  public void setTimeCurrentReside(String timeCurrentReside ){
+    this.timeCurrentReside=timeCurrentReside;
   }
   public String getAddressTypeCode(){
     return this.addressTypeCode;
