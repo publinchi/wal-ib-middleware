@@ -152,6 +152,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
+				this.columnsToReturn = columns;
 				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
 	
 				reqTMPLocal.setSpName("cob_bvirtual..sp_account_credit_operation_local_api");
@@ -180,7 +181,6 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 					if (columns[0].getValue().equals("true")) {
 						
 						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-						this.columnsToReturn = columns;
 						return;
 						
 					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
