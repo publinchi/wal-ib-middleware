@@ -84,7 +84,7 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 		logger.logDebug("Begin flow, queryGetBalancesDetail with id: " + idCustomer);
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
-		reqTMPCentral.setSpName("cobis..sp_get_balances_detail_api");
+		reqTMPCentral.setSpName("cobis..sp_get_balances_detail_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500102");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
@@ -94,32 +94,55 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logDebug("Ending flow, queryGetBalancesDetail with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
-
+		IProcedureResponse wProcedureResponseLocal;
 		if (!wProcedureResponseCentral.hasError()) {
 			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				this.columnsToReturn = columns;
-				return;
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
+				reqTMPLocal.setSpName("cob_atm..sp_get_balances_detail_local_api");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500102");
+				reqTMPLocal.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
+				
+				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+				if (logger.isInfoEnabled()) {
+					logger.logDebug("Ending flow, queryGetBalancesDetail with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
+				}
+
+				if (!wProcedureResponseLocal.hasError()) {
+					
+					resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
+					columns = resultSetRow.getColumnsAsArray();
+					
+					if (columns[0].getValue().equals("true")) {
+						
+						this.columnsToReturn[20] = columns[3];
+						this.columnsToReturn[21] = columns[4];
+						this.columnsToReturn[22] = columns[5];
+						return;
+						
+					} else {
+					
+						return;
+					}					
+				} else {
+					
+					return;
+				}
 								
 			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
-				
 				aBagSPJavaOrchestration.put(columns[1].getValue(), "Customer with externalCustomerId: " + idCustomer + " does not exist");
 				return;
 				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40080")) {
-				
+			} else  {	
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
 				
-			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40081")) {
-				
-				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
-				return;
-			}
-			 
+			} 
 			
 		} else {
 			aBagSPJavaOrchestration.put("50009", "Error get balances detail");
