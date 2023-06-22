@@ -80,7 +80,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		}
 		aBagSPJavaOrchestration.put("externalCustomerId", aRequest.readValueParam("@i_external_customer_id"));
 		aBagSPJavaOrchestration.put("accountStatus", aRequest.readValueParam("@i_account_status"));
-		aBagSPJavaOrchestration.put("accountNumber", aRequest.readValueParam("@i_account"));
+		aBagSPJavaOrchestration.put("accountNumber", aRequest.readValueParam("@i_account_number"));
 		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		
@@ -140,7 +140,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
-		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -171,7 +171,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_account_status", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
-		request.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
+		request.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		
 		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");		
 		
@@ -209,7 +209,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
-		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account"));
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
