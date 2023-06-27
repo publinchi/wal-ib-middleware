@@ -81,7 +81,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		aBagSPJavaOrchestration.put("externalCustomerId", aRequest.readValueParam("@i_external_customer_id"));
 		aBagSPJavaOrchestration.put("accountStatus", aRequest.readValueParam("@i_account_status"));
 		aBagSPJavaOrchestration.put("accountNumber", aRequest.readValueParam("@i_account_number"));
-		
+		aBagSPJavaOrchestration.put("blockingValue", aRequest.readValueParam("@i_blockingValue"));
+		aBagSPJavaOrchestration.put("period", aRequest.readValueParam("@i_period"));
+		String accountStatus = aRequest.readValueParam("@i_account_status");
+	
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		
 		wAccountsResp = valDataCentral(aRequest, aBagSPJavaOrchestration);
@@ -89,6 +92,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		logger.logInfo(CLASS_NAME + " code resp account dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
+			if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM"))
+			{
+				return wAccountsResp;
+			}
 			IProcedureResponse wAccountsValDataLocal = new ProcedureResponseAS();
 			wAccountsValDataLocal = valDataLocal(aRequest, aBagSPJavaOrchestration);
 			
@@ -141,6 +148,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
+		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_blockingValue"));
+		request.addInputParam("@i_period", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_period"));
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
