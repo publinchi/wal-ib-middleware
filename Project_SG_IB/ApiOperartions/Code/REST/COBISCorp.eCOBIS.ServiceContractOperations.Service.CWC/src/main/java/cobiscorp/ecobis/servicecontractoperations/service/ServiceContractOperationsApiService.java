@@ -332,7 +332,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizePurchase>() {
+						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizePurchase>() {
 							@Override
 							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
