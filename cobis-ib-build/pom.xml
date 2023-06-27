@@ -194,6 +194,8 @@
 		<module>../ApiOperations/orchestration-core-ib-define-security-qa-api</module>
 		<module>../ApiOperations/orchestration-core-ib-validate-all-security-qa-api</module>
 		<module>../ApiOperations/orchestration-core-ib-update-account-status-dock-api</module>
+		<module>../ApiOperations/orchestration-core-ib-authorize-purchase-api</module>
+		<module>../ApiOperations/orchestration-core-ib-authorize-withdrawal-api</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>
