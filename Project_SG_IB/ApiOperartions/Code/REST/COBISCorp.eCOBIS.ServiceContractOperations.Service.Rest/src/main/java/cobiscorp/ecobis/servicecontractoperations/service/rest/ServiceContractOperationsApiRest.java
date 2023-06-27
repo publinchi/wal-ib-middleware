@@ -28,6 +28,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
@@ -218,6 +222,132 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: affiliateCustomer");
 		return Response.ok(outSingleResponseAffiliateCustomer).build();
+
+	}
+	
+	/**
+	 * Authorize Purchase
+	 */
+	@POST
+	@Path("/apiOperations/authorization/authorizePurchase")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizePurchase(RequestAuthorizePurchase inRequestAuthorizePurchase) {
+		LOGGER.logDebug("Start service execution REST: authorizePurchase");
+		ResponseAuthorizePurchase outResponseAuthorizePurchase = new ResponseAuthorizePurchase();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizePurchase.getExternalCustomerId()),
+				new Data("uuid", inRequestAuthorizePurchase.getUuid()),
+				new Data("cardId", inRequestAuthorizePurchase.getCardId()),
+				new Data("accountNumber", inRequestAuthorizePurchase.getAccountNumber()),
+				new Data("transmissionDateTimeGmt", inRequestAuthorizePurchase.getTransmissionDateTimeGmt()),
+				new Data("date", inRequestAuthorizePurchase.getDate()),
+				new Data("time", inRequestAuthorizePurchase.getTime()),
+				new Data("mti", inRequestAuthorizePurchase.getMti()),
+				new Data("processing", inRequestAuthorizePurchase.getProcessing().getType()),
+				new Data("processing", inRequestAuthorizePurchase.getProcessing().getCode()),
+				new Data("nsu", inRequestAuthorizePurchase.getNsu()),
+				new Data("cardExpirationDate", inRequestAuthorizePurchase.getCardExpirationDate()),
+				new Data("cardEntry", inRequestAuthorizePurchase.getCardEntry().getCode()),
+				new Data("cardEntry", inRequestAuthorizePurchase.getCardEntry().getPin()),
+				new Data("cardEntry", inRequestAuthorizePurchase.getCardEntry().getMode()),
+				new Data("merchantCategoryCode", inRequestAuthorizePurchase.getMerchantCategoryCode()),
+				new Data("values", inRequestAuthorizePurchase.getValues().getSourceCurrencyCode()),
+				new Data("values", inRequestAuthorizePurchase.getValues().getSettlementCurrencyCode()),
+				new Data("values", inRequestAuthorizePurchase.getValues().getAmount()),
+				new Data("institutionName", inRequestAuthorizePurchase.getInstitutionName()),
+				new Data("terminalCode", inRequestAuthorizePurchase.getTerminalCode()),
+				new Data("retrievalReferenceNumber", inRequestAuthorizePurchase.getRetrievalReferenceNumber()),
+				new Data("acquirerCountryCode", inRequestAuthorizePurchase.getAcquirerCountryCode()),
+				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isCardPresent()),
+				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isCardholderPresent()),
+				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isCvv2Present()),
+				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isPinValidatedOffline()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseAuthorizePurchase = iServiceContractOperationsApiService
+					.authorizePurchase(inRequestAuthorizePurchase);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizePurchase");
+		return Response.ok(outResponseAuthorizePurchase).build();
+
+	}
+
+	/**
+	 * Authorize Withdrawal
+	 */
+	@POST
+	@Path("/apiOperations/authorization/authorizeWithdrawal")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal) {
+		LOGGER.logDebug("Start service execution REST: authorizeWithdrawal");
+		ResponseAuthorizeWithdrawal outResponseAuthorizeWithdrawal = new ResponseAuthorizeWithdrawal();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizeWithdrawal.getExternalCustomerId()),
+				new Data("uuid", inRequestAuthorizeWithdrawal.getUuid()),
+				new Data("orderId", inRequestAuthorizeWithdrawal.getOrderId()),
+				new Data("accountNumber", inRequestAuthorizeWithdrawal.getAccountNumber()),
+				new Data("transmissionDateTimeGmt", inRequestAuthorizeWithdrawal.getTransmissionDateTimeGmt()),
+				new Data("date", inRequestAuthorizeWithdrawal.getDate()),
+				new Data("time", inRequestAuthorizeWithdrawal.getTime()),
+				new Data("mti", inRequestAuthorizeWithdrawal.getMti()),
+				new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getType()),
+				new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getCode()),
+				new Data("nsu", inRequestAuthorizeWithdrawal.getNsu()),
+				new Data("merchantCategoryCode", inRequestAuthorizeWithdrawal.getMerchantCategoryCode()),
+				new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSourceCurrencyCode()),
+				new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSettlementCurrencyCode()),
+				new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getAmount()),
+				new Data("institutionName", inRequestAuthorizeWithdrawal.getInstitutionName()),
+				new Data("terminalCode", inRequestAuthorizeWithdrawal.getTerminalCode()),
+				new Data("retrievalReferenceNumber", inRequestAuthorizeWithdrawal.getRetrievalReferenceNumber()),
+				new Data("acquirerCountryCode", inRequestAuthorizeWithdrawal.getAcquirerCountryCode()),
+				new Data("storeNumber", inRequestAuthorizeWithdrawal.getStoreNumber()),
+				new Data("afiliationNumber", inRequestAuthorizeWithdrawal.getAfiliationNumber()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseAuthorizeWithdrawal = iServiceContractOperationsApiService
+					.authorizeWithdrawal(inRequestAuthorizeWithdrawal);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizeWithdrawal");
+		return Response.ok(outResponseAuthorizeWithdrawal).build();
 
 	}
 
