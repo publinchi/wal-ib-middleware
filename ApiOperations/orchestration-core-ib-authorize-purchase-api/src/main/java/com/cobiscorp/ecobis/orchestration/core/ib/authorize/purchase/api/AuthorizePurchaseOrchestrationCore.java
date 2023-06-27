@@ -86,12 +86,12 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		if (wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
 			IProcedureResponse wAuthValDataCentral = new ProcedureResponseAS();
-			wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
+			/*wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
 			
 			if (wAuthValDataCentral.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 				
 				return wAuthValDataCentral;
-			}	
+			}*/	
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -110,7 +110,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logInfo(CLASS_NAME + " Entrando en valDataLocal");
 		}
 
-		request.setSpName("cob_atm..sp_auth_purchase_local_api");
+		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
@@ -118,19 +118,23 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
+		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
+		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
+		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
 		
-		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");		
+		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("account dock id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
+			logger.logDebug("o_card_mask es " +  wProductsQueryResp.readValueParam("@o_card_mask"));
 		}
 		
-		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		aBagSPJavaOrchestration.put("o_card_mask", wProductsQueryResp.readValueParam("@o_card_mask"));
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {

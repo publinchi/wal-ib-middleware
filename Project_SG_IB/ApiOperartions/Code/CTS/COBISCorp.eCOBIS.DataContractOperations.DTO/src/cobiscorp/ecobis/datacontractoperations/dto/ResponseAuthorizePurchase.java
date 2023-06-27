@@ -30,12 +30,7 @@ import java.util.HashMap;
 public class ResponseAuthorizePurchase implements Serializable {
   private Boolean success;
   private Response response;
-  private String transactionStatus;
   private String approvedValue;
-  private String settlementValue;
-  private String cardholderBillingValue;
-  private String reason;
-  private String availableLimit;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -54,40 +49,10 @@ public class ResponseAuthorizePurchase implements Serializable {
   public void setResponse(Response response ){
     this.response=response;
   }
-  public String getTransactionStatus(){
-    return this.transactionStatus;
-  }
-  public void setTransactionStatus(String transactionStatus ){
-    this.transactionStatus=transactionStatus;
-  }
   public String getApprovedValue(){
     return this.approvedValue;
   }
   public void setApprovedValue(String approvedValue ){
     this.approvedValue=approvedValue;
-  }
-  public String getSettlementValue(){
-    return this.settlementValue;
-  }
-  public void setSettlementValue(String settlementValue ){
-    this.settlementValue=settlementValue;
-  }
-  public String getCardholderBillingValue(){
-    return this.cardholderBillingValue;
-  }
-  public void setCardholderBillingValue(String cardholderBillingValue ){
-    this.cardholderBillingValue=cardholderBillingValue;
-  }
-  public String getReason(){
-    return this.reason;
-  }
-  public void setReason(String reason ){
-    this.reason=reason;
-  }
-  public String getAvailableLimit(){
-    return this.availableLimit;
-  }
-  public void setAvailableLimit(String availableLimit ){
-    this.availableLimit=availableLimit;
   }
 }
