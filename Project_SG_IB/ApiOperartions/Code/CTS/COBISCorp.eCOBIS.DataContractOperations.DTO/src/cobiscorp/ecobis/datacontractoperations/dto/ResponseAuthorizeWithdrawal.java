@@ -30,7 +30,6 @@ import java.util.HashMap;
 public class ResponseAuthorizeWithdrawal implements Serializable {
   private Boolean success;
   private Response response;
-  private String transactionStatus;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -48,11 +47,5 @@ public class ResponseAuthorizeWithdrawal implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
-  }
-  public String getTransactionStatus(){
-    return this.transactionStatus;
-  }
-  public void setTransactionStatus(String transactionStatus ){
-    this.transactionStatus=transactionStatus;
   }
 }
