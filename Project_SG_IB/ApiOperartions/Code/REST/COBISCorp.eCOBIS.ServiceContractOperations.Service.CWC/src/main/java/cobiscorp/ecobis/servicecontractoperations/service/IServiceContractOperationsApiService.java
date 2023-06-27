@@ -23,8 +23,12 @@ package cobiscorp.ecobis.servicecontractoperations.service;
 
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
@@ -115,6 +119,22 @@ public interface IServiceContractOperationsApiService {
 
 	// Return list
 	public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer)
+			throws CTSRestException;
+	
+	/**
+	 * Authorize Purchase
+	 */
+
+	// Have DTO
+	public ResponseAuthorizePurchase authorizePurchase(RequestAuthorizePurchase inRequestAuthorizePurchase)
+			throws CTSRestException;
+
+	/**
+	 * Authorize Withdrawal
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeWithdrawal authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
 			throws CTSRestException;
 
 	/**
