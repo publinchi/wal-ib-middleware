@@ -170,6 +170,56 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		return wProductsQueryResp;
 	}
 	
+	private IProcedureResponse TransactionPurchase(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en valData");
+		}
+
+		request.setSpName("cob_cuentas..sp_compra_atm_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, );
+		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_val_deb", ICTSTypes.SQLMONEY,); 
+		request.addInputParam("@i_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@i_cliente", ICTSTypes.SQLINTN, );
+		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY,); 
+		request.addInputParam("@i_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
+		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
+		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
+		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
+		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
+		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		
+		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("account dock(1) id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		}
+		
+		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de valData");
+		}
+
+		return wProductsQueryResp;
+	}
 
 	/*private void registerLogBd(IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
 
