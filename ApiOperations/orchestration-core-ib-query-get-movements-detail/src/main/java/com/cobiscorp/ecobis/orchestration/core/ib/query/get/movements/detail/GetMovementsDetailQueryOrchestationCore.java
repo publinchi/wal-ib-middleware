@@ -309,6 +309,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
 			IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
 			IResultSetData data0 = new ResultSetData();
+			
+			if (!dataComprobanteExists(rowsTemp))
+			{
+				
+			}
 
 			for (IResultSetRow iResultSetRow : rowsTemp) {
 				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
@@ -331,10 +336,22 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[11].getValue()));
 				rowDat.addRowData(15, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(16, new ResultSetRowColumnData(false, columns[14].getValue()));
+				logger.logInfo("Prueba movements secuencial");
+				logger.logInfo(columns[8].getValue());
+				logger.logInfo("Prueba movements ssn_branch");
+				logger.logInfo(columns[16].getValue());
 				
 				if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 					String[] strBeneficiary = columns[15].getValue().split("\\|");
-				
+					
+					logger.logInfo("Prueba movements");
+					
+					for (int i = 0; i < strBeneficiary.length; i++)
+					{
+						logger.logInfo(strBeneficiary[i]);
+					}
+					
+					logger.logInfo("Fin prueba movements");
 				    if(strBeneficiary.length>0)
 				    	rowDat.addRowData(17, new ResultSetRowColumnData(false, strBeneficiary[0]));
 				    else
@@ -385,6 +402,19 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
 		return anOriginalProcedureResponse;
+	}
+
+	private boolean dataComprobanteExists(IResultSetRow[] rowsTemp) {
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+
+			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
+				return true;
+			} else {
+				return false;
+			}		
+		}
+		return true;		
 	}
 
 

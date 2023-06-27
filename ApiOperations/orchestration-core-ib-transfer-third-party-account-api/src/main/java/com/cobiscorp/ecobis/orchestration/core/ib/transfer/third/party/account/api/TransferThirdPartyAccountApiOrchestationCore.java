@@ -123,9 +123,17 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 		else
 		{
-			code = String.valueOf(codeReturn);
-			message = anOriginalProcedureRes.getMessage(1).getMessageText();
-			success = "false";
+			if (codeReturn == 250046)
+			{
+				code = String.valueOf(500010);
+				message = "destination account is blocked against deposit and withdrawal";
+				success = "false";
+			}
+			else {
+				code = String.valueOf(codeReturn);
+				message = anOriginalProcedureRes.getMessage(1).getMessageText();
+				success = "false";
+			}
 		}
 		
 		// Agregar Header y data 1
@@ -162,12 +170,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		if (referenceCode != null) {
 			
-			metaData3.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLINTN, 5));
+			if (codeReturn != 250046) { 
+				metaData3.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLINTN, 5));
 
-			// Agregar info 3
-			IResultSetRow row3 = new ResultSetRow();
-			row3.addRowData(1, new ResultSetRowColumnData(false,referenceCode));
-			data3.addRow(row3);			
+				// Agregar info 3
+				IResultSetRow row3 = new ResultSetRow();
+				row3.addRowData(1, new ResultSetRowColumnData(false,referenceCode));
+				data3.addRow(row3);			
+			}		
 		}
 
 		anOriginalProcedureResponse.setReturnCode(200);
