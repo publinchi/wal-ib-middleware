@@ -88,7 +88,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 			IProcedureResponse wAuthValDataCentral = new ProcedureResponseAS();
 			wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAuthValDataCentral.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+			if (wAuthValDataCentral.getResultSetRowColumnData(4, 1, 1).getValue().equals("0")) {
 				
 				return wAuthValDataCentral;
 			}	
@@ -141,36 +141,6 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 	}
 	
 	private IProcedureResponse valDataCentral(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
-		IProcedureRequest request = new ProcedureRequestAS();
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en valDataCentral");
-		}
-
-		request.setSpName("cob_atm..sp_auth_purchase_central_api");
-
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_CENTRAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-		
-		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
-		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		
-		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
-		}
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de valDataCentral");
-		}
-
-		return wProductsQueryResp;
-	}
-	
-	private IProcedureResponse TransactionWithdrawal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
