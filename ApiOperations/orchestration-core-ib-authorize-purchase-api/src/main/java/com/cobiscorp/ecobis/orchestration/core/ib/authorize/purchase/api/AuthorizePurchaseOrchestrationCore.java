@@ -83,12 +83,12 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		if (wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
 			IProcedureResponse wAuthValDataCentral = new ProcedureResponseAS();
-			/*wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
+			wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAuthValDataCentral.getResultSetRowColumnData(4, 1, 1).getValue().equals("0")) {
+			if (wAuthValDataCentral.getResultSetRowColumnData(3, 1, 1).getValue().equals("0")) {
 				
-				return wAuthValDataCentral;
-			}*/	
+				return wAuthValDataLocal;
+			}	
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -152,12 +152,12 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.setSpName("cob_cuentas..sp_compra_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
+				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "4");
 		request.addInputParam("@i_val_deb", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount")); 
 		request.addInputParam("@i_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "");
 		request.addInputParam("@i_cliente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
@@ -170,6 +170,9 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
 		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
 		

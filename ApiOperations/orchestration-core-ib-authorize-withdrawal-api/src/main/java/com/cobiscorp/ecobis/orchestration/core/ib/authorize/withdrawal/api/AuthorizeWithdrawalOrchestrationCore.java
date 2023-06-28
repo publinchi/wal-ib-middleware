@@ -85,9 +85,9 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 			IProcedureResponse wAuthValDataCentral = new ProcedureResponseAS();
 			wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAuthValDataCentral.getResultSetRowColumnData(4, 1, 1).getValue().equals("0")) {
+			if (wAuthValDataCentral.getResultSetRowColumnData(3, 1, 1).getValue().equals("0")) {
 				
-				return wAuthValDataCentral;
+				return wAuthValDataLocal;
 			}	
 		}
 		
@@ -115,7 +115,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_order_id"));
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
@@ -152,12 +152,12 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		request.setSpName("cob_cuentas..sp_retiro_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
+				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "4");
 		request.addInputParam("@i_val_deb", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount")); 
 		request.addInputParam("@i_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "");
 		request.addInputParam("@i_cliente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
@@ -170,6 +170,9 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
 		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
 		
