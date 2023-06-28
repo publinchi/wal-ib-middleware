@@ -110,10 +110,10 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
         ServerRequest serverRequest = new ServerRequest();
         serverRequest.setChannelId(anOriginalRequest.readValueFieldInHeader("servicio"));
         ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
-        logger.logInfo("SERVER RESPONSE: " + responseServer.toString());
+        logger.logInfo("SERVER RESPONSE: "+responseServer.toString());
         aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
 
-        if (anOriginalRequest.readValueFieldInHeader("comision") != null) {
+        if(anOriginalRequest.readValueFieldInHeader("comision") != null) {
             if (logger.isInfoEnabled())
                 logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
         }
@@ -134,10 +134,10 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
                     return responseTransfer;
                 }
             } else {
-                logDebug(CLASS_NAME + "Response transfer obtained from executing transaction: " + responseTransfer.getProcedureResponseAsString());
-                logDebug(CLASS_NAME + "aBagSPJavaOrchestration: base tm " + aBagSPJavaOrchestration);
+                logDebug(CLASS_NAME + "Response transfer obtained from executing transaction: "+responseTransfer.getProcedureResponseAsString());
+                logDebug(CLASS_NAME + "aBagSPJavaOrchestration: base tm "+aBagSPJavaOrchestration);
 
-                if (Boolean.TRUE.equals(getFromReentryExcecution(aBagSPJavaOrchestration))) {
+                if (Boolean.TRUE.equals(getFromReentryExcecution(aBagSPJavaOrchestration)) ) {
                     logDebug(CLASS_NAME + "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
                     return responseTransfer;
                 }
@@ -145,11 +145,8 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
         }
 
         // Actualizacion local
-        int tTrn = Integer.parseInt(anOriginalRequest.readValueParam("@t_trn"));
-        if (tTrn != 18500070) {
-            IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
-            aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
-        }
+        IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+        aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
 
         if (logger.isInfoEnabled())
             logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta metodo executeStepsTransactionsBase: " + aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
@@ -184,20 +181,14 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
         request.addInputParam("@s_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
         request.addInputParam("@s_perfil", ICTSTypes.SYBINT2, anOriginalRequest.readValueParam("@s_perfil"));
         request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, anOriginalRequest.readValueParam("@s_servicio"));
-        if (anOriginalRequest.readValueParam("@s_cliente") == null || "".equals(anOriginalRequest.readValueParam("@s_cliente"))) {
+        if( anOriginalRequest.readValueParam("@s_cliente") == null || "".equals(anOriginalRequest.readValueParam("@s_cliente"))){
             request.addInputParam("@s_cliente", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_codigo_cliente"));
         }
 
         int tTrn = Integer.parseInt(anOriginalRequest.readValueParam("@t_trn"));
-        if (tTrn == 18500069) {
-            logDebug("[updateLocalExecution] Response Transaction:  " + responseTransaction.getProcedureResponseAsString());
-            logDebug("[updateLocalExecution] Cuenta Cobis:  " + anOriginalRequest.readValueParam("@i_cuenta_cobis"));
-            request.addInputParam("@i_prod", ICTSTypes.SQLVARCHAR, responseTransaction.readValueParam("@o_prod_cta"));
-            request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, responseTransaction.readValueParam("@o_cuenta_cobis"));
-            if (anOriginalRequest.readValueParam("@i_cuenta_cobis") != null) {
-                request.addInputParam("@i_prod", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_producto"));
-                request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
-            }
+        if(tTrn == 18500069){
+            request.addInputParam("@i_prod", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_producto"));
+            request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
             request.addInputParam("@i_cuenta_dst", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
             request.addInputParam("@i_prod_des", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
             request.addInputParam("@i_mon_des", ICTSTypes.SQLINT4, "0");
@@ -206,7 +197,7 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             request.addInputParam("@i_mon", ICTSTypes.SQLVARCHAR, "0");
             request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, "9");
             request.addInputParam("@i_banco_origen", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_institucionOrdenante"));
-            request.addInputParam("@i_estado_ejec", ICTSTypes.SQLVARCHAR, (String) bag.get("@i_estado_ejec"));
+            request.addInputParam("@i_estado_ejec", ICTSTypes.SQLVARCHAR, (String)bag.get("@i_estado_ejec"));
             request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
         }
 
@@ -252,7 +243,7 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
                 Utils.addInputParam(request, "@s_msg", ICTSTypes.SQLVARCHAR, (responseTransaction.getMessage(1).getMessageText()));
         }
 
-        if (bag.get("@s_error") != null && !"0".equals(bag.get("@s_error"))) {
+        if(bag.get("@s_error") != null && !"0".equals(bag.get("@s_error"))){
             Utils.addInputParam(request, "@s_error", ICTSTypes.SQLVARCHAR, bag.get("@s_error").toString());
         }
 

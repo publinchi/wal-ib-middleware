@@ -31,8 +31,6 @@ public class Util {
         String wRefundDescription = responseData.readValueParam("@o_descripcion_error");
         wProcedureRespFinal.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, wDescription != null ? wDescription : wRefundDescription);
         wProcedureRespFinal.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, responseData.readValueParam("@o_id_causa_devolucion"));
-        wProcedureRespFinal.addParam("@o_cuenta_cobis", ICTSTypes.SQLVARCHAR, 50, responseData.readValueParam("@o_cuenta_cobis"));
-        wProcedureRespFinal.addParam("@o_prod_cta", ICTSTypes.SQLINT4, 50, responseData.readValueParam("@o_prod_cta"));
 
         wProcedureRespFinal.setReturnCode(0);
 

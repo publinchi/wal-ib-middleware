@@ -2931,18 +2931,4 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
-	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para Dispatcher Spei Tasking 18500085">
-		<conditions>
-		  <condition param="trn">
-			<value>18500085</value>      
-		  </condition>
-		</conditions>
-		<indicators>
-		  <indicator name="externalProvider" value="0"/>
-		  <indicator name="serviceMethodName" value="executeTransaction"/>
-		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=DispacherSpeiOrchestrationCore)"/>
-		  <indicator name="t_corr" value=""/>
-		</indicators>
-		<mappings keepMode="1"/>
-	</config>
 </csp-config>
