@@ -400,7 +400,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_settlement_currency_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawal.getTransaction().getSettlementCurrencyCode());
 			procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestAuthorizeWithdrawal.getTransaction()));
+					String.valueOf(inRequestAuthorizeWithdrawal.getTransaction().getAmount()));
 			procedureRequestAS.addInputParam("@i_institution_name", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawal.getInstitutionName());
 			procedureRequestAS.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR,
