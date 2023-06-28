@@ -328,29 +328,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			}
 	
-			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
-				// ---------NO Array
-				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizePurchase>() {
-							@Override
-							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
-
-								dto.setApprovedValue(resultSetMapper.getString(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseAuthorizePurchase.setApprovedValue(returnResponseAuthorizePurchase.getApprovedValue());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-	
+			
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");

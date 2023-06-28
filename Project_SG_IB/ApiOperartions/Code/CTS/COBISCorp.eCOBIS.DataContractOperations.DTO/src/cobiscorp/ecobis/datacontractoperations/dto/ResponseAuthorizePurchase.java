@@ -30,7 +30,6 @@ import java.util.HashMap;
 public class ResponseAuthorizePurchase implements Serializable {
   private Boolean success;
   private Response response;
-  private String approvedValue;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -48,11 +47,5 @@ public class ResponseAuthorizePurchase implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
-  }
-  public String getApprovedValue(){
-    return this.approvedValue;
-  }
-  public void setApprovedValue(String approvedValue ){
-    this.approvedValue=approvedValue;
   }
 }
