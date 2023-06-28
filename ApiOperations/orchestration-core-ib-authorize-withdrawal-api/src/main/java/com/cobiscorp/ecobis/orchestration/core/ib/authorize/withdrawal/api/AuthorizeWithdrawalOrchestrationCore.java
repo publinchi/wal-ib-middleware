@@ -118,7 +118,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_order_id"));
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
-		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
+		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
