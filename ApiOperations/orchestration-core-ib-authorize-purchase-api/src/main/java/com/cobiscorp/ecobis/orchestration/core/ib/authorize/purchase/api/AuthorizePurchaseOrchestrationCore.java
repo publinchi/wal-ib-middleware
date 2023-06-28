@@ -3,9 +3,6 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.authorize.purchase.api;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -247,19 +244,20 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		if (codeReturn == 0) {
 			
-			logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-			logger.logDebug("Ending flow, processResponse success with code: ");
-			
-			IResultSetRow row = new ResultSetRow();
-			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
-			row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-			data2.addRow(row2);
+			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
+				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+				logger.logDebug("Ending flow, processResponse success with code: ");
 				
-			/*} else {
+				IResultSetRow row = new ResultSetRow();
+				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
+				data.addRow(row);
+				
+				IResultSetRow row2 = new ResultSetRow();
+				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
+				data2.addRow(row2);
+			}
+			 else {
 				logger.logDebug("Ending flow, processResponse error");
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
@@ -274,7 +272,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
-			}*/
+			}
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
