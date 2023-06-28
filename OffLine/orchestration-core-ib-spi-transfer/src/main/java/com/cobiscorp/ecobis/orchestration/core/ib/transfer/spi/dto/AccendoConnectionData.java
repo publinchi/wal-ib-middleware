@@ -27,10 +27,6 @@ public class AccendoConnectionData {
     private String appClient;
     private String companyId;
     private String trackingKeyPrefix;
-    private String algnUri;
-    private String certUri;
-    private String speiDummy;
-    private String timeInitDay;
     
 
     public String getScope() { return scope; }
@@ -133,22 +129,6 @@ public class AccendoConnectionData {
         this.trackingKeyPrefix = trackingKeyPrefix;
     }
 
-    public String getAlgnUri() { return algnUri; }
-
-    public void setAlgnUri(String algnUri) { this.algnUri = algnUri; }
-
-    public String getCertUri() { return certUri; }
-
-    public void setCertUri(String certUri) { this.certUri = certUri; }
-
-    public String getSpeiDummy() { return speiDummy; }
-
-    public void setSpeiDummy(String speiDummy) { this.speiDummy = speiDummy; }
-
-    public String getTimeInitDay() { return timeInitDay; }
-
-    public void setTimeInitDay(String timeInitDay) { this.timeInitDay = timeInitDay; }
-
     @Override
     public String toString() {
         return "AccendoConnectionData{" +
@@ -175,8 +155,6 @@ public class AccendoConnectionData {
                 ", urlSingleToken='" + urlSingleToken + '\'' +
                 ", urlRegistraSpei='" + urlRegistraSpei + '\'' +
                 ", appClient='" + appClient + '\'' +
-                ", timeInitDay='" + timeInitDay + '\'' +
-                ", speiDummy='" + speiDummy + '\'' +
                 '}';
     }
 }

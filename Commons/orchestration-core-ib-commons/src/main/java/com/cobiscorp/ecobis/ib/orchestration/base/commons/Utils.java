@@ -291,12 +291,6 @@ public class Utils {
 		ErrorBlock eb = new ErrorBlock(-1, "ERROR DE INFRAESTRUCTURA");
 		wProcedureRespFinal.addResponseBlock(eb);
 		wProcedureRespFinal.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, "1");
-		// validar y homologar con errores del cliente para el Front End
-		if(returnCode == 0){
-			returnCode = 200;
-			messageError = "Exitoso";
-
-		}
 		wProcedureRespFinal.setReturnCode(returnCode);
 		wProcedureRespFinal.addMessage(returnCode, messageError);
 
