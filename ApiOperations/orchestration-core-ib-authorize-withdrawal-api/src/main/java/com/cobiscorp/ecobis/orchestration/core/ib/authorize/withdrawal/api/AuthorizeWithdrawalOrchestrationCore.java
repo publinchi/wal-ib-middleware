@@ -3,9 +3,6 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.authorize.withdrawal.api;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -110,7 +107,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 			logger.logInfo(CLASS_NAME + " Entrando en valDataLocal");
 		}
 
-		request.setSpName("cob_atm..sp_auth_purchase_local_api");
+		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
@@ -118,21 +115,25 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
+		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
+		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
+		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
 		
-		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");		
+		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("account dock id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
+			logger.logDebug("o_card_mask es " +  wProductsQueryResp.readValueParam("@o_card_mask"));
 		}
 		
-		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		aBagSPJavaOrchestration.put("o_card_mask", wProductsQueryResp.readValueParam("@o_card_mask"));
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking valDataLocal AW: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de valDataLocal");
 		}
@@ -264,19 +265,20 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		if (codeReturn == 0) {
 			
-			logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-			logger.logDebug("Ending flow, processResponse success with code: ");
-			
-			IResultSetRow row = new ResultSetRow();
-			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
-			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
-			row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-			data2.addRow(row2);
+			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
+				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+				logger.logDebug("Ending flow, processResponse success with code: ");
 				
-			/*} else {
+				IResultSetRow row = new ResultSetRow();
+				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
+				data.addRow(row);
+				
+				IResultSetRow row2 = new ResultSetRow();
+				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
+				data2.addRow(row2);
+			}
+			 else {
 				logger.logDebug("Ending flow, processResponse error");
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
@@ -291,7 +293,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
-			}*/
+			}
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
