@@ -258,14 +258,14 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		} catch (Exception e){
 			logger.logError("AN ERROR OCURRED: ", e);
 		}
-		logDebug("[executeTransfer] Response: " + response);
+
 		return response;
 	}
 
 	private IProcedureResponse mappingResponse(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration){
 		String wInfo = CLASS_NAME+"[mappingResponse] ";
 		logger.logInfo(wInfo + INIT_TASK);
-		logger.logInfo(wInfo + INIT_TASK + "[Response]: " + aResponse);
+
 		if (aResponse != null && aResponse.getMessageListSize() != 0 && aResponse.readValueParam("@o_descripcion_error") != null) {
 			aBagSPJavaOrchestration.put("@s_error", String.valueOf(aResponse.getReturnCode()));
 			String causaDevolucion = aResponse.readValueParam("@o_id_causa_devolucion");
@@ -282,11 +282,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		aResponse.addParam("@o_folio", ICTSTypes.SQLVARCHAR, 50, aResponse.readValueParam("@o_id_interno"));
 		aResponse.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, aResponse.readValueParam("@o_descripcion"));
 		aResponse.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, aResponse.readValueParam("@o_id_causa_devolucion"));
-		aResponse.addParam("@o_cuenta_cobis", ICTSTypes.SQLVARCHAR, 50, aResponse.readValueParam("@o_cuenta_cobis"));
-		aResponse.addParam("@o_prod_cta", ICTSTypes.SQLINT4, 50, aResponse.readValueParam("@o_prod_cta"));
 		aBagSPJavaOrchestration.put("@s_error", aResponse.getReturnCode());
 
-		logger.logInfo(wInfo + END_TASK + "[Response]: " + aResponse);
 		return aResponse;
 	}
 
@@ -362,8 +359,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
 		procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
-		procedureRequest.addOutputParam("@o_cuenta_cobis", ICTSTypes.SQLVARCHAR, "");
-		procedureRequest.addOutputParam("@o_prod_cta", ICTSTypes.SQLINT4, "");
 
 
 		logger.logInfo(wInfo + END_TASK);
