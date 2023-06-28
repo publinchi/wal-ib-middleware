@@ -47,11 +47,5 @@
       </columns>
       <queryText>SELECT "code"=0,"message"="success"</queryText>
     </query>
-    <query>
-      <columns>
-        <column name="aprovedValue" />
-      </columns>
-      <queryText>SELECT "aprovedValue"=o_aproved_value</queryText>
-    </query>
   </queries>
 </procedure>
