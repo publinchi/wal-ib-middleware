@@ -199,47 +199,50 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 			IProcedureRequest originalRequestClone = originalRequest.clone();
 			// SE EJECUTA LA NOTA DE DEBITO CENTRAL
-
+			
 			logger.logDebug("Aplicando Transacción " + idTransaccion);
-
-			if (aBagSPJavaOrchestration.containsKey("origin_spei") && aBagSPJavaOrchestration.get("origin_spei") != null) {
-				logger.logDebug("On Origin Spei ");
-				String appliedOrigin = aBagSPJavaOrchestration.get("origin_spei").toString();
-				logger.logDebug("On Origin Spei do " + appliedOrigin);
-				if (appliedOrigin.equals("MASSIVE")) {
-					logger.logDebug("On massive function");
-					idTransaccion = "040";
-				}
+			
+			if(aBagSPJavaOrchestration.containsKey("origin_spei") &&  aBagSPJavaOrchestration.get("origin_spei")!=null) {
+				logger.logDebug("On Origin Spei " );
+				String appliedOrigin= aBagSPJavaOrchestration.get("origin_spei").toString();
+				logger.logDebug("On Origin Spei do "+appliedOrigin );
+				if(appliedOrigin.equals("MASSIVE")) {
+					logger.logDebug("On massive function");					
+			    	idTransaccion="040";
+			    }
 			}
-
-			responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
-
-
-			if (!(idTransaccion != null && idTransaccion.equals("040"))) {
-				logger.logDebug("Normal transacction");
-
-
+			
+			 responseTransfer = this.executeTransferSPI(originalRequestClone, aBagSPJavaOrchestration);
+			
+			 
+			 
+			 
+			if(!(idTransaccion!=null && idTransaccion.equals("040"))) {
+				logger.logDebug("Normal transacction");			   
+			
+				
+				
 				if (responseTransfer.readValueParam("@o_referencia") != null && responseTransfer.readValueParam("@o_referencia") != null)
 					idMovement = responseTransfer.readValueParam("@o_referencia");
-
+				
 				if (responseTransfer.readValueParam("@o_ref_branch") != null && responseTransfer.readValueParam("@o_ref_branch") != null) {
 					refBranch = responseTransfer.readValueParam("@o_ref_branch");
 				}
-
+				
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("ref_branch" + refBranch);
 				}
-
-				responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration, idTransaccion);
-			} else {
+				
+				  responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration, idTransaccion);
+			}else {
 				logger.logDebug("On massive transacction");
-				idMovement = aBagSPJavaOrchestration.get("ssn_operation").toString();
+				idMovement=aBagSPJavaOrchestration.get("ssn_operation").toString();;
 			}
-
+			
 			originalRequestClone.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, refBranch);
 			aBagSPJavaOrchestration.put("@i_ssn_branch", refBranch);
-
-
+			
+			
 			// JCOS VALIDACION PARA FL
 			if (serverResponse.getOnLine()) {
 
@@ -253,7 +256,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
 				}
-
+				
 				if ((originalRequestClone.readValueParam("@i_type_reentry") == null
 						|| !originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {// VALIDACION DE REENTRY
 
@@ -263,7 +266,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 						}
 
 						aBagSPJavaOrchestration.put("APPLY_DATE", originalRequestClone.readValueParam("@o_fecha_tran"));
-
+						
 						int transacctionApplied = Integer.parseInt(idTransaccion.trim());
 						if (transacctionApplied > 0) {
 
@@ -278,17 +281,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 							if (logger.isDebugEnabled()) {
 								logger.logDebug("Spei do it");
 							}
-							// CAMBIO DE PROVEEDOR
-							logInfo("executeTransfer: Execucion del conector");
-							responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequestClone);
-							//SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
-							// ARMANDO OBJETO DE RESPUESTA
-							SpeiMappingResponse responseSpei = new SpeiMappingResponse();
-							responseSpei.setClaveRastreo((String) aBagSPJavaOrchestration.get("@i_clave_rastreo"));
-							responseSpei.setCodigoAcc((String) aBagSPJavaOrchestration.get("@i_cod_respuesta"));
-							responseSpei.setMensajeAcc((String) aBagSPJavaOrchestration.get("@i_msj_respuesta"));
-							responseSpei.setSpeiRequest((String) aBagSPJavaOrchestration.get("@o_spei_request"));
-							responseSpei.setSpeiResponse((String) aBagSPJavaOrchestration.get("@o_spei_response"));
+							SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
 
 							responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer, aBagSPJavaOrchestration);
 						} else
@@ -298,7 +291,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 						if (logger.isDebugEnabled()) {
 							logger.logDebug(":::: No Aplica Transaccion Cancel jcos " + idTransaccion);
 						}
-					}
+					}	
 				}
 
 			} else if (originalRequestClone.readValueParam("@i_type_reentry") == null && !serverResponse.getOnLine()) {
@@ -457,8 +450,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 		aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, response.getClaveRastreo());
 		aBagSPJavaOrchestration.put(Constants.I_MENSAJE_ACC, response.getMensajeAcc());
-		// aBagSPJavaOrchestration.put(Constants.I_ID_SPEI_ACC, response.getCodigoAcc());
-		aBagSPJavaOrchestration.put(Constants.I_ID_SPEI_ACC, response.getClaveRastreo());
+		aBagSPJavaOrchestration.put(Constants.I_ID_SPEI_ACC, response.getCodigoAcc());
 		aBagSPJavaOrchestration.put(Constants.I_CODIGO_ACC, response.getCodigoAcc());
 
 		aBagSPJavaOrchestration.put(Constants.O_SPEI_REQUEST, response.getSpeiRequest());
@@ -476,12 +468,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		// SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
 		List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
 		// SE ACTUALIZA TABLA DE SECUENCIAL SPEI
-		boolean actualizaClaveRastreo = speiSec(originalRequest, aBagSPJavaOrchestration);
-		logInfo("[executeTransfer] Actualizacion de Clave Rastreo SPEI: " + actualizaClaveRastreo);
+		speiSec(originalRequest, aBagSPJavaOrchestration);
 		// SE HACE LA VALIDACION DE LA RESPUESTA
 		if (respuesta != null) {
 			if (!respuesta.get(0).equals("00")) {
-				aBagSPJavaOrchestration.put("@i_bandera_spei", "N");
 				// SE CAMBIA ESTADO DE REGISTRO
 				speiGetDataRB(originalRequest, aBagSPJavaOrchestration);
 				// SE HACELA REVERSA DE LA NOTA DE DEBITO
@@ -510,7 +500,6 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("List<String> respuesta error o null");
 			}
-			aBagSPJavaOrchestration.put("@i_bandera_spei", "N");
 			// SE CAMBIA ESTADO DE REGISTRO
 			speiGetDataRB(originalRequest, aBagSPJavaOrchestration);
 			// SE HACELA REVERSA DE LA NOTA DE DEBITO
@@ -591,20 +580,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			// SE OBTIENE LA DATA FALTANTE
 			List<String> data = speiData(anOriginalRequest, bag);
 
-			AccendoConnectionData loadded = retrieveAccendoConnectionData();
-
-			anOriginalRequest.addInputParam("@i_empresa", ICTSTypes.SQLVARCHAR, loadded.getCompanyId());
-			anOriginalRequest.addInputParam("@i_algotih", ICTSTypes.SQLVARCHAR, "SHA256withRSA");
-			anOriginalRequest.addInputParam("@i_prefijo_rastreo", ICTSTypes.SQLVARCHAR, loadded.getTrackingKeyPrefix());
-			anOriginalRequest.addInputParam("@i_base_url", ICTSTypes.SQLVARCHAR, loadded.getBaseUrl());
-			anOriginalRequest.addInputParam("@i_algn_path", ICTSTypes.SQLVARCHAR, loadded.getAlgnUri());
-			anOriginalRequest.addInputParam("@i_cert_path", ICTSTypes.SQLVARCHAR, loadded.getCertUri());
-			anOriginalRequest.addInputParam("@i_time_init_day", ICTSTypes.SQLVARCHAR, loadded.getTimeInitDay());
-			anOriginalRequest.addInputParam("@i_spei_dummy", ICTSTypes.SQLVARCHAR, loadded.getSpeiDummy());
-
 			//FECHA
-			// CALCULO DE FECHA SOLO SE HACE EN ENVIOS NUEVOS DE SPEI NO EN DEVOLUCIONES
-			Date fecha = Methods.getFechaProceso(new Date(), loadded.getTimeInitDay());
+			Date fecha = new Date();
 			SimpleDateFormat forma = new SimpleDateFormat("yyyyMMdd");
 			anOriginalRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR, forma.format(fecha));
 			anOriginalRequest.addInputParam("@i_institucion_contraparte", ICTSTypes.SQLVARCHAR,
@@ -636,13 +613,20 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			anOriginalRequest.addOutputParam("@o_id", ICTSTypes.SQLINT1, "0");
 			anOriginalRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "X");
 
-			String claveRastreo = loadded.getTrackingKeyPrefix() + Methods.getActualDateYyyymmdd() + anOriginalRequest.readValueParam("@i_transaccion_spei");
-			anOriginalRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR, claveRastreo);
+			AccendoConnectionData loadded= retrieveAccendoConnectionData();
+
+			anOriginalRequest.addInputParam("@i_empresa", ICTSTypes.SQLVARCHAR, loadded.getCompanyId());
+			anOriginalRequest.addInputParam("@i_algotih", ICTSTypes.SQLVARCHAR, "SHA256withRSA");
+			anOriginalRequest.addInputParam("@i_prefijo_rastreo", ICTSTypes.SQLVARCHAR, loadded.getTrackingKeyPrefix());
+			anOriginalRequest.addInputParam("@i_base_url", ICTSTypes.SQLVARCHAR, loadded.getBaseUrl());
+
+			String claveRastreo = loadded.getTrackingKeyPrefix()+Methods.getActualDateYyyymmdd()+ anOriginalRequest.readValueParam("@i_transaccion_spei");
+			anOriginalRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR,claveRastreo) ;
 			bag.put("@i_clave_rastreo", claveRastreo);
 
 			anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_transaccion_spei"));
 			anOriginalRequest.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_ssn_branch"));
-
+			
 			// SE HACE LA LLAMADA AL CONECTOR
 			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
 			anOriginalRequest.setSpName("cob_procesador..sp_orq_banpay_spei");
@@ -659,11 +643,11 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				}
 				// SE MAPEAN LAS VARIABLES DE SALIDA
 				response = new ArrayList<String>();
-				String codRespuesta = connectorSpeiResponse.readValueParam("@o_cod_respuesta");
+				String codRespuesta=connectorSpeiResponse.readValueParam("@o_cod_respuesta");
 
-				logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
-				logger.logDebug("readValueParam @o_msj_respuesta: " + connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
 				response.add(connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+				logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+				logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readParam("@o_cod_respuesta"));
 				response.add(connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
 
 				response.add(connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
@@ -679,13 +663,13 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				response.add(connectorSpeiResponse.readValueParam("@o_spei_response"));
 
 				if (logger.isDebugEnabled()) {
-					logger.logDebug("CODIGO RASTREO DX" + connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
+					logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
 					logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
 				}
 
 				// SE ALMACENA EL DATO DE CLAVE DE RASTREO
 				String rastreo = connectorSpeiResponse.readValueParam("@o_clave_rastreo");
-				if (null == rastreo) {
+				if(null == rastreo){
 					rastreo = anOriginalRequest.readValueParam("i_clave_rastreo_connection");
 				}
 				bag.put("@i_clave_rastreo", rastreo);
@@ -697,18 +681,18 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				bag.put("@i_mensaje_acc", connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
 				bag.put("@i_id_spei_acc", connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
 				bag.put("@i_codigo_acc", connectorSpeiResponse.readValueParam("@i_codigo_acc"));
-				logger.logDebug("transaccion Spei " + anOriginalRequest.readValueParam("@i_transaccion_spei"));
+				logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam("@i_transaccion_spei"));
 				bag.put("@i_transaccion_spei", anOriginalRequest.readValueParam("@i_transaccion_spei"));
-
-				if (logger.isDebugEnabled()) {
+				
+				if (logger.isDebugEnabled()) {					
 					logger.logDebug("i_ssn_branch origin" + anOriginalRequest.readValueParam("@i_ssn_branch"));
-				}
+				}				
 				bag.put("@i_ssn_branch", anOriginalRequest.readValueParam("@i_ssn_branch"));
 
 				bag.put("@o_spei_request", connectorSpeiResponse.readValueParam("@o_spei_request"));
 				bag.put("@o_spei_response", connectorSpeiResponse.readValueParam("@o_spei_response"));
 
-				bag.put("@o_transaccion_spei", anOriginalRequest.readValueParam("@i_transaccion_spei"));
+				bag.put("@o_transaccion_spei",anOriginalRequest.readValueParam("@i_transaccion_spei"));
 				data = null;
 			} else {
 
@@ -791,22 +775,6 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 					if( this.getString(row, 2).equals(Constants.TRACKING_KEY_PREFIX)){
 						accendoConnectionData.setTrackingKeyPrefix(this.getString(row, 3));
-					}
-
-					if( this.getString(row, 2).equals(Constants.ALGN_URI)){
-						accendoConnectionData.setAlgnUri(this.getString(row, 3));
-					}
-
-					if( this.getString(row, 2).equals(Constants.CERT_URI)){
-						accendoConnectionData.setCertUri(this.getString(row, 3));
-					}
-
-					if( this.getString(row, 2).equals(Constants.SPEI_DUMMY)){
-						accendoConnectionData.setSpeiDummy(this.getString(row, 3));
-					}
-
-					if( this.getString(row, 2).equals(Constants.TIME_INIT_DAY)){
-						accendoConnectionData.setTimeInitDay(this.getString(row, 3));
 					}
 				}
 			}
@@ -1540,11 +1508,5 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 
 		return pResponse;
 
-	}
-
-	private void logInfo(String aMensaje){
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(aMensaje);
-		}
 	}
 }

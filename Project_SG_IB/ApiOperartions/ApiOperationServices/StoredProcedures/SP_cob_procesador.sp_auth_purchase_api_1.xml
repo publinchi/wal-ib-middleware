@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_auth_purchase_api</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+    <parameter name="@i_uuid" dataType="varchar" direction="in" />
+    <parameter name="@i_card_id" dataType="varchar" direction="in" />
+    <parameter name="@i_account_number" dataType="varchar" direction="in" />
+    <parameter name="@i_transmission_date_time_gtm" dataType="varchar" direction="in" />
+    <parameter name="@i_date" dataType="varchar" direction="in" />
+    <parameter name="@i_time" dataType="varchar" direction="in" />
+    <parameter name="@i_mti" dataType="varchar" direction="in" />
+    <parameter name="@i_type" dataType="varchar" direction="in" />
+    <parameter name="@i_processing_code" dataType="varchar" direction="in" />
+    <parameter name="@i_nsu" dataType="varchar" direction="in" />
+    <parameter name="@i_card_expiration_date" dataType="varchar" direction="in" />
+    <parameter name="@i_card_entry_code" dataType="varchar" direction="in" />
+    <parameter name="@i_pin" dataType="varchar" direction="in" />
+    <parameter name="@i_mode" dataType="varchar" direction="in" />
+    <parameter name="@i_merchant_category_code" dataType="varchar" direction="in" />
+    <parameter name="@i_source_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_settlement_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_amount" dataType="varchar" direction="in" />
+    <parameter name="@i_institution_name" dataType="varchar" direction="in" />
+    <parameter name="@i_terminal_code" dataType="varchar" direction="in" />
+    <parameter name="@i_retrieval_reference_number" dataType="varchar" direction="in" />
+    <parameter name="@i_acquirer_country_code" dataType="varchar" direction="in" />
+    <parameter name="@i_card_present" dataType="bit" direction="in" />
+    <parameter name="@i_card_holder_present" dataType="bit" direction="in" />
+    <parameter name="@i_cvv2_present" dataType="bit" direction="in" />
+    <parameter name="@i_pin_validated_offline" dataType="bit" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="success"</queryText>
+    </query>
+  </queries>
+</procedure>
