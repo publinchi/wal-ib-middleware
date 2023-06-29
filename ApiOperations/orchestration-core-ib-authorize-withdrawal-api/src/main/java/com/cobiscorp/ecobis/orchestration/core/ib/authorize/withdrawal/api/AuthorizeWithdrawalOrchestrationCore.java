@@ -85,10 +85,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 			IProcedureResponse wAuthValDataCentral = new ProcedureResponseAS();
 			wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAuthValDataCentral.getResultSetRowColumnData(3, 1, 1).getValue().equals("0")) {
-				
-				return wAuthValDataLocal;
-			}	
+			return wAuthValDataCentral;
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -119,6 +116,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
