@@ -362,15 +362,13 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: createCustomer");
 		CreateCustomerResponse outCreateCustomerResponse = new CreateCustomerResponse();
 
-		if (!validateMandatory(new Data("activity", inCreateCustomerRequest.getActivity()),
+		if (!validateMandatory(
 				new Data("birthDate", inCreateCustomerRequest.getBirthDate()),
 				new Data("gender", inCreateCustomerRequest.getGender()),
 				new Data("idNumber", inCreateCustomerRequest.getIdNumber()),
 				new Data("lastName", inCreateCustomerRequest.getLastName()),
 				new Data("firstName", inCreateCustomerRequest.getFirstName()),
-				new Data("nationality", inCreateCustomerRequest.getNationality()),
 				new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()),
-				new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()),
 				new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()),
 				new Data("identificationType", inCreateCustomerRequest.getIdentificationType()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
