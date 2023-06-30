@@ -85,10 +85,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 			IProcedureResponse wAuthValDataCentral = new ProcedureResponseAS();
 			wAuthValDataCentral = valDataCentral(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAuthValDataCentral.getResultSetRowColumnData(3, 1, 1).getValue().equals("0")) {
-				
-				return wAuthValDataLocal;
-			}	
+			return wAuthValDataCentral;
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -118,7 +115,8 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
-		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
+		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "PURCHASE");
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
