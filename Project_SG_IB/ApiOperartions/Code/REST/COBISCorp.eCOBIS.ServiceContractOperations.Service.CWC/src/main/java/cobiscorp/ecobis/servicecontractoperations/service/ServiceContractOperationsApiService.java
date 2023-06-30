@@ -555,8 +555,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				inCreateCustomerRequest.getPropertyTypeCode());
 		procedureRequestAS.addInputParam("@i_province_code", ICTSTypes.SQLINT2,
 				String.valueOf(inCreateCustomerRequest.getProvince()));
-		procedureRequestAS.addInputParam("@i_provincebirth_code", ICTSTypes.SQLINT2,
-				String.valueOf(inCreateCustomerRequest.getProvinceBirth()));
+		procedureRequestAS.addInputParam("@i_provincebirth_code", ICTSTypes.SQLVARCHAR,
+				inCreateCustomerRequest.getProvinceBirth());
 		procedureRequestAS.addInputParam("@i_provision_cash", ICTSTypes.SQLINT4,
 				String.valueOf(inCreateCustomerRequest.getProvisionCash()));
 		procedureRequestAS.addInputParam("@i_rfc", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getRfc());
