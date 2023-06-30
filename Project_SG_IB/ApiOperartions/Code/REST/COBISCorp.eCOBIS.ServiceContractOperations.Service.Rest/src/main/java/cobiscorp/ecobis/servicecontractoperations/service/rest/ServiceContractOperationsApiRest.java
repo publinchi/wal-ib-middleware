@@ -369,7 +369,6 @@ public class ServiceContractOperationsApiRest {
 				new Data("lastName", inCreateCustomerRequest.getLastName()),
 				new Data("firstName", inCreateCustomerRequest.getFirstName()),
 				new Data("secondLastName", inCreateCustomerRequest.getSecondLastName()),
-				new Data("provinceBirth", inCreateCustomerRequest.getProvinceBirth()),
 				new Data("identificationNumber", inCreateCustomerRequest.getIdentificationNumber()),
 				new Data("identificationType", inCreateCustomerRequest.getIdentificationType()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
