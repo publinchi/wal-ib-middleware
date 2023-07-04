@@ -1148,6 +1148,16 @@
 			<artifactId>orchestration-core-ib-authorize-withdrawal-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-deposit-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-reversal-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1520,7 +1530,9 @@
 							orchestration-core-ib-validate-all-security-qa-api,
 							orchestration-core-ib-update-account-status-dock-api,
 							orchestration-core-ib-authorize-purchase-api,
-							orchestration-core-ib-authorize-withdrawal-api
+							orchestration-core-ib-authorize-withdrawal-api,
+							orchestration-core-ib-authorize-deposit-api,
+							orchestration-core-ib-authorize-reversal-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>

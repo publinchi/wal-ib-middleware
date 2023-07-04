@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cobiscorp.ecobis.orchestration.core.ib.authorize.withdrawal.api;
+package com.cobiscorp.ecobis.orchestration.core.ib.authorize.reversal.api;
 
 import java.util.Map;
 
@@ -35,21 +35,21 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 
 /**
  * @author Sochoa
- * @since Jun 20, 2023
+ * @since Jun 30, 2023
  * @version 1.0.0
  */
-@Component(name = "AuthorizeWithdrawalOrchestrationCore", immediate = false)
+@Component(name = "AuthorizeReversalOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
-@Properties(value = { @Property(name = "service.description", value = "AuthorizeWithdrawalOrchestrationCore"),
+@Properties(value = { @Property(name = "service.description", value = "AuthorizeReversalOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
-		@Property(name = "service.identifier", value = "AuthorizeWithdrawalOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_auth_withdrawal_api")})
-public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBase {
+		@Property(name = "service.identifier", value = "AuthorizeReversalOrchestrationCore"),
+		@Property(name = "service.spName", value = "cob_procesador..sp_auth_reversal_api")})
+public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	private ILogger logger = (ILogger) this.getLogger();
-	private static final String CLASS_NAME = "AuthorizeWithdrawalOrchestrationCore";
+	private static final String CLASS_NAME = "AuthorizeReversalOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
-	protected static final String AUTHORIZE_PURCHASE= "AUTHORIZE_WITHDRAWAL";
+	protected static final String AUTHORIZE_PURCHASE= "AUTHORIZE_REVERSAL";
 	protected static final String MODE_OPERATION = "PYS";
 
 	@Override
@@ -58,22 +58,22 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AuthorizeWithdrawal starts...");		
+		logger.logDebug("Begin flow, AuthorizeReversal starts...");		
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		
-		anProcedureResponse = authorizeWithdrawal(anOriginalRequest, aBagSPJavaOrchestration);
+		anProcedureResponse = authorizeReversal(anOriginalRequest, aBagSPJavaOrchestration);
 		
 		return processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
 	}
 	
-	private IProcedureResponse authorizeWithdrawal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse authorizeReversal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en authorizeWithdrawal: ");
+			logger.logInfo(CLASS_NAME + " Entrando en authorizeReversal: ");
 		}
 		
 		IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
@@ -90,7 +90,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Response " + wAuthValDataLocal.toString());
-			logger.logInfo(CLASS_NAME + " Saliendo de authorizeWithdrawal...");
+			logger.logInfo(CLASS_NAME + " Saliendo de authorizeReversal...");
 		}
 
 		return wAuthValDataLocal;
@@ -117,7 +117,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
