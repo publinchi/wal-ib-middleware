@@ -112,7 +112,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		/*request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));*/
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
@@ -148,7 +148,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
 
-		request.setSpName("cob_cuentas..sp_deposito_atm_api");
+		request.setSpName("cob_cuentas..sp_retiro_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
@@ -165,10 +165,10 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "253");
 		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "253");
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
