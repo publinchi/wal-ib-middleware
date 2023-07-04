@@ -115,6 +115,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_order_id"));
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
+		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 		
@@ -123,7 +124,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("o_card_mask es " +  wProductsQueryResp.readValueParam("@o_card_mask"));
+			logger.logDebug("card mask es " +  wProductsQueryResp.readValueParam("@o_card_mask"));
 		}
 		
 		aBagSPJavaOrchestration.put("o_card_mask", wProductsQueryResp.readValueParam("@o_card_mask"));
@@ -144,7 +145,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en valData");
+			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
 
 		request.setSpName("cob_cuentas..sp_retiro_atm_api");
@@ -177,7 +178,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("account dock(1) id es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
+			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
@@ -187,7 +188,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de valData");
+			logger.logInfo(CLASS_NAME + " Saliendo de trnDataCentral");
 		}
 
 		return wProductsQueryResp;
