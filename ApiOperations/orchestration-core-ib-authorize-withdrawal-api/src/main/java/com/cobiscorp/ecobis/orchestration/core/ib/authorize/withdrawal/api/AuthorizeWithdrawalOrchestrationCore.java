@@ -3,6 +3,8 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.authorize.withdrawal.api;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -67,7 +69,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		anProcedureResponse = authorizeWithdrawal(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		return processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
+		return processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 	}
 	
 	private IProcedureResponse authorizeWithdrawal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -195,7 +197,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 	}
 	
 
-	/*private void registerLogBd(IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
+	private void registerLogBd(IProcedureRequest aRequest, IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -203,48 +205,46 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 			logger.logInfo(CLASS_NAME + " Entrando en registerLogBd");
 		}
 
-		request.setSpName("cob_atm..sp_insert_data_dock_api");
+		request.setSpName("cob_ahorros..sp_insert_data_trn_aut");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
+				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		LocalDateTime fechaHoraActual = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String fechaActual = fechaHoraActual.format(formato);
 		 
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("externalCustomerId").toString());
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaActual);
-		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "UAS");
+		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTA");
 
-		request.addInputParam("@i_cuenta_id", ICTSTypes.SQLVARCHAR, reponseAccount.readValueParam("@o_account_id"));
-		request.addInputParam("@i_request_cd", ICTSTypes.SQLVARCHAR, reponseAccount.readValueParam("@o_request_update_account"));
-		request.addInputParam("@i_estado_cuenta", ICTSTypes.SQLVARCHAR, reponseAccount.readValueParam("@o_account_status"));
-		request.addInputParam("@i_estado_upd", ICTSTypes.SQLVARCHAR, reponseAccount.readValueParam("@o_success"));
-		
-		String message = reponseAccount.readValueParam("@o_response_update_account")!=null?reponseAccount.readValueParam("@o_response_update_account"):reponseAccount.getResultSetRowColumnData(2, 1, 2).getValue();
-		request.addInputParam("@i_response_cd", ICTSTypes.SQLVARCHAR, message);
+		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
+		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, reponseAccount.readValueFieldInHeader("ssn"));
+		request.addInputParam("@i_reverse_tran", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_uuid_reverse"));
+		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
+		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking registerLog: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de registerLogBd");
 		}
-	}*/
+	}
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		return null;
 	}
 	
-	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseApi(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		logger.logInfo("processResponseApi [INI] --->" );
 		
@@ -266,6 +266,8 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 
 		
 		if (codeReturn == 0) {
+			
+			registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 			
 			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
 				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
@@ -315,8 +317,6 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
-		
-		/*registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);*/
 		
 		return wProcedureResponse;		
 	}
