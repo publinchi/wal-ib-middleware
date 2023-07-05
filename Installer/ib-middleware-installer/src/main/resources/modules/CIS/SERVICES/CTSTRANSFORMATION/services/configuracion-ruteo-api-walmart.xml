@@ -341,4 +341,19 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<!-- 18500130 UPDATE CARD DOCK STATUS-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo update card dock">
+		<conditions>
+		  <condition param="trn">
+			<value>18500130</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=UpdateCardDockOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>

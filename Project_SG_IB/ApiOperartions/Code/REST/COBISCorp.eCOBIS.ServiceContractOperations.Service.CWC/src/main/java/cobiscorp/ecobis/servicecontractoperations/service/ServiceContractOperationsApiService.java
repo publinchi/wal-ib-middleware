@@ -262,6 +262,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					String.valueOf(inRequestAuthorizePurchase.getTransactionIndicators().isCvv2Present()));
 			procedureRequestAS.addInputParam("@i_pin_validated_offline", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizePurchase.getTransactionIndicators().isPinValidatedOffline()));
+			
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAuthorizePurchase);
+			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
 
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -3097,6 +3101,7 @@ int mapBlank=0;
 		    procedureRequestAS.addInputParam("@i_status_reason",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getStatusReason());
 		    procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getAccountNumber());
 		    procedureRequestAS.addInputParam("@i_type_card",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getTypeCard());
+		    procedureRequestAS.addInputParam("@i_mode",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getMode());
 		    
 		    //execute procedure
 		    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -3622,12 +3627,6 @@ int mapBlank=0;
 		               public CardApplicationResponse mapRow(ResultSetMapper resultSetMapper, int index) {
 		               CardApplicationResponse dto = new CardApplicationResponse();
 		               LOGGER.logInfo("result xcxc" + resultSetMapper.toString());
-		               if(resultSetMapper.getInteger(2)==0){
-		            	   dto.setCardId(resultSetMapper.getString(4));
-		                    dto.setPersonId(resultSetMapper.getString(5));
-		                    dto.setAccountId(resultSetMapper.getString(6));
-		                    dto.setAssignmentDate(resultSetMapper.getString(7));
-		               }
 		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
