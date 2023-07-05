@@ -309,4 +309,36 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
+	<!-- 18500134 AUTHORIZE DEPOSIT-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AuthorizeDeposit">
+		<conditions>
+		  <condition param="trn">
+			<value>18500134</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AuthorizeDepositOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	
+	<!-- 18500134 AUTHORIZE REVERSAL-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AuthorizeReversal">
+		<conditions>
+		  <condition param="trn">
+			<value>18500135</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AuthorizeReversalOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 </csp-config>

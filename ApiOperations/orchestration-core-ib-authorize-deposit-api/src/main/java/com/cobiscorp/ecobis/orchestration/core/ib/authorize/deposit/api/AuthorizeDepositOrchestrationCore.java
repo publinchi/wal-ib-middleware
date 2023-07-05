@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cobiscorp.ecobis.orchestration.core.ib.authorize.withdrawal.api;
+package com.cobiscorp.ecobis.orchestration.core.ib.authorize.deposit.api;
 
 import java.util.Map;
 
@@ -35,21 +35,21 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 
 /**
  * @author Sochoa
- * @since Jun 20, 2023
+ * @since Jun 30, 2023
  * @version 1.0.0
  */
-@Component(name = "AuthorizeWithdrawalOrchestrationCore", immediate = false)
+@Component(name = "AuthorizeDepositOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
-@Properties(value = { @Property(name = "service.description", value = "AuthorizeWithdrawalOrchestrationCore"),
+@Properties(value = { @Property(name = "service.description", value = "AuthorizeDepositOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
-		@Property(name = "service.identifier", value = "AuthorizeWithdrawalOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_auth_withdrawal_api")})
-public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBase {
+		@Property(name = "service.identifier", value = "AuthorizeDepositOrchestrationCore"),
+		@Property(name = "service.spName", value = "cob_procesador..sp_auth_deposit_api")})
+public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	private ILogger logger = (ILogger) this.getLogger();
-	private static final String CLASS_NAME = "AuthorizeWithdrawalOrchestrationCore";
+	private static final String CLASS_NAME = "AuthorizeDepositOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
-	protected static final String AUTHORIZE_PURCHASE= "AUTHORIZE_WITHDRAWAL";
+	protected static final String AUTHORIZE_PURCHASE= "AUTHORIZE_DEPOSIT";
 	protected static final String MODE_OPERATION = "PYS";
 
 	@Override
@@ -58,22 +58,22 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AuthorizeWithdrawal starts...");		
+		logger.logDebug("Begin flow, AuthorizeDeposit starts...");		
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		
-		anProcedureResponse = authorizeWithdrawal(anOriginalRequest, aBagSPJavaOrchestration);
+		anProcedureResponse = authorizeDeposit(anOriginalRequest, aBagSPJavaOrchestration);
 		
 		return processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
 	}
 	
-	private IProcedureResponse authorizeWithdrawal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse authorizeDeposit(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en authorizeWithdrawal: ");
+			logger.logInfo(CLASS_NAME + " Entrando en authorizeDeposit: ");
 		}
 		
 		IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
@@ -90,7 +90,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Response " + wAuthValDataLocal.toString());
-			logger.logInfo(CLASS_NAME + " Saliendo de authorizeWithdrawal...");
+			logger.logInfo(CLASS_NAME + " Saliendo de authorizeDeposit...");
 		}
 
 		return wAuthValDataLocal;
@@ -112,12 +112,12 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		/*request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_order_id"));*/
+		/*request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));*/
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
@@ -130,9 +130,9 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("o_card_mask", wProductsQueryResp.readValueParam("@o_card_mask"));
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking valDataLocal AW: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-		
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de valDataLocal");
 		}
@@ -165,10 +165,10 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "253");
 		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "253");
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
@@ -193,7 +193,6 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 
 		return wProductsQueryResp;
 	}
-	
 
 	/*private void registerLogBd(IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
 
