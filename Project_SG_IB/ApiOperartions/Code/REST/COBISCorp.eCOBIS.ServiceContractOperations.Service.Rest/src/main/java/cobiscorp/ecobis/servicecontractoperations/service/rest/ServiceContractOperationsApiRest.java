@@ -28,10 +28,14 @@ import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
@@ -238,7 +242,6 @@ public class ServiceContractOperationsApiRest {
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizePurchase.getExternalCustomerId()),
 				new Data("uuid", inRequestAuthorizePurchase.getUuid()),
-				new Data("cardId", inRequestAuthorizePurchase.getCardId()),
 				new Data("accountNumber", inRequestAuthorizePurchase.getAccountNumber()),
 				new Data("transmissionDateTimeGmt", inRequestAuthorizePurchase.getTransmissionDateTimeGmt()),
 				new Data("date", inRequestAuthorizePurchase.getDate()),
@@ -348,6 +351,136 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: authorizeWithdrawal");
 		return Response.ok(outResponseAuthorizeWithdrawal).build();
+
+	}
+	
+	/**
+	 * Authorize Deposit
+	 */
+	@POST
+	@Path("/apiOperations/authorization/authorizeDeposit")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit) {
+		LOGGER.logDebug("Start service execution REST: authorizeDeposit");
+		ResponseAuthorizeDeposit outResponseAuthorizeDeposit = new ResponseAuthorizeDeposit();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizeDeposit.getExternalCustomerId()),
+				new Data("uuid", inRequestAuthorizeDeposit.getUuid()),
+				new Data("orderId", inRequestAuthorizeDeposit.getOrderId()),
+				new Data("accountNumber", inRequestAuthorizeDeposit.getAccountNumber()),
+				new Data("transmissionDateTimeGmt", inRequestAuthorizeDeposit.getTransmissionDateTimeGmt()),
+				new Data("date", inRequestAuthorizeDeposit.getDate()),
+				new Data("time", inRequestAuthorizeDeposit.getTime()),
+				new Data("mti", inRequestAuthorizeDeposit.getMti()),
+				new Data("processing", inRequestAuthorizeDeposit.getProcessing().getType()),
+				new Data("processing", inRequestAuthorizeDeposit.getProcessing().getCode()),
+				new Data("nsu", inRequestAuthorizeDeposit.getNsu()),
+				new Data("merchantCategoryCode", inRequestAuthorizeDeposit.getMerchantCategoryCode()),
+				new Data("transaction", inRequestAuthorizeDeposit.getTransaction().getSourceCurrencyCode()),
+				new Data("transaction", inRequestAuthorizeDeposit.getTransaction().getSettlementCurrencyCode()),
+				new Data("transaction", inRequestAuthorizeDeposit.getTransaction().getAmount()),
+				new Data("institutionName", inRequestAuthorizeDeposit.getInstitutionName()),
+				new Data("terminalCode", inRequestAuthorizeDeposit.getTerminalCode()),
+				new Data("retrievalReferenceNumber", inRequestAuthorizeDeposit.getRetrievalReferenceNumber()),
+				new Data("acquirerCountryCode", inRequestAuthorizeDeposit.getAcquirerCountryCode()),
+				new Data("storeNumber", inRequestAuthorizeDeposit.getStoreNumber()),
+				new Data("afiliacionNumber", inRequestAuthorizeDeposit.getAfiliacionNumber()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseAuthorizeDeposit = iServiceContractOperationsApiService
+					.authorizeDeposit(inRequestAuthorizeDeposit);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizeDeposit");
+		return Response.ok(outResponseAuthorizeDeposit).build();
+
+	}
+	
+	/**
+	 * Authorize Reversal
+	 */
+	@POST
+	@Path("/apiOperations/authorization/authorizeReversal")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizeReversal(RequestAuthorizeReversal inRequestAuthorizeReversal) {
+		LOGGER.logDebug("Start service execution REST: authorizeReversal");
+		ResponseAuthorizeReversal outResponseAuthorizeReversal = new ResponseAuthorizeReversal();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizeReversal.getExternalCustomerId()),
+				new Data("uuid", inRequestAuthorizeReversal.getUuid()),
+				new Data("orderId", inRequestAuthorizeReversal.getOrderId()),
+				new Data("accountNumber", inRequestAuthorizeReversal.getAccountNumber()),
+				new Data("transmissionDateTimeGmt", inRequestAuthorizeReversal.getTransmissionDateTimeGmt()),
+				new Data("date", inRequestAuthorizeReversal.getDate()),
+				new Data("time", inRequestAuthorizeReversal.getTime()),
+				new Data("mti", inRequestAuthorizeReversal.getMti()),
+				new Data("processing", inRequestAuthorizeReversal.getProcessing().getType()),
+				new Data("processing", inRequestAuthorizeReversal.getProcessing().getCode()),
+				new Data("nsu", inRequestAuthorizeReversal.getNsu()),
+				new Data("merchantCategoryCode", inRequestAuthorizeReversal.getMerchantCategoryCode()),
+				new Data("transaction", inRequestAuthorizeReversal.getTransaction().getSourceCurrencyCode()),
+				new Data("transaction", inRequestAuthorizeReversal.getTransaction().getSettlementCurrencyCode()),
+				new Data("transaction", inRequestAuthorizeReversal.getTransaction().getAmount()),
+				new Data("terminalCode", inRequestAuthorizeReversal.getTerminalCode()),
+				new Data("retrievalReferenceNumber", inRequestAuthorizeReversal.getRetrievalReferenceNumber()),
+				new Data("acquirerCountryCode", inRequestAuthorizeReversal.getAcquirerCountryCode()),
+				new Data("storeNumber", inRequestAuthorizeReversal.getStoreNumber()),
+				new Data("afiliacionNumber", inRequestAuthorizeReversal.getAfiliacionNumber()),
+				new Data("establishment", inRequestAuthorizeReversal.getEstablishment()),
+				new Data("adviceReason", inRequestAuthorizeReversal.getAdviceReason()),
+				new Data("adviceReasonCode", inRequestAuthorizeReversal.getAdviceReasonCode()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseAuthorizeReversal = iServiceContractOperationsApiService
+					.authorizeReversal(inRequestAuthorizeReversal);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizeReversal");
+		return Response.ok(outResponseAuthorizeReversal).build();
 
 	}
 
