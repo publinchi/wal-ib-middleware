@@ -1537,7 +1537,8 @@
 							orchestration-core-ib-authorize-purchase-api,
 							orchestration-core-ib-authorize-withdrawal-api,
 							orchestration-core-ib-authorize-deposit-api,
-							orchestration-core-ib-authorize-reversal-api
+							orchestration-core-ib-authorize-reversal-api,
+							orchestration-core-ib-update-card-dock-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
