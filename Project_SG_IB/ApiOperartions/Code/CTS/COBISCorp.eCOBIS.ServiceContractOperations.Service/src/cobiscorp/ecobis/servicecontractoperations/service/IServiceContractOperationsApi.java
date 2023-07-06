@@ -36,9 +36,19 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO affiliateCustomer(ServiceRequestTO requestTO);  
 
   /**
+  * Authorize Deposit
+  */
+  ServiceResponseTO authorizeDeposit(ServiceRequestTO requestTO);  
+
+  /**
   * Authorize Purchase
   */
   ServiceResponseTO authorizePurchase(ServiceRequestTO requestTO);  
+
+  /**
+  * Authorize Reversal
+  */
+  ServiceResponseTO authorizeReversal(ServiceRequestTO requestTO);  
 
   /**
   * Authorize Withdrawal
