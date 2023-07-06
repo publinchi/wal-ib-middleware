@@ -23,11 +23,15 @@ package cobiscorp.ecobis.servicecontractoperations.service;
 
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
@@ -135,6 +139,22 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizeWithdrawal authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
+			throws CTSRestException;
+	
+	/**
+	 * Authorize Deposit
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeDeposit authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit)
+			throws CTSRestException;
+
+	/**
+	 * Authorize Reversal
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeReversal authorizeReversal(RequestAuthorizeReversal inRequestAuthorizeReversal)
 			throws CTSRestException;
 
 	/**

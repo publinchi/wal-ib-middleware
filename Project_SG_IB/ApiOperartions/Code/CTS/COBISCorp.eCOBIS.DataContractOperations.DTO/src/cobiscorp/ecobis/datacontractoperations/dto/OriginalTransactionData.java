@@ -27,47 +27,61 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestUpdateCardStatus implements Serializable {
-  private Integer externalCustomerId;
-  private String cardStatus;
-  private String statusReason;
-  private String accountNumber;
-  private String typeCard;
-  private String mode;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class OriginalTransactionData implements Serializable {
+  private String uuid;
+  private String nsu;
+  private String mti;
+  private String transmissionDateTimeGmt;
+  private String institutionName;
+  private String retrievalReferenceNumber;
+  private String type;
+  private String code;
+  public String getUuid(){
+    return this.uuid;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public void setUuid(String uuid ){
+    this.uuid=uuid;
   }
-  public String getCardStatus(){
-    return this.cardStatus;
+  public String getNsu(){
+    return this.nsu;
   }
-  public void setCardStatus(String cardStatus ){
-    this.cardStatus=cardStatus;
+  public void setNsu(String nsu ){
+    this.nsu=nsu;
   }
-  public String getStatusReason(){
-    return this.statusReason;
+  public String getMti(){
+    return this.mti;
   }
-  public void setStatusReason(String statusReason ){
-    this.statusReason=statusReason;
+  public void setMti(String mti ){
+    this.mti=mti;
   }
-  public String getAccountNumber(){
-    return this.accountNumber;
+  public String getTransmissionDateTimeGmt(){
+    return this.transmissionDateTimeGmt;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public void setTransmissionDateTimeGmt(String transmissionDateTimeGmt ){
+    this.transmissionDateTimeGmt=transmissionDateTimeGmt;
   }
-  public String getTypeCard(){
-    return this.typeCard;
+  public String getInstitutionName(){
+    return this.institutionName;
   }
-  public void setTypeCard(String typeCard ){
-    this.typeCard=typeCard;
+  public void setInstitutionName(String institutionName ){
+    this.institutionName=institutionName;
   }
-  public String getMode(){
-    return this.mode;
+  public String getRetrievalReferenceNumber(){
+    return this.retrievalReferenceNumber;
   }
-  public void setMode(String mode ){
-    this.mode=mode;
+  public void setRetrievalReferenceNumber(String retrievalReferenceNumber ){
+    this.retrievalReferenceNumber=retrievalReferenceNumber;
+  }
+  public String getType(){
+    return this.type;
+  }
+  public void setType(String type ){
+    this.type=type;
+  }
+  public String getCode(){
+    return this.code;
+  }
+  public void setCode(String code ){
+    this.code=code;
   }
 }

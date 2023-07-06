@@ -27,47 +27,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestUpdateCardStatus implements Serializable {
-  private Integer externalCustomerId;
-  private String cardStatus;
-  private String statusReason;
-  private String accountNumber;
-  private String typeCard;
-  private String mode;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class ResponseAuthorizeDeposit implements Serializable {
+  private Boolean success;
+  private Response response;
+  public Boolean isSuccess(){
+    return this.success;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public void setSuccess(Boolean success ){
+    this.success=success;
   }
-  public String getCardStatus(){
-    return this.cardStatus;
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
+	}
+	return this.response;
   }
-  public void setCardStatus(String cardStatus ){
-    this.cardStatus=cardStatus;
+  public Response getResponse(){
+    return this.response;
   }
-  public String getStatusReason(){
-    return this.statusReason;
-  }
-  public void setStatusReason(String statusReason ){
-    this.statusReason=statusReason;
-  }
-  public String getAccountNumber(){
-    return this.accountNumber;
-  }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
-  }
-  public String getTypeCard(){
-    return this.typeCard;
-  }
-  public void setTypeCard(String typeCard ){
-    this.typeCard=typeCard;
-  }
-  public String getMode(){
-    return this.mode;
-  }
-  public void setMode(String mode ){
-    this.mode=mode;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }
