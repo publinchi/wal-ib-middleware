@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class CardApplicationResponse implements Serializable {
+public class ResponseAuthorizeDeposit implements Serializable {
   private Boolean success;
   private Response response;
   public Boolean isSuccess(){

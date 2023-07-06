@@ -27,9 +27,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestAuthorizePurchase implements Serializable {
+public class RequestAuthorizeDeposit implements Serializable {
   private Integer externalCustomerId;
   private String uuid;
+  private String orderId;
   private String accountNumber;
   private String transmissionDateTimeGmt;
   private String date;
@@ -37,15 +38,14 @@ public class RequestAuthorizePurchase implements Serializable {
   private String mti;
   private Processing processing;
   private String nsu;
-  private String cardExpirationDate;
-  private CardEntry cardEntry;
   private String merchantCategoryCode;
-  private Values values;
+  private Transaction transaction;
   private String institutionName;
   private String terminalCode;
   private String retrievalReferenceNumber;
   private String acquirerCountryCode;
-  private TransactionIndicators transactionIndicators;
+  private java.math.BigDecimal storeNumber;
+  private java.math.BigDecimal afiliacionNumber;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -57,6 +57,12 @@ public class RequestAuthorizePurchase implements Serializable {
   }
   public void setUuid(String uuid ){
     this.uuid=uuid;
+  }
+  public String getOrderId(){
+    return this.orderId;
+  }
+  public void setOrderId(String orderId ){
+    this.orderId=orderId;
   }
   public String getAccountNumber(){
     return this.accountNumber;
@@ -106,41 +112,23 @@ public class RequestAuthorizePurchase implements Serializable {
   public void setNsu(String nsu ){
     this.nsu=nsu;
   }
-  public String getCardExpirationDate(){
-    return this.cardExpirationDate;
-  }
-  public void setCardExpirationDate(String cardExpirationDate ){
-    this.cardExpirationDate=cardExpirationDate;
-  }
-  public CardEntry cardEntryInstance(){
-	if(this.cardEntry==null){
-	this.cardEntry=new CardEntry();
-	}
-	return this.cardEntry;
-  }
-  public CardEntry getCardEntry(){
-    return this.cardEntry;
-  }
-  public void setCardEntry(CardEntry cardEntry ){
-    this.cardEntry=cardEntry;
-  }
   public String getMerchantCategoryCode(){
     return this.merchantCategoryCode;
   }
   public void setMerchantCategoryCode(String merchantCategoryCode ){
     this.merchantCategoryCode=merchantCategoryCode;
   }
-  public Values valuesInstance(){
-	if(this.values==null){
-	this.values=new Values();
+  public Transaction transactionInstance(){
+	if(this.transaction==null){
+	this.transaction=new Transaction();
 	}
-	return this.values;
+	return this.transaction;
   }
-  public Values getValues(){
-    return this.values;
+  public Transaction getTransaction(){
+    return this.transaction;
   }
-  public void setValues(Values values ){
-    this.values=values;
+  public void setTransaction(Transaction transaction ){
+    this.transaction=transaction;
   }
   public String getInstitutionName(){
     return this.institutionName;
@@ -166,16 +154,16 @@ public class RequestAuthorizePurchase implements Serializable {
   public void setAcquirerCountryCode(String acquirerCountryCode ){
     this.acquirerCountryCode=acquirerCountryCode;
   }
-  public TransactionIndicators transactionIndicatorsInstance(){
-	if(this.transactionIndicators==null){
-	this.transactionIndicators=new TransactionIndicators();
-	}
-	return this.transactionIndicators;
+  public java.math.BigDecimal getStoreNumber(){
+    return this.storeNumber;
   }
-  public TransactionIndicators getTransactionIndicators(){
-    return this.transactionIndicators;
+  public void setStoreNumber(java.math.BigDecimal storeNumber ){
+    this.storeNumber=storeNumber;
   }
-  public void setTransactionIndicators(TransactionIndicators transactionIndicators ){
-    this.transactionIndicators=transactionIndicators;
+  public java.math.BigDecimal getAfiliacionNumber(){
+    return this.afiliacionNumber;
+  }
+  public void setAfiliacionNumber(java.math.BigDecimal afiliacionNumber ){
+    this.afiliacionNumber=afiliacionNumber;
   }
 }

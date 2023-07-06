@@ -217,8 +217,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestAuthorizePurchase.getExternalCustomerId()));
 			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, inRequestAuthorizePurchase.getUuid());
-			procedureRequestAS.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizePurchase.getCardId());
 			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchase.getAccountNumber());
 			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
@@ -395,8 +393,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawal.getAcquirerCountryCode());
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
 					inRequestAuthorizeWithdrawal.getAcquirerCountryCode());
+			
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawal);
+			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
 	
-
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
@@ -473,6 +474,291 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// returns data
 			return outResponseAuthorizeWithdrawal;
 		}
+		
+		/**
+		 * Authorize Deposit
+		 */
+		@Override
+		// Have DTO
+		public ResponseAuthorizeDeposit authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: authorizeDeposit");
+			ResponseAuthorizeDeposit outResponseAuthorizeDeposit = new ResponseAuthorizeDeposit();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_deposit_api");
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500134");
+			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestAuthorizeDeposit.getExternalCustomerId()));
+			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getUuid());
+			procedureRequestAS.addInputParam("@i_order_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getOrderId());
+			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getAccountNumber());
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTransmissionDateTimeGmt());
+			procedureRequestAS.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getDate());
+			procedureRequestAS.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getTime());
+			procedureRequestAS.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getMti());
+			procedureRequestAS.addInputParam("@i_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getProcessing().getType());
+			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getProcessing().getCode());
+			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getNsu());
+			procedureRequestAS.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getMerchantCategoryCode());
+			procedureRequestAS.addInputParam("@i_source_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTransaction().getSourceCurrencyCode());
+			procedureRequestAS.addInputParam("@i_settlement_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTransaction().getSettlementCurrencyCode());
+			procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTransaction().getAmount());
+			procedureRequestAS.addInputParam("@i_institution_name", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getInstitutionName());
+			procedureRequestAS.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTerminalCode());
+			procedureRequestAS.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getRetrievalReferenceNumber());
+			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getAcquirerCountryCode());
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDeposit.getStoreNumber()));
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDeposit.getAfiliacionNumber()));
+			
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAuthorizeDeposit);
+			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeDeposit.setSuccess(returnResponseAuthorizeDeposit.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeDeposit.setResponse(returnResponseAuthorizeDeposit.getResponse());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+
+			LOGGER.logDebug("Ends service execution: authorizeDeposit");
+			// returns data
+			return outResponseAuthorizeDeposit;
+		}
+		
+		/**
+		 * Authorize Reversal
+		 */
+		@Override
+		// Have DTO
+		public ResponseAuthorizeReversal authorizeReversal(RequestAuthorizeReversal inRequestAuthorizeReversal)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: authorizeReversal");
+			ResponseAuthorizeReversal outResponseAuthorizeReversal = new ResponseAuthorizeReversal();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_reversal_api");
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500135");
+			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestAuthorizeReversal.getExternalCustomerId()));
+			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversal.getUuid());
+			procedureRequestAS.addInputParam("@i_order_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOrderId());
+			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getAccountNumber());
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTransmissionDateTimeGmt());
+			procedureRequestAS.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversal.getDate());
+			procedureRequestAS.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversal.getTime());
+			procedureRequestAS.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversal.getMti());
+			procedureRequestAS.addInputParam("@i_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getProcessing().getType());
+			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getProcessing().getCode());
+			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversal.getNsu());
+			procedureRequestAS.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getMerchantCategoryCode());
+			procedureRequestAS.addInputParam("@i_source_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTransaction().getSourceCurrencyCode());
+			procedureRequestAS.addInputParam("@i_settlement_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTransaction().getSettlementCurrencyCode());
+			procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTransaction().getAmount());
+			procedureRequestAS.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTerminalCode());
+			procedureRequestAS.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getRetrievalReferenceNumber());
+			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getAcquirerCountryCode());
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeReversal.getStoreNumber()));
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeReversal.getAfiliacionNumber()));
+			procedureRequestAS.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getEstablishment());
+			procedureRequestAS.addInputParam("@i_advise_reason", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getAdviceReason());
+			procedureRequestAS.addInputParam("@i_advise_reason_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getAdviceReasonCode());
+			procedureRequestAS.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getUuid());
+			procedureRequestAS.addInputParam("@i_origin_nsu", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getNsu());
+			procedureRequestAS.addInputParam("@i_origin_mti", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getMti());
+			procedureRequestAS.addInputParam("@i_origin_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getTransmissionDateTimeGmt());
+			procedureRequestAS.addInputParam("@i_origin_institution_name", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getInstitutionName());
+			procedureRequestAS.addInputParam("@i_origin_retrieval_reference_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getRetrievalReferenceNumber());
+			procedureRequestAS.addInputParam("@i_origin_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getType());
+			procedureRequestAS.addInputParam("@i_origin_processing_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getOriginalTransactionData().getCode());
+			
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAuthorizeReversal);
+			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
+			
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeReversal.setSuccess(returnResponseAuthorizeReversal.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeReversal.setResponse(returnResponseAuthorizeReversal.getResponse());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+
+			LOGGER.logDebug("Ends service execution: authorizeReversal");
+			// returns data
+			return outResponseAuthorizeReversal;
+		}
+        
 
 	/**
 	 * Create new customers

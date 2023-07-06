@@ -27,7 +27,7 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
   </collection>
-  <field type="String" name="name" value="CardApplicationResponse" />
+  <field type="String" name="name" value="ResponseAuthorizeDeposit" />
   <collection type="Map" length="0" id="6" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
