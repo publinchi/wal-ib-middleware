@@ -222,7 +222,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
 		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
 		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, reponseAccount.readValueParam("@o_ssn_host"));
-		request.addInputParam("@i_reverse_tran", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_uuid_reverse"));
+		request.addInputParam("@i_reverse_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_uuid"));
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
@@ -266,9 +266,11 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		if (codeReturn == 0) {
 			
-			registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+			if (anOriginalProcedureRes.readValueParam("@o_ssn_host") != null && !anOriginalProcedureRes.readValueParam("@o_ssn_host").equals("0"))
+				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 			
 			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
+				
 				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
 				logger.logDebug("Ending flow, processResponse success with code: ");
 				
