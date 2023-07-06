@@ -10,6 +10,7 @@
     <parameter name="@i_status_reason" dataType="varchar" direction="in" />
     <parameter name="@i_account_number" dataType="varchar" direction="in" />
     <parameter name="@i_type_card" dataType="varchar" direction="in" />
+    <parameter name="@i_mode" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

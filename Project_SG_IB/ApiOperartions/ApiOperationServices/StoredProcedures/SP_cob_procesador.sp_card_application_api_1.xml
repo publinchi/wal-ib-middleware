@@ -21,10 +21,6 @@
         <column name="success" />
         <column name="code" />
         <column name="message" />
-        <column name="cardId" />
-        <column name="personId" />
-        <column name="accountId" />
-        <column name="assignmentDate" />
       </columns>
       <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message,"cardId" = tab.cardId,"cardNumber" = tab.cardNumber,"customerName" = tab.customerName,"cardApplication" = tab.cardApplication </queryText>
     </query>
