@@ -33,6 +33,7 @@ public class RequestUpdateCardStatus implements Serializable {
   private String statusReason;
   private String accountNumber;
   private String typeCard;
+  private String mode;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -62,5 +63,11 @@ public class RequestUpdateCardStatus implements Serializable {
   }
   public void setTypeCard(String typeCard ){
     this.typeCard=typeCard;
+  }
+  public String getMode(){
+    return this.mode;
+  }
+  public void setMode(String mode ){
+    this.mode=mode;
   }
 }
