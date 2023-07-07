@@ -122,7 +122,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
 		request.addInputParam("@i_origin_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_mti"));
 		request.addInputParam("@i_origin_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_type"));
-		request.addInputParam("@i_origin_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_processingCode"));
+		request.addInputParam("@i_origin_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_processing_code"));
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
@@ -154,8 +154,10 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		}
 		
 		String trn = "253";
+		String causa = "102";
 		if (aRequest.readValueParam("@i_origin_type").equals("DEPOSIT")) {
 			trn = "264";
+			causa = "106";
 		}
 
 		request.setSpName("cob_cuentas..sp_retiro_atm_api");
@@ -176,7 +178,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, trn);
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "110");
+		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, causa);
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
 		request.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_uuid"));
 		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, trn);

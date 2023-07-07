@@ -168,7 +168,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "253");
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "110");
+		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "102");
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
 		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "253");
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
