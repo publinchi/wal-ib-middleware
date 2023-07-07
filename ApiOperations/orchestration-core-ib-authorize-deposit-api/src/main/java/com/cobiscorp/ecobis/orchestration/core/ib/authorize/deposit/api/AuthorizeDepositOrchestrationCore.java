@@ -105,7 +105,13 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en valDataLocal");
 		}
-
+		
+		String monto = aRequest.readValueParam("@i_amount");
+		
+		if (monto != null && !monto.isEmpty() && !monto.matches("[0-9]+[\\.]?[0-9]*")) {
+			monto = "";
+		}
+		
 		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -118,7 +124,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
-		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, monto);
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
 		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
@@ -168,7 +174,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "253");
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "110");
+		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "102");
 		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
 		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "253");
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
