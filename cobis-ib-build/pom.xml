@@ -197,6 +197,7 @@
 		<module>../ApiOperations/orchestration-core-ib-authorize-withdrawal-api</module>
 		<module>../ApiOperations/orchestration-core-ib-authorize-deposit-api</module>
 		<module>../ApiOperations/orchestration-core-ib-authorize-reversal-api</module>
+		<module>../ApiOperations/orchestration-core-ib-authorize-reversal-dock-api</module>
 		<module>../ApiOperations/orchestration-core-ib-update-card-dock-api</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>

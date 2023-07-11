@@ -2026,7 +2026,6 @@ public class ServiceContractOperationsApiRest {
 			new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()), 
 			new Data("nsu", inRequestAuthorizeReversalDock.getNsu()), 
 			new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()), 
-			new Data("card_expiration_date", inRequestAuthorizeReversalDock.getCard_expiration_date()), 
 			new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()), 
 			new Data("installments", inRequestAuthorizeReversalDock.getInstallments()), 
 			new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()), 

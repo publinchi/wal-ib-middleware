@@ -4496,6 +4496,7 @@ int mapBlank=0;
           
       //create procedure
       ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_reversal_dock_api");
+	  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500139");
       procedureRequestAS.addInputParam("@i_account_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAccount_id());
       procedureRequestAS.addInputParam("@i_person_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPerson_id());
       procedureRequestAS.addInputParam("@i_card_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_id());
