@@ -4637,5 +4637,156 @@ int mapBlank=0;
         //returns data
         return outSingleResponseUpdateCredentials;
       }
+
+	  /**
+          * Authorize Reversal Dock
+          */
+         @Override
+			// Return DTO
+			public  ResponseAuthorizeReversalDock  authorizeReversalDock(String legacyid,String clientid,String uuid,String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: authorizeReversalDock");
+      ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock  = new ResponseAuthorizeReversalDock();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_reversal_dock_api");
+      procedureRequestAS.addInputParam("@i_account_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAccount_id());
+      procedureRequestAS.addInputParam("@i_person_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPerson_id());
+      procedureRequestAS.addInputParam("@i_card_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_id());
+      procedureRequestAS.addInputParam("@i_product_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProduct_id());
+      procedureRequestAS.addInputParam("@i_product_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProduct_status());
+      procedureRequestAS.addInputParam("@i_bank_branch_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getBank_branch_number());
+      procedureRequestAS.addInputParam("@i_bank_account_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getBank_account_number());
+      procedureRequestAS.addInputParam("@i_transmission_date_time",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTransmission_date_time_gmt());
+      procedureRequestAS.addInputParam("@i_terminal_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTerminal_date());
+      procedureRequestAS.addInputParam("@i_terminal_time",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTerminal_time());
+      procedureRequestAS.addInputParam("@i_mti",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getMti());
+      procedureRequestAS.addInputParam("@i_processing_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getType());
+      procedureRequestAS.addInputParam("@i_processing_origin_account_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type());
+      procedureRequestAS.addInputParam("@i_processing_destiny_account_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type());
+      procedureRequestAS.addInputParam("@i_processing_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getCode());
+      procedureRequestAS.addInputParam("@i_nsu",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getNsu());
+      procedureRequestAS.addInputParam("@i_authorization_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAuthorization_code());
+      procedureRequestAS.addInputParam("@i_card_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_number());
+      procedureRequestAS.addInputParam("@i_card_expiration_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_expiration_date());
+      procedureRequestAS.addInputParam("@i_transaction_origin",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTransaction_origin());
+      procedureRequestAS.addInputParam("@i_installments",ICTSTypes.SQLINT4,String.valueOf(inRequestAuthorizeReversalDock.getInstallments()));
+      procedureRequestAS.addInputParam("@i_installment_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getInstallment_type());
+      procedureRequestAS.addInputParam("@i_card_entry_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_entry().getCode());
+      procedureRequestAS.addInputParam("@i_card_entry_pin",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_entry().getPin());
+      procedureRequestAS.addInputParam("@i_card_entry_mode",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_entry().getMode());
+      procedureRequestAS.addInputParam("@i_mechant_category_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getMerchant_category_code());
+      procedureRequestAS.addInputParam("@i_values_updated_transaction_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getUpdated_transaction_value());
+      procedureRequestAS.addInputParam("@i_values_source_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSource_currency_code());
+      procedureRequestAS.addInputParam("@i_values_settlement_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSettlement_currency_code());
+      procedureRequestAS.addInputParam("@i_values_billing_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getBilling_currency_code());
+      procedureRequestAS.addInputParam("@i_values_source_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSource_value());
+      procedureRequestAS.addInputParam("@i_values_settlement_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSettlement_value());
+      procedureRequestAS.addInputParam("@i_values_billing_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getBilling_value());
+      procedureRequestAS.addInputParam("@i_values_billing_conversion_rate",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getBilling_conversion_rate());
+      procedureRequestAS.addInputParam("@i_values_cash_back_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getCash_back_value());
+      procedureRequestAS.addInputParam("@i_values_credit__line_usage_fee",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getCredit_line_usage_fee());
+      procedureRequestAS.addInputParam("@i_establishment",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getEstablishment());
+      procedureRequestAS.addInputParam("@i_terminal_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTerminal_code());
+      procedureRequestAS.addInputParam("@i_establishment_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getEstablishment_code());
+      procedureRequestAS.addInputParam("@i_retrieval_reference_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getRetrieval_reference_number());
+      procedureRequestAS.addInputParam("@i_brand_response_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getBrand_response_code());
+      procedureRequestAS.addInputParam("@i_advice_reason",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAdvice_reason());
+      procedureRequestAS.addInputParam("@i_advice_reason_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAdvice_reason_code());
+      procedureRequestAS.addInputParam("@i_pos_postal_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPos_postal_code());
+      procedureRequestAS.addInputParam("@i_acquirer_country_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAcquirer_country_code());
+      procedureRequestAS.addInputParam("@i_preauthorization_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPreauthorization().getType());
+      procedureRequestAS.addInputParam("@i_preauthorization_initial_transaction_uuid",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPreauthorization().getInitial_transaction_uuid());
+      procedureRequestAS.addInputParam("@i_preauthorization_life_cycle",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPreauthorization().getLife_cycle());
+      procedureRequestAS.addInputParam("@i_token_data_token",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getToken());
+      procedureRequestAS.addInputParam("@i_token_data_requestor_id_token",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getRequestor_id_token());
+      procedureRequestAS.addInputParam("@i_token_data_expiration_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getExpiration_date());
+      procedureRequestAS.addInputParam("@i_token_data_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getStatus());
+      procedureRequestAS.addInputParam("@i_funds_transfer_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getFunds_transfer().getType());
+      procedureRequestAS.addInputParam("@i_transaction_indicators_card_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCard_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_cardholder_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCardholder_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_password_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPassword_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_cvv1_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv1_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_ccv2_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv2_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_ccv3_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv3_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_token_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isToken_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_3ds_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_3ds_present()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_3ds_valid",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_3ds_valid()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_recurring",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isRecurring()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_allows_partial_approval",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isAllows_partial_approval()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_pin_validated_offline",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPin_validated_offline()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_partially_reversed",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPartially_reversed()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_preauthorization",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPreauthorization()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_crossborder",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_crossborder()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_dcc",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_dcc()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isOnly_supports_purchase()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_international",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_international()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_funds_transfer",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_funds_transfer()));
+      procedureRequestAS.addInputParam("@i_transaction_indicators_is_automated_fuel_dispenser",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_automated_fuel_dispenser()));
+      procedureRequestAS.addInputParam("@i_original_transaction_data_transaction_uuid",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_nsu",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getNsu());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_mti",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_transmission_date_time_gmt",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransmission_date_time_gmt());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_institution_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_institutiion_name",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_accounting_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getAccounting_date());
+      procedureRequestAS.addInputParam("@i_original_transaction_data_retrieval_reference_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getRetrieval_reference_number());
+      procedureRequestAS.addInputParam("@i_legacy-id",ICTSTypes.SQLVARCHAR,legacyid);
+      procedureRequestAS.addInputParam("@i_client-id",ICTSTypes.SQLVARCHAR,clientid);
+      procedureRequestAS.addInputParam("@i_uuid",ICTSTypes.SQLVARCHAR,uuid);
+      procedureRequestAS.addInputParam("@i_x-apigw-api-id",ICTSTypes.SQLVARCHAR,xapigwapiid);
+
+	  Gson gson = new Gson();
+	  String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);
+	  procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    ResponseAuthorizeReversalDock returnResponseAuthorizeReversalDock = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizeReversalDock>() { 
+                    @Override
+                    public ResponseAuthorizeReversalDock mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseAuthorizeReversalDock dto = new ResponseAuthorizeReversalDock();
+                    
+                          dto.setResponse(resultSetMapper.getString(1));
+                          dto.setReason(resultSetMapper.getString(2));
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseAuthorizeReversalDock=returnResponseAuthorizeReversalDock ;
+                    
+            }else {
+            mapBlank++;
+
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: authorizeReversalDock");
+        //returns data
+        return outSingleResponseAuthorizeReversalDock;
+      }
     
 }

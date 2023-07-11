@@ -113,6 +113,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
 import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
 import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
+import   cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversalDock;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversalDock;
 
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 import java.util.List;
@@ -440,5 +442,12 @@ public interface IServiceContractOperationsApiService {
         
 	// Return DTO
 	public ResponseUpdateCredentials updateCredentials(RequestUpdateCredentials inRequestUpdateCredentials  )throws CTSRestException;
+
+	/**
+	* Authorize Reversal Dock
+    */
+        
+	// Return DTO
+	public  ResponseAuthorizeReversalDock  authorizeReversalDock(String legacyid,String clientid,String uuid,String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock  )throws CTSRestException;
 
 }
