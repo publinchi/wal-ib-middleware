@@ -259,6 +259,125 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_auth_purchase_dock_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestAuthorizePurchaseDock",
+				input = {
+				
+					@CTSInputParam(field = "account_id", param = "@i_account_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "acquirer_country_code", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "bank_account_number", param = "@i_bank_account_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "bank_branch_number", param = "@i_bank_branch_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "brand_response_code", param = "@i_brand_response_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_expiration_date", param = "@i_card_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_indicators.cardholder_present", param = "@i_card_holder_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "card_id", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_number", param = "@i_card_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_indicators.card_present", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "card_entry.code", param = "@i_crd_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.pin", param = "@i_crd_mode", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.pin", param = "@i_crd_pin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "establishment", param = "@i_establishment", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "establishment_code", param = "@i_establishment_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "funds_transfer.type", param = "@i_funds_transfer_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "installment_type", param = "@i_installment_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "installments", param = "@i_installments", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "merchant_category_code", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_p_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.destiny_account_type", param = "@i_p_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.origin_account_type", param = "@i_p_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_p_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "person_id", param = "@i_person_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "pos_postal_code", param = "@i_pos_postal_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "preauthorization.initial_transaction_uuid", param = "@i_pre_initial_transaction_uuid", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "preauthorization.life_cycle", param = "@i_pre_life_cycle", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "preauthorization.type", param = "@i_pre_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "product_id", param = "@i_product_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "product_status", param = "@i_product_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "retrieval_reference_number", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "terminal_code", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "terminal_date", param = "@i_terminal_date", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "terminal_time", param = "@i_terminal_time", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.expiration_date", param = "@i_tk_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.requestor_id_token", param = "@i_tk_requestor_id_token", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.status", param = "@i_tk_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.token", param = "@i_tk_token", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_origin", param = "@i_transaction_origin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time_gtm", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_indicators.allows_partial_approval", param = "@i_trn_allows_partial_approval", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.card_present", param = "@i_trn_card_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cardholder_present", param = "@i_trn_cardholder_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv1_present", param = "@i_trn_cvv1_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv2_present", param = "@i_trn_cvv2_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv3_present", param = "@i_trn_cvv3_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_3ds_present", param = "@i_trn_is_3ds_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_3ds_valid", param = "@i_trn_is_3ds_valid", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_automated_fuel_dispenser", param = "@i_trn_is_automated_fuel_disp", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_crossborder", param = "@i_trn_is_crossborder", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_dcc", param = "@i_trn_is_dcc", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_funds_transfer", param = "@i_trn_is_funds_transfer", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_international", param = "@i_trn_is_international", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.only_supports_purchase", param = "@i_trn_only_supports_purchase", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.partially_reversed", param = "@i_trn_partially_reversed", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.password_present", param = "@i_trn_password_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.pin_validated_offline", param = "@i_trn_pin_validated_offline", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.preauthorization", param = "@i_trn_preauthorization", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.recurring", param = "@i_trn_recurring", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.token_present", param = "@i_trn_token_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "values.billing_conversion_rate", param = "@i_val_billing_conversion_rate", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_currency_code", param = "@i_val_billing_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_value", param = "@i_val_billing_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.cash_back_value", param = "@i_val_cash_back_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.credit_line_usage_fee", param = "@i_val_credit_line_usage_fee", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_currency_code", param = "@i_val_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_value", param = "@i_val_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_currency_code", param = "@i_val_source_currency_code", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500138")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseAuthorizePurchaseDock",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock.class,
+      columns = {
+		    @CTSColumn(field = "approved_value", columnIndex = 1),
+		    @CTSColumn(field = "settlement_value", columnIndex = 2),
+		    @CTSColumn(field = "cardholder_billing_value", columnIndex = 3),
+		    @CTSColumn(field = "reason", columnIndex = 4),
+		    @CTSColumn(field = "available_limit", columnIndex = 5)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseAuthorizePurchaseDock",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock.class,
+      columns = {
+		    @CTSColumn(field = "response", columnIndex = 1)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO authorizePurchaseDock(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+	  
+	@CTSProcedure(
 		name = "cob_procesador..sp_auth_reversal_api", dbms = "SQLCTS",  
 		objectRequest = {
 		

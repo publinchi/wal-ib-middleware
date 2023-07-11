@@ -30,9 +30,11 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
@@ -293,6 +295,45 @@ public class ServiceContractOperationsApiRest {
 		return Response.ok(outResponseAuthorizePurchase).build();
 
 	}
+	
+	    /**
+	    * Authorize Purchase Dock
+	    */
+	  @POST
+		@Path("/apiOperations/authorization/authorizePurchaseDock")
+		@Consumes({"application/json"})
+		@Produces({"application/json"})
+		 public Response  authorizePurchaseDock(@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock ){
+		LOGGER.logDebug("Start service execution REST: authorizePurchaseDock");
+		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock  = new ResponseAuthorizePurchaseDock();
+		    
+		if(!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()), new Data("card_expiration_date", inRequestAuthorizePurchaseDock.getCard_expiration_date()), new Data("transaction_indicators.cardholder_present", inRequestAuthorizePurchaseDock.transaction_indicatorsInstance().isCardholder_present()), new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()), new Data("transaction_indicators.card_present", inRequestAuthorizePurchaseDock.transaction_indicatorsInstance().isCard_present()), new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()), new Data("card_entry.pin", inRequestAuthorizePurchaseDock.getCard_entry().getPin()), new Data("establishment_code", inRequestAuthorizePurchaseDock.getEstablishment_code()), new Data("installments", inRequestAuthorizePurchaseDock.getInstallments()), new Data("merchant_category_code", inRequestAuthorizePurchaseDock.getMerchant_category_code()), new Data("mti", inRequestAuthorizePurchaseDock.getMti()), new Data("nsu", inRequestAuthorizePurchaseDock.getNsu()), new Data("processing.code", inRequestAuthorizePurchaseDock.getProcessing().getCode()), new Data("processing.destiny_account_type", inRequestAuthorizePurchaseDock.getProcessing().getDestiny_account_type()), new Data("processing.origin_account_type", inRequestAuthorizePurchaseDock.getProcessing().getOrigin_account_type()), new Data("processing.type", inRequestAuthorizePurchaseDock.getProcessing().getType()), new Data("terminal_code", inRequestAuthorizePurchaseDock.getTerminal_code()), new Data("transaction_origin", inRequestAuthorizePurchaseDock.getTransaction_origin()), new Data("values.billing_currency_code", inRequestAuthorizePurchaseDock.getValues().getBilling_currency_code()), new Data("values.billing_value", inRequestAuthorizePurchaseDock.getValues().getBilling_value()), new Data("values.source_currency_code", inRequestAuthorizePurchaseDock.getValues().getSource_currency_code()))) {
+		  LOGGER.logDebug("400 is returned - Required fields are missing");
+		  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+		}
+		  
+		try {
+		outResponseAuthorizePurchaseDock=iServiceContractOperationsApiService.authorizePurchaseDock(xapigwapiid,legacyid,clientid,uuid, inRequestAuthorizePurchaseDock );
+		} catch (CTSRestException e) {
+		LOGGER.logError("CTSRestException",e);
+		if ("404".equals(e.getMessage())) {
+		LOGGER.logDebug("404 is returned - No data found");
+		return Response.status(404).entity("No data found").build();
+		}
+		
+		LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+		return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e){
+		LOGGER.logDebug("500 is returned - Code exception");
+		LOGGER.logError("Exception",e);
+		return Response.status(500).entity(e.getMessage()).build();
+		}
+		
+		    LOGGER.logDebug("Ends service execution REST: authorizePurchaseDock");
+		    return Response.ok(outResponseAuthorizePurchaseDock).build();
+		  
+		}
+
 
 	/**
 	 * Authorize Withdrawal
