@@ -29,14 +29,18 @@ import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDepositDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDepositDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
@@ -398,6 +402,69 @@ public class ServiceContractOperationsApiRest {
 	}
 	
 	/**
+	 * Authorize Withdrawal Dock
+	 */
+	@POST
+	@Path("/apiOperations/authorization/authorizeWithdrawalDock")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,
+			@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
+			@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
+			@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
+			RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
+		LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
+		ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
+
+		if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
+				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getType()),
+				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
+				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
+				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
+				new Data("nsu", inRequestAuthorizeWithdrawalDock.getNsu()),
+//				new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
+				new Data("transaction_origin", inRequestAuthorizeWithdrawalDock.getTransaction_origin()),
+				new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
+				new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
+				new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
+				new Data("merchant_category_code", inRequestAuthorizeWithdrawalDock.getMerchant_category_code()),
+				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_currency_code()),
+				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_currency_code()),
+				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_value()),
+				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
+				new Data("terminal_code", inRequestAuthorizeWithdrawalDock.getTerminal_code()),
+				new Data("establishment_code", inRequestAuthorizeWithdrawalDock.getEstablishment_code()),
+				new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
+				new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseAuthorizeWithdrawalDock = iServiceContractOperationsApiService.authorizeWithdrawalDock(legacyid,
+					clientid, uuid, xapigwapiid, inRequestAuthorizeWithdrawalDock);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizeWithdrawalDock");
+		return Response.ok(outResponseAuthorizeWithdrawalDock).build();
+
+	}
+	
+	/**
 	 * Authorize Deposit
 	 */
 	@POST
@@ -454,6 +521,69 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: authorizeDeposit");
 		return Response.ok(outResponseAuthorizeDeposit).build();
+
+	}
+	
+	/**
+	 * Authorize Deposit Dock
+	 */
+	@POST
+	@Path("/apiOperations/authorization/authorizeDepositDock")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizeDepositDock(@Null @HeaderParam("legacy-id") String legacyid,
+			@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
+			@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
+			@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
+			RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) {
+		LOGGER.logDebug("Start service execution REST: authorizeDepositDock");
+		ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
+
+		if (!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()),
+				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getType()),
+				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()),
+				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()),
+				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getCode()),
+				new Data("nsu", inRequestAuthorizeDepositDock.getNsu()),
+				new Data("authorization_code", inRequestAuthorizeDepositDock.getAuthorization_code()),
+//				new Data("card_expiration_date", inRequestAuthorizeDepositDock.getCard_expiration_date()),
+				new Data("transaction_origin", inRequestAuthorizeDepositDock.getTransaction_origin()),
+				new Data("card_entry", inRequestAuthorizeDepositDock.getCard_entry().getCode()),
+				new Data("card_entry", inRequestAuthorizeDepositDock.getCard_entry().getPin()),
+				new Data("card_entry", inRequestAuthorizeDepositDock.getCard_entry().getMode()),
+				new Data("merchant_category_code", inRequestAuthorizeDepositDock.getMerchant_category_code()),
+				new Data("values", inRequestAuthorizeDepositDock.getValues().getSource_currency_code()),
+				new Data("values", inRequestAuthorizeDepositDock.getValues().getBilling_currency_code()),
+				new Data("values", inRequestAuthorizeDepositDock.getValues().getSource_value()),
+				new Data("values", inRequestAuthorizeDepositDock.getValues().getBilling_value()),
+				new Data("terminal_code", inRequestAuthorizeDepositDock.getTerminal_code()),
+				new Data("establishment_code", inRequestAuthorizeDepositDock.getEstablishment_code()),
+				new Data("card_id", inRequestAuthorizeDepositDock.getCard_id()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseAuthorizeDepositDock = iServiceContractOperationsApiService.authorizeDepositDock(legacyid,
+					clientid, uuid, xapigwapiid, inRequestAuthorizeDepositDock);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizeDepositDock");
+		return Response.ok(outResponseAuthorizeDepositDock).build();
 
 	}
 	
