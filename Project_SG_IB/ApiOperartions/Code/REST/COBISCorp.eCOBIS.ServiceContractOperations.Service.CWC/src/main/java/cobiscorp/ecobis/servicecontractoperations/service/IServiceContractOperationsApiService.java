@@ -25,6 +25,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchaseDock;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
@@ -135,6 +137,13 @@ public interface IServiceContractOperationsApiService {
 	public ResponseAuthorizePurchase authorizePurchase(RequestAuthorizePurchase inRequestAuthorizePurchase)
 			throws CTSRestException;
 
+	/**
+    * Authorize Purchase Dock
+    */
+        
+	//Have DTO
+	public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid,String legacyid,String clientid,String uuid,RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock  )throws CTSRestException;
+	  
 	/**
 	 * Authorize Withdrawal
 	 */

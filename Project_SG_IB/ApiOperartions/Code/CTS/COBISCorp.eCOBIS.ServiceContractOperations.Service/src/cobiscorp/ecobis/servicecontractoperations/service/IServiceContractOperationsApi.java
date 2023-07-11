@@ -46,6 +46,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO authorizePurchase(ServiceRequestTO requestTO);  
 
   /**
+  * Authorize Purchase Dock
+  */
+  ServiceResponseTO authorizePurchaseDock(ServiceRequestTO requestTO);  
+  
+  /**
   * Authorize Reversal
   */
   ServiceResponseTO authorizeReversal(ServiceRequestTO requestTO);  
