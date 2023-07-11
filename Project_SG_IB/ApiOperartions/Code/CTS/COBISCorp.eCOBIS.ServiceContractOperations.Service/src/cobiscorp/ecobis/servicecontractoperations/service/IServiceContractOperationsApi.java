@@ -41,6 +41,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO authorizeDeposit(ServiceRequestTO requestTO);  
 
   /**
+  * Authorize Deposit Dock
+  */
+  ServiceResponseTO authorizeDepositDock(ServiceRequestTO requestTO);  
+
+  /**
   * Authorize Purchase
   */
   ServiceResponseTO authorizePurchase(ServiceRequestTO requestTO);  
@@ -49,16 +54,26 @@ public interface IServiceContractOperationsApi{
   * Authorize Purchase Dock
   */
   ServiceResponseTO authorizePurchaseDock(ServiceRequestTO requestTO);  
-  
+
   /**
   * Authorize Reversal
   */
   ServiceResponseTO authorizeReversal(ServiceRequestTO requestTO);  
 
   /**
+  * Authorize Reversal Dock
+  */
+  ServiceResponseTO authorizeReversalDock(ServiceRequestTO requestTO);  
+
+  /**
   * Authorize Withdrawal
   */
   ServiceResponseTO authorizeWithdrawal(ServiceRequestTO requestTO);  
+
+  /**
+  * Authorize Withdrawal Dock
+  */
+  ServiceResponseTO authorizeWithdrawalDock(ServiceRequestTO requestTO);  
 
   /**
   * Create new customers

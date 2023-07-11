@@ -24,17 +24,21 @@ package cobiscorp.ecobis.servicecontractoperations.service;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDepositDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDepositDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
@@ -153,12 +157,29 @@ public interface IServiceContractOperationsApiService {
 			throws CTSRestException;
 	
 	/**
+	 * Authorize Withdrawal Dock
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeWithdrawalDock authorizeWithdrawalDock(String legacyid, String clientid, String uuid,
+			String xapigwapiid, RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock)
+			throws CTSRestException;
+	
+	/**
 	 * Authorize Deposit
 	 */
 
 	// Have DTO
 	public ResponseAuthorizeDeposit authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit)
 			throws CTSRestException;
+	
+	/**
+	 * Authorize Deposit Dock
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeDepositDock authorizeDepositDock(String legacyid, String clientid, String uuid,
+			String xapigwapiid, RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) throws CTSRestException;
 
 	/**
 	 * Authorize Reversal
