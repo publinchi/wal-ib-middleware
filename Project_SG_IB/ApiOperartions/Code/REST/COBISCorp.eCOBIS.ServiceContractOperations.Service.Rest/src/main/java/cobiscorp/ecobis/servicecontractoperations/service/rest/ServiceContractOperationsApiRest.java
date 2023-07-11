@@ -111,6 +111,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversalDock;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversalDock;
 
 import org.apache.felix.scr.annotations.*;
 import com.cobiscorp.cobis.commons.log.ILogger;
@@ -2001,6 +2003,72 @@ public class ServiceContractOperationsApiRest {
       
           LOGGER.logDebug("Ends service execution REST: updateCredentials");
           return Response.ok(outSingleResponseUpdateCredentials).build();
+        
+      }
+
+	  /**
+          * Authorize Reversal Dock
+          */
+        @POST
+      @Path("/apiOperations/authorization/authorizeReversalDock")
+      @Consumes({"application/json"})
+      @Produces({"application/json"})
+       public Response  authorizeReversalDock(@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock ){
+	  LOGGER.logDebug("Start service execution REST: authorizeReversalDock");
+      ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock  = new ResponseAuthorizeReversalDock();
+          
+      if(!validateMandatory(
+			new Data("card_id", inRequestAuthorizeReversalDock.getCard_id()), 
+			new Data("mti", inRequestAuthorizeReversalDock.getMti()), 
+			new Data("processing.type", inRequestAuthorizeReversalDock.getProcessing().getType()), 
+			new Data("processing.origin_account_type", inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type()), 
+			new Data("processing.destiny_account_type", inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type()), 
+			new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()), 
+			new Data("nsu", inRequestAuthorizeReversalDock.getNsu()), 
+			new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()), 
+			new Data("card_expiration_date", inRequestAuthorizeReversalDock.getCard_expiration_date()), 
+			new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()), 
+			new Data("installments", inRequestAuthorizeReversalDock.getInstallments()), 
+			new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()), 
+			new Data("card_entry.pin", inRequestAuthorizeReversalDock.getCard_entry().getPin()), 
+			new Data("card_entry.mode", inRequestAuthorizeReversalDock.getCard_entry().getMode()), 
+			new Data("merchant_category_code", inRequestAuthorizeReversalDock.getMerchant_category_code()), 
+			new Data("values.source_currency_code", inRequestAuthorizeReversalDock.getValues().getSource_currency_code()), 
+			new Data("values.billing_currency_code", inRequestAuthorizeReversalDock.getValues().getBilling_currency_code()), 
+			new Data("values.source_value", inRequestAuthorizeReversalDock.getValues().getSource_value()), 
+			new Data("values.billing_value", inRequestAuthorizeReversalDock.getValues().getBilling_value()), 
+			new Data("terminal_code", inRequestAuthorizeReversalDock.getTerminal_code()), 
+			new Data("establishment_code", inRequestAuthorizeReversalDock.getEstablishment_code()), 
+			new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()), 
+			new Data("original_transaction_data.transaction_uuid", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid()),
+			new Data("original_transaction_data.nsu", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getNsu()), 
+			new Data("original_transaction_data.mti", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti()), 
+			new Data("original_transaction_data.institution_code", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code()), 
+			new Data("original_transaction_data.institution_name", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name()), 
+			new Data("original_transaction_data.retrieval_reference_number", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getRetrieval_reference_number()))) {
+        LOGGER.logDebug("400 is returned - Required fields are missing");
+        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+      }
+	    
+      try {
+      outSingleResponseAuthorizeReversalDock=iServiceContractOperationsApiService.authorizeReversalDock(legacyid,clientid,uuid,xapigwapiid, inRequestAuthorizeReversalDock );
+      } catch (CTSRestException e) {
+      LOGGER.logError("CTSRestException",e);
+      if ("404".equals(e.getMessage())) {
+      LOGGER.logDebug("404 is returned - No data found");
+      return Response.status(404).entity("No data found").build();
+      }
+
+      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+      return Response.status(409).entity(e.getMessageBlockList()).build();
+      } catch (Exception e){
+      LOGGER.logDebug("500 is returned - Code exception");
+      LOGGER.logError("Exception",e);
+      return Response.status(500).entity(e.getMessage()).build();
+      }
+      
+          LOGGER.logDebug("Ends service execution REST: authorizeReversalDock");
+          return Response.ok(outSingleResponseAuthorizeReversalDock).build();
         
       }
 
