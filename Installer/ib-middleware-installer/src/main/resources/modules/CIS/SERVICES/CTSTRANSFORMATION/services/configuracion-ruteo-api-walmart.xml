@@ -326,7 +326,7 @@
 		<mappings keepMode="1"/>
 	</config>
 	
-	<!-- 18500134 AUTHORIZE REVERSAL-->
+	<!-- 18500135 AUTHORIZE REVERSAL-->
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AuthorizeReversal">
 		<conditions>
 		  <condition param="trn">
@@ -373,7 +373,8 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
-	<!-- 18500138AUTHORIZE PURCHASE DOCK-->
+	
+	<!-- 18500138 AUTHORIZE PURCHASE DOCK-->
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AuthorizePurchaseDock">
 		<conditions>
 		  <condition param="trn">
@@ -384,6 +385,38 @@
 		  <indicator name="externalProvider" value="0"/>
 		  <indicator name="serviceMethodName" value="executeTransaction"/>
 		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AuthorizePurchaseDockOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	
+	<!-- 18500136 AUTHORIZE WITHDRAWAL DOCK-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AuthorizeWithdrawalDock">
+		<conditions>
+		  <condition param="trn">
+			<value>18500136</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AuthorizeWithdrawalDockOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	
+	<!-- 18500137 AUTHORIZE DEPOSIT DOCK-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo AuthorizeDepositDock">
+		<conditions>
+		  <condition param="trn">
+			<value>18500137</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=AuthorizeDepositDockOrchestrationCore)"/>
 		  <indicator name="t_corr" value=""/>
 		</indicators>
 		<mappings keepMode="1"/>
