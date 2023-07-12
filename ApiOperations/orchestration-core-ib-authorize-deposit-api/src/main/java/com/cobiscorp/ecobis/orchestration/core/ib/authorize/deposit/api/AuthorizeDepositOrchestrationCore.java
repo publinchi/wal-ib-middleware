@@ -6,6 +6,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.authorize.deposit.api;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -108,7 +109,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		String monto = aRequest.readValueParam("@i_amount");
 		
-		if (monto != null && !monto.isEmpty() && !monto.matches("[0-9]+[\\.]?[0-9]*")) {
+		if (monto != null && !monto.isEmpty() && !isNumeric(monto)) {
 			monto = "";
 		}
 		
@@ -326,5 +327,13 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		return wProcedureResponse;		
+	}
+	
+	public boolean isNumeric(String strNum) {
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+	    if (strNum == null) {
+	        return false; 
+	    }
+	    return pattern.matcher(strNum).matches();
 	}
 }
