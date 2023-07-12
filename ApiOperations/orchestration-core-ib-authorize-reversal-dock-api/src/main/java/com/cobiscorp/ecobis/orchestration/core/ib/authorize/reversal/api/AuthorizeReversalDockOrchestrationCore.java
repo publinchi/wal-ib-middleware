@@ -6,6 +6,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.authorize.reversal.api;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -108,19 +109,11 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		String values_3 = aRequest.readValueParam("@i_values_source_value");
 		String values_4 = aRequest.readValueParam("@i_values_billing_value");
 		
-		if (values_1 != null && !values_1.isEmpty() && !values_1.matches("[0-9]+[\\.]?[0-9]*")) {
-			values_1 = "";
-		}
-		
-		if (values_2 != null && !values_2.isEmpty() && !values_2.matches("[0-9]+[\\.]?[0-9]*")) {
-			values_2 = "";
-		}
-		
-		if (values_3 != null && !values_3.isEmpty() && !values_3.matches("[0-9]+[\\.]?[0-9]*")) {
+		if (values_3 != null && !values_3.isEmpty() && !isNumeric(values_3)) {
 			values_3 = "";
 		}
 		
-		if (values_4 != null && !values_4.isEmpty() && !values_4.matches("[0-9]+[\\.]?[0-9]*")) {
+		if (values_4 != null && !values_4.isEmpty() && !isNumeric(values_4)) {
 			values_4 = "";
 		}
 		
@@ -143,7 +136,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
 		request.addInputParam("@i_card_entry_pin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_pin"));
 		request.addInputParam("@i_card_entry_mode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_mode"));
-		request.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_merchant_category_code"));
+		request.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mechant_category_code"));
 		request.addInputParam("@i_values_source_currency_code", ICTSTypes.SQLMONEY, values_1);
 		request.addInputParam("@i_values_billing_currency_code", ICTSTypes.SQLMONEY, values_2);
 		request.addInputParam("@i_values_source_value", ICTSTypes.SQLMONEY, values_3);
@@ -155,16 +148,16 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_original_transaction_data_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_nsu"));
 		request.addInputParam("@i_original_transaction_data_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_mti"));
 		request.addInputParam("@i_original_transaction_data_institution_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institution_code"));
-		request.addInputParam("@i_original_transaction_data_institution_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institution_name"));
+		request.addInputParam("@i_original_transaction_data_institution_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institutiion_name"));
 		request.addInputParam("@i_original_transaction_data_retrieval_reference_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_retrieval_reference_number"));
-		request.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
-		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
-		request.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_client-id"));
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
+		request.addInputParam("@i_x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_x-apigw-api-id"));
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
 		
 		request.addOutputParam("@o_accountNumber", ICTSTypes.SQLVARCHAR, "X");		
-		request.addOutputParam("@o_externalCustomerId", ICTSTypes.SQLINTN, "X");		
+		request.addOutputParam("@o_externalCustomerId", ICTSTypes.SQLINTN, "0");		
 		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -201,7 +194,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("@o_account_number"));
+		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("@o_accountNumber"));
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "4");
 		request.addInputParam("@i_val_deb", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_values_billing_value")); 
@@ -344,5 +337,13 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		
 		return wProcedureResponse;		
+	}
+	
+	public boolean isNumeric(String strNum) {
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+	    if (strNum == null) {
+	        return false; 
+	    }
+	    return pattern.matcher(strNum).matches();
 	}
 }
