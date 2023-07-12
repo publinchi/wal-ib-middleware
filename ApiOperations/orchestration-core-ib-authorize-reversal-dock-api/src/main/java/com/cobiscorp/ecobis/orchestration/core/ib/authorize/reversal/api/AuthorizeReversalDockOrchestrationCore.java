@@ -103,11 +103,27 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 			logger.logInfo(CLASS_NAME + " Entrando en valDataLocal");
 		}
 		
-		String monto = aRequest.readValueParam("@i_values_billing_value");
+		String values_1 = aRequest.readValueParam("@i_values_source_currency_code");
+		String values_2 = aRequest.readValueParam("@i_values_billing_currency_code");
+		String values_3 = aRequest.readValueParam("@i_values_source_value");
+		String values_4 = aRequest.readValueParam("@i_values_billing_value");
 		
-		if (monto != null && !monto.isEmpty() && !monto.matches("[0-9]+[\\.]?[0-9]*")) {
-			monto = "";
+		if (values_1 != null && !values_1.isEmpty() && !values_1.matches("[0-9]+[\\.]?[0-9]*")) {
+			values_1 = "";
 		}
+		
+		if (values_2 != null && !values_2.isEmpty() && !values_2.matches("[0-9]+[\\.]?[0-9]*")) {
+			values_2 = "";
+		}
+		
+		if (values_3 != null && !values_3.isEmpty() && !values_3.matches("[0-9]+[\\.]?[0-9]*")) {
+			values_3 = "";
+		}
+		
+		if (values_4 != null && !values_4.isEmpty() && !values_4.matches("[0-9]+[\\.]?[0-9]*")) {
+			values_4 = "";
+		}
+		
 
 		request.setSpName("cob_atm..sp_bv_valida_dock_reversal_api");
 
@@ -117,11 +133,35 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
-		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_type"));
-		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
-		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, monto);
+		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_type"));
+		request.addInputParam("@i_processing_origin_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_origin_account_type"));
+		request.addInputParam("@i_processing_destiny_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_destiny_account_type"));
+		request.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
+		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
+		request.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authorization_code"));
+		request.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transaction_origin"));
+		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
+		request.addInputParam("@i_card_entry_pin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_pin"));
+		request.addInputParam("@i_card_entry_mode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_mode"));
+		request.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_merchant_category_code"));
+		request.addInputParam("@i_values_source_currency_code", ICTSTypes.SQLMONEY, values_1);
+		request.addInputParam("@i_values_billing_currency_code", ICTSTypes.SQLMONEY, values_2);
+		request.addInputParam("@i_values_source_value", ICTSTypes.SQLMONEY, values_3);
+		request.addInputParam("@i_values_billing_value", ICTSTypes.SQLMONEY, values_4);
+		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
+		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
+		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
+		request.addInputParam("@i_original_transaction_data_transaction_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
+		request.addInputParam("@i_original_transaction_data_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_nsu"));
+		request.addInputParam("@i_original_transaction_data_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_mti"));
+		request.addInputParam("@i_original_transaction_data_institution_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institution_code"));
+		request.addInputParam("@i_original_transaction_data_institution_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institution_name"));
+		request.addInputParam("@i_original_transaction_data_retrieval_reference_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_retrieval_reference_number"));
+		request.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
-		request.addInputParam("@i_origin_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_mti"));
 		
 		request.addOutputParam("@o_accountNumber", ICTSTypes.SQLVARCHAR, "X");		
 		request.addOutputParam("@o_externalCustomerId", ICTSTypes.SQLINTN, "X");		
@@ -260,14 +300,8 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
-		
-		IResultSetHeader metaData2 = new ResultSetHeader();
-		IResultSetData data2 = new ResultSetData();
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLVARCHAR, 100));
 		
 		if (codeReturn == 0) {
 			
@@ -280,49 +314,34 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				logger.logDebug("Ending flow, processResponse success with code: ");
 				
 				IResultSetRow row = new ResultSetRow();
-				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
+				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 				data.addRow(row);
-				
-				IResultSetRow row2 = new ResultSetRow();
-				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
-				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-				data2.addRow(row2);
 			}
 			 else {
 				logger.logDebug("Ending flow, processResponse error");
 				
-				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 				String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				String message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
-				
+							
 				IResultSetRow row = new ResultSetRow();
-				row.addRowData(1, new ResultSetRowColumnData(false, success));
+				row.addRowData(1, new ResultSetRowColumnData(false, code));
+				row.addRowData(2, new ResultSetRowColumnData(false, message));
 				data.addRow(row);
-				
-				IResultSetRow row2 = new ResultSetRow();
-				row2.addRowData(1, new ResultSetRowColumnData(false, code));
-				row2.addRowData(2, new ResultSetRowColumnData(false, message));
-				data2.addRow(row2);
 			}
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			IResultSetRow row = new ResultSetRow();
-			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
+			row.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
 			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
-			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
-			data2.addRow(row2);
 		}
 
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
-		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		return wProcedureResponse;		
 	}
