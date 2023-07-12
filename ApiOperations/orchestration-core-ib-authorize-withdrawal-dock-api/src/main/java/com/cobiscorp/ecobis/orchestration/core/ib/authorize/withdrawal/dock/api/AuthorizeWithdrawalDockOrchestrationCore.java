@@ -6,6 +6,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.authorize.withdrawal.dock.api
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -104,6 +105,17 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en valDataLocal");
 		}
+		
+		String s_amount = aRequest.readValueParam("@i_source_value");
+		String b_amount = aRequest.readValueParam("@i_billing_value");
+		
+		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
+			s_amount = "";
+		}
+		
+		if (b_amount != null && !b_amount.isEmpty() && !isNumeric(b_amount)) {
+			b_amount = "";
+		}
 
 		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
@@ -111,24 +123,46 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
-		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
-		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
-		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
-		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
-		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
+		request.addInputParam("@x_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client_id"));
+		request.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
+		request.addInputParam("@x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_apigw_api_id"));
 		
-		//request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
+		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
+		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
+		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
+		request.addInputParam("@i_origin_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_type"));
+		request.addInputParam("@i_destiny_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destiny_account_type"));
+		request.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
+		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
+		request.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authorization_code"));
+		request.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transaction_origin"));
+		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
+		request.addInputParam("@i_pin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_pin"));
+		request.addInputParam("@i_mode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mode"));
+		request.addInputParam("@i_source_currency_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_source_currency_code"));
+		request.addInputParam("@i_billing_currency_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_billing_currency_code"));
+		request.addInputParam("@i_source_value", ICTSTypes.SQLMONEY, s_amount);
+		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
+		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
+		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
+			
+		request.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("card mask es " +  wProductsQueryResp.readValueParam("@o_card_mask"));
+			logger.logDebug("ente es " +  wProductsQueryResp.readValueParam("@o_ente"));
 		}
 		
-		//aBagSPJavaOrchestration.put("o_card_mask", wProductsQueryResp.readValueParam("@o_card_mask"));
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("cta es " +  wProductsQueryResp.readValueParam("@o_cta"));
+		}
+		
+		aBagSPJavaOrchestration.put("ente", wProductsQueryResp.readValueParam("@o_ente"));
+		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -149,18 +183,18 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
 
-		request.setSpName("cob_cuentas..sp_compra_atm_api");
+		request.setSpName("cob_cuentas..sp_retiro_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
+		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("cta").toString());
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_prod_deb", ICTSTypes.SQLINTN, "4");
-		request.addInputParam("@i_val_deb", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount")); 
+		request.addInputParam("@i_val_deb", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_billing_value")); 
 		request.addInputParam("@i_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "");
-		request.addInputParam("@i_cliente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_cliente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, "0"); 
 		request.addInputParam("@i_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
@@ -182,7 +216,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
 		
-		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -213,15 +247,15 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String fechaActual = fechaHoraActual.format(formato);
 		 
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTA");
 
-		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
+		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
 		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, reponseAccount.readValueParam("@o_ssn_host"));
-		request.addInputParam("@i_reverse_tran", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_uuid_reverse"));
+		request.addInputParam("@i_reverse_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_origin_uuid"));
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
@@ -317,5 +351,16 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		return wProcedureResponse;		
+	}
+	
+	public boolean isNumeric(String strNum) {
+
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+		if (strNum == null) {
+
+			return false;
+		}
+		return pattern.matcher(strNum).matches();
 	}
 }
