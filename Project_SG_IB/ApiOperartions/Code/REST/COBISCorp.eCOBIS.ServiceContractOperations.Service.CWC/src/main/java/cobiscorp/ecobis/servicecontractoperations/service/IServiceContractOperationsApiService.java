@@ -42,6 +42,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawalDo
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
+import cobiscorp.ecobis.datacontractoperations.dto.Error;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;

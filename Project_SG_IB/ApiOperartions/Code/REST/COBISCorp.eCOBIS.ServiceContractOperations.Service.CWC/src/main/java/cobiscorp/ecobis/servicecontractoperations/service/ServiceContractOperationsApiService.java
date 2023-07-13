@@ -431,7 +431,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     procedureRequestAS.addInputParam("@i_val_settlement_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSettlement_currency_code());
     procedureRequestAS.addInputParam("@i_val_settlement_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSettlement_value());
     procedureRequestAS.addInputParam("@i_val_source_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSource_currency_code());
+    procedureRequestAS.addInputParam("@i_val_source_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSource_value());
     
+    Gson gson = new Gson();
+	String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
+	procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
+	
     //execute procedure
     ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 

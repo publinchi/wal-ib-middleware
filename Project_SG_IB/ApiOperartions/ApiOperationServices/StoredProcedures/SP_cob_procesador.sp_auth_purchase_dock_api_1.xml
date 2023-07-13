@@ -109,7 +109,9 @@
     </query>
     <query>
       <columns>
-        <column name="response" />
+        <column name="id" />
+        <column name="description" />
+        <column name="code" />
       </columns>
       <queryText>SELECT "code"=0,"message"="success"</queryText>
     </query>
