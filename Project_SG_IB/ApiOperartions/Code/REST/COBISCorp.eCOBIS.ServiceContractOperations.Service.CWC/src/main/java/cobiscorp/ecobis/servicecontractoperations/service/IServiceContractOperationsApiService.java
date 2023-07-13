@@ -24,18 +24,25 @@ package cobiscorp.ecobis.servicecontractoperations.service;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDepositDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchaseDock;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDepositDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.Message;
+import cobiscorp.ecobis.datacontractoperations.dto.Error;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
@@ -111,6 +118,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
 import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
 import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
+import   cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversalDock;
+import   cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversalDock;
 
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 import java.util.List;
@@ -134,11 +143,27 @@ public interface IServiceContractOperationsApiService {
 			throws CTSRestException;
 
 	/**
+    * Authorize Purchase Dock
+    */
+        
+	//Have DTO
+	public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid,String legacyid,String clientid,String uuid,RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock  )throws CTSRestException;
+	  
+	/**
 	 * Authorize Withdrawal
 	 */
 
 	// Have DTO
 	public ResponseAuthorizeWithdrawal authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
+			throws CTSRestException;
+	
+	/**
+	 * Authorize Withdrawal Dock
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeWithdrawalDock authorizeWithdrawalDock(String legacyid, String clientid, String uuid,
+			String xapigwapiid, RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock)
 			throws CTSRestException;
 	
 	/**
@@ -148,6 +173,14 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseAuthorizeDeposit authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit)
 			throws CTSRestException;
+	
+	/**
+	 * Authorize Deposit Dock
+	 */
+
+	// Have DTO
+	public ResponseAuthorizeDepositDock authorizeDepositDock(String legacyid, String clientid, String uuid,
+			String xapigwapiid, RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) throws CTSRestException;
 
 	/**
 	 * Authorize Reversal
@@ -431,5 +464,12 @@ public interface IServiceContractOperationsApiService {
         
 	// Return DTO
 	public ResponseUpdateCredentials updateCredentials(RequestUpdateCredentials inRequestUpdateCredentials  )throws CTSRestException;
+
+	/**
+	* Authorize Reversal Dock
+    */
+        
+	// Return DTO
+	public  ResponseAuthorizeReversalDock  authorizeReversalDock(String legacyid,String clientid,String uuid,String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock  )throws CTSRestException;
 
 }

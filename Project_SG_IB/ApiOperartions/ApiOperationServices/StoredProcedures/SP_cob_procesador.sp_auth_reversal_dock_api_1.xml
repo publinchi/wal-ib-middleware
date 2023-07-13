@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_auth_reversal_dock_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_account_id" dataType="varchar" direction="in" />
+    <parameter name="@i_person_id" dataType="varchar" direction="in" />
+    <parameter name="@i_card_id" dataType="varchar" direction="in" />
+    <parameter name="@i_product_id" dataType="varchar" direction="in" />
+    <parameter name="@i_product_status" dataType="varchar" direction="in" />
+    <parameter name="@i_bank_branch_number" dataType="varchar" direction="in" />
+    <parameter name="@i_bank_account_number" dataType="varchar" direction="in" />
+    <parameter name="@i_transmission_date_time" dataType="varchar" direction="in" />
+    <parameter name="@i_terminal_date" dataType="varchar" direction="in" />
+    <parameter name="@i_terminal_time" dataType="varchar" direction="in" />
+    <parameter name="@i_mti" dataType="varchar" direction="in" />
+    <parameter name="@i_processing_type" dataType="varchar" direction="in" />
+    <parameter name="@i_processing_origin_account_type" dataType="varchar" direction="in" />
+    <parameter name="@i_processing_destiny_account_type" dataType="varchar" direction="in" />
+    <parameter name="@i_processing_code" dataType="varchar" direction="in" />
+    <parameter name="@i_nsu" dataType="varchar" direction="in" />
+    <parameter name="@i_authorization_code" dataType="varchar" direction="in" />
+    <parameter name="@i_card_number" dataType="varchar" direction="in" />
+    <parameter name="@i_card_expiration_date" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction_origin" dataType="varchar" direction="in" />
+    <parameter name="@i_installments" dataType="int" direction="in" />
+    <parameter name="@i_installment_type" dataType="varchar" direction="in" />
+    <parameter name="@i_card_entry_code" dataType="varchar" direction="in" />
+    <parameter name="@i_card_entry_pin" dataType="varchar" direction="in" />
+    <parameter name="@i_card_entry_mode" dataType="varchar" direction="in" />
+    <parameter name="@i_mechant_category_code" dataType="varchar" direction="in" />
+    <parameter name="@i_values_updated_transaction_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_source_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_values_settlement_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_values_billing_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_values_source_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_settlement_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_billing_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_billing_conversion_rate" dataType="varchar" direction="in" />
+    <parameter name="@i_values_cash_back_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_credit__line_usage_fee" dataType="varchar" direction="in" />
+    <parameter name="@i_establishment" dataType="varchar" direction="in" />
+    <parameter name="@i_terminal_code" dataType="varchar" direction="in" />
+    <parameter name="@i_establishment_code" dataType="varchar" direction="in" />
+    <parameter name="@i_retrieval_reference_number" dataType="varchar" direction="in" />
+    <parameter name="@i_brand_response_code" dataType="varchar" direction="in" />
+    <parameter name="@i_advice_reason" dataType="varchar" direction="in" />
+    <parameter name="@i_advice_reason_code" dataType="varchar" direction="in" />
+    <parameter name="@i_pos_postal_code" dataType="varchar" direction="in" />
+    <parameter name="@i_acquirer_country_code" dataType="varchar" direction="in" />
+    <parameter name="@i_preauthorization_type" dataType="varchar" direction="in" />
+    <parameter name="@i_preauthorization_initial_transaction_uuid" dataType="varchar" direction="in" />
+    <parameter name="@i_preauthorization_life_cycle" dataType="varchar" direction="in" />
+    <parameter name="@i_token_data_token" dataType="varchar" direction="in" />
+    <parameter name="@i_token_data_requestor_id_token" dataType="varchar" direction="in" />
+    <parameter name="@i_token_data_expiration_date" dataType="varchar" direction="in" />
+    <parameter name="@i_token_data_status" dataType="varchar" direction="in" />
+    <parameter name="@i_funds_transfer_type" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction_indicators_card_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_cardholder_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_password_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_cvv1_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_ccv2_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_ccv3_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_token_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_3ds_present" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_3ds_valid" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_recurring" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_allows_partial_approval" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_pin_validated_offline" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_partially_reversed" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_preauthorization" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_crossborder" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_dcc" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_only_supports_purchase" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_international" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_funds_transfer" dataType="bit" direction="in" />
+    <parameter name="@i_transaction_indicators_is_automated_fuel_dispenser" dataType="bit" direction="in" />
+    <parameter name="@i_original_transaction_data_transaction_uuid" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_nsu" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_mti" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_transmission_date_time_gmt" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_institution_code" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_institutiion_name" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_accounting_date" dataType="varchar" direction="in" />
+    <parameter name="@i_original_transaction_data_retrieval_reference_number" dataType="varchar" direction="in" />
+    <parameter name="@i_legacy-id" dataType="varchar" direction="in" />
+    <parameter name="@i_client-id" dataType="varchar" direction="in" />
+    <parameter name="@i_uuid" dataType="varchar" direction="in" />
+    <parameter name="@i_x-apigw-api-id" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>

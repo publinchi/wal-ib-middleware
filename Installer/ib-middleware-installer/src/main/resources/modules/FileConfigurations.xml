@@ -284,7 +284,11 @@
 		<staff id="22" name="orchestration-core-ib-authorize-withdrawal-api" version="4.6.1.0" />	
 		<staff id="23" name="orchestration-core-ib-authorize-deposit-api" version="4.6.1.0" />
 		<staff id="24" name="orchestration-core-ib-authorize-reversal-api" version="4.6.1.0" />
-		<staff id="25" name="orchestration-core-ib-update-card-dock-api" version="4.6.1.0" />
+		<staff id="25" name="orchestration-core-ib-authorize-reversal-dock-api" version="4.6.1.0" />
+		<staff id="26" name="orchestration-core-ib-update-card-dock-api" version="4.6.1.0" />
+		<staff id="27" name="orchestration-core-ib-authorize-purchase-dock-api" version="4.6.1.0" />
+		<staff id="28" name="orchestration-core-ib-authorize-withdrawal-dock-api" version="4.6.1.0" />
+		<staff id="29" name="orchestration-core-ib-authorize-deposit-dock-api" version="4.6.1.0" />
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
