@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class ResponseUpdateCardStatus implements Serializable {
   private Boolean success;
   private Response response;
+  private String cardId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -47,5 +48,11 @@ public class ResponseUpdateCardStatus implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public String getCardId(){
+    return this.cardId;
+  }
+  public void setCardId(String cardId ){
+    this.cardId=cardId;
   }
 }
