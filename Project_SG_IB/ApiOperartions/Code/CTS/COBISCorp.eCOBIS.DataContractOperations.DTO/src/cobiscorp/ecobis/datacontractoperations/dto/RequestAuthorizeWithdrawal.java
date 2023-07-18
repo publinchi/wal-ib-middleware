@@ -44,7 +44,7 @@ public class RequestAuthorizeWithdrawal implements Serializable {
   private String retrievalReferenceNumber;
   private String acquirerCountryCode;
   private java.math.BigDecimal storeNumber;
-  private java.math.BigDecimal afiliationNumber;
+  private java.math.BigDecimal affiliationNumber;
   private String orderId;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
@@ -154,11 +154,11 @@ public class RequestAuthorizeWithdrawal implements Serializable {
   public void setStoreNumber(java.math.BigDecimal storeNumber ){
     this.storeNumber=storeNumber;
   }
-  public java.math.BigDecimal getAfiliationNumber(){
-    return this.afiliationNumber;
+  public java.math.BigDecimal getAffiliationNumber(){
+    return this.affiliationNumber;
   }
-  public void setAfiliationNumber(java.math.BigDecimal afiliationNumber ){
-    this.afiliationNumber=afiliationNumber;
+  public void setAffiliationNumber(java.math.BigDecimal affiliationNumber ){
+    this.affiliationNumber=affiliationNumber;
   }
   public String getOrderId(){
     return this.orderId;

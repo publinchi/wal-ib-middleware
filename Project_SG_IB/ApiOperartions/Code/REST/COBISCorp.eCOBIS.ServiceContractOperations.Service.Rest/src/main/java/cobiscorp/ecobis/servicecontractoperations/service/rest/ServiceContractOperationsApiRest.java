@@ -372,7 +372,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("retrievalReferenceNumber", inRequestAuthorizeWithdrawal.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizeWithdrawal.getAcquirerCountryCode()),
 				new Data("storeNumber", inRequestAuthorizeWithdrawal.getStoreNumber()),
-				new Data("afiliationNumber", inRequestAuthorizeWithdrawal.getAfiliationNumber()))) {
+				new Data("affiliationNumber", inRequestAuthorizeWithdrawal.getAffiliationNumber()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -495,7 +495,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("retrievalReferenceNumber", inRequestAuthorizeDeposit.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizeDeposit.getAcquirerCountryCode()),
 				new Data("storeNumber", inRequestAuthorizeDeposit.getStoreNumber()),
-				new Data("afiliacionNumber", inRequestAuthorizeDeposit.getAfiliacionNumber()))) {
+				new Data("affiliationNumber", inRequestAuthorizeDeposit.getAffiliationNumber()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -558,7 +558,8 @@ public class ServiceContractOperationsApiRest {
 				new Data("values", inRequestAuthorizeDepositDock.getValues().getBilling_value()),
 				new Data("terminal_code", inRequestAuthorizeDepositDock.getTerminal_code()),
 				new Data("establishment_code", inRequestAuthorizeDepositDock.getEstablishment_code()),
-				new Data("card_id", inRequestAuthorizeDepositDock.getCard_id()))) {
+				new Data("card_id", inRequestAuthorizeDepositDock.getCard_id()),
+				new Data("transaction_indicators", inRequestAuthorizeDepositDock.getTransaction_indicators()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -617,18 +618,18 @@ public class ServiceContractOperationsApiRest {
 				new Data("retrievalReferenceNumber", inRequestAuthorizeReversal.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizeReversal.getAcquirerCountryCode()),
 				new Data("storeNumber", inRequestAuthorizeReversal.getStoreNumber()),
-				new Data("afiliacionNumber", inRequestAuthorizeReversal.getAfiliacionNumber()),
+				new Data("affiliationNumber", inRequestAuthorizeReversal.getAffiliationNumber()),
 				new Data("establishment", inRequestAuthorizeReversal.getEstablishment()),
 				new Data("adviceReason", inRequestAuthorizeReversal.getAdviceReason()),
 				new Data("adviceReasonCode", inRequestAuthorizeReversal.getAdviceReasonCode()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData()))) {
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getUuid()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getNsu()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getMti()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getTransmissionDateTimeGmt()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getInstitutionName()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getRetrievalReferenceNumber()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getType()),
+				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getCode()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();

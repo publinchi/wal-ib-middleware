@@ -44,7 +44,7 @@ public class RequestAuthorizeReversal implements Serializable {
   private String retrievalReferenceNumber;
   private String acquirerCountryCode;
   private java.math.BigDecimal storeNumber;
-  private java.math.BigDecimal afiliacionNumber;
+  private java.math.BigDecimal affiliationNumber;
   private String establishment;
   private String adviceReason;
   private String adviceReasonCode;
@@ -157,11 +157,11 @@ public class RequestAuthorizeReversal implements Serializable {
   public void setStoreNumber(java.math.BigDecimal storeNumber ){
     this.storeNumber=storeNumber;
   }
-  public java.math.BigDecimal getAfiliacionNumber(){
-    return this.afiliacionNumber;
+  public java.math.BigDecimal getAffiliationNumber(){
+    return this.affiliationNumber;
   }
-  public void setAfiliacionNumber(java.math.BigDecimal afiliacionNumber ){
-    this.afiliacionNumber=afiliacionNumber;
+  public void setAffiliationNumber(java.math.BigDecimal affiliationNumber ){
+    this.affiliationNumber=affiliationNumber;
   }
   public String getEstablishment(){
     return this.establishment;

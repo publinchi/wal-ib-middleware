@@ -548,9 +548,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawal.getAcquirerCountryCode());
 			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					inRequestAuthorizeWithdrawal.getAcquirerCountryCode());
+					String.valueOf(inRequestAuthorizeWithdrawal.getStoreNumber()));
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					inRequestAuthorizeWithdrawal.getAcquirerCountryCode());
+					String.valueOf(inRequestAuthorizeWithdrawal.getAffiliationNumber()));
 			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawal);
@@ -888,7 +888,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inRequestAuthorizeDeposit.getStoreNumber()));
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDeposit.getAfiliacionNumber()));
+					String.valueOf(inRequestAuthorizeDeposit.getAffiliationNumber()));
 			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeDeposit);
@@ -1223,7 +1223,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inRequestAuthorizeReversal.getStoreNumber()));
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeReversal.getAfiliacionNumber()));
+					String.valueOf(inRequestAuthorizeReversal.getAffiliationNumber()));
 			procedureRequestAS.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversal.getEstablishment());
 			procedureRequestAS.addInputParam("@i_advise_reason", ICTSTypes.SQLVARCHAR,

@@ -3,10 +3,12 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.authorize.deposit.dock.api;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -64,7 +66,6 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
-		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		
 		anProcedureResponse = authorizeDepositDock(anOriginalRequest, aBagSPJavaOrchestration);
@@ -108,6 +109,10 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		String s_amount = aRequest.readValueParam("@i_source_value");
 		String b_amount = aRequest.readValueParam("@i_billing_value");
+		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gmt");
+		String date = aRequest.readValueParam("@i_terminal_date");
+		String time = aRequest.readValueParam("@i_terminal_time");
+		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
 			s_amount = "";
@@ -116,19 +121,40 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		if (b_amount != null && !b_amount.isEmpty() && !isNumeric(b_amount)) {
 			b_amount = "";
 		}
+		
+		if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+			gtm_date_time = "I";
+		}
+		
+		if (date != null && !date.isEmpty() && !isDate(date)) {
+			date = "I";
+		}
+		
+		if (time != null && !time.isEmpty() && !isTime(time)) {
+			time = "I";
+		}
+		
+		if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
+			exp_date = "I";
+		}
 
-		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
+		request.setSpName("sp_bv_val_trn_atm_dock_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
+		//headers
 		request.addInputParam("@x_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client_id"));
 		request.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_apigw_api_id"));
 		
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_person_id"));
 		request.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
+		request.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR, gtm_date_time);
+		request.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, date);
+		request.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, time);
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_origin_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_type"));
@@ -136,16 +162,19 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
 		request.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authorization_code"));
+		request.addInputParam("@i_card_expiration_date", ICTSTypes.SQLVARCHAR, exp_date);
 		request.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transaction_origin"));
 		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
 		request.addInputParam("@i_pin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_pin"));
 		request.addInputParam("@i_mode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mode"));
+		request.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_merchant_category_code"));
 		request.addInputParam("@i_source_currency_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_source_currency_code"));
 		request.addInputParam("@i_billing_currency_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_billing_currency_code"));
 		request.addInputParam("@i_source_value", ICTSTypes.SQLMONEY, s_amount);
 		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
+		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
 			
 		request.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");
@@ -166,10 +195,10 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("codeErrorApi", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("messageError", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 			
-			logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("codeErrorApi"));
+			logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("code_error"));
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -224,13 +253,13 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
 		
-		aBagSPJavaOrchestration.put("ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
-			aBagSPJavaOrchestration.put("codeErrorApi", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("messageError", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 				
-			logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("codeErrorApi"));
+			logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -320,9 +349,9 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		if (codeReturn == 0) {		
 			
-			if(aBagSPJavaOrchestration.containsKey("codeErrorApi")){
+			if(aBagSPJavaOrchestration.containsKey("code_error")){
 				
-				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("codeErrorApi"));
+				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -330,7 +359,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-				row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("messageError").toString() + " [" + aBagSPJavaOrchestration.get("codeErrorApi").toString() + "]"));
+				row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				
 				data.addRow(row);
@@ -348,7 +377,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString() ));
+				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				data.addRow(row);
 				
@@ -391,4 +420,60 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		}
 		return pattern.matcher(strNum).matches();
 	}
+	
+	public static boolean isGtmDateTime(String gtmDateTime) {
+        try {
+        	
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+            
+            dateTimeFormat.setLenient(false);
+            dateTimeFormat.parse(gtmDateTime);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isDate(String date) {
+        try {
+        	
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMdd");
+            
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isTime(String time) {
+        try {
+        	
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
+            
+            timeFormat.setLenient(false);
+            timeFormat.parse(time);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isExpDate(String expDate) {
+        try {
+        	
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyMM");
+            
+            dateFormat.setLenient(false);
+            dateFormat.parse(expDate);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
 }
