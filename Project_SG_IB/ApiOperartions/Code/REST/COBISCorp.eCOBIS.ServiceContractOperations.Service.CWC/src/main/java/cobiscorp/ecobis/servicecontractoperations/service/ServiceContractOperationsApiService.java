@@ -3956,6 +3956,7 @@ int mapBlank=0;
 		    procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getAccountNumber());
 		    procedureRequestAS.addInputParam("@i_type_card",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getTypeCard());
 		    procedureRequestAS.addInputParam("@i_mode",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getMode());
+		    procedureRequestAS.addInputParam("@i_card_id",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getCardId());
 		    
 		    //execute procedure
 		    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -4018,6 +4019,27 @@ int mapBlank=0;
 		          mapBlank++;
 		
 		          }
+		          
+		          mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0 ) {	
+										//---------NO Array
+										ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseUpdateCardStatus>() { 
+		                    @Override
+		                    public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
+		                    
+		                          dto.setCardId(resultSetMapper.getString(1));
+		                    return dto;
+		                    }
+		                    },false);
+
+		                    outResponseUpdateCardStatus.setCardId(returnResponseUpdateCardStatus.getCardId());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
+
+		            }
 		        
 		    //End map returns
 		    if(mapBlank!=0&&mapBlank==mapTotal){

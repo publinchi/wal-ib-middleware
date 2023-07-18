@@ -11,6 +11,7 @@
     <parameter name="@i_account_number" dataType="varchar" direction="in" />
     <parameter name="@i_type_card" dataType="varchar" direction="in" />
     <parameter name="@i_mode" dataType="varchar" direction="in" />
+    <parameter name="@i_card_id" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
@@ -25,6 +26,12 @@
         <column name="message" />
       </columns>
       <queryText>SELECT "code"=0,"message"="Success"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="cardId" />
+      </columns>
+      <queryText></queryText>
     </query>
   </queries>
 </procedure>
