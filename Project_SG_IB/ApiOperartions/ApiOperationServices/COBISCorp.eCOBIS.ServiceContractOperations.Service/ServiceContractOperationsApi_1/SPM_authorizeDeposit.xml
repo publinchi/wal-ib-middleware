@@ -17,6 +17,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAuthorizeDeposit" />
           <field type="String" name="dTOPropertyName" value="success" />
           <field type="String" name="dataType" value="boolean?" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -30,6 +31,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAuthorizeDeposit" />
           <field type="String" name="dTOPropertyName" value="response.code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="10" index="1">
           <field type="int" name="position" value="1" />
@@ -37,6 +39,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAuthorizeDeposit" />
           <field type="String" name="dTOPropertyName" value="response.message" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -311,7 +314,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDeposit" />
-      <field type="String" name="dTOPropertyName" value="afiliacionNumber" />
+      <field type="String" name="dTOPropertyName" value="affiliationNumber" />
       <field type="String" name="cTSDataType" value="SQLDECIMAL" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
