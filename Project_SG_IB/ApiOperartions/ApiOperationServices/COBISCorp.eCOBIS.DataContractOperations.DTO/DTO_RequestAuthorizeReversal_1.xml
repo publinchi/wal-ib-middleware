@@ -172,7 +172,7 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="21" index="16">
-      <field type="String" name="name" value="afiliacionNumber" />
+      <field type="String" name="name" value="affiliationNumber" />
       <field type="String" name="type" value="decimal?" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />

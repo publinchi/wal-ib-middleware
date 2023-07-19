@@ -93,10 +93,14 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		String flag = "S";
 		wAccountsResp = getDataCardDock(aRequest, aBagSPJavaOrchestration);
 
+		if(wAccountsResp.getResultSets().size()>1 && !wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+			return wAccountsResp;
+		}
+		
 		//ACTIVAR TARJETA COBIS
-		if(aBagSPJavaOrchestration.containsKey("o_status_atm") && null!=aRequest.readValueParam("@i_mode")){
+		if(aBagSPJavaOrchestration.containsKey("o_status_atm") && aBagSPJavaOrchestration.get("mode").toString().equals("N")){
 			if(aBagSPJavaOrchestration.get("o_status_atm").toString().equals("reg"))
-				
+			{
 				if(!aBagSPJavaOrchestration.get("o_card_available").equals("X")){
 					IProcedureResponse wAccountsRespDock = registerAtmCobis(aBagSPJavaOrchestration);
 					
@@ -130,6 +134,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 							return wAccountsRespDock;
 						}
 				}
+			}
 		}		
 		
 		logger.logInfo(
@@ -398,7 +403,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_id_account_dock", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_id_card_atm", ICTSTypes.SQLINT4, "0");
 
+		String mode = aRequest.readValueParam("@i_mode").equals("null")?"X":aRequest.readValueParam("@i_mode").toString();
+		aBagSPJavaOrchestration.put("mode", mode);
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
 		
 		aBagSPJavaOrchestration.put("o_id_card_dock", wProductsQueryResp.readValueParam("@o_id_card_dock"));
 		aBagSPJavaOrchestration.put("o_detail_status", wProductsQueryResp.readValueParam("@o_detail_status"));
@@ -655,6 +664,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		logger.logDebug("retunr code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
 		logger.logDebug("retunr o_card_available: " + aBagSPJavaOrchestration.get("o_card_available"));
 		logger.logDebug("retunr o_id_card_dock: " + aBagSPJavaOrchestration.get("o_id_card_dock"));
+		logger.logDebug("request mode: " + aBagSPJavaOrchestration.get("mode"));
+		
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
@@ -717,12 +728,12 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
-		if(!aBagSPJavaOrchestration.get("o_card_available").toString().equals("X")){
+		if(!aBagSPJavaOrchestration.get("o_card_available").toString().equals("X") && aBagSPJavaOrchestration.get("mode").toString().equals("N")){
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
 		}
 
-		if(!aBagSPJavaOrchestration.get("o_id_card_dock").toString().equals("X")){
+		if(!aBagSPJavaOrchestration.get("o_id_card_dock").toString().equals("X") && aBagSPJavaOrchestration.get("mode").toString().equals("N")){
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
 		}

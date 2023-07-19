@@ -3,6 +3,8 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.authorize.withdrawal.dock.api;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -64,7 +66,6 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
-		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		
 		anProcedureResponse = authorizeWithdrawalDock(anOriginalRequest, aBagSPJavaOrchestration);
@@ -108,6 +109,10 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		
 		String s_amount = aRequest.readValueParam("@i_source_value");
 		String b_amount = aRequest.readValueParam("@i_billing_value");
+		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gtm");
+		String date = aRequest.readValueParam("@i_terminal_date");
+		String time = aRequest.readValueParam("@i_terminal_time");
+		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
 			s_amount = "";
@@ -116,25 +121,47 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		if (b_amount != null && !b_amount.isEmpty() && !isNumeric(b_amount)) {
 			b_amount = "";
 		}
+		
+		if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+			gtm_date_time = "I";
+		}
+		
+		if (date != null && !date.isEmpty() && !isDate(date)) {
+			date = "I";
+		}
+		
+		if (time != null && !time.isEmpty() && !isTime(time)) {
+			time = "I";
+		}
+		
+		if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
+			exp_date = "I";
+		}
 
-		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
+		request.setSpName("sp_bv_val_trn_atm_dock_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
+		//headers
 		request.addInputParam("@x_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client_id"));
 		request.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_apigw_api_id"));
 		
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_person_id"));
 		request.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
+		request.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR, gtm_date_time);
+		request.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, date);
+		request.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, time);
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_origin_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_type"));
 		request.addInputParam("@i_destiny_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destiny_account_type"));
 		request.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
+		request.addInputParam("@i_card_expiration_date", ICTSTypes.SQLVARCHAR, exp_date);
 		request.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transaction_origin"));
 		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
 		request.addInputParam("@i_pin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_pin"));
@@ -147,6 +174,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
 		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
+		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 			
 		request.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");
@@ -167,10 +195,10 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("codeErrorApi", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("messageError", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 			
-			logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("codeErrorApi"));
+			logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("code_error"));
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -225,13 +253,13 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
 		
-		aBagSPJavaOrchestration.put("ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
-			aBagSPJavaOrchestration.put("codeErrorApi", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("messageError", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 				
-			logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("codeErrorApi"));
+			logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -317,19 +345,18 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		
 		if (codeReturn == 0) {		
 			
-			if(aBagSPJavaOrchestration.containsKey("codeErrorApi")){
+			if(aBagSPJavaOrchestration.containsKey("code_error")){
 				
-				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("codeErrorApi"));
+				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
 				IResultSetRow row = new ResultSetRow();
 	
 				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("messageError").toString() + " [" + aBagSPJavaOrchestration.get("codeErrorApi").toString() + "]"));
+				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
 				
 				data.addRow(row);
 				
-			}
-			 else {
+			} else {
 				 
 				logger.logDebug("Ending flow, processResponse successful...");
 				
@@ -338,11 +365,11 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString() ));
+				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				
-				data.addRow(row);
-				
+				data.addRow(row);	
 			}
+			
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
@@ -381,4 +408,60 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		}
 		return pattern.matcher(strNum).matches();
 	}
+	
+	public static boolean isGtmDateTime(String gtmDateTime) {
+        try {
+        	
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+            
+            dateTimeFormat.setLenient(false);
+            dateTimeFormat.parse(gtmDateTime);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isDate(String date) {
+        try {
+        	
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMdd");
+            
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isTime(String time) {
+        try {
+        	
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
+            
+            timeFormat.setLenient(false);
+            timeFormat.parse(time);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isExpDate(String expDate) {
+        try {
+        	
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyMM");
+            
+            dateFormat.setLenient(false);
+            dateFormat.parse(expDate);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
 }
