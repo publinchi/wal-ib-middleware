@@ -409,25 +409,21 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		}
 		return pattern.matcher(strNum).matches();
 	}
-	
+
 	public static boolean isGtmDateTime(String gtmDateTime) {
-		try {
-			
-			String patron = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z";
-	        
-			if(Pattern.matches(patron, gtmDateTime))
-			{
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-				sdf.setLenient(false);
-	            sdf.parse(gtmDateTime);
-	            return true;
-			}
+        try {
+        	
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+            
+            dateTimeFormat.setLenient(false);
+            dateTimeFormat.parse(gtmDateTime);
+            
         } catch (ParseException e) {
             return false;
         }
-		return false;
+        return true;
     }
-	
+
 	public static boolean isDate(String date) {
         try {
         	
