@@ -76,7 +76,7 @@
       <field type="String" name="dTOAlias" value="inCardApplicationRequest" />
       <field type="String" name="dTOPropertyName" value="street" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="16" index="3">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="17" name="parameter">
@@ -102,7 +102,7 @@
       <field type="String" name="dTOAlias" value="inCardApplicationRequest" />
       <field type="String" name="dTOPropertyName" value="number" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="20" index="5">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="21" name="parameter">
@@ -115,7 +115,7 @@
       <field type="String" name="dTOAlias" value="inCardApplicationRequest" />
       <field type="String" name="dTOPropertyName" value="city" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="22" index="6">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="23" name="parameter">
@@ -154,7 +154,7 @@
       <field type="String" name="dTOAlias" value="inCardApplicationRequest" />
       <field type="String" name="dTOPropertyName" value="postalCode" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
   </collection>
   <collection type="List" length="0" id="28" name="parametersOpenApi">

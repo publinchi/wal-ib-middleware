@@ -438,7 +438,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "values.credit_line_usage_fee", param = "@i_val_credit_line_usage_fee", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "values.settlement_currency_code", param = "@i_val_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "values.settlement_value", param = "@i_val_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values.source_currency_code", param = "@i_val_source_currency_code", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "values.source_currency_code", param = "@i_val_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_value", param = "@i_val_source_value", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -458,6 +459,15 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "response", columnIndex = 4),
 		    @CTSColumn(field = "reason", columnIndex = 5),
 		    @CTSColumn(field = "available_limit", columnIndex = 6)
+      }
+    ),
+    @CTSResponse(
+      name = "returnError",
+      type = cobiscorp.ecobis.datacontractoperations.dto.Error.class,
+      columns = {
+		    @CTSColumn(field = "id", columnIndex = 1),
+		    @CTSColumn(field = "description", columnIndex = 2),
+		    @CTSColumn(field = "code", columnIndex = 3)
       }
     )
   }
@@ -641,6 +651,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		},
 		defaultRequest = {
     
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500139")
 		},
   response = {
   
@@ -2284,7 +2295,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "statusReason", param = "@i_status_reason", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "accountNumber", param = "@i_account_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "typeCard", param = "@i_type_card", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "mode", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "mode", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cardId", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -2307,6 +2319,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       columns = {
 		    @CTSColumn(field = "response.code", columnIndex = 1),
 		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseUpdateCardStatus",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCardStatus.class,
+      columns = {
+		    @CTSColumn(field = "cardId", columnIndex = 1)
       }
     )
   }

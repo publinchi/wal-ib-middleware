@@ -301,7 +301,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeReversal" />
-      <field type="String" name="dTOPropertyName" value="afiliacionNumber" />
+      <field type="String" name="dTOPropertyName" value="affiliationNumber" />
       <field type="String" name="cTSDataType" value="SQLDECIMAL" />
       <field type="boolean" name="allowNull" value="false" />
     </class>

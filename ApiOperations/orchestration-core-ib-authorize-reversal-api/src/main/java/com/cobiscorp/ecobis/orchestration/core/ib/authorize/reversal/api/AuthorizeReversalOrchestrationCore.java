@@ -3,6 +3,8 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.authorize.reversal.api;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -108,9 +110,29 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		}
 		
 		String monto = aRequest.readValueParam("@i_amount");
+		String gtmDateTime = aRequest.readValueParam("@i_transmission_date_time_gtm");
+		String date = aRequest.readValueParam("@i_date");
+		String time = aRequest.readValueParam("@i_time");
+		String originGtm = aRequest.readValueParam("@i_origin_transmission_date_time_gtm");
 		
 		if (monto != null && !monto.isEmpty() && !isNumeric(monto)) {
 			monto = "";
+		}
+			
+		if (gtmDateTime != null && !gtmDateTime.isEmpty() && !isGtmDateTime(gtmDateTime)) {
+			gtmDateTime = "I";
+		}
+		
+		if (date != null && !date.isEmpty() && !isDate(date)) {
+			date = "I";
+		}
+		
+		if (time != null && !time.isEmpty() && !isTime(time)) {
+			time = "I";
+		}
+		
+		if (originGtm != null && !originGtm.isEmpty() && !isGtmDateTime(originGtm)) {
+			originGtm = "I";
 		}
 
 		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
@@ -120,29 +142,44 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
+		request.addInputParam("@i_orderId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_order_id"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		/*request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_order_id"));*/
+		request.addInputParam("@i_transmissionDateTimeGmt", ICTSTypes.SQLVARCHAR, gtmDateTime);
+		request.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, date);
+		request.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, time);
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_type"));
 		request.addInputParam("@i_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
+		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
+		request.addInputParam("@i_merchantCategoryCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_merchant_category_code"));
+		request.addInputParam("@i_sourceCurrencyCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_source_currency_code"));
+		request.addInputParam("@i_settlementCurrencyCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_settlement_currency_code"));
 		request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, monto);
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
+		request.addInputParam("@i_terminalCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
+		request.addInputParam("@i_retrievalReferenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_retrieval_reference_number"));
+		request.addInputParam("@i_acquirerCountryCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
+		request.addInputParam("@i_storeNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
+		request.addInputParam("@i_affiliationNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
+		request.addInputParam("@i_adviceReason", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_advise_reason"));
+		request.addInputParam("@i_adviceReasonCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_advise_reason_code"));
+		
+		request.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_uuid"));
+		request.addInputParam("@i_origin_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_nsu"));
 		request.addInputParam("@i_origin_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_mti"));
+		request.addInputParam("@i_origin_transmissionDateTimeGtm", ICTSTypes.SQLVARCHAR, originGtm);
+		request.addInputParam("@i_origin_institutionName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_institution_name"));
+		request.addInputParam("@i_origin_retrievalReferenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_retrieval_reference_number"));
 		request.addInputParam("@i_origin_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_type"));
 		request.addInputParam("@i_origin_processingCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_processing_code"));
 		
-		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
-		
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
+				
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("card mask es " +  wProductsQueryResp.readValueParam("@o_card_mask"));
-		}
-		
-		aBagSPJavaOrchestration.put("o_card_mask", wProductsQueryResp.readValueParam("@o_card_mask"));
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking valDataLocal AW: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -162,6 +199,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		String trn = "253";
 		String causa = "102";
+		
 		if (aRequest.readValueParam("@i_origin_type").equals("DEPOSIT")) {
 			trn = "264";
 			causa = "106";
@@ -273,11 +311,12 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
+		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
 		
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
+		
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
@@ -293,15 +332,16 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 				logger.logDebug("Ending flow, processResponse success with code: ");
 				
 				IResultSetRow row = new ResultSetRow();
+				
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
 				data.addRow(row);
 				
 				IResultSetRow row2 = new ResultSetRow();
+				
 				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 				data2.addRow(row2);
-			}
-			 else {
+			} else {
 				logger.logDebug("Ending flow, processResponse error");
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
@@ -309,23 +349,28 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 				String message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				
 				IResultSetRow row = new ResultSetRow();
+				
 				row.addRowData(1, new ResultSetRowColumnData(false, success));
 				data.addRow(row);
 				
 				IResultSetRow row2 = new ResultSetRow();
+				
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
 			}
+			
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			IResultSetRow row = new ResultSetRow();
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			data.addRow(row);
 			
 			IResultSetRow row2 = new ResultSetRow();
+			
 			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
 			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
 			data2.addRow(row2);
@@ -347,4 +392,46 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 	    }
 	    return pattern.matcher(strNum).matches();
 	}
+	
+	public static boolean isGtmDateTime(String gtmDateTime) {
+        try {
+        	
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+            
+            dateTimeFormat.setLenient(false);
+            dateTimeFormat.parse(gtmDateTime);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isDate(String date) {
+        try {
+        	
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+	
+	public static boolean isTime(String time) {
+        try {
+        	
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            
+            timeFormat.setLenient(false);
+            timeFormat.parse(time);
+            
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
 }
