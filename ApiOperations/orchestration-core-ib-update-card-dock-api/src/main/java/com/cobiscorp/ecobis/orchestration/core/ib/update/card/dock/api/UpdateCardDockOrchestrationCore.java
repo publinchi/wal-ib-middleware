@@ -373,11 +373,21 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 	private IProcedureResponse getDataCardDock(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
-
+		String mode;
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getDataCardDock");
 		}
+		
+		if(aRequest.readValueParam("@i_mode")!=null){
+			mode = aRequest.readValueParam("@i_mode").equals("null")?"X":aRequest.readValueParam("@i_mode").toString();
+			aBagSPJavaOrchestration.put("mode", mode);
+		}
+		else
+			mode= "X";
 
+		logger.logInfo(CLASS_NAME + " mode_getDataCardDock" + mode);
+		
 		request.setSpName("cob_atm..sp_get_data_card_dock_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -403,11 +413,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_id_account_dock", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_id_card_atm", ICTSTypes.SQLINT4, "0");
 
-		String mode = aRequest.readValueParam("@i_mode").equals("null")?"X":aRequest.readValueParam("@i_mode").toString();
-		aBagSPJavaOrchestration.put("mode", mode);
-		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-		
 		
 		aBagSPJavaOrchestration.put("o_id_card_dock", wProductsQueryResp.readValueParam("@o_id_card_dock"));
 		aBagSPJavaOrchestration.put("o_detail_status", wProductsQueryResp.readValueParam("@o_detail_status"));
@@ -506,6 +512,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		LocalDateTime fechaHoraActual = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String fechaACtual = fechaHoraActual.format(formato);
+        String cardId = null;
 		 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
@@ -513,7 +520,19 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaACtual);
 		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "UCS");
 		
-		request.addInputParam("@i_tarjeta_id", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_card_id"));
+		if(aBagSPJavaOrchestration.containsKey("o_type_card") ){
+			if(!aBagSPJavaOrchestration.get("mode").toString().equals("X") )
+			{
+				if(aBagSPJavaOrchestration.get("o_type_card").toString().equals("VIRTUAL"))
+					cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
+				else
+					cardId = aBagSPJavaOrchestration.get("o_card_available").toString();
+			}
+			else
+				cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
+		} 
+		
+		request.addInputParam("@i_tarjeta_id", ICTSTypes.SQLVARCHAR, cardId);
 		request.addInputParam("@i_request_td", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_requestUpdateCard"));
 		request.addInputParam("@i_estado_tarjeta", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_card_status"));
 		request.addInputParam("@i_estado_upd", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_success"));
@@ -652,7 +671,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		*/
-		if(aBagSPJavaOrchestration.containsKey("flag_log"))
+		if(!aBagSPJavaOrchestration.containsKey("flag_log"))
 			registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);
 		
 		if (codeReturn == 0) {
