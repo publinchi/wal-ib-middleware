@@ -1,5 +1,7 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.query.get.movements.detail;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -35,6 +37,10 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 
+import com.cobiscorp.cobis.cts.utils.BDDUtil;
+
+
+import Utils.ResponseMovements;
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
 
 /**
@@ -121,11 +127,102 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		
 		if (anProcedureResponse.getResultSets().size()>2) {
 			
-			return processTransformationResponse(anProcedureResponse);
+			proccessResponseCentralToObject(anProcedureResponse, aBagSPJavaOrchestration);
+			
+			if (!(Boolean) aBagSPJavaOrchestration.get("dataComrobanteExist")) {
+				IProcedureResponse anProcedureResponseLocal = new ProcedureResponseAS();
+				anProcedureResponseLocal = getMovementsDetailLocal(anOriginalRequest, aBagSPJavaOrchestration);
+				return processTransformationResponse(anProcedureResponseLocal, aBagSPJavaOrchestration); 
+			} else {
+				return processTransformationResponse(anProcedureResponse, aBagSPJavaOrchestration);
+			}
+			
 		} else {
 			return processResponseError(anProcedureResponse);
 		}
 
+	}
+
+	private void proccessResponseCentralToObject(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+		List<ResponseMovements> responseMovementsList = new ArrayList<ResponseMovements>();
+		IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
+		IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
+		boolean dataComrobanteExist = true;
+
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			ResponseMovements respMovement =  new ResponseMovements();
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			
+			
+			respMovement.setFecha(columns[0].getValue());
+			respMovement.setTransaccion(columns[1].getValue());
+			respMovement.setCod_tran(columns[2].getValue());
+			respMovement.setReferencia(columns[3].getValue());
+			respMovement.setD_c(columns[4].getValue());
+			respMovement.setValor(columns[5].getValue());
+			respMovement.setContable(columns[6].getValue());
+			respMovement.setDisponible(columns[7].getValue());
+			respMovement.setSecuencial(columns[8].getValue());
+			respMovement.setCod_alterno(columns[9].getValue());
+			respMovement.setHora(columns[10].getValue());
+			respMovement.setSec(Integer.parseInt(columns[11].getValue()));
+			respMovement.setConcepto(columns[12].getValue());
+			respMovement.setRastreo(columns[13].getValue());
+			respMovement.setTarjetNumber(columns[14].getValue());
+			respMovement.setUm_ssn_branch(Integer.parseInt(columns[16].getValue()));
+			respMovement.setUm_secuencial(Integer.parseInt(columns[17].getValue()));
+			
+			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
+				respMovement.setDataComprobante(columns[15].getValue());
+				String[] strBeneficiary = respMovement.getDataComprobante().split("\\|");
+				if (strBeneficiary != null && strBeneficiary.length > 0 && strBeneficiary[0].contains("error")) {
+					dataComrobanteExist = false;
+					respMovement.setProblem(strBeneficiary[0]);
+					if (respMovement.getProblem().trim().equals("error 3")) {
+						if (strBeneficiary.length > 1)
+							respMovement.setOne_dataComprobante(strBeneficiary[1]);
+						else
+							respMovement.setOne_dataComprobante(" ");
+						if (strBeneficiary.length > 2)
+							respMovement.setTwo_dataComprobante(strBeneficiary[2]);
+						else
+							respMovement.setTwo_dataComprobante(" ");
+						if (strBeneficiary.length > 3)
+							respMovement.setThree_dataComprobante(strBeneficiary[3]);
+						else
+							respMovement.setThree_dataComprobante(" ");
+						if (strBeneficiary.length > 4)
+							respMovement.setFour_dataComprobante(strBeneficiary[4]);
+						else
+							respMovement.setFour_dataComprobante("0");
+						if (strBeneficiary.length > 5)
+							respMovement.setFive_dataComprobante(strBeneficiary[5]);
+						else
+							respMovement.setFive_dataComprobante("0");
+						if (strBeneficiary.length > 6)
+							respMovement.setSix_dataComprobante(strBeneficiary[6]);
+						else
+							respMovement.setSix_dataComprobante("0");
+					} else {
+						respMovement.setOne_dataComprobante(" ");
+						respMovement.setTwo_dataComprobante(" ");
+						respMovement.setThree_dataComprobante(" ");
+						respMovement.setFour_dataComprobante(" ");
+						respMovement.setFive_dataComprobante(" ");
+						respMovement.setSix_dataComprobante(" ");
+					}
+				}
+			}
+			else{
+				respMovement.setDataComprobante(" | | |0|0|0");
+			}
+			
+			responseMovementsList.add(respMovement);
+		}
+		
+		aBagSPJavaOrchestration.put("responseMovementsList", responseMovementsList);
+		aBagSPJavaOrchestration.put("dataComrobanteExist", dataComrobanteExist);
+		
 	}
 
 	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
@@ -168,6 +265,106 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return anOriginalProcedureResponse;
 	}
 
+	private IProcedureResponse getMovementsDetailLocal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getMovementsDetail");
+		}
+
+		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_local_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		List<ResponseMovements> responseMovementsList = (List<ResponseMovements>) aBagSPJavaOrchestration.get("responseMovementsList");
+		String script = createScriptFromDataCentral(responseMovementsList);
+		
+		request.addInputParam("@i_script", ICTSTypes.SQLVARCHAR, script);
+		
+		
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getMovementsDetail");
+		}
+
+		return wProductsQueryResp;
+	}
+
+	private String createScriptFromDataCentral(List<ResponseMovements> responseMovementsList) {
+		String script = ""
+				+ "IF OBJECT_ID('ultimos_movimientos_local') IS NOT NULL\r\n"
+				+ "	BEGIN		\r\n"
+				+ "		drop TABLE ultimos_movimientos_local\r\n"
+				+ "	END\r\n"
+				+ "	ELSE\r\n"
+				+ "\r\n"
+				+ "	create table ultimos_movimientos_local ( \r\n"
+				+ "		fecha				varchar(250),\r\n"
+				+ "		transaccion			varchar(250) null,\r\n"
+				+ "		cod_tran			varchar(250) null,\r\n"
+				+ "		referencia			varchar(250) null,\r\n"
+				+ "		d_c					varchar(250) null,\r\n"
+				+ "		valor				varchar(250) null,\r\n"
+				+ "		contable			varchar(250) null,\r\n"
+				+ "		disponible			varchar(250) null,\r\n"
+				+ "		secuencial			varchar(250) null,\r\n"
+				+ "		cod_alterno			varchar(250) null,\r\n"
+				+ "		hora				varchar(250) null,\r\n"
+				+ "		sec					int null,\r\n"
+				+ "		concepto			varchar(250) null,\r\n"
+				+ "		rastreo				varchar(250) null,\r\n"
+				+ "		tarjetNumber		varchar(250) null,\r\n"
+				+ "		dataComprobante		varchar(250) null,\r\n"
+				+ "		um_ssn_branch       int			 null,	\r\n"
+				+ "		um_secuencial       int			 null,\r\n"
+				+ "		problem				varchar(250) null,\r\n"
+				+ "		one_dataComprobante varchar(250) null,\r\n"
+				+ "		two_dataComprobante varchar(250) null,\r\n"
+				+ "		three_dataComprobante varchar(250) null,\r\n"
+				+ "		four_dataComprobante varchar(250) null,\r\n"
+				+ "		five_dataComprobante varchar(250) null,\r\n"
+				+ "		six_dataComprobante varchar(250) null)\r\n";
+		for (ResponseMovements respMov : responseMovementsList) {
+			script = script + "insert into ultimos_movimientos_local values (\r\n";
+			script = script + (respMov.getFecha() != null ? "'" + respMov.getFecha() + "'" : "null") + ",";
+			script = script + (respMov.getTransaccion() != null ? "'" + respMov.getTransaccion() + "'" : "null") + ",";
+			script = script + (respMov.getCod_tran() != null ? "'" + respMov.getCod_tran() + "'" : "null") + ",";
+			script = script + (respMov.getReferencia() != null ? "'" + respMov.getReferencia() + "'" : "null") + ",";
+			script = script + (respMov.getD_c() != null ? "'" + respMov.getD_c() + "'" : "null") + ",";
+			script = script + (respMov.getValor() != null ? "'" + respMov.getValor() + "'" : "null") + ",";
+			script = script + (respMov.getContable() != null ? "'" + respMov.getContable() + "'" : "null") + ",";
+			script = script + (respMov.getDisponible() != null ? "'" + respMov.getDisponible() + "'" : "null") + ",";
+			script = script + (respMov.getSecuencial() != null ? "'" + respMov.getSecuencial() + "'" : "null") + ",";
+			script = script + (respMov.getCod_alterno() != null ? "'" + respMov.getCod_alterno() + "'" : "null") + ",";
+			script = script + (respMov.getHora() != null ? "'" + respMov.getHora() + "'" : "null") + ",";
+			script = script + respMov.getSec() + ",";
+			script = script + (respMov.getConcepto() != null ? "'" + respMov.getConcepto() + "'" : "null") + ",";
+			script = script + (respMov.getRastreo() != null ? "'" + respMov.getRastreo() + "'" : "null") + ",";
+			script = script + (respMov.getTarjetNumber() != null ? "'" + respMov.getTarjetNumber() + "'" : "null") + ",";
+			script = script + (respMov.getDataComprobante() != null ? "'" + respMov.getDataComprobante() + "'" : "null") + ",";
+			script = script + respMov.getUm_ssn_branch() + ",";
+			script = script + respMov.getUm_secuencial() + ",";
+			script = script + (respMov.getProblem() != null ? "'" + respMov.getProblem() + "'" : "null") + ",";
+			script = script + (respMov.getOne_dataComprobante() != null ? "'" + respMov.getOne_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getTwo_dataComprobante() != null ? "'" +respMov.getTwo_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getThree_dataComprobante() != null ? "'" +  respMov.getThree_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getFour_dataComprobante() != null ? "'" + respMov.getFour_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getFive_dataComprobante() != null ? "'" + respMov.getFive_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ")\r\n";
+
+		}
+		return script;
+		
+	}
 
 	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest) {
 
@@ -220,7 +417,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return null;
 	}
 
-	public IProcedureResponse processTransformationResponse(IProcedureResponse anOriginalProcedureRes) {
+	public IProcedureResponse processTransformationResponse(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processTransformationResponse--->");
 		}
@@ -310,11 +507,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
 			IResultSetData data0 = new ResultSetData();
 			
-			if (!dataComprobanteExists(rowsTemp))
-			{
-				
-			}
-
 			for (IResultSetRow iResultSetRow : rowsTemp) {
 				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
 
@@ -336,10 +528,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[11].getValue()));
 				rowDat.addRowData(15, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(16, new ResultSetRowColumnData(false, columns[14].getValue()));
-				logger.logInfo("Prueba movements secuencial");
-				logger.logInfo(columns[8].getValue());
-				logger.logInfo("Prueba movements ssn_branch");
-				logger.logInfo(columns[16].getValue());
 				
 				if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 					String[] strBeneficiary = columns[15].getValue().split("\\|");
@@ -416,6 +604,5 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		}
 		return true;		
 	}
-
-
+	
 }
