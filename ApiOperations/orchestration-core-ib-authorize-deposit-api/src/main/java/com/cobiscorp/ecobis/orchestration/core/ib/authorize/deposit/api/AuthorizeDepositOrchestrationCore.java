@@ -319,6 +319,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 				data2.addRow(row2);
 				
 			} else {
+				
 				logger.logDebug("Ending flow, processResponse error");
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
