@@ -62,7 +62,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AuthorizeWithdrawal starts...");		
+		logger.logDebug("Begin flow, AuthorizeWithdrawalDock starts...");		
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
@@ -138,7 +138,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			exp_date = "I";
 		}
 
-		request.setSpName("sp_bv_val_trn_atm_dock_api");
+		request.setSpName("cob_atm..sp_bv_val_trn_atm_dock_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);

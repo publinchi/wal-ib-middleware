@@ -109,7 +109,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		String s_amount = aRequest.readValueParam("@i_source_value");
 		String b_amount = aRequest.readValueParam("@i_billing_value");
-		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gmt");
+		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gtm");
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
@@ -138,7 +138,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			exp_date = "I";
 		}
 
-		request.setSpName("sp_bv_val_trn_atm_dock_api");
+		request.setSpName("cob_atm..sp_bv_val_trn_atm_dock_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
