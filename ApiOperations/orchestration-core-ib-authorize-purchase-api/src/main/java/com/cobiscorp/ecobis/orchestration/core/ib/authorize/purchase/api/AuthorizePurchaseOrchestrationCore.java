@@ -327,8 +327,8 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 				data2.addRow(row2);
-			}
-			 else {
+				
+			} else {
 				 
 				logger.logDebug("Ending flow, processResponse error");
 				
@@ -347,6 +347,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
 			}
+			
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
