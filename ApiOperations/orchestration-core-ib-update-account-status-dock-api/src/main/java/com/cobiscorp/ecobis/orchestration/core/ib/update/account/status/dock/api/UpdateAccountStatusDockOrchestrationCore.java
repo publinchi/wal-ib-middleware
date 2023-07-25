@@ -70,7 +70,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		anProcedureResponse = updateAccountStatusDock(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		return processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
+		return processResponseApi(anProcedureResponse,aBagSPJavaOrchestration, anOriginalRequest);
 	}
 	
 	private IProcedureResponse updateAccountStatusDock(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -94,6 +94,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			
 			if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM"))
 			{
+				aBagSPJavaOrchestration.put("success", "success");
 				return wAccountsResp;
 			}
 			IProcedureResponse wAccountsValDataLocal = new ProcedureResponseAS();
@@ -181,8 +182,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_account_status", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
-		
-		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");		
+		request.addOutputParam("@o_account_dock_id", ICTSTypes.SQLVARCHAR, "X");	
+		request.addOutputParam("@o_bv_ente", ICTSTypes.SQLINTN, "0");		
+		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -191,6 +193,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		}
 		
 		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
+		aBagSPJavaOrchestration.put("bv_ente", wProductsQueryResp.readValueParam("@o_bv_ente"));
+		aBagSPJavaOrchestration.put("login", wProductsQueryResp.readValueParam("@o_login"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -362,7 +366,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		return null;
 	}
 	
-	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
 		
 		logger.logInfo("processResponseApi [INI] --->" );
 		
@@ -401,6 +405,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 				data2.addRow(row2);
+				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
 				
 			} else {
 				logger.logDebug("Ending flow, processResponse error");
@@ -441,5 +446,73 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);
 		
 		return wProcedureResponse;		
+	}
+
+	private void sendMail(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en sendMail");
+		}
+
+		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
+		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
+		String titulo = "";
+		if (status.equals("A")) {
+			titulo = "Cuenta Activada";
+		} else if (status.equals("B")) {
+			titulo = "Cuenta Bloqueada";
+		} else if (status.equals("C")) {
+			titulo = "Cuenta Cancelada";
+		} else if (status.equals("BV")) {
+			titulo = "Cuenta Bloqueada por valores: " + value;
+		} else if (status.equals("BM")) {
+			if (value.equals("1")) {
+				titulo = "Cuenta Bloqueada por movimientos: contra credito";
+			} else if (value.equals("2")) {
+				titulo = "Cuenta Bloqueada por movimientos: contra debito";
+			} else if (value.equals("3")) {
+				titulo = "Cuenta Bloqueada por movimientos: contra credito y debito";
+			}
+			
+		} 
+		
+		
+		request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, titulo);
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+		request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("externalCustomerId").toString());
+		request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("bv_ente") != null ? aBagSPJavaOrchestration.get("bv_ente").toString() : "0");
+		request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N45");
+		
+		
+		request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "3");
+		request.addInputParam("@i_num_producto", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("login") != null ? aBagSPJavaOrchestration.get("login").toString() : "login");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+		request.addInputParam("@i_mensaje", ICTSTypes.SQLVARCHAR, "Cliente Afiliad");
+		request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
+		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, "ayuda 1");
+		request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+		
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de sendMail");
+		}
+		
 	}
 }
