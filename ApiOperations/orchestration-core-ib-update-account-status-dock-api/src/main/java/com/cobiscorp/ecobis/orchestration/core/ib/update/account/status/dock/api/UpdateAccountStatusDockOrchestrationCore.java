@@ -471,7 +471,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		} else if (status.equals("C")) {
 			titulo = "Cuenta Cancelada";
 		} else if (status.equals("BV")) {
-			titulo = "Cuenta Bloqueada por valores: " + value;
+			titulo = "Cuenta Bloqueada por valores, por el valor de: " + value;
 		} else if (status.equals("BM")) {
 			if (value.equals("1")) {
 				titulo = "Cuenta Bloqueada por movimientos: contra credito";
