@@ -70,7 +70,7 @@
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
       <field type="String" name="dTOPropertyName" value="activity" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="17" index="1">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="18" name="parameter">
@@ -395,7 +395,7 @@
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
       <field type="String" name="dTOPropertyName" value="nationality" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="67" index="26">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="68" name="parameter">

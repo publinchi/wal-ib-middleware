@@ -368,7 +368,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     procedureRequestAS.addInputParam("@i_card_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_number());
     procedureRequestAS.addInputParam("@i_card_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCard_present()));
     procedureRequestAS.addInputParam("@i_crd_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getCode());
-    procedureRequestAS.addInputParam("@i_crd_mode",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getPin());
+    procedureRequestAS.addInputParam("@i_crd_mode",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getMode());
     procedureRequestAS.addInputParam("@i_crd_pin",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getPin());
     procedureRequestAS.addInputParam("@x_apigw-api-id",ICTSTypes.SQLVARCHAR,xapigwapiid);
     procedureRequestAS.addInputParam("@i_establishment",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getEstablishment());

@@ -313,9 +313,33 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: authorizePurchaseDock");
 		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock  = new ResponseAuthorizePurchaseDock();
 		    
-		if(!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()), new Data("card_expiration_date", inRequestAuthorizePurchaseDock.getCard_expiration_date()), new Data("transaction_indicators.cardholder_present", inRequestAuthorizePurchaseDock.transaction_indicatorsInstance().isCardholder_present()), new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()), new Data("transaction_indicators.card_present", inRequestAuthorizePurchaseDock.transaction_indicatorsInstance().isCard_present()), new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()), new Data("card_entry.pin", inRequestAuthorizePurchaseDock.getCard_entry().getPin()), new Data("establishment_code", inRequestAuthorizePurchaseDock.getEstablishment_code()), new Data("installments", inRequestAuthorizePurchaseDock.getInstallments()), new Data("merchant_category_code", inRequestAuthorizePurchaseDock.getMerchant_category_code()), new Data("mti", inRequestAuthorizePurchaseDock.getMti()), new Data("nsu", inRequestAuthorizePurchaseDock.getNsu()), new Data("processing.code", inRequestAuthorizePurchaseDock.getProcessing().getCode()), new Data("processing.destiny_account_type", inRequestAuthorizePurchaseDock.getProcessing().getDestiny_account_type()), new Data("processing.origin_account_type", inRequestAuthorizePurchaseDock.getProcessing().getOrigin_account_type()), new Data("processing.type", inRequestAuthorizePurchaseDock.getProcessing().getType()), new Data("terminal_code", inRequestAuthorizePurchaseDock.getTerminal_code()), new Data("transaction_origin", inRequestAuthorizePurchaseDock.getTransaction_origin()), new Data("values.billing_currency_code", inRequestAuthorizePurchaseDock.getValues().getBilling_currency_code()), new Data("values.billing_value", inRequestAuthorizePurchaseDock.getValues().getBilling_value()), new Data("values.source_currency_code", inRequestAuthorizePurchaseDock.getValues().getSource_currency_code()), new Data("values.source_value", inRequestAuthorizePurchaseDock.getValues().getSource_value()))) {
-		  LOGGER.logDebug("400 is returned - Required fields are missing");
-		  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+		if (!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
+				new Data("card_expiration_date", inRequestAuthorizePurchaseDock.getCard_expiration_date()),
+				new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()),
+				new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()),
+				new Data("card_entry.pin", inRequestAuthorizePurchaseDock.getCard_entry().getPin()),
+				new Data("establishment_code", inRequestAuthorizePurchaseDock.getEstablishment_code()),
+				new Data("installments", inRequestAuthorizePurchaseDock.getInstallments()),
+				new Data("merchant_category_code", inRequestAuthorizePurchaseDock.getMerchant_category_code()),
+				new Data("mti", inRequestAuthorizePurchaseDock.getMti()),
+				new Data("nsu", inRequestAuthorizePurchaseDock.getNsu()),
+				new Data("processing.code", inRequestAuthorizePurchaseDock.getProcessing().getCode()),
+				new Data("processing.destiny_account_type",
+						inRequestAuthorizePurchaseDock.getProcessing().getDestiny_account_type()),
+				new Data("processing.origin_account_type",
+						inRequestAuthorizePurchaseDock.getProcessing().getOrigin_account_type()),
+				new Data("processing.type", inRequestAuthorizePurchaseDock.getProcessing().getType()),
+				new Data("terminal_code", inRequestAuthorizePurchaseDock.getTerminal_code()),
+				new Data("transaction_origin", inRequestAuthorizePurchaseDock.getTransaction_origin()),
+				new Data("values.billing_currency_code",
+						inRequestAuthorizePurchaseDock.getValues().getBilling_currency_code()),
+				new Data("values.billing_value", inRequestAuthorizePurchaseDock.getValues().getBilling_value()),
+				new Data("values.source_currency_code",
+						inRequestAuthorizePurchaseDock.getValues().getSource_currency_code()),
+				new Data("values.source_value", inRequestAuthorizePurchaseDock.getValues().getSource_value()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
 		}
 		  
 		try {
