@@ -314,7 +314,6 @@ public class ServiceContractOperationsApiRest {
 		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock  = new ResponseAuthorizePurchaseDock();
 		    
 		if (!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
-				new Data("card_expiration_date", inRequestAuthorizePurchaseDock.getCard_expiration_date()),
 				new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()),
 				new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()),
 				new Data("card_entry.pin", inRequestAuthorizePurchaseDock.getCard_entry().getPin()),
