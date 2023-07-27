@@ -28,15 +28,10 @@ import java.util.HashMap;
 
 
 public class CreateCustomerResponse implements Serializable {
-  private Integer externalCustomerId;
   private Boolean success;
   private Response response;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
-  }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
+  private Integer externalCustomerId;
+  private String accountNumber;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -54,5 +49,17 @@ public class CreateCustomerResponse implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public Integer getExternalCustomerId(){
+    return this.externalCustomerId;
+  }
+  public void setExternalCustomerId(Integer externalCustomerId ){
+    this.externalCustomerId=externalCustomerId;
+  }
+  public String getAccountNumber(){
+    return this.accountNumber;
+  }
+  public void setAccountNumber(String accountNumber ){
+    this.accountNumber=accountNumber;
   }
 }

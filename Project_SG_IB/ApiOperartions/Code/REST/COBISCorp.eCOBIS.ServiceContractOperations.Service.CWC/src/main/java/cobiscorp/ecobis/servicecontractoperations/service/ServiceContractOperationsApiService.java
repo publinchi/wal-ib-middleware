@@ -1468,7 +1468,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 						}
 					}, false);
 
-			outCreateCustomerResponse = returnCreateCustomerResponse;
+			outCreateCustomerResponse.setSuccess(returnCreateCustomerResponse.isSuccess());
 			// break;
 
 		} else {
@@ -1500,7 +1500,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+		if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
 			// ---------NO Array
 			CreateCustomerResponse returnCreateCustomerResponse = MapperResultUtil
 					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<CreateCustomerResponse>() {
@@ -1514,6 +1514,28 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					}, false);
 
 			outCreateCustomerResponse.setExternalCustomerId(returnCreateCustomerResponse.getExternalCustomerId());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+		
+		mapTotal++;
+		if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+			// ---------NO Array
+			CreateCustomerResponse returnCreateCustomerResponse = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<CreateCustomerResponse>() {
+						@Override
+						public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+							CreateCustomerResponse dto = new CreateCustomerResponse();
+
+							dto.setAccountNumber(resultSetMapper.getString(1));
+							return dto;
+						}
+					}, false);
+
+			outCreateCustomerResponse.setAccountNumber(returnCreateCustomerResponse.getAccountNumber());
 			// break;
 
 		} else {
@@ -3299,79 +3321,76 @@ int mapBlank=0;
 		  return outResponseRegisterAccountSpei;
 		}
 
-	/**
-	 * Service to create a savings account for an existing customer
-	 */
-	@Override
-	// Have DTO
-	public ResponseCreateSavingAccount createSavingAccount(RequestCreateSavingAccount inRequestCreateSavingAccount)
-			throws CTSRestException {
-		LOGGER.logDebug("Start service execution: createSavingAccount");
+		/**
+		 * Service to create a savings account for an existing customer
+		 */
+		@Override
+		// Have DTO
+		public ResponseCreateSavingAccount createSavingAccount(RequestCreateSavingAccount inRequestCreateSavingAccount)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: createSavingAccount");
 
-		ResponseCreateSavingAccount outResponseCreateSavingAccount = new ResponseCreateSavingAccount();
+			ResponseCreateSavingAccount outResponseCreateSavingAccount = new ResponseCreateSavingAccount();
 
-		Response response = new Response();
-		outResponseCreateSavingAccount.setResponse(response);
+			Response response = new Response();
+			outResponseCreateSavingAccount.setResponse(response);
 
-		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_apertura_aut_bv_api");
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_apertura_aut_bv_api");
 
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500097");
-		procedureRequestAS.addInputParam("@i_customer", ICTSTypes.SQLINT4,
-				String.valueOf(inRequestCreateSavingAccount.getCustomerId()));
-		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXXX");
-		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "00000");
-		procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "00000");
-		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500097");
+			procedureRequestAS.addInputParam("@i_customer", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getCustomerId()));
+			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
+			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
+			procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
 
-		// execute procedure
-		ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
+			// execute procedure
+			ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(resp);
-		// throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+			List<MessageBlock> errors = ErrorUtil.getErrors(resp);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
 				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
 			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+
+			outResponseCreateSavingAccount.setResponse(response);
+			outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+
+			if (outResponseCreateSavingAccount.getAccountNumber() != null
+					&& outResponseCreateSavingAccount.getAccountNumber() != "" && response.getCode() == 0) {
+
+				outResponseCreateSavingAccount.setSuccess(true);
+
+			} else {
+
+				outResponseCreateSavingAccount.setSuccess(false);
+			}
+
+			LOGGER.logDebug("Ends service execution: createSavingAccount");
+
+			return outResponseCreateSavingAccount;
 		}
-		LOGGER.logDebug("Procedure ok");
-		// Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
-
-		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
-		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
-		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
-		outResponseCreateSavingAccount.setResponse(response);
-		outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
-		
-		if(outResponseCreateSavingAccount.getAccountNumber()!=null && outResponseCreateSavingAccount.getAccountNumber()!="" && response.getCode()==0) {
-			
-			outResponseCreateSavingAccount.setSuccess(true);
-			
-		}else
-		{
-			
-			outResponseCreateSavingAccount.setSuccess(false);
-			
-		}
-		
-		
-
-		LOGGER.logDebug("Ends service execution: createSavingAccount");
-
-		return outResponseCreateSavingAccount;
-
-	}
 	
 	/**
 	 * Catalogue Of Locations 

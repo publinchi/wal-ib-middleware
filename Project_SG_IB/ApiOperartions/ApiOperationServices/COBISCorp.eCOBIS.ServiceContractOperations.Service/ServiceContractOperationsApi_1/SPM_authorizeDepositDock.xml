@@ -321,7 +321,7 @@
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
       <field type="String" name="dTOPropertyName" value="authorization_code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="53" index="20">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="54" name="parameter">
