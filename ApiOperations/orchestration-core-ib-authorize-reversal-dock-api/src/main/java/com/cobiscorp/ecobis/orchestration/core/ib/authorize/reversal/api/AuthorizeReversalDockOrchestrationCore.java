@@ -116,6 +116,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
 		String original_gtm_date_time = aRequest.readValueParam("@i_original_transaction_data_transmission_date_time_gmt");
 		
+		
 		if (values_3 != null && !values_3.isEmpty() && !isNumeric(values_3)) {
 			values_3 = "";
 		}
@@ -124,26 +125,57 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 			values_4 = "";
 		}
 		
-		if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
-			gtm_date_time = "I";
-		}
-		
-		if (date != null && !date.isEmpty() && !isDate(date)) {
-			date = "I";
-		}
-		
-		if (time != null && !time.isEmpty() && !isTime(time)) {
-			time = "I";
-		}
-		
-		if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
-			exp_date = "I";
-		}
-		
-		if (original_gtm_date_time != null && !original_gtm_date_time.isEmpty() && !isGtmDateTime(original_gtm_date_time)) {
-			original_gtm_date_time = "I";
-		}
+		if(gtm_date_time.equals("null")){
 
+            gtm_date_time  = "";
+
+        } else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+
+            gtm_date_time = "I";
+
+        }
+		
+		if(date.equals("null")){
+
+			date  = "";
+
+        } else if (date != null && !date.isEmpty() && !isDate(date)) {
+
+        	date = "I";
+
+        }
+		
+		if(time.equals("null")){
+
+			time  = "";
+
+        } else if (time != null && !time.isEmpty() && !isTime(time)) {
+
+        	time = "I";
+
+        }
+		
+		if(exp_date.equals("null")){
+
+			exp_date  = "";
+
+        } else if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
+
+        	exp_date = "I";
+
+        }
+		
+		if(original_gtm_date_time.equals("null")){
+
+			original_gtm_date_time  = "";
+
+        } else if (original_gtm_date_time != null && !original_gtm_date_time.isEmpty() && !isGtmDateTime(original_gtm_date_time)) {
+
+        	original_gtm_date_time = "I";
+
+        }
+		
+		
 		request.setSpName("cob_atm..sp_bv_valida_dock_reversal_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
