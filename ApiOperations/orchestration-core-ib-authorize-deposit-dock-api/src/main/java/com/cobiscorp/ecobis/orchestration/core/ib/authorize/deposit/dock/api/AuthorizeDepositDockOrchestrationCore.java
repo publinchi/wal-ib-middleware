@@ -122,22 +122,39 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			b_amount = "";
 		}
 		
-		if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
-			gtm_date_time = "I";
+		if (gtm_date_time.trim().length()>0) {
+			if (!gtm_date_time.isEmpty()) {
+				if (!isGtmDateTime(gtm_date_time)) {
+					gtm_date_time = "I";
+				}
+			}	
 		}
 		
-		if (date != null && !date.isEmpty() && !isDate(date)) {
-			date = "I";
+		if (date.trim().length()>0) {
+			if (!date.isEmpty()) {
+				if (!isDate(date)) {
+					date = "I";
+				}
+			}	
 		}
 		
-		if (time != null && !time.isEmpty() && !isTime(time)) {
-			time = "I";
+		if (time.trim().length()>0) {
+			if (!time.isEmpty()) {
+				if (!isTime(time)) {
+					time = "I";
+				}
+			}	
 		}
 		
-		if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
-			exp_date = "I";
+		if (exp_date.trim().length()>0) {
+			if (!exp_date.isEmpty()) {
+				if (!isExpDate(exp_date)) {
+					exp_date = "I";
+				}
+			}	
 		}
-
+			
+		
 		request.setSpName("cob_atm..sp_bv_val_trn_atm_dock_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -190,7 +207,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			logger.logDebug("cta es " +  wProductsQueryResp.readValueParam("@o_cta"));
 		}
 		
-		aBagSPJavaOrchestration.put("amount", aRequest.readValueParam("@i_billing_value"));
+		aBagSPJavaOrchestration.put("amount", aRequest.readValueParam("@i_source_value"));
 		aBagSPJavaOrchestration.put("ente", wProductsQueryResp.readValueParam("@o_ente"));
 		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
 		

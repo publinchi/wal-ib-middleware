@@ -144,12 +144,23 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 				if(!wAccountsResp.readValueParam("@o_id_card_atm").equals("0") && flag.equals("S")) {
 					IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
 					wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
-					updateStatusAtm(aRequest, aBagSPJavaOrchestration);
+					if(aRequest.readValueParam("@i_card_status").equals("C")){
+						cancelCardAtm(aRequest, aBagSPJavaOrchestration);
+					}
+					else{
+						updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
+					}
+					//updateStatusAtm(aRequest, aBagSPJavaOrchestration);
 					return wAccountsRespInsert;
 				}else if(wAccountsResp.readValueParam("@o_type_card").toString().equals("VIRTUAL") && !wAccountsResp.readValueParam("@o_id_card_dock").toString().equals("X") && flag.equals("S")) {
 					IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
 					wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
-					updateStatusAtm(aRequest, aBagSPJavaOrchestration);
+					if(aRequest.readValueParam("@i_card_status").equals("C")){
+						cancelCardAtm(aRequest, aBagSPJavaOrchestration);
+					}
+					else{
+						updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
+					}
 					return wAccountsRespInsert;
 				}
 		}
@@ -495,6 +506,52 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 
 		return wProductsQueryResp;
 	}
+	
+	private IProcedureResponse cancelCardAtm(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+		Integer trn = 16507;
+		String reason = "SCL";
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en cancelCardAtm");
+		}
+		
+		request.setSpName("cob_atm..sp_atm_elimina_tarj");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_tipo_sol_org", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@i_banco", ICTSTypes.SQLINT4, "1");
+		request.addInputParam("@i_tarjeta", ICTSTypes.SQLINT4,aBagSPJavaOrchestration.get("o_id_card_atm").toString());
+		request.addInputParam("@i_motivo", ICTSTypes.SQLVARCHAR, reason);
+		request.addInputParam("@i_observaciones", ICTSTypes.SQLVARCHAR, "Eliminacion Tarjeta API");
+		request.addInputParam("@i_proceso_val", ICTSTypes.SQLVARCHAR, "CAN");
+		
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, String.valueOf(trn));
+		request.addInputParam("@s_org", ICTSTypes.SQLCHAR, "");
+		
+		//request.addOutputParam("@o_secuencial", ICTSTypes.SQLVARCHAR, "0");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking cancelCardAtm: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de cancelCardAtm");
+		}
+
+		return wProductsQueryResp;
+	}
+	
 	private void registerLogBd(IProcedureResponse reponseCard, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
