@@ -114,6 +114,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
 		
+		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
 			s_amount = "";
 		}
@@ -122,36 +123,28 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			b_amount = "";
 		}
 		
-		if (gtm_date_time.trim().length()>0) {
-			if (!gtm_date_time.isEmpty()) {
-				if (!isGtmDateTime(gtm_date_time)) {
-					gtm_date_time = "I";
-				}
-			}	
+		if(gtm_date_time.equals("null")){
+			gtm_date_time  = "";
+		} else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+			gtm_date_time = "I";
 		}
 		
-		if (date.trim().length()>0) {
-			if (!date.isEmpty()) {
-				if (!isDate(date)) {
-					date = "I";
-				}
-			}	
+		if(date.equals("null")){
+			date = "";
+		} else if (date != null && !date.isEmpty() && !isDate(date)) {
+			date = "I";
 		}
 		
-		if (time.trim().length()>0) {
-			if (!time.isEmpty()) {
-				if (!isTime(time)) {
-					time = "I";
-				}
-			}	
+		if(time.equals("null")){
+			time = "";
+		} else if (time != null && !time.isEmpty() && !isTime(time)) {
+			time = "I";
 		}
 		
-		if (exp_date.trim().length()>0) {
-			if (!exp_date.isEmpty()) {
-				if (!isExpDate(exp_date)) {
-					exp_date = "I";
-				}
-			}	
+		if(exp_date.equals("null")){
+			exp_date = "";
+		} else if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
+			exp_date = "I";
 		}
 
 		
