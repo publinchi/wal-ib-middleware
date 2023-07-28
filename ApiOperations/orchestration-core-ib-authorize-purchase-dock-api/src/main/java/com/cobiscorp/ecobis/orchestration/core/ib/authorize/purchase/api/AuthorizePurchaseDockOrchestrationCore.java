@@ -122,19 +122,27 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 			b_amount = "";
 		}
 		
-		if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+		if(gtm_date_time.equals("null")){
+			gtm_date_time  = "";
+		}else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
 			gtm_date_time = "I";
 		}
 		
-		if (date != null && !date.isEmpty() && !isDate(date)) {
+		if(date.equals("null")){
+			date = "";
+		}else if (date != null && !date.isEmpty() && !isDate(date)) {
 			date = "I";
 		}
 		
-		if (time != null && !time.isEmpty() && !isTime(time)) {
+		if(time.equals("null")){
+			time = "";
+		}else if (time != null && !time.isEmpty() && !isTime(time)) {
 			time = "I";
 		}
 		
-		if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
+		if(exp_date.equals("null")){
+			exp_date = "";
+		}else if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
 			exp_date = "I";
 		}
 		
