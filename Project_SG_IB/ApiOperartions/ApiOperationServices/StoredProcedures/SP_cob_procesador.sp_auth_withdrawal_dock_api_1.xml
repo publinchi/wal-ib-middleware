@@ -80,11 +80,5 @@
       </columns>
       <queryText>SELECT "response"=o_response</queryText>
     </query>
-    <query>
-      <columns>
-        <column name="response" />
-      </columns>
-      <queryText>SELECT "reason"=o_reason</queryText>
-    </query>
   </queries>
 </procedure>

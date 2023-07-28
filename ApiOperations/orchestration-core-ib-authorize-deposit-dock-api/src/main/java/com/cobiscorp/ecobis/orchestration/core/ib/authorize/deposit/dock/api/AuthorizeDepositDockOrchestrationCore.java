@@ -113,6 +113,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
+				
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
 			s_amount = "";
@@ -122,36 +123,36 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			b_amount = "";
 		}
 		
-		if (gtm_date_time.trim().length()>0) {
-			if (!gtm_date_time.isEmpty()) {
-				if (!isGtmDateTime(gtm_date_time)) {
-					gtm_date_time = "I";
-				}
-			}	
+		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
+			s_amount = "";
 		}
 		
-		if (date.trim().length()>0) {
-			if (!date.isEmpty()) {
-				if (!isDate(date)) {
-					date = "I";
-				}
-			}	
+		if (b_amount != null && !b_amount.isEmpty() && !isNumeric(b_amount)) {
+			b_amount = "";
 		}
 		
-		if (time.trim().length()>0) {
-			if (!time.isEmpty()) {
-				if (!isTime(time)) {
-					time = "I";
-				}
-			}	
+		if(gtm_date_time.equals("null")){
+			gtm_date_time  = "";
+		} else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+			gtm_date_time = "I";
 		}
 		
-		if (exp_date.trim().length()>0) {
-			if (!exp_date.isEmpty()) {
-				if (!isExpDate(exp_date)) {
-					exp_date = "I";
-				}
-			}	
+		if(date.equals("null")){
+			date = "";
+		} else if (date != null && !date.isEmpty() && !isDate(date)) {
+			date = "I";
+		}
+		
+		if(time.equals("null")){
+			time = "";
+		} else if (time != null && !time.isEmpty() && !isTime(time)) {
+			time = "I";
+		}
+		
+		if(exp_date.equals("null")){
+			exp_date = "";
+		} else if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
+			exp_date = "I";
 		}
 			
 		
@@ -178,7 +179,6 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@i_destiny_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destiny_account_type"));
 		request.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
-		request.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authorization_code"));
 		request.addInputParam("@i_card_expiration_date", ICTSTypes.SQLVARCHAR, exp_date);
 		request.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transaction_origin"));
 		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
