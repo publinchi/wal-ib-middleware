@@ -90,97 +90,7 @@ public class TransferSpeiApiOrchestationCore extends SPJavaOrchestrationBase {
 		return processResponseTransfer(anProcedureResponse);
 
 	}
-
-	public IProcedureResponse processResponseTransfer(IProcedureResponse anOriginalProcedureRes) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(" start processResponseAccounts--->");
-			logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_referencia") );
-			//logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_tracking_key") );
-		}
-		
-		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		String code,message,success,referenceCode = null;
-		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
-		referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
-		//trackingKey = anOriginalProcedureRes.readValueParam("@o_tracking_key");
-		
-		logger.logInfo("xdcxv2 --->" + referenceCode );
-		if (codeReturn == 0){
-			if(null!=referenceCode) {
-				code = "0";
-				message = "Success";
-				success = "true";
-				referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
-				logger.logInfo("bnbn true--->" + referenceCode);
-			}
-			else{
-				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
-				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
-				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
-				logger.logInfo("bnbn false--->" + referenceCode);
-			}
-			
-		}
-		else
-		{
-			code = String.valueOf(codeReturn);
-			message = anOriginalProcedureRes.getMessage(1).getMessageText();
-			success = "false";
-		}
-		
-		// Agregar Header y data 1
-		IResultSetHeader metaData = new ResultSetHeader();
-		IResultSetData data = new ResultSetData();
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-
-		// Agregar Header y data 2
-		IResultSetHeader metaData2 = new ResultSetHeader();
-		IResultSetData data2 = new ResultSetData();
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
-		// Agregar info 1
-		IResultSetRow row = new ResultSetRow();
-		row.addRowData(1, new ResultSetRowColumnData(false, code));
-		row.addRowData(2, new ResultSetRowColumnData(false, message));
-		data.addRow(row);
-
-		// Agregar info 2
-		IResultSetRow row2 = new ResultSetRow();
-		row2.addRowData(1, new ResultSetRowColumnData(false, success));
-		data2.addRow(row2);
-
-		// Agregar resulBlock
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-
-		// Agregar Header y data 3
-		IResultSetHeader metaData3 = new ResultSetHeader();
-		IResultSetData data3 = new ResultSetData();
-		// Agregar resulBlock
-		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
-		
-		
-		if (referenceCode != null) {
-			
-			metaData3.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLINTN, 5));
-
-			// Agregar info 3
-			IResultSetRow row3 = new ResultSetRow();
-			row3.addRowData(1, new ResultSetRowColumnData(false,
-					anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim()));
-			data3.addRow(row3);			
-		}
-
-		anOriginalProcedureResponse.setReturnCode(200);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
-		
-		return anOriginalProcedureResponse;
-	}
-
-
+	
 	private IProcedureResponse transferSpei(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		if (logger.isInfoEnabled()) {
@@ -213,6 +123,65 @@ public class TransferSpeiApiOrchestationCore extends SPJavaOrchestrationBase {
 		return wAccountsResp;
 	}
 	
+	private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getDataTransfSpeiReq");
+		}
+
+		request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
+		request.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
+		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+		request.addInputParam("@i_bank_id", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_bank_id"));
+		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_bank_name"));
+		request.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_destination_account_owner_name"));
+		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
+		request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
+		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
+		request.addInputParam("@i_longitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
+		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_reference_number"));
+		
+		request.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_prod_des", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_mon", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_mon_des", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_ente_bv", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_prod_alias", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_nom_beneficiary", ICTSTypes.SQLVARCHAR, "X");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		
+		aBagSPJavaOrchestration.put("o_prod", wProductsQueryResp.readValueParam("@o_prod"));
+		aBagSPJavaOrchestration.put("o_mon", wProductsQueryResp.readValueParam("@o_mon"));
+		aBagSPJavaOrchestration.put("o_prod_des", wProductsQueryResp.readValueParam("@o_prod_des"));
+		aBagSPJavaOrchestration.put("o_mon_des", wProductsQueryResp.readValueParam("@o_mon_des"));
+		aBagSPJavaOrchestration.put("o_prod_alias", wProductsQueryResp.readValueParam("@o_prod_alias"));
+		aBagSPJavaOrchestration.put("o_nom_beneficiary", wProductsQueryResp.readValueParam("@o_nom_beneficiary"));
+		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
+		aBagSPJavaOrchestration.put("o_ente_bv", wProductsQueryResp.readValueParam("@o_ente_bv"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getDataTransfSpeiReq DCO : " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getDataTransfSpeiReq");
+		}
+
+		return wProductsQueryResp;
+	}
+	
 	private IProcedureResponse executeTransfer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -221,15 +190,6 @@ public class TransferSpeiApiOrchestationCore extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeTransfer");
 		}
-
-		aBagSPJavaOrchestration.get("o_prod");
-		aBagSPJavaOrchestration.get("o_mon");
-		aBagSPJavaOrchestration.get("o_prod_des");
-		aBagSPJavaOrchestration.get("o_mon_des");
-		aBagSPJavaOrchestration.get("o_prod_alias");
-		aBagSPJavaOrchestration.get("o_nom_beneficiary");
-		aBagSPJavaOrchestration.get("o_login");
-		aBagSPJavaOrchestration.get("o_ente_bv");
 		
 		/*curp = (String) aBagSPJavaOrchestration.get("o_curp");
 		beneficiary = (String) aBagSPJavaOrchestration.get("o_beneficiary");
@@ -335,65 +295,6 @@ public class TransferSpeiApiOrchestationCore extends SPJavaOrchestrationBase {
 		return responseTransferSpei;
 	}
 
-	private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
-		IProcedureRequest request = new ProcedureRequestAS();
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getDataTransfSpeiReq");
-		}
-
-		request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
-
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-		
-		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
-		request.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
-		request.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
-		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-		request.addInputParam("@i_bank_id", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_bank_id"));
-		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_bank_name"));
-		request.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_destination_account_owner_name"));
-		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
-		request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
-		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
-		request.addInputParam("@i_longitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
-		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_reference_number"));
-		
-		request.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
-		request.addOutputParam("@o_prod_des", ICTSTypes.SQLINT4, "0");
-		request.addOutputParam("@o_mon", ICTSTypes.SQLINT4, "0");
-		request.addOutputParam("@o_mon_des", ICTSTypes.SQLINT4, "0");
-		request.addOutputParam("@o_ente_bv", ICTSTypes.SQLINT4, "0");
-		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
-		request.addOutputParam("@o_prod_alias", ICTSTypes.SQLVARCHAR, "X");
-		request.addOutputParam("@o_nom_beneficiary", ICTSTypes.SQLVARCHAR, "X");
-		
-		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-		
-		
-		aBagSPJavaOrchestration.put("o_prod", wProductsQueryResp.readValueParam("@o_prod"));
-		aBagSPJavaOrchestration.put("o_mon", wProductsQueryResp.readValueParam("@o_mon"));
-		aBagSPJavaOrchestration.put("o_prod_des", wProductsQueryResp.readValueParam("@o_prod_des"));
-		aBagSPJavaOrchestration.put("o_mon_des", wProductsQueryResp.readValueParam("@o_mon_des"));
-		aBagSPJavaOrchestration.put("o_prod_alias", wProductsQueryResp.readValueParam("@o_prod_alias"));
-		aBagSPJavaOrchestration.put("o_nom_beneficiary", wProductsQueryResp.readValueParam("@o_nom_beneficiary"));
-		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
-		aBagSPJavaOrchestration.put("o_ente_bv", wProductsQueryResp.readValueParam("@o_ente_bv"));
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking getDataTransfSpeiReq DCO : " + wProductsQueryResp.getProcedureResponseAsString());
-		}
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de getDataTransfSpeiReq");
-		}
-
-		return wProductsQueryResp;
-	}
-
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 			Map<String, Object> aBagSPJavaOrchestration) {
@@ -401,4 +302,92 @@ public class TransferSpeiApiOrchestationCore extends SPJavaOrchestrationBase {
 		return null;
 	}
 
+	public IProcedureResponse processResponseTransfer(IProcedureResponse anOriginalProcedureRes) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" start processResponseAccounts--->");
+			logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_referencia") );
+			//logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_tracking_key") );
+		}
+		
+		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		String code,message,success,referenceCode = null;
+		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+		referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
+		//trackingKey = anOriginalProcedureRes.readValueParam("@o_tracking_key");
+		
+		logger.logInfo("xdcxv2 --->" + referenceCode );
+		if (codeReturn == 0){
+			if(null!=referenceCode) {
+				code = "0";
+				message = "Success";
+				success = "true";
+				referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+				logger.logInfo("bnbn true--->" + referenceCode);
+			}
+			else{
+				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
+				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
+				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+				logger.logInfo("bnbn false--->" + referenceCode);
+			}
+			
+		}
+		else
+		{
+			code = String.valueOf(codeReturn);
+			message = anOriginalProcedureRes.getMessage(1).getMessageText();
+			success = "false";
+		}
+		
+		// Agregar Header y data 1
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+		// Agregar Header y data 2
+		IResultSetHeader metaData2 = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+		// Agregar info 1
+		IResultSetRow row = new ResultSetRow();
+		row.addRowData(1, new ResultSetRowColumnData(false, code));
+		row.addRowData(2, new ResultSetRowColumnData(false, message));
+		data.addRow(row);
+
+		// Agregar info 2
+		IResultSetRow row2 = new ResultSetRow();
+		row2.addRowData(1, new ResultSetRowColumnData(false, success));
+		data2.addRow(row2);
+
+		// Agregar resulBlock
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+
+		// Agregar Header y data 3
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();
+		// Agregar resulBlock
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+		
+		
+		if (referenceCode != null) {
+			
+			metaData3.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLINTN, 5));
+
+			// Agregar info 3
+			IResultSetRow row3 = new ResultSetRow();
+			row3.addRowData(1, new ResultSetRowColumnData(false,
+					anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim()));
+			data3.addRow(row3);			
+		}
+
+		anOriginalProcedureResponse.setReturnCode(200);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
+		
+		return anOriginalProcedureResponse;
+	}
 }
