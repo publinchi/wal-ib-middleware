@@ -46,7 +46,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 @Properties(value = { @Property(name = "service.description", value = "UpdateAccountStatusDockOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "UpdateAccountStatusDockOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_get_data_account_status_api")})
+		@Property(name = "service.spName", value = "cob_procesador..sp_update_account_status_api")})
 public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	private ILogger logger = (ILogger) this.getLogger();
