@@ -345,10 +345,19 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
 		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_reference_number"));
+		request.addInputParam("@i_filial", ICTSTypes.SQLVARCHAR, "1");
 
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
+		request.addInputParam("@s_rol", ICTSTypes.SQLVARCHAR, "96");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "BRANCHSRV");
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
+		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, "1");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, "1");
 		request.addInputParam("@t_ejec", ICTSTypes.SQLVARCHAR, "R");
 		request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
 		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
+		
 
 		// 18500115
 		logger.logInfo(METHOD_NAME + " Datos Cabecera");
@@ -527,6 +536,47 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String refBranch = "";
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+			
+			if (originalRequest != null) {
+				logger.logDebug("Inicia originalRequest no es null");
+				
+				 if (originalRequest.readValueParam(S_USER) != null) {
+					 logger.logDebug(S_USER + " no es null");
+				 }
+				 
+				 if (originalRequest.readValueParam(S_TERM) != null) {
+					 logger.logDebug(S_TERM + " no es null");
+				 }
+				 
+				if (originalRequest.readValueParam(S_ROL) != null) {
+					logger.logDebug(S_ROL + " no es null");				 
+				}
+				
+				if (originalRequest.readValueParam(S_SRV) != null) {
+					logger.logDebug(S_SRV + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(S_DATE_LOCAL) != null) {
+					logger.logDebug(S_DATE_LOCAL + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(S_OFI) != null) {
+					logger.logDebug(S_OFI + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(S_SRV) != null) {
+					logger.logDebug(S_SRV + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(T_EJEC) != null) {
+					logger.logDebug(T_EJEC + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(T_RTY) != null) {
+					logger.logDebug(T_RTY + " no es null");
+				}
+			}
+			
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 			IProcedureRequest originalRequestClone = originalRequest.clone();
 			// SE EJECUTA LA NOTA DE DEBITO CENTRAL
