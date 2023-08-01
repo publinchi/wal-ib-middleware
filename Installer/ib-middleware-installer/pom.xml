@@ -1183,6 +1183,11 @@
 			<artifactId>orchestration-core-ib-authorize-deposit-dock-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-transfer-spei-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1562,7 +1567,8 @@
 							orchestration-core-ib-update-card-dock-api,
 							orchestration-core-ib-authorize-purchase-dock-api,
 							orchestration-core-ib-authorize-withdrawal-dock-api,
-							orchestration-core-ib-authorize-deposit-dock-api
+							orchestration-core-ib-authorize-deposit-dock-api,
+							orchestration-core-ib-transfer-spei-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>

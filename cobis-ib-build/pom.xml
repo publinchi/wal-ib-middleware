@@ -202,6 +202,7 @@
 		<module>../ApiOperations/orchestration-core-ib-authorize-purchase-dock-api</module>
 		<module>../ApiOperations/orchestration-core-ib-authorize-withdrawal-dock-api</module>
 		<module>../ApiOperations/orchestration-core-ib-authorize-deposit-dock-api</module>
+		<module>../ApiOperations/orchestration-core-ib-transfer-spei-api</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>
