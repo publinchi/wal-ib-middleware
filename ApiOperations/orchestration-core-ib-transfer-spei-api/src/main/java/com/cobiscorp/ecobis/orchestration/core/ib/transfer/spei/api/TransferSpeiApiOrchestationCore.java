@@ -340,12 +340,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_nombre_cta_dest", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_destination_account_owner_name"));
 		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
-		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commision"));
+		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
 		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_reference_number"));
-		request.addInputParam("@i_filial", ICTSTypes.SQLVARCHAR, "1");
+		
 
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
@@ -354,6 +354,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
 		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, "1");
 		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, "1");
+		request.addInputParam("@t_filial", ICTSTypes.SQLVARCHAR, "1");
+		request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, "8");
 		request.addInputParam("@t_ejec", ICTSTypes.SQLVARCHAR, "R");
 		request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
 		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
