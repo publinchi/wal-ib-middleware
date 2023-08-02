@@ -254,6 +254,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
 		request.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_destination_account_owner_name"));
+		request.addInputParam("@i_destination_type_account", ICTSTypes.SQLINTN,
+				aRequest.readValueParam("@i_destination_type_account"));
+		
+		request.addInputParam("@i_owner_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_owner_name"));
 		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
 		request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
@@ -333,7 +337,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		// request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_concept"));
-		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, "concepto prueba spei");// poner en el CWC
+		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));// poner en el CWC
 		request.addInputParam("@i_banco_ben", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_id"));
 		// request.addInputParam("@i_nom_banco_des", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_bank_name"));
@@ -418,9 +422,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		logger.logInfo(request);
 
-		//IProcedureResponse responseTransferSpei = executeCoreBanking(request);
+		IProcedureResponse responseTransferSpei = executeCoreBanking(request);
 		
-		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
+		/*Map<String, Object> mapInterfaces = new HashMap<String, Object>();
 		mapInterfaces.put("coreServer", coreServer);
 		mapInterfaces.put("coreService", coreService);
 		mapInterfaces.put("coreServiceNotification", coreServiceNotification);
@@ -429,7 +433,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, request);
 		
-		IProcedureResponse responseTransferSpei = executeTransfer(aBagSPJavaOrchestration);
+		IProcedureResponse responseTransferSpei = executeTransfer(aBagSPJavaOrchestration);*/
 
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO API: " + responseTransferSpei.getProcedureResponseAsString());

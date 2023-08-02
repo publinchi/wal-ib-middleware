@@ -31,11 +31,7 @@ public class RequestTransferSpi implements Serializable {
   private Integer externalCustomerId;
   private String originAccountNumber;
   private String destinationAccountNumber;
-  private String originAccountAlias;
-  private String destinationAccountAlias;
-  private String destinationBeneficiaryName;
-  private Integer amount;
-  private String description;
+  private java.math.BigDecimal amount;
   private String bankId;
   private String bankName;
   private String destinationAccountOwnerName;
@@ -64,35 +60,11 @@ public class RequestTransferSpi implements Serializable {
   public void setDestinationAccountNumber(String destinationAccountNumber ){
     this.destinationAccountNumber=destinationAccountNumber;
   }
-  public String getOriginAccountAlias(){
-    return this.originAccountAlias;
-  }
-  public void setOriginAccountAlias(String originAccountAlias ){
-    this.originAccountAlias=originAccountAlias;
-  }
-  public String getDestinationAccountAlias(){
-    return this.destinationAccountAlias;
-  }
-  public void setDestinationAccountAlias(String destinationAccountAlias ){
-    this.destinationAccountAlias=destinationAccountAlias;
-  }
-  public String getDestinationBeneficiaryName(){
-    return this.destinationBeneficiaryName;
-  }
-  public void setDestinationBeneficiaryName(String destinationBeneficiaryName ){
-    this.destinationBeneficiaryName=destinationBeneficiaryName;
-  }
-  public Integer getAmount(){
+  public java.math.BigDecimal getAmount(){
     return this.amount;
   }
-  public void setAmount(Integer amount ){
+  public void setAmount(java.math.BigDecimal amount ){
     this.amount=amount;
-  }
-  public String getDescription(){
-    return this.description;
-  }
-  public void setDescription(String description ){
-    this.description=description;
   }
   public String getBankId(){
     return this.bankId;
