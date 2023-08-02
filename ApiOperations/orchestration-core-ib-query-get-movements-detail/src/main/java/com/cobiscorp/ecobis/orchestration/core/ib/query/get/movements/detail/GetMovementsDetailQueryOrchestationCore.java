@@ -75,9 +75,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	/**
 	 * Method that set the instance of ICTSServiceIntegration
-	 * 
-	 * @param serviceIntegration
-	 *            Instance of ICTSServiceIntegration
 	 */
 	public void setServiceIntegration(ICTSServiceIntegration serviceIntegration) {
 		this.serviceIntegration = serviceIntegration;
@@ -85,9 +82,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	/**
 	 * Method that unset the instance of ICTSServiceIntegration
-	 * 
-	 * @param serviceIntegration
-	 *            Instance of ICTSServiceIntegration
 	 */
 	public void unsetServiceIntegration(ICTSServiceIntegration serviceIntegration) {
 		this.serviceIntegration = null;
@@ -100,22 +94,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	public void loadConfiguration(IConfigurationReader arg0) {
 	}
 
-	/**
-	 * /** Execute transfer first step of service
-	 * <p>
-	 * This method is the main executor of transactional contains the original
-	 * input parameters.
-	 * 
-	 * @param anOriginalRequest
-	 *            - Information original sended by user's.
-	 * @param aBagSPJavaOrchestration
-	 *            - Object dictionary transactional steps.
-	 * 
-	 * @return
-	 *         <ul>
-	 *         <li>IProcedureResponse - Represents the service execution.</li>
-	 *         </ul>
-	 */
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
@@ -141,6 +119,52 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			return processResponseError(anProcedureResponse);
 		}
 
+	}
+	
+	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getMovementsDetail");
+		}
+
+		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@t_online", ICTSTypes.SYBCHAR, "S");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "A");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLCHAR, "T");
+		
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
+		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fecha_ini"));
+		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fecha_fin"));
+		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
+		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
+		
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
+		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
+		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
+		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
+		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getMovementsDetail");
+		}
+
+		return wProductsQueryResp;
 	}
 
 	private void proccessResponseCentralToObject(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
@@ -366,49 +390,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		
 	}
 
-	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest) {
-
-		IProcedureRequest request = new ProcedureRequestAS();
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getMovementsDetail");
-		}
-
-		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
-
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_CENTRAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-
-		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "A");
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
-		request.addInputParam("@t_online", ICTSTypes.SYBCHAR, "S");
-		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
-		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
-		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
-		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
-		request.addInputParam("@i_operacion",  ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_operacion"));
-		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
-		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_tipo"));
-		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fecha_ini"));
-		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fecha_fin"));
-		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
-		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
-
-		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
-		}
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de getMovementsDetail");
-		}
-
-		return wProductsQueryResp;
-	}
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,

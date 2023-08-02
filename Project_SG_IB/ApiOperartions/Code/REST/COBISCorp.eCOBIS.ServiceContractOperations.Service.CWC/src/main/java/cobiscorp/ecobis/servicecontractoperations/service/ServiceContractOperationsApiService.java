@@ -2200,165 +2200,181 @@ int mapBlank=0;
 		return outResponseCatalog;
 	}
 	
-	    /**
-	    * Service to obtain the detail of movements of an existing savings account
-	    */
-	   @Override
-		//Have DTO
-		public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail  )throws CTSRestException{
+	/**
+	 * Service to obtain the detail of movements of an existing savings account
+	 */
+	@Override
+	// Have DTO
+	public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail)
+			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: getMovementsDetail");
-		ResponseGetMovementsDetail outResponseGetMovementsDetail  = new ResponseGetMovementsDetail();
+		ResponseGetMovementsDetail outResponseGetMovementsDetail = new ResponseGetMovementsDetail();
 
-		//create procedure
+		// create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_tr04_cons_mov_ah_api");
+		
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500106");
+		procedureRequestAS.addInputParam("@i_cliente", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
+				inRequestGetMovementsDetail.getAccountNumber());
+		procedureRequestAS.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getNumberOfMovements()));
+		procedureRequestAS.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR,
+				inRequestGetMovementsDetail.getMinDate());
+		procedureRequestAS.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR,
+				inRequestGetMovementsDetail.getMaxDate());
+		procedureRequestAS.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getSequential()));
+		procedureRequestAS.addInputParam("@i_mov_id", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getMovementId()));
 
-		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500106");
-		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestGetMovementsDetail.getAccountNumber());
-		procedureRequestAS.addInputParam("@i_fecha_ini",ICTSTypes.SQLVARCHAR,inRequestGetMovementsDetail.getMinDate());
-		procedureRequestAS.addInputParam("@i_fecha_fin",ICTSTypes.SQLVARCHAR,inRequestGetMovementsDetail.getMaxDate());
-		procedureRequestAS.addInputParam("@i_sec_unico",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getSequential()));
-		procedureRequestAS.addInputParam("@i_tipo",ICTSTypes.SQLCHAR,"T");
-		procedureRequestAS.addInputParam("@i_servicio",ICTSTypes.SQLINT1,"8");
-		procedureRequestAS.addInputParam("@i_cliente",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"A");
-		procedureRequestAS.addInputParam("@i_nro_registros",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getNumberOfMovements()));
-		procedureRequestAS.addInputParam("@i_mov_id",ICTSTypes.SQLINT4,String.valueOf(inRequestGetMovementsDetail.getMovementId()));
-
-		//execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
 
 		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		//throw error
-		if(errors!= null && errors.size()> 0){
-		LOGGER.logDebug("Procedure execution returns error");
-		if ( LOGGER.isDebugEnabled() ) {
-		for (int i = 0; i < errors.size(); i++) {
-		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-		}
-		}
-		throw new CTSRestException("Procedure Response has errors", null, errors);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
 		}
 		LOGGER.logDebug("Procedure ok");
-		//Init map returns
-		int mapTotal=0;
-		int mapBlank=0;
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
 
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
-									//---------NO Array
-									ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetMovementsDetail>() {
-		              @Override
-		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetMovementsDetail>() {
+						@Override
+						public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
 
-		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-		              return dto;
-		              }
-		              },false);
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
 
-		              outResponseGetMovementsDetail.setSuccess(returnResponseGetMovementsDetail.isSuccess());
-		                  // break;
+			outResponseGetMovementsDetail.setSuccess(returnResponseGetMovementsDetail.isSuccess());
+			// break;
 
-		      }else {
-		      mapBlank++;
+		} else {
+			mapBlank++;
 
-		      }
-
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {
-									//---------NO Array
-									ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetMovementsDetail>() {
-		              @Override
-		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
-
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-		              return dto;
-		              }
-		              },false);
-
-		              outResponseGetMovementsDetail.setResponse(returnResponseGetMovementsDetail.getResponse());
-		                  // break;
-
-		      }else {
-		      mapBlank++;
-
-		      }
-
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
-									//---------NO Array
-									ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseGetMovementsDetail>() {
-		              @Override
-		              public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
-
-		                    dto.setNumberOfResults(resultSetMapper.getInteger(1));
-		              return dto;
-		              }
-		              },false);
-
-		              outResponseGetMovementsDetail.setNumberOfResults(returnResponseGetMovementsDetail.getNumberOfResults());
-		                  // break;
-
-		      }else {
-		      mapBlank++;
-
-		      }
-
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
-									//---------NO Array
-		      	AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil.mapToArray(response.getResultSets().get(3), new RowMapper<AccountStatementArray>() {
-		              @Override
-		              public AccountStatementArray mapRow(ResultSetMapper resultSetMapper, int index) {
-		              	AccountStatementArray dto = new AccountStatementArray();
-
-								dto.setAccountingBalance(resultSetMapper.getBigDecimal(1));
-								dto.setAlternateCode(resultSetMapper.getInteger(2));
-								dto.setAmount(resultSetMapper.getBigDecimal(3));
-								dto.setAvailableBalance(resultSetMapper.getBigDecimal(4));
-								dto.setConcept(resultSetMapper.getString(5));
-								dto.setDescription(resultSetMapper.getString(6));
-								dto.setHour(resultSetMapper.getString(7));
-								dto.setTracking(resultSetMapper.getString(8));
-								dto.setOperationType(resultSetMapper.getString(9));
-								dto.setReference(resultSetMapper.getInteger(10));
-								dto.setMovementId(resultSetMapper.getInteger(11));
-								dto.setSignDC(resultSetMapper.getString(12));
-								dto.setTransactionDate(resultSetMapper.getString(13));
-								dto.setUniqueSequential(resultSetMapper.getInteger(14));
-								dto.setProcessDate(resultSetMapper.getString(15));
-								dto.setTarjetNumber(resultSetMapper.getString(16));
-								dto.setDestinyAccount(resultSetMapper.getString(17));
-								dto.setTypeAccount(resultSetMapper.getString(18));
-								dto.setBeneficiary(resultSetMapper.getString(19));
-								dto.setReferenceNumber(resultSetMapper.getString(20));
-								dto.setCommission(resultSetMapper.getString(21));
-								dto.setIva(resultSetMapper.getString(22));
-		              return dto;
-		              }
-		              },false);
-
-		              outResponseGetMovementsDetail.setAccountStatementArray(returnResponseGetMovementsDetail);
-		                  // break;
-
-		      }else {
-		      mapBlank++;
-
-		      }
-
-		//End map returns
-		if(mapBlank!=0&&mapBlank==mapTotal){
-		LOGGER.logDebug("No data found");
-		throw new CTSRestException("404",null);
 		}
 
-		  LOGGER.logDebug("Ends service execution: getMovementsDetail");
-		  //returns data
-		  return outResponseGetMovementsDetail;
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetMovementsDetail>() {
+						@Override
+						public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setResponse(returnResponseGetMovementsDetail.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
 		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2
+				&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseGetMovementsDetail>() {
+						@Override
+						public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+
+							dto.setNumberOfResults(resultSetMapper.getInteger(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setNumberOfResults(returnResponseGetMovementsDetail.getNumberOfResults());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 3
+				&& response.getResultSets().get(3).getData().getRows().size() > 0) {
+			// ---------NO Array
+			AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
+					.mapToArray(response.getResultSets().get(3), new RowMapper<AccountStatementArray>() {
+						@Override
+						public AccountStatementArray mapRow(ResultSetMapper resultSetMapper, int index) {
+							AccountStatementArray dto = new AccountStatementArray();
+
+							dto.setAccountingBalance(resultSetMapper.getBigDecimal(1));
+							dto.setAvailableBalance(resultSetMapper.getBigDecimal(2));
+							dto.setMovementType(resultSetMapper.getString(3));
+							dto.setAmount(resultSetMapper.getBigDecimal(4));
+							dto.setTransactionDate(resultSetMapper.getString(5));
+							dto.setOperationType(resultSetMapper.getString(6));
+							dto.setCommission(resultSetMapper.getString(7));
+							dto.setIva(resultSetMapper.getString(8));
+							dto.setTransactionReferenceNumber(resultSetMapper.getInteger(9));
+							dto.setDescription(resultSetMapper.getString(10));
+							dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
+							dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
+							dto.sourceAccountInstance().setAccountNumber(resultSetMapper.getString(13));
+							dto.sourceAccountInstance().setBankName(resultSetMapper.getString(14));
+							dto.destinationAccountInstance().setOwnerName(resultSetMapper.getString(15));
+							dto.destinationAccountInstance().setAccountNumber(resultSetMapper.getString(16));
+							dto.destinationAccountInstance().setBankName(resultSetMapper.getString(17));
+							dto.speiDetailsInstance().setReferenceCode(resultSetMapper.getString(18));
+							dto.speiDetailsInstance().setTrackingId(resultSetMapper.getString(19));
+							dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
+							dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
+							dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
+							dto.merchantDetailsInstance().setEstablishmentName(resultSetMapper.getString(23));
+							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
+							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
+							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setAccountStatementArray(returnResponseGetMovementsDetail);
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		LOGGER.logDebug("Ends service execution: getMovementsDetail");
+		// returns data
+		return outResponseGetMovementsDetail;
+	}
 
 	/**
 	 * Municipality By State
