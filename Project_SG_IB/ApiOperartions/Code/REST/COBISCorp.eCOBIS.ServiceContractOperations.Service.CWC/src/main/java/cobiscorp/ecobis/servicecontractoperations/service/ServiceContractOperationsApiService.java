@@ -3523,7 +3523,7 @@ int mapBlank=0;
 		procedureRequestAS.addInputParam("@i_longitude", ICTSTypes.SQLMONEY,
 				String.valueOf(inRequestTransferSpi.getLongitude()));
 		procedureRequestAS.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
-				inRequestTransferSpi.getOriginAccountNumber());
+				inRequestTransferSpi.getReferenceNumber());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,

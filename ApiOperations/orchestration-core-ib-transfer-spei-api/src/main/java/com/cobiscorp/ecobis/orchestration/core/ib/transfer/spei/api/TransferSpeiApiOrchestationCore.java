@@ -347,7 +347,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
-		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
+		request.addInputParam("@i_reference_number", ICTSTypes.SQLINTN,
 				aRequest.readValueParam("@i_reference_number"));
 		
 
