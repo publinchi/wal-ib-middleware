@@ -55,32 +55,11 @@
     <parameter name="@i_town_code" dataType="varchar" direction="in" />
     <parameter name="@i_validity_date" dataType="datetime" direction="in" />
     <parameter name="@i_zipcode_code" dataType="varchar" direction="in" />
+    <parameter name="@o_success" dataType="bit" direction="out" />
+    <parameter name="@o_code" dataType="int" direction="out" />
+    <parameter name="@o_message" dataType="varchar" direction="out" />
+    <parameter name="@o_customer" dataType="int" direction="out" />
+    <parameter name="@o_account" dataType="varchar" direction="out" />
   </parameters>
-  <queries>
-    <query>
-      <columns>
-        <column name="success" />
-      </columns>
-      <queryText>SELECT "success"=1</queryText>
-    </query>
-    <query>
-      <columns>
-        <column name="code" />
-        <column name="message" />
-      </columns>
-      <queryText>SELECT "code"=0,"mensaje"="SUCCESSFULL"</queryText>
-    </query>
-    <query>
-      <columns>
-        <column name="externalCustomerId " />
-      </columns>
-      <queryText>SELECT  externalCustomerId = 0 </queryText>
-    </query>
-    <query>
-      <columns>
-        <column name="accountNumber" />
-      </columns>
-      <queryText></queryText>
-    </query>
-  </queries>
+  <queries />
 </procedure>
