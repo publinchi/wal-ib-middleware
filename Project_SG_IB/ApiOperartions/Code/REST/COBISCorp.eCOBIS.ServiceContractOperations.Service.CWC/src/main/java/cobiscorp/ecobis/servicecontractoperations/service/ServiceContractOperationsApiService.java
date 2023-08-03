@@ -1336,9 +1336,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		public CreateCustomerResponse createCustomer(CreateCustomerRequest inCreateCustomerRequest)
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: createCustomer");
+			
 			CreateCustomerResponse outCreateCustomerResponse = new CreateCustomerResponse();
+			
+			Response response = new Response();
+			outCreateCustomerResponse.setResponse(response);
 
-			//create procedure
+			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_api_create_customer");
 
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500094");
@@ -1438,13 +1442,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getZipcode());
 			procedureRequestAS.addInputParam("@i_economic_sector", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getEconomicSector());
+			procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
+			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
+			procedureRequestAS.addOutputParam("@o_customer", ICTSTypes.SQLINT4, "0");
+			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
+			
 
-//execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+			//execute procedure
+			ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
 
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-//throw error
+			List<MessageBlock> errors = ErrorUtil.getErrors(resp);
+			//throw error
 			if (errors != null && errors.size() > 0) {
 				LOGGER.logDebug("Procedure execution returns error");
 				if (LOGGER.isDebugEnabled()) {
@@ -1455,105 +1465,31 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("Procedure Response has errors", null, errors);
 			}
 			LOGGER.logDebug("Procedure ok");
-//Init map returns
+			//Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				CreateCustomerResponse returnCreateCustomerResponse = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<CreateCustomerResponse>() {
-							@Override
-							public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-								CreateCustomerResponse dto = new CreateCustomerResponse();
-
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
-
-				outCreateCustomerResponse.setSuccess(returnCreateCustomerResponse.isSuccess());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				CreateCustomerResponse returnCreateCustomerResponse = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<CreateCustomerResponse>() {
-							@Override
-							public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-								CreateCustomerResponse dto = new CreateCustomerResponse();
-
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
-
-				outCreateCustomerResponse.setResponse(returnCreateCustomerResponse.getResponse());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 2
-					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
-				// ---------NO Array
-				CreateCustomerResponse returnCreateCustomerResponse = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<CreateCustomerResponse>() {
-							@Override
-							public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-								CreateCustomerResponse dto = new CreateCustomerResponse();
-
-								dto.setExternalCustomerId(resultSetMapper.getInteger(1));
-								return dto;
-							}
-						}, false);
-
-				outCreateCustomerResponse.setExternalCustomerId(returnCreateCustomerResponse.getExternalCustomerId());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 3
-					&& response.getResultSets().get(3).getData().getRows().size() > 0) {
-				// ---------NO Array
-				CreateCustomerResponse returnCreateCustomerResponse = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<CreateCustomerResponse>() {
-							@Override
-							public CreateCustomerResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-								CreateCustomerResponse dto = new CreateCustomerResponse();
-
-								dto.setAccountNumber(resultSetMapper.getString(1));
-								return dto;
-							}
-						}, false);
-
-				outCreateCustomerResponse.setAccountNumber(returnCreateCustomerResponse.getAccountNumber());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			//End map returns
+			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
+			}
+			
+			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
+			
+			outCreateCustomerResponse.setResponse(response);
+				
+			outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
+			outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+			
+			if (response != null && response.getCode() == 0) {
+
+				outCreateCustomerResponse.setSuccess(true);
+
+			} else {
+
+				outCreateCustomerResponse.setSuccess(false);
 			}
 
 			LOGGER.logDebug("Ends service execution: createCustomer");
