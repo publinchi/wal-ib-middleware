@@ -3442,15 +3442,8 @@ int mapBlank=0;
 				inRequestTransferSpi.getOriginAccountNumber());
 		procedureRequestAS.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR,
 				inRequestTransferSpi.getDestinationAccountNumber());
-		procedureRequestAS.addInputParam("@i_origin_account_alias", ICTSTypes.SQLVARCHAR,
-				inRequestTransferSpi.getOriginAccountAlias());
-		procedureRequestAS.addInputParam("@i_destination_account_alias", ICTSTypes.SQLVARCHAR,
-				inRequestTransferSpi.getDestinationAccountAlias());
-		procedureRequestAS.addInputParam("@i_destination_beneficiary_name", ICTSTypes.SQLVARCHAR,
-				inRequestTransferSpi.getDestinationBeneficiaryName());
-		procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLINT4,
+		procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLMONEY,
 				String.valueOf(inRequestTransferSpi.getAmount()));
-		procedureRequestAS.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getDescription());
 		procedureRequestAS.addInputParam("@i_bank_id", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getBankId());
 		procedureRequestAS.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getBankName());
 		procedureRequestAS.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR,
@@ -3466,7 +3459,7 @@ int mapBlank=0;
 		procedureRequestAS.addInputParam("@i_longitude", ICTSTypes.SQLMONEY,
 				String.valueOf(inRequestTransferSpi.getLongitude()));
 		procedureRequestAS.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
-				inRequestTransferSpi.getOriginAccountNumber());
+				inRequestTransferSpi.getReferenceNumber());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,

@@ -254,6 +254,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
 		request.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_destination_account_owner_name"));
+		request.addInputParam("@i_destination_type_account", ICTSTypes.SQLINTN,
+				aRequest.readValueParam("@i_destination_type_account"));
+		
+		request.addInputParam("@i_owner_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_owner_name"));
 		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
 		request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
@@ -333,23 +337,41 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		// request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_concept"));
-		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, "concepto prueba spei");// poner en el CWC
+		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));// poner en el CWC
 		request.addInputParam("@i_banco_ben", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_id"));
 		// request.addInputParam("@i_nom_banco_des", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_bank_name"));
 		request.addInputParam("@i_nombre_cta_dest", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_destination_account_owner_name"));
 		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
-		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commision"));
+		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
-		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
+		request.addInputParam("@i_reference_number", ICTSTypes.SQLINTN,
 				aRequest.readValueParam("@i_reference_number"));
-
+		
+		
+		request.addInputParam("@s_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
+		request.addInputParam("@s_ssn_branch", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn_branch"));
+		request.addInputParam("@s_sesn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_sesn"));
+		request.addInputParam("@t_ssn_corr", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_ssn_corr"));
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
+		request.addInputParam("@s_lsrv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_lsrv"));
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
+		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ofi"));
+		request.addInputParam("@s_rol", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@s_rol"));
+		request.addInputParam("@s_sev", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_sev"));
+		request.addInputParam("@s_org", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("U"));
+		request.addInputParam("@t_filial", ICTSTypes.SQLVARCHAR, "1");
+		request.addInputParam("@t_corr", ICTSTypes.SQLVARCHAR, "N");
 		request.addInputParam("@t_ejec", ICTSTypes.SQLVARCHAR, "R");
+		request.addInputParam("@t_debug", ICTSTypes.SQLVARCHAR, "S");
 		request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
 		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
-
+		request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, "8");
+		
 		// 18500115
 		logger.logInfo(METHOD_NAME + " Datos Cabecera");
 		// Date fecha = new Date();
@@ -370,11 +392,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addFieldInHeader("originalRequestIsCobProcesador", ICOBISTS.HEADER_STRING_TYPE, "true");
 		// request.addFieldInHeader("ssnLog", ICOBISTS.HEADER_NUMBER_TYPE,
 		// request.readValueParam("@ssn_branch"));
-		request.addFieldInHeader("sesn", ICOBISTS.HEADER_NUMBER_TYPE, "0");
+		request.addFieldInHeader("sesn", ICOBISTS.HEADER_NUMBER_TYPE, aRequest.readValueParam("@s_sesn"));
 		request.addFieldInHeader("authorizationService", ICOBISTS.HEADER_STRING_TYPE, "COBISBV");
 		request.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
 		request.addFieldInHeader("supportOffline", ICOBISTS.HEADER_CHARACTER_TYPE, "N");
-		request.addFieldInHeader("term", ICOBISTS.HEADER_STRING_TYPE, "0:0:0:0:0:0:0:1");
+		request.addFieldInHeader("term", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_term"));
 		request.addFieldInHeader("serviceId", ICOBISTS.HEADER_STRING_TYPE,
 				"InternetBanking.WebApp.Transfers.Service.Transfer.TransferSPI");
 		request.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
@@ -396,20 +418,20 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		// request.addFieldInHeader("serviceExecutionId",
 		// ICOBISTS.HEADER_STRING_TYPE, request.readValueParam("@ssn_branch"));
 		request.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
-		request.addFieldInHeader("srv", ICOBISTS.HEADER_STRING_TYPE, "BRANCHSRV");
+		request.addFieldInHeader("srv", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_srv"));
 		request.addFieldInHeader("culture", ICOBISTS.HEADER_STRING_TYPE, "ES-EC");
 		request.addFieldInHeader("spType", ICOBISTS.HEADER_STRING_TYPE, "Sybase");
-		request.addFieldInHeader("lsrv", ICOBISTS.HEADER_STRING_TYPE, "CTSSRV");
-		request.addFieldInHeader("user", ICOBISTS.HEADER_STRING_TYPE, "usuariobv");
+		request.addFieldInHeader("lsrv", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_lsrv"));
+		request.addFieldInHeader("user", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_user"));
 
 		request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "1870013");
 		request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
 
 		logger.logInfo(request);
 
-		//IProcedureResponse responseTransferSpei = executeCoreBanking(request);
+		IProcedureResponse responseTransferSpei = executeCoreBanking(request);
 		
-		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
+		/*Map<String, Object> mapInterfaces = new HashMap<String, Object>();
 		mapInterfaces.put("coreServer", coreServer);
 		mapInterfaces.put("coreService", coreService);
 		mapInterfaces.put("coreServiceNotification", coreServiceNotification);
@@ -418,7 +440,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, request);
 		
-		IProcedureResponse responseTransferSpei = executeTransfer(aBagSPJavaOrchestration);
+		IProcedureResponse responseTransferSpei = executeTransfer(aBagSPJavaOrchestration);*/
 
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO API: " + responseTransferSpei.getProcedureResponseAsString());
@@ -440,7 +462,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		String code, message, success, referenceCode = null;
+		String code = null, message, success, referenceCode = null;
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
 		referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
 		// trackingKey = anOriginalProcedureRes.readValueParam("@o_tracking_key");
@@ -454,16 +476,30 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
 				logger.logInfo("bnbn true--->" + referenceCode);
 			} else {
+				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+				
 				logger.logInfo("bnbn false--->" + referenceCode);
 			}
 
 		} else {
-			code = String.valueOf(codeReturn);
-			message = anOriginalProcedureRes.getMessage(1).getMessageText();
-			success = "false";
+			if (String.valueOf(codeReturn).equals("1875285")) {
+				code = "400178";
+				message = "The amount to be transferred exceeds the current account balance";		
+				success = "false";
+			} else if (String.valueOf(codeReturn).equals("400177")) {
+				code = "400177";
+				message = "The source account has a debit block";		
+				success = "false";
+			}
+			else {
+				code = String.valueOf(codeReturn);
+				message = anOriginalProcedureRes.getMessage(1).getMessageText();
+				success = "false";
+			}
+			
 		}
 
 		// Agregar Header y data 1
@@ -527,6 +563,47 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String refBranch = "";
 		try {
 			IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+			
+			if (originalRequest != null) {
+				logger.logDebug("Inicia originalRequest no es null");
+				
+				 if (originalRequest.readValueParam(S_USER) != null) {
+					 logger.logDebug(S_USER + " no es null");
+				 }
+				 
+				 if (originalRequest.readValueParam(S_TERM) != null) {
+					 logger.logDebug(S_TERM + " no es null");
+				 }
+				 
+				if (originalRequest.readValueParam(S_ROL) != null) {
+					logger.logDebug(S_ROL + " no es null");				 
+				}
+				
+				if (originalRequest.readValueParam(S_SRV) != null) {
+					logger.logDebug(S_SRV + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(S_DATE_LOCAL) != null) {
+					logger.logDebug(S_DATE_LOCAL + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(S_OFI) != null) {
+					logger.logDebug(S_OFI + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(S_SRV) != null) {
+					logger.logDebug(S_SRV + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(T_EJEC) != null) {
+					logger.logDebug(T_EJEC + " no es null");
+				}
+				
+				if (originalRequest.readValueParam(T_RTY) != null) {
+					logger.logDebug(T_RTY + " no es null");
+				}
+			}
+			
 			ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 			IProcedureRequest originalRequestClone = originalRequest.clone();
 			// SE EJECUTA LA NOTA DE DEBITO CENTRAL

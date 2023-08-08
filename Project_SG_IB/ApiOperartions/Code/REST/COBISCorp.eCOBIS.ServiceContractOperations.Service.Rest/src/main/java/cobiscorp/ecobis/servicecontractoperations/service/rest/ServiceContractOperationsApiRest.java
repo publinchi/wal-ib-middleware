@@ -1429,14 +1429,11 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
 
-		if (!validateMandatory(new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
+		if (!validateMandatory(
+				new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferSpi.getOriginAccountNumber()),
 				new Data("destinationAccountNumber", inRequestTransferSpi.getDestinationAccountNumber()),
-				new Data("originAccountAlias", inRequestTransferSpi.getOriginAccountAlias()),
-				new Data("destinationAccountAlias", inRequestTransferSpi.getDestinationAccountAlias()),
-				new Data("destinationBeneficiaryName", inRequestTransferSpi.getDestinationBeneficiaryName()),
 				new Data("amount", inRequestTransferSpi.getAmount()),
-				new Data("description", inRequestTransferSpi.getDescription()),
 				new Data("bankId", inRequestTransferSpi.getBankId()),
 				new Data("bankName", inRequestTransferSpi.getBankName()),
 				new Data("destinationAccountOwnerName", inRequestTransferSpi.getDestinationAccountOwnerName()),
@@ -1446,7 +1443,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("commission", inRequestTransferSpi.getCommission()),
 				new Data("latitude", inRequestTransferSpi.getLatitude()),
 				new Data("longitude", inRequestTransferSpi.getLongitude()),
-				new Data("originAccountNumber", inRequestTransferSpi.getOriginAccountNumber()))) {
+				new Data("referenceNumber", inRequestTransferSpi.getReferenceNumber()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
