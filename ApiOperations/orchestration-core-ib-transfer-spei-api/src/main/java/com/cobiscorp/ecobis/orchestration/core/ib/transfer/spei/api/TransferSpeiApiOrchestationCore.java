@@ -350,21 +350,28 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_reference_number", ICTSTypes.SQLINTN,
 				aRequest.readValueParam("@i_reference_number"));
 		
-
-		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
-		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		request.addInputParam("@s_rol", ICTSTypes.SQLVARCHAR, "96");
-		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "BRANCHSRV");
+		
+		request.addInputParam("@s_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
+		request.addInputParam("@s_ssn_branch", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn_branch"));
+		request.addInputParam("@s_sesn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_sesn"));
+		request.addInputParam("@t_ssn_corr", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_ssn_corr"));
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
+		request.addInputParam("@s_lsrv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_lsrv"));
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
-		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, "1");
-		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, "1");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ofi"));
+		request.addInputParam("@s_rol", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@s_rol"));
+		request.addInputParam("@s_sev", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_sev"));
+		request.addInputParam("@s_org", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("U"));
 		request.addInputParam("@t_filial", ICTSTypes.SQLVARCHAR, "1");
-		request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, "8");
+		request.addInputParam("@t_corr", ICTSTypes.SQLVARCHAR, "N");
 		request.addInputParam("@t_ejec", ICTSTypes.SQLVARCHAR, "R");
+		request.addInputParam("@t_debug", ICTSTypes.SQLVARCHAR, "S");
 		request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
 		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
+		request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, "8");
 		
-
 		// 18500115
 		logger.logInfo(METHOD_NAME + " Datos Cabecera");
 		// Date fecha = new Date();
@@ -385,11 +392,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addFieldInHeader("originalRequestIsCobProcesador", ICOBISTS.HEADER_STRING_TYPE, "true");
 		// request.addFieldInHeader("ssnLog", ICOBISTS.HEADER_NUMBER_TYPE,
 		// request.readValueParam("@ssn_branch"));
-		request.addFieldInHeader("sesn", ICOBISTS.HEADER_NUMBER_TYPE, "0");
+		request.addFieldInHeader("sesn", ICOBISTS.HEADER_NUMBER_TYPE, aRequest.readValueParam("@s_sesn"));
 		request.addFieldInHeader("authorizationService", ICOBISTS.HEADER_STRING_TYPE, "COBISBV");
 		request.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
 		request.addFieldInHeader("supportOffline", ICOBISTS.HEADER_CHARACTER_TYPE, "N");
-		request.addFieldInHeader("term", ICOBISTS.HEADER_STRING_TYPE, "0:0:0:0:0:0:0:1");
+		request.addFieldInHeader("term", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_term"));
 		request.addFieldInHeader("serviceId", ICOBISTS.HEADER_STRING_TYPE,
 				"InternetBanking.WebApp.Transfers.Service.Transfer.TransferSPI");
 		request.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
@@ -411,11 +418,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		// request.addFieldInHeader("serviceExecutionId",
 		// ICOBISTS.HEADER_STRING_TYPE, request.readValueParam("@ssn_branch"));
 		request.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
-		request.addFieldInHeader("srv", ICOBISTS.HEADER_STRING_TYPE, "BRANCHSRV");
+		request.addFieldInHeader("srv", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_srv"));
 		request.addFieldInHeader("culture", ICOBISTS.HEADER_STRING_TYPE, "ES-EC");
 		request.addFieldInHeader("spType", ICOBISTS.HEADER_STRING_TYPE, "Sybase");
-		request.addFieldInHeader("lsrv", ICOBISTS.HEADER_STRING_TYPE, "CTSSRV");
-		request.addFieldInHeader("user", ICOBISTS.HEADER_STRING_TYPE, "usuariobv");
+		request.addFieldInHeader("lsrv", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_lsrv"));
+		request.addFieldInHeader("user", ICOBISTS.HEADER_STRING_TYPE, aRequest.readValueParam("@s_user"));
 
 		request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "1870013");
 		request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
@@ -455,7 +462,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		String code, message, success, referenceCode = null;
+		String code = null, message, success, referenceCode = null;
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
 		referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
 		// trackingKey = anOriginalProcedureRes.readValueParam("@o_tracking_key");
@@ -469,16 +476,30 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
 				logger.logInfo("bnbn true--->" + referenceCode);
 			} else {
+				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+				
 				logger.logInfo("bnbn false--->" + referenceCode);
 			}
 
 		} else {
-			code = String.valueOf(codeReturn);
-			message = anOriginalProcedureRes.getMessage(1).getMessageText();
-			success = "false";
+			if (String.valueOf(codeReturn).equals("1875285")) {
+				code = "400178";
+				message = "The amount to be transferred exceeds the current account balance";		
+				success = "false";
+			} else if (String.valueOf(codeReturn).equals("400177")) {
+				code = "400177";
+				message = "The source account has a debit block";		
+				success = "false";
+			}
+			else {
+				code = String.valueOf(codeReturn);
+				message = anOriginalProcedureRes.getMessage(1).getMessageText();
+				success = "false";
+			}
+			
 		}
 
 		// Agregar Header y data 1
