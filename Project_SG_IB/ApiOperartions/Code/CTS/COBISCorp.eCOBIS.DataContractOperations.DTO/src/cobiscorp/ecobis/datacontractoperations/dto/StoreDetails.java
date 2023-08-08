@@ -27,54 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestGetMovementsDetail implements Serializable {
-  private Integer externalCustomerId;
-  private String accountNumber;
-  private Integer numberOfMovements;
-  private String minDate;
-  private String maxDate;
-  private Integer sequential;
-  private Integer movementId;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class StoreDetails implements Serializable {
+  private String establishmentName;
+  private String transactionId;
+  public String getEstablishmentName(){
+    return this.establishmentName;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public void setEstablishmentName(String establishmentName ){
+    this.establishmentName=establishmentName;
   }
-  public String getAccountNumber(){
-    return this.accountNumber;
+  public String getTransactionId(){
+    return this.transactionId;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
-  }
-  public Integer getNumberOfMovements(){
-    return this.numberOfMovements;
-  }
-  public void setNumberOfMovements(Integer numberOfMovements ){
-    this.numberOfMovements=numberOfMovements;
-  }
-  public String getMinDate(){
-    return this.minDate;
-  }
-  public void setMinDate(String minDate ){
-    this.minDate=minDate;
-  }
-  public String getMaxDate(){
-    return this.maxDate;
-  }
-  public void setMaxDate(String maxDate ){
-    this.maxDate=maxDate;
-  }
-  public Integer getSequential(){
-    return this.sequential;
-  }
-  public void setSequential(Integer sequential ){
-    this.sequential=sequential;
-  }
-  public Integer getMovementId(){
-    return this.movementId;
-  }
-  public void setMovementId(Integer movementId ){
-    this.movementId=movementId;
+  public void setTransactionId(String transactionId ){
+    this.transactionId=transactionId;
   }
 }

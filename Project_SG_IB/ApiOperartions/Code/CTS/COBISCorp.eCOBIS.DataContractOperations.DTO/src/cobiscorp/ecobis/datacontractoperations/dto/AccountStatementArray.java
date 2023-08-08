@@ -29,38 +29,27 @@ import java.util.HashMap;
 
 public class AccountStatementArray implements Serializable {
   private java.math.BigDecimal accountingBalance;
-  private Integer alternateCode;
   private java.math.BigDecimal amount;
   private java.math.BigDecimal availableBalance;
-  private String concept;
   private String description;
-  private String hour;
-  private String tracking;
   private String operationType;
-  private Integer reference;
-  private Integer movementId;
-  private String signDC;
   private String transactionDate;
-  private Integer uniqueSequential;
-  private String processDate;
-  private String tarjetNumber;
-  private String destinyAccount;
-  private String typeAccount;
-  private String beneficiary;
-  private String referenceNumber;
+  private Integer transactionReferenceNumber;
   private String commission;
   private String iva;
+  private String movementType;
+  private CardDetails cardDetails;
+  private SourceAccount sourceAccount;
+  private DestinationAccount destinationAccount;
+  private SpeiDetails speiDetails;
+  private AtmDetails atmDetails;
+  private MerchantDetails merchantDetails;
+  private StoreDetails storeDetails;
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
   public void setAccountingBalance(java.math.BigDecimal accountingBalance ){
     this.accountingBalance=accountingBalance;
-  }
-  public Integer getAlternateCode(){
-    return this.alternateCode;
-  }
-  public void setAlternateCode(Integer alternateCode ){
-    this.alternateCode=alternateCode;
   }
   public java.math.BigDecimal getAmount(){
     return this.amount;
@@ -74,29 +63,11 @@ public class AccountStatementArray implements Serializable {
   public void setAvailableBalance(java.math.BigDecimal availableBalance ){
     this.availableBalance=availableBalance;
   }
-  public String getConcept(){
-    return this.concept;
-  }
-  public void setConcept(String concept ){
-    this.concept=concept;
-  }
   public String getDescription(){
     return this.description;
   }
   public void setDescription(String description ){
     this.description=description;
-  }
-  public String getHour(){
-    return this.hour;
-  }
-  public void setHour(String hour ){
-    this.hour=hour;
-  }
-  public String getTracking(){
-    return this.tracking;
-  }
-  public void setTracking(String tracking ){
-    this.tracking=tracking;
   }
   public String getOperationType(){
     return this.operationType;
@@ -104,71 +75,17 @@ public class AccountStatementArray implements Serializable {
   public void setOperationType(String operationType ){
     this.operationType=operationType;
   }
-  public Integer getReference(){
-    return this.reference;
-  }
-  public void setReference(Integer reference ){
-    this.reference=reference;
-  }
-  public Integer getMovementId(){
-    return this.movementId;
-  }
-  public void setMovementId(Integer movementId ){
-    this.movementId=movementId;
-  }
-  public String getSignDC(){
-    return this.signDC;
-  }
-  public void setSignDC(String signDC ){
-    this.signDC=signDC;
-  }
   public String getTransactionDate(){
     return this.transactionDate;
   }
   public void setTransactionDate(String transactionDate ){
     this.transactionDate=transactionDate;
   }
-  public Integer getUniqueSequential(){
-    return this.uniqueSequential;
+  public Integer getTransactionReferenceNumber(){
+    return this.transactionReferenceNumber;
   }
-  public void setUniqueSequential(Integer uniqueSequential ){
-    this.uniqueSequential=uniqueSequential;
-  }
-  public String getProcessDate(){
-    return this.processDate;
-  }
-  public void setProcessDate(String processDate ){
-    this.processDate=processDate;
-  }
-  public String getTarjetNumber(){
-    return this.tarjetNumber;
-  }
-  public void setTarjetNumber(String tarjetNumber ){
-    this.tarjetNumber=tarjetNumber;
-  }
-  public String getDestinyAccount(){
-    return this.destinyAccount;
-  }
-  public void setDestinyAccount(String destinyAccount ){
-    this.destinyAccount=destinyAccount;
-  }
-  public String getTypeAccount(){
-    return this.typeAccount;
-  }
-  public void setTypeAccount(String typeAccount ){
-    this.typeAccount=typeAccount;
-  }
-  public String getBeneficiary(){
-    return this.beneficiary;
-  }
-  public void setBeneficiary(String beneficiary ){
-    this.beneficiary=beneficiary;
-  }
-  public String getReferenceNumber(){
-    return this.referenceNumber;
-  }
-  public void setReferenceNumber(String referenceNumber ){
-    this.referenceNumber=referenceNumber;
+  public void setTransactionReferenceNumber(Integer transactionReferenceNumber ){
+    this.transactionReferenceNumber=transactionReferenceNumber;
   }
   public String getCommission(){
     return this.commission;
@@ -181,5 +98,95 @@ public class AccountStatementArray implements Serializable {
   }
   public void setIva(String iva ){
     this.iva=iva;
+  }
+  public String getMovementType(){
+    return this.movementType;
+  }
+  public void setMovementType(String movementType ){
+    this.movementType=movementType;
+  }
+  public CardDetails cardDetailsInstance(){
+	if(this.cardDetails==null){
+	this.cardDetails=new CardDetails();
+	}
+	return this.cardDetails;
+  }
+  public CardDetails getCardDetails(){
+    return this.cardDetails;
+  }
+  public void setCardDetails(CardDetails cardDetails ){
+    this.cardDetails=cardDetails;
+  }
+  public SourceAccount sourceAccountInstance(){
+	if(this.sourceAccount==null){
+	this.sourceAccount=new SourceAccount();
+	}
+	return this.sourceAccount;
+  }
+  public SourceAccount getSourceAccount(){
+    return this.sourceAccount;
+  }
+  public void setSourceAccount(SourceAccount sourceAccount ){
+    this.sourceAccount=sourceAccount;
+  }
+  public DestinationAccount destinationAccountInstance(){
+	if(this.destinationAccount==null){
+	this.destinationAccount=new DestinationAccount();
+	}
+	return this.destinationAccount;
+  }
+  public DestinationAccount getDestinationAccount(){
+    return this.destinationAccount;
+  }
+  public void setDestinationAccount(DestinationAccount destinationAccount ){
+    this.destinationAccount=destinationAccount;
+  }
+  public SpeiDetails speiDetailsInstance(){
+	if(this.speiDetails==null){
+	this.speiDetails=new SpeiDetails();
+	}
+	return this.speiDetails;
+  }
+  public SpeiDetails getSpeiDetails(){
+    return this.speiDetails;
+  }
+  public void setSpeiDetails(SpeiDetails speiDetails ){
+    this.speiDetails=speiDetails;
+  }
+  public AtmDetails atmDetailsInstance(){
+	if(this.atmDetails==null){
+	this.atmDetails=new AtmDetails();
+	}
+	return this.atmDetails;
+  }
+  public AtmDetails getAtmDetails(){
+    return this.atmDetails;
+  }
+  public void setAtmDetails(AtmDetails atmDetails ){
+    this.atmDetails=atmDetails;
+  }
+  public MerchantDetails merchantDetailsInstance(){
+	if(this.merchantDetails==null){
+	this.merchantDetails=new MerchantDetails();
+	}
+	return this.merchantDetails;
+  }
+  public MerchantDetails getMerchantDetails(){
+    return this.merchantDetails;
+  }
+  public void setMerchantDetails(MerchantDetails merchantDetails ){
+    this.merchantDetails=merchantDetails;
+  }
+  public StoreDetails storeDetailsInstance(){
+	if(this.storeDetails==null){
+	this.storeDetails=new StoreDetails();
+	}
+	return this.storeDetails;
+  }
+  public StoreDetails getStoreDetails(){
+    return this.storeDetails;
+  }
+  public void setStoreDetails(StoreDetails storeDetails ){
+    this.storeDetails=storeDetails;
   }
 }

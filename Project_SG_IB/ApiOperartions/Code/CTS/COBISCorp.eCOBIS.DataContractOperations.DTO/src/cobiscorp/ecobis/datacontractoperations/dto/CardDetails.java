@@ -27,54 +27,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestGetMovementsDetail implements Serializable {
-  private Integer externalCustomerId;
-  private String accountNumber;
-  private Integer numberOfMovements;
-  private String minDate;
-  private String maxDate;
-  private Integer sequential;
-  private Integer movementId;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class CardDetails implements Serializable {
+  private String maskedCardNumber;
+  public String getMaskedCardNumber(){
+    return this.maskedCardNumber;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
-  public String getAccountNumber(){
-    return this.accountNumber;
-  }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
-  }
-  public Integer getNumberOfMovements(){
-    return this.numberOfMovements;
-  }
-  public void setNumberOfMovements(Integer numberOfMovements ){
-    this.numberOfMovements=numberOfMovements;
-  }
-  public String getMinDate(){
-    return this.minDate;
-  }
-  public void setMinDate(String minDate ){
-    this.minDate=minDate;
-  }
-  public String getMaxDate(){
-    return this.maxDate;
-  }
-  public void setMaxDate(String maxDate ){
-    this.maxDate=maxDate;
-  }
-  public Integer getSequential(){
-    return this.sequential;
-  }
-  public void setSequential(Integer sequential ){
-    this.sequential=sequential;
-  }
-  public Integer getMovementId(){
-    return this.movementId;
-  }
-  public void setMovementId(Integer movementId ){
-    this.movementId=movementId;
+  public void setMaskedCardNumber(String maskedCardNumber ){
+    this.maskedCardNumber=maskedCardNumber;
   }
 }
