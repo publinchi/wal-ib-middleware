@@ -151,7 +151,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirerCountryCode", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "storeNumber", param = "@i_store_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "afiliacionNumber", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL)
+					@CTSInputParam(field = "affiliationNumber", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL)
 				}
 			)
 		},
@@ -509,7 +509,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirerCountryCode", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "storeNumber", param = "@i_store_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "afiliacionNumber", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL),
+					@CTSInputParam(field = "affiliationNumber", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL),
 					@CTSInputParam(field = "establishment", param = "@i_establishment", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "adviceReason", param = "@i_advise_reason", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "adviceReasonCode", param = "@i_advise_reason_code", dataType = ICTSTypes.SQLVARCHAR),
@@ -703,7 +703,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirerCountryCode", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "storeNumber", param = "@i_store_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "afiliationNumber", param = "@i_affiliation_number", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "affiliationNumber", param = "@i_affiliation_number", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -926,6 +926,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
       columns = {
 		    @CTSColumn(field = "externalCustomerId", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnCreateCustomerResponse",
+      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
+      columns = {
+		    @CTSColumn(field = "accountNumber", columnIndex = 1)
       }
     )
   }
@@ -1625,27 +1632,31 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail.class,
       columns = {
 		    @CTSColumn(field = "accountStatementArray.accountingBalance", columnIndex = 1),
-		    @CTSColumn(field = "accountStatementArray.alternateCode", columnIndex = 2),
-		    @CTSColumn(field = "accountStatementArray.amount", columnIndex = 3),
-		    @CTSColumn(field = "accountStatementArray.availableBalance", columnIndex = 4),
-		    @CTSColumn(field = "accountStatementArray.concept", columnIndex = 5),
-		    @CTSColumn(field = "accountStatementArray.description", columnIndex = 6),
-		    @CTSColumn(field = "accountStatementArray.hour", columnIndex = 7),
-		    @CTSColumn(field = "accountStatementArray.tracking", columnIndex = 8),
-		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 9),
-		    @CTSColumn(field = "accountStatementArray.reference", columnIndex = 10),
-		    @CTSColumn(field = "accountStatementArray.movementId", columnIndex = 11),
-		    @CTSColumn(field = "accountStatementArray.signDC", columnIndex = 12),
-		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 13),
-		    @CTSColumn(field = "accountStatementArray.uniqueSequential", columnIndex = 14),
-		    @CTSColumn(field = "accountStatementArray.processDate", columnIndex = 15),
-		    @CTSColumn(field = "accountStatementArray.tarjetNumber", columnIndex = 16),
-		    @CTSColumn(field = "accountStatementArray.destinyAccount", columnIndex = 17),
-		    @CTSColumn(field = "accountStatementArray.typeAccount", columnIndex = 18),
-		    @CTSColumn(field = "accountStatementArray.beneficiary", columnIndex = 19),
-		    @CTSColumn(field = "accountStatementArray.referenceNumber", columnIndex = 20),
-		    @CTSColumn(field = "accountStatementArray.commission", columnIndex = 21),
-		    @CTSColumn(field = "accountStatementArray.iva", columnIndex = 22)
+		    @CTSColumn(field = "accountStatementArray.availableBalance", columnIndex = 2),
+		    @CTSColumn(field = "accountStatementArray.movementType", columnIndex = 3),
+		    @CTSColumn(field = "accountStatementArray.amount", columnIndex = 4),
+		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 5),
+		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 6),
+		    @CTSColumn(field = "accountStatementArray.commission", columnIndex = 7),
+		    @CTSColumn(field = "accountStatementArray.iva", columnIndex = 8),
+		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 9),
+		    @CTSColumn(field = "accountStatementArray.description", columnIndex = 10),
+		    @CTSColumn(field = "cardDetails.maskedCardNumber", columnIndex = 11),
+		    @CTSColumn(field = "sourceAccount.ownerName", columnIndex = 12),
+		    @CTSColumn(field = "sourceAccount.accountNumber", columnIndex = 13),
+		    @CTSColumn(field = "sourceAccount.bankName", columnIndex = 14),
+		    @CTSColumn(field = "destinationAccount.ownerName", columnIndex = 15),
+		    @CTSColumn(field = "destinationAccount.accountNumber", columnIndex = 16),
+		    @CTSColumn(field = "destinationAccount.bankName", columnIndex = 17),
+		    @CTSColumn(field = "speiDetails.referenceCode", columnIndex = 18),
+		    @CTSColumn(field = "speiDetails.trackingId", columnIndex = 19),
+		    @CTSColumn(field = "atmDetails.bankName", columnIndex = 20),
+		    @CTSColumn(field = "atmDetails.locationId", columnIndex = 21),
+		    @CTSColumn(field = "atmDetails.transactionId", columnIndex = 22),
+		    @CTSColumn(field = "merchantDetails.establishmentName", columnIndex = 23),
+		    @CTSColumn(field = "merchantDetails.transactionId", columnIndex = 24),
+		    @CTSColumn(field = "storeDetails.establishmentName", columnIndex = 25),
+		    @CTSColumn(field = "storeDetails.transactionId", columnIndex = 26)
       }
     )
   }
