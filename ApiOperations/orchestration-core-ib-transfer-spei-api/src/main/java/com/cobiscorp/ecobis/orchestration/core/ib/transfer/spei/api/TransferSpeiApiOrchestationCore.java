@@ -96,6 +96,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	private static final String S_SERVICIO_LOCAL = "@s_servicio";
 	private static final String I_PROD_LOCAL = "@i_prod";
 	private static final String CANCEL_OPERATION = "0";
+	private boolean successConnector = true;
+	private int returnCode = 0;
 
 	private static ILogger logger = LogFactory.getLogger(TransferSpeiApiOrchestationCore.class);
 	private static final String CLASS_NAME = "TransferSpeiApiOrchestationCore--->";
@@ -480,11 +482,20 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		logger.logInfo("xdcxv2 --->" + referenceCode);
 		if (codeReturn == 0) {
 			if (null != referenceCode) {
-				code = "0";
-				message = "Success";
-				success = "true";
-				referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
-				logger.logInfo("bnbn true--->" + referenceCode);
+				if (this.successConnector) {
+					code = "0";
+					message = "Success";
+					success = "true";
+					referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+					logger.logInfo("bnbn true--->" + referenceCode);
+				} else {
+					code = "500022";
+					message = "Error executing connector";
+					success = "false";
+					referenceCode = null;
+					logger.logInfo("bnbn false--->" + referenceCode);
+				}
+				
 			} else {
 				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
@@ -495,11 +506,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			}
 
 		} else {
-			if (String.valueOf(codeReturn).equals("1875285")) {
+			if (this.returnCode == 1875285) {
 				code = "400178";
 				message = "The amount to be transferred exceeds the current account balance";		
 				success = "false";
-			} else if (String.valueOf(codeReturn).equals("400177")) {
+			} else if (this.returnCode == 400177) {
 				code = "400177";
 				message = "The source account has a debit block";		
 				success = "false";
@@ -636,7 +647,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 			if (!(idTransaccion != null && idTransaccion.equals("040"))) {
 				logger.logDebug("Normal transacction");
-
+				
 				if (responseTransfer.readValueParam("@o_referencia") != null
 						&& responseTransfer.readValueParam("@o_referencia") != null)
 					idMovement = responseTransfer.readValueParam("@o_referencia");
@@ -648,6 +659,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("ref_branch" + refBranch);
+				}
+				
+				if (refBranch.equals("0")) {
+					this.returnCode = responseTransfer.getReturnCode();	
 				}
 
 				responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration,
@@ -1051,7 +1066,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		logger.logInfo(wInfo + "response de entrada spei: " + response.toString());
 
 		if (response.getErrorCode() != null) {
+			this.successConnector = false;
 			return Utils.returnException(1, ERROR_SPEI);
+		} else {
+			this.successConnector = true;
 		}
 
 		logger.logInfo(wInfo + Constants.END_TASK);
