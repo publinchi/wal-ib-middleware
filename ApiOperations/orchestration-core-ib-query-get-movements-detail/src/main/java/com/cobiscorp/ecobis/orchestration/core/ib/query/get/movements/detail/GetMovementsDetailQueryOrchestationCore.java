@@ -134,14 +134,19 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		String minDate = aRequest.readValueParam("@i_fecha_ini");
 		String maxDate = aRequest.readValueParam("@i_fecha_fin");
 		
-		if (minDate != null && !minDate.isEmpty() && !isDate(minDate)) {
+		if(minDate.equals("null")){
+			minDate  = "";
+		} else if (minDate != null && !minDate.isEmpty() && !isDate(minDate)) {
 			minDate = "01/01/1910";
 		}
 		
-		if (maxDate != null && !maxDate.isEmpty() && !isDate(maxDate)) {
+		if(maxDate.equals("null")){
+			maxDate  = "";
+		} else if (maxDate != null && !maxDate.isEmpty() && !isDate(maxDate)) {
 			maxDate = "01/01/1910";
 		}
-
+		
+		
 		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -544,12 +549,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					}
 					logger.logInfo("Fin prueba movements");
 					
-				    if(strBeneficiary.length>0)
+				    if(strBeneficiary.length>0 && !strBeneficiary[0].isEmpty() && !strBeneficiary[0].equals("0"))
 				    	destinyAccountNumber = strBeneficiary[0];
 				    else
 				    	destinyAccountNumber = null;
 	
-				    if(strBeneficiary.length>2)
+				    if(strBeneficiary.length>2 && !strBeneficiary[2].isEmpty() && !strBeneficiary[0].equals("0"))
 				    	destinyOwnerName = strBeneficiary[2];
 				    else
 				    	destinyOwnerName = null;
