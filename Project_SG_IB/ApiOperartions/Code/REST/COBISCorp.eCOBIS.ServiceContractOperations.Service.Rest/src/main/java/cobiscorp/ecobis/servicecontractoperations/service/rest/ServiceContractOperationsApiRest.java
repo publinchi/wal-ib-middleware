@@ -1050,7 +1050,10 @@ public class ServiceContractOperationsApiRest {
 		ResponseGetMovementsDetail outResponseGetMovementsDetail = new ResponseGetMovementsDetail();
 
 		if (!validateMandatory(new Data("accountNumber", inRequestGetMovementsDetail.getAccountNumber()),
-				new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()))) {
+				new Data("minDate", inRequestGetMovementsDetail.getMinDate()),
+				new Data("maxDate", inRequestGetMovementsDetail.getMaxDate()),
+				new Data("externalCustomerId", inRequestGetMovementsDetail.getExternalCustomerId()),
+				new Data("numberOfMovements", inRequestGetMovementsDetail.getNumberOfMovements()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
