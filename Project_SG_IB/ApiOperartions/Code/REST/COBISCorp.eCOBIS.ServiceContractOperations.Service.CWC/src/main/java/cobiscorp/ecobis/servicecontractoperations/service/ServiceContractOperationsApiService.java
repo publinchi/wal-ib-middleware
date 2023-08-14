@@ -3467,7 +3467,7 @@ int mapBlank=0;
 		procedureRequestAS.addInputParam("@i_destination_type_account", ICTSTypes.SQLINT4,
 				String.valueOf(inRequestTransferSpi.getDestinationTypeAccount()));
 		procedureRequestAS.addInputParam("@i_owner_name", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getOwnerName());
-		procedureRequestAS.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getDetail());
+		procedureRequestAS.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getDescription());
 		procedureRequestAS.addInputParam("@i_commission", ICTSTypes.SQLMONEY,
 				String.valueOf(inRequestTransferSpi.getCommission()));
 		procedureRequestAS.addInputParam("@i_latitude", ICTSTypes.SQLMONEY,

@@ -37,7 +37,7 @@ public class RequestTransferSpi implements Serializable {
   private String destinationAccountOwnerName;
   private Integer destinationTypeAccount;
   private String ownerName;
-  private String detail;
+  private String description;
   private java.math.BigDecimal commission;
   private java.math.BigDecimal latitude;
   private java.math.BigDecimal longitude;
@@ -96,11 +96,11 @@ public class RequestTransferSpi implements Serializable {
   public void setOwnerName(String ownerName ){
     this.ownerName=ownerName;
   }
-  public String getDetail(){
-    return this.detail;
+  public String getDescription(){
+    return this.description;
   }
-  public void setDetail(String detail ){
-    this.detail=detail;
+  public void setDescription(String description ){
+    this.description=description;
   }
   public java.math.BigDecimal getCommission(){
     return this.commission;
