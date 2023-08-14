@@ -197,7 +197,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestTransferSpi" />
-      <field type="String" name="dTOPropertyName" value="detail" />
+      <field type="String" name="dTOPropertyName" value="description" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
