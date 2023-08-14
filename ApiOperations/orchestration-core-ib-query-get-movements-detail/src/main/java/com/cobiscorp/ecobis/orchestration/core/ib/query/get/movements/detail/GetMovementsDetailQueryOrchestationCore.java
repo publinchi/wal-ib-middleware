@@ -134,14 +134,19 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		String minDate = aRequest.readValueParam("@i_fecha_ini");
 		String maxDate = aRequest.readValueParam("@i_fecha_fin");
 		
-		if (minDate != null && !minDate.isEmpty() && !isDate(minDate)) {
-			minDate = "01/01/1950";
+		if(minDate.equals("null")){
+			minDate  = "";
+		} else if (minDate != null && !minDate.isEmpty() && !isDate(minDate)) {
+			minDate = "01/01/1910";
 		}
 		
-		if (maxDate != null && !maxDate.isEmpty() && !isDate(maxDate)) {
-			maxDate = "01/01/1950";
+		if(maxDate.equals("null")){
+			maxDate  = "";
+		} else if (maxDate != null && !maxDate.isEmpty() && !isDate(maxDate)) {
+			maxDate = "01/01/1910";
 		}
-
+		
+		
 		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -187,7 +192,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
 		IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
 		
-		boolean dataComrobanteExist = true;
+		boolean dataComrobanteExist = false;
 
 		for (IResultSetRow iResultSetRow : rowsTemp) {
 			
@@ -226,7 +231,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				if (strBeneficiary != null && strBeneficiary.length > 0 && strBeneficiary[0].contains("error")) {
 					
-					dataComrobanteExist = false;
 					respMovement.setProblem(strBeneficiary[0]);
 					
 					if (respMovement.getProblem().trim().equals("error 3")) {
@@ -260,56 +264,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						else
 							respMovement.setSix_dataComprobante("0");
 						
-						if (strBeneficiary.length > 7)
-							respMovement.setSeven_dataComprobante(strBeneficiary[7]);
-						else
-							respMovement.setSeven_dataComprobante("");
-						
-						if (strBeneficiary.length > 8)
-							respMovement.setEight_dataComprobante(strBeneficiary[8]);
-						else
-							respMovement.setEight_dataComprobante("");
-						
-						if (strBeneficiary.length > 9)
-							respMovement.setNine_dataComprobante(strBeneficiary[9]);
-						else
-							respMovement.setNine_dataComprobante("");
-						
-						if (strBeneficiary.length > 10)
-							respMovement.setTen_dataComprobante(strBeneficiary[10]);
-						else
-							respMovement.setTen_dataComprobante("");
-						
-						if (strBeneficiary.length > 11)
-							respMovement.setEleven_dataComprobante(strBeneficiary[11]);
-						else
-							respMovement.setEleven_dataComprobante("");
-						
-						if (strBeneficiary.length > 12)
-							respMovement.setTwelve_dataComprobante(strBeneficiary[12]);
-						else
-							respMovement.setTwelve_dataComprobante("");
-						
-						if (strBeneficiary.length > 13)
-							respMovement.setThirteen_dataComprobante(strBeneficiary[13]);
-						else
-							respMovement.setThirteen_dataComprobante("");
-						
-						if (strBeneficiary.length > 14)
-							respMovement.setFourteen_dataComprobante(strBeneficiary[14]);
-						else
-							respMovement.setFourteen_dataComprobante("");
-						
-						if (strBeneficiary.length > 15)
-							respMovement.setFifteen_dataComprobante(strBeneficiary[15]);
-						else
-							respMovement.setFifteen_dataComprobante("");
-						
-						if (strBeneficiary.length > 16)
-							respMovement.setSixteen_dataComprobante(strBeneficiary[16]);
-						else
-							respMovement.setSixteen_dataComprobante("");
-		
 					} else {
 						
 						respMovement.setOne_dataComprobante(" ");
@@ -318,21 +272,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						respMovement.setFour_dataComprobante(" ");
 						respMovement.setFive_dataComprobante(" ");
 						respMovement.setSix_dataComprobante(" ");
-						respMovement.setSeven_dataComprobante(" ");
-						respMovement.setEight_dataComprobante(" ");
-						respMovement.setNine_dataComprobante(" ");
-						respMovement.setTen_dataComprobante(" ");
-						respMovement.setEleven_dataComprobante(" ");
-						respMovement.setTwelve_dataComprobante(" ");
-						respMovement.setThirteen_dataComprobante(" ");
-						respMovement.setFourteen_dataComprobante(" ");
-						respMovement.setFifteen_dataComprobante(" ");
-						respMovement.setSixteen_dataComprobante(" ");
 					}
 				}
 				
 			}else{
-				respMovement.setDataComprobante(" | | |0|0|0| | | | | | | | | | ");
+				respMovement.setDataComprobante(" | | |0|0|0");
 			}
 			
 			responseMovementsList.add(respMovement);
@@ -417,18 +361,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		three_dataComprobante varchar(250) null,\r\n"
 				+ "		four_dataComprobante varchar(250) null,\r\n"
 				+ "		five_dataComprobante varchar(250) null,\r\n"
-				+ "		six_dataComprobante varchar(250) null)\r\n"
-				+ "		seven_dataComprobante varchar(250) null)\r\n"
-				+ "		eight_dataComprobante varchar(250) null)\r\n"
-				+ "		nine_dataComprobante varchar(250) null)\r\n"
-				+ "		ten_dataComprobante varchar(250) null)\r\n"
-				+ "		eleven_dataComprobante varchar(250) null)\r\n"
-				+ "		twelve_dataComprobante varchar(250) null)\r\n"
-				+ "		thirteen_dataComprobante varchar(250) null)\r\n"
-				+ "		fourteen_dataComprobante varchar(250) null)\r\n"
-				+ "		fifteen_dataComprobante varchar(250) null)\r\n"
-				+ "		sixteen_dataComprobante varchar(250) null)\r\n"
-				;
+				+ "		six_dataComprobante varchar(250) null)\r\n";
+		
 		for (ResponseMovements respMov : responseMovementsList) {
 			script = script + "insert into ultimos_movimientos_local values (\r\n";
 			script = script + (respMov.getFecha() != null ? "'" + respMov.getFecha() + "'" : "null") + ",";
@@ -463,16 +397,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getFour_dataComprobante() != null ? "'" + respMov.getFour_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getFive_dataComprobante() != null ? "'" + respMov.getFive_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getSeven_dataComprobante() != null ? "'" + respMov.getSeven_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getEight_dataComprobante() != null ? "'" + respMov.getEight_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getNine_dataComprobante() != null ? "'" + respMov.getNine_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getTen_dataComprobante() != null ? "'" + respMov.getTen_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getEleven_dataComprobante() != null ? "'" + respMov.getEleven_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getTwelve_dataComprobante() != null ? "'" + respMov.getTwelve_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getThirteen_dataComprobante() != null ? "'" + respMov.getThirteen_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getFourteen_dataComprobante() != null ? "'" + respMov.getFourteen_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getFifteen_dataComprobante() != null ? "'" + respMov.getFifteen_dataComprobante() + "'" : "null") + ")\r\n";
-			script = script + (respMov.getSixteen_dataComprobante() != null ? "'" + respMov.getSixteen_dataComprobante() + "'" : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -611,23 +535,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
 				IResultSetRow rowDat = new ResultSetRow();
 				
-				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
-				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
-				rowDat.addRowData(3, new ResultSetRowColumnData(false, columns[12].getValue()));//2?
-				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[5].getValue()));
-				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
-				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
-				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[24].getValue()));//8, 11?
-				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue().trim()));
-				
-				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[18].getValue()));
-				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[19].getValue()));
-				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[20].getValue()));
-				
-				rowDat.addRowData(17, new ResultSetRowColumnData(false, columns[21].getValue()));
-				
-				rowDat.addRowData(18, new ResultSetRowColumnData(false, columns[22].getValue()));
-				rowDat.addRowData(19, new ResultSetRowColumnData(false, columns[23].getValue()));
+				String destinyAccountNumber = null, destinyOwnerName = null, commission = "0", iva = "0";
 				
 	
 				if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
@@ -635,87 +543,67 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					String[] strBeneficiary = columns[15].getValue().split("\\|");
 					
 					logger.logInfo("Prueba movements");
-					
 					for (int i = 0; i < strBeneficiary.length; i++)
 					{
 						logger.logInfo(strBeneficiary[i]);
 					}
-					
 					logger.logInfo("Fin prueba movements");
-				    if(strBeneficiary.length>0)
-				    	rowDat.addRowData(16, new ResultSetRowColumnData(false, strBeneficiary[0]));
+					
+				    if(strBeneficiary.length>0 && !strBeneficiary[0].trim().isEmpty() && !strBeneficiary[0].equals("0"))
+				    	destinyAccountNumber = strBeneficiary[0];
 				    else
-				    	rowDat.addRowData(16, new ResultSetRowColumnData(false, " "));
+				    	destinyAccountNumber = null;
 	
-				    if(strBeneficiary.length>2)
-				    	rowDat.addRowData(15, new ResultSetRowColumnData(false, strBeneficiary[2]));
+				    if(strBeneficiary.length>2 && !strBeneficiary[2].trim().isEmpty() && !strBeneficiary[2].equals("0"))
+				    	destinyOwnerName = strBeneficiary[2];
 				    else
-				    	rowDat.addRowData(15, new ResultSetRowColumnData(false, " "));
+				    	destinyOwnerName = null;
 				    
 				    if(strBeneficiary.length>4)
-				    	rowDat.addRowData(7, new ResultSetRowColumnData(false, strBeneficiary[4]));
+				    	commission = strBeneficiary[4];
 				    else
-				    	rowDat.addRowData(7, new ResultSetRowColumnData(false, "0"));
+				    	commission = "0";
 				    
 				    if(strBeneficiary.length>5)
-				    	rowDat.addRowData(8, new ResultSetRowColumnData(false, strBeneficiary[5]));
+				    	iva = strBeneficiary[5];
 				    else
-				    	rowDat.addRowData(8, new ResultSetRowColumnData(false, "0"));
-				    
-				    if(strBeneficiary.length>6)
-				    	rowDat.addRowData(11, new ResultSetRowColumnData(false, strBeneficiary[6]));
-				    else
-				    	rowDat.addRowData(11, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>7)
-				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, strBeneficiary[7]));
-				    else
-				    	rowDat.addRowData(20, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>8)
-				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, strBeneficiary[8]));
-				    else
-				    	rowDat.addRowData(21, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>9)
-				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, strBeneficiary[9]));
-				    else
-				    	rowDat.addRowData(22, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>10)
-				    	rowDat.addRowData(23, new ResultSetRowColumnData(false, strBeneficiary[10]));
-				    else
-				    	rowDat.addRowData(23, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>11)
-				    	rowDat.addRowData(24, new ResultSetRowColumnData(false, strBeneficiary[11]));
-				    else
-				    	rowDat.addRowData(24, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>12)
-				    	rowDat.addRowData(25, new ResultSetRowColumnData(false, strBeneficiary[12]));
-				    else
-				    	rowDat.addRowData(25, new ResultSetRowColumnData(false, " "));
-				    
-				    if(strBeneficiary.length>13)
-				    	rowDat.addRowData(26, new ResultSetRowColumnData(false, strBeneficiary[13]));
-				    else
-				    	rowDat.addRowData(26, new ResultSetRowColumnData(false, " "));
+				    	iva = "0";
 				}
-				else{
-					rowDat.addRowData(16, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(15, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(7, new ResultSetRowColumnData(false, "0"));
-					rowDat.addRowData(8, new ResultSetRowColumnData(false, "0"));
-					rowDat.addRowData(11, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(20, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(21, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(22, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(23, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(24, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(25, new ResultSetRowColumnData(false, ""));
-					rowDat.addRowData(26, new ResultSetRowColumnData(false, ""));
-				}
+				
+				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
+				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
+				rowDat.addRowData(3, new ResultSetRowColumnData(false, columns[12].getValue()));//2?
+				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[5].getValue()));
+				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
+				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
+				rowDat.addRowData(7, new ResultSetRowColumnData(false, commission));
+				rowDat.addRowData(8, new ResultSetRowColumnData(false, iva));
+				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[24].getValue()));//8, 11?
+				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue().trim()));
+				
+				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
+				
+				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[18].getValue()));
+				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[19].getValue()));
+				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[20].getValue()));
+				
+				rowDat.addRowData(15, new ResultSetRowColumnData(false, destinyOwnerName));
+				rowDat.addRowData(16, new ResultSetRowColumnData(false, destinyAccountNumber));
+				rowDat.addRowData(17, new ResultSetRowColumnData(false, columns[21].getValue()));
+				
+				rowDat.addRowData(18, new ResultSetRowColumnData(false, columns[22].getValue()));
+				rowDat.addRowData(19, new ResultSetRowColumnData(false, columns[23].getValue()));
+				
+				rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
+				rowDat.addRowData(21, new ResultSetRowColumnData(false, columns[27].getValue()));
+				rowDat.addRowData(22, new ResultSetRowColumnData(false, columns[28].getValue()));
+				
+				rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
+				rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
+				
+				rowDat.addRowData(25, new ResultSetRowColumnData(false, columns[31].getValue()));
+				rowDat.addRowData(26, new ResultSetRowColumnData(false, columns[32].getValue()));
+				
 
 				data0.addRow(rowDat);
 			}
