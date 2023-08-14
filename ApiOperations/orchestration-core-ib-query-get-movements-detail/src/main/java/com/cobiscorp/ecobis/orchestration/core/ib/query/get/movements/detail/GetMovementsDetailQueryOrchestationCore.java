@@ -549,12 +549,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					}
 					logger.logInfo("Fin prueba movements");
 					
-				    if(strBeneficiary.length>0 && !strBeneficiary[0].isEmpty() && !strBeneficiary[0].equals("0"))
+				    if(strBeneficiary.length>0 && !strBeneficiary[0].trim().isEmpty() && !strBeneficiary[0].equals("0"))
 				    	destinyAccountNumber = strBeneficiary[0];
 				    else
 				    	destinyAccountNumber = null;
 	
-				    if(strBeneficiary.length>2 && !strBeneficiary[2].isEmpty() && !strBeneficiary[0].equals("0"))
+				    if(strBeneficiary.length>2 && !strBeneficiary[2].trim().isEmpty() && !strBeneficiary[2].equals("0"))
 				    	destinyOwnerName = strBeneficiary[2];
 				    else
 				    	destinyOwnerName = null;
