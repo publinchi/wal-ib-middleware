@@ -1438,11 +1438,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("bankName", inRequestTransferSpi.getBankName()),
 				new Data("destinationAccountOwnerName", inRequestTransferSpi.getDestinationAccountOwnerName()),
 				new Data("destinationTypeAccount", inRequestTransferSpi.getDestinationTypeAccount()),
-				new Data("ownerName", inRequestTransferSpi.getOwnerName()),
-				new Data("detail", inRequestTransferSpi.getDetail()),
 				new Data("commission", inRequestTransferSpi.getCommission()),
-				new Data("latitude", inRequestTransferSpi.getLatitude()),
-				new Data("longitude", inRequestTransferSpi.getLongitude()),
 				new Data("referenceNumber", inRequestTransferSpi.getReferenceNumber()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")

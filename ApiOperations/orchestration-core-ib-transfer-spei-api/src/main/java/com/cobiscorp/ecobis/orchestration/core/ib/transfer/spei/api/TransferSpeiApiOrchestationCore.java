@@ -199,7 +199,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
 
-		return processResponseTransfer(anProcedureResponse);
+		return processResponseTransfer(anProcedureResponse, aBagSPJavaOrchestration);
 
 	}
 
@@ -339,13 +339,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		// request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_concept"));
-		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));// poner en el CWC
+		String detail = "SPEI";
+		if (!aRequest.readValueParam("@i_detail").equals("null")) {
+			detail = aRequest.readValueParam("@i_detail");
+		}
+		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, detail);// poner en el CWC
 		request.addInputParam("@i_banco_ben", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_id"));
 		// request.addInputParam("@i_nom_banco_des", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_bank_name"));
 		request.addInputParam("@i_nombre_cta_dest", ICTSTypes.SQLVARCHAR,
 				aRequest.readValueParam("@i_destination_account_owner_name"));
-		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
+		request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, detail);
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
@@ -465,32 +469,32 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return responseTransferSpei;*/
 	}
 
-	public IProcedureResponse processResponseTransfer(IProcedureResponse anOriginalProcedureRes) {
+	public IProcedureResponse processResponseTransfer(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processResponseAccounts--->");
 			logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_referencia"));
-			// logger.logInfo("xdcxv --->" +
-			// anOriginalProcedureRes.readValueParam("@o_tracking_key") );
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		String code = null, message, success, referenceCode = null;
+		String code = null, message, success, referenceCode = null, trackingKey = null;
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
 		referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
-		// trackingKey = anOriginalProcedureRes.readValueParam("@o_tracking_key");
 
 		logger.logInfo("xdcxv2 --->" + referenceCode);
 		if (codeReturn == 0) {
 			if (null != referenceCode) {
+				IProcedureResponse responseDataSpei = getDataSpei(referenceCode, aBagSPJavaOrchestration);
+				
 				if (this.successConnector) {
 					code = "0";
 					message = "Success";
 					success = "true";
 					referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+					trackingKey = (String) aBagSPJavaOrchestration.get("@o_clave_ratreo");
 					logger.logInfo("bnbn true--->" + referenceCode);
 				} else {
-					code = "500022";
-					message = "Error executing connector";
+					code = (String) aBagSPJavaOrchestration.get("@o_id_error");
+					message = (String) aBagSPJavaOrchestration.get("@o_mensaje_error");
 					success = "false";
 					referenceCode = null;
 					logger.logInfo("bnbn false--->" + referenceCode);
@@ -554,6 +558,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		IResultSetData data3 = new ResultSetData();
 		// Agregar resulBlock
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+		
+		// Agregar Header y data 4
+		IResultSetHeader metaData4 = new ResultSetHeader();
+		IResultSetData data4 = new ResultSetData();
+		// Agregar resulBlock
+		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
 
 		if (referenceCode != null) {
 
@@ -565,13 +575,66 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim()));
 			data3.addRow(row3);
 		}
+		
+		if (trackingKey != null) {
+
+			metaData4.addColumnMetaData(new ResultSetHeaderColumn("trackingKey", ICTSTypes.SQLINTN, 5));
+
+			// Agregar info 4
+			IResultSetRow row4 = new ResultSetRow();
+			row4.addRowData(1, new ResultSetRowColumnData(false,
+					trackingKey));
+			data4.addRow(row4);
+		}
 
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock4);
 
 		return anOriginalProcedureResponse;
+	}
+	
+	private IProcedureResponse getDataSpei(String referenceCode,
+			Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getDataSpei");
+		}
+
+		request.setSpName("cob_bvirtual..sp_get_data_spei_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_reference_code", ICTSTypes.SQLVARCHAR,
+				referenceCode);
+
+		request.addOutputParam("@o_clave_ratreo", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_mensaje_error", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_id_error", ICTSTypes.SQLINT4, "0");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		aBagSPJavaOrchestration.put("@o_clave_ratreo", wProductsQueryResp.readValueParam("@o_clave_ratreo"));
+		aBagSPJavaOrchestration.put("@o_mensaje_error", wProductsQueryResp.readValueParam("@o_mensaje_error"));
+		aBagSPJavaOrchestration.put("@o_id_error", wProductsQueryResp.readValueParam("@o_id_error"));
+
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getDataSpei DCO : "
+					+ wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getDataSpei");
+		}
+
+		return wProductsQueryResp;
 	}
 
 	@Override
@@ -1036,7 +1099,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		} else {
 			response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0,
-					String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
+					String.valueOf(responseTransfer.readValueParam("@o_referencia")));
 
 			// response.addParam("@o_ref_branch", ICTSTypes.SYBINT4, 0,
 			// String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
