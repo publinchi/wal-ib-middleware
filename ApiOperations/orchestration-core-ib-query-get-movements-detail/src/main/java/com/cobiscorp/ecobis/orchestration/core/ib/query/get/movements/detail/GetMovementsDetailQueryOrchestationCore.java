@@ -555,7 +555,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				    	destinyAccountNumber = null;
 	
 				    if(strBeneficiary.length>2 && !strBeneficiary[2].trim().isEmpty() && !strBeneficiary[2].equals("0"))
-				    	destinyOwnerName = strBeneficiary[2];
+				    	destinyOwnerName = strBeneficiary[2].trim();
 				    else
 				    	destinyOwnerName = null;
 				    
@@ -583,7 +583,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
 				
-				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[18].getValue()));
+				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[18].getValue().trim()));
 				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[19].getValue()));
 				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[20].getValue()));
 				
