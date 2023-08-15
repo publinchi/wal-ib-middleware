@@ -340,7 +340,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		// request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_concept"));
 		String detail = "SPEI";
-		if (!aRequest.readValueParam("@i_detail").equals("null")) {
+		if (!aRequest.readValueParam("@i_detail").equals("null") && !aRequest.readValueParam("@i_detail").trim().isEmpty()) {
 			detail = aRequest.readValueParam("@i_detail");
 		}
 		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, detail);// poner en el CWC
