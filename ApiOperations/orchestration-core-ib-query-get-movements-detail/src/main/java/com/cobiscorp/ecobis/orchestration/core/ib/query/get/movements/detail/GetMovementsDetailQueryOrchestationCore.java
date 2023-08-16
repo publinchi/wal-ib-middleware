@@ -579,7 +579,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(7, new ResultSetRowColumnData(false, commission));
 				rowDat.addRowData(8, new ResultSetRowColumnData(false, iva));
 				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[24].getValue()));//8, 11?
-				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue().trim()));
+				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue()));
 				
 				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
 				
