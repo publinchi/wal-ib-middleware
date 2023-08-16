@@ -127,7 +127,7 @@
   </collection>
   <collection type="List" length="0" id="29" name="properties">
   </collection>
-  <field type="String" name="documentation" value="services" />
+  <field type="String" name="documentation" value="Services" />
   <field type="boolean" name="autoSelectDTO" value="false" />
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_auth_reversal_api</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+    <parameter name="@i_uuid" dataType="varchar" direction="in" />
+    <parameter name="@i_order_id" dataType="varchar" direction="in" />
+    <parameter name="@i_account_number" dataType="varchar" direction="in" />
+    <parameter name="@i_transmission_date_time_gtm" dataType="varchar" direction="in" />
+    <parameter name="@i_date" dataType="varchar" direction="in" />
+    <parameter name="@i_time" dataType="varchar" direction="in" />
+    <parameter name="@i_mti" dataType="varchar" direction="in" />
+    <parameter name="@i_type" dataType="varchar" direction="in" />
+    <parameter name="@i_processing_code" dataType="varchar" direction="in" />
+    <parameter name="@i_nsu" dataType="varchar" direction="in" />
+    <parameter name="@i_merchant_category_code" dataType="varchar" direction="in" />
+    <parameter name="@i_source_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_settlement_currency_code" dataType="varchar" direction="in" />
+    <parameter name="@i_amount" dataType="varchar" direction="in" />
+    <parameter name="@i_terminal_code" dataType="varchar" direction="in" />
+    <parameter name="@i_retrieval_reference_number" dataType="varchar" direction="in" />
+    <parameter name="@i_acquirer_country_code" dataType="varchar" direction="in" />
+    <parameter name="@i_store_number" dataType="decimal" direction="in" />
+    <parameter name="@i_affiliation_number" dataType="decimal" direction="in" />
+    <parameter name="@i_establishment" dataType="varchar" direction="in" />
+    <parameter name="@i_advise_reason" dataType="varchar" direction="in" />
+    <parameter name="@i_advise_reason_code" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_uuid" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_nsu" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_mti" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_transmission_date_time_gtm" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_institution_name" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_retrieval_reference_number" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_type" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_processing_code" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "success"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="success"</queryText>
+    </query>
+  </queries>
+</procedure>

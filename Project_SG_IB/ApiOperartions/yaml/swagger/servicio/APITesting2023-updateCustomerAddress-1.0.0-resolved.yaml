@@ -5,6 +5,8 @@ info:
   description: Service update address customer
   version: 1.0.0
 servers:
+- url: https://virtserver.swaggerhub.com/APICobisCorp2023/updateCustomerAddress/1.0.0
+  description: SwaggerHub API Auto Mocking
 - url: https://virtserver.swaggerhub.com/APITesting2023/updateCustomerAddress/1.0.0
   description: SwaggerHub API Auto Mocking
 tags:
@@ -15,8 +17,8 @@ paths:
     post:
       tags:
       - Update Customer's
-      summary: Update customer addrerss
-      operationId: createCustomer
+      summary: Update customer address
+      operationId: updateCustomerAddress
       requestBody:
         description: Request to update customer address
         content:
@@ -26,7 +28,11 @@ paths:
         required: true
       responses:
         "400":
-          description: The data sent is incorrect or corrupted
+          description: Description of errors regarding the execution of the service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
         "500":
           description: An error occurred on the server
         "401":
@@ -34,7 +40,7 @@ paths:
         "403":
           description: The request has been denied.
         "200":
-          description: Response Create Customer
+          description: Response update customer address
           content:
             application/json:
               schema:
@@ -44,18 +50,28 @@ paths:
 components:
   schemas:
     UpdateCustomerAddressRequest:
+      required:
+      - addressTypeCode
+      - anotherAddress
+      - city
+      - country
+      - externalCustomerId
+      - externalNumber
+      - internalNumberl
+      - propertyTypeCode
+      - province
+      - referenceAddress
+      - street
+      - subdivisioncode
+      - timeCurrentRecide
+      - townCode
+      - zipcode
       properties:
         externalCustomerId:
           maxLength: 12
           type: integer
           description: External Customer Id
           example: 220
-        country:
-          maximum: 10
-          minimum: 1
-          type: string
-          description: Country of Residence ID(Use the "getCatalog" service with table cl_pais)
-          example: "52"
         zipcode:
           maximum: 5
           minimum: 5
@@ -116,7 +132,7 @@ components:
           type: string
           description: Customer time current residence
           example: "3"
-        AddressTypeCode:
+        addressTypeCode:
           maximum: 5
           minimum: 1
           type: string
@@ -128,12 +144,6 @@ components:
           type: string
           description: Type of provider where you live (Use the "getCatalog" service with table cl_tpropiedad)
           example: PRO
-        anotherAddress:
-          maximum: 15
-          minimum: 1
-          type: string
-          description: Description of the other type of addres
-          example: my type address
     UpdateCustomerAddressResponse:
       properties:
         success:
@@ -155,6 +165,302 @@ components:
           type: string
           description: Result Mesagge Code
           example: success
+    Error400052:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400052_Message'
+      description: The selected address type does not exist in the catalog
+    Error400053:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400053_Message'
+      description: The selected property type does not exist in the catalog
+    Error400057:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400057_Message'
+      description: Error the zip code you entered does not exist
+    Error400058:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400058_Message'
+      description: Error the municipality or city does not exist
+    Error400059:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400059_Message'
+      description: Error the colony or parish does not exist
+    Error400060:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400060_Message'
+      description: Error the location does not exist
+    Error400099:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400099_Message'
+      description: The entered customer code does not exist
+    Error400129:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400129_Message'
+      description: The zipcode is required
+    Error400130:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400130_Message'
+      description: The province or state is required
+    Error400131:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400131_Message'
+      description: The city or municipality is required
+    Error400132:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400132_Message'
+      description: The colony is required
+    Error400133:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400133_Message'
+      description: The location is required
+    Error400134:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400134_Message'
+      description: The address type is required
+    Error400135:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        Message:
+          $ref: '#/components/schemas/Error400135_Message'
+      description: Property type is required
+    inline_response_400:
+      oneOf:
+      - $ref: '#/components/schemas/Error400052'
+      - $ref: '#/components/schemas/Error400053'
+      - $ref: '#/components/schemas/Error400057'
+      - $ref: '#/components/schemas/Error400058'
+      - $ref: '#/components/schemas/Error400059'
+      - $ref: '#/components/schemas/Error400060'
+      - $ref: '#/components/schemas/Error400099'
+      - $ref: '#/components/schemas/Error400129'
+      - $ref: '#/components/schemas/Error400130'
+      - $ref: '#/components/schemas/Error400131'
+      - $ref: '#/components/schemas/Error400132'
+      - $ref: '#/components/schemas/Error400133'
+      - $ref: '#/components/schemas/Error400134'
+      - $ref: '#/components/schemas/Error400135'
+    Error400052_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400052
+        message:
+          type: string
+          description: message error
+          example: The selected address type does not exist in the catalog
+    Error400053_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400053
+        message:
+          type: string
+          description: message error
+          example: The selected property type does not exist in the catalog
+    Error400057_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400057
+        message:
+          type: string
+          description: message error
+          example: Error the zip code you entered does not exist
+    Error400058_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400058
+        message:
+          type: string
+          description: message error
+          example: Error the municipality or city does not exist
+    Error400059_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400059
+        message:
+          type: string
+          description: message error
+          example: Error the colony or parish does not exist
+    Error400060_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400060
+        message:
+          type: string
+          description: message error
+          example: Error the location does not exist
+    Error400099_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400099
+        message:
+          type: string
+          description: message error
+          example: The entered customer code does not exist
+    Error400129_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400129
+        message:
+          type: string
+          description: message error
+          example: The zipcode is required
+    Error400130_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400130
+        message:
+          type: string
+          description: message error
+          example: The province or state is required
+    Error400131_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400131
+        message:
+          type: string
+          description: message error
+          example: The city or municipality is required
+    Error400132_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400132
+        message:
+          type: string
+          description: message error
+          example: The colony is required
+    Error400133_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400133
+        message:
+          type: string
+          description: message error
+          example: The location is required
+    Error400134_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400134
+        message:
+          type: string
+          description: message error
+          example: The address type is required
+    Error400135_Message:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400135
+        message:
+          type: string
+          description: message error
+          example: Property type is required
   responses:
     Unauthorized:
       description: Unauthorized service

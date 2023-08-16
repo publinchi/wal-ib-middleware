@@ -29,37 +29,37 @@ import java.util.HashMap;
 
 public class ResponseValidateIdentity implements Serializable {
   private Boolean success;
-  private String numeroVerficacion;
-  private String nombreEvento;
-  private Message message;
+  private String verificationNumber;
+  private String eventName;
+  private Response response;
   public Boolean isSuccess(){
     return this.success;
   }
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public String getNumeroVerficacion(){
-    return this.numeroVerficacion;
+  public String getVerificationNumber(){
+    return this.verificationNumber;
   }
-  public void setNumeroVerficacion(String numeroVerficacion ){
-    this.numeroVerficacion=numeroVerficacion;
+  public void setVerificationNumber(String verificationNumber ){
+    this.verificationNumber=verificationNumber;
   }
-  public String getNombreEvento(){
-    return this.nombreEvento;
+  public String getEventName(){
+    return this.eventName;
   }
-  public void setNombreEvento(String nombreEvento ){
-    this.nombreEvento=nombreEvento;
+  public void setEventName(String eventName ){
+    this.eventName=eventName;
   }
-  public Message messageInstance(){
-	if(this.message==null){
-	this.message=new Message();
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
 	}
-	return this.message;
+	return this.response;
   }
-  public Message getMessage(){
-    return this.message;
+  public Response getResponse(){
+    return this.response;
   }
-  public void setMessage(Message message ){
-    this.message=message;
+  public void setResponse(Response response ){
+    this.response=response;
   }
 }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <procedure>
   <database>cobis</database>
-  <name>sp_validate_identy_card_api</name>
+  <name>sp_validate_identity_card_api</name>
   <type>SYBASE</type>
   <version>1</version>
   <parameters>

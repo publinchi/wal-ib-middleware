@@ -96,12 +96,12 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("password", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT2, 2));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		if (password.equals(""))
 		{
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, ""));
-			row.addRowData(3, new ResultSetRowColumnData(false, "Password must not be empty"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "Data must not be empty"));
 			row.addRowData(4, new ResultSetRowColumnData(false, "40001"));
 			data.addRow(row);
 
@@ -121,7 +121,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		{
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, ""));
-			row.addRowData(3, new ResultSetRowColumnData(false, "Error encrypting password"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "Error encrypting data"));
 			row.addRowData(4, new ResultSetRowColumnData(false, "50001"));
 			data.addRow(row);
 
@@ -136,7 +136,7 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 		} else {
 			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
 			row.addRowData(2, new ResultSetRowColumnData(false, passEncrypt));
-			row.addRowData(3, new ResultSetRowColumnData(false, "SUCCESS"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "Success"));
 			row.addRowData(4, new ResultSetRowColumnData(false, "0"));
 			data.addRow(row);
 
@@ -178,28 +178,6 @@ public class EncryptDataOrchestrationCore extends SPJavaOrchestrationBase {// SP
 	
 	public String getPublicKey() 
 	{
-		logger.logDebug("Begin flow, getPublicKey start.");
-		File xmlFile = new File("/cobis/cobishome/CTS_MF/services-as/securityBM/security-config.xml");
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder;
-		try {
-			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFile);
-			String publickey = doc.getElementsByTagName("public-keyrsa").item(0).getTextContent();
-			logger.logDebug("Ending flow, getPublicKey publickey: " + publickey);
-			return publickey;
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.logDebug("Ending flow, getPublicKey failed.");
-		return "";
+		return Utils.PUBLIC_KEY;
 	}
 }

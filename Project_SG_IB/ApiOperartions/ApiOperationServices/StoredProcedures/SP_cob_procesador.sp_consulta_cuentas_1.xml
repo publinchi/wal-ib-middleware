@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_consulta_cuentas</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_operacion" dataType="char" direction="in" />
+    <parameter name="@i_customer_id" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "availableBalance"="","drawBalance"="","currencyId"="","currencySymbol"="","currencyName"="","productAlias"="","productId"="","productNumber"="","productName"="","productAbbreviation"="","accountingBalance"="","aliasName"="","expirationDate"="","rate"="","totalCredit"="","clabeInterBank"=""</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "success"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="availableBalance" />
+        <column name="drawBalance" />
+        <column name="currencyId" />
+        <column name="currencySymbol" />
+        <column name="currencyName" />
+        <column name="productAlias" />
+        <column name="productId" />
+        <column name="productNumber" />
+        <column name="productName" />
+        <column name="productAbbreviation" />
+        <column name="accountingBalance" />
+        <column name="expirationDate" />
+        <column name="rate" />
+        <column name="totalCredit" />
+        <column name="clabeInterBank" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
+    </query>
+  </queries>
+</procedure>

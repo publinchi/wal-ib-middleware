@@ -6,6 +6,16 @@ info:
   version: 1.0.0
 servers:
 - url: https://virtserver.swaggerhub.com/APITesting2023/GetOwnAccountsView/1.0.0
+  description: SwaggerHub API Auto Mocking---
+openapi: 3.0.0
+info:
+  title: Get Own Accounts View
+  description: Service to get the summary of the savings accounts of an existing client.
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/APICobisCorp2023/GetOwnAccountsView/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://virtserver.swaggerhub.com/APITesting2023/GetOwnAccountsView/1.0.0
   description: SwaggerHub API Auto Mocking
 tags:
 - name: Get Own Accounts View
@@ -43,6 +53,9 @@ paths:
 components:
   schemas:
     RequestOwnAccountsView:
+      required:
+      - externalCustomerId
+      type: object
       properties:
         externalCustomerId:
           maxLength: 12
@@ -144,12 +157,6 @@ components:
           type: number
           description: Accounting balance
           example: 999804.34
-        aliasName:
-          maxLength: 2
-          minLength: 1
-          type: string
-          description: Alias name
-          example: CTAAHO_0027
         expirationDate:
           maxLength: 2
           minLength: 1

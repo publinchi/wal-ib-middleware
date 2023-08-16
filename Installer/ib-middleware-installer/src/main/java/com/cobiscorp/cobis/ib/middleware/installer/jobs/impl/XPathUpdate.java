@@ -1555,6 +1555,74 @@ public class XPathUpdate {
 			logger.error("******* ERROR  failed upgrade file: \n" + xmlFilePath);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void editPlanConfigCISApiRest(String xmlFilePath,
+			InputStream fileConfigurations, String objPlanId, String objelementT)
+			throws Exception {
+		String planId = objPlanId;
+		File xmlFile = new File(xmlFilePath);
+		this.readDocument(xmlFile);
+
+		org.jdom.Element root1 = getRootElement(fileConfigurations);
+		org.jdom.Element elementT;
+		List<org.jdom.Element> confElement;
+
+		// Plan Config
+		elementT = root1.getChild(objelementT);
+		confElement = elementT.getChildren("staff");
+		Element planIdResult = (Element) xPath.evaluate("/ccm-plan-config/own/plan[@id='" + planId + "']", doc, XPathConstants.NODE);
+
+		if (null == planIdResult) {
+			// Create plan id IB
+			logger.info("======= OK create plan id: \n" + planId);
+			Element ownElement = (Element) xPath.evaluate("/ccm-plan-config/own[last()]", doc, XPathConstants.NODE);
+			Comment comment = doc.createComment("Plan " + objPlanId);
+			ownElement.appendChild(comment);
+			Element planElement = doc.createElement("plan");
+			ownElement.appendChild(planElement);
+			planElement.setAttribute("id", planId);
+
+			for (org.jdom.Element element : confElement) {
+				String pluginName = element.getAttributeValue("name");
+				String actualVersion = element.getAttributeValue("version");
+				String jarPath = "../../CIS/SERVICES/plugins/ApiWalmart/" + pluginName + "-" + actualVersion + ".jar";
+					
+				Element pluginElement = doc.createElement("plugin");
+				planElement.appendChild(pluginElement);
+				pluginElement.setAttribute("name", pluginName);
+				pluginElement.setAttribute("path", jarPath);
+			}
+		}
+		else {
+			NodeList nodeList = planIdResult.getChildNodes();
+			// Remove all plugins
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+					Element pluginElement = (Element) nodeList.item(i);
+					planIdResult.removeChild(pluginElement);
+				}
+			}
+			// Add all plugins
+			logger.info("======= OK edit plan id: \n" + planId);
+			for (org.jdom.Element element : confElement) {
+				String pluginName = element.getAttributeValue("name");
+				String actualVersion = element.getAttributeValue("version");
+				String jarPath = "../../CIS/SERVICES/plugins/IBOrchestration/" + pluginName + "-" + actualVersion + ".jar";
+
+				Element pluginElement = doc.createElement("plugin");
+				planIdResult.appendChild(pluginElement);
+				pluginElement.setAttribute("name", pluginName);
+				pluginElement.setAttribute("path", jarPath);
+			}
+		}
+
+		if (this.WriteDoc(doc, xmlFile)) {
+			logger.info("======= OK successful upgrade file: \n" + xmlFilePath);
+		} else {
+			logger.error("******* ERROR  failed upgrade file: \n" + xmlFilePath);
+		}
+	}
 
 	/**
 	 * @author smejia Sandra Mejia J.

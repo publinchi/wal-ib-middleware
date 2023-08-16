@@ -28,67 +28,61 @@ import java.util.HashMap;
 
 
 public class CreateCustomerRequest implements Serializable {
-  private Integer externalCustomerId;
-  private String firtname;
+  private String firstName;
   private String secondName;
   private String lastName;
   private String secondLastName;
-  private String idNumber;
-  private String idType;
-  private java.util.Calendar birthDate;
-  private java.util.Calendar validityDate;
   private String gender;
-  private String email;
+  private String birthDate;
+  private String nationality;
+  private String provinceBirth;
+  private String civilStatus;
+  private String idNumber;
+  private String rfc;
   private String identificationType;
   private String identificationNumber;
-  private String phoneCode;
+  private String activity;
+  private String companyName;
+  private String operationType;
+  private String incomeLevelEntity;
+  private String legalIncomeSource;
+  private String noConnectionIllegalNetworks;
+  private String validityDate;
+  private String email;
   private String phoneNumber;
-  private String country;
   private String zipcode;
   private String province;
+  private String townCode;
   private String city;
   private String subdivisioncode;
-  private String townCode;
   private String street;
   private String externalNumber;
   private String internalNumber;
   private String referenceAddress;
-  private String timeCurrentRecide;
+  private Integer timeCurrentReside;
   private String addressTypeCode;
   private String propertyTypeCode;
-  private String anotherAddress;
-  private String nationality;
   private String countryBirth;
-  private String proviceBirth;
   private String occupation;
-  private String activity;
   private String incomeLevel;
-  private String legalIncomeSource;
-  private String noConnectionIllegalNetworks;
-  private String companyName;
-  private String incomeLevelEntity;
   private String otherMexicanAccount;
-  private String paymentCard;
-  private String paymentRecharge;
-  private String provisionCash;
-  private String electronicTransfer;
+  private Integer paymentCard;
+  private Integer paymentRecharge;
+  private Integer provisionCash;
+  private Integer electronicTransfer;
+  private Integer servicesPay;
   private String averageBalance;
   private String amountTransaction;
   private String numberTransaction;
   private String geolocalizationLongitude;
   private String geolocalizationLatitude;
-  private String isMati;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+  private String identityValidated;
+  private String economicSector;
+  public String getFirstName(){
+    return this.firstName;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
-  public String getFirtname(){
-    return this.firtname;
-  }
-  public void setFirtname(String firtname ){
-    this.firtname=firtname;
+  public void setFirstName(String firstName ){
+    this.firstName=firstName;
   }
   public String getSecondName(){
     return this.secondName;
@@ -108,41 +102,47 @@ public class CreateCustomerRequest implements Serializable {
   public void setSecondLastName(String secondLastName ){
     this.secondLastName=secondLastName;
   }
-  public String getIdNumber(){
-    return this.idNumber;
-  }
-  public void setIdNumber(String idNumber ){
-    this.idNumber=idNumber;
-  }
-  public String getIdType(){
-    return this.idType;
-  }
-  public void setIdType(String idType ){
-    this.idType=idType;
-  }
-  public java.util.Calendar getBirthDate(){
-    return this.birthDate;
-  }
-  public void setBirthDate(java.util.Calendar birthDate ){
-    this.birthDate=birthDate;
-  }
-  public java.util.Calendar getValidityDate(){
-    return this.validityDate;
-  }
-  public void setValidityDate(java.util.Calendar validityDate ){
-    this.validityDate=validityDate;
-  }
   public String getGender(){
     return this.gender;
   }
   public void setGender(String gender ){
     this.gender=gender;
   }
-  public String getEmail(){
-    return this.email;
+  public String getBirthDate(){
+    return this.birthDate;
   }
-  public void setEmail(String email ){
-    this.email=email;
+  public void setBirthDate(String birthDate ){
+    this.birthDate=birthDate;
+  }
+  public String getNationality(){
+    return this.nationality;
+  }
+  public void setNationality(String nationality ){
+    this.nationality=nationality;
+  }
+  public String getProvinceBirth(){
+    return this.provinceBirth;
+  }
+  public void setProvinceBirth(String provinceBirth ){
+    this.provinceBirth=provinceBirth;
+  }
+  public String getCivilStatus(){
+    return this.civilStatus;
+  }
+  public void setCivilStatus(String civilStatus ){
+    this.civilStatus=civilStatus;
+  }
+  public String getIdNumber(){
+    return this.idNumber;
+  }
+  public void setIdNumber(String idNumber ){
+    this.idNumber=idNumber;
+  }
+  public String getRfc(){
+    return this.rfc;
+  }
+  public void setRfc(String rfc ){
+    this.rfc=rfc;
   }
   public String getIdentificationType(){
     return this.identificationType;
@@ -156,23 +156,59 @@ public class CreateCustomerRequest implements Serializable {
   public void setIdentificationNumber(String identificationNumber ){
     this.identificationNumber=identificationNumber;
   }
-  public String getPhoneCode(){
-    return this.phoneCode;
+  public String getActivity(){
+    return this.activity;
   }
-  public void setPhoneCode(String phoneCode ){
-    this.phoneCode=phoneCode;
+  public void setActivity(String activity ){
+    this.activity=activity;
+  }
+  public String getCompanyName(){
+    return this.companyName;
+  }
+  public void setCompanyName(String companyName ){
+    this.companyName=companyName;
+  }
+  public String getOperationType(){
+    return this.operationType;
+  }
+  public void setOperationType(String operationType ){
+    this.operationType=operationType;
+  }
+  public String getIncomeLevelEntity(){
+    return this.incomeLevelEntity;
+  }
+  public void setIncomeLevelEntity(String incomeLevelEntity ){
+    this.incomeLevelEntity=incomeLevelEntity;
+  }
+  public String getLegalIncomeSource(){
+    return this.legalIncomeSource;
+  }
+  public void setLegalIncomeSource(String legalIncomeSource ){
+    this.legalIncomeSource=legalIncomeSource;
+  }
+  public String getNoConnectionIllegalNetworks(){
+    return this.noConnectionIllegalNetworks;
+  }
+  public void setNoConnectionIllegalNetworks(String noConnectionIllegalNetworks ){
+    this.noConnectionIllegalNetworks=noConnectionIllegalNetworks;
+  }
+  public String getValidityDate(){
+    return this.validityDate;
+  }
+  public void setValidityDate(String validityDate ){
+    this.validityDate=validityDate;
+  }
+  public String getEmail(){
+    return this.email;
+  }
+  public void setEmail(String email ){
+    this.email=email;
   }
   public String getPhoneNumber(){
     return this.phoneNumber;
   }
   public void setPhoneNumber(String phoneNumber ){
     this.phoneNumber=phoneNumber;
-  }
-  public String getCountry(){
-    return this.country;
-  }
-  public void setCountry(String country ){
-    this.country=country;
   }
   public String getZipcode(){
     return this.zipcode;
@@ -186,6 +222,12 @@ public class CreateCustomerRequest implements Serializable {
   public void setProvince(String province ){
     this.province=province;
   }
+  public String getTownCode(){
+    return this.townCode;
+  }
+  public void setTownCode(String townCode ){
+    this.townCode=townCode;
+  }
   public String getCity(){
     return this.city;
   }
@@ -197,12 +239,6 @@ public class CreateCustomerRequest implements Serializable {
   }
   public void setSubdivisioncode(String subdivisioncode ){
     this.subdivisioncode=subdivisioncode;
-  }
-  public String getTownCode(){
-    return this.townCode;
-  }
-  public void setTownCode(String townCode ){
-    this.townCode=townCode;
   }
   public String getStreet(){
     return this.street;
@@ -228,11 +264,11 @@ public class CreateCustomerRequest implements Serializable {
   public void setReferenceAddress(String referenceAddress ){
     this.referenceAddress=referenceAddress;
   }
-  public String getTimeCurrentRecide(){
-    return this.timeCurrentRecide;
+  public Integer getTimeCurrentReside(){
+    return this.timeCurrentReside;
   }
-  public void setTimeCurrentRecide(String timeCurrentRecide ){
-    this.timeCurrentRecide=timeCurrentRecide;
+  public void setTimeCurrentReside(Integer timeCurrentReside ){
+    this.timeCurrentReside=timeCurrentReside;
   }
   public String getAddressTypeCode(){
     return this.addressTypeCode;
@@ -246,29 +282,11 @@ public class CreateCustomerRequest implements Serializable {
   public void setPropertyTypeCode(String propertyTypeCode ){
     this.propertyTypeCode=propertyTypeCode;
   }
-  public String getAnotherAddress(){
-    return this.anotherAddress;
-  }
-  public void setAnotherAddress(String anotherAddress ){
-    this.anotherAddress=anotherAddress;
-  }
-  public String getNationality(){
-    return this.nationality;
-  }
-  public void setNationality(String nationality ){
-    this.nationality=nationality;
-  }
   public String getCountryBirth(){
     return this.countryBirth;
   }
   public void setCountryBirth(String countryBirth ){
     this.countryBirth=countryBirth;
-  }
-  public String getProviceBirth(){
-    return this.proviceBirth;
-  }
-  public void setProviceBirth(String proviceBirth ){
-    this.proviceBirth=proviceBirth;
   }
   public String getOccupation(){
     return this.occupation;
@@ -276,41 +294,11 @@ public class CreateCustomerRequest implements Serializable {
   public void setOccupation(String occupation ){
     this.occupation=occupation;
   }
-  public String getActivity(){
-    return this.activity;
-  }
-  public void setActivity(String activity ){
-    this.activity=activity;
-  }
   public String getIncomeLevel(){
     return this.incomeLevel;
   }
   public void setIncomeLevel(String incomeLevel ){
     this.incomeLevel=incomeLevel;
-  }
-  public String getLegalIncomeSource(){
-    return this.legalIncomeSource;
-  }
-  public void setLegalIncomeSource(String legalIncomeSource ){
-    this.legalIncomeSource=legalIncomeSource;
-  }
-  public String getNoConnectionIllegalNetworks(){
-    return this.noConnectionIllegalNetworks;
-  }
-  public void setNoConnectionIllegalNetworks(String noConnectionIllegalNetworks ){
-    this.noConnectionIllegalNetworks=noConnectionIllegalNetworks;
-  }
-  public String getCompanyName(){
-    return this.companyName;
-  }
-  public void setCompanyName(String companyName ){
-    this.companyName=companyName;
-  }
-  public String getIncomeLevelEntity(){
-    return this.incomeLevelEntity;
-  }
-  public void setIncomeLevelEntity(String incomeLevelEntity ){
-    this.incomeLevelEntity=incomeLevelEntity;
   }
   public String getOtherMexicanAccount(){
     return this.otherMexicanAccount;
@@ -318,29 +306,35 @@ public class CreateCustomerRequest implements Serializable {
   public void setOtherMexicanAccount(String otherMexicanAccount ){
     this.otherMexicanAccount=otherMexicanAccount;
   }
-  public String getPaymentCard(){
+  public Integer getPaymentCard(){
     return this.paymentCard;
   }
-  public void setPaymentCard(String paymentCard ){
+  public void setPaymentCard(Integer paymentCard ){
     this.paymentCard=paymentCard;
   }
-  public String getPaymentRecharge(){
+  public Integer getPaymentRecharge(){
     return this.paymentRecharge;
   }
-  public void setPaymentRecharge(String paymentRecharge ){
+  public void setPaymentRecharge(Integer paymentRecharge ){
     this.paymentRecharge=paymentRecharge;
   }
-  public String getProvisionCash(){
+  public Integer getProvisionCash(){
     return this.provisionCash;
   }
-  public void setProvisionCash(String provisionCash ){
+  public void setProvisionCash(Integer provisionCash ){
     this.provisionCash=provisionCash;
   }
-  public String getElectronicTransfer(){
+  public Integer getElectronicTransfer(){
     return this.electronicTransfer;
   }
-  public void setElectronicTransfer(String electronicTransfer ){
+  public void setElectronicTransfer(Integer electronicTransfer ){
     this.electronicTransfer=electronicTransfer;
+  }
+  public Integer getServicesPay(){
+    return this.servicesPay;
+  }
+  public void setServicesPay(Integer servicesPay ){
+    this.servicesPay=servicesPay;
   }
   public String getAverageBalance(){
     return this.averageBalance;
@@ -372,10 +366,16 @@ public class CreateCustomerRequest implements Serializable {
   public void setGeolocalizationLatitude(String geolocalizationLatitude ){
     this.geolocalizationLatitude=geolocalizationLatitude;
   }
-  public String getIsMati(){
-    return this.isMati;
+  public String getIdentityValidated(){
+    return this.identityValidated;
   }
-  public void setIsMati(String isMati ){
-    this.isMati=isMati;
+  public void setIdentityValidated(String identityValidated ){
+    this.identityValidated=identityValidated;
+  }
+  public String getEconomicSector(){
+    return this.economicSector;
+  }
+  public void setEconomicSector(String economicSector ){
+    this.economicSector=economicSector;
   }
 }

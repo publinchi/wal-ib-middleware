@@ -5,7 +5,6 @@
   <type>SYBASE</type>
   <version>1</version>
   <parameters>
-    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
     <parameter name="@i_password" dataType="varchar" direction="in" />
   </parameters>
   <queries>

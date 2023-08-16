@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -80,7 +79,7 @@
 			<version>2.8.1</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- ORQUESTACIONES COMMONS -->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
@@ -101,7 +100,7 @@
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-commons</artifactId>
 			<version>4.6.1.0</version>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-commons-template</artifactId>
@@ -122,7 +121,7 @@
 			<artifactId>orchestration-core-ib-template</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		
+
 		<!-- ORQUESTACIONES DIRECT -->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
@@ -238,7 +237,7 @@
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-based-billing</artifactId>
 			<version>4.6.1.0</version>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-pay-service-online</artifactId>
@@ -303,7 +302,7 @@
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-account-by-criteria</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-query-account-item</artifactId>
@@ -684,7 +683,7 @@
 			<artifactId>cobis-business-process-connector-ib</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
+
 		<!-- GENERADOR DE SERVICIOS IB-->
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
@@ -695,7 +694,7 @@
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO</artifactId>
@@ -705,12 +704,12 @@
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.DTO</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.HSBC.DTO</artifactId>
@@ -720,9 +719,9 @@
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Common.DTO</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
-		<groupId>com.cobiscorp.channels.ib</groupId>
+			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExternalProducts.DTO</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
@@ -731,66 +730,66 @@
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-	    <dependency>
-	      	<groupId>com.cobiscorp.channels.ib</groupId>
-	      	<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.Service</artifactId>
-	      	<version>4.6.1.0</version>
-	    </dependency>
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.Service</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Authorization.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Customer.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Enquiries.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.EnterpriseServices.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ForeignExchange.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Loan.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Payments.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Products.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Security.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Transfers.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ProgrammedSavings.Service.Service</artifactId>
@@ -800,7 +799,7 @@
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Receipts.Service.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Publicity.DTO</artifactId>
@@ -810,17 +809,17 @@
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Provider.DTO</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Provider.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.CreditLine.Service.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.BankGuarantee.DTO</artifactId>
@@ -830,7 +829,7 @@
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.BankGuarantee.Service</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ServicesExt.DTO</artifactId>
@@ -852,10 +851,10 @@
 			<version>1.0.0.0</version>
 		</dependency>
 		<dependency>
-           <groupId>com.cobiscorp.cobis.cis.java.orchestration.channel.adm</groupId>
-           <artifactId>channel-adm-commons</artifactId>
-           <version>1.0.1</version>
-        </dependency>
+			<groupId>com.cobiscorp.cobis.cis.java.orchestration.channel.adm</groupId>
+			<artifactId>channel-adm-commons</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO</artifactId>
@@ -872,8 +871,8 @@
 			<version>4.6.1.0</version>
 		</dependency>
 
-			
-		<!-- GENERADOR DE SERVICIOS BIB-->	
+
+		<!-- GENERADOR DE SERVICIOS BIB-->
 		<!--<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
 			<artifactId>Cobiscorp.BusinessBanking.Services.Security</artifactId>
@@ -909,8 +908,8 @@
       		<artifactId>Cobiscorp.BusinessBanking.Services.DTO</artifactId>
       		<version>4.6.1.0</version>
 	    </dependency>
-    	-->		
-		
+    	-->
+
 		<!-- ORQUESTACIONES ONLINE , OFFILINE-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
@@ -981,7 +980,7 @@
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-reverse-ach-transfer</artifactId>
 			<version>4.6.1.0</version>
-		</dependency-->	
+		</dependency-->
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.authenticate</groupId>
 			<artifactId>orchestration-core-ib-authenticate-template</artifactId>
@@ -991,7 +990,7 @@
 			<groupId>com.cobiscorp.ecobis.ib.authenticate</groupId>
 			<artifactId>orchestration-core-ib-authenticate</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>				
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.cobis.ib.middleware</groupId>
 			<artifactId>ib-middleware-checksum-validator</artifactId>
@@ -1008,40 +1007,185 @@
 			<artifactId>orchestration-core-ib-enrollment-template</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-        <dependency>
-          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-          <artifactId>orchestration-core-ib-spi-transfer</artifactId>
-          <version>4.6.1.0</version>
-        </dependency>
-        <dependency>
-          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-          <artifactId>orchestration-core-ib-direct-transfer</artifactId>
-          <version>4.6.1.0</version>
-        </dependency>
-	    <dependency>
-          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-          <artifactId>orchestration-core-ib-authorization</artifactId>
-          <version>4.6.1.0</version>
-        </dependency>
 		<dependency>
-          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-          <artifactId>orchestration-core-ib-activate-card</artifactId>
-          <version>4.6.1.0</version>
-        </dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-spi-transfer</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-direct-transfer</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorization</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-activate-card</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 		<!--Cuentas de Gastos -->
 		<dependency>
-          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-          <artifactId>orchestration-ib-expenses-accounts-template</artifactId>
-          <version>4.6.1.0</version>
-        </dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-ib-expenses-accounts-template</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 		<dependency>
-          <groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-          <artifactId>orchestration-ib-expenses-accounts</artifactId>
-          <version>4.6.1.0</version>
-        </dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-ib-expenses-accounts</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-spei-in</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-affiliatecustomer</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-encryptdata</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-getCatalogue</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-getcustomer</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-query-generate-transaction-factor</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-updateprofile</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-validateIdentity</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-getbalancesdetail</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-query-get-own-accounts-view</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-query-register-account</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-accountcreditoperation</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<!--<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-dispacher-spei</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>-->
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-transfer-third-party-account-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-accountdebitoperation</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-query-validate-transaction-factor</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-updatecredentials</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-define-security-qa-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-validate-all-security-qa-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-update-account-status-dock-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-purchase-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-withdrawal-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-deposit-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-reversal-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-reversal-dock-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-update-card-dock-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-purchase-dock-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-withdrawal-dock-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-authorize-deposit-dock-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-transfer-spei-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
 	</dependencies>
@@ -1088,14 +1232,14 @@
 						</configuration>
 					</execution>
 					<execution>
-                    <id>IB</id>
-                    <goals>
-                        <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                        <outputDirectory>${staging.dir}/modules/CTS_MF/plugins/IB</outputDirectory>
-                        <stripVersion>false</stripVersion>
-                        <includeArtifactIds>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO,
+						<id>IB</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${staging.dir}/modules/CTS_MF/plugins/IB</outputDirectory>
+							<stripVersion>false</stripVersion>
+							<includeArtifactIds>COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.DTO,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.Commons.DTO,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.Admin.DTO,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.Services.DTO,
@@ -1133,10 +1277,10 @@
 											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service
 						</includeArtifactIds>
-                        <excludeTransitive>true</excludeTransitive>
-                    </configuration>
-                </execution>					
-				<!-- <execution>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+					<!-- <execution>
                     <id>BIB</id>
                     <goals>
                         <goal>copy-dependencies</goal>
@@ -1159,15 +1303,15 @@
                         <excludeTransitive>true</excludeTransitive>
                     </configuration>
                 </execution>-->
-				<execution>
-                    <id>Commons</id>
-                    <goals>
-                        <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                        <outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/IBOrchestration/Commons</outputDirectory>
-                        <stripVersion>false</stripVersion>
-                        <includeArtifactIds>orchestration-ib-dtos,
+					<execution>
+						<id>Commons</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/IBOrchestration/Commons</outputDirectory>
+							<stripVersion>false</stripVersion>
+							<includeArtifactIds>orchestration-ib-dtos,
 											orchestration-ib-interfaces,
 											orchestration-ib-base,
 											orchestration-core-ib-commons,
@@ -1290,18 +1434,18 @@
 											orchestration-ib-expenses-accounts-template,
 											orchestration-ib-expenses-accounts
 						</includeArtifactIds>
-                        <excludeTransitive>true</excludeTransitive>
-                    </configuration>
-                </execution>
-                <execution>
-                    <id>OtherCore</id>
-                    <goals>
-                        <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                        <outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/IBOrchestration/Other_Core</outputDirectory>
-                        <stripVersion>false</stripVersion>
-                        <includeArtifactIds>orchestration-core-ib-transfer-template,
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>OtherCore</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/IBOrchestration/Other_Core</outputDirectory>
+							<stripVersion>false</stripVersion>
+							<includeArtifactIds>orchestration-core-ib-transfer-template,
 											orchestration-core-ib-query-template,
 											orchestration-core-ib-aplication-cashierscheck-template,
 											orchestration-core-ib-query-timedeposits-template,
@@ -1356,18 +1500,18 @@
 											orchestration-core-ib-receiving-printing-archive-template,
 											orchestration-core-ib-query-office-template                                         
 						</includeArtifactIds>
-                        <excludeTransitive>true</excludeTransitive>
-                    </configuration>
-                </execution>
-                <execution>
-                    <id>With_Offline</id>
-                    <goals>
-                        <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                        <outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/IBOrchestration/With_Offline</outputDirectory>
-                        <stripVersion>false</stripVersion>
-                        <includeArtifactIds>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>With_Offline</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/IBOrchestration/With_Offline</outputDirectory>
+							<stripVersion>false</stripVersion>
+							<includeArtifactIds>
                           orchestration-core-ib-self-account-transfer,
                           orchestration-core-ib-third-account-transfer,
                           orchestration-core-ib-international-account-transfer,
@@ -1384,9 +1528,51 @@
 						  orchestration-core-ib-authorization,
 						  orchestration-core-ib-spei-in
                         </includeArtifactIds>
-                        <excludeTransitive>true</excludeTransitive>
-                    </configuration>
-                </execution>	
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>API_WALMART</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${staging.dir}/modules/CIS/SERVICES/plugins/API_WALMART</outputDirectory>
+							<stripVersion>false</stripVersion>
+							<includeArtifactIds>						
+							orchestration-core-ib-affiliatecustomer,
+							orchestration-core-ib-encryptdata,
+							orchestration-core-ib-getCatalogue,
+							orchestration-core-ib-getcustomer,
+							orchestration-core-ib-query-generate-transaction-factor,
+							orchestration-core-ib-updateprofile,
+							orchestration-core-ib-validateIdentity,
+							orchestration-core-ib-getbalancesdetail,
+							orchestration-core-ib-query-get-own-accounts-view,
+							orchestration-core-ib-query-register-account,
+							orchestration-core-ib-accountcreditoperation,
+							orchestration-core-ib-transfer-third-party-account-api,
+							orchestration-core-ib-accountdebitoperation,
+							orchestration-core-ib-query-validate-transaction-factor,
+							orchestration-core-ib-updatecredentials,
+							orchestration-core-ib-define-security-qa-api,
+							orchestration-core-ib-validate-all-security-qa-api,
+							orchestration-core-ib-update-account-status-dock-api,
+							orchestration-core-ib-authorize-purchase-api,
+							orchestration-core-ib-authorize-withdrawal-api,
+							orchestration-core-ib-authorize-deposit-api,
+							orchestration-core-ib-authorize-reversal-api,
+							orchestration-core-ib-authorize-reversal-dock-api,
+							orchestration-core-ib-update-card-dock-api,
+							orchestration-core-ib-authorize-purchase-dock-api,
+							orchestration-core-ib-authorize-withdrawal-dock-api,
+							orchestration-core-ib-authorize-deposit-dock-api,
+							orchestration-core-ib-transfer-spei-api
+						</includeArtifactIds>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 

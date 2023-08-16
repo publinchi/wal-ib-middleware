@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_credit_operation_api</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
+    <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
+    <parameter name="@i_amount" dataType="money" direction="in" />
+    <parameter name="@i_commission" dataType="money" direction="in" />
+    <parameter name="@i_latitude" dataType="float" direction="in" />
+    <parameter name="@i_longitude" dataType="float" direction="in" />
+    <parameter name="@i_referenceNumber" dataType="varchar" direction="in" />
+    <parameter name="@i_creditConcept" dataType="varchar" direction="in" />
+    <parameter name="@i_originCode" dataType="int" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+        <column name="code" />
+        <column name="message" />
+        <column name="referenceCode" />
+      </columns>
+      <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message,"referenceCode" = tab.referenceCode </queryText>
+    </query>
+  </queries>
+</procedure>
