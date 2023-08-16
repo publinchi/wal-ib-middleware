@@ -2254,7 +2254,7 @@ int mapBlank=0;
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size() > 3
+		if (response.getResultSets() != null && response.getResultSets().size() == 4
 				&& response.getResultSets().get(3).getData().getRows().size() > 0) {
 			// ---------NO Array
 			AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
