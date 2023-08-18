@@ -1480,8 +1480,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			
 			outCreateCustomerResponse.setResponse(response);
 				
-			outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
-			outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+			if (response != null && response.getCode() == 0) {
+                
+                outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
+                outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+            
+            } else {
+                
+                outCreateCustomerResponse.setExternalCustomerId(null);
+                outCreateCustomerResponse.setAccountNumber(null);
+            }
 			
 			if (response != null && response.getCode() == 0) {
 
@@ -2254,7 +2262,7 @@ int mapBlank=0;
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size() > 3
+		if (response.getResultSets() != null && response.getResultSets().size() == 4
 				&& response.getResultSets().get(3).getData().getRows().size() > 0) {
 			// ---------NO Array
 			AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
