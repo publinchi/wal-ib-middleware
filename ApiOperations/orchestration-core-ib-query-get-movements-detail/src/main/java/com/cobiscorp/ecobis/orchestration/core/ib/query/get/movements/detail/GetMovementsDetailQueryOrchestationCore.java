@@ -232,47 +232,65 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				if (strBeneficiary != null && strBeneficiary.length > 0 && strBeneficiary[0].contains("error")) {
 					
 					respMovement.setProblem(strBeneficiary[0]);
-					
-					if (respMovement.getProblem().trim().equals("error 3")) {
-						if (strBeneficiary.length > 1)
-							respMovement.setOne_dataComprobante(strBeneficiary[1]);
-						else
-							respMovement.setOne_dataComprobante(" ");
-						
-						if (strBeneficiary.length > 2)
-							respMovement.setTwo_dataComprobante(strBeneficiary[2]);
-						else
-							respMovement.setTwo_dataComprobante(" ");
-						
-						if (strBeneficiary.length > 3)
-							respMovement.setThree_dataComprobante(strBeneficiary[3]);
-						else
-							respMovement.setThree_dataComprobante(" ");
-						
-						if (strBeneficiary.length > 4)
-							respMovement.setFour_dataComprobante(strBeneficiary[4]);
-						else
-							respMovement.setFour_dataComprobante("0");
-						
-						if (strBeneficiary.length > 5)
-							respMovement.setFive_dataComprobante(strBeneficiary[5]);
-						else
-							respMovement.setFive_dataComprobante("0");
-						
-						if (strBeneficiary.length > 6)
-							respMovement.setSix_dataComprobante(strBeneficiary[6]);
-						else
-							respMovement.setSix_dataComprobante("0");
-						
-					} else {
-						
+					if (strBeneficiary.length > 1)
+						respMovement.setOne_dataComprobante(strBeneficiary[1]);
+					else
 						respMovement.setOne_dataComprobante(" ");
+					
+					if (strBeneficiary.length > 2)
+						respMovement.setTwo_dataComprobante(strBeneficiary[2]);
+					else
 						respMovement.setTwo_dataComprobante(" ");
+					
+					if (strBeneficiary.length > 3)
+						respMovement.setThree_dataComprobante(strBeneficiary[3]);
+					else
 						respMovement.setThree_dataComprobante(" ");
-						respMovement.setFour_dataComprobante(" ");
-						respMovement.setFive_dataComprobante(" ");
-						respMovement.setSix_dataComprobante(" ");
-					}
+					
+					if (strBeneficiary.length > 4)
+						respMovement.setFour_dataComprobante(strBeneficiary[4]);
+					else
+						respMovement.setFour_dataComprobante("0");
+					
+					if (strBeneficiary.length > 5)
+						respMovement.setFive_dataComprobante(strBeneficiary[5]);
+					else
+						respMovement.setFive_dataComprobante("0");
+					
+					if (strBeneficiary.length > 6)
+						respMovement.setSix_dataComprobante(strBeneficiary[6]);
+					else
+						respMovement.setSix_dataComprobante("0");
+				} else {
+					if (strBeneficiary.length > 0)
+						respMovement.setOne_dataComprobante(strBeneficiary[0]);
+					else
+						respMovement.setOne_dataComprobante(" ");
+					
+					if (strBeneficiary.length > 1)
+						respMovement.setTwo_dataComprobante(strBeneficiary[1]);
+					else
+						respMovement.setTwo_dataComprobante(" ");
+					
+					if (strBeneficiary.length > 2)
+						respMovement.setThree_dataComprobante(strBeneficiary[2]);
+					else
+						respMovement.setThree_dataComprobante(" ");
+					
+					if (strBeneficiary.length > 3)
+						respMovement.setFour_dataComprobante(strBeneficiary[3]);
+					else
+						respMovement.setFour_dataComprobante("0");
+					
+					if (strBeneficiary.length > 4)
+						respMovement.setFive_dataComprobante(strBeneficiary[4]);
+					else
+						respMovement.setFive_dataComprobante("0");
+					
+					if (strBeneficiary.length > 5)
+						respMovement.setSix_dataComprobante(strBeneficiary[5]);
+					else
+						respMovement.setSix_dataComprobante("0");
 				}
 				
 			}else{
@@ -306,6 +324,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		String script = createScriptFromDataCentral(responseMovementsList);
 		
 		request.addInputParam("@i_script", ICTSTypes.SQLVARCHAR, script);
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 		
 	
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -346,7 +365,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		rastreo				varchar(250) null,\r\n"
 				+ "		tarjetNumber		varchar(250) null,\r\n"
 				+ "		dataComprobante		varchar(250) null,\r\n"
-				+ "		um_ssn_branch       int			 null,	\r\n"
+				+ "		um_ssn_branch       int			 null,\r\n"
 				+ "		um_secuencial       int			 null,\r\n"
 				+ "		nombreOrdenante		varchar(250) null,\r\n"
 				+ "		cuentaOrdenante		varchar(250) null,\r\n"
@@ -524,6 +543,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			//storeDetails
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("establishmentNameSD", ICTSTypes.SQLVARCHAR, 32));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdSD", ICTSTypes.SQLVARCHAR, 30));
+			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));
 	
 		
 			IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
@@ -570,9 +592,27 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				    	iva = "0";
 				}
 				
+				String trackingKey = columns[23].getValue();
+				String operationType = columns[4].getValue();
+				String movementType = "";
+				
+				if (trackingKey != null) {
+					movementType = "SPEI_";
+				} else {
+					movementType = "P2P_";
+				}
+				
+				if (operationType.equals("D")) {
+					movementType = movementType + "DEBIT";
+				}
+				
+				if (operationType.equals("C")) {
+					movementType = movementType + "CREDIT";
+				}
+			
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
-				rowDat.addRowData(3, new ResultSetRowColumnData(false, columns[12].getValue()));//2?
+				rowDat.addRowData(3, new ResultSetRowColumnData(false, movementType));//2?
 				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[5].getValue()));
 				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
@@ -603,6 +643,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(25, new ResultSetRowColumnData(false, columns[31].getValue()));
 				rowDat.addRowData(26, new ResultSetRowColumnData(false, columns[32].getValue()));
+				
+				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
+				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));
 				
 
 				data0.addRow(rowDat);
