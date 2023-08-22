@@ -57,6 +57,8 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 	private ICobisCrypt cobisCrypt;
 	private String loginId;
 	private String userCreated;
+	private String clabe;
+	private String cardId;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -65,7 +67,8 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AffiliateCustomerOrchestrationCore start.");		
+		logger.logDebug("Begin flow, AffiliateCustomerOrchestrationCore starts...");
+		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		queryAffiliateCustomer(aBagSPJavaOrchestration);
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -74,7 +77,9 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 	private void queryAffiliateCustomer(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest wQueryRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+		
 		aBagSPJavaOrchestration.clear();
+		
 		String idCustomer = wQueryRequest.readValueParam("@i_external_customer_id");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		
@@ -86,23 +91,38 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		logger.logDebug("Begin flow, queryAffiliateCustomer with id: " + idCustomer);
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));
+		
 		reqTMPCentral.setSpName("cobis..sp_affiliate_customer_get_data_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500101");
+		
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
+		
+		reqTMPCentral.addOutputParam("@o_clabe", ICTSTypes.SQLVARCHAR, "X");
+		
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("CLABE es: " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
+		}
+		
+		clabe = wProcedureResponseCentral.readValueParam("@o_clabe");
+		
 		if (logger.isInfoEnabled()) {
 			logger.logDebug("Ending flow, queryAffiliateCustomer with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
 		IProcedureResponse wProcedureResponseLocal;
 		if (!wProcedureResponseCentral.hasError()) {
+			
 			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
+				
 				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
+				
 				String mail = columns[11].getValue();
 				String phone = columns[12].getValue();
 				String user = createUser();
@@ -111,6 +131,7 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 				reqTMPLocal.setSpName("cob_bvirtual..sp_affiliate_customer_validate_and_add_affiliate_api");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500101");
+				
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 				reqTMPLocal.addInputParam("@i_pc_subtipo", ICTSTypes.SQLVARCHAR, columns[2].getValue());
@@ -143,13 +164,13 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 						
 						loginId = columns[2].getValue();
 						userCreated = columns[3].getValue();
+						cardId = columns[4].getValue();
+						
 						aBagSPJavaOrchestration.put("0", "Success");
 						return;
 						
 					} else if (columns[1].getValue().equals("10001")) {
-						
-						loginId = columns[2].getValue();
-						userCreated = columns[3].getValue();
+											
 						aBagSPJavaOrchestration.put("10001", "Already affiliated customer");
 						return;
 					}					
@@ -179,7 +200,6 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 				return;
 			} 
 			 
-			
 		} else {
 			aBagSPJavaOrchestration.put("50007", "Error affiliating a customer");
 			return;
@@ -188,10 +208,13 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
 		ArrayList<String> keyList = new ArrayList<String>(aBagSPJavaOrchestration.keySet());
+		
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
 		IResultSetRow row = new ResultSetRow();
+		
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("loginId", ICTSTypes.SYBINT4, 255));
@@ -199,27 +222,40 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("clabe", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SYBVARCHAR, 255));
 		
-		if (keyList.get(0).equals("0") || keyList.get(0).equals("10001")) {
+		if (keyList.get(0).equals("0")) {
+			
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, loginId));
 			row.addRowData(2, new ResultSetRowColumnData(false, userCreated));
 			row.addRowData(3, new ResultSetRowColumnData(false, "true"));
 			row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(5, new ResultSetRowColumnData(false, keyList.get(0)));
+			row.addRowData(6, new ResultSetRowColumnData(false, clabe));
+			row.addRowData(7, new ResultSetRowColumnData(false, cardId));
+			
 			data.addRow(row);
 
 		} else {
+			
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, null));
 			row.addRowData(2, new ResultSetRowColumnData(false, null));
 			row.addRowData(3, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(5, new ResultSetRowColumnData(false,  keyList.get(0)));
+			row.addRowData(6, new ResultSetRowColumnData(false, null));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
+			
 			data.addRow(row);
 		}
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
+		
 		wProcedureResponse.addResponseBlock(resultBlock);			
 		return wProcedureResponse;
 	}
