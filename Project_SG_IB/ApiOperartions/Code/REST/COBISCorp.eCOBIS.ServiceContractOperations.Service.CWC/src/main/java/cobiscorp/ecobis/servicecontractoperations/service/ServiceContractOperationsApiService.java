@@ -132,7 +132,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 
 		/**
-		 * Afiliate Customer
+		 * Affiliate Customer
 		 */
 		@Override
 		// Return List

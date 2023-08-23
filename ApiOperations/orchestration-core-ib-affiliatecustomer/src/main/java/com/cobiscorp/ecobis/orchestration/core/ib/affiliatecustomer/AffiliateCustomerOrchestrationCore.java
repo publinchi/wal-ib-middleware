@@ -104,7 +104,7 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("CLABE es: " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
+			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
 		}
 		
 		clabe = wProcedureResponseCentral.readValueParam("@o_clabe");
@@ -170,6 +170,10 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 						return;
 						
 					} else if (columns[1].getValue().equals("10001")) {
+						
+						loginId = columns[2].getValue();
+						userCreated = columns[3].getValue();
+						cardId = columns[4].getValue();
 											
 						aBagSPJavaOrchestration.put("10001", "Already affiliated customer");
 						return;
@@ -225,7 +229,7 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("clabe", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SYBVARCHAR, 255));
 		
-		if (keyList.get(0).equals("0")) {
+		if (keyList.get(0).equals("0") || keyList.get(0).equals("10001")) {
 			
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
 			
