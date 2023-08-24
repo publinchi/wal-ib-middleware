@@ -597,7 +597,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String operationType = columns[4].getValue();
 				String movementType = "";
 				
-				if (trackingKey != null) {
+				if (trackingKey != null || columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
 					movementType = "SPEI_";
 				} else {
 					movementType = "P2P_";
