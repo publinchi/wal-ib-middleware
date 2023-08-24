@@ -2279,7 +2279,7 @@ int mapBlank=0;
 							dto.setOperationType(resultSetMapper.getString(6));
 							dto.setCommission(resultSetMapper.getString(7));
 							dto.setIva(resultSetMapper.getString(8));
-							dto.setTransactionReferenceNumber(resultSetMapper.getInteger(9));
+							dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
 							dto.setDescription(resultSetMapper.getString(10));
 							dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
 							dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
