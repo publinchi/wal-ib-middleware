@@ -325,6 +325,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		
 		request.addInputParam("@i_script", ICTSTypes.SQLVARCHAR, script);
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
 		
 	
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -478,7 +479,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 		IResultSetRow row3 = new ResultSetRow();
 		
-		row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue()));
+		row3.addRowData(1, new ResultSetRowColumnData(false, String.valueOf(anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length)));
 		data3.addRow(row3);
 			
 		//Result Blocks
@@ -596,7 +597,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String operationType = columns[4].getValue();
 				String movementType = "";
 				
-				if (trackingKey != null) {
+				if (trackingKey != null || columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
 					movementType = "SPEI_";
 				} else {
 					movementType = "P2P_";
@@ -616,8 +617,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[5].getValue()));
 				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
-				rowDat.addRowData(7, new ResultSetRowColumnData(false, commission));
-				rowDat.addRowData(8, new ResultSetRowColumnData(false, iva));
+				rowDat.addRowData(7, new ResultSetRowColumnData(false, columns[34].getValue()));
+				rowDat.addRowData(8, new ResultSetRowColumnData(false, columns[33].getValue()));
 				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[24].getValue()));//8, 11?
 				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue()));
 				

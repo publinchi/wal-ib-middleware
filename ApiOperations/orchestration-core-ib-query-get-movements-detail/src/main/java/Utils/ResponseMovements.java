@@ -39,7 +39,6 @@ public class ResponseMovements {
 	private String four_dataComprobante;
 	private String five_dataComprobante;
 	private String six_dataComprobante;
-
 	
 	public String getFecha() {
 		return fecha;
@@ -234,6 +233,5 @@ public class ResponseMovements {
 	}
 	public void setSix_dataComprobante(String six_dataComprobante) {
 		this.six_dataComprobante = six_dataComprobante;
-	}
-	
+	}	
 }
