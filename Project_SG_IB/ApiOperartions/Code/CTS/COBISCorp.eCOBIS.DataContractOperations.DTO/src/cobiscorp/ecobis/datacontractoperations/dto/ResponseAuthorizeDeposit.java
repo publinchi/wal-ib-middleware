@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class ResponseAuthorizeDeposit implements Serializable {
   private Boolean success;
   private Response response;
+  private Integer authorizationCode;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -47,5 +48,11 @@ public class ResponseAuthorizeDeposit implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public Integer getAuthorizationCode(){
+    return this.authorizationCode;
+  }
+  public void setAuthorizationCode(Integer authorizationCode ){
+    this.authorizationCode=authorizationCode;
   }
 }

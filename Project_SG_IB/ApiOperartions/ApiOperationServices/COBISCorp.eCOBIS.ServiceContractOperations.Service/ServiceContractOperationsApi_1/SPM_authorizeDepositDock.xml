@@ -241,7 +241,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="processing" />
+      <field type="String" name="dTOPropertyName" value="processing.type" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -254,7 +254,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="processing" />
+      <field type="String" name="dTOPropertyName" value="processing.origin_account_type" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -267,7 +267,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="processing" />
+      <field type="String" name="dTOPropertyName" value="processing.destiny_account_type" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -280,7 +280,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="processing" />
+      <field type="String" name="dTOPropertyName" value="processing.code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -384,7 +384,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="card_entry" />
+      <field type="String" name="dTOPropertyName" value="card_entry.code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -397,7 +397,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="card_entry" />
+      <field type="String" name="dTOPropertyName" value="card_entry.pin" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -410,7 +410,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="card_entry" />
+      <field type="String" name="dTOPropertyName" value="card_entry.mode" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -436,7 +436,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.source_currency_code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -449,7 +449,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.settlement_currency_code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -462,7 +462,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.billing_currency_code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -475,7 +475,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.source_currency_code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -488,7 +488,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.settlement_currency_code" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -501,7 +501,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.billing_value" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -514,7 +514,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.billing_conversion_rate" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -527,7 +527,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.cash_back_value" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -540,7 +540,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="values" />
+      <field type="String" name="dTOPropertyName" value="values.credit_line_usage_fee" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -644,7 +644,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.card_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -657,7 +657,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.cardholder_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -670,7 +670,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.password_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -683,7 +683,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.cvv1_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -696,7 +696,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.cvv2_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -709,7 +709,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.cvv3_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -722,7 +722,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.token_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -735,7 +735,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.is_3ds_present" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -748,7 +748,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.is_3ds_valid" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -761,7 +761,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.recurring" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -774,7 +774,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators." />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -787,7 +787,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.pin_validated_offline" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -800,7 +800,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.partially_reversed" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -813,7 +813,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.preauthorization" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -826,7 +826,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.is_crossborder" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -839,7 +839,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.is_dcc" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -852,7 +852,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.only_supports_purchase" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -865,7 +865,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeDepositDock" />
-      <field type="String" name="dTOPropertyName" value="transaction_indicators" />
+      <field type="String" name="dTOPropertyName" value="transaction_indicators.is_international" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
@@ -951,7 +951,7 @@
     </class>
   </collection>
   <field type="String" name="trnCode" value="18500137" />
-  <collection type="List" length="4" id="150" name="dTOs">
+  <collection type="List" length="3" id="150" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="151" index="0">
       <field type="String" name="dTOName" value="RequestAuthorizeDepositDock" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
@@ -982,18 +982,8 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="154" index="3">
-      <field type="String" name="dTOName" value="Error" />
-      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
-      <field type="String" name="dTOVersion" value="1" />
-      <field type="int" name="repetition" value="0" />
-      <field type="String" name="alias" value="returnError" />
-      <field type="String" name="direction" value="return" />
-      <field type="boolean" name="required" value="true" />
-      <field type="String" name="stateDTO" value="" />
-    </class>
   </collection>
-  <collection type="Map" length="4" id="155" name="mappingProperties">
+  <collection type="Map" length="4" id="154" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />

@@ -9,7 +9,6 @@
     <parameter name="@i_account_number" dataType="varchar" direction="in" />
     <parameter name="@i_account_type_indicator" dataType="varchar" direction="in" />
     <parameter name="@i_acquirer_country_code" dataType="varchar" direction="in" />
-    <parameter name="@i_amount" dataType="varchar" direction="in" />
     <parameter name="@i_authorization_code" dataType="varchar" direction="in" />
     <parameter name="@i_bank_account_number" dataType="varchar" direction="in" />
     <parameter name="@i_bank_branch_number" dataType="varchar" direction="in" />
@@ -24,14 +23,11 @@
     <parameter name="@i_crd_mode" dataType="varchar" direction="in" />
     <parameter name="@i_crd_pin" dataType="varchar" direction="in" />
     <parameter name="@x_apigw-api-id" dataType="varchar" direction="in" />
-    <parameter name="@i_date" dataType="varchar" direction="in" />
     <parameter name="@i_establishment" dataType="varchar" direction="in" />
     <parameter name="@i_establishment_code" dataType="varchar" direction="in" />
-    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
     <parameter name="@i_funds_transfer_type" dataType="varchar" direction="in" />
     <parameter name="@i_installment_type" dataType="varchar" direction="in" />
     <parameter name="@i_installments" dataType="int" direction="in" />
-    <parameter name="@i_institution_name" dataType="varchar" direction="in" />
     <parameter name="@i_merchant_category_code" dataType="varchar" direction="in" />
     <parameter name="@x_legacy-id" dataType="varchar" direction="in" />
     <parameter name="@i_mti" dataType="varchar" direction="in" />
@@ -56,7 +52,6 @@
     <parameter name="@i_terminal_code" dataType="varchar" direction="in" />
     <parameter name="@i_terminal_date" dataType="varchar" direction="in" />
     <parameter name="@i_terminal_time" dataType="varchar" direction="in" />
-    <parameter name="@i_time" dataType="varchar" direction="in" />
     <parameter name="@i_tk_expiration_date" dataType="varchar" direction="in" />
     <parameter name="@i_tk_requestor_id_token" dataType="varchar" direction="in" />
     <parameter name="@i_tk_status" dataType="varchar" direction="in" />
@@ -84,7 +79,6 @@
     <parameter name="@i_trn_preauthorization" dataType="bit" direction="in" />
     <parameter name="@i_trn_recurring" dataType="bit" direction="in" />
     <parameter name="@i_trn_token_present" dataType="bit" direction="in" />
-    <parameter name="@i_uuid" dataType="varchar" direction="in" />
     <parameter name="@i_val_billing_conversion_rate" dataType="varchar" direction="in" />
     <parameter name="@i_val_billing_currency_code" dataType="varchar" direction="in" />
     <parameter name="@i_val_billing_value" dataType="varchar" direction="in" />
@@ -104,16 +98,9 @@
         <column name="response" />
         <column name="reason" />
         <column name="available_limit" />
+        <column name="authorizationCode" />
       </columns>
       <queryText>SELECT "success"="true"</queryText>
-    </query>
-    <query>
-      <columns>
-        <column name="id" />
-        <column name="description" />
-        <column name="code" />
-      </columns>
-      <queryText>SELECT "code"=0,"message"="success"</queryText>
     </query>
   </queries>
 </procedure>

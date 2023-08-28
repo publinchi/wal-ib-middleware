@@ -77,6 +77,7 @@
       <columns>
         <column name="response" />
         <column name=" reason" />
+        <column name="authorizationCode" />
       </columns>
       <queryText>SELECT "response"=o_response</queryText>
     </query>

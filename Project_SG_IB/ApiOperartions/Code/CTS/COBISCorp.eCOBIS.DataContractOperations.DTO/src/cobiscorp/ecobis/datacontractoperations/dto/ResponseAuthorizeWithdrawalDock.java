@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class ResponseAuthorizeWithdrawalDock implements Serializable {
   private ArrayList response;
   private String reason;
+  private Integer authorizationCode;
   public ArrayList getResponse(){
     return this.response;
   }
@@ -41,5 +42,11 @@ public class ResponseAuthorizeWithdrawalDock implements Serializable {
   }
   public void setReason(String reason ){
     this.reason=reason;
+  }
+  public Integer getAuthorizationCode(){
+    return this.authorizationCode;
+  }
+  public void setAuthorizationCode(Integer authorizationCode ){
+    this.authorizationCode=authorizationCode;
   }
 }

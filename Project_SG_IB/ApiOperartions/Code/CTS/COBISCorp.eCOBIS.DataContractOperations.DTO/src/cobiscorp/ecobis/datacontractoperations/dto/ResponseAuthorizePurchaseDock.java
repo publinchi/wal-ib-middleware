@@ -34,6 +34,7 @@ public class ResponseAuthorizePurchaseDock implements Serializable {
   private ArrayList response;
   private String reason;
   private String available_limit;
+  private Integer authorizationCode;
   public String getApproved_value(){
     return this.approved_value;
   }
@@ -69,5 +70,11 @@ public class ResponseAuthorizePurchaseDock implements Serializable {
   }
   public void setAvailable_limit(String available_limit ){
     this.available_limit=available_limit;
+  }
+  public Integer getAuthorizationCode(){
+    return this.authorizationCode;
+  }
+  public void setAuthorizationCode(Integer authorizationCode ){
+    this.authorizationCode=authorizationCode;
   }
 }
