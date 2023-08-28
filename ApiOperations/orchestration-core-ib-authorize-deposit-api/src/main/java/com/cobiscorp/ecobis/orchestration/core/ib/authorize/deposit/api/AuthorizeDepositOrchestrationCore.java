@@ -206,7 +206,8 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		
-		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
+		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -214,7 +215,12 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
 		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
+		}
+		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -289,12 +295,16 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
 
-		
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
 		
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();
+		
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
 
 		
 		if (codeReturn == 0) {
@@ -317,6 +327,11 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 				data2.addRow(row2);
+				
+				IResultSetRow row3 = new ResultSetRow();
+				
+				row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				data3.addRow(row3);
 				
 			} else {
 				
@@ -354,11 +369,13 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 			data2.addRow(row2);
 		}
 
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
+		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		
 		return wProcedureResponse;		
 	}
