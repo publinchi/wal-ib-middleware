@@ -98,7 +98,7 @@
         <column name="response" />
         <column name="reason" />
         <column name="available_limit" />
-        <column name="authorizationCode" />
+        <column name="authorization_code" />
       </columns>
       <queryText>SELECT "success"="true"</queryText>
     </query>

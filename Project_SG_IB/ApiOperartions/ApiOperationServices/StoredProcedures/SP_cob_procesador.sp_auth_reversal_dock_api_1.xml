@@ -96,7 +96,7 @@
       <columns>
         <column name="response" />
         <column name="reason" />
-        <column name="authorizationCode" />
+        <column name="authorization_code" />
       </columns>
       <queryText></queryText>
     </query>
