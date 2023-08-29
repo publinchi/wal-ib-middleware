@@ -29,14 +29,28 @@ import java.util.HashMap;
 
 public class ResponseAffiliateCustomer implements Serializable {
   private boolean success;
+  private Response response;
   private Integer loginId;
   private String userCreated;
-  private Response response;
+  private String clabe;
+  private String cardId;
   public boolean isSuccess(){
     return this.success;
   }
   public void setSuccess(boolean success ){
     this.success=success;
+  }
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
+	}
+	return this.response;
+  }
+  public Response getResponse(){
+    return this.response;
+  }
+  public void setResponse(Response response ){
+    this.response=response;
   }
   public Integer getLoginId(){
     return this.loginId;
@@ -50,16 +64,16 @@ public class ResponseAffiliateCustomer implements Serializable {
   public void setUserCreated(String userCreated ){
     this.userCreated=userCreated;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
+  public String getClabe(){
+    return this.clabe;
   }
-  public Response getResponse(){
-    return this.response;
+  public void setClabe(String clabe ){
+    this.clabe=clabe;
   }
-  public void setResponse(Response response ){
-    this.response=response;
+  public String getCardId(){
+    return this.cardId;
+  }
+  public void setCardId(String cardId ){
+    this.cardId=cardId;
   }
 }
