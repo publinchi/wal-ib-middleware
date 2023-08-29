@@ -37,7 +37,7 @@
           <field type="int" name="position" value="3" />
           <field type="String" name="columnName" value="referenceCode" />
           <field type="String" name="dTOAlias" value="returnDebitAccountResponse" />
-          <field type="String" name="dTOPropertyName" value="movementId" />
+          <field type="String" name="dTOPropertyName" value="referenceCode" />
           <field type="String" name="dataType" value="string" />
           <field type="String" name="format" value="" />
         </class>

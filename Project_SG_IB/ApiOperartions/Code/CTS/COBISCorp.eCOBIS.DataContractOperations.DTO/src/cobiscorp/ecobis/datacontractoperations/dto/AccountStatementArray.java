@@ -37,15 +37,13 @@ public class AccountStatementArray implements Serializable {
   private String commission;
   private String iva;
   private String movementType;
-  private String transactionId;
+  private CardDetails cardDetails;
   private SourceAccount sourceAccount;
   private DestinationAccount destinationAccount;
   private SpeiDetails speiDetails;
-  private CardDetails cardDetails;
   private AtmDetails atmDetails;
   private MerchantDetails merchantDetails;
   private StoreDetails storeDetails;
-  
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
@@ -183,11 +181,5 @@ public class AccountStatementArray implements Serializable {
   }
   public void setStoreDetails(StoreDetails storeDetails ){
     this.storeDetails=storeDetails;
-  }
-  public String getTransactionId(){
-    return this.transactionId;
-  }
-  public void setTransactionId(String transactionId ){
-    this.transactionId=transactionId;
   }
 }
