@@ -34,7 +34,6 @@ public class AccountStatementArray implements Serializable {
   private String description;
   private String operationType;
   private String transactionDate;
-  private Integer transactionReferenceNumber;
   private String commission;
   private String iva;
   private String movementType;
@@ -82,12 +81,6 @@ public class AccountStatementArray implements Serializable {
   }
   public void setTransactionDate(String transactionDate ){
     this.transactionDate=transactionDate;
-  }
-  public Integer getTransactionReferenceNumber(){
-    return this.transactionReferenceNumber;
-  }
-  public void setTransactionReferenceNumber(Integer transactionReferenceNumber ){
-    this.transactionReferenceNumber=transactionReferenceNumber;
   }
   public String getCommission(){
     return this.commission;

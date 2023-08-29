@@ -120,6 +120,38 @@ public class GetBatchProductOpening extends SPJavaOrchestrationBase implements I
 
 		return transformTohProductOpeningResponse(response);
 	}
+	
+	@Override
+	public void executeBatchLocalProduct(BatchProductOpeningResponse aBatchProductOpeningRequest)
+			throws CTSServiceException, CTSInfrastructureException {
+		
+		logger.logInfo("JC Execute LOCAL Products ");
+		
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1801022");
+		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		anOriginalRequest.setSpName("cob_bvirtual..sp_bv_gen_doit_dataprod");
+
+
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Obtencion del servicio");
+
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Enviando solicitud al Core");
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Request a enviar: " + anOriginalRequest.getProcedureRequestAsString());
+
+		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
+
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Data devuelta del Core");
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Response obtenido: " + response.getProcedureResponseAsString());
+
+	
+	}
+	
 
 	/**
 	 * @param response
