@@ -41,5 +41,5 @@ sign-archive:
   [signjar] The signer's certificate is self-signed.
   [signjar] Enter Passphrase for keystore: Enter key password for cobis: 
 BUILD SUCCESSFUL
-Total time: 10 seconds
+Total time: 6 seconds
 FIN
