@@ -23,6 +23,8 @@ import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
+import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
+import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
@@ -30,6 +32,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
@@ -134,6 +137,8 @@ public class GenerateDataProductOpeningOrchestrationCore extends QueryBaseTempla
 		BatchProductOpeningResponse aBatchProductOpeningResponse = new BatchProductOpeningResponse();
 		BatchProductOpeningRequest aBatchProductOpeningRequest = transformToGenerateProductOpeningRequest(
 				request.clone());
+		
+		logger.logInfo("JC New version product generate ");
 
 		try {
 			messageError = "executeBatchProductOpening: ERROR EXECUTING SERVICE";
@@ -141,6 +146,7 @@ public class GenerateDataProductOpeningOrchestrationCore extends QueryBaseTempla
 			queryName = "executeBatchProductOpening";
 			// aBatchProductOpeningRequest.setOriginalRequest(request);
 			aBatchProductOpeningResponse = coreService.executeBatchProductOpening(aBatchProductOpeningRequest);
+			
 		} catch (CTSServiceException e) {
 			e.printStackTrace();
 			if (logger.isDebugEnabled())
@@ -158,7 +164,7 @@ public class GenerateDataProductOpeningOrchestrationCore extends QueryBaseTempla
 
 		return transformProcedureResponse(aBatchProductOpeningResponse, aBagSPJavaOrchestration);
 	}
-
+	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOrginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
@@ -227,6 +233,8 @@ public class GenerateDataProductOpeningOrchestrationCore extends QueryBaseTempla
 
 	/*********************
 	 * Transformación de Response a ProcedureResponse
+	 * @throws CTSInfrastructureException 
+	 * @throws CTSServiceException 
 	 ***********************/
 	private IProcedureResponse transformProcedureResponse(BatchProductOpeningResponse aBatchProductOpeningResponse,
 			Map<String, Object> aBagSPJavaOrchestration) {
@@ -246,108 +254,17 @@ public class GenerateDataProductOpeningOrchestrationCore extends QueryBaseTempla
 																						// TRANSACCIÓN
 			Utils.returnException(aBatchProductOpeningResponse.getMessages());
 		} else {
-			// Agregar Header
-			IResultSetHeader metaData = new ResultSetHeader();
-			IResultSetData data = new ResultSetData();
+			// Agregar Header			
+			
+			logger.logDebug("JCOS EXECUTE PROCESS >> ");
+			
+			try {
+			
+		     	coreService.executeBatchLocalProduct(aBatchProductOpeningResponse);
 
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_fecha", ICTSTypes.SQLVARCHAR, 10));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_estado", ICTSTypes.SQLVARCHAR, 1));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_ente_mis", ICTSTypes.SQLINT4, 10));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_producto", ICTSTypes.SQLINT4, 5));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_moneda", ICTSTypes.SQLINT4, 64));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_cuenta", ICTSTypes.SQLVARCHAR, 30));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_estado_prod", ICTSTypes.SQLVARCHAR, 1));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_oficina", ICTSTypes.SQLINT4, 5));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_cuenta_desc", ICTSTypes.SQLVARCHAR, 17));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_tipo_firma", ICTSTypes.SQLVARCHAR, 1));
-			metaData.addColumnMetaData(new ResultSetHeaderColumn("pp_tipo_cuenta", ICTSTypes.SQLVARCHAR, 1));
-
-			for (BatchProductOpening aBatchProductOpening : aBatchProductOpeningResponse.getBatchProductOpeningList()) {
-				if (!IsValidBatchProductOpeningResponse(aBatchProductOpening))
-					return null;
-
-				IResultSetRow row = new ResultSetRow();
-				row.addRowData(1, new ResultSetRowColumnData(false,
-						aBatchProductOpening.getDate() != null ? aBatchProductOpening.getDate() : ""));
-				row.addRowData(2, new ResultSetRowColumnData(false,
-						aBatchProductOpening.getStatus() != null ? aBatchProductOpening.getStatus() : ""));
-				row.addRowData(3, new ResultSetRowColumnData(false, aBatchProductOpening.getCustomerId() != null
-						? aBatchProductOpening.getCustomerId().toString() : ""));
-				row.addRowData(4, new ResultSetRowColumnData(false, aBatchProductOpening.getProductId() != null
-						? aBatchProductOpening.getProductId().toString() : ""));
-				row.addRowData(5, new ResultSetRowColumnData(false, aBatchProductOpening.getCurrencyId() != null
-						? aBatchProductOpening.getCurrencyId().toString() : ""));
-				row.addRowData(6, new ResultSetRowColumnData(false,
-						aBatchProductOpening.getAccount() != null ? aBatchProductOpening.getAccount() : ""));
-				row.addRowData(7, new ResultSetRowColumnData(false, aBatchProductOpening.getStatusproduct() != null
-						? aBatchProductOpening.getStatusproduct() : ""));
-				row.addRowData(8, new ResultSetRowColumnData(false, aBatchProductOpening.getOfficeId() != null
-						? aBatchProductOpening.getOfficeId().toString() : ""));
-				row.addRowData(9, new ResultSetRowColumnData(false,
-						aBatchProductOpening.getDestAccount() != null ? aBatchProductOpening.getDestAccount() : ""));
-				row.addRowData(10, new ResultSetRowColumnData(false, aBatchProductOpening.getTypeSignature() != null
-						? aBatchProductOpening.getTypeSignature() : ""));
-				row.addRowData(11, new ResultSetRowColumnData(false,
-						aBatchProductOpening.getTypeAccount() != null ? aBatchProductOpening.getTypeAccount() : ""));
-
-				data.addRow(row);
-			}
-			IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
-			wProcedureResponse.addResponseBlock(resultBlock);
-
-			if (String.valueOf(aBatchProductOpeningResponse.getMaxCustomer()) != null) {
-				wProcedureResponse.addParam("@o_cliente", ICTSTypes.SQLINT4, 0,
-						String.valueOf(aBatchProductOpeningResponse.getMaxCustomer().toString()));
-			}
-			if (String.valueOf(aBatchProductOpeningResponse.getMaxProduct()) != null) {
-				wProcedureResponse.addParam("@o_producto", ICTSTypes.SQLINT4, 0,
-						String.valueOf(aBatchProductOpeningResponse.getMaxProduct().toString()));
-			}
-			if (String.valueOf(aBatchProductOpeningResponse.getMaxCurrency()) != null) {
-				wProcedureResponse.addParam("@o_moneda", ICTSTypes.SQLINT4, 0,
-						String.valueOf(aBatchProductOpeningResponse.getMaxCurrency().toString()));
-			}
-			if (String.valueOf(aBatchProductOpeningResponse.getMaxAccount()) != null) {
-				wProcedureResponse.addParam("@o_cuenta", ICTSTypes.SQLVARCHAR, 0,
-						String.valueOf(aBatchProductOpeningResponse.getMaxAccount()));
-			}
-			if (String.valueOf(aBatchProductOpeningResponse.getSecuential()) != null) {
-				wProcedureResponse.addParam("@o_secuencial", ICTSTypes.SQLINT4, 0,
-						String.valueOf(aBatchProductOpeningResponse.getSecuential().toString()));
-			}
-			wProcedureResponse.setReturnCode(aBatchProductOpeningResponse.getReturnCode());
-
-			/*****
-			 * PROCESO PARA ACTUALIZAR TABLA cob_bvirtual..bv_proceso_batch
-			 *******/
-			List<String> queryList = new ArrayList<String>();
-			String query = null;
-
-			if (aBatchProductOpeningResponse.getSecuential() != 0) {
-				query = " update cob_bvirtual..bv_proceso_batch " + " set  pb_num_reg = " + numReg.toString()
-						+ " ,pb_secuencial  = " + aBatchProductOpeningResponse.getSecuential().toString()
-						+ ", pb_tot_reg_procesar = " + aBatchProductOpeningResponse.getMaxCustomer().toString()
-						+ " where pb_cod = " + batch.toString();
-				queryList.add(query);
-			}
-
-			executeBdd(queryList);
-
-			/*****
-			 * FIN PROCESO PARA ACTUALIZAR TABLA cob_bvirtual..bv_proceso_batch
-			 *******/
-
-			IResultSetBlock resultSet = wProcedureResponse.getResultSet(1);
-			IResultSetRow[] dataInsert = wProcedureResponse.getResultSet(1).getData().getRowsAsArray();
-			IResultSetHeader headerInsert = resultSet.getMetaData();
-			for (IResultSetRow iResultSetRow : dataInsert) {
-				inserts.add(prepareInsertBatch(tableName, iResultSetRow, headerInsert));
-			}
-
-			if (!inserts.isEmpty()) {
-				executeBdd(inserts);
-			} else {
-
+			}catch(Exception xe) {		
+				logger.logInfo("Error al ejecutar proceso LOCAL");
+				logger.logError(xe);
 			}
 		}
 

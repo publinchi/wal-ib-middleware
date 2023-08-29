@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class SpeiDetails implements Serializable {
   private String referenceCode;
   private String trackingId;
+  private Integer transactionReferenceNumber;
   public String getReferenceCode(){
     return this.referenceCode;
   }
@@ -41,5 +42,11 @@ public class SpeiDetails implements Serializable {
   }
   public void setTrackingId(String trackingId ){
     this.trackingId=trackingId;
+  }
+  public Integer getTransactionReferenceNumber(){
+    return this.transactionReferenceNumber;
+  }
+  public void setTransactionReferenceNumber(Integer transactionReferenceNumber ){
+    this.transactionReferenceNumber=transactionReferenceNumber;
   }
 }
