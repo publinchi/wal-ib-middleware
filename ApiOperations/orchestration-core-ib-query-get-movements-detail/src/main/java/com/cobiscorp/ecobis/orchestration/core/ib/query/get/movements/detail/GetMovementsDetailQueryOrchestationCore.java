@@ -545,6 +545,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("establishmentNameSD", ICTSTypes.SQLVARCHAR, 32));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdSD", ICTSTypes.SQLVARCHAR, 30));
 			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionId", ICTSTypes.SQLVARCHAR, 30));
+			
 			/*metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));*/
 	
@@ -644,6 +646,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(25, new ResultSetRowColumnData(false, columns[31].getValue()));
 				rowDat.addRowData(26, new ResultSetRowColumnData(false, columns[32].getValue()));
+				
+				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
 				
 				/*rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));*/
