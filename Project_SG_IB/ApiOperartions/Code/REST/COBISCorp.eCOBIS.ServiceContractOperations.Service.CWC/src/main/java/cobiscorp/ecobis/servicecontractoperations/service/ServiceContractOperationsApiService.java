@@ -106,7 +106,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     CreditAccountResponse dto = new CreditAccountResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                          dto.setReferenceCode(resultSetMapper.getString(4));
+                          dto.setMovementId(resultSetMapper.getString(4));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
@@ -131,82 +131,74 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       }
 
 
-		/**
-		 * Affiliate Customer
-		 */
-		@Override
-		// Return List
-		public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: affiliateCustomer");
-			ResponseAffiliateCustomer outSingleResponseAffiliateCustomer = new ResponseAffiliateCustomer();
+	 /**
+          * Afiliate Customer
+          */
+         @Override
+			// Return List
+			public  ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: affiliateCustomer");
+      ResponseAffiliateCustomer outSingleResponseAffiliateCustomer  = new ResponseAffiliateCustomer();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_affiliate_customer");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500101");
+      procedureRequestAS.addInputParam("@i_external_customer_id",ICTSTypes.SQLINT4,String.valueOf(inRequestAffiliateCustomer.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestAffiliateCustomer.getAccountNumber());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_affiliate_customer");
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    ResponseAffiliateCustomer returnResponseAffiliateCustomer = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAffiliateCustomer>() { 
+                    @Override
+                    public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
+                    
+                          dto.setSuccess(resultSetMapper.getBoolean(3));
+                          dto.setLoginId(resultSetMapper.getInteger(1));
+                          dto.setUserCreated(resultSetMapper.getString(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(4));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(5));
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseAffiliateCustomer=returnResponseAffiliateCustomer ;
+                    
+            }else {
+            mapBlank++;
 
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500101");
-			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestAffiliateCustomer.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
-					inRequestAffiliateCustomer.getAccountNumber());
-
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ----------------Assume Array return
-				ResponseAffiliateCustomer returnResponseAffiliateCustomer = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAffiliateCustomer>() {
-							@Override
-							public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
-
-								dto.setSuccess(resultSetMapper.getBoolean(3));
-								dto.responseInstance().setCode(resultSetMapper.getInteger(5));
-								dto.responseInstance().setMessage(resultSetMapper.getString(4));
-								dto.setLoginId(resultSetMapper.getInteger(1));
-								dto.setUserCreated(resultSetMapper.getString(2));
-								dto.setClabe(resultSetMapper.getString(6));
-								dto.setCardId(resultSetMapper.getString(7));
-								return dto;
-							}
-						}, false);
-
-				outSingleResponseAffiliateCustomer = returnResponseAffiliateCustomer;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			LOGGER.logDebug("Ends service execution: affiliateCustomer");
-			// returns data
-			return outSingleResponseAffiliateCustomer;
-		}
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        LOGGER.logDebug("Ends service execution: affiliateCustomer");
+        //returns data
+        return outSingleResponseAffiliateCustomer;
+      }
          
 		/**
 		 * Authorize Purchase
@@ -1488,16 +1480,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			
 			outCreateCustomerResponse.setResponse(response);
 				
-			if (response != null && response.getCode() == 0) {
-                
-                outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
-                outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
-            
-            } else {
-                
-                outCreateCustomerResponse.setExternalCustomerId(null);
-                outCreateCustomerResponse.setAccountNumber(null);
-            }
+			outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
+			outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
 			
 			if (response != null && response.getCode() == 0) {
 
@@ -2270,7 +2254,7 @@ int mapBlank=0;
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size() == 4
+		if (response.getResultSets() != null && response.getResultSets().size() > 3
 				&& response.getResultSets().get(3).getData().getRows().size() > 0) {
 			// ---------NO Array
 			AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
@@ -2305,8 +2289,7 @@ int mapBlank=0;
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
-							/*dto.sourceAccountInstance().setTypeAccount(resultSetMapper.getInteger(27));
-							dto.destinationAccountInstance().setTypeAccount(resultSetMapper.getInteger(28));*/
+							dto.setTransactionId(resultSetMapper.getString(27));
 							return dto;
 						}
 					}, false);
@@ -3569,12 +3552,12 @@ int mapBlank=0;
 						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
-							dto.setReferenceCode(resultSetMapper.getString(1));
+							dto.setMovementId(resultSetMapper.getString(1));
 							return dto;
 						}
 					}, false);
 
-			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
+			outResponseTransferSpi.setMovementId(returnResponseTransferSpi.getMovementId());
 			// break;
 
 		} else {
@@ -3592,11 +3575,13 @@ int mapBlank=0;
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
 							dto.setTrackingKey(resultSetMapper.getString(1));
+							dto.setReferenceCode(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
 			outResponseTransferSpi.setTrackingKey(returnResponseTransferSpi.getTrackingKey());
+			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
 			// break;
 
 		} else {
@@ -3707,12 +3692,12 @@ int mapBlank=0;
 		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
 		              
-		                    dto.setReferenceCode(resultSetMapper.getString(1));
+		                    dto.setMovementId(resultSetMapper.getString(1));
 		              return dto;
 		              }
 		              },false);
 		
-		              outResponseTransferThirdPartyAccount.setReferenceCode(returnResponseTransferThirdPartyAccount.getReferenceCode());
+		              outResponseTransferThirdPartyAccount.setMovementId(returnResponseTransferThirdPartyAccount.getMovementId());
 		                  // break;
 		                
 		      }else {
@@ -4567,7 +4552,7 @@ int mapBlank=0;
                     DebitAccountResponse dto = new DebitAccountResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                          dto.setReferenceCode(resultSetMapper.getString(4));
+                          dto.setMovementId(resultSetMapper.getString(4));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;

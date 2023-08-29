@@ -476,28 +476,29 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		String code = null, message, success, referenceCode = null, trackingKey = null;
+		String code = null, message, success, referenceCode = null, trackingKey = null, movementId = null;
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
-		referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
+		movementId = anOriginalProcedureRes.readValueParam("@o_referencia");
 
-		logger.logInfo("xdcxv2 --->" + referenceCode);
+		logger.logInfo("xdcxv2 --->" + movementId);
 		if (codeReturn == 0) {
-			if (null != referenceCode) {
-				IProcedureResponse responseDataSpei = getDataSpei(referenceCode, aBagSPJavaOrchestration);
+			if (null != movementId) {
+				IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
 				
 				if (this.successConnector) {
 					code = "0";
 					message = "Success";
 					success = "true";
-					referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+					referenceCode = (String) aBagSPJavaOrchestration.get("@o_id_error");
 					trackingKey = (String) aBagSPJavaOrchestration.get("@o_clave_ratreo");
-					logger.logInfo("bnbn true--->" + referenceCode);
+					movementId = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+					logger.logInfo("bnbn true--->" + movementId);
 				} else {
 					code = (String) aBagSPJavaOrchestration.get("@o_id_error");
 					message = (String) aBagSPJavaOrchestration.get("@o_mensaje_error");
 					success = "false";
-					referenceCode = null;
-					logger.logInfo("bnbn false--->" + referenceCode);
+					movementId = null;
+					logger.logInfo("bnbn false--->" + movementId);
 				}
 				
 			} else {
@@ -506,7 +507,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 				
-				logger.logInfo("bnbn false--->" + referenceCode);
+				logger.logInfo("bnbn false--->" + movementId);
 			}
 
 		} else {
@@ -565,9 +566,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		// Agregar resulBlock
 		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
 
-		if (referenceCode != null) {
+		if (movementId != null) {
 
-			metaData3.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLINTN, 5));
+			metaData3.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SQLINTN, 5));
 
 			// Agregar info 3
 			IResultSetRow row3 = new ResultSetRow();
@@ -579,11 +580,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		if (trackingKey != null) {
 
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("trackingKey", ICTSTypes.SQLINTN, 5));
+			metaData4.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLINTN, 5));
 
 			// Agregar info 4
 			IResultSetRow row4 = new ResultSetRow();
 			row4.addRowData(1, new ResultSetRowColumnData(false,
-					trackingKey));
+					trackingKey));		
+			row4.addRowData(2, new ResultSetRowColumnData(false,
+					referenceCode));
+			
 			data4.addRow(row4);
 		}
 

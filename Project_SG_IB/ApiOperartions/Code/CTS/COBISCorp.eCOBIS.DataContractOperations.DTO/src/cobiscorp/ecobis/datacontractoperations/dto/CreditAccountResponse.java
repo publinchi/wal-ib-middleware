@@ -29,7 +29,7 @@ import java.util.HashMap;
 
 public class CreditAccountResponse implements Serializable {
   private Boolean success;
-  private String referenceCode;
+  private String movementId;
   private Response response;
   public Boolean isSuccess(){
     return this.success;
@@ -37,11 +37,11 @@ public class CreditAccountResponse implements Serializable {
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public String getReferenceCode(){
-    return this.referenceCode;
+  public String getMovementId(){
+    return this.movementId;
   }
-  public void setReferenceCode(String referenceCode ){
-    this.referenceCode=referenceCode;
+  public void setMovementId(String movementId ){
+    this.movementId=movementId;
   }
   public Response responseInstance(){
 	if(this.response==null){
