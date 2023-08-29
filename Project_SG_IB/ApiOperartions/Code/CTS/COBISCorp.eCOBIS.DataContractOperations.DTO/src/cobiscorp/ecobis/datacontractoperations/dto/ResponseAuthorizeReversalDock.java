@@ -28,12 +28,13 @@ import java.util.HashMap;
 
 
 public class ResponseAuthorizeReversalDock implements Serializable {
-  private String response;
+  private ArrayList response;
   private String reason;
-  public String getResponse(){
+  private Integer authorization_code;
+  public ArrayList getResponse(){
     return this.response;
   }
-  public void setResponse(String response ){
+  public void setResponse(ArrayList response ){
     this.response=response;
   }
   public String getReason(){
@@ -41,5 +42,11 @@ public class ResponseAuthorizeReversalDock implements Serializable {
   }
   public void setReason(String reason ){
     this.reason=reason;
+  }
+  public Integer getAuthorization_code(){
+    return this.authorization_code;
+  }
+  public void setAuthorization_code(Integer authorization_code ){
+    this.authorization_code=authorization_code;
   }
 }

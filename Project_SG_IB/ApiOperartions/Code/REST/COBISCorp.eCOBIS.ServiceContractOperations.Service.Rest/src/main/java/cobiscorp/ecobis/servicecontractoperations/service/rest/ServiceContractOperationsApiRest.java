@@ -642,8 +642,6 @@ public class ServiceContractOperationsApiRest {
 				new Data("storeNumber", inRequestAuthorizeReversal.getStoreNumber()),
 				new Data("affiliationNumber", inRequestAuthorizeReversal.getAffiliationNumber()),
 				new Data("establishment", inRequestAuthorizeReversal.getEstablishment()),
-				new Data("adviceReason", inRequestAuthorizeReversal.getAdviceReason()),
-				new Data("adviceReasonCode", inRequestAuthorizeReversal.getAdviceReasonCode()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getUuid()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getNsu()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getMti()),

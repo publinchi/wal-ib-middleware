@@ -229,10 +229,18 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("@o_accountNumber es " +  wProductsQueryResp.readValueParam("@o_accountNumber"));
+			logger.logDebug("@o_externalCustomerId es " +  wProductsQueryResp.readValueParam("@o_externalCustomerId"));
 		}
 		
 		aBagSPJavaOrchestration.put("@o_accountNumber", wProductsQueryResp.readValueParam("@o_accountNumber"));
 		aBagSPJavaOrchestration.put("@o_externalCustomerId", wProductsQueryResp.readValueParam("@o_externalCustomerId"));
+		
+		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			
+			logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("code_error"));
+		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking valDataLocal AW: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -283,15 +291,25 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		
-		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
+		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
+			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
+		
+		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+				
+			logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
+		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -363,48 +381,72 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 100));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLVARCHAR, 100));
+
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
 		
-		if (codeReturn == 0) {
+		IResultSetHeader metaData2 = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+		
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+		
+		if (codeReturn == 0) {		
 			
-			if (anOriginalProcedureRes.readValueParam("@o_ssn_host") != null && !anOriginalProcedureRes.readValueParam("@o_ssn_host").equals("0"))
+			if(aBagSPJavaOrchestration.containsKey("code_error")){
+				
+				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
+				
+				IResultSetRow row = new ResultSetRow();
+	
+				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
+				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
+				row.addRowData(3, new ResultSetRowColumnData(false, null));
+				
+				data.addRow(row);
+				
+			} else {
+				 
+				logger.logDebug("Ending flow, processResponse successful...");
+				
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+				
+				IResultSetRow row = new ResultSetRow();
+				
+				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
+				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
+				row.addRowData(3, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				
+				data.addRow(row);	
+			}
 			
-			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
-				
-				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-				logger.logDebug("Ending flow, processResponse success with code: ");
-				
-				IResultSetRow row = new ResultSetRow();
-				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-				data.addRow(row);
-			}
-			 else {
-				logger.logDebug("Ending flow, processResponse error");
-				
-				String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
-				String message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
-							
-				IResultSetRow row = new ResultSetRow();
-				row.addRowData(1, new ResultSetRowColumnData(false, code));
-				row.addRowData(2, new ResultSetRowColumnData(false, message));
-				data.addRow(row);
-			}
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			IResultSetRow row = new ResultSetRow();
-			row.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
-			row.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
+			
+			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			
 			data.addRow(row);
+			
+			IResultSetRow row2 = new ResultSetRow();
+			
+			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
+			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
+			
+			data2.addRow(row2);
+			
+			wProcedureResponse.setReturnCode(1);
 		}
-
+		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		
 		wProcedureResponse.addResponseBlock(resultsetBlock);
+		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		return wProcedureResponse;		
 	}
