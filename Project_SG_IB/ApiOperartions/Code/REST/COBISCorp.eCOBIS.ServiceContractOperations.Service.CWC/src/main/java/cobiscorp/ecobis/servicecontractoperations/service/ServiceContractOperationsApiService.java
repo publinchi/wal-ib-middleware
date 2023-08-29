@@ -106,7 +106,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     CreditAccountResponse dto = new CreditAccountResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                          dto.setReferenceCode(resultSetMapper.getString(4));
+                          dto.setMovementId(resultSetMapper.getString(4));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
@@ -2305,8 +2305,7 @@ int mapBlank=0;
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
-							/*dto.sourceAccountInstance().setTypeAccount(resultSetMapper.getInteger(27));
-							dto.destinationAccountInstance().setTypeAccount(resultSetMapper.getInteger(28));*/
+							dto.setTransactionId(resultSetMapper.getString(27));
 							return dto;
 						}
 					}, false);
@@ -3569,12 +3568,12 @@ int mapBlank=0;
 						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
-							dto.setReferenceCode(resultSetMapper.getString(1));
+							dto.setMovementId(resultSetMapper.getString(1));
 							return dto;
 						}
 					}, false);
 
-			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
+			outResponseTransferSpi.setMovementId(returnResponseTransferSpi.getMovementId());
 			// break;
 
 		} else {
@@ -3592,11 +3591,13 @@ int mapBlank=0;
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
 							dto.setTrackingKey(resultSetMapper.getString(1));
+							dto.setReferenceCode(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
 			outResponseTransferSpi.setTrackingKey(returnResponseTransferSpi.getTrackingKey());
+			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
 			// break;
 
 		} else {
@@ -3707,12 +3708,12 @@ int mapBlank=0;
 		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
 		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
 		              
-		                    dto.setReferenceCode(resultSetMapper.getString(1));
+		                    dto.setMovementId(resultSetMapper.getString(1));
 		              return dto;
 		              }
 		              },false);
 		
-		              outResponseTransferThirdPartyAccount.setReferenceCode(returnResponseTransferThirdPartyAccount.getReferenceCode());
+		              outResponseTransferThirdPartyAccount.setMovementId(returnResponseTransferThirdPartyAccount.getMovementId());
 		                  // break;
 		                
 		      }else {
@@ -4567,7 +4568,7 @@ int mapBlank=0;
                     DebitAccountResponse dto = new DebitAccountResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                          dto.setReferenceCode(resultSetMapper.getString(4));
+                          dto.setMovementId(resultSetMapper.getString(4));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;

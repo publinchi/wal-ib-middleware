@@ -32,6 +32,7 @@ public class ResponseTransferSpi implements Serializable {
   private String referenceCode;
   private String trackingKey;
   private Response response;
+  private String movementId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -61,5 +62,11 @@ public class ResponseTransferSpi implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public String getMovementId(){
+    return this.movementId;
+  }
+  public void setMovementId(String movementId ){
+    this.movementId=movementId;
   }
 }
