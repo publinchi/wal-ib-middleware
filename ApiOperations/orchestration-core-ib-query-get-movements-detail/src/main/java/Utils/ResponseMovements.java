@@ -39,6 +39,17 @@ public class ResponseMovements {
 	private String four_dataComprobante;
 	private String five_dataComprobante;
 	private String six_dataComprobante;
+	private String seven_dataComprobante;
+	private String eight_dataComprobante;
+	private String nine_dataComprobante;
+	private String ten_dataComprobante;
+	private String eleven_dataComprobante;
+	private String twelve_dataComprobante;
+	private String thirteen_dataComprobante;
+	private String fourteen_dataComprobante;
+	private String fifteen_dataComprobante;
+	private String sixteen_dataComprobante;
+
 	
 	public String getFecha() {
 		return fecha;
@@ -233,5 +244,66 @@ public class ResponseMovements {
 	}
 	public void setSix_dataComprobante(String six_dataComprobante) {
 		this.six_dataComprobante = six_dataComprobante;
-	}	
+	}
+	public String getSeven_dataComprobante() {
+		return seven_dataComprobante;
+	}
+	public void setSeven_dataComprobante(String seven_dataComprobante) {
+		this.seven_dataComprobante = seven_dataComprobante;
+	}
+	public String getEight_dataComprobante() {
+		return eight_dataComprobante;
+	}
+	public void setEight_dataComprobante(String eight_dataComprobante) {
+		this.eight_dataComprobante = eight_dataComprobante;
+	}
+	public String getNine_dataComprobante() {
+		return nine_dataComprobante;
+	}
+	public void setNine_dataComprobante(String nine_dataComprobante) {
+		this.nine_dataComprobante = nine_dataComprobante;
+	}
+	public String getTen_dataComprobante() {
+		return ten_dataComprobante;
+	}
+	public void setTen_dataComprobante(String ten_dataComprobante) {
+		this.ten_dataComprobante = ten_dataComprobante;
+	}
+	public String getEleven_dataComprobante() {
+		return eleven_dataComprobante;
+	}
+	public void setEleven_dataComprobante(String eleven_dataComprobante) {
+		this.eleven_dataComprobante = eleven_dataComprobante;
+	}
+	public String getTwelve_dataComprobante() {
+		return twelve_dataComprobante;
+	}
+	public void setTwelve_dataComprobante(String twelve_dataComprobante) {
+		this.twelve_dataComprobante = twelve_dataComprobante;
+	}
+	public String getThirteen_dataComprobante() {
+		return thirteen_dataComprobante;
+	}
+	public void setThirteen_dataComprobante(String thirteen_dataComprobante) {
+		this.thirteen_dataComprobante = thirteen_dataComprobante;
+	}
+	public String getFourteen_dataComprobante() {
+		return fourteen_dataComprobante;
+	}
+	public void setFourteen_dataComprobante(String fourteen_dataComprobante) {
+		this.fourteen_dataComprobante = fourteen_dataComprobante;
+	}
+	public String getFifteen_dataComprobante() {
+		return fifteen_dataComprobante;
+	}
+	public void setFifteen_dataComprobante(String fifteen_dataComprobante) {
+		this.fifteen_dataComprobante = fifteen_dataComprobante;
+	}
+	public String getSixteen_dataComprobante() {
+		return sixteen_dataComprobante;
+	}
+	public void setSixteen_dataComprobante(String sixteen_dataComprobante) {
+		this.sixteen_dataComprobante = sixteen_dataComprobante;
+	}
+	
 }
