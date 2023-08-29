@@ -337,7 +337,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 			if (anOriginalProcedureRes.readValueParam("@o_ssn_host") != null && !anOriginalProcedureRes.readValueParam("@o_ssn_host").equals("0"))
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 			
-			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
+			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 				
 				logger.logDebug("Return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
 				logger.logDebug("Ending flow, processResponse successful...");
