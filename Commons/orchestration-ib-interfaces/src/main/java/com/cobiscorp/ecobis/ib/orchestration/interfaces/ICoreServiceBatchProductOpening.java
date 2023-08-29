@@ -14,6 +14,4 @@ public interface ICoreServiceBatchProductOpening {
 		
 	public BatchProductOpeningResponse executeBatchProductOpening(BatchProductOpeningRequest aBatchProductOpeningRequest) throws CTSServiceException, CTSInfrastructureException;
   
-	public void executeBatchLocalProduct(BatchProductOpeningResponse aBatchProductOpeningRequest) throws CTSServiceException, CTSInfrastructureException;
-	
 }
