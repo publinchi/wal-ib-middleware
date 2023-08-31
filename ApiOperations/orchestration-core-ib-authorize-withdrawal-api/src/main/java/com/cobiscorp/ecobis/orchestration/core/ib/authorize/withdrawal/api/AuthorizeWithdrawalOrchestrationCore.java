@@ -313,10 +313,12 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 			if (anOriginalProcedureRes.readValueParam("@o_ssn_host") != null && !anOriginalProcedureRes.readValueParam("@o_ssn_host").equals("0"))
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 			
-			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).equals("0")){
+			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 				
-				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-				logger.logDebug("Ending flow, processResponse success with code: ");
+				logger.logDebug("Return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+				logger.logDebug("Ending flow, processResponse successful...");
+				
+				String authorizationCode = anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).isNull()?"0":anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue();
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -331,7 +333,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 				
 				IResultSetRow row3 = new ResultSetRow();
 				
-				row3.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				row3.addRowData(1, new ResultSetRowColumnData(false, authorizationCode));
 				data3.addRow(row3);
 				
 	        } else {
