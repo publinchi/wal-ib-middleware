@@ -184,7 +184,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                                 dto.responseInstance().setMessage(resultSetMapper.getString(4));
                                 dto.setLoginId(resultSetMapper.getInteger(1));
                                 dto.setUserCreated(resultSetMapper.getString(2));
-                                dto.setClabe(resultSetMapper.getString(6));
+                                dto.setClabeAccountNumber(resultSetMapper.getString(6));
                                 dto.setCardId(resultSetMapper.getString(7));
                                 return dto;
                             }
@@ -272,7 +272,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchase);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-
+	
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
