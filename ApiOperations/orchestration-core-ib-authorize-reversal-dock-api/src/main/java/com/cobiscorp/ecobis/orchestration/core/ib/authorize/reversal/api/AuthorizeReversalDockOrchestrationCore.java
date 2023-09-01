@@ -352,8 +352,16 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
+		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq_tran"));
+		}
+		
+		aBagSPJavaOrchestration.put("@o_seq_tran", wProductsQueryResp.readValueParam("@o_seq_tran"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking registerLog: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -385,6 +393,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
@@ -404,6 +413,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
 				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
 				row.addRowData(3, new ResultSetRowColumnData(false, null));
+				row.addRowData(4, new ResultSetRowColumnData(false, null));
 				
 				data.addRow(row);
 				
@@ -418,6 +428,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(3, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
 				
 				data.addRow(row);	
 			}
