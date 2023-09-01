@@ -223,6 +223,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setReferenciaSpei(columns[22].getValue());
 			respMovement.setRastreoSpei(columns[23].getValue());
 			respMovement.setTrnReferencia(Integer.parseInt(columns[24].getValue()));
+			respMovement.setIe_request(columns[25].getValue());
+			respMovement.setIe_ente(columns[26].getValue());
 			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
@@ -381,7 +383,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		three_dataComprobante varchar(250) null,\r\n"
 				+ "		four_dataComprobante varchar(250) null,\r\n"
 				+ "		five_dataComprobante varchar(250) null,\r\n"
-				+ "		six_dataComprobante varchar(250) null)\r\n";
+				+ "		six_dataComprobante varchar(250) null),\r\n"
+				+ "		ie_request varchar(max) null),\r\n"
+				+ "		ie_ente int null)\r\n";
 		
 		for (ResponseMovements respMov : responseMovementsList) {
 			script = script + "insert into ultimos_movimientos_local values (\r\n";
@@ -416,7 +420,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getThree_dataComprobante() != null ? "'" +  respMov.getThree_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getFour_dataComprobante() != null ? "'" + respMov.getFour_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getFive_dataComprobante() != null ? "'" + respMov.getFive_dataComprobante() + "'" : "null") + ",";
-			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ")\r\n";
+			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getIe_request() != null ? "'" + respMov.getIe_request() + "'" : "null") + ",";
+			script = script + (respMov.getIe_ente() != null ? respMov.getIe_request() : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -595,23 +601,94 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				    	iva = "0";
 				}
 				
-				String trackingKey = columns[23].getValue();
-				String operationType = columns[4].getValue();
-				String movementType = "";
 				
-				if (trackingKey != null || columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+				String type_movement = columns[35].getValue();
+				String is_dock_idc = columns[36].getValue();
+				String type_auth = columns[37].getValue();
+                String operationType = columns[4].getValue();
+				String movementType = null;
+				
+				if (type_movement.equals("SPEI") || columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+					
 					movementType = "SPEI_";
-				} else {
+					if (operationType.equals("D")) {
+						movementType = movementType + "DEBIT";
+					}
+					
+					if (operationType.equals("C")) {
+						movementType = movementType + "CREDIT";
+					}
+				} else if (type_movement.equals("P2P")) {
+					
 					movementType = "P2P_";
-				}
-				
-				if (operationType.equals("D")) {
-					movementType = movementType + "DEBIT";
-				}
-				
-				if (operationType.equals("C")) {
-					movementType = movementType + "CREDIT";
-				}
+					if (operationType.equals("D")) {
+						movementType = movementType + "DEBIT";
+					}
+					
+					if (operationType.equals("C")) {
+						movementType = movementType + "CREDIT";
+					}
+				} else if (type_movement.equals("AUTH")) {
+					
+					if (type_auth.equals("WITHDRAWAL")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "ATM_DEBIT";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "DEBIT_AT_STORE";
+						}
+					}
+					
+					if (type_auth.equals("PURCHASE")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "PURCHASE_ONLINE";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "PURCHASE_AT_STORE";
+						}
+					}
+					
+					if (type_auth.equals("DEPOSIT")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "CREDIT_AT_STORE";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "CREDIT_AT_STORE";
+						}
+					}
+
+					if (type_auth.equals("REVERSAL")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "REVERSAL";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "REVERSAL";
+						}
+					}
+					
+				} else if (type_movement.equals("ISO")) {
+					
+					if (type_auth.equals("WITHDRAWAL")) {
+						movementType = "ATM_DEBIT";
+					}
+					
+					if (type_auth.equals("PURCHASE")) {
+						movementType = "PURCHASE_ONLINE";
+					}
+					
+					if (type_auth.equals("REVERSAL")) {
+						movementType = "REVERSAL";
+					}
+				} 
+			
 			
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
