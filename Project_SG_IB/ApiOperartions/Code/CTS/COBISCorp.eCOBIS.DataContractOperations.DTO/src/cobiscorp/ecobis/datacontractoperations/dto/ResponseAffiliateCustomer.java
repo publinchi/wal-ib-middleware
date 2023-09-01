@@ -32,7 +32,7 @@ public class ResponseAffiliateCustomer implements Serializable {
   private Response response;
   private Integer loginId;
   private String userCreated;
-  private String clabe;
+  private String clabeAccountNumber;
   private String cardId;
   public boolean isSuccess(){
     return this.success;
@@ -64,11 +64,11 @@ public class ResponseAffiliateCustomer implements Serializable {
   public void setUserCreated(String userCreated ){
     this.userCreated=userCreated;
   }
-  public String getClabe(){
-    return this.clabe;
+  public String getClabeAccountNumber(){
+    return this.clabeAccountNumber;
   }
-  public void setClabe(String clabe ){
-    this.clabe=clabe;
+  public void setClabeAccountNumber(String clabeAccountNumber ){
+    this.clabeAccountNumber=clabeAccountNumber;
   }
   public String getCardId(){
     return this.cardId;

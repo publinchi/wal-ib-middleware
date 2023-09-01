@@ -17,6 +17,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAffiliateCustomer" />
           <field type="String" name="dTOPropertyName" value="loginId" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="7" index="1">
           <field type="int" name="position" value="1" />
@@ -24,6 +25,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAffiliateCustomer" />
           <field type="String" name="dTOPropertyName" value="userCreated" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="8" index="2">
           <field type="int" name="position" value="2" />
@@ -53,8 +55,9 @@
           <field type="int" name="position" value="5" />
           <field type="String" name="columnName" value="clabe" />
           <field type="String" name="dTOAlias" value="returnResponseAffiliateCustomer" />
-          <field type="String" name="dTOPropertyName" value="clabe" />
+          <field type="String" name="dTOPropertyName" value="clabeAccountNumber" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="12" index="6">
           <field type="int" name="position" value="6" />
@@ -62,6 +65,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAffiliateCustomer" />
           <field type="String" name="dTOPropertyName" value="cardId" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
