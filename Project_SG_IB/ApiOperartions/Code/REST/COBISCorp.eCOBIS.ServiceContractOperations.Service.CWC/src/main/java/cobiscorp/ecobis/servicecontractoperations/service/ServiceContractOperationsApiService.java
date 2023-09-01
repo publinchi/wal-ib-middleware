@@ -56,7 +56,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private ICTSRestIntegrationService ctsRestIntegrationService;
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 
-
+	public void saveAuthResponse(String jsonRes) throws CTSRestException {
+		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
+		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		
+		LOGGER.logDebug("Ends funtion execution: saveAuthResponse");
+	}
 
          @Override
 			// Return DTO
@@ -184,7 +192,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                                 dto.responseInstance().setMessage(resultSetMapper.getString(4));
                                 dto.setLoginId(resultSetMapper.getInteger(1));
                                 dto.setUserCreated(resultSetMapper.getString(2));
-                                dto.setClabe(resultSetMapper.getString(6));
+                                dto.setClabeAccountNumber(resultSetMapper.getString(6));
                                 dto.setCardId(resultSetMapper.getString(7));
                                 return dto;
                             }
@@ -272,7 +280,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchase);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-
+	
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
@@ -365,6 +373,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizePurchase);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchase");
 			// returns data
@@ -593,6 +606,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
 			// returns data
@@ -748,6 +766,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizeWithdrawal);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawal");
 			// returns data
@@ -953,6 +976,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
 			// returns data
@@ -1107,6 +1135,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizeDeposit);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDeposit");
 			// returns data
@@ -1308,6 +1341,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
@@ -1482,6 +1520,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversal");
 			// returns data
@@ -5456,6 +5499,11 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
+			
+			saveAuthResponse(jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
 			// returns data
