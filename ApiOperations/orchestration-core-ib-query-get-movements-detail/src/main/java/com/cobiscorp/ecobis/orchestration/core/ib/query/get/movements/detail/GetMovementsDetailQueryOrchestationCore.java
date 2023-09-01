@@ -383,8 +383,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		three_dataComprobante varchar(250) null,\r\n"
 				+ "		four_dataComprobante varchar(250) null,\r\n"
 				+ "		five_dataComprobante varchar(250) null,\r\n"
-				+ "		six_dataComprobante varchar(250) null),\r\n"
-				+ "		ie_request varchar(max) null),\r\n"
+				+ "		six_dataComprobante varchar(250) null,\r\n"
+				+ "		ie_request varchar(max) null,\r\n"
 				+ "		ie_ente int null)\r\n";
 		
 		for (ResponseMovements respMov : responseMovementsList) {
@@ -422,7 +422,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getFive_dataComprobante() != null ? "'" + respMov.getFive_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getIe_request() != null ? "'" + respMov.getIe_request() + "'" : "null") + ",";
-			script = script + (respMov.getIe_ente() != null ? respMov.getIe_request() : "null") + ")\r\n";
+			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -553,6 +553,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionId", ICTSTypes.SQLVARCHAR, 30));
 			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLVARCHAR, 30));
+			
 			/*metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));*/
 	
@@ -608,7 +610,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
                 String operationType = columns[4].getValue();
 				String movementType = null;
 				
-				if (type_movement.equals("SPEI") || columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+				if (type_movement.equals("SPEI") || (columns[1].getValue() !=null && columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI"))) {
 					
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
@@ -725,6 +727,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(26, new ResultSetRowColumnData(false, columns[32].getValue()));
 				
 				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
+				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
 				
 				/*rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));*/

@@ -44,7 +44,7 @@ public class AccountStatementArray implements Serializable {
   private AtmDetails atmDetails;
   private MerchantDetails merchantDetails;
   private StoreDetails storeDetails;
-  private String transactionId;
+  private String movementId;
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
@@ -183,10 +183,10 @@ public class AccountStatementArray implements Serializable {
   public void setStoreDetails(StoreDetails storeDetails ){
     this.storeDetails=storeDetails;
   }
-  public String getTransactionId(){
-    return this.transactionId;
+  public String getMovementId(){
+    return this.movementId;
   }
-  public void setTransactionId(String transactionId ){
-    this.transactionId=transactionId;
+  public void setMovementId(String movementId ){
+    this.movementId=movementId;
   }
 }

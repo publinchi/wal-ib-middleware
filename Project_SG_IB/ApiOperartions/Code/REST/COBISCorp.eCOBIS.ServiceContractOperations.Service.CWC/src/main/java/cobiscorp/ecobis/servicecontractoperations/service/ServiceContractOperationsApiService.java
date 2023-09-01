@@ -2458,7 +2458,8 @@ int mapBlank=0;
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
-							dto.setTransactionId(resultSetMapper.getString(27));
+							dto.setMovementId(resultSetMapper.getString(27));
+							dto.atmDetailsInstance().setAuthorizationCode(resultSetMapper.getString(28));
 							return dto;
 						}
 					}, false);
