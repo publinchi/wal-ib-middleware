@@ -56,7 +56,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private ICTSRestIntegrationService ctsRestIntegrationService;
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 
-	public void saveAuthResponse(String seqTran, String jsonRes) {
+	public void saveAuthResponse(String seqTran, String jsonRes) throws CTSRestException {
 		
 		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
 		
@@ -67,10 +67,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
 		
+		//execute procedure
+	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
 		LOGGER.logDebug("Ends funtion execution: saveAuthResponse");
 	}
 	
-	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes) {
+	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes) throws CTSRestException {
 		
 		LOGGER.logDebug("Start funtion execution: saveCobisTrnReqRes");
 		
@@ -81,6 +84,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
 		procedureRequestAS.addInputParam("@i_request_trn",ICTSTypes.SQLVARCHAR, jsonReq);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		
+		//execute procedure
+	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 		
 		LOGGER.logDebug("Ends funtion execution: saveCobisTrnReqRes");
 	}
