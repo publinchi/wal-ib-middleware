@@ -57,7 +57,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 
 	public void saveAuthResponse(String seqTran, String jsonRes) {
+		
 		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
+		
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
 		
 		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
@@ -66,6 +68,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
 		
 		LOGGER.logDebug("Ends funtion execution: saveAuthResponse");
+	}
+	
+	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes) {
+		
+		LOGGER.logDebug("Start funtion execution: saveCobisTrnReqRes");
+		
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
+		procedureRequestAS.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTC");
+		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
+		procedureRequestAS.addInputParam("@i_request_trn",ICTSTypes.SQLVARCHAR, jsonReq);
+		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		
+		LOGGER.logDebug("Ends funtion execution: saveCobisTrnReqRes");
 	}
 
          @Override
@@ -212,6 +229,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 LOGGER.logDebug("No data found");
                 throw new CTSRestException("404", null);
             }
+            
+            String trn = "Affiliate Customer";
+            
+            Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAffiliateCustomer);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAffiliateCustomer);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
             LOGGER.logDebug("Ends service execution: affiliateCustomer");
             // returns data
@@ -578,7 +605,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-
+			
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);

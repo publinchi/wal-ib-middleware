@@ -266,6 +266,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
