@@ -56,14 +56,39 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private ICTSRestIntegrationService ctsRestIntegrationService;
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 
-	public void saveAuthResponse(String jsonRes) throws CTSRestException {
+	public void saveAuthResponse(String seqTran, String jsonRes) throws CTSRestException {
+		
 		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
+		
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
 		
 		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
+		procedureRequestAS.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTA");
+		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
 		
+		//execute procedure
+	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
 		LOGGER.logDebug("Ends funtion execution: saveAuthResponse");
+	}
+	
+	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes) throws CTSRestException {
+		
+		LOGGER.logDebug("Start funtion execution: saveCobisTrnReqRes");
+		
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
+		procedureRequestAS.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTC");
+		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
+		procedureRequestAS.addInputParam("@i_request_trn",ICTSTypes.SQLVARCHAR, jsonReq);
+		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		
+		//execute procedure
+	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		LOGGER.logDebug("Ends funtion execution: saveCobisTrnReqRes");
 	}
 
          @Override
@@ -210,6 +235,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 LOGGER.logDebug("No data found");
                 throw new CTSRestException("404", null);
             }
+            
+            String trn = "Affiliate Customer";
+            
+            Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAffiliateCustomer);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAffiliateCustomer);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
             LOGGER.logDebug("Ends service execution: affiliateCustomer");
             // returns data
@@ -367,6 +402,28 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizePurchase>() {
+							@Override
+							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizePurchase.setSeq(returnResponseAuthorizePurchase.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 	
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -374,11 +431,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outResponseAuthorizePurchase.getSeq();
+			
+			outResponseAuthorizePurchase.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizePurchase);
 			
-			saveAuthResponse(jsonRes);
-
+			saveAuthResponse(seqTran, jsonRes);
+			
 			LOGGER.logDebug("Ends service execution: authorizePurchase");
 			// returns data
 			return outResponseAuthorizePurchase;
@@ -550,7 +611,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-
+			
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
@@ -589,6 +650,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setReason(resultSetMapper.getString(5));
 								dto.setAvailable_limit(resultSetMapper.getString(6));
 								dto.setAuthorization_code(resultSetMapper.getInteger(7));
+								dto.setSeq(resultSetMapper.getString(8));
 								return dto;
 							}
 						}, false);
@@ -607,10 +669,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outSingleResponseAuthorizePurchaseDock.getSeq();
+			
+			outSingleResponseAuthorizePurchaseDock.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
 			
-			saveAuthResponse(jsonRes);
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
 			// returns data
@@ -760,6 +826,28 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeWithdrawal>() {
+							@Override
+							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeWithdrawal.setSeq(returnResponseAuthorizeWithdrawal.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -767,10 +855,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outResponseAuthorizeWithdrawal.getSeq();
+			
+			outResponseAuthorizeWithdrawal.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeWithdrawal);
 			
-			saveAuthResponse(jsonRes);
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawal");
 			// returns data
@@ -959,6 +1051,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 										dto.setResponse((ArrayList) arrayList);
 										dto.setReason(resultSetMapper.getString(2));
 										dto.setAuthorization_code(resultSetMapper.getInteger(3));
+										dto.setSeq(resultSetMapper.getString(4));
 										return dto;
 									}
 								}, false);
@@ -977,10 +1070,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outSingleResponseAuthorizeWithdrawalDock.getSeq();
+			
+			outSingleResponseAuthorizeWithdrawalDock.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
 			
-			saveAuthResponse(jsonRes);
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
 			// returns data
@@ -1129,6 +1226,28 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeDeposit.setSeq(returnResponseAuthorizeDeposit.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -1136,10 +1255,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outResponseAuthorizeDeposit.getSeq();
+			
+			outResponseAuthorizeDeposit.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeDeposit);
 			
-			saveAuthResponse(jsonRes);
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDeposit");
 			// returns data
@@ -1306,7 +1429,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
-
+		
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -1324,6 +1447,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setReason(resultSetMapper.getString(5));
 								dto.setAvailable_limit(resultSetMapper.getString(6));
 								dto.setAuthorization_code(resultSetMapper.getInteger(7));
+								dto.setSeq(resultSetMapper.getString(8));
+								
 								return dto;
 							}
 						}, false);
@@ -1342,10 +1467,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outSingleResponseAuthorizeDepositDock.getSeq();
+			
+			outSingleResponseAuthorizeDepositDock.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
 			
-			saveAuthResponse(jsonRes);
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
@@ -1514,6 +1643,28 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeReversal.setSeq(returnResponseAuthorizeReversal.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -1521,11 +1672,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outResponseAuthorizeReversal.getSeq();
+			
+			outResponseAuthorizeReversal.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
 			
-			saveAuthResponse(jsonRes);
-
+			saveAuthResponse(seqTran, jsonRes);
+		
 			LOGGER.logDebug("Ends service execution: authorizeReversal");
 			// returns data
 			return outResponseAuthorizeReversal;
@@ -5483,6 +5638,7 @@ int mapBlank=0;
 								dto.setResponse((ArrayList) arrayList);
 								dto.setReason(resultSetMapper.getString(2));
 								dto.setAuthorization_code(resultSetMapper.getInteger(3));
+								dto.setSeq(resultSetMapper.getString(4));
 								return dto;
 							}
 						}, false);
@@ -5500,10 +5656,14 @@ int mapBlank=0;
 				throw new CTSRestException("404", null);
 			}
 			
+			String seqTran = outSingleResponseAuthorizeReversalDock.getSeq();
+			
+			outSingleResponseAuthorizeReversalDock.setSeq(null);
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
 			
-			saveAuthResponse(jsonRes);
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
 			// returns data

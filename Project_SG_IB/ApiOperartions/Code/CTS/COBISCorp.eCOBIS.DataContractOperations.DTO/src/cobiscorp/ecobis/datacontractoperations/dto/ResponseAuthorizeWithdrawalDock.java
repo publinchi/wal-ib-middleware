@@ -31,6 +31,7 @@ public class ResponseAuthorizeWithdrawalDock implements Serializable {
   private ArrayList response;
   private String reason;
   private Integer authorization_code;
+  private String seq;
   public ArrayList getResponse(){
     return this.response;
   }
@@ -48,5 +49,11 @@ public class ResponseAuthorizeWithdrawalDock implements Serializable {
   }
   public void setAuthorization_code(Integer authorization_code ){
     this.authorization_code=authorization_code;
+  }
+  public String getSeq(){
+    return this.seq;
+  }
+  public void setSeq(String seq ){
+    this.seq=seq;
   }
 }

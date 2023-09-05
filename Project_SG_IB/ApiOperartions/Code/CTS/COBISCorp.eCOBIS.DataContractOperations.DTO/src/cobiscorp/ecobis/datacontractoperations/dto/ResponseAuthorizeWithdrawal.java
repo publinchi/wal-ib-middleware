@@ -31,6 +31,7 @@ public class ResponseAuthorizeWithdrawal implements Serializable {
   private Boolean success;
   private Response response;
   private Integer authorizationCode;
+  private String seq;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -54,5 +55,11 @@ public class ResponseAuthorizeWithdrawal implements Serializable {
   }
   public void setAuthorizationCode(Integer authorizationCode ){
     this.authorizationCode=authorizationCode;
+  }
+  public String getSeq(){
+    return this.seq;
+  }
+  public void setSeq(String seq ){
+    this.seq=seq;
   }
 }
