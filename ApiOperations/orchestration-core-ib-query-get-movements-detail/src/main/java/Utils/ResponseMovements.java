@@ -41,6 +41,7 @@ public class ResponseMovements {
 	private String six_dataComprobante;
 	private String ie_request;
 	private String ie_ente;
+	private String causa;
 	
 	public String getFecha() {
 		return fecha;
@@ -247,5 +248,11 @@ public class ResponseMovements {
 	}
 	public void setIe_ente(String ie_ente) {
 		this.ie_ente = ie_ente;
+	}
+	public String getCausa() {
+		return causa;
+	}
+	public void setCausa(String causa) {
+		this.causa = causa;
 	}	
 }
