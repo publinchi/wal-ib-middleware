@@ -323,8 +323,17 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
+		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq_tran"));
+		}
+		
+		aBagSPJavaOrchestration.put("@o_seq_tran", wProductsQueryResp.readValueParam("@o_seq_tran"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking registerLog: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -360,6 +369,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("available_limit", ICTSTypes.SQLMONEY4, 25));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
@@ -383,6 +393,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 				row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(7, new ResultSetRowColumnData(false, null));
+				row.addRowData(8, new ResultSetRowColumnData(false, null));
 				
 				data.addRow(row);
 				
@@ -401,6 +412,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(7, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
 				
 				data.addRow(row);
 			}

@@ -263,8 +263,17 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
+		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq_tran"));
+		}
+		
+		aBagSPJavaOrchestration.put("@o_seq_tran", wProductsQueryResp.readValueParam("@o_seq_tran"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking registerLog: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -305,6 +314,11 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		IResultSetData data3 = new ResultSetData();
 		
 		metaData3.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
+		
+		IResultSetHeader metaData4 = new ResultSetHeader();
+		IResultSetData data4 = new ResultSetData();
+		
+		metaData4.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 
 		
 		if (codeReturn == 0) {
@@ -318,6 +332,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 				logger.logDebug("Ending flow, processResponse successful...");
 				
 				String authorizationCode = anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).isNull()?"0":anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue();
+				String seq = aBagSPJavaOrchestration.get("@o_seq_tran").toString();
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -334,6 +349,11 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 				
 				row3.addRowData(1, new ResultSetRowColumnData(false, authorizationCode));
 				data3.addRow(row3);
+				
+				IResultSetRow row4 = new ResultSetRow();
+				
+				row4.addRowData(1, new ResultSetRowColumnData(false, seq));
+				data4.addRow(row4);
 				
 			} else {
 				
@@ -374,10 +394,12 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		wProcedureResponse.addResponseBlock(resultsetBlock3);
+		wProcedureResponse.addResponseBlock(resultsetBlock4);
 		
 		return wProcedureResponse;		
 	}
