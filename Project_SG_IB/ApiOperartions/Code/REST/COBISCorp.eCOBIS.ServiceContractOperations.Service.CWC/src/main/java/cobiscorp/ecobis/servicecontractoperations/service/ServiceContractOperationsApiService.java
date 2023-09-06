@@ -3808,6 +3808,16 @@ int mapBlank=0;
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Register Account to Transfer Spei";
+	      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestRegisterAccountSpei);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseRegisterAccountSpei);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		
 		  LOGGER.logDebug("Ends service execution: registerAccount");
 		  //returns data
 		  return outResponseRegisterAccountSpei;
@@ -3966,7 +3976,7 @@ int mapBlank=0;
 			outResponseSearchLocationCatalog.setSuccess(false);
 		
 
-		String trn = "Get Colony By Municipality";
+		String trn = "Catalogue Of Locations";
 	    
 	    Gson gson = new Gson();
 	    String jsonReq = gson.toJson(inRequestSearchLocationCatalog);
@@ -4251,6 +4261,16 @@ int mapBlank=0;
 		LOGGER.logDebug("No data found");
 		throw new CTSRestException("404",null);
 		}
+		
+		  String trn = "Transfer to third party account";
+	      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestTransferThirdPartyAccount);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseTransferThirdPartyAccount);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 		
 		  LOGGER.logDebug("Ends service execution: transferThirdPartyAccount");
 		  //returns data
@@ -5122,6 +5142,16 @@ int mapBlank=0;
       throw new CTSRestException("404",null);
       }
       
+		String trn = "Account Debit Operation";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inDebitAccountRequest);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleDebitAccountResponse);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+      
         LOGGER.logDebug("Ends service execution: debitOperation");
         //returns data
         return outSingleDebitAccountResponse;
@@ -5525,6 +5555,16 @@ int mapBlank=0;
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
+      
+        String trn = "Validate Transaction Factor";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inValidateTokenRequest);
+		
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outSingleValidateTokenResponse);
+		
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes);
       
         LOGGER.logDebug("Ends service execution: validateTransactionFactor");
         //returns data
