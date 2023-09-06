@@ -2282,7 +2282,7 @@ int mapBlank=0;
                           dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
                           dto.setOfficial(resultSetMapper.getInteger(19));
                           dto.setClabeAccountNumber(resultSetMapper.getString(20));
-                          dto.setIdDebitCard(resultSetMapper.getInteger(21));
+                          dto.setCardId(resultSetMapper.getString(21));
                           dto.setDebitCardNumber(resultSetMapper.getString(22));
                           dto.setStateDebitCard(resultSetMapper.getString(23));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
