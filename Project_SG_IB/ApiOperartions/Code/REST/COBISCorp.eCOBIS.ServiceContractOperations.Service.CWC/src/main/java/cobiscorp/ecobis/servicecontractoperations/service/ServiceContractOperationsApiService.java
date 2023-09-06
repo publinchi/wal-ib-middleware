@@ -158,6 +158,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       throw new CTSRestException("404",null);
       }
       
+        String trn = "Account Credit Operation";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inCreditAccountRequest);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleCreditAccountResponse);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+      
         LOGGER.logDebug("Ends service execution: creditOperation");
         //returns data
         return outSingleCreditAccountResponse;
@@ -1858,6 +1868,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 				outCreateCustomerResponse.setSuccess(false);
 			}
+			
+			String trn = "Create Customer";
+		      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inCreateCustomerRequest);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outCreateCustomerResponse);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: createCustomer");
 			// returns data
@@ -2016,6 +2036,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       throw new CTSRestException("404",null);
       }
       
+      	String trn = "Encrypt Data";
+      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestEncriptData);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseEncriptData);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+      
         LOGGER.logDebug("Ends service execution: encryptData");
         //returns data
         return outSingleResponseEncriptData;
@@ -2084,6 +2114,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Generate and send OTP";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestOtp);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseOtp);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: generateTransactionFactor");
 		// returns data
@@ -2154,17 +2194,25 @@ int mapBlank=0;
       }
       
       
- Response response=new Response();
- response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
- response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
- outResponseGetColonyByMunicipality.setResponse(response);
+	 Response response=new Response();
+	 response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+	 response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+	 outResponseGetColonyByMunicipality.setResponse(response);
 
 	if (response != null && response.getCode() == 0) {
 		outResponseGetColonyByMunicipality.setSuccess(true);
 	} else
 		outResponseGetColonyByMunicipality.setSuccess(false);
       
+	String trn = "Get Colony By Municipality";
     
+    Gson gson = new Gson();
+    String jsonReq = gson.toJson(inRequestGetColonyByMunicipality);
+
+    Gson gson2 = new Gson();
+    String jsonRes = gson2.toJson(outResponseGetColonyByMunicipality);
+
+    saveCobisTrnReqRes(trn, jsonReq, jsonRes); 
       
   LOGGER.logDebug("Ends service execution: getColonyByMunicipality");
   //returns data
@@ -2254,6 +2302,16 @@ int mapBlank=0;
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
+      
+        String trn = "Get Balances Detail";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestGetBalancesDetail);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleResponseGetBalancesDetail);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
       
         LOGGER.logDebug("Ends service execution: getBalancesDetail");
         //returns data
@@ -2383,6 +2441,16 @@ int mapBlank=0;
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Get Beneficiary";
+	      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inGetBeneficiaryRequest);
+		
+	      Gson gson2 = new Gson();
+	      String jsonRes = gson2.toJson(outGetBeneficiaryResponse);
+		
+	      saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		
 		  LOGGER.logDebug("Ends service execution: getBeneficiary");
 		  //returns data
 		  return outGetBeneficiaryResponse;
@@ -2497,6 +2565,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Get Catalog";
+        
+        Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestCatalog);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseCatalog);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: getCatalog");
 		// returns data
@@ -2675,6 +2753,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Get Movements Detail";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestGetMovementsDetail);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseGetMovementsDetail);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: getMovementsDetail");
 		// returns data
@@ -2743,8 +2831,6 @@ int mapBlank=0;
 
 		}
 
-
-
 		Response response=new Response();
 		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
 		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
@@ -2755,7 +2841,17 @@ int mapBlank=0;
 
 		} else
 			outResponseMunicipalityByState.setSuccess(false);
-
+		
+		
+		String trn = "Get Municipality By State";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestMunicipalityByState);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseMunicipalityByState);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: getMunicipalityByState");
 		// returns data
@@ -2879,6 +2975,16 @@ int mapBlank=0;
 	   throw new CTSRestException("404",null);
 	   }
 	   
+	     String trn = "Get Own Accounts View";
+	      
+	     Gson gson = new Gson();
+	     String jsonReq = gson.toJson(inRequestOwnAccountsView);
+	
+         Gson gson2 = new Gson();
+         String jsonRes = gson2.toJson(outResponseOwnAccountsView);
+	
+         saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+	   
 	     LOGGER.logDebug("Ends service execution: getOwnAccountsView");
 	     //returns data
 	     return outResponseOwnAccountsView;
@@ -2947,7 +3053,15 @@ int mapBlank=0;
 			} else
 				outStateByZipCodeResponse.setSuccess(false);
 		
-			
+			String trn = "Get State By Zip Code";
+		      
+		    Gson gson = new Gson();
+		    String jsonReq = gson.toJson(inStateByZipCodeRequest);
+		
+	        Gson gson2 = new Gson();
+	        String jsonRes = gson2.toJson(outStateByZipCodeResponse);
+		
+	        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: getStateByZipCode");
 			// returns data
@@ -3039,6 +3153,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "View Customer Information";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestGetUserEntityInformation);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseGetUserEntityInformation);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: getUserEntityInformation");
 		// returns data
@@ -3161,6 +3285,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+	    String trn = "Register Beneficiary";
+      
+	    Gson gson1 = new Gson();
+	    String jsonReq = gson1.toJson(inRegisterBeneficiaryRequest);
+		
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outRegisterBeneficiaryResponse);
+		
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: registerBeneficiary");
 		// returns data
@@ -3244,6 +3378,16 @@ int mapBlank=0;
 			toReturn.setSuccess(false);
 
 		toReturn.setResponse(response);
+		
+		String trn = "Search Zip Code";
+	      
+		Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inSearchZipCodeRequest);
+			
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(toReturn);
+			
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: searchZipCode");
 
@@ -3349,6 +3493,16 @@ int mapBlank=0;
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Update Customer Address";
+		      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inUpdateCustomerAddressRequest);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outUpdateCustomerAddressResponse);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		
 		  LOGGER.logDebug("Ends service execution: updateCustomerAddress");
 		  //returns data
 		  return outUpdateCustomerAddressResponse;
@@ -3421,6 +3575,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Update Profile";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestUpdateProfile);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseUpdateProfile);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: updateProfile");
 		// returns data
@@ -3800,8 +3964,17 @@ int mapBlank=0;
 
 		} else
 			outResponseSearchLocationCatalog.setSuccess(false);
-
 		
+
+		String trn = "Get Colony By Municipality";
+	    
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestSearchLocationCatalog);
+
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outResponseSearchLocationCatalog);
+
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes); 
 
 		LOGGER.logDebug("Ends service execution: searchLocationCatalog");
 		// returns data
@@ -4533,6 +4706,16 @@ int mapBlank=0;
 		}
 		// outResponseValidateIdentity.setSuccess(getOutValue(String.class, "@salida",
 		// response.getParams()));
+		
+		String trn = "Validate Customer Identity Card";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestValidateIdentity);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseValidateIdentity);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: validateIdentity");
 		// returns data
