@@ -1477,8 +1477,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("externalCustomerId", inRequestTransferThirdPartyAccount.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferThirdPartyAccount.getOriginAccountNumber()),
 				new Data("destinationNumber", inRequestTransferThirdPartyAccount.getDestinationNumber()),
-				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()),
-				new Data("description", inRequestTransferThirdPartyAccount.getDescription()))) {
+				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
