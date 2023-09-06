@@ -182,11 +182,11 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="21" index="18">
-      <field type="String" name="name" value="idDebitCard" />
-      <field type="String" name="type" value="int?" />
+      <field type="String" name="name" value="cardId" />
+      <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="required" value="false" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />

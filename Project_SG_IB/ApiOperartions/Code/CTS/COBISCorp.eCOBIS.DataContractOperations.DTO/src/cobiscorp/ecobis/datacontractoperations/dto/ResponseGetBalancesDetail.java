@@ -46,7 +46,7 @@ public class ResponseGetBalancesDetail implements Serializable {
   private java.math.BigDecimal accountingBalance;
   private Integer official;
   private String clabeAccountNumber;
-  private Integer idDebitCard;
+  private String cardId;
   private String debitCardNumber;
   private String stateDebitCard;
   private Response response;
@@ -158,11 +158,11 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setClabeAccountNumber(String clabeAccountNumber ){
     this.clabeAccountNumber=clabeAccountNumber;
   }
-  public Integer getIdDebitCard(){
-    return this.idDebitCard;
+  public String getCardId(){
+    return this.cardId;
   }
-  public void setIdDebitCard(Integer idDebitCard ){
-    this.idDebitCard=idDebitCard;
+  public void setCardId(String cardId ){
+    this.cardId=cardId;
   }
   public String getDebitCardNumber(){
     return this.debitCardNumber;
