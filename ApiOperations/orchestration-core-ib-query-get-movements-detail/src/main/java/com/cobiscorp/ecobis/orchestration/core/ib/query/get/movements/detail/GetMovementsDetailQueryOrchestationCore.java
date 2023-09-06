@@ -225,6 +225,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setTrnReferencia(Integer.parseInt(columns[24].getValue()));
 			respMovement.setIe_request(columns[25].getValue());
 			respMovement.setIe_ente(columns[26].getValue());
+			respMovement.setCausa(columns[27].getValue());
 			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
@@ -386,7 +387,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		five_dataComprobante varchar(250) null,\r\n"
 				+ "		six_dataComprobante varchar(250) null,\r\n"
 				+ "		ie_request varchar(max) null,\r\n"
-				+ "		ie_ente int null)\r\n";
+				+ "		ie_ente int null,\r\n"
+				+ "		causa int null)\r\n";
 		
 		for (ResponseMovements respMov : responseMovementsList) {
 			script = script + "insert into ultimos_movimientos_local values (\r\n";
@@ -423,7 +425,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getFive_dataComprobante() != null ? "'" + respMov.getFive_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getIe_request() != null ? "'" + respMov.getIe_request() + "'" : "null") + ",";
-			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ")\r\n";
+			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ",";
+			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ")\r\n";
 		}
 		
 		return script;
