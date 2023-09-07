@@ -1969,6 +1969,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Delete Beneficiary";
+	      
+      	  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestDeleteBeneficiary);
+		
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseDeleteBeneficiary);
+		
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		
 		  LOGGER.logDebug("Ends service execution: deleteBeneficiary");
 		  //returns data
 		  return outResponseDeleteBeneficiary;
@@ -4145,11 +4155,22 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+	    String trn = "Transfer Spei";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestTransferSpi);
+	
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outResponseTransferSpi);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: transferSpei");
 		// returns data
 		return outResponseTransferSpi;
 	}
+	
 	    /**
 	    * Service for transfer to a third party account
 	    */
@@ -4367,6 +4388,16 @@ int mapBlank=0;
 	   throw new CTSRestException("404",null);
 	   }
 	   
+	   	String trn = "Update Account Beneficiary";
+	      
+   		Gson gson1 = new Gson();
+		String jsonReq = gson1.toJson(inUpdateBeneficiaryRequest);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outUpdateBeneficiaryResponse);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+	   
 	     LOGGER.logDebug("Ends service execution: updateAccountBebeficiary");
 	     //returns data
 	     return outUpdateBeneficiaryResponse;
@@ -4394,7 +4425,7 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestUpdateAccountStatus.getAccountNumber());
 			procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
-      procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
+			procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
 
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -4466,6 +4497,16 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Update Account Status";
+		      
+		    Gson gson = new Gson();
+		    String jsonReq = gson.toJson(inRequestUpdateAccountStatus);
+		
+		    Gson gson2 = new Gson();
+		    String jsonRes = gson2.toJson(outResponseUpdateAccountStatus);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: updateAccountStatus");
 			// returns data
@@ -4581,6 +4622,16 @@ int mapBlank=0;
 		    LOGGER.logDebug("No data found");
 		    throw new CTSRestException("404",null);
 		    }
+		    
+		      String trn = "Update Card Status";
+		      
+		      Gson gson = new Gson();
+		      String jsonReq = gson.toJson(inRequestUpdateCardStatus);
+		
+		      Gson gson2 = new Gson();
+		      String jsonRes = gson2.toJson(outResponseUpdateCardStatus);
+			
+			  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 		    
 		      LOGGER.logDebug("Ends service execution: updateCardStatus");
 		      //returns data
@@ -4893,6 +4944,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Activate device";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestDeviceActivation);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseDeviceActivation);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: activateDevice");
 		// returns data
@@ -4992,6 +5053,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Validate Device Activation";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestValidateDeviceActivation);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseValidateDeviceActivation);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 		LOGGER.logDebug("Ends service execution: validateDeviceActivation");
 		// returns data
@@ -5157,8 +5228,6 @@ int mapBlank=0;
         return outSingleDebitAccountResponse;
       }
          
-
-         
          
          
          /**
@@ -5229,7 +5298,7 @@ int mapBlank=0;
                     CstmrAnswers dto = new CstmrAnswers();
                     
                           dto.setQuestionId(resultSetMapper.getInteger(1));
-                          dto.setResponseId(resultSetMapper.getInteger(2));
+                          dto.setAnswerId(resultSetMapper.getInteger(2));
                           dto.setDescription(resultSetMapper.getString(3));
                     return dto;
                     }
@@ -5242,18 +5311,29 @@ int mapBlank=0;
             mapBlank++;
 
             }
-          
-
-      
-      Response response=new Response();
-      response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
-      response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
-      outResponseAllCustomerQuestions.setResponse(response);
+ 
+  
+	    Response response=new Response();
+	    response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+	    response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+	    outResponseAllCustomerQuestions.setResponse(response);
 
      	if (response != null && response.getCode() == 0) {
      		outResponseAllCustomerQuestions.setSuccess(true);
      	} else
-     		outResponseAllCustomerQuestions.setSuccess(false);   
+     		outResponseAllCustomerQuestions.setSuccess(false);
+     	
+     	
+     	String trn = "Get All Customer Questions";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestAllCustomerQuestions);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseAllCustomerQuestions);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+     	
         LOGGER.logDebug("Ends service execution: getAllCustomerQuestions");
         //returns data
         return outResponseAllCustomerQuestions;
@@ -5278,15 +5358,15 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()));
 			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getAnswerDescription()));
 			
 
 			// execute procedure
@@ -5381,6 +5461,16 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Define Security Questions and Answers";
+		      
+	    	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestDefineSecurityQA);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseDefineSecurityQA);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: defineSecurityQA");
 			// returns data
@@ -5407,15 +5497,15 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()));
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()));
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getResponseDescription()));
+			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getAnswerDescription()));
 
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -5487,6 +5577,16 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Validate All Security Questions and Answers";
+		      
+	    	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestValidateAllSecurityQA);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseValidateAllSecurityQA);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: validateAllSecurityQA");
 			// returns data
@@ -5634,6 +5734,16 @@ int mapBlank=0;
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
+      
+      	String trn = "Update Credentials";
+      
+    	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestUpdateCredentials);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseUpdateCredentials);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
       
         LOGGER.logDebug("Ends service execution: updateCredentials");
         //returns data

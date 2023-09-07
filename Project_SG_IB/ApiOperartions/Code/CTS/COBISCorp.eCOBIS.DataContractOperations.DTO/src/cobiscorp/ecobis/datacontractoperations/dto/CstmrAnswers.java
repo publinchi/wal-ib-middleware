@@ -29,7 +29,7 @@ import java.util.HashMap;
 
 public class CstmrAnswers implements Serializable {
   private Integer questionId;
-  private Integer responseId;
+  private Integer answerId;
   private String description;
   public Integer getQuestionId(){
     return this.questionId;
@@ -37,11 +37,11 @@ public class CstmrAnswers implements Serializable {
   public void setQuestionId(Integer questionId ){
     this.questionId=questionId;
   }
-  public Integer getResponseId(){
-    return this.responseId;
+  public Integer getAnswerId(){
+    return this.answerId;
   }
-  public void setResponseId(Integer responseId ){
-    this.responseId=responseId;
+  public void setAnswerId(Integer answerId ){
+    this.answerId=answerId;
   }
   public String getDescription(){
     return this.description;
