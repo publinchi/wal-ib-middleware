@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -607,6 +608,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				    	iva = "0";
 				}
 				
+				if (destinyOwnerName!=null && isNumeric(destinyOwnerName.trim())) {
+					destinyOwnerName = null;
+				}
+				
 				
 				String type_movement = columns[35].getValue();
 				String is_dock_idc = columns[36].getValue();
@@ -819,5 +824,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			}		
 		}
 		return true;		
+	}
+	
+	public boolean isNumeric(String strNum) {
+
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+		if (strNum == null) {
+
+			return false;
+		}
+		return pattern.matcher(strNum).matches();
 	}
 }
