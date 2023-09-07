@@ -2029,11 +2029,11 @@ public class ServiceContractOperationsApiRest {
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestDefineSecurityQA.getExternalCustomerId()),
 				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()),
-				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()),
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getAnswerId()),
 				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()),
-				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getAnswerId()),
 				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()))) {
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getAnswerDescription()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -2075,11 +2075,8 @@ public class ServiceContractOperationsApiRest {
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestValidateAllSecurityQA.getExternalCustomerId()),
 				new Data("cstmrVal1", inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()),
-				new Data("cstmrVal1", inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()),
 				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()),
-				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()),
-				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()),
-				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getResponseDescription()))) {
+				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
