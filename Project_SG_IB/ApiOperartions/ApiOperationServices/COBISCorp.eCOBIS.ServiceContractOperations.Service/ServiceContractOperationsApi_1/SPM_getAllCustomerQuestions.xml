@@ -45,7 +45,7 @@
           <field type="int" name="position" value="1" />
           <field type="String" name="columnName" value="answer_id" />
           <field type="String" name="dTOAlias" value="returnCstmrAnswers" />
-          <field type="String" name="dTOPropertyName" value="responseId" />
+          <field type="String" name="dTOPropertyName" value="answerId" />
           <field type="String" name="dataType" value="int?" />
           <field type="String" name="format" value="" />
         </class>

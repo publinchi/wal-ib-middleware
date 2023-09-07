@@ -29,26 +29,14 @@ import java.util.HashMap;
 
 public class ResponseAllCustomerQuestions implements Serializable {
   private Boolean success;
+  private Response response;
   private CstmrQuestions[] cstmrQuestionsList;
   private CstmrAnswers[] cstmrAnswersList;
-  private Response response;
   public Boolean isSuccess(){
     return this.success;
   }
   public void setSuccess(Boolean success ){
     this.success=success;
-  }
-  public CstmrQuestions[] getCstmrQuestionsList(){
-    return this.cstmrQuestionsList;
-  }
-  public void setCstmrQuestionsList(CstmrQuestions[] cstmrQuestionsList ){
-    this.cstmrQuestionsList=cstmrQuestionsList;
-  }
-  public CstmrAnswers[] getCstmrAnswersList(){
-    return this.cstmrAnswersList;
-  }
-  public void setCstmrAnswersList(CstmrAnswers[] cstmrAnswersList ){
-    this.cstmrAnswersList=cstmrAnswersList;
   }
   public Response responseInstance(){
 	if(this.response==null){
@@ -61,5 +49,17 @@ public class ResponseAllCustomerQuestions implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public CstmrQuestions[] getCstmrQuestionsList(){
+    return this.cstmrQuestionsList;
+  }
+  public void setCstmrQuestionsList(CstmrQuestions[] cstmrQuestionsList ){
+    this.cstmrQuestionsList=cstmrQuestionsList;
+  }
+  public CstmrAnswers[] getCstmrAnswersList(){
+    return this.cstmrAnswersList;
+  }
+  public void setCstmrAnswersList(CstmrAnswers[] cstmrAnswersList ){
+    this.cstmrAnswersList=cstmrAnswersList;
   }
 }
