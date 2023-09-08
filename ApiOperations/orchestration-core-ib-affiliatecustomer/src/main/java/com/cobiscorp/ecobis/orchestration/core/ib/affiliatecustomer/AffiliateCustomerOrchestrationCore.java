@@ -57,8 +57,8 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 	private ICobisCrypt cobisCrypt;
 	private String loginId;
 	private String userCreated;
-	private String clabe;
 	private String cardId;
+	private String clabe;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -82,6 +82,11 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		String idCustomer = wQueryRequest.readValueParam("@i_external_customer_id");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
+		String clabe="";
+		String categoria="";
+		String clabeStatus="";
+		String clabeError="";
+		String tercerOden="";
 		
 		if (accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("40082", "accountNumber must not be empty");
@@ -89,10 +94,10 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		}
 				
 		logger.logDebug("Begin flow, queryAffiliateCustomer with id: " + idCustomer);
+				IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));
+
 		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));
-		
-		reqTMPCentral.setSpName("cobis..sp_affiliate_customer_get_data_api");
+		reqTMPCentral.setSpName("cobis..sp_affi_custom_data_api_complete");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500101");
 		
@@ -100,14 +105,30 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 		
 		reqTMPCentral.addOutputParam("@o_clabe", ICTSTypes.SQLVARCHAR, "X");
+		reqTMPCentral.addOutputParam("@o_categoria", ICTSTypes.SQLVARCHAR, "X");
+		reqTMPCentral.addOutputParam("@o_clabe_status", ICTSTypes.SQLVARCHAR, "X");	
+		reqTMPCentral.addOutputParam("@o_clabe_error", ICTSTypes.SQLVARCHAR, "X");
+		reqTMPCentral.addOutputParam("@o_tercer_orden", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isDebugEnabled()) {
+			logger.logDebug("CLABE: JCOS " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
+			
 			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
+			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_categoria"));
+			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe_status"));
+			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe_error"));
+			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_tercer_orden"));
 		}
 		
 		clabe = wProcedureResponseCentral.readValueParam("@o_clabe");
+		categoria= wProcedureResponseCentral.readValueParam("@o_categoria");
+		clabeStatus=wProcedureResponseCentral.readValueParam("@o_clabe_status");
+		clabeError=wProcedureResponseCentral.readValueParam("@o_clabe_error");
+		tercerOden=wProcedureResponseCentral.readValueParam("@o_tercer_orden");		
+		this.clabe=clabe;
+		
 		
 		if (logger.isInfoEnabled()) {
 			logger.logDebug("Ending flow, queryAffiliateCustomer with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
@@ -146,7 +167,7 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 				reqTMPLocal.addInputParam("@i_password", ICTSTypes.SQLVARCHAR, password);
 				reqTMPLocal.addInputParam("@i_clave", ICTSTypes.SQLVARCHAR, createKey(user, password));
 				reqTMPLocal.addInputParam("@i_medios_envio", ICTSTypes.SQLVARCHAR, getMedia(mail, phone));
-				reqTMPLocal.addInputParam("@i_productos", ICTSTypes.SQLVARCHAR, getProducts(accountNumber));
+				reqTMPLocal.addInputParam("@i_productos", ICTSTypes.SQLVARCHAR, getProducts(accountNumber,clabe,categoria,tercerOden,clabeStatus,clabeError));
 				reqTMPLocal.addInputParam("@i_pc_fecha_nac", ICTSTypes.SQLDATETIME, columns[10].getValue());
 				reqTMPLocal.addInputParam("@i_mail", ICTSTypes.SQLVARCHAR, mail);
 				
@@ -309,14 +330,18 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		return medios;
 	}
 	
-	public String getProducts(String accounNumber) {
+	public String getProducts(String accounNumber,String clabe,String categoria,String ordenante,String statusClabe,String clabeError ) {
 
 		String producto = "";
 
 		if (accounNumber != null && accounNumber != "") {
 
-			producto = accounNumber + ",4,0,S";
+			producto = accounNumber + ",4,0,S,"+clabe+","+categoria+","+ordenante+","+statusClabe+","+clabeError;
 		}
 		return producto;
 	}
+	
+	
+	
+	
 }
