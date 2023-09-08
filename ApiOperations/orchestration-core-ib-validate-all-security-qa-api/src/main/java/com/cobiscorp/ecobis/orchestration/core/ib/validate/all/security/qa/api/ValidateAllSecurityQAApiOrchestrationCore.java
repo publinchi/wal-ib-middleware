@@ -130,25 +130,31 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 			dQuestion1 = decrypt(dQuestion1);
 			logger.logInfo(dQuestion1);
 			
-			logger.logInfo(dAnswer1);
-			dAnswer1 = decrypt(dAnswer1);
-			logger.logInfo(dAnswer1);
+			if (dAnswer1 != null) {
+				logger.logInfo(dAnswer1);
+				dAnswer1 = decrypt(dAnswer1);
+				logger.logInfo(dAnswer1);
+			}
 			
 			logger.logInfo(dQuestion2);
 			dQuestion2 = decrypt(dQuestion2);
 			logger.logInfo(dQuestion2);
 			
-			logger.logInfo(dAnswer2);
-			dAnswer2 = decrypt(dAnswer2);
-			logger.logInfo(dAnswer2);
+			if (dAnswer2 != null) {
+				logger.logInfo(dAnswer2);
+				dAnswer2 = decrypt(dAnswer2);
+				logger.logInfo(dAnswer2);
+			}
 			
 			logger.logInfo(dQuestion3);
 			dQuestion3 = decrypt(dQuestion3);
 			logger.logInfo(dQuestion3);
 			
-			logger.logInfo(dAnswer3);
-			dAnswer3 = decrypt(dAnswer3);
-			logger.logInfo(dAnswer3);
+			if (dAnswer3 != null) {
+				logger.logInfo(dAnswer3);
+				dAnswer3 = decrypt(dAnswer3);
+				logger.logInfo(dAnswer3);
+			}
 			
 		} catch (Exception e) {
 			
@@ -162,17 +168,17 @@ public class ValidateAllSecurityQAApiOrchestrationCore extends SPJavaOrchestrati
 			dAnswer3 = "I";
 		}
 		
-		if (dAnswer1 != "I") {
+		if (dAnswer1 != null && dAnswer1 != "I") {
 			
 			dAnswer1 = anOriginalRequest.readValueParam("@i_answer_1_id");
 		}
 		
-		if (dAnswer2 != "I") {
+		if (dAnswer2 != null && dAnswer2 != "I") {
 			
 			dAnswer2 = anOriginalRequest.readValueParam("@i_answer_2_id");
 		}
 		
-		if (dAnswer3 != "I") {
+		if (dAnswer3 != null && dAnswer3 != "I") {
 			
 			dAnswer3 = anOriginalRequest.readValueParam("@i_answer_desc");
 		}

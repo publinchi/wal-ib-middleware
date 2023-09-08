@@ -31,7 +31,6 @@ public class AtmDetails implements Serializable {
   private String bankName;
   private String locationId;
   private String transactionId;
-  private String authorizationCode;
   public String getBankName(){
     return this.bankName;
   }
@@ -49,11 +48,5 @@ public class AtmDetails implements Serializable {
   }
   public void setTransactionId(String transactionId ){
     this.transactionId=transactionId;
-  }
-  public String getAuthorizationCode(){
-    return this.authorizationCode;
-  }
-  public void setAuthorizationCode(String authorizationCode ){
-    this.authorizationCode=authorizationCode;
   }
 }

@@ -2726,8 +2726,9 @@ int mapBlank=0;
 							dto.setOperationType(resultSetMapper.getString(6));
 							dto.setCommission(resultSetMapper.getString(7));
 							dto.setIva(resultSetMapper.getString(8));
-							dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
 							dto.setDescription(resultSetMapper.getString(10));
+							dto.setMovementId(resultSetMapper.getString(27));
+							dto.setAuthorizationCode(resultSetMapper.getString(28));
 							dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
 							dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
 							dto.sourceAccountInstance().setAccountNumber(resultSetMapper.getString(13));
@@ -2737,6 +2738,7 @@ int mapBlank=0;
 							dto.destinationAccountInstance().setBankName(resultSetMapper.getString(17));
 							dto.speiDetailsInstance().setReferenceCode(resultSetMapper.getString(18));
 							dto.speiDetailsInstance().setTrackingId(resultSetMapper.getString(19));
+							dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
 							dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
 							dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
 							dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
@@ -2744,8 +2746,7 @@ int mapBlank=0;
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
-							dto.setMovementId(resultSetMapper.getString(27));
-							dto.atmDetailsInstance().setAuthorizationCode(resultSetMapper.getString(28));
+							
 							return dto;
 						}
 					}, false);
