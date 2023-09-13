@@ -103,7 +103,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	private static final String CLASS_NAME = "TransferSpeiApiOrchestationCore--->";
 
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
-
+	
 	protected static final String CHANNEL_REQUEST = "8";
 
 	/**
@@ -146,6 +146,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	}
 
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
+	private static final String TYPE_REENTRY_OFF = "OFF_LINE";
+	private static final String TYPE_REENTRY_OFF_SPI = "OFF_LINE";
+	private static final String ERROR_SPEI = "ERROR_EN_TRANSFERENCIA_SPEI";
 
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
@@ -244,7 +247,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-
+		
+		//headers
+		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
+		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
+		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+		
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN,
 				aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR,

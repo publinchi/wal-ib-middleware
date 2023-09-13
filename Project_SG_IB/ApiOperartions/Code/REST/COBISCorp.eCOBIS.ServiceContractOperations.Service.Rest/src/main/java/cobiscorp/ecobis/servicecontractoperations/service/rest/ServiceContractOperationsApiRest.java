@@ -1420,12 +1420,16 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/transfer/transferSpei")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response transferSpei(RequestTransferSpi inRequestTransferSpi) {
+	public Response transferSpei(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestTransferSpi inRequestTransferSpi) {
 		LOGGER.logDebug("Start service execution REST: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
 
-		if (!validateMandatory(
-				new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
+		if (!validateMandatory(new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferSpi.getOriginAccountNumber()),
 				new Data("destinationAccountNumber", inRequestTransferSpi.getDestinationAccountNumber()),
 				new Data("amount", inRequestTransferSpi.getAmount()),
@@ -1441,7 +1445,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(inRequestTransferSpi);
+			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(xRequestId, xEndUserRequestDate,
+					xEndUserIp, xChannel, inRequestTransferSpi);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1469,7 +1474,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/transfer/transferThirdPartyAccount")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) {
+	public Response transferThirdPartyAccount(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) {
 		LOGGER.logDebug("Start service execution REST: transferThirdPartyAccount");
 		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount = new ResponseTransferThirdPartyAccount();
 
@@ -1484,8 +1494,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseTransferThirdPartyAccount = iServiceContractOperationsApiService
-					.transferThirdPartyAccount(inRequestTransferThirdPartyAccount);
+			outResponseTransferThirdPartyAccount = iServiceContractOperationsApiService.transferThirdPartyAccount(
+					xRequestId, xEndUserRequestDate, xEndUserIp, xChannel, inRequestTransferThirdPartyAccount);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {

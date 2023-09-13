@@ -31,6 +31,7 @@ public class DebitAccountResponse implements Serializable {
   private Boolean success;
   private String referenceCode;
   private Response response;
+  private String movementId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -54,5 +55,11 @@ public class DebitAccountResponse implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public String getMovementId(){
+    return this.movementId;
+  }
+  public void setMovementId(String movementId ){
+    this.movementId=movementId;
   }
 }

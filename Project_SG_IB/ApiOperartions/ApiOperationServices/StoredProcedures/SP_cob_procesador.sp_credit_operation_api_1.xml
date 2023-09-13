@@ -22,6 +22,7 @@
         <column name="code" />
         <column name="message" />
         <column name="referenceCode" />
+        <column name="movementId" />
       </columns>
       <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message,"referenceCode" = tab.referenceCode </queryText>
     </query>
