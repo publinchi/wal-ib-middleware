@@ -8,6 +8,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
@@ -17,6 +18,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="5" index="2">
@@ -26,6 +28,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="3">
@@ -35,6 +38,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="4">
@@ -44,6 +48,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="8" index="5">
@@ -53,6 +58,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="9" index="6">
@@ -62,6 +68,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="10" index="7">
@@ -71,6 +78,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="11" index="8">
@@ -80,6 +88,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="12" index="9">
@@ -89,6 +98,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="13" index="10">
@@ -98,6 +108,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="14" index="11">
@@ -112,6 +123,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="16" index="12">
@@ -121,6 +133,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="17" index="13">
@@ -130,6 +143,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="18" index="14">
@@ -139,6 +153,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="19" index="15">
@@ -148,6 +163,7 @@
       <field type="int" name="maxLength" value="16" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="20" index="16">
@@ -157,6 +173,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="21" index="17">
@@ -166,6 +183,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="22" index="18">
@@ -175,6 +193,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="23" index="19">
@@ -184,6 +203,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="24" index="20">
@@ -198,6 +218,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="26" index="21">
@@ -207,6 +228,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="27" index="22">
@@ -221,6 +243,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="29" index="23">
@@ -230,6 +253,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="30" index="24">
@@ -244,6 +268,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="32" index="25">
@@ -253,6 +278,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="33" index="26">
@@ -262,6 +288,7 @@
       <field type="int" name="maxLength" value="15" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="34" index="27">
@@ -271,6 +298,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="35" index="28">
@@ -280,6 +308,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="36" index="29">
@@ -289,6 +318,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="37" index="30">
@@ -298,6 +328,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="38" index="31">
@@ -312,6 +343,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="40" index="32">
@@ -326,6 +358,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="42" index="33">
@@ -340,6 +373,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
   </collection>
@@ -347,5 +381,5 @@
   <collection type="Map" length="0" id="44" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
-  <field type="String" name="stateDTO" value="NEW" />
+  <field type="String" name="stateDTO" value="" />
 </class>

@@ -39,6 +39,9 @@ public class ResponseMovements {
 	private String four_dataComprobante;
 	private String five_dataComprobante;
 	private String six_dataComprobante;
+	private String ie_request;
+	private String ie_ente;
+	private String causa;
 	
 	public String getFecha() {
 		return fecha;
@@ -233,5 +236,23 @@ public class ResponseMovements {
 	}
 	public void setSix_dataComprobante(String six_dataComprobante) {
 		this.six_dataComprobante = six_dataComprobante;
+	}
+	public String getIe_request() {
+		return ie_request;
+	}
+	public void setIe_request(String ie_request) {
+		this.ie_request = ie_request;
+	}
+	public String getIe_ente() {
+		return ie_ente;
+	}
+	public void setIe_ente(String ie_ente) {
+		this.ie_ente = ie_ente;
+	}
+	public String getCausa() {
+		return causa;
+	}
+	public void setCausa(String causa) {
+		this.causa = causa;
 	}	
 }

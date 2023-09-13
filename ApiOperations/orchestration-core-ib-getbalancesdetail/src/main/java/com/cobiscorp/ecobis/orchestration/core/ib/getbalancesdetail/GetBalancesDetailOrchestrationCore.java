@@ -178,7 +178,7 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("accountingBalance", ICTSTypes.SYBDECIMAL, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("official", ICTSTypes.SYBINT4, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeAccountNumber", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("idDebitCard", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardNumber", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("stateDebitCard", ICTSTypes.SYBVARCHAR, 255));
 

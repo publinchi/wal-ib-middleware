@@ -255,15 +255,18 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		
-		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
+		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
+			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -283,7 +286,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		return wProductsQueryResp;
 	}
 
-	private void registerLogBd(IProcedureRequest aRequest, IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
+	private void registerLogBd(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -308,13 +311,22 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 
 		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
-		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, reponseAccount.readValueParam("@o_ssn_host"));
+		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, aResponse.readValueParam("@o_ssn_host"));
 		request.addInputParam("@i_reverse_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_uuid"));
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
+		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq_tran"));
+		}
+		
+		aBagSPJavaOrchestration.put("@o_seq_tran", wProductsQueryResp.readValueParam("@o_seq_tran"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking registerLog: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -345,6 +357,8 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
@@ -363,6 +377,8 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 	
 				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
 				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
+				row.addRowData(3, new ResultSetRowColumnData(false, null));
+				row.addRowData(4, new ResultSetRowColumnData(false, null));
 				
 				data.addRow(row);
 				
@@ -376,6 +392,8 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
+				row.addRowData(3, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
 				
 				data.addRow(row);	
 			}
@@ -387,6 +405,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			IResultSetRow row = new ResultSetRow();
 			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			
 			data.addRow(row);
 			
 			IResultSetRow row2 = new ResultSetRow();
@@ -398,10 +417,10 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			
 			wProcedureResponse.setReturnCode(1);
 		}
-
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		

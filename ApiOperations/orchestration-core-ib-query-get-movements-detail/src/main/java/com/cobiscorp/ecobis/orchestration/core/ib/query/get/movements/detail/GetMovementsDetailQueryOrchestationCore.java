@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -223,6 +224,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setReferenciaSpei(columns[22].getValue());
 			respMovement.setRastreoSpei(columns[23].getValue());
 			respMovement.setTrnReferencia(Integer.parseInt(columns[24].getValue()));
+			respMovement.setIe_request(columns[25].getValue());
+			respMovement.setIe_ente(columns[26].getValue());
+			respMovement.setCausa(columns[27].getValue());
 			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
@@ -326,6 +330,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_script", ICTSTypes.SQLVARCHAR, script);
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
+		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
 		
 	
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -381,7 +386,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		three_dataComprobante varchar(250) null,\r\n"
 				+ "		four_dataComprobante varchar(250) null,\r\n"
 				+ "		five_dataComprobante varchar(250) null,\r\n"
-				+ "		six_dataComprobante varchar(250) null)\r\n";
+				+ "		six_dataComprobante varchar(250) null,\r\n"
+				+ "		ie_request varchar(max) null,\r\n"
+				+ "		ie_ente int null,\r\n"
+				+ "		causa int null)\r\n";
 		
 		for (ResponseMovements respMov : responseMovementsList) {
 			script = script + "insert into ultimos_movimientos_local values (\r\n";
@@ -416,7 +424,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getThree_dataComprobante() != null ? "'" +  respMov.getThree_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getFour_dataComprobante() != null ? "'" + respMov.getFour_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getFive_dataComprobante() != null ? "'" + respMov.getFive_dataComprobante() + "'" : "null") + ",";
-			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ")\r\n";
+			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ",";
+			script = script + (respMov.getIe_request() != null ? "'" + respMov.getIe_request() + "'" : "null") + ",";
+			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ",";
+			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -545,6 +556,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("establishmentNameSD", ICTSTypes.SQLVARCHAR, 32));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdSD", ICTSTypes.SQLVARCHAR, 30));
 			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionId", ICTSTypes.SQLVARCHAR, 30));
+			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLVARCHAR, 30));
+			
 			/*metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));*/
 	
@@ -593,23 +608,98 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				    	iva = "0";
 				}
 				
-				String trackingKey = columns[23].getValue();
-				String operationType = columns[4].getValue();
-				String movementType = "";
+				if (destinyOwnerName!=null && isNumeric(destinyOwnerName.trim())) {
+					destinyOwnerName = null;
+				}
 				
-				if (trackingKey != null || columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+				
+				String type_movement = columns[35].getValue();
+				String is_dock_idc = columns[36].getValue();
+				String type_auth = columns[37].getValue();
+                String operationType = columns[4].getValue();
+				String movementType = null;
+				
+				if (type_movement.equals("SPEI") || (columns[1].getValue() !=null && columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI"))) {
+					
 					movementType = "SPEI_";
-				} else {
+					if (operationType.equals("D")) {
+						movementType = movementType + "DEBIT";
+					}
+					
+					if (operationType.equals("C")) {
+						movementType = movementType + "CREDIT";
+					}
+				} else if (type_movement.equals("P2P")) {
+					
 					movementType = "P2P_";
-				}
-				
-				if (operationType.equals("D")) {
-					movementType = movementType + "DEBIT";
-				}
-				
-				if (operationType.equals("C")) {
-					movementType = movementType + "CREDIT";
-				}
+					if (operationType.equals("D")) {
+						movementType = movementType + "DEBIT";
+					}
+					
+					if (operationType.equals("C")) {
+						movementType = movementType + "CREDIT";
+					}
+				} else if (type_movement.equals("AUTH")) {
+					
+					if (type_auth.equals("WITHDRAWAL")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "ATM_DEBIT";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "DEBIT_AT_STORE";
+						}
+					}
+					
+					if (type_auth.equals("PURCHASE")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "PURCHASE_ONLINE";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "PURCHASE_AT_STORE";
+						}
+					}
+					
+					if (type_auth.equals("DEPOSIT")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "CREDIT_AT_STORE";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "CREDIT_AT_STORE";
+						}
+					}
+
+					if (type_auth.equals("REVERSAL")) {
+						
+						if (is_dock_idc.equals("DOCK")) {
+							movementType = "REVERSAL";
+						}
+						
+						if (is_dock_idc.equals("IDC")) {
+							movementType = "REVERSAL";
+						}
+					}
+					
+				} else if (type_movement.equals("ISO")) {
+					
+					if (type_auth.equals("WITHDRAWAL")) {
+						movementType = "ATM_DEBIT";
+					}
+					
+					if (type_auth.equals("PURCHASE")) {
+						movementType = "PURCHASE_ONLINE";
+					}
+					
+					if (type_auth.equals("REVERSAL")) {
+						movementType = "REVERSAL";
+					}
+				} 
+			
 			
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
@@ -644,6 +734,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(25, new ResultSetRowColumnData(false, columns[31].getValue()));
 				rowDat.addRowData(26, new ResultSetRowColumnData(false, columns[32].getValue()));
+				
+				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
+				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
 				
 				/*rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));*/
@@ -731,5 +824,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			}		
 		}
 		return true;		
+	}
+	
+	public boolean isNumeric(String strNum) {
+
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+		if (strNum == null) {
+
+			return false;
+		}
+		return pattern.matcher(strNum).matches();
 	}
 }

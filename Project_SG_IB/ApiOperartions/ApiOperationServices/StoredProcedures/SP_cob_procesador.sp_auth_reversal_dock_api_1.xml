@@ -94,8 +94,9 @@
   <queries>
     <query>
       <columns>
-        <column name="code" />
-        <column name="message" />
+        <column name="response" />
+        <column name="reason" />
+        <column name="authorization_code" />
       </columns>
       <queryText></queryText>
     </query>

@@ -34,6 +34,8 @@ public class ResponseAuthorizeDepositDock implements Serializable {
   private ArrayList response;
   private String reason;
   private String available_limit;
+  private Integer authorization_code;
+  private String seq;
   public String getApproved_value(){
     return this.approved_value;
   }
@@ -69,5 +71,17 @@ public class ResponseAuthorizeDepositDock implements Serializable {
   }
   public void setAvailable_limit(String available_limit ){
     this.available_limit=available_limit;
+  }
+  public Integer getAuthorization_code(){
+    return this.authorization_code;
+  }
+  public void setAuthorization_code(Integer authorization_code ){
+    this.authorization_code=authorization_code;
+  }
+  public String getSeq(){
+    return this.seq;
+  }
+  public void setSeq(String seq ){
+    this.seq=seq;
   }
 }

@@ -29,17 +29,17 @@ import java.util.HashMap;
 
 public class CstmrAnswer3 implements Serializable {
   private String questionDescription;
-  private String responseDescription;
+  private String answerDescription;
   public String getQuestionDescription(){
     return this.questionDescription;
   }
   public void setQuestionDescription(String questionDescription ){
     this.questionDescription=questionDescription;
   }
-  public String getResponseDescription(){
-    return this.responseDescription;
+  public String getAnswerDescription(){
+    return this.answerDescription;
   }
-  public void setResponseDescription(String responseDescription ){
-    this.responseDescription=responseDescription;
+  public void setAnswerDescription(String answerDescription ){
+    this.answerDescription=answerDescription;
   }
 }

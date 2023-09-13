@@ -152,7 +152,6 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		//request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_person_id"));
@@ -182,7 +181,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-		//request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
+		
 		//Header
 		request.addInputParam("@x_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client-id"));
 		request.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
@@ -250,16 +249,19 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		
-		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");		
+		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");	
+		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("response " +  wProductsQueryResp.toString());
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
+			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
 			aBagSPJavaOrchestration.put("codeErrorApi", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -278,7 +280,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		return wProductsQueryResp;
 	}
 
-	private void registerLogBd(IProcedureRequest aRequest, IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
+	private void registerLogBd(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -303,13 +305,22 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 
 		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
-		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, reponseAccount.readValueParam("@o_ssn_host"));
+		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, aResponse.readValueParam("@o_ssn_host"));
 		request.addInputParam("@i_reverse_tran", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_uuid_reverse"));
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
+		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq_tran"));
+		}
+		
+		aBagSPJavaOrchestration.put("@o_seq_tran", wProductsQueryResp.readValueParam("@o_seq_tran"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking registerLog: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -337,15 +348,19 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
+		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("approved_value", ICTSTypes.SQLMONEY4, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("settlement_value", ICTSTypes.SQLMONEY4, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardholder_billing_value", ICTSTypes.SQLVARCHAR, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("available_limit", ICTSTypes.SQLMONEY4, 25));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
+		
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
@@ -353,7 +368,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		if (codeReturn == 0) {		
 			
 			if(aBagSPJavaOrchestration.containsKey("codeErrorApi")){
-				//logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+
 				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("codeErrorApi"));
 				
 				IResultSetRow row = new ResultSetRow();
@@ -363,44 +378,53 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 				row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
 				row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("messageError").toString() + " [" + aBagSPJavaOrchestration.get("codeErrorApi").toString() + "]"));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
-				data.addRow(row);
+				row.addRowData(7, new ResultSetRowColumnData(false, null));
+				row.addRowData(8, new ResultSetRowColumnData(false, null));
 				
-				/*IResultSetRow row2 = new ResultSetRow();
-				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
-				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
-				data2.addRow(row2);*/
-			}
-			 else {
-				logger.logDebug("Ending flow, processResponse succes");
+				data.addRow(row);
+
+			} else {
+				
+				logger.logDebug("Ending flow, processResponse successful...");
+				
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+				
 				IResultSetRow row = new ResultSetRow();
+				
 				row.addRowData(1, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("monto").toString()));
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(5, new ResultSetRowColumnData(false, "Transacction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString() ));
+				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
-				data.addRow(row);
+				row.addRowData(7, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
+				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
 				
+				data.addRow(row);
 			}
+			
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			IResultSetRow row = new ResultSetRow();
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			data.addRow(row);
 			
 			IResultSetRow row2 = new ResultSetRow();
+			
 			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
 			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
+			
 			data2.addRow(row2);
+			
 			wProcedureResponse.setReturnCode(1);
 		}
-
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+	
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		

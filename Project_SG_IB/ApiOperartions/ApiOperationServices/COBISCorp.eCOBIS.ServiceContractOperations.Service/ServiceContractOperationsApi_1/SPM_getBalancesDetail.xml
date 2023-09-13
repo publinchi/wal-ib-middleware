@@ -173,7 +173,7 @@
           <field type="int" name="position" value="20" />
           <field type="String" name="columnName" value="idDebitCard" />
           <field type="String" name="dTOAlias" value="returnResponseGetBalancesDetail" />
-          <field type="String" name="dTOPropertyName" value="idDebitCard" />
+          <field type="String" name="dTOPropertyName" value="cardId" />
           <field type="String" name="dataType" value="int?" />
           <field type="String" name="format" value="" />
         </class>

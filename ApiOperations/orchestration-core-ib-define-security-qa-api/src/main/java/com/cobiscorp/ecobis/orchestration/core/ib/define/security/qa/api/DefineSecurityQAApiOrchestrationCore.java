@@ -127,6 +127,7 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		}
 			
 		try {
+			
 			logger.logInfo(dQuestion1);			
 			dQuestion1 = decrypt(dQuestion1);
 			logger.logInfo(dQuestion1);
@@ -151,9 +152,16 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 			dAnswer3 = decrypt(dAnswer3);
 			logger.logInfo(dAnswer3);
 			
-		} catch (Exception e){
+		} catch (Exception e) {
 			
-			logger.logError(e);
+			logger.logError("Exception is: "+e);
+			
+			dQuestion1 = "I";
+			dAnswer1 = "I";
+			dQuestion2 = "I";
+			dAnswer2 = "I";
+			dQuestion3 = "I";
+			dAnswer3 = "I";
 		}
 		
 		aBagSPJavaOrchestration.put("dQuestion1", dQuestion1);
@@ -175,61 +183,6 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 
 	}
 	
-	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Starting processResponseError defineSecurityQA--->");
-		}
-
-		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		
-		// Agregar Header 1
-		IResultSetHeader metaData = new ResultSetHeader();
-		IResultSetData data = new ResultSetData();
-		
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-	
-		// Agregar Header 2
-		IResultSetHeader metaData2 = new ResultSetHeader();
-		IResultSetData data2 = new ResultSetData();
-		
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-		
-		
-		/***************************************success***************************************/
-
-		IResultSetRow row = new ResultSetRow();
-		
-		row.addRowData(1, 
-				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue()));
-		
-		data.addRow(row);
-		
-		/***************************************code/message************************************/
-		
-		IResultSetRow row2 = new ResultSetRow();
-
-		row2.addRowData(1,
-				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
-		row2.addRowData(2, 
-				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue()));
-
-		data2.addRow(row2);
-		
-		
-		//return
-		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-	
-		
-		anOriginalProcedureResponse.setReturnCode(200);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-
-
-		return anOriginalProcedureResponse;
-	}
-
 	private IProcedureResponse defineSecurityQaVal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest valRequest = new ProcedureRequestAS();
@@ -246,11 +199,11 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		
 		valRequest.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		
-		valRequest.addInputParam("@i_question_1_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion1"));
-		valRequest.addInputParam("@i_answer_1_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dAnswer1"));
+		valRequest.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dQuestion1"));
+		valRequest.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dAnswer1"));
 		
-		valRequest.addInputParam("@i_question_2_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dQuestion2"));
-		valRequest.addInputParam("@i_answer_2_id", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("dAnswer2"));
+		valRequest.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dQuestion2"));
+		valRequest.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dAnswer2"));
 		
 		valRequest.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dQuestion3"));
 		valRequest.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("dAnswer3"));
@@ -309,7 +262,7 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 			
 		} catch (Exception e){
 			
-			logger.logError(e);
+			logger.logError("Exception is: "+e);
 		}
 		
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -422,6 +375,61 @@ public class DefineSecurityQAApiOrchestrationCore extends SPJavaOrchestrationBas
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
 		logger.logInfo(CLASS_NAME + " processTransformationResponse final DCO response" + anOriginalProcedureResponse.getProcedureResponseAsString());
+		return anOriginalProcedureResponse;
+	}
+	
+	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Starting processResponseError defineSecurityQA--->");
+		}
+
+		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		
+		// Agregar Header 1
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+	
+		// Agregar Header 2
+		IResultSetHeader metaData2 = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+		
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		
+		/***************************************success***************************************/
+
+		IResultSetRow row = new ResultSetRow();
+		
+		row.addRowData(1, 
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue()));
+		
+		data.addRow(row);
+		
+		/***************************************code/message************************************/
+		
+		IResultSetRow row2 = new ResultSetRow();
+
+		row2.addRowData(1,
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
+		row2.addRowData(2, 
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue()));
+
+		data2.addRow(row2);
+		
+		
+		//return
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+	
+		
+		anOriginalProcedureResponse.setReturnCode(200);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+
+
 		return anOriginalProcedureResponse;
 	}
 	

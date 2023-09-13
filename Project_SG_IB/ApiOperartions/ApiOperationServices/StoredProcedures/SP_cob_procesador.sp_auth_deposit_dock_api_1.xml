@@ -79,6 +79,7 @@
         <column name="response" />
         <column name="reason" />
         <column name="available_imit" />
+        <column name="authorization_code" />
       </columns>
       <queryText>SELECT "aproved_value"=o_aproved_value,"settlement_value"=o_settlement_value,"cardholder_billing_value"=o_cardholder_billing_value,"reason"=o_reason,"available_imit"=o_available_limit</queryText>
     </query>
