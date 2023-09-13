@@ -560,6 +560,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLVARCHAR, 30));
 			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankBranchCode", ICTSTypes.SQLVARCHAR, 30));
+			
 			/*metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));*/
 	
@@ -618,12 +620,18 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String type_auth = columns[37].getValue();
                 String operationType = columns[4].getValue();
 				String movementType = null;
+				String referenciaSpei = columns[22].getValue();
 				
 				if (type_movement.equals("SPEI") || (columns[1].getValue() !=null && columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI"))) {
 					
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
-						movementType = movementType + "DEBIT";
+						
+						if (referenciaSpei.contains("-")) {
+							movementType = movementType + "RETURN";
+						} else {
+							movementType = movementType + "DEBIT";	
+						}
 					}
 					
 					if (operationType.equals("C")) {
@@ -698,6 +706,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if (type_auth.equals("REVERSAL")) {
 						movementType = "REVERSAL";
 					}
+					
+					if (type_auth.equals("CONSULT")) {
+						movementType = "CONSULT";
+					}
 				} 
 			
 			
@@ -737,6 +749,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
+				
+				rowDat.addRowData(29, new ResultSetRowColumnData(false, columns[39].getValue()));
 				
 				/*rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));*/
