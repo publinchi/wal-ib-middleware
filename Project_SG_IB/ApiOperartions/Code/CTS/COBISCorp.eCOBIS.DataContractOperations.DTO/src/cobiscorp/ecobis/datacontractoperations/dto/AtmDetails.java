@@ -31,6 +31,7 @@ public class AtmDetails implements Serializable {
   private String bankName;
   private String locationId;
   private String transactionId;
+  private String bankBranchCode;
   public String getBankName(){
     return this.bankName;
   }
@@ -48,5 +49,11 @@ public class AtmDetails implements Serializable {
   }
   public void setTransactionId(String transactionId ){
     this.transactionId=transactionId;
+  }
+  public String getBankBranchCode(){
+    return this.bankBranchCode;
+  }
+  public void setBankBranchCode(String bankBranchCode ){
+    this.bankBranchCode=bankBranchCode;
   }
 }
