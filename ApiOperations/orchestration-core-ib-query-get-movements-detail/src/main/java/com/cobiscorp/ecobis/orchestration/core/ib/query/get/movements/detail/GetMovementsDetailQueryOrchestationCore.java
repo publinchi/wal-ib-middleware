@@ -347,14 +347,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	}
 
 	private String createScriptFromDataCentral(List<ResponseMovements> responseMovementsList) {
-		String script = ""
-				+ "IF OBJECT_ID('ultimos_movimientos_local') IS NOT NULL\r\n"
-				+ "	BEGIN		\r\n"
-				+ "		drop TABLE ultimos_movimientos_local\r\n"
-				+ "	END\r\n"
-				+ "	ELSE\r\n"
-				+ "\r\n"
-				+ "	create table ultimos_movimientos_local ( \r\n"
+		String script = "";
+				/*+ "	create table #ultimos_movimientos_local ( \r\n"
 				+ "		fecha				varchar(250),\r\n"
 				+ "		transaccion			varchar(250) null,\r\n"
 				+ "		cod_tran			varchar(250) null,\r\n"
@@ -389,10 +383,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				+ "		six_dataComprobante varchar(250) null,\r\n"
 				+ "		ie_request varchar(max) null,\r\n"
 				+ "		ie_ente int null,\r\n"
-				+ "		causa int null)\r\n";
+				+ "		causa int null)\r\n";*/
 		
 		for (ResponseMovements respMov : responseMovementsList) {
-			script = script + "insert into ultimos_movimientos_local values (\r\n";
+			script = script + "insert into #ultimos_movimientos_local values (\r\n";
 			script = script + (respMov.getFecha() != null ? "'" + respMov.getFecha() + "'" : "null") + ",";
 			script = script + (respMov.getTransaccion() != null ? "'" + respMov.getTransaccion() + "'" : "null") + ",";
 			script = script + (respMov.getCod_tran() != null ? "'" + respMov.getCod_tran() + "'" : "null") + ",";
