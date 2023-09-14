@@ -29,19 +29,20 @@ import java.util.HashMap;
 
 public class DebitAccountResponse implements Serializable {
   private Boolean success;
-  private String movementId;
+  private String referenceCode;
   private Response response;
+  private String movementId;
   public Boolean isSuccess(){
     return this.success;
   }
   public void setSuccess(Boolean success ){
     this.success=success;
   }
-  public String getMovementId(){
-    return this.movementId;
+  public String getReferenceCode(){
+    return this.referenceCode;
   }
-  public void setMovementId(String movementId ){
-    this.movementId=movementId;
+  public void setReferenceCode(String referenceCode ){
+    this.referenceCode=referenceCode;
   }
   public Response responseInstance(){
 	if(this.response==null){
@@ -54,5 +55,11 @@ public class DebitAccountResponse implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public String getMovementId(){
+    return this.movementId;
+  }
+  public void setMovementId(String movementId ){
+    this.movementId=movementId;
   }
 }

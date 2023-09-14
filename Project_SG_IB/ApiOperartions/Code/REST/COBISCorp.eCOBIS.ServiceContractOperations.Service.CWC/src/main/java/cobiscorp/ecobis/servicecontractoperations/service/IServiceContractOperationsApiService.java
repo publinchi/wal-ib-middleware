@@ -339,15 +339,16 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseTransferSpi transferSpei(RequestTransferSpi inRequestTransferSpi) throws CTSRestException;
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException;
 
 	/**
 	 * Service for transfer to a third party account
 	 */
 
 	// Have DTO
-	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(
-			RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) throws CTSRestException;
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+			String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) throws CTSRestException;
 
 	/**
     * Update Account Beneficiary
