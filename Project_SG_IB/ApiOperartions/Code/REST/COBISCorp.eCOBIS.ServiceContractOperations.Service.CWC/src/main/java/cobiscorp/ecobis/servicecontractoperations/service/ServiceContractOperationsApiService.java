@@ -2742,6 +2742,7 @@ int mapBlank=0;
 							dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
 							dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
 							dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
+							dto.atmDetailsInstance().setBankBranchCode(resultSetMapper.getString(29));
 							dto.merchantDetailsInstance().setEstablishmentName(resultSetMapper.getString(23));
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
