@@ -16,6 +16,10 @@
     <parameter name="@i_latitud" dataType="money" direction="in" />
     <parameter name="@i_longitud" dataType="money" direction="in" />
     <parameter name="@i_detalle" dataType="varchar" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
@@ -36,6 +40,12 @@
         <column name="referenceCode" />
       </columns>
       <queryText>SELECT "referenceCode"=0</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="movementId" />
+      </columns>
+      <queryText></queryText>
     </query>
   </queries>
 </procedure>
