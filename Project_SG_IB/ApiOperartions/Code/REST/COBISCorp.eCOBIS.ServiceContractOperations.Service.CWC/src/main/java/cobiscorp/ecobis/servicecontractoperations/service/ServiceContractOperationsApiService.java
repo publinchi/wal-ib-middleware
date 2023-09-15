@@ -55,6 +55,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	@Reference(name = "ctsRestIntegrationService", referenceInterface = ICTSRestIntegrationService.class, bind = "setctsRestIntegrationService", unbind = "unsetctsRestIntegrationService", cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.DYNAMIC)
 	private ICTSRestIntegrationService ctsRestIntegrationService;
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
+	private String jsonHead = null;
 
 	public void saveAuthResponse(String seqTran, String jsonRes) throws CTSRestException {
 		
@@ -73,7 +74,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		LOGGER.logDebug("Ends funtion execution: saveAuthResponse");
 	}
 	
-	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes) throws CTSRestException {
+	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes, String jsonHead) throws CTSRestException {
 		
 		LOGGER.logDebug("Start funtion execution: saveCobisTrnReqRes");
 		
@@ -84,6 +85,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
 		procedureRequestAS.addInputParam("@i_request_trn",ICTSTypes.SQLVARCHAR, jsonReq);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		procedureRequestAS.addInputParam("@i_header_trn",ICTSTypes.SQLVARCHAR, jsonHead);
 		
 		//execute procedure
 	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -166,7 +168,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         Gson gson2 = new Gson();
         String jsonRes = gson2.toJson(outSingleCreditAccountResponse);
 	
-        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: creditOperation");
         //returns data
@@ -254,7 +256,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAffiliateCustomer);
 			
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
             LOGGER.logDebug("Ends service execution: affiliateCustomer");
             // returns data
@@ -1877,7 +1879,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outCreateCustomerResponse);
 			
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createCustomer");
 			// returns data
@@ -1977,7 +1979,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		  Gson gson2 = new Gson();
 		  String jsonRes = gson2.toJson(outResponseDeleteBeneficiary);
 		
-		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		
 		  LOGGER.logDebug("Ends service execution: deleteBeneficiary");
 		  //returns data
@@ -2054,7 +2056,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outSingleResponseEncriptData);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: encryptData");
         //returns data
@@ -2133,7 +2135,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outSingleResponseOtp);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: generateTransactionFactor");
 		// returns data
@@ -2222,7 +2224,7 @@ int mapBlank=0;
     Gson gson2 = new Gson();
     String jsonRes = gson2.toJson(outResponseGetColonyByMunicipality);
 
-    saveCobisTrnReqRes(trn, jsonReq, jsonRes); 
+    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead); 
       
   LOGGER.logDebug("Ends service execution: getColonyByMunicipality");
   //returns data
@@ -2321,7 +2323,7 @@ int mapBlank=0;
         Gson gson2 = new Gson();
         String jsonRes = gson2.toJson(outSingleResponseGetBalancesDetail);
 	
-        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: getBalancesDetail");
         //returns data
@@ -2459,7 +2461,7 @@ int mapBlank=0;
 	      Gson gson2 = new Gson();
 	      String jsonRes = gson2.toJson(outGetBeneficiaryResponse);
 		
-	      saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+	      saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		
 		  LOGGER.logDebug("Ends service execution: getBeneficiary");
 		  //returns data
@@ -2584,7 +2586,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outResponseCatalog);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getCatalog");
 		// returns data
@@ -2742,6 +2744,7 @@ int mapBlank=0;
 							dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
 							dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
 							dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
+							dto.atmDetailsInstance().setBankBranchCode(resultSetMapper.getString(29));
 							dto.merchantDetailsInstance().setEstablishmentName(resultSetMapper.getString(23));
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
@@ -2773,7 +2776,7 @@ int mapBlank=0;
         Gson gson2 = new Gson();
         String jsonRes = gson2.toJson(outResponseGetMovementsDetail);
 	
-        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getMovementsDetail");
 		// returns data
@@ -2862,7 +2865,7 @@ int mapBlank=0;
         Gson gson2 = new Gson();
         String jsonRes = gson2.toJson(outResponseMunicipalityByState);
 	
-        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getMunicipalityByState");
 		// returns data
@@ -2994,7 +2997,7 @@ int mapBlank=0;
          Gson gson2 = new Gson();
          String jsonRes = gson2.toJson(outResponseOwnAccountsView);
 	
-         saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+         saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 	   
 	     LOGGER.logDebug("Ends service execution: getOwnAccountsView");
 	     //returns data
@@ -3072,7 +3075,7 @@ int mapBlank=0;
 	        Gson gson2 = new Gson();
 	        String jsonRes = gson2.toJson(outStateByZipCodeResponse);
 		
-	        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+	        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: getStateByZipCode");
 			// returns data
@@ -3173,7 +3176,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outResponseGetUserEntityInformation);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getUserEntityInformation");
 		// returns data
@@ -3305,7 +3308,7 @@ int mapBlank=0;
 	    Gson gson2 = new Gson();
 	    String jsonRes = gson2.toJson(outRegisterBeneficiaryResponse);
 		
-	    saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: registerBeneficiary");
 		// returns data
@@ -3398,7 +3401,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(toReturn);
 			
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: searchZipCode");
 
@@ -3512,7 +3515,7 @@ int mapBlank=0;
 		  Gson gson2 = new Gson();
 		  String jsonRes = gson2.toJson(outUpdateCustomerAddressResponse);
 			
-		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		
 		  LOGGER.logDebug("Ends service execution: updateCustomerAddress");
 		  //returns data
@@ -3595,7 +3598,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outSingleResponseUpdateProfile);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: updateProfile");
 		// returns data
@@ -3827,7 +3830,7 @@ int mapBlank=0;
 		  Gson gson2 = new Gson();
 		  String jsonRes = gson2.toJson(outResponseRegisterAccountSpei);
 			
-		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		
 		  LOGGER.logDebug("Ends service execution: registerAccount");
 		  //returns data
@@ -3995,7 +3998,7 @@ int mapBlank=0;
 	    Gson gson2 = new Gson();
 	    String jsonRes = gson2.toJson(outResponseSearchLocationCatalog);
 
-	    saveCobisTrnReqRes(trn, jsonReq, jsonRes); 
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: searchLocationCatalog");
 		// returns data
@@ -4007,12 +4010,19 @@ int mapBlank=0;
 	 */
 	@Override
 	// Have DTO
-	public ResponseTransferSpi transferSpei(RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
 
 		// create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transfer_spei_api");
+		
+		// headers
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
 		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500115");
 		procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
@@ -4164,140 +4174,192 @@ int mapBlank=0;
 	
 	    Gson gson2 = new Gson();
 	    String jsonRes = gson2.toJson(outResponseTransferSpi);
+	    
+	    Header header = new Header();
+		  
+		header.setAccept("application/json");
+		header.setX_request_id(xRequestId);
+		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_ip(xEndUserIp);
+		header.setX_channel(xChannel);
+		header.setContent_type("application/json");
+	    
+	    Gson gson3 = new Gson();
+	    String jsonHead = gson3.toJson(header);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: transferSpei");
 		// returns data
 		return outResponseTransferSpi;
 	}
 	
-	    /**
-	    * Service for transfer to a third party account
-	    */
-	   @Override
-		//Have DTO
-		public ResponseTransferThirdPartyAccount transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount  )throws CTSRestException{
+	/**
+	 * Service for transfer to a third party account
+	 */
+	@Override
+	// Have DTO
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate,
+			String xEndUserIp, String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount)
+			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferThirdPartyAccount");
-		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount  = new ResponseTransferThirdPartyAccount();
-		    
-		//create procedure
+		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount = new ResponseTransferThirdPartyAccount();
+
+		// create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transf_third_account_api");
-		
-		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500114");
-		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getOriginAccountNumber());
-		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationNumber());
-		procedureRequestAS.addInputParam("@i_val",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
-		procedureRequestAS.addInputParam("@i_concepto",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDescription());
-		procedureRequestAS.addInputParam("@i_comision",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
-		procedureRequestAS.addInputParam("@i_latitud",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getLatitude()));
-		procedureRequestAS.addInputParam("@i_longitud",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
-		procedureRequestAS.addInputParam("@i_detalle",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDetail());
-		
-		//execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
-		
+
+		// headers
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500114");
+		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getOriginAccountNumber());
+		procedureRequestAS.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getDestinationNumber());
+		procedureRequestAS.addInputParam("@i_val", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
+		procedureRequestAS.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getDescription());
+		procedureRequestAS.addInputParam("@i_comision", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
+		procedureRequestAS.addInputParam("@i_latitud", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getLatitude()));
+		procedureRequestAS.addInputParam("@i_longitud", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
+		procedureRequestAS.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getDetail());
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
 		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		//throw error
-		if(errors!= null && errors.size()> 0){
-		LOGGER.logDebug("Procedure execution returns error");
-		if ( LOGGER.isDebugEnabled() ) {
-		for (int i = 0; i < errors.size(); i++) {
-		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-		}
-		}
-		throw new CTSRestException("Procedure Response has errors", null, errors);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
 		}
 		LOGGER.logDebug("Procedure ok");
-		//Init map returns
-		int mapTotal=0;
-		int mapBlank=0;
-		
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseTransferThirdPartyAccount>() { 
-		              @Override
-		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
-		              
-		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseTransferThirdPartyAccount.setSuccess(returnResponseTransferThirdPartyAccount.isSuccess());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseTransferThirdPartyAccount>() { 
-		              @Override
-		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
-		              
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseTransferThirdPartyAccount.setResponse(returnResponseTransferThirdPartyAccount.getResponse());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseTransferThirdPartyAccount>() { 
-		              @Override
-		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
-		              
-		                    dto.setMovementId(resultSetMapper.getString(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseTransferThirdPartyAccount.setMovementId(returnResponseTransferThirdPartyAccount.getMovementId());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		//End map returns
-		if(mapBlank!=0&&mapBlank==mapTotal){
-		LOGGER.logDebug("No data found");
-		throw new CTSRestException("404",null);
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0),
+							new RowMapper<ResponseTransferThirdPartyAccount>() {
+								@Override
+								public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper,
+										int index) {
+									ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+
+									dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+									return dto;
+								}
+							}, false);
+
+			outResponseTransferThirdPartyAccount.setSuccess(returnResponseTransferThirdPartyAccount.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
 		}
-		
-		  String trn = "Transfer to third party account";
-	      
-		  Gson gson = new Gson();
-		  String jsonReq = gson.toJson(inRequestTransferThirdPartyAccount);
-			
-		  Gson gson2 = new Gson();
-		  String jsonRes = gson2.toJson(outResponseTransferThirdPartyAccount);
-			
-		  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
-		
-		  LOGGER.logDebug("Ends service execution: transferThirdPartyAccount");
-		  //returns data
-		  return outResponseTransferThirdPartyAccount;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1),
+							new RowMapper<ResponseTransferThirdPartyAccount>() {
+								@Override
+								public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper,
+										int index) {
+									ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
+									return dto;
+								}
+							}, false);
+
+			outResponseTransferThirdPartyAccount.setResponse(returnResponseTransferThirdPartyAccount.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
 		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2
+				&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2),
+							new RowMapper<ResponseTransferThirdPartyAccount>() {
+								@Override
+								public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper,
+										int index) {
+									ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+
+									dto.setMovementId(resultSetMapper.getString(1));
+									return dto;
+								}
+							}, false);
+
+			outResponseTransferThirdPartyAccount.setMovementId(returnResponseTransferThirdPartyAccount.getMovementId());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		String trn = "Transfer to third party account";
+
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestTransferThirdPartyAccount);
+
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseTransferThirdPartyAccount);
+		
+		Header header = new Header();
+		  
+		header.setAccept("application/json");
+		header.setX_request_id(xRequestId);
+		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_ip(xEndUserIp);
+		header.setX_channel(xChannel);
+		header.setContent_type("application/json");
+	    
+	    Gson gson3 = new Gson();
+	    String jsonHead = gson3.toJson(header);
+
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: transferThirdPartyAccount");
+		// returns data
+		return outResponseTransferThirdPartyAccount;
+	}
 	   
 
        /**
@@ -4397,7 +4459,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outUpdateBeneficiaryResponse);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 	   
 	     LOGGER.logDebug("Ends service execution: updateAccountBebeficiary");
 	     //returns data
@@ -4507,7 +4569,7 @@ int mapBlank=0;
 		    Gson gson2 = new Gson();
 		    String jsonRes = gson2.toJson(outResponseUpdateAccountStatus);
 			
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: updateAccountStatus");
 			// returns data
@@ -4632,7 +4694,7 @@ int mapBlank=0;
 		      Gson gson2 = new Gson();
 		      String jsonRes = gson2.toJson(outResponseUpdateCardStatus);
 			
-			  saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		      saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		    
 		      LOGGER.logDebug("Ends service execution: updateCardStatus");
 		      //returns data
@@ -4787,7 +4849,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outResponseValidateIdentity);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateIdentity");
 		// returns data
@@ -4954,7 +5016,7 @@ int mapBlank=0;
         Gson gson2 = new Gson();
         String jsonRes = gson2.toJson(outResponseDeviceActivation);
 	
-        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: activateDevice");
 		// returns data
@@ -5063,7 +5125,7 @@ int mapBlank=0;
         Gson gson2 = new Gson();
         String jsonRes = gson2.toJson(outResponseValidateDeviceActivation);
 	
-        saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateDeviceActivation");
 		// returns data
@@ -5222,7 +5284,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outSingleDebitAccountResponse);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: debitOperation");
         //returns data
@@ -5333,7 +5395,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outResponseAllCustomerQuestions);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
      	
         LOGGER.logDebug("Ends service execution: getAllCustomerQuestions");
         //returns data
@@ -5471,7 +5533,7 @@ int mapBlank=0;
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseDefineSecurityQA);
 			
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: defineSecurityQA");
 			// returns data
@@ -5587,7 +5649,7 @@ int mapBlank=0;
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseValidateAllSecurityQA);
 			
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: validateAllSecurityQA");
 			// returns data
@@ -5665,7 +5727,7 @@ int mapBlank=0;
 	    Gson gson2 = new Gson();
 	    String jsonRes = gson2.toJson(outSingleValidateTokenResponse);
 		
-	    saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: validateTransactionFactor");
         //returns data
@@ -5744,7 +5806,7 @@ int mapBlank=0;
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outSingleResponseUpdateCredentials);
 		
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes);
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: updateCredentials");
         //returns data
