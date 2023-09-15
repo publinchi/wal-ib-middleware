@@ -146,7 +146,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	}
 
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
-
+	private static final String TYPE_REENTRY_OFF = "OFF_LINE";
+	private static final String TYPE_REENTRY_OFF_SPI = "S";
+	private static final String ERROR_SPEI = "ERROR_EN_TRANSFERENCIA_SPEI";
 
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
