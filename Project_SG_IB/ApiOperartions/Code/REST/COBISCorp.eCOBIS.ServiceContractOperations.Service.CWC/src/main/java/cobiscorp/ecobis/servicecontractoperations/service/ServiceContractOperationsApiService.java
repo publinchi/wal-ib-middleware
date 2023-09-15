@@ -4181,7 +4181,7 @@ int mapBlank=0;
 		header.setX_request_id(xRequestId);
 		header.setX_end_user_request_date(xEndUserRequestDate);
 		header.setX_end_user_ip(xEndUserIp);
-		header.setX_end_user_ip(xChannel);
+		header.setX_channel(xChannel);
 		header.setContent_type("application/json");
 	    
 	    Gson gson3 = new Gson();
@@ -4348,7 +4348,7 @@ int mapBlank=0;
 		header.setX_request_id(xRequestId);
 		header.setX_end_user_request_date(xEndUserRequestDate);
 		header.setX_end_user_ip(xEndUserIp);
-		header.setX_end_user_ip(xChannel);
+		header.setX_channel(xChannel);
 		header.setContent_type("application/json");
 	    
 	    Gson gson3 = new Gson();
