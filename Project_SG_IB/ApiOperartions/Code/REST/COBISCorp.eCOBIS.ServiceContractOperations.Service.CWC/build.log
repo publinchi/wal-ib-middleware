@@ -1,9 +1,5 @@
 ---CMD---
 
-[WARNING] 
-[WARNING] Some problems were encountered while building the effective settings
-[WARNING] Unrecognised tag: 'blocked' (position: START_TAG seen ...</url>\r\n         <blocked>... @20:19)  @ C:\apache-maven-3.2.5\conf\settings.xml, line 20, column 19
-[WARNING] 
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for COBISCorp.eCOBIS.ServiceContractOperations.Service:COBISCorp.eCOBIS.ServiceContractOperations.Service:jar:1.0.0.0
@@ -36,224 +32,21 @@
 [INFO] --- maven-compiler-plugin:3.5:compile (default-compile) @ COBISCorp.eCOBIS.ServiceContractOperations.Service ---
 [INFO] Changes detected - recompiling the module!
 [INFO] Compiling 2 source files to C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\classes
-[INFO] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\src\main\java\cobiscorp\ecobis\servicecontractoperations\service\ServiceContractOperationsApiService.java uses or overrides a deprecated API.
-[INFO] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java: Recompile with -Xlint:deprecation for details.
-[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
 [INFO] -------------------------------------------------------------
 [ERROR] COMPILATION ERROR : 
 [INFO] -------------------------------------------------------------
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[156,46] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse)
-  location: variable outCreateCustomerResponse of type cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[178,46] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse)
-  location: variable outCreateCustomerResponse of type cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[199,46] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse)
-  location: variable outCreateCustomerResponse of type cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[260,37] package outResponseCreateSavingAccount does not exist
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[261,43] package outResponseCreateSavingAccount does not exist
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[262,13] cannot find symbol
-  symbol:   variable outResponseCreateSavingAccount
-  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[263,13] cannot find symbol
-  symbol:   variable outResponseCreateSavingAccount
-  location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[450,39] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems)
-  location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[472,39] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.Message)
-  location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[493,39] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog)
-  location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[575,56] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation)
-  location: variable outResponseGetUserEntityInformation of type cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[607,124] cannot find symbol
-  symbol:   method getLastName()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[608,124] cannot find symbol
-  symbol:   method getSecondLastName()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[609,119] cannot find symbol
-  symbol:   method getStreet()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[610,132] cannot find symbol
-  symbol:   method getCity()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[611,135] cannot find symbol
-  symbol:   method getZipcode()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[613,170] cannot find symbol
-  symbol:   method getBirthDate()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[614,123] cannot find symbol
-  symbol:   method getLocation()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[615,121] cannot find symbol
-  symbol:   method getNames()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[616,128] cannot find symbol
-  symbol:   method getExternalNumber()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[617,128] cannot find symbol
-  symbol:   method getInternalNumber()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[620,124] cannot find symbol
-  symbol:   method getRelationship()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[621,135] cannot find symbol
-  symbol:   method getColony()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[622,136] cannot find symbol
-  symbol:   method getPercentage()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[623,135] cannot find symbol
-  symbol:   method getProvince()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[624,122] cannot find symbol
-  symbol:   method getPhoneNumber()
-  location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[658,51] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse)
-  location: variable outRegisterBeneficiaryResponse of type cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[680,51] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse)
-  location: variable outRegisterBeneficiaryResponse of type cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[899,60] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard)
-  location: variable outResponseValidateCustomerIdentityCard of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[920,60] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard)
-  location: variable outResponseValidateCustomerIdentityCard of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[990,48] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity)
-  location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1012,48] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.Message)
-  location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1033,48] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity)
-  location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1054,48] cannot find symbol
-  symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity)
-  location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1067,57] incompatible types: inference variable T has incompatible bounds
-    equality constraints: java.lang.String
-    upper bounds: java.lang.Boolean,java.lang.Object
-[INFO] 35 errors 
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[3380,21] illegal start of expression
+[INFO] 1 error
 [INFO] -------------------------------------------------------------
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2.303 s
-[INFO] Finished at: 2023-03-06T15:50:49-06:00
-[INFO] Final Memory: 19M/303M
+[INFO] Total time: 1.232 s
+[INFO] Finished at: 2023-09-17T14:09:03-05:00
+[INFO] Final Memory: 14M/246M
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.5:compile (default-compile) on project COBISCorp.eCOBIS.ServiceContractOperations.Service: Compilation failure: Compilation failure:
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[156,46] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse)
-[ERROR] location: variable outCreateCustomerResponse of type cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[178,46] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse)
-[ERROR] location: variable outCreateCustomerResponse of type cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[199,46] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse)
-[ERROR] location: variable outCreateCustomerResponse of type cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[260,37] package outResponseCreateSavingAccount does not exist
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[261,43] package outResponseCreateSavingAccount does not exist
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[262,13] cannot find symbol
-[ERROR] symbol:   variable outResponseCreateSavingAccount
-[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[263,13] cannot find symbol
-[ERROR] symbol:   variable outResponseCreateSavingAccount
-[ERROR] location: class cobiscorp.ecobis.servicecontractoperations.service.ServiceContractOperationsApiService
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[450,39] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems)
-[ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[472,39] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.Message)
-[ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[493,39] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog)
-[ERROR] location: variable outResponseCatalog of type cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[575,56] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation)
-[ERROR] location: variable outResponseGetUserEntityInformation of type cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[607,124] cannot find symbol
-[ERROR] symbol:   method getLastName()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[608,124] cannot find symbol
-[ERROR] symbol:   method getSecondLastName()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[609,119] cannot find symbol
-[ERROR] symbol:   method getStreet()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[610,132] cannot find symbol
-[ERROR] symbol:   method getCity()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[611,135] cannot find symbol
-[ERROR] symbol:   method getZipcode()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[613,170] cannot find symbol
-[ERROR] symbol:   method getBirthDate()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[614,123] cannot find symbol
-[ERROR] symbol:   method getLocation()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[615,121] cannot find symbol
-[ERROR] symbol:   method getNames()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[616,128] cannot find symbol
-[ERROR] symbol:   method getExternalNumber()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[617,128] cannot find symbol
-[ERROR] symbol:   method getInternalNumber()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[620,124] cannot find symbol
-[ERROR] symbol:   method getRelationship()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[621,135] cannot find symbol
-[ERROR] symbol:   method getColony()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[622,136] cannot find symbol
-[ERROR] symbol:   method getPercentage()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[623,135] cannot find symbol
-[ERROR] symbol:   method getProvince()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[624,122] cannot find symbol
-[ERROR] symbol:   method getPhoneNumber()
-[ERROR] location: class cobiscorp.ecobis.datacontractoperations.dto.Beneficiaries[]
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[658,51] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse)
-[ERROR] location: variable outRegisterBeneficiaryResponse of type cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[680,51] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse)
-[ERROR] location: variable outRegisterBeneficiaryResponse of type cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[899,60] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard)
-[ERROR] location: variable outResponseValidateCustomerIdentityCard of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[920,60] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard)
-[ERROR] location: variable outResponseValidateCustomerIdentityCard of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[990,48] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity)
-[ERROR] location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1012,48] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.Message)
-[ERROR] location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1033,48] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity)
-[ERROR] location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1054,48] cannot find symbol
-[ERROR] symbol:   method set(cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity)
-[ERROR] location: variable outResponseValidateIdentity of type cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity
-[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[1067,57] incompatible types: inference variable T has incompatible bounds
-[ERROR] equality constraints: java.lang.String
-[ERROR] upper bounds: java.lang.Boolean,java.lang.Object
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.5:compile (default-compile) on project COBISCorp.eCOBIS.ServiceContractOperations.Service: Compilation failure
+[ERROR] /C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/src/main/java/cobiscorp/ecobis/servicecontractoperations/service/ServiceContractOperationsApiService.java:[3380,21] illegal start of expression
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.

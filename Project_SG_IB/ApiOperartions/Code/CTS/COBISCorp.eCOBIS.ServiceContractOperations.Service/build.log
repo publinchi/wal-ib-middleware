@@ -12,7 +12,6 @@ Buildfile: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartio
      [echo] Building C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.ServiceContractOperations.Service\build.xml
      [echo] Version 1.0.0.0
 clean:
-   [delete] Deleting directory C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.ServiceContractOperations.Service\build
 classpath:
 init:
     [mkdir] Created dir: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.ServiceContractOperations.Service\build\src
@@ -43,5 +42,5 @@ sign-archive:
   [signjar] The signer's certificate is self-signed.
   [signjar] Enter Passphrase for keystore: Enter key password for cobis: 
 BUILD SUCCESSFUL
-Total time: 6 seconds
+Total time: 3 seconds
 FIN
