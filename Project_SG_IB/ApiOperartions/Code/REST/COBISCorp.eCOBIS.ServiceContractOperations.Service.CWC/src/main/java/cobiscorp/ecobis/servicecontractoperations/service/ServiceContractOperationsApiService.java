@@ -1739,7 +1739,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getCompanyName());
 			procedureRequestAS.addInputParam("@i_electronic_transfer", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
-			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLINT4,
+			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inCreateCustomerRequest.getExternalNumber()));
 			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getGender()));
