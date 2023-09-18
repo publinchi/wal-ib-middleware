@@ -88,11 +88,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		return processResponseTransfer(anProcedureResponse,aBagSPJavaOrchestration);
+		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 
 	}
 
-	public IProcedureResponse processResponseTransfer(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseTransfer(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processResponseAccounts--->");
 			logger.logInfo("xdcxv --->" + aBagSPJavaOrchestration.get("ssn") );
@@ -108,11 +108,18 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		logger.logInfo("xdcxv2 --->" + referenceCode );
 		logger.logInfo("xdcxv3 --->" + codeReturn );
 		if (codeReturn == 0){
-			if(null!=referenceCode) {
+			if (null != referenceCode) {
 				code = "0";
 				message = "Success";
 				success = "true";
-				//referenceCode = anOriginalProcedureRes.readValueParam("@o_referencia");
+				// referenceCode =
+				// anOriginalProcedureRes.readValueParam("@o_referencia");
+
+				// Notificacion debito
+				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N11");
+				// Notificacion credito
+				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N146");
+
 			}
 			else{
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
@@ -374,6 +381,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addOutputParam("@o_prod_des", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mon", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mon_des", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_ente_bv_des", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_login_des", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_ente_bv", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod_alias", ICTSTypes.SQLVARCHAR, "X");
@@ -389,6 +398,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		aBagSPJavaOrchestration.put("o_nom_beneficiary", wProductsQueryResp.readValueParam("@o_nom_beneficiary"));
 		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
 		aBagSPJavaOrchestration.put("o_ente_bv", wProductsQueryResp.readValueParam("@o_ente_bv"));
+		aBagSPJavaOrchestration.put("o_login_des", wProductsQueryResp.readValueParam("@o_login_des"));
+		aBagSPJavaOrchestration.put("o_ente_bv_des", wProductsQueryResp.readValueParam("@o_ente_bv_des"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking getDataAccountReq DCO : " + wProductsQueryResp.getProcedureResponseAsString());
@@ -549,5 +560,67 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		return response;
 	}
+	
+	private void notifyThirdPartyTransfer (IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String notify) {
 
+		try {
+
+			String referenceCode = aBagSPJavaOrchestration.containsKey("ssn")?aBagSPJavaOrchestration.get("ssn").toString():null;
+			
+			logger.logInfo("Enviando notificacion cuentas terceros API: " + notify);
+
+			IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
+
+			procedureRequest.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib");
+			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S',"local");
+
+			//procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, trn);
+			procedureRequest.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
+			// procedureRequest.addInputParam("@i_num_producto", Types.VARCHAR, "");
+			procedureRequest.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLCHAR, "F");
+			procedureRequest.addInputParam("@i_notificacion", ICTSTypes.SYBVARCHAR, notify);    		
+			procedureRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "I");
+			
+			procedureRequest.addInputParam("@i_canal", ICTSTypes.SQLINT1, "8");
+			procedureRequest.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "A");
+			//procedureRequest.addInputParam("@i_nom_cliente_benef", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_nom_beneficiary").toString());
+			procedureRequest.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, referenceCode);   //anOriginalRequest.readValueParam("@i_referenciaNumerica"));
+			
+			procedureRequest.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, String.valueOf(anOriginalRequest.readValueParam("@i_val")));
+			procedureRequest.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_concepto"));
+			procedureRequest.addInputParam("@i_m", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_mon").toString());
+			//procedureRequest.addInputParam("@i_aux9", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
+			//procedureRequest.addInputParam("@i_aux8", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombreOrdenante"));
+			
+			if(notify.equals("N11")){
+				procedureRequest.addInputParam("@i_c2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+				procedureRequest.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des"));
+				procedureRequest.addInputParam("@i_ente_ib", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_ente_bv").toString());
+				procedureRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_login").toString());
+				procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N',"1875053");
+				procedureRequest.addInputParam("@i_producto", ICTSTypes.SQLINT1, "4");
+			}
+			else{
+				procedureRequest.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+				procedureRequest.addInputParam("@i_c2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des"));
+				procedureRequest.addInputParam("@i_ente_ib", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_ente_bv_des").toString());
+				procedureRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_login_des").toString());
+				procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N',"1800195");
+				procedureRequest.addInputParam("@i_producto", ICTSTypes.SQLINT1, "18");
+			}
+			
+			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+			
+			logger.logInfo("Proceso de notificacion API terminado");
+			
+			if (logger.isDebugEnabled())
+				logger.logInfo("Response Notification: " + procedureResponseLocal.toString());
+			
+		}catch(Exception xe) {
+
+			logger.logInfo("Error en la notificacion cuentas terceros");
+			logger.logError(xe);
+		}
+	}
+	
 }
