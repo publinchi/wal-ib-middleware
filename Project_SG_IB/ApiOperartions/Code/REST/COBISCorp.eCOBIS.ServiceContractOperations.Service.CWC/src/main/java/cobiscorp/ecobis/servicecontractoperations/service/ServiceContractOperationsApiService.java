@@ -1739,8 +1739,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getCompanyName());
 			procedureRequestAS.addInputParam("@i_electronic_transfer", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
-			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inCreateCustomerRequest.getExternalNumber()));
+
+		      procedureRequestAS.addInputParam("@i_externalnumber",ICTSTypes.SQLVARCHAR,
+		    		  inCreateCustomerRequest.getExternalNumber());
+
 			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getGender()));
 			procedureRequestAS.addInputParam("@i_geolocatization_latitude", ICTSTypes.SQLDECIMAL,
@@ -1755,8 +1757,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getIncomeLevel());
 			procedureRequestAS.addInputParam("@i_incomelevel_entity", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getIncomeLevelEntity());
-			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getInternalNumber()));
+			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLVARCHAR,
+					inCreateCustomerRequest.getInternalNumber());
 			procedureRequestAS.addInputParam("@i_lastname", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getLastName());
 			procedureRequestAS.addInputParam("@i_legalincomesource", ICTSTypes.SQLCHAR,
