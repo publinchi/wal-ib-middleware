@@ -130,10 +130,29 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 		else
 		{
+			referenceCode = null;
 			if (codeReturn == 250046)
 			{
 				code = String.valueOf(500010);
 				message = "destination account is blocked against deposit and withdrawal";
+				success = "false";
+			}
+			else if (codeReturn == 252077)
+			{
+				code = String.valueOf(50059);
+				message = "The credit to the account exceeds the maximum balance allowed";
+				success = "false";
+			}
+			else if (codeReturn == 251002)
+			{
+				code = String.valueOf(500023);
+				message = "the origin account or the destination number is blocked";
+				success = "false";
+			}
+			else if (codeReturn == 251033)
+			{
+				code = String.valueOf(500008);
+				message = "account without funds";
 				success = "false";
 			}
 			else {
