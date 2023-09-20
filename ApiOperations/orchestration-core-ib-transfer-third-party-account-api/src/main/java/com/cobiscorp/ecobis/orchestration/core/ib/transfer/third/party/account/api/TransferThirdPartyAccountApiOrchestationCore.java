@@ -396,6 +396,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
 		
+		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_prod_des", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mon", ICTSTypes.SQLINT4, "0");
@@ -409,6 +411,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq"));
+			logger.logDebug("reentry es " +  wProductsQueryResp.readValueParam("@o_reentry"));
+		}
+		
+		aBagSPJavaOrchestration.put("o_seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("o_prod", wProductsQueryResp.readValueParam("@o_prod"));
 		aBagSPJavaOrchestration.put("o_mon", wProductsQueryResp.readValueParam("@o_mon"));
 		aBagSPJavaOrchestration.put("o_prod_des", wProductsQueryResp.readValueParam("@o_prod_des"));
