@@ -608,6 +608,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					destinyOwnerName = null;
 				}
 				
+				String sourceOwnerName = columns[18].getValue();
+				
+				if (sourceOwnerName != null) {
+					sourceOwnerName = sourceOwnerName.trim(); 
+				}
 				
 				String type_movement = columns[35].getValue();
 				String is_dock_idc = columns[36].getValue();
@@ -642,6 +647,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						movementType = movementType + "CREDIT";
 					}
 				} else if (type_movement.equals("AUTH")) {
+					
+					if (destinyOwnerName!=null) {
+						destinyOwnerName = null;
+					}
+					
+					if(destinyAccountNumber != null) {
+						destinyAccountNumber = null;
+					}
 					
 					if (type_auth.equals("WITHDRAWAL")) {
 						
@@ -720,7 +733,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
 				
-				rowDat.addRowData(12, new ResultSetRowColumnData(false, columns[18].getValue()));
+				rowDat.addRowData(12, new ResultSetRowColumnData(false, sourceOwnerName));
 				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[19].getValue()));
 				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[20].getValue()));
 				
