@@ -3721,12 +3721,21 @@ int mapBlank=0;
 			outResponseValidateCustomerIdentityCard.setSuccess(true);
 		}
 		
-
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Validate Customer Identity Card";
+	      
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestValidateCustomerIdentityCard);
+			
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseValidateCustomerIdentityCard);
+			
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateCustomerIdentityCard");
 		// returns data
@@ -4841,7 +4850,7 @@ int mapBlank=0;
 		// outResponseValidateIdentity.setSuccess(getOutValue(String.class, "@salida",
 		// response.getParams()));
 		
-		String trn = "Validate Customer Identity Card";
+		String trn = "Validate Identity Card";
 	      
       	Gson gson = new Gson();
 		String jsonReq = gson.toJson(inRequestValidateIdentity);
@@ -5200,6 +5209,16 @@ int mapBlank=0;
 		 LOGGER.logDebug("No data found");
 		 throw new CTSRestException("404",null);
 		 }
+		 
+		 	String trn = "Customer Card Application";
+	      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inCardApplicationRequest);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleCardApplicationResponse);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		 
 		   LOGGER.logDebug("Ends service execution: customerCardApplication");
 		   //returns data
