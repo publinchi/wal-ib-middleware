@@ -9,7 +9,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <db.provider>DataSource</db.provider>
     <sign.alias>cobis</sign.alias>
-    <sign.keystore>C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/ApiOperationServices/Products/COBISCorp.eCOBIS.ServiceContractOperations.Service/cobis.keystore</sign.keystore>
+    <sign.keystore>C:/waltmart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/ApiOperationServices/Products/COBISCorp.eCOBIS.ServiceContractOperations.Service/cobis.keystore</sign.keystore>
     <sign.keypass>cobisadmin</sign.keypass>
     <sign.storepass>cobisadminadmin</sign.storepass>
     <pmd.fail.on.violation>true</pmd.fail.on.violation>

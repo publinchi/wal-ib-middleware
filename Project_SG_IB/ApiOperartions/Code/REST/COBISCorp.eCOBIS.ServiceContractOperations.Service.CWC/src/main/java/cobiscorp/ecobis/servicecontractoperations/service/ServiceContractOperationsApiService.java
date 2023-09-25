@@ -1739,8 +1739,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getCompanyName());
 			procedureRequestAS.addInputParam("@i_electronic_transfer", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
-			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inCreateCustomerRequest.getExternalNumber()));
+
+		      procedureRequestAS.addInputParam("@i_externalnumber",ICTSTypes.SQLVARCHAR,
+		    		  inCreateCustomerRequest.getExternalNumber());
+
 			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getGender()));
 			procedureRequestAS.addInputParam("@i_geolocatization_latitude", ICTSTypes.SQLDECIMAL,
@@ -1755,8 +1757,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getIncomeLevel());
 			procedureRequestAS.addInputParam("@i_incomelevel_entity", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getIncomeLevelEntity());
-			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getInternalNumber()));
+			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLVARCHAR,
+					inCreateCustomerRequest.getInternalNumber());
 			procedureRequestAS.addInputParam("@i_lastname", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getLastName());
 			procedureRequestAS.addInputParam("@i_legalincomesource", ICTSTypes.SQLCHAR,
@@ -3721,12 +3723,21 @@ int mapBlank=0;
 			outResponseValidateCustomerIdentityCard.setSuccess(true);
 		}
 		
-
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Validate Customer Identity Card";
+	      
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestValidateCustomerIdentityCard);
+			
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseValidateCustomerIdentityCard);
+			
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateCustomerIdentityCard");
 		// returns data
@@ -4841,7 +4852,7 @@ int mapBlank=0;
 		// outResponseValidateIdentity.setSuccess(getOutValue(String.class, "@salida",
 		// response.getParams()));
 		
-		String trn = "Validate Customer Identity Card";
+		String trn = "Validate Identity Card";
 	      
       	Gson gson = new Gson();
 		String jsonReq = gson.toJson(inRequestValidateIdentity);
@@ -5200,6 +5211,16 @@ int mapBlank=0;
 		 LOGGER.logDebug("No data found");
 		 throw new CTSRestException("404",null);
 		 }
+		 
+		 	String trn = "Customer Card Application";
+	      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inCardApplicationRequest);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleCardApplicationResponse);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		 
 		   LOGGER.logDebug("Ends service execution: customerCardApplication");
 		   //returns data

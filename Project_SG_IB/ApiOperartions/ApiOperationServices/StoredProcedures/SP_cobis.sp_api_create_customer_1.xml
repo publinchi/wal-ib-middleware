@@ -23,9 +23,9 @@
     <parameter name="@i_geolocatization_longitude" dataType="decimal" direction="in" />
     <parameter name="@i_identification_number" dataType="varchar" direction="in" />
     <parameter name="@i_identity_validated" dataType="char" direction="in" />
-    <parameter name="@i_incomelevel" dataType="varchar" direction="in" />
+    <parameter name="@i_incomelevel" dataType="int" direction="in" />
     <parameter name="@i_incomelevel_entity" dataType="varchar" direction="in" />
-    <parameter name="@i_internalnumber" dataType="int" direction="in" />
+    <parameter name="@i_internalnumber" dataType="varchar" direction="in" />
     <parameter name="@i_lastname" dataType="varchar" direction="in" />
     <parameter name="@i_legalincomesource" dataType="char" direction="in" />
     <parameter name="@i_mail" dataType="varchar" direction="in" />

@@ -279,7 +279,7 @@
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
       <field type="String" name="dTOPropertyName" value="internalNumber" />
-      <field type="String" name="cTSDataType" value="SQLINT4" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="47" index="21">
