@@ -99,7 +99,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 		
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
-		String code,message,success,referenceCode;
+		String code,message,success,referenceCode, executionStatus = null;
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
 		
 		referenceCode = aBagSPJavaOrchestration.containsKey("ssn")?aBagSPJavaOrchestration.get("ssn").toString():null;
@@ -109,6 +109,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		logger.logInfo("xdcxv3 --->" + codeReturn );
 		if (codeReturn == 0){
 			if (null != referenceCode) {
+				
+				executionStatus = "CORRECT";
+				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 				code = "0";
 				message = "Success";
 				success = "true";
@@ -120,17 +124,23 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				// Notificacion credito
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N146");
 
-			}
-			else{
+			} else {
+				
+				executionStatus = "ERROR";
+				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 			}
 			
-		}
-		else
-		{
+		} else {
+			
+			executionStatus = "ERROR";
 			referenceCode = null;
+			
+			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 			if (codeReturn == 250046)
 			{
 				code = String.valueOf(500010);
@@ -212,6 +222,37 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 		
 		return anOriginalProcedureResponse;
+	}
+	
+	private void updateTransferStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
+		}
+
+		request.setSpName("cob_bvirtual..sp_update_transfer_status");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
+		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
+		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
+		}
 	}
 
 
@@ -396,6 +437,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
 		
+		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_prod_des", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mon", ICTSTypes.SQLINT4, "0");
@@ -409,6 +452,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq"));
+			logger.logDebug("reentry es " +  wProductsQueryResp.readValueParam("@o_reentry"));
+		}
+		
+		aBagSPJavaOrchestration.put("o_seq", wProductsQueryResp.readValueParam("@o_seq"));
+		aBagSPJavaOrchestration.put("o_reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		aBagSPJavaOrchestration.put("o_prod", wProductsQueryResp.readValueParam("@o_prod"));
 		aBagSPJavaOrchestration.put("o_mon", wProductsQueryResp.readValueParam("@o_mon"));
 		aBagSPJavaOrchestration.put("o_prod_des", wProductsQueryResp.readValueParam("@o_prod_des"));
