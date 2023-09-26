@@ -227,6 +227,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setIe_request(columns[25].getValue());
 			respMovement.setIe_ente(columns[26].getValue());
 			respMovement.setCausa(columns[27].getValue());
+			respMovement.setIva(columns[28].getValue());
+			respMovement.setComision(columns[29].getValue());
 			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
@@ -421,7 +423,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getIe_request() != null ? "'" + respMov.getIe_request() + "'" : "null") + ",";
 			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ",";
-			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ")\r\n";
+			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ",";
+			script = script + (respMov.getIva() != null ? respMov.getIva() : "null") + ",";
+			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ")\r\n";
 		}
 		
 		return script;
