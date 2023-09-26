@@ -525,6 +525,8 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
                         
                     } //Fin filtro json
                 }
+            }else{
+            	logger.logInfo("No existe archivos a procesar");
             }
         } else {
         	 logger.logInfo("La carpeta especificada no existe o no es una carpeta válida.");
