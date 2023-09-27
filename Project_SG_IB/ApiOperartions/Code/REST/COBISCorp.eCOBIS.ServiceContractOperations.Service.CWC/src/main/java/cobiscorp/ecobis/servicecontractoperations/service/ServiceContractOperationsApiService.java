@@ -3004,6 +3004,134 @@ int mapBlank=0;
 	     return outResponseOwnAccountsView;
 	   }
 	   
+		/**
+		 * Get Statement List
+		 */
+		@Override
+		// Have DTO
+		public ResponseGetStatementList getStatementList(RequestGetStatementList inRequestGetStatementList)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: getStatementList");
+			ResponseGetStatementList outResponseGetStatementList = new ResponseGetStatementList();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_statement_list_api");
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500145");
+			procedureRequestAS.addInputParam("@i_month", ICTSTypes.SQLVARCHAR, inRequestGetStatementList.getMonth());
+			procedureRequestAS.addInputParam("@i_year", ICTSTypes.SQLVARCHAR, inRequestGetStatementList.getYear());
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseGetStatementList returnResponseGetStatementList = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetStatementList>() {
+							@Override
+							public ResponseGetStatementList mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetStatementList dto = new ResponseGetStatementList();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetStatementList.setSuccess(returnResponseGetStatementList.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseGetStatementList returnResponseGetStatementList = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetStatementList>() {
+							@Override
+							public ResponseGetStatementList mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetStatementList dto = new ResponseGetStatementList();
+
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetStatementList.setResponse(returnResponseGetStatementList.getResponse());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().size() > 2
+					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+				// ---------NO Array
+				StatementsItems[] returnResponseStatementsItems = MapperResultUtil
+						.mapToArray(response.getResultSets().get(2), new RowMapper<StatementsItems>() {
+							@Override
+							public StatementsItems mapRow(ResultSetMapper resultSetMapper, int index) {
+								StatementsItems dto = new StatementsItems();
+								
+								dto.setFileName(resultSetMapper.getString(1));
+								dto.setDateRegistered(resultSetMapper.getString(2));
+								dto.setLink(resultSetMapper.getString(3));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetStatementList.setStatementsItems(returnResponseStatementsItems);
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			 String trn = "Get Statement List";
+		      
+		     Gson gson = new Gson();
+		     String jsonReq = gson.toJson(inRequestGetStatementList);
+		
+	         Gson gson2 = new Gson();
+	         String jsonRes = gson2.toJson(outResponseGetStatementList);
+		
+	         saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+			LOGGER.logDebug("Ends service execution: getStatementList");
+			// returns data
+			return outResponseGetStatementList;
+		}
+	   
 	   
 		/**
 		 * Find State By zip Code API
