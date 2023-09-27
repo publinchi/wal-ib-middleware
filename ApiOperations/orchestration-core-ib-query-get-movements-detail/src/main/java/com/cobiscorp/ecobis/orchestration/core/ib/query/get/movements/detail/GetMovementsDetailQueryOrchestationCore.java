@@ -658,13 +658,13 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if (operationType.equals("C")) {
 						movementType = movementType + "CREDIT";
 						
-						if(causa != null && causa.trim().equals("110")) {
+						/*if(causa != null && causa.trim().equals("110")) {
 							destinyOwnerName = sourceOwnerName;
-							sourceOwnerName = null;
+							sourceOwnerName = null;	
 							
 							destinyAccountNumber = sourceAccountNumber;
 							sourceAccountNumber = null;
-						}
+						}*/
 					}
 				} else if (type_movement.equals("AUTH")) {
 					
@@ -737,7 +737,20 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if (type_auth.equals("CONSULT")) {
 						movementType = "CONSULT";
 					}
-				} 
+				}
+				
+				if (operationType.equals("C")) {
+					String copysourceOwnerName = sourceOwnerName;
+					String copydestinyOwnerName = destinyOwnerName;
+					String copysourceAccountNumber = sourceAccountNumber;
+					String copydestinyAccountNumber = destinyAccountNumber;
+					
+					destinyOwnerName = copysourceOwnerName;
+					destinyAccountNumber = copysourceAccountNumber;
+					
+					sourceOwnerName = copydestinyOwnerName;
+					sourceAccountNumber = copydestinyAccountNumber; 
+				}
 			
 			
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
