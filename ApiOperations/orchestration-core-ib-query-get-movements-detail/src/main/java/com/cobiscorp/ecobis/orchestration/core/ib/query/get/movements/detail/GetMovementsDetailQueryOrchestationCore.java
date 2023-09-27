@@ -227,6 +227,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setIe_request(columns[25].getValue());
 			respMovement.setIe_ente(columns[26].getValue());
 			respMovement.setCausa(columns[27].getValue());
+			respMovement.setIva(columns[28].getValue());
+			respMovement.setComision(columns[29].getValue());
 			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
@@ -421,7 +423,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getSix_dataComprobante() != null ? "'" + respMov.getSix_dataComprobante() + "'" : "null") + ",";
 			script = script + (respMov.getIe_request() != null ? "'" + respMov.getIe_request() + "'" : "null") + ",";
 			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ",";
-			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ")\r\n";
+			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ",";
+			script = script + (respMov.getIva() != null ? respMov.getIva() : "null") + ",";
+			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -609,6 +613,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				}
 				
 				String sourceOwnerName = columns[18].getValue();
+				String sourceAccountNumber = columns[19].getValue();
 				
 				if (sourceOwnerName != null) {
 					sourceOwnerName = sourceOwnerName.trim(); 
@@ -619,22 +624,29 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String type_auth = columns[37].getValue();
                 String operationType = columns[4].getValue();
 				String movementType = null;
-				String referenciaSpei = columns[22].getValue();
+				//String referenciaSpei = columns[22].getValue();
+				String status_spei = columns[40].getValue();
+				String causa = columns[41].getValue();
 				
 				if (type_movement.equals("SPEI") || (columns[1].getValue() !=null && columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI"))) {
 					
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
 						
-						if (referenciaSpei.contains("-")) {
-							movementType = movementType + "RETURN";
-						} else {
-							movementType = movementType + "DEBIT";	
+						if (status_spei.trim().equals("A") || status_spei.trim().equals("F")) {
+							movementType = movementType + "DEBIT";
+						} else if ((status_spei.trim().equals("P"))) {
+							movementType = movementType + "PENDING";
 						}
 					}
 					
 					if (operationType.equals("C")) {
-						movementType = movementType + "CREDIT";
+						if (columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+							movementType = movementType + "RETURN";
+						} else {
+							movementType = movementType + "CREDIT";
+						}
+						
 					}
 				} else if (type_movement.equals("P2P")) {
 					
@@ -645,6 +657,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					
 					if (operationType.equals("C")) {
 						movementType = movementType + "CREDIT";
+						
+						if(causa != null && causa.trim().equals("110")) {
+							destinyOwnerName = sourceOwnerName;
+							sourceOwnerName = null;
+							
+							destinyAccountNumber = sourceAccountNumber;
+							sourceAccountNumber = null;
+						}
 					}
 				} else if (type_movement.equals("AUTH")) {
 					
@@ -734,7 +754,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
 				
 				rowDat.addRowData(12, new ResultSetRowColumnData(false, sourceOwnerName));
-				rowDat.addRowData(13, new ResultSetRowColumnData(false, columns[19].getValue()));
+				rowDat.addRowData(13, new ResultSetRowColumnData(false, sourceAccountNumber));
 				rowDat.addRowData(14, new ResultSetRowColumnData(false, columns[20].getValue()));
 				
 				rowDat.addRowData(15, new ResultSetRowColumnData(false, destinyOwnerName));
