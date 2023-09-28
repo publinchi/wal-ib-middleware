@@ -1198,6 +1198,11 @@
 			<artifactId>orchestration-core-batch-compensation</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-get-statement-list-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1580,7 +1585,8 @@
 							orchestration-core-ib-authorize-deposit-dock-api,
 							orchestration-core-ib-transfer-spei-api,
 							orchestration-core-ib-query-get-movements-detail,
-							orchestration-core-batch-compensation
+							orchestration-core-batch-compensation,
+							orchestration-core-ib-get-statement-list-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>

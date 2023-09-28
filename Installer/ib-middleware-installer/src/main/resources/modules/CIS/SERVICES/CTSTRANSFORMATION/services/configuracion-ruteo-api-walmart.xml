@@ -453,5 +453,21 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
+	<!-- 18500145 GET STATEMENT LIST-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetStatementList">
+		<conditions>
+		  <condition param="trn">
+			<value>18500145</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetStatementListOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 
 </csp-config>
