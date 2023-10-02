@@ -39,6 +39,12 @@ public class ResponseMovements {
 	private String four_dataComprobante;
 	private String five_dataComprobante;
 	private String six_dataComprobante;
+	private String ie_request;
+	private String ie_ente;
+	private String causa;
+	private String iva;
+	private String comision;
+	private String um_correccion;
 	
 	public String getFecha() {
 		return fecha;
@@ -233,5 +239,41 @@ public class ResponseMovements {
 	}
 	public void setSix_dataComprobante(String six_dataComprobante) {
 		this.six_dataComprobante = six_dataComprobante;
+	}
+	public String getIe_request() {
+		return ie_request;
+	}
+	public void setIe_request(String ie_request) {
+		this.ie_request = ie_request;
+	}
+	public String getIe_ente() {
+		return ie_ente;
+	}
+	public void setIe_ente(String ie_ente) {
+		this.ie_ente = ie_ente;
+	}
+	public String getCausa() {
+		return causa;
+	}
+	public void setCausa(String causa) {
+		this.causa = causa;
+	}
+	public String getIva() {
+		return iva;
+	}
+	public void setIva(String iva) {
+		this.iva = iva;
+	}
+	public String getComision() {
+		return comision;
+	}
+	public void setComision(String comision) {
+		this.comision = comision;
+	}
+	public String getUm_correccion() {
+		return um_correccion;
+	}
+	public void setUm_correccion(String um_correccion) {
+		this.um_correccion = um_correccion;
 	}	
 }
