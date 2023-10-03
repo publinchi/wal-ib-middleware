@@ -42,6 +42,8 @@ public class ResponseMovements {
 	private String ie_request;
 	private String ie_ente;
 	private String causa;
+	private String iva;
+	private String comision;
 	
 	public String getFecha() {
 		return fecha;
@@ -254,5 +256,17 @@ public class ResponseMovements {
 	}
 	public void setCausa(String causa) {
 		this.causa = causa;
+	}
+	public String getIva() {
+		return iva;
+	}
+	public void setIva(String iva) {
+		this.iva = iva;
+	}
+	public String getComision() {
+		return comision;
+	}
+	public void setComision(String comision) {
+		this.comision = comision;
 	}	
 }
