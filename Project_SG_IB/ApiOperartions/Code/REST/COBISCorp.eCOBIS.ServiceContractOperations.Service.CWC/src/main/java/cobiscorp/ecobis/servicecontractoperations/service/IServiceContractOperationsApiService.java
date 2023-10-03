@@ -250,7 +250,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException;
 
 	/**
@@ -258,7 +258,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) throws CTSRestException;
 
 	/**

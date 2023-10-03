@@ -4149,7 +4149,7 @@ int mapBlank=0;
 	 */
 	@Override
 	// Have DTO
-	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
@@ -4159,7 +4159,7 @@ int mapBlank=0;
 		
 		// headers
 		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
 		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
@@ -4318,7 +4318,7 @@ int mapBlank=0;
 		  
 		header.setAccept("application/json");
 		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
 		header.setX_end_user_ip(xEndUserIp);
 		header.setX_channel(xChannel);
 		header.setContent_type("application/json");
@@ -4338,7 +4338,7 @@ int mapBlank=0;
 	 */
 	@Override
 	// Have DTO
-	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate,
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDateTime,
 			String xEndUserIp, String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount)
 			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferThirdPartyAccount");
@@ -4349,7 +4349,7 @@ int mapBlank=0;
 
 		// headers
 		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
 		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
@@ -4485,7 +4485,7 @@ int mapBlank=0;
 		  
 		header.setAccept("application/json");
 		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
 		header.setX_end_user_ip(xEndUserIp);
 		header.setX_channel(xChannel);
 		header.setContent_type("application/json");
