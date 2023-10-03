@@ -229,6 +229,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setCausa(columns[27].getValue());
 			respMovement.setIva(columns[28].getValue());
 			respMovement.setComision(columns[29].getValue());
+			respMovement.setUm_correccion(columns[30].getValue());
 			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
@@ -425,7 +426,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ",";
 			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ",";
 			script = script + (respMov.getIva() != null ? respMov.getIva() : "null") + ",";
-			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ")\r\n";
+			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ",";
+			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -626,9 +628,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String movementType = null;
 				//String referenciaSpei = columns[22].getValue();
 				String status_spei = columns[40].getValue();
-				String causa = columns[41].getValue();
+				String um_correccion = columns[41].getValue();
 				
-				if (type_movement.equals("SPEI") || (columns[1].getValue() !=null && columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI"))) {
+				if (type_movement.equals("SPEI") || um_correccion.equals("S")) {
 					
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
@@ -641,7 +643,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					}
 					
 					if (operationType.equals("C")) {
-						if (columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+						if (um_correccion.equals("S")) {
 							movementType = movementType + "RETURN";
 						} else {
 							movementType = movementType + "CREDIT";
