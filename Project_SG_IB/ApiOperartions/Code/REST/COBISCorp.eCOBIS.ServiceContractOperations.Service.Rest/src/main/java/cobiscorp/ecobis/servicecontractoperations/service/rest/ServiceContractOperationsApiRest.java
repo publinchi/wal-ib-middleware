@@ -1465,7 +1465,7 @@ public class ServiceContractOperationsApiRest {
 	@Produces({ "application/json" })
 	public Response transferSpei(
 			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
-			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			RequestTransferSpi inRequestTransferSpi) {
@@ -1488,7 +1488,7 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(xRequestId, xEndUserRequestDate,
+			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(xRequestId, xEndUserRequestDateTime,
 					xEndUserIp, xChannel, inRequestTransferSpi);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
@@ -1519,7 +1519,7 @@ public class ServiceContractOperationsApiRest {
 	@Produces({ "application/json" })
 	public Response transferThirdPartyAccount(
 			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
-			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) {
@@ -1538,7 +1538,7 @@ public class ServiceContractOperationsApiRest {
 
 		try {
 			outResponseTransferThirdPartyAccount = iServiceContractOperationsApiService.transferThirdPartyAccount(
-					xRequestId, xEndUserRequestDate, xEndUserIp, xChannel, inRequestTransferThirdPartyAccount);
+					xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestTransferThirdPartyAccount);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
