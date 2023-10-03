@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class Header implements Serializable {
   private String accept;
   private String x_request_id;
-  private String x_end_user_request_date;
+  private String x_end_user_request_date_time;
   private String x_end_user_ip;
   private String x_channel;
   private String content_type;
@@ -46,11 +46,11 @@ public class Header implements Serializable {
   public void setX_request_id(String x_request_id ){
     this.x_request_id=x_request_id;
   }
-  public String getX_end_user_request_date(){
-    return this.x_end_user_request_date;
+  public String getX_end_user_request_date_time(){
+    return this.x_end_user_request_date_time;
   }
-  public void setX_end_user_request_date(String x_end_user_request_date ){
-    this.x_end_user_request_date=x_end_user_request_date;
+  public void setX_end_user_request_date_time(String x_end_user_request_date_time ){
+    this.x_end_user_request_date_time=x_end_user_request_date_time;
   }
   public String getX_end_user_ip(){
     return this.x_end_user_ip;
