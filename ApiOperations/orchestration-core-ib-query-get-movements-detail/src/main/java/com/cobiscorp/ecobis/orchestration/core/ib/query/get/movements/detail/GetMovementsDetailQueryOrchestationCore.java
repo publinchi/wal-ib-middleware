@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -229,7 +228,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setCausa(columns[27].getValue());
 			respMovement.setIva(columns[28].getValue());
 			respMovement.setComision(columns[29].getValue());
-			
+			respMovement.setUm_correccion(columns[30].getValue());
+
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
 				respMovement.setDataComprobante(columns[15].getValue());
@@ -333,7 +333,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
 		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
-		
+
 	
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
@@ -425,7 +425,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getIe_ente() != null ? respMov.getIe_ente() : "null") + ",";
 			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ",";
 			script = script + (respMov.getIva() != null ? respMov.getIva() : "null") + ",";
-			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ")\r\n";
+			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ",";
+			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ")\r\n";
 		}
 		
 		return script;
@@ -555,11 +556,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdSD", ICTSTypes.SQLVARCHAR, 30));
 			
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionId", ICTSTypes.SQLVARCHAR, 30));
-			
+
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLVARCHAR, 30));
-			
+
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankBranchCode", ICTSTypes.SQLVARCHAR, 30));
-			
+
 			/*metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));*/
 	
@@ -611,14 +612,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				if (destinyOwnerName!=null && isNumeric(destinyOwnerName.trim())) {
 					destinyOwnerName = null;
 				}
-				
+
 				String sourceOwnerName = columns[18].getValue();
 				String sourceAccountNumber = columns[19].getValue();
-				
+
 				if (sourceOwnerName != null) {
-					sourceOwnerName = sourceOwnerName.trim(); 
+					sourceOwnerName = sourceOwnerName.trim();
 				}
-				
+
 				String type_movement = columns[35].getValue();
 				String is_dock_idc = columns[36].getValue();
 				String type_auth = columns[37].getValue();
@@ -626,132 +627,132 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String movementType = null;
 				//String referenciaSpei = columns[22].getValue();
 				String status_spei = columns[40].getValue();
-				String causa = columns[41].getValue();
+				String um_correccion = columns[41].getValue();
 				
-				if (type_movement.equals("SPEI") || (columns[1].getValue() !=null && columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI"))) {
-					
+				if (type_movement.equals("SPEI") || um_correccion.equals("S")) {
+
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
-						
+
 						if (status_spei.trim().equals("A") || status_spei.trim().equals("F")) {
 							movementType = movementType + "DEBIT";
 						} else if ((status_spei.trim().equals("P"))) {
 							movementType = movementType + "PENDING";
 						}
 					}
-					
+
 					if (operationType.equals("C")) {
-						if (columns[1].getValue().trim().equals("ERROR EN TRANSFERENCIA SPEI")) {
+						if (um_correccion.equals("S")) {
 							movementType = movementType + "RETURN";
 						} else {
 							movementType = movementType + "CREDIT";
 						}
-						
+
 					}
 				} else if (type_movement.equals("P2P")) {
-					
+
 					movementType = "P2P_";
 					if (operationType.equals("D")) {
 						movementType = movementType + "DEBIT";
 					}
-					
+
 					if (operationType.equals("C")) {
 						movementType = movementType + "CREDIT";
-						
+
 						/*if(causa != null && causa.trim().equals("110")) {
 							destinyOwnerName = sourceOwnerName;
-							sourceOwnerName = null;	
-							
+							sourceOwnerName = null;
+
 							destinyAccountNumber = sourceAccountNumber;
 							sourceAccountNumber = null;
 						}*/
 					}
 				} else if (type_movement.equals("AUTH")) {
-					
+
 					if (destinyOwnerName!=null) {
 						destinyOwnerName = null;
 					}
-					
+
 					if(destinyAccountNumber != null) {
 						destinyAccountNumber = null;
 					}
-					
+
 					if (type_auth.equals("WITHDRAWAL")) {
-						
+
 						if (is_dock_idc.equals("DOCK")) {
 							movementType = "ATM_DEBIT";
 						}
-						
+
 						if (is_dock_idc.equals("IDC")) {
 							movementType = "DEBIT_AT_STORE";
 						}
 					}
-					
+
 					if (type_auth.equals("PURCHASE")) {
-						
+
 						if (is_dock_idc.equals("DOCK")) {
 							movementType = "PURCHASE_ONLINE";
 						}
-						
+
 						if (is_dock_idc.equals("IDC")) {
 							movementType = "PURCHASE_AT_STORE";
 						}
 					}
-					
+
 					if (type_auth.equals("DEPOSIT")) {
-						
+
 						if (is_dock_idc.equals("DOCK")) {
 							movementType = "CREDIT_AT_STORE";
 						}
-						
+
 						if (is_dock_idc.equals("IDC")) {
 							movementType = "CREDIT_AT_STORE";
 						}
 					}
 
 					if (type_auth.equals("REVERSAL")) {
-						
+
 						if (is_dock_idc.equals("DOCK")) {
 							movementType = "REVERSAL";
 						}
-						
+
 						if (is_dock_idc.equals("IDC")) {
 							movementType = "REVERSAL";
 						}
 					}
-					
+
 				} else if (type_movement.equals("ISO")) {
-					
+
 					if (type_auth.equals("WITHDRAWAL")) {
 						movementType = "ATM_DEBIT";
 					}
-					
+
 					if (type_auth.equals("PURCHASE")) {
 						movementType = "PURCHASE_ONLINE";
 					}
-					
+
 					if (type_auth.equals("REVERSAL")) {
 						movementType = "REVERSAL";
 					}
-					
+
 					if (type_auth.equals("CONSULT")) {
 						movementType = "CONSULT";
 					}
 				}
-				
+
 				if (operationType.equals("C")) {
 					String copysourceOwnerName = sourceOwnerName;
 					String copydestinyOwnerName = destinyOwnerName;
 					String copysourceAccountNumber = sourceAccountNumber;
 					String copydestinyAccountNumber = destinyAccountNumber;
-					
+
 					destinyOwnerName = copysourceOwnerName;
 					destinyAccountNumber = copysourceAccountNumber;
-					
+
 					sourceOwnerName = copydestinyOwnerName;
-					sourceAccountNumber = copydestinyAccountNumber; 
+					sourceAccountNumber = copydestinyAccountNumber;
 				}
-			
+
 			
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
@@ -789,9 +790,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				
 				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
-				
+
 				rowDat.addRowData(29, new ResultSetRowColumnData(false, columns[39].getValue()));
-				
+
 				/*rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));*/
 				
@@ -879,7 +880,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		}
 		return true;		
 	}
-	
+
 	public boolean isNumeric(String strNum) {
 
 		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
