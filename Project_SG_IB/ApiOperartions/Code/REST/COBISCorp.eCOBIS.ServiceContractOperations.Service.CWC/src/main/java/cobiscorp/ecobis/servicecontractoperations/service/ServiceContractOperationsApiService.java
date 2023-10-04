@@ -4026,11 +4026,21 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
 			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
 			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
 
 			outResponseCreateSavingAccount.setResponse(response);
-			outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+			
+			if (response != null && response.getCode() == 0) {
+                
+				outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+            
+            } else {
+                
+            	outResponseCreateSavingAccount.setAccountNumber(null);
+            }
+			
 
 			if (outResponseCreateSavingAccount.getAccountNumber() != null
 					&& outResponseCreateSavingAccount.getAccountNumber() != "" && response.getCode() == 0) {
@@ -4041,9 +4051,18 @@ int mapBlank=0;
 
 				outResponseCreateSavingAccount.setSuccess(false);
 			}
+			
+			String trn = "Create Saving Account";
+		      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestCreateSavingAccount);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseCreateSavingAccount);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createSavingAccount");
-
 			return outResponseCreateSavingAccount;
 		}
 	
