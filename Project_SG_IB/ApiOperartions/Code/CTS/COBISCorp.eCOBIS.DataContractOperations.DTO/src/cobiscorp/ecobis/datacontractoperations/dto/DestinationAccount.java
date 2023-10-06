@@ -31,7 +31,6 @@ public class DestinationAccount implements Serializable {
   private String ownerName;
   private String accountNumber;
   private String bankName;
-  //private Integer typeAccount;
   public String getOwnerName(){
     return this.ownerName;
   }
@@ -50,10 +49,4 @@ public class DestinationAccount implements Serializable {
   public void setBankName(String bankName ){
     this.bankName=bankName;
   }
-  /*public Integer getTypeAccount(){
-    return this.typeAccount;
-  }
-  public void setTypeAccount(Integer typeAccount ){
-    this.typeAccount=typeAccount;
-  }*/
 }

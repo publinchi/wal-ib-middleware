@@ -94,7 +94,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer1.responseId" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer1.answerId" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -120,7 +120,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer2.responseId" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer2.answerId" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -146,7 +146,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestDefineSecurityQA" />
-      <field type="String" name="dTOPropertyName" value="cstmrAnswer3.responseDescription" />
+      <field type="String" name="dTOPropertyName" value="cstmrAnswer3.answerDescription" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>

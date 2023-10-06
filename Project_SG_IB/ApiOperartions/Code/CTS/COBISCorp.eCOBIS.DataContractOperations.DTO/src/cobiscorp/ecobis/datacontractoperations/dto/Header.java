@@ -27,39 +27,47 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseAuthorizeWithdrawal implements Serializable {
-  private Boolean success;
-  private Response response;
-  private Integer authorizationCode;
-  private String seq;
-  public Boolean isSuccess(){
-    return this.success;
+public class Header implements Serializable {
+  private String accept;
+  private String x_request_id;
+  private String x_end_user_request_date;
+  private String x_end_user_ip;
+  private String x_channel;
+  private String content_type;
+  public String getAccept(){
+    return this.accept;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setAccept(String accept ){
+    this.accept=accept;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
+  public String getX_request_id(){
+    return this.x_request_id;
   }
-  public Response getResponse(){
-    return this.response;
+  public void setX_request_id(String x_request_id ){
+    this.x_request_id=x_request_id;
   }
-  public void setResponse(Response response ){
-    this.response=response;
+  public String getX_end_user_request_date(){
+    return this.x_end_user_request_date;
   }
-  public Integer getAuthorizationCode(){
-    return this.authorizationCode;
+  public void setX_end_user_request_date(String x_end_user_request_date ){
+    this.x_end_user_request_date=x_end_user_request_date;
   }
-  public void setAuthorizationCode(Integer authorizationCode ){
-    this.authorizationCode=authorizationCode;
+  public String getX_end_user_ip(){
+    return this.x_end_user_ip;
   }
-  public String getSeq(){
-    return this.seq;
+  public void setX_end_user_ip(String x_end_user_ip ){
+    this.x_end_user_ip=x_end_user_ip;
   }
-  public void setSeq(String seq ){
-    this.seq=seq;
+  public String getX_channel(){
+    return this.x_channel;
+  }
+  public void setX_channel(String x_channel ){
+    this.x_channel=x_channel;
+  }
+  public String getContent_type(){
+    return this.content_type;
+  }
+  public void setContent_type(String content_type ){
+    this.content_type=content_type;
   }
 }

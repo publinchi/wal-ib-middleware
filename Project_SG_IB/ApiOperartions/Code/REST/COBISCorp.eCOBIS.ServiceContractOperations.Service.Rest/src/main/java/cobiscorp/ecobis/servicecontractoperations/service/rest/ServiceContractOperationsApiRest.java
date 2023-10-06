@@ -642,8 +642,6 @@ public class ServiceContractOperationsApiRest {
 				new Data("storeNumber", inRequestAuthorizeReversal.getStoreNumber()),
 				new Data("affiliationNumber", inRequestAuthorizeReversal.getAffiliationNumber()),
 				new Data("establishment", inRequestAuthorizeReversal.getEstablishment()),
-				new Data("adviceReason", inRequestAuthorizeReversal.getAdviceReason()),
-				new Data("adviceReasonCode", inRequestAuthorizeReversal.getAdviceReasonCode()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getUuid()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getNsu()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getMti()),
@@ -1422,12 +1420,16 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/transfer/transferSpei")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response transferSpei(RequestTransferSpi inRequestTransferSpi) {
+	public Response transferSpei(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestTransferSpi inRequestTransferSpi) {
 		LOGGER.logDebug("Start service execution REST: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
 
-		if (!validateMandatory(
-				new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
+		if (!validateMandatory(new Data("externalCustomerId", inRequestTransferSpi.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferSpi.getOriginAccountNumber()),
 				new Data("destinationAccountNumber", inRequestTransferSpi.getDestinationAccountNumber()),
 				new Data("amount", inRequestTransferSpi.getAmount()),
@@ -1443,7 +1445,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(inRequestTransferSpi);
+			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(xRequestId, xEndUserRequestDate,
+					xEndUserIp, xChannel, inRequestTransferSpi);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1471,7 +1474,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/transfer/transferThirdPartyAccount")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) {
+	public Response transferThirdPartyAccount(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) {
 		LOGGER.logDebug("Start service execution REST: transferThirdPartyAccount");
 		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount = new ResponseTransferThirdPartyAccount();
 
@@ -1479,16 +1487,15 @@ public class ServiceContractOperationsApiRest {
 				new Data("externalCustomerId", inRequestTransferThirdPartyAccount.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferThirdPartyAccount.getOriginAccountNumber()),
 				new Data("destinationNumber", inRequestTransferThirdPartyAccount.getDestinationNumber()),
-				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()),
-				new Data("description", inRequestTransferThirdPartyAccount.getDescription()))) {
+				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
 		}
 
 		try {
-			outResponseTransferThirdPartyAccount = iServiceContractOperationsApiService
-					.transferThirdPartyAccount(inRequestTransferThirdPartyAccount);
+			outResponseTransferThirdPartyAccount = iServiceContractOperationsApiService.transferThirdPartyAccount(
+					xRequestId, xEndUserRequestDate, xEndUserIp, xChannel, inRequestTransferThirdPartyAccount);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -2032,11 +2039,11 @@ public class ServiceContractOperationsApiRest {
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestDefineSecurityQA.getExternalCustomerId()),
 				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()),
-				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()),
+				new Data("cstmrAnswer1", inRequestDefineSecurityQA.getCstmrAnswer1().getAnswerId()),
 				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()),
-				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()),
+				new Data("cstmrAnswer2", inRequestDefineSecurityQA.getCstmrAnswer2().getAnswerId()),
 				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()),
-				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()))) {
+				new Data("cstmrAnswer3", inRequestDefineSecurityQA.getCstmrAnswer3().getAnswerDescription()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -2078,11 +2085,8 @@ public class ServiceContractOperationsApiRest {
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestValidateAllSecurityQA.getExternalCustomerId()),
 				new Data("cstmrVal1", inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()),
-				new Data("cstmrVal1", inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()),
 				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()),
-				new Data("cstmrVal2", inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()),
-				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()),
-				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getResponseDescription()))) {
+				new Data("cstmrVal3", inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();

@@ -21,6 +21,6 @@
   </target>
   <target name="archive" depends="archive-cts-dto" />
   <target name="sign-archive" depends="archive">
-    <signjar alias="cobis" jar="${dist.dir}/${ant.project.name}-${project.version}.jar" keystore="C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/ApiOperationServices/Products/COBISCorp.eCOBIS.DataContractOperations.DTO/cobis.keystore" storepass="cobisadminadmin" keypass="cobisadmin" />
+    <signjar alias="cobis" jar="${dist.dir}/${ant.project.name}-${project.version}.jar" keystore="C:/waltmart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/ApiOperationServices/Products/COBISCorp.eCOBIS.DataContractOperations.DTO/cobis.keystore" storepass="cobisadminadmin" keypass="cobisadmin" />
   </target>
 </project>

@@ -51,5 +51,11 @@
       </columns>
       <queryText>SELECT "code"=0,"message"="success"</queryText>
     </query>
+    <query>
+      <columns>
+        <column name="authorizationCode" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>

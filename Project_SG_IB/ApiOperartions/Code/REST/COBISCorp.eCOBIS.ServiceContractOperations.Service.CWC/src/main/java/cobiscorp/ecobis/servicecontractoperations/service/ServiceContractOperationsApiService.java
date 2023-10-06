@@ -55,8 +55,43 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	@Reference(name = "ctsRestIntegrationService", referenceInterface = ICTSRestIntegrationService.class, bind = "setctsRestIntegrationService", unbind = "unsetctsRestIntegrationService", cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.DYNAMIC)
 	private ICTSRestIntegrationService ctsRestIntegrationService;
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
+	private String jsonHead = null;
 
-
+	public void saveAuthResponse(String seqTran, String jsonRes) throws CTSRestException {
+		
+		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
+		
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
+		procedureRequestAS.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTA");
+		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
+		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		
+		//execute procedure
+	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		LOGGER.logDebug("Ends funtion execution: saveAuthResponse");
+	}
+	
+	public void saveCobisTrnReqRes(String trn, String jsonReq, String jsonRes, String jsonHead) throws CTSRestException {
+		
+		LOGGER.logDebug("Start funtion execution: saveCobisTrnReqRes");
+		
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_ahorros..sp_insert_data_trn_aut");
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
+		procedureRequestAS.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTC");
+		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
+		procedureRequestAS.addInputParam("@i_request_trn",ICTSTypes.SQLVARCHAR, jsonReq);
+		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		procedureRequestAS.addInputParam("@i_header_trn",ICTSTypes.SQLVARCHAR, jsonHead);
+		
+		//execute procedure
+	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		LOGGER.logDebug("Ends funtion execution: saveCobisTrnReqRes");
+	}
 
          @Override
 			// Return DTO
@@ -106,7 +141,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     CreditAccountResponse dto = new CreditAccountResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                          dto.setReferenceCode(resultSetMapper.getString(4));
+                          dto.setMovementId(resultSetMapper.getString(4));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
@@ -125,88 +160,108 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       throw new CTSRestException("404",null);
       }
       
+        String trn = "Account Credit Operation";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inCreditAccountRequest);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleCreditAccountResponse);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+      
         LOGGER.logDebug("Ends service execution: creditOperation");
         //returns data
         return outSingleCreditAccountResponse;
       }
 
 
-		/**
-		 * Affiliate Customer
-		 */
-		@Override
-		// Return List
-		public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: affiliateCustomer");
-			ResponseAffiliateCustomer outSingleResponseAffiliateCustomer = new ResponseAffiliateCustomer();
+	/**
+         * Affiliate Customer
+         */
+        @Override
+        // Return List
+        public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer)
+                throws CTSRestException {
+            LOGGER.logDebug("Start service execution: affiliateCustomer");
+            ResponseAffiliateCustomer outSingleResponseAffiliateCustomer = new ResponseAffiliateCustomer();
 
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_affiliate_customer");
+            // create procedure
+            ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_affiliate_customer");
 
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500101");
-			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestAffiliateCustomer.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
-					inRequestAffiliateCustomer.getAccountNumber());
+            procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500101");
+            procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+                    String.valueOf(inRequestAffiliateCustomer.getExternalCustomerId()));
+            procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
+                    inRequestAffiliateCustomer.getAccountNumber());
 
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
+            // execute procedure
+            ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+                    procedureRequestAS);
 
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
+            List<MessageBlock> errors = ErrorUtil.getErrors(response);
+            // throw error
+            if (errors != null && errors.size() > 0) {
+                LOGGER.logDebug("Procedure execution returns error");
+                if (LOGGER.isDebugEnabled()) {
+                    for (int i = 0; i < errors.size(); i++) {
+                        LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+                    }
+                }
+                throw new CTSRestException("Procedure Response has errors", null, errors);
+            }
+            LOGGER.logDebug("Procedure ok");
+            // Init map returns
+            int mapTotal = 0;
+            int mapBlank = 0;
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ----------------Assume Array return
-				ResponseAffiliateCustomer returnResponseAffiliateCustomer = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAffiliateCustomer>() {
-							@Override
-							public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
+            mapTotal++;
+            if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+                // ----------------Assume Array return
+                ResponseAffiliateCustomer returnResponseAffiliateCustomer = MapperResultUtil
+                        .mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAffiliateCustomer>() {
+                            @Override
+                            public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
+                                ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
 
-								dto.setSuccess(resultSetMapper.getBoolean(3));
-								dto.responseInstance().setCode(resultSetMapper.getInteger(5));
-								dto.responseInstance().setMessage(resultSetMapper.getString(4));
-								dto.setLoginId(resultSetMapper.getInteger(1));
-								dto.setUserCreated(resultSetMapper.getString(2));
-								dto.setClabe(resultSetMapper.getString(6));
-								dto.setCardId(resultSetMapper.getString(7));
-								return dto;
-							}
-						}, false);
+                                dto.setSuccess(resultSetMapper.getBoolean(3));
+                                dto.responseInstance().setCode(resultSetMapper.getInteger(5));
+                                dto.responseInstance().setMessage(resultSetMapper.getString(4));
+                                dto.setLoginId(resultSetMapper.getInteger(1));
+                                dto.setUserCreated(resultSetMapper.getString(2));
+                                dto.setClabeAccountNumber(resultSetMapper.getString(6));
+                                dto.setCardId(resultSetMapper.getString(7));
+                                return dto;
+                            }
+                        }, false);
 
-				outSingleResponseAffiliateCustomer = returnResponseAffiliateCustomer;
+                outSingleResponseAffiliateCustomer = returnResponseAffiliateCustomer;
 
-			} else {
-				mapBlank++;
+            } else {
+                mapBlank++;
 
-			}
+            }
 
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
+            // End map returns
+            if (mapBlank != 0 && mapBlank == mapTotal) {
+                LOGGER.logDebug("No data found");
+                throw new CTSRestException("404", null);
+            }
+            
+            String trn = "Affiliate Customer";
+            
+            Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAffiliateCustomer);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAffiliateCustomer);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
-			LOGGER.logDebug("Ends service execution: affiliateCustomer");
-			// returns data
-			return outSingleResponseAffiliateCustomer;
-		}
+            LOGGER.logDebug("Ends service execution: affiliateCustomer");
+            // returns data
+            return outSingleResponseAffiliateCustomer;
+        }
          
 		/**
 		 * Authorize Purchase
@@ -272,7 +327,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchase);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-
+	
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
@@ -337,175 +392,308 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
-	
 			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizePurchase>() {
+							@Override
+							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+
+								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizePurchase.setAuthorizationCode(returnResponseAuthorizePurchase.getAuthorizationCode());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizePurchase>() {
+							@Override
+							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizePurchase.setSeq(returnResponseAuthorizePurchase.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+	
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-
+			
+			String seqTran = outResponseAuthorizePurchase.getSeq();
+			
+			outResponseAuthorizePurchase.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizePurchase);
+			
+			saveAuthResponse(seqTran, jsonRes);
+			
 			LOGGER.logDebug("Ends service execution: authorizePurchase");
 			// returns data
 			return outResponseAuthorizePurchase;
 		}
 		
-        /**
-        * Authorize Purchase Dock
-        */
-       @Override
-			//Have DTO
-			public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid,String legacyid,String clientid,String uuid,RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock  )throws CTSRestException{
-	  LOGGER.logDebug("Start service execution: authorizePurchaseDock");
-    ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock  = new ResponseAuthorizePurchaseDock();
-        
-    //create procedure
-    ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_purchase_dock_api");
-    
-      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500138");
-    procedureRequestAS.addInputParam("@i_account_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getAccount_id());
-    procedureRequestAS.addInputParam("@i_account_type_indicator",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getAccount_type_indicator());
-    procedureRequestAS.addInputParam("@i_acquirer_country_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getAcquirer_country_code());
-    procedureRequestAS.addInputParam("@i_authorization_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getAuthorization_code());
-    procedureRequestAS.addInputParam("@i_bank_account_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getBank_account_number());
-    procedureRequestAS.addInputParam("@i_bank_branch_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getBank_branch_number());
-    procedureRequestAS.addInputParam("@i_brand_response_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getBrand_response_code());
-    procedureRequestAS.addInputParam("@i_card_expiration_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_expiration_date());
-    procedureRequestAS.addInputParam("@i_card_holder_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCardholder_present()));
-    procedureRequestAS.addInputParam("@i_card_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_id());
-    procedureRequestAS.addInputParam("@i_card_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_number());
-    procedureRequestAS.addInputParam("@i_card_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCard_present()));
-    procedureRequestAS.addInputParam("@i_crd_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getCode());
-    procedureRequestAS.addInputParam("@i_crd_mode",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getMode());
-    procedureRequestAS.addInputParam("@i_crd_pin",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getCard_entry().getPin());
-    procedureRequestAS.addInputParam("@x_apigw-api-id",ICTSTypes.SQLVARCHAR,xapigwapiid);
-    procedureRequestAS.addInputParam("@i_establishment",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getEstablishment());
-    procedureRequestAS.addInputParam("@i_establishment_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getEstablishment_code());
-    procedureRequestAS.addInputParam("@i_funds_transfer_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getFunds_transfer().getType());
-    procedureRequestAS.addInputParam("@i_installment_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getInstallment_type());
-    procedureRequestAS.addInputParam("@i_installments",ICTSTypes.SQLINT4,String.valueOf(inRequestAuthorizePurchaseDock.getInstallments()));
-    procedureRequestAS.addInputParam("@i_merchant_category_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getMerchant_category_code());
-    procedureRequestAS.addInputParam("@x_legacy-id",ICTSTypes.SQLVARCHAR,legacyid);
-    procedureRequestAS.addInputParam("@i_mti",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getMti());
-    procedureRequestAS.addInputParam("@i_nsu",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getNsu());
-    procedureRequestAS.addInputParam("@i_p_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getProcessing().getCode());
-    procedureRequestAS.addInputParam("@i_p_destiny_account_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getProcessing().getDestiny_account_type());
-    procedureRequestAS.addInputParam("@i_p_origin_account_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getProcessing().getOrigin_account_type());
-    procedureRequestAS.addInputParam("@i_p_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getProcessing().getType());
-    procedureRequestAS.addInputParam("@i_person_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getPerson_id());
-    procedureRequestAS.addInputParam("@x_client-id",ICTSTypes.SQLVARCHAR,clientid);
-    procedureRequestAS.addInputParam("@x_uuid",ICTSTypes.SQLVARCHAR,uuid);
-    procedureRequestAS.addInputParam("@i_pos_postal_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getPos_postal_code());
-    procedureRequestAS.addInputParam("@i_pre_initial_transaction_uuid",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getPreauthorization().getInitial_transaction_uuid());
-    procedureRequestAS.addInputParam("@i_pre_life_cycle",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getPreauthorization().getLife_cycle());
-    procedureRequestAS.addInputParam("@i_pre_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getPreauthorization().getType());
-    procedureRequestAS.addInputParam("@i_product_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getProduct_id());
-    procedureRequestAS.addInputParam("@i_product_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getProduct_status());
-    procedureRequestAS.addInputParam("@i_retrieval_reference_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getRetrieval_reference_number());
-    procedureRequestAS.addInputParam("@i_terminal_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getTerminal_code());
-    procedureRequestAS.addInputParam("@i_terminal_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getTerminal_date());
-    procedureRequestAS.addInputParam("@i_terminal_time",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getTerminal_time());
-    procedureRequestAS.addInputParam("@i_tk_expiration_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getToken_data().getExpiration_date());
-    procedureRequestAS.addInputParam("@i_tk_requestor_id_token",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getToken_data().getRequestor_id_token());
-    procedureRequestAS.addInputParam("@i_tk_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getToken_data().getStatus());
-    procedureRequestAS.addInputParam("@i_tk_token",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getToken_data().getToken());
-    procedureRequestAS.addInputParam("@i_transaction_origin",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getTransaction_origin());
-    procedureRequestAS.addInputParam("@i_transmission_date_time_gtm",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getTransmission_date_time_gmt());
-    procedureRequestAS.addInputParam("@i_trn_allows_partial_approval",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isAllows_partial_approval()));
-    procedureRequestAS.addInputParam("@i_trn_card_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCard_present()));
-    procedureRequestAS.addInputParam("@i_trn_cardholder_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCardholder_present()));
-    procedureRequestAS.addInputParam("@i_trn_cvv1_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCvv1_present()));
-    procedureRequestAS.addInputParam("@i_trn_cvv2_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCvv2_present()));
-    procedureRequestAS.addInputParam("@i_trn_cvv3_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCvv3_present()));
-    procedureRequestAS.addInputParam("@i_trn_is_3ds_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_3ds_present()));
-    procedureRequestAS.addInputParam("@i_trn_is_3ds_valid",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_3ds_valid()));
-    procedureRequestAS.addInputParam("@i_trn_is_automated_fuel_disp",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_automated_fuel_dispenser()));
-    procedureRequestAS.addInputParam("@i_trn_is_crossborder",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_crossborder()));
-    procedureRequestAS.addInputParam("@i_trn_is_dcc",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_dcc()));
-    procedureRequestAS.addInputParam("@i_trn_is_funds_transfer",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_funds_transfer()));
-    procedureRequestAS.addInputParam("@i_trn_is_international",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_international()));
-    procedureRequestAS.addInputParam("@i_trn_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isOnly_supports_purchase()));
-    procedureRequestAS.addInputParam("@i_trn_partially_reversed",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPartially_reversed()));
-    procedureRequestAS.addInputParam("@i_trn_password_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPassword_present()));
-    procedureRequestAS.addInputParam("@i_trn_pin_validated_offline",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPin_validated_offline()));
-    procedureRequestAS.addInputParam("@i_trn_preauthorization",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPreauthorization()));
-    procedureRequestAS.addInputParam("@i_trn_recurring",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isRecurring()));
-    procedureRequestAS.addInputParam("@i_trn_token_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isToken_present()));
-    procedureRequestAS.addInputParam("@i_val_billing_conversion_rate",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getBilling_conversion_rate());
-    procedureRequestAS.addInputParam("@i_val_billing_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getBilling_currency_code());
-    procedureRequestAS.addInputParam("@i_val_billing_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getBilling_value());
-    procedureRequestAS.addInputParam("@i_val_cash_back_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getCash_back_value());
-    procedureRequestAS.addInputParam("@i_val_credit_line_usage_fee",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getCredit_line_usage_fee());
-    procedureRequestAS.addInputParam("@i_val_settlement_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSettlement_currency_code());
-    procedureRequestAS.addInputParam("@i_val_settlement_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSettlement_value());
-    procedureRequestAS.addInputParam("@i_val_source_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSource_currency_code());
-    procedureRequestAS.addInputParam("@i_val_source_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizePurchaseDock.getValues().getSource_value());
-    
-    Gson gson = new Gson();
-	String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
-	procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-	
-    //execute procedure
-    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		/**
+		 * Authorize Purchase Dock
+		 */
+		@Override
+		// Have DTO
+		public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid, String legacyid, String clientid,
+				String uuid, RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) throws CTSRestException {
+			LOGGER.logDebug("Start service execution: authorizePurchaseDock");
+			ResponseAuthorizePurchaseDock outSingleResponseAuthorizePurchaseDock = new ResponseAuthorizePurchaseDock();
 
-    List<MessageBlock> errors = ErrorUtil.getErrors(response);
-    //throw error
-    if(errors!= null && errors.size()> 0){
-    LOGGER.logDebug("Procedure execution returns error");
-    if ( LOGGER.isDebugEnabled() ) {
-    for (int i = 0; i < errors.size(); i++) {
-    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-    }
-    }
-    throw new CTSRestException("Procedure Response has errors", null, errors);
-    }
-    LOGGER.logDebug("Procedure ok");
-    //Init map returns
-    int mapTotal=0;
-    int mapBlank=0;
-    
-          mapTotal++;
-          if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
-								//---------NO Array
-								ResponseAuthorizePurchaseDock returnResponseAuthorizePurchaseDock = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizePurchaseDock>() { 
-                  @Override
-                  public ResponseAuthorizePurchaseDock mapRow(ResultSetMapper resultSetMapper, int index) {
-                  ResponseAuthorizePurchaseDock dto = new ResponseAuthorizePurchaseDock();
-                  
-                        dto.setApproved_value(resultSetMapper.getString(1));
-                        dto.setSettlement_value(resultSetMapper.getString(2));
-                        dto.setCardholder_billing_value(resultSetMapper.getString(3));
-                        List<String> arrayList = new ArrayList<>(Arrays.asList(resultSetMapper.getString(4).split(",")));
-                        dto.setResponse((ArrayList) arrayList);
-                        dto.setReason(resultSetMapper.getString(5));
-                        dto.setAvailable_limit(resultSetMapper.getString(6));
-                  return dto;
-                  }
-                  },false);
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_purchase_dock_api");
 
-                  outResponseAuthorizePurchaseDock.setApproved_value(returnResponseAuthorizePurchaseDock.getApproved_value());
-                  outResponseAuthorizePurchaseDock.setSettlement_value(returnResponseAuthorizePurchaseDock.getSettlement_value());
-                  outResponseAuthorizePurchaseDock.setCardholder_billing_value(returnResponseAuthorizePurchaseDock.getCardholder_billing_value());
-                  outResponseAuthorizePurchaseDock.setResponse(returnResponseAuthorizePurchaseDock.getResponse());
-                  outResponseAuthorizePurchaseDock.setReason(returnResponseAuthorizePurchaseDock.getReason());
-                  outResponseAuthorizePurchaseDock.setAvailable_limit(returnResponseAuthorizePurchaseDock.getAvailable_limit());
-                      // break;
-                    
-          }else {
-          mapBlank++;
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500138");
+			procedureRequestAS.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getAccount_id());
+			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getAccount_type_indicator());
+			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getAcquirer_country_code());
+			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getAuthorization_code());
+			procedureRequestAS.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getBank_account_number());
+			procedureRequestAS.addInputParam("@i_bank_branch_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getBank_branch_number());
+			procedureRequestAS.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getBrand_response_code());
+			procedureRequestAS.addInputParam("@i_card_expiration_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getCard_expiration_date());
+			procedureRequestAS.addInputParam("@i_card_holder_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCardholder_present()));
+			procedureRequestAS.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getCard_id());
+			procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getCard_number());
+			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCard_present()));
+			procedureRequestAS.addInputParam("@i_crd_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getCard_entry().getCode());
+			procedureRequestAS.addInputParam("@i_crd_mode", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getCard_entry().getMode());
+			procedureRequestAS.addInputParam("@i_crd_pin", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getCard_entry().getPin());
+			procedureRequestAS.addInputParam("@x_apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
+			procedureRequestAS.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getEstablishment());
+			procedureRequestAS.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getEstablishment_code());
+			procedureRequestAS.addInputParam("@i_funds_transfer_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getFunds_transfer().getType());
+			procedureRequestAS.addInputParam("@i_installment_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getInstallment_type());
+			procedureRequestAS.addInputParam("@i_installments", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestAuthorizePurchaseDock.getInstallments()));
+			procedureRequestAS.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getMerchant_category_code());
+			procedureRequestAS.addInputParam("@x_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
+			procedureRequestAS.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, inRequestAuthorizePurchaseDock.getMti());
+			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizePurchaseDock.getNsu());
+			procedureRequestAS.addInputParam("@i_p_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getProcessing().getCode());
+			procedureRequestAS.addInputParam("@i_p_destiny_account_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getProcessing().getDestiny_account_type());
+			procedureRequestAS.addInputParam("@i_p_origin_account_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getProcessing().getOrigin_account_type());
+			procedureRequestAS.addInputParam("@i_p_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getProcessing().getType());
+			procedureRequestAS.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getPerson_id());
+			procedureRequestAS.addInputParam("@x_client-id", ICTSTypes.SQLVARCHAR, clientid);
+			procedureRequestAS.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, uuid);
+			procedureRequestAS.addInputParam("@i_pos_postal_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getPos_postal_code());
+			procedureRequestAS.addInputParam("@i_pre_initial_transaction_uuid", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getPreauthorization().getInitial_transaction_uuid());
+			procedureRequestAS.addInputParam("@i_pre_life_cycle", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getPreauthorization().getLife_cycle());
+			procedureRequestAS.addInputParam("@i_pre_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getPreauthorization().getType());
+			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getProduct_id());
+			procedureRequestAS.addInputParam("@i_product_status", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getProduct_status());
+			procedureRequestAS.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getRetrieval_reference_number());
+			procedureRequestAS.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTerminal_code());
+			procedureRequestAS.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTerminal_date());
+			procedureRequestAS.addInputParam("@i_terminal_time", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTerminal_time());
+			procedureRequestAS.addInputParam("@i_tk_expiration_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getToken_data().getExpiration_date());
+			procedureRequestAS.addInputParam("@i_tk_requestor_id_token", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getToken_data().getRequestor_id_token());
+			procedureRequestAS.addInputParam("@i_tk_status", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getToken_data().getStatus());
+			procedureRequestAS.addInputParam("@i_tk_token", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getToken_data().getToken());
+			procedureRequestAS.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTransaction_origin());
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTransmission_date_time_gmt());
+			procedureRequestAS.addInputParam("@i_trn_allows_partial_approval", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isAllows_partial_approval()));
+			procedureRequestAS.addInputParam("@i_trn_card_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCard_present()));
+			procedureRequestAS.addInputParam("@i_trn_cardholder_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCardholder_present()));
+			procedureRequestAS.addInputParam("@i_trn_cvv1_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCvv1_present()));
+			procedureRequestAS.addInputParam("@i_trn_cvv2_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCvv2_present()));
+			procedureRequestAS.addInputParam("@i_trn_cvv3_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isCvv3_present()));
+			procedureRequestAS.addInputParam("@i_trn_is_3ds_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_3ds_present()));
+			procedureRequestAS.addInputParam("@i_trn_is_3ds_valid", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_3ds_valid()));
+			procedureRequestAS.addInputParam("@i_trn_is_automated_fuel_disp", ICTSTypes.SQLBIT, String.valueOf(
+					inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_automated_fuel_dispenser()));
+			procedureRequestAS.addInputParam("@i_trn_is_crossborder", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_crossborder()));
+			procedureRequestAS.addInputParam("@i_trn_is_dcc", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_dcc()));
+			procedureRequestAS.addInputParam("@i_trn_is_funds_transfer", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_funds_transfer()));
+			procedureRequestAS.addInputParam("@i_trn_is_international", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isIs_international()));
+			procedureRequestAS.addInputParam("@i_trn_only_supports_purchase", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isOnly_supports_purchase()));
+			procedureRequestAS.addInputParam("@i_trn_partially_reversed", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPartially_reversed()));
+			procedureRequestAS.addInputParam("@i_trn_password_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPassword_present()));
+			procedureRequestAS.addInputParam("@i_trn_pin_validated_offline", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPin_validated_offline()));
+			procedureRequestAS.addInputParam("@i_trn_preauthorization", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isPreauthorization()));
+			procedureRequestAS.addInputParam("@i_trn_recurring", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isRecurring()));
+			procedureRequestAS.addInputParam("@i_trn_token_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTransaction_indicators().isToken_present()));
+			procedureRequestAS.addInputParam("@i_val_billing_conversion_rate", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getBilling_conversion_rate());
+			procedureRequestAS.addInputParam("@i_val_billing_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getBilling_currency_code());
+			procedureRequestAS.addInputParam("@i_val_billing_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getBilling_value());
+			procedureRequestAS.addInputParam("@i_val_cash_back_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getCash_back_value());
+			procedureRequestAS.addInputParam("@i_val_credit_line_usage_fee", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getCredit_line_usage_fee());
+			procedureRequestAS.addInputParam("@i_val_settlement_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getSettlement_currency_code());
+			procedureRequestAS.addInputParam("@i_val_settlement_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getSettlement_value());
+			procedureRequestAS.addInputParam("@i_val_source_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getSource_currency_code());
+			procedureRequestAS.addInputParam("@i_val_source_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getValues().getSource_value());
 
-          }
-        
-    //End map returns
-    if(mapBlank!=0&&mapBlank==mapTotal){
-    LOGGER.logDebug("No data found");
-    throw new CTSRestException("404",null);
-    }
-    
-      LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
-      //returns data
-      return outResponseAuthorizePurchaseDock;
-    }
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
+			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
+			
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizePurchaseDock returnResponseAuthorizePurchaseDock = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(0), new RowMapper<ResponseAuthorizePurchaseDock>() {
+							@Override
+							public ResponseAuthorizePurchaseDock mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizePurchaseDock dto = new ResponseAuthorizePurchaseDock();
+
+								dto.setApproved_value(resultSetMapper.getString(1));
+								dto.setSettlement_value(resultSetMapper.getString(2));
+								dto.setCardholder_billing_value(resultSetMapper.getString(3));
+								List<String> arrayList = new ArrayList<>(
+										Arrays.asList(resultSetMapper.getString(4).split(",")));
+								dto.setResponse((ArrayList) arrayList);
+								dto.setReason(resultSetMapper.getString(5));
+								dto.setAvailable_limit(resultSetMapper.getString(6));
+								dto.setAuthorization_code(resultSetMapper.getInteger(7));
+								dto.setSeq(resultSetMapper.getString(8));
+								return dto;
+							}
+						}, false);
+
+				outSingleResponseAuthorizePurchaseDock = returnResponseAuthorizePurchaseDock;
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			String seqTran = outSingleResponseAuthorizePurchaseDock.getSeq();
+			
+			outSingleResponseAuthorizePurchaseDock.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
+			
+			saveAuthResponse(seqTran, jsonRes);
+
+			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
+			// returns data
+			return outSingleResponseAuthorizePurchaseDock;
+		}
 
     
 		/**
@@ -628,13 +816,65 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeWithdrawal>() {
+							@Override
+							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
 
+								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeWithdrawal.setAuthorizationCode(returnResponseAuthorizeWithdrawal.getAuthorizationCode());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeWithdrawal>() {
+							@Override
+							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeWithdrawal.setSeq(returnResponseAuthorizeWithdrawal.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String seqTran = outResponseAuthorizeWithdrawal.getSeq();
+			
+			outResponseAuthorizeWithdrawal.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizeWithdrawal);
+			
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawal");
 			// returns data
@@ -650,7 +890,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				String xapigwapiid, RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock)
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: authorizeWithdrawalDock");
-			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
+			ResponseAuthorizeWithdrawalDock outSingleResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
 
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
@@ -747,8 +987,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getToken_data().getStatus());
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isCard_present()));
-			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isCardholder_present()));
+			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isCardholder_present()));
 			procedureRequestAS.addInputParam("@i_password_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isPassword_present()));
 			procedureRequestAS.addInputParam("@i_cvv1_present", ICTSTypes.SQLBIT,
@@ -765,12 +1005,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isIs_3ds_valid()));
 			procedureRequestAS.addInputParam("@i_recurring", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isRecurring()));
-			procedureRequestAS.addInputParam("@i_allows_partial_approval", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isAllows_partial_approval()));
-			procedureRequestAS.addInputParam("@i_pin_validated_offline", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isPin_validated_offline()));
-			procedureRequestAS.addInputParam("@i_partially_reversed", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isPartially_reversed()));
+			procedureRequestAS.addInputParam("@i_allows_partial_approval", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isAllows_partial_approval()));
+			procedureRequestAS.addInputParam("@i_pin_validated_offline", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isPin_validated_offline()));
+			procedureRequestAS.addInputParam("@i_partially_reversed", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isPartially_reversed()));
 			procedureRequestAS.addInputParam("@i_preauthorization", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isPreauthorization()));
 			procedureRequestAS.addInputParam("@i_is_crossborder", ICTSTypes.SQLBIT,
@@ -783,7 +1023,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getProduct_id());
-			
+
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawalDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -818,16 +1058,17 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 									public ResponseAuthorizeWithdrawalDock mapRow(ResultSetMapper resultSetMapper,
 											int index) {
 										ResponseAuthorizeWithdrawalDock dto = new ResponseAuthorizeWithdrawalDock();
-										
+
 										List<String> arrayList = new ArrayList<>(Arrays.asList(resultSetMapper.getString(1).split(",")));
 										dto.setResponse((ArrayList) arrayList);
 										dto.setReason(resultSetMapper.getString(2));
+										dto.setAuthorization_code(resultSetMapper.getInteger(3));
+										dto.setSeq(resultSetMapper.getString(4));
 										return dto;
 									}
 								}, false);
 
-				outResponseAuthorizeWithdrawalDock.setResponse(returnResponseAuthorizeWithdrawalDock.getResponse());
-				outResponseAuthorizeWithdrawalDock.setReason(returnResponseAuthorizeWithdrawalDock.getReason());
+				outSingleResponseAuthorizeWithdrawalDock = returnResponseAuthorizeWithdrawalDock;
 				// break;
 
 			} else {
@@ -840,10 +1081,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String seqTran = outSingleResponseAuthorizeWithdrawalDock.getSeq();
+			
+			outSingleResponseAuthorizeWithdrawalDock.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
+			
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
 			// returns data
-			return outResponseAuthorizeWithdrawalDock;
+			return outSingleResponseAuthorizeWithdrawalDock;
 		}
 		
 		/**
@@ -966,12 +1216,65 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+
+								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeDeposit.setAuthorizationCode(returnResponseAuthorizeDeposit.getAuthorizationCode());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeDeposit.setSeq(returnResponseAuthorizeDeposit.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String seqTran = outResponseAuthorizeDeposit.getSeq();
+			
+			outResponseAuthorizeDeposit.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizeDeposit);
+			
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDeposit");
 			// returns data
@@ -986,7 +1289,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		public ResponseAuthorizeDepositDock authorizeDepositDock(String legacyid, String clientid, String uuid,
 				String xapigwapiid, RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) throws CTSRestException {
 			LOGGER.logDebug("Start service execution: authorizeDepositDock");
-			ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
+			ResponseAuthorizeDepositDock outSingleResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
 
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_deposit_dock_api");
@@ -1138,7 +1441,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
-
+		
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -1155,16 +1458,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setResponse((ArrayList) arrayList);
 								dto.setReason(resultSetMapper.getString(5));
 								dto.setAvailable_limit(resultSetMapper.getString(6));
+								dto.setAuthorization_code(resultSetMapper.getInteger(7));
+								dto.setSeq(resultSetMapper.getString(8));
+								
 								return dto;
 							}
 						}, false);
 
-				outResponseAuthorizeDepositDock.setApproved_value(returnResponseAuthorizeDepositDock.getApproved_value());
-				outResponseAuthorizeDepositDock.setSettlement_value(returnResponseAuthorizeDepositDock.getSettlement_value());
-	            outResponseAuthorizeDepositDock.setCardholder_billing_value(returnResponseAuthorizeDepositDock.getCardholder_billing_value());
-	            outResponseAuthorizeDepositDock.setResponse(returnResponseAuthorizeDepositDock.getResponse());
-                outResponseAuthorizeDepositDock.setReason(returnResponseAuthorizeDepositDock.getReason());
-                outResponseAuthorizeDepositDock.setAvailable_limit(returnResponseAuthorizeDepositDock.getAvailable_limit());
+				outSingleResponseAuthorizeDepositDock = returnResponseAuthorizeDepositDock;
 				// break;
 
 			} else {
@@ -1177,10 +1478,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String seqTran = outSingleResponseAuthorizeDepositDock.getSeq();
+			
+			outSingleResponseAuthorizeDepositDock.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
+			
+			saveAuthResponse(seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
-			return outResponseAuthorizeDepositDock;
+			return outSingleResponseAuthorizeDepositDock;
 		}
 		
 		/**
@@ -1323,13 +1633,66 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+
+								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeReversal.setAuthorizationCode(returnResponseAuthorizeReversal.getAuthorizationCode());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+
+								dto.setSeq(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeReversal.setSeq(returnResponseAuthorizeReversal.getSeq());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-
+			
+			String seqTran = outResponseAuthorizeReversal.getSeq();
+			
+			outResponseAuthorizeReversal.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
+			
+			saveAuthResponse(seqTran, jsonRes);
+		
 			LOGGER.logDebug("Ends service execution: authorizeReversal");
 			// returns data
 			return outResponseAuthorizeReversal;
@@ -1376,8 +1739,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getCompanyName());
 			procedureRequestAS.addInputParam("@i_electronic_transfer", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
-			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getExternalNumber()));
+
+		      procedureRequestAS.addInputParam("@i_externalnumber",ICTSTypes.SQLVARCHAR,
+		    		  inCreateCustomerRequest.getExternalNumber());
+
 			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getGender()));
 			procedureRequestAS.addInputParam("@i_geolocatization_latitude", ICTSTypes.SQLDECIMAL,
@@ -1392,8 +1757,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getIncomeLevel());
 			procedureRequestAS.addInputParam("@i_incomelevel_entity", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getIncomeLevelEntity());
-			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getInternalNumber()));
+			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLVARCHAR,
+					inCreateCustomerRequest.getInternalNumber());
 			procedureRequestAS.addInputParam("@i_lastname", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getLastName());
 			procedureRequestAS.addInputParam("@i_legalincomesource", ICTSTypes.SQLCHAR,
@@ -1507,6 +1872,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 				outCreateCustomerResponse.setSuccess(false);
 			}
+			
+			String trn = "Create Customer";
+		      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inCreateCustomerRequest);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outCreateCustomerResponse);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createCustomer");
 			// returns data
@@ -1598,6 +1973,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Delete Beneficiary";
+	      
+      	  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestDeleteBeneficiary);
+		
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseDeleteBeneficiary);
+		
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
 		  LOGGER.logDebug("Ends service execution: deleteBeneficiary");
 		  //returns data
 		  return outResponseDeleteBeneficiary;
@@ -1664,6 +2049,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
+      
+      	String trn = "Encrypt Data";
+      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestEncriptData);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseEncriptData);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: encryptData");
         //returns data
@@ -1733,6 +2128,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Generate and send OTP";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestOtp);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseOtp);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: generateTransactionFactor");
 		// returns data
@@ -1803,17 +2208,25 @@ int mapBlank=0;
       }
       
       
- Response response=new Response();
- response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
- response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
- outResponseGetColonyByMunicipality.setResponse(response);
+	 Response response=new Response();
+	 response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+	 response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+	 outResponseGetColonyByMunicipality.setResponse(response);
 
 	if (response != null && response.getCode() == 0) {
 		outResponseGetColonyByMunicipality.setSuccess(true);
 	} else
 		outResponseGetColonyByMunicipality.setSuccess(false);
       
+	String trn = "Get Colony By Municipality";
     
+    Gson gson = new Gson();
+    String jsonReq = gson.toJson(inRequestGetColonyByMunicipality);
+
+    Gson gson2 = new Gson();
+    String jsonRes = gson2.toJson(outResponseGetColonyByMunicipality);
+
+    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead); 
       
   LOGGER.logDebug("Ends service execution: getColonyByMunicipality");
   //returns data
@@ -1883,7 +2296,7 @@ int mapBlank=0;
                           dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
                           dto.setOfficial(resultSetMapper.getInteger(19));
                           dto.setClabeAccountNumber(resultSetMapper.getString(20));
-                          dto.setIdDebitCard(resultSetMapper.getInteger(21));
+                          dto.setCardId(resultSetMapper.getString(21));
                           dto.setDebitCardNumber(resultSetMapper.getString(22));
                           dto.setStateDebitCard(resultSetMapper.getString(23));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
@@ -1903,6 +2316,16 @@ int mapBlank=0;
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
+      
+        String trn = "Get Balances Detail";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestGetBalancesDetail);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleResponseGetBalancesDetail);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: getBalancesDetail");
         //returns data
@@ -2032,6 +2455,16 @@ int mapBlank=0;
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Get Beneficiary";
+	      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inGetBeneficiaryRequest);
+		
+	      Gson gson2 = new Gson();
+	      String jsonRes = gson2.toJson(outGetBeneficiaryResponse);
+		
+	      saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
 		  LOGGER.logDebug("Ends service execution: getBeneficiary");
 		  //returns data
 		  return outGetBeneficiaryResponse;
@@ -2146,6 +2579,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Get Catalog";
+        
+        Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestCatalog);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseCatalog);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getCatalog");
 		// returns data
@@ -2270,7 +2713,7 @@ int mapBlank=0;
 		}
 
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size() == 4
+		if (response.getResultSets() != null && response.getResultSets().size() > 3
 				&& response.getResultSets().get(3).getData().getRows().size() > 0) {
 			// ---------NO Array
 			AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
@@ -2287,8 +2730,9 @@ int mapBlank=0;
 							dto.setOperationType(resultSetMapper.getString(6));
 							dto.setCommission(resultSetMapper.getString(7));
 							dto.setIva(resultSetMapper.getString(8));
-							dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
 							dto.setDescription(resultSetMapper.getString(10));
+							dto.setMovementId(resultSetMapper.getString(27));
+							dto.setAuthorizationCode(resultSetMapper.getString(28));
 							dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
 							dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
 							dto.sourceAccountInstance().setAccountNumber(resultSetMapper.getString(13));
@@ -2298,15 +2742,16 @@ int mapBlank=0;
 							dto.destinationAccountInstance().setBankName(resultSetMapper.getString(17));
 							dto.speiDetailsInstance().setReferenceCode(resultSetMapper.getString(18));
 							dto.speiDetailsInstance().setTrackingId(resultSetMapper.getString(19));
+							dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
 							dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
 							dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
 							dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
+							dto.atmDetailsInstance().setBankBranchCode(resultSetMapper.getString(29));
 							dto.merchantDetailsInstance().setEstablishmentName(resultSetMapper.getString(23));
 							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
-							/*dto.sourceAccountInstance().setTypeAccount(resultSetMapper.getInteger(27));
-							dto.destinationAccountInstance().setTypeAccount(resultSetMapper.getInteger(28));*/
+							
 							return dto;
 						}
 					}, false);
@@ -2324,6 +2769,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Get Movements Detail";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestGetMovementsDetail);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseGetMovementsDetail);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getMovementsDetail");
 		// returns data
@@ -2392,8 +2847,6 @@ int mapBlank=0;
 
 		}
 
-
-
 		Response response=new Response();
 		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
 		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
@@ -2404,7 +2857,17 @@ int mapBlank=0;
 
 		} else
 			outResponseMunicipalityByState.setSuccess(false);
-
+		
+		
+		String trn = "Get Municipality By State";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestMunicipalityByState);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseMunicipalityByState);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getMunicipalityByState");
 		// returns data
@@ -2528,6 +2991,16 @@ int mapBlank=0;
 	   throw new CTSRestException("404",null);
 	   }
 	   
+	     String trn = "Get Own Accounts View";
+	      
+	     Gson gson = new Gson();
+	     String jsonReq = gson.toJson(inRequestOwnAccountsView);
+	
+         Gson gson2 = new Gson();
+         String jsonRes = gson2.toJson(outResponseOwnAccountsView);
+	
+         saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+	   
 	     LOGGER.logDebug("Ends service execution: getOwnAccountsView");
 	     //returns data
 	     return outResponseOwnAccountsView;
@@ -2596,7 +3069,15 @@ int mapBlank=0;
 			} else
 				outStateByZipCodeResponse.setSuccess(false);
 		
-			
+			String trn = "Get State By Zip Code";
+		      
+		    Gson gson = new Gson();
+		    String jsonReq = gson.toJson(inStateByZipCodeRequest);
+		
+	        Gson gson2 = new Gson();
+	        String jsonRes = gson2.toJson(outStateByZipCodeResponse);
+		
+	        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: getStateByZipCode");
 			// returns data
@@ -2688,6 +3169,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "View Customer Information";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestGetUserEntityInformation);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseGetUserEntityInformation);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: getUserEntityInformation");
 		// returns data
@@ -2810,6 +3301,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+	    String trn = "Register Beneficiary";
+      
+	    Gson gson1 = new Gson();
+	    String jsonReq = gson1.toJson(inRegisterBeneficiaryRequest);
+		
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outRegisterBeneficiaryResponse);
+		
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: registerBeneficiary");
 		// returns data
@@ -2893,6 +3394,16 @@ int mapBlank=0;
 			toReturn.setSuccess(false);
 
 		toReturn.setResponse(response);
+		
+		String trn = "Search Zip Code";
+	      
+		Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inSearchZipCodeRequest);
+			
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(toReturn);
+			
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: searchZipCode");
 
@@ -2998,6 +3509,16 @@ int mapBlank=0;
 		throw new CTSRestException("404",null);
 		}
 		
+		  String trn = "Update Customer Address";
+		      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inUpdateCustomerAddressRequest);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outUpdateCustomerAddressResponse);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
 		  LOGGER.logDebug("Ends service execution: updateCustomerAddress");
 		  //returns data
 		  return outUpdateCustomerAddressResponse;
@@ -3070,6 +3591,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Update Profile";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestUpdateProfile);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseUpdateProfile);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: updateProfile");
 		// returns data
@@ -3192,12 +3723,21 @@ int mapBlank=0;
 			outResponseValidateCustomerIdentityCard.setSuccess(true);
 		}
 		
-
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Validate Customer Identity Card";
+	      
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestValidateCustomerIdentityCard);
+			
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseValidateCustomerIdentityCard);
+			
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateCustomerIdentityCard");
 		// returns data
@@ -3292,6 +3832,16 @@ int mapBlank=0;
 		LOGGER.logDebug("No data found");
 		throw new CTSRestException("404",null);
 		}
+		
+		  String trn = "Register Account to Transfer Spei";
+	      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestRegisterAccountSpei);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseRegisterAccountSpei);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		
 		  LOGGER.logDebug("Ends service execution: registerAccount");
 		  //returns data
@@ -3449,8 +3999,17 @@ int mapBlank=0;
 
 		} else
 			outResponseSearchLocationCatalog.setSuccess(false);
-
 		
+
+		String trn = "Catalogue Of Locations";
+	    
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestSearchLocationCatalog);
+
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outResponseSearchLocationCatalog);
+
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: searchLocationCatalog");
 		// returns data
@@ -3462,12 +4021,19 @@ int mapBlank=0;
 	 */
 	@Override
 	// Have DTO
-	public ResponseTransferSpi transferSpei(RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
 
 		// create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transfer_spei_api");
+		
+		// headers
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
 		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500115");
 		procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
@@ -3569,12 +4135,12 @@ int mapBlank=0;
 						public ResponseTransferSpi mapRow(ResultSetMapper resultSetMapper, int index) {
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
-							dto.setReferenceCode(resultSetMapper.getString(1));
+							dto.setMovementId(resultSetMapper.getString(1));
 							return dto;
 						}
 					}, false);
 
-			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
+			outResponseTransferSpi.setMovementId(returnResponseTransferSpi.getMovementId());
 			// break;
 
 		} else {
@@ -3592,11 +4158,180 @@ int mapBlank=0;
 							ResponseTransferSpi dto = new ResponseTransferSpi();
 
 							dto.setTrackingKey(resultSetMapper.getString(1));
+							dto.setReferenceCode(resultSetMapper.getString(2));
 							return dto;
 						}
 					}, false);
 
 			outResponseTransferSpi.setTrackingKey(returnResponseTransferSpi.getTrackingKey());
+			outResponseTransferSpi.setReferenceCode(returnResponseTransferSpi.getReferenceCode());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+		
+	    String trn = "Transfer Spei";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestTransferSpi);
+	
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outResponseTransferSpi);
+	    
+	    Header header = new Header();
+		  
+		header.setAccept("application/json");
+		header.setX_request_id(xRequestId);
+		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_ip(xEndUserIp);
+		header.setX_channel(xChannel);
+		header.setContent_type("application/json");
+	    
+	    Gson gson3 = new Gson();
+	    String jsonHead = gson3.toJson(header);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: transferSpei");
+		// returns data
+		return outResponseTransferSpi;
+	}
+	
+	/**
+	 * Service for transfer to a third party account
+	 */
+	@Override
+	// Have DTO
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate,
+			String xEndUserIp, String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount)
+			throws CTSRestException {
+		LOGGER.logDebug("Start service execution: transferThirdPartyAccount");
+		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount = new ResponseTransferThirdPartyAccount();
+
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transf_third_account_api");
+
+		// headers
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500114");
+		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getOriginAccountNumber());
+		procedureRequestAS.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getDestinationNumber());
+		procedureRequestAS.addInputParam("@i_val", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
+		procedureRequestAS.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getDescription());
+		procedureRequestAS.addInputParam("@i_comision", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
+		procedureRequestAS.addInputParam("@i_latitud", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getLatitude()));
+		procedureRequestAS.addInputParam("@i_longitud", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
+		procedureRequestAS.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getDetail());
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0),
+							new RowMapper<ResponseTransferThirdPartyAccount>() {
+								@Override
+								public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper,
+										int index) {
+									ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+
+									dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+									return dto;
+								}
+							}, false);
+
+			outResponseTransferThirdPartyAccount.setSuccess(returnResponseTransferThirdPartyAccount.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1),
+							new RowMapper<ResponseTransferThirdPartyAccount>() {
+								@Override
+								public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper,
+										int index) {
+									ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
+									return dto;
+								}
+							}, false);
+
+			outResponseTransferThirdPartyAccount.setResponse(returnResponseTransferThirdPartyAccount.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2
+				&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2),
+							new RowMapper<ResponseTransferThirdPartyAccount>() {
+								@Override
+								public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper,
+										int index) {
+									ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
+
+									dto.setMovementId(resultSetMapper.getString(1));
+									return dto;
+								}
+							}, false);
+
+			outResponseTransferThirdPartyAccount.setMovementId(returnResponseTransferThirdPartyAccount.getMovementId());
 			// break;
 
 		} else {
@@ -3610,126 +4345,32 @@ int mapBlank=0;
 			throw new CTSRestException("404", null);
 		}
 
-		LOGGER.logDebug("Ends service execution: transferSpei");
+		String trn = "Transfer to third party account";
+
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestTransferThirdPartyAccount);
+
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseTransferThirdPartyAccount);
+		
+		Header header = new Header();
+		  
+		header.setAccept("application/json");
+		header.setX_request_id(xRequestId);
+		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_ip(xEndUserIp);
+		header.setX_channel(xChannel);
+		header.setContent_type("application/json");
+	    
+	    Gson gson3 = new Gson();
+	    String jsonHead = gson3.toJson(header);
+
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: transferThirdPartyAccount");
 		// returns data
-		return outResponseTransferSpi;
+		return outResponseTransferThirdPartyAccount;
 	}
-	    /**
-	    * Service for transfer to a third party account
-	    */
-	   @Override
-		//Have DTO
-		public ResponseTransferThirdPartyAccount transferThirdPartyAccount(RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount  )throws CTSRestException{
-		LOGGER.logDebug("Start service execution: transferThirdPartyAccount");
-		ResponseTransferThirdPartyAccount outResponseTransferThirdPartyAccount  = new ResponseTransferThirdPartyAccount();
-		    
-		//create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_transf_third_account_api");
-		
-		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500114");
-		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestTransferThirdPartyAccount.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getOriginAccountNumber());
-		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDestinationNumber());
-		procedureRequestAS.addInputParam("@i_val",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getAmount()));
-		procedureRequestAS.addInputParam("@i_concepto",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDescription());
-		procedureRequestAS.addInputParam("@i_comision",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getCommission()));
-		procedureRequestAS.addInputParam("@i_latitud",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getLatitude()));
-		procedureRequestAS.addInputParam("@i_longitud",ICTSTypes.SQLMONEY,String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
-		procedureRequestAS.addInputParam("@i_detalle",ICTSTypes.SQLVARCHAR,inRequestTransferThirdPartyAccount.getDetail());
-		
-		//execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
-		
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		//throw error
-		if(errors!= null && errors.size()> 0){
-		LOGGER.logDebug("Procedure execution returns error");
-		if ( LOGGER.isDebugEnabled() ) {
-		for (int i = 0; i < errors.size(); i++) {
-		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-		}
-		}
-		throw new CTSRestException("Procedure Response has errors", null, errors);
-		}
-		LOGGER.logDebug("Procedure ok");
-		//Init map returns
-		int mapTotal=0;
-		int mapBlank=0;
-		
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseTransferThirdPartyAccount>() { 
-		              @Override
-		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
-		              
-		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseTransferThirdPartyAccount.setSuccess(returnResponseTransferThirdPartyAccount.isSuccess());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseTransferThirdPartyAccount>() { 
-		              @Override
-		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
-		              
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseTransferThirdPartyAccount.setResponse(returnResponseTransferThirdPartyAccount.getResponse());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseTransferThirdPartyAccount returnResponseTransferThirdPartyAccount = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseTransferThirdPartyAccount>() { 
-		              @Override
-		              public ResponseTransferThirdPartyAccount mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseTransferThirdPartyAccount dto = new ResponseTransferThirdPartyAccount();
-		              
-		                    dto.setReferenceCode(resultSetMapper.getString(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseTransferThirdPartyAccount.setReferenceCode(returnResponseTransferThirdPartyAccount.getReferenceCode());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		//End map returns
-		if(mapBlank!=0&&mapBlank==mapTotal){
-		LOGGER.logDebug("No data found");
-		throw new CTSRestException("404",null);
-		}
-		
-		  LOGGER.logDebug("Ends service execution: transferThirdPartyAccount");
-		  //returns data
-		  return outResponseTransferThirdPartyAccount;
-		}
 	   
 
        /**
@@ -3821,6 +4462,16 @@ int mapBlank=0;
 	   throw new CTSRestException("404",null);
 	   }
 	   
+	   	String trn = "Update Account Beneficiary";
+	      
+   		Gson gson1 = new Gson();
+		String jsonReq = gson1.toJson(inUpdateBeneficiaryRequest);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outUpdateBeneficiaryResponse);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+	   
 	     LOGGER.logDebug("Ends service execution: updateAccountBebeficiary");
 	     //returns data
 	     return outUpdateBeneficiaryResponse;
@@ -3848,7 +4499,7 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestUpdateAccountStatus.getAccountNumber());
 			procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
-      procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
+			procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
 
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -3920,6 +4571,16 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Update Account Status";
+		      
+		    Gson gson = new Gson();
+		    String jsonReq = gson.toJson(inRequestUpdateAccountStatus);
+		
+		    Gson gson2 = new Gson();
+		    String jsonRes = gson2.toJson(outResponseUpdateAccountStatus);
+			
+		    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: updateAccountStatus");
 			// returns data
@@ -4035,6 +4696,16 @@ int mapBlank=0;
 		    LOGGER.logDebug("No data found");
 		    throw new CTSRestException("404",null);
 		    }
+		    
+		      String trn = "Update Card Status";
+		      
+		      Gson gson = new Gson();
+		      String jsonReq = gson.toJson(inRequestUpdateCardStatus);
+		
+		      Gson gson2 = new Gson();
+		      String jsonRes = gson2.toJson(outResponseUpdateCardStatus);
+			
+		      saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 		    
 		      LOGGER.logDebug("Ends service execution: updateCardStatus");
 		      //returns data
@@ -4180,6 +4851,16 @@ int mapBlank=0;
 		}
 		// outResponseValidateIdentity.setSuccess(getOutValue(String.class, "@salida",
 		// response.getParams()));
+		
+		String trn = "Validate Identity Card";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestValidateIdentity);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseValidateIdentity);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateIdentity");
 		// returns data
@@ -4337,6 +5018,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Activate device";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestDeviceActivation);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseDeviceActivation);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: activateDevice");
 		// returns data
@@ -4436,6 +5127,16 @@ int mapBlank=0;
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
+		
+		String trn = "Validate Device Activation";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestValidateDeviceActivation);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseValidateDeviceActivation);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: validateDeviceActivation");
 		// returns data
@@ -4511,6 +5212,16 @@ int mapBlank=0;
 		 throw new CTSRestException("404",null);
 		 }
 		 
+		 	String trn = "Customer Card Application";
+	      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inCardApplicationRequest);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleCardApplicationResponse);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		 
 		   LOGGER.logDebug("Ends service execution: customerCardApplication");
 		   //returns data
 		   return outSingleCardApplicationResponse;
@@ -4567,7 +5278,7 @@ int mapBlank=0;
                     DebitAccountResponse dto = new DebitAccountResponse();
                     
                           dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                          dto.setReferenceCode(resultSetMapper.getString(4));
+                          dto.setMovementId(resultSetMapper.getString(4));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
                     return dto;
@@ -4586,12 +5297,20 @@ int mapBlank=0;
       throw new CTSRestException("404",null);
       }
       
+		String trn = "Account Debit Operation";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inDebitAccountRequest);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleDebitAccountResponse);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+      
         LOGGER.logDebug("Ends service execution: debitOperation");
         //returns data
         return outSingleDebitAccountResponse;
       }
-         
-
          
          
          
@@ -4663,7 +5382,7 @@ int mapBlank=0;
                     CstmrAnswers dto = new CstmrAnswers();
                     
                           dto.setQuestionId(resultSetMapper.getInteger(1));
-                          dto.setResponseId(resultSetMapper.getInteger(2));
+                          dto.setAnswerId(resultSetMapper.getInteger(2));
                           dto.setDescription(resultSetMapper.getString(3));
                     return dto;
                     }
@@ -4676,18 +5395,29 @@ int mapBlank=0;
             mapBlank++;
 
             }
-          
-
-      
-      Response response=new Response();
-      response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
-      response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
-      outResponseAllCustomerQuestions.setResponse(response);
+ 
+  
+	    Response response=new Response();
+	    response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+	    response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+	    outResponseAllCustomerQuestions.setResponse(response);
 
      	if (response != null && response.getCode() == 0) {
      		outResponseAllCustomerQuestions.setSuccess(true);
      	} else
-     		outResponseAllCustomerQuestions.setSuccess(false);   
+     		outResponseAllCustomerQuestions.setSuccess(false);
+     	
+     	
+     	String trn = "Get All Customer Questions";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestAllCustomerQuestions);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseAllCustomerQuestions);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+     	
         LOGGER.logDebug("Ends service execution: getAllCustomerQuestions");
         //returns data
         return outResponseAllCustomerQuestions;
@@ -4712,15 +5442,15 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getResponseId()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer1().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getResponseId()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer2().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_desc", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getQuestionDescription()));
 			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getResponseDescription()));
+					String.valueOf(inRequestDefineSecurityQA.getCstmrAnswer3().getAnswerDescription()));
 			
 
 			// execute procedure
@@ -4815,6 +5545,16 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Define Security Questions and Answers";
+		      
+	    	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestDefineSecurityQA);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseDefineSecurityQA);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: defineSecurityQA");
 			// returns data
@@ -4841,15 +5581,15 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@i_question_1_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_1_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getResponseId()));
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal1().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_2_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getQuestionId()));
 			procedureRequestAS.addInputParam("@i_answer_2_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getResponseId()));
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal2().getAnswerId()));
 			procedureRequestAS.addInputParam("@i_question_3_id", ICTSTypes.SQLVARCHAR,
 					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getCustomQuestionId()));
-			procedureRequestAS.addInputParam("@i_answer_3_id", ICTSTypes.SQLVARCHAR,
-					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getResponseDescription()));
+			procedureRequestAS.addInputParam("@i_answer_desc", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestValidateAllSecurityQA.getCstmrVal3().getAnswerDescription()));
 
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -4921,6 +5661,16 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Validate All Security Questions and Answers";
+		      
+	    	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestValidateAllSecurityQA);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseValidateAllSecurityQA);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: validateAllSecurityQA");
 			// returns data
@@ -4989,6 +5739,16 @@ int mapBlank=0;
       LOGGER.logDebug("No data found");
       throw new CTSRestException("404",null);
       }
+      
+        String trn = "Validate Transaction Factor";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inValidateTokenRequest);
+		
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outSingleValidateTokenResponse);
+		
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
       
         LOGGER.logDebug("Ends service execution: validateTransactionFactor");
         //returns data
@@ -5059,161 +5819,272 @@ int mapBlank=0;
       throw new CTSRestException("404",null);
       }
       
+      	String trn = "Update Credentials";
+      
+    	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestUpdateCredentials);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outSingleResponseUpdateCredentials);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+      
         LOGGER.logDebug("Ends service execution: updateCredentials");
         //returns data
         return outSingleResponseUpdateCredentials;
       }
 
-	  /**
-          * Authorize Reversal Dock
-          */
-         @Override
-			// Return DTO
-			public  ResponseAuthorizeReversalDock  authorizeReversalDock(String legacyid,String clientid,String uuid,String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock  )throws CTSRestException{
-	  LOGGER.logDebug("Start service execution: authorizeReversalDock");
-      ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock  = new ResponseAuthorizeReversalDock();
-          
-      //create procedure
-      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_reversal_dock_api");
-	  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500139");
-      procedureRequestAS.addInputParam("@i_account_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAccount_id());
-      procedureRequestAS.addInputParam("@i_person_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPerson_id());
-      procedureRequestAS.addInputParam("@i_card_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_id());
-      procedureRequestAS.addInputParam("@i_product_id",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProduct_id());
-      procedureRequestAS.addInputParam("@i_product_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProduct_status());
-      procedureRequestAS.addInputParam("@i_bank_branch_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getBank_branch_number());
-      procedureRequestAS.addInputParam("@i_bank_account_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getBank_account_number());
-      procedureRequestAS.addInputParam("@i_transmission_date_time",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTransmission_date_time_gmt());
-      procedureRequestAS.addInputParam("@i_terminal_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTerminal_date());
-      procedureRequestAS.addInputParam("@i_terminal_time",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTerminal_time());
-      procedureRequestAS.addInputParam("@i_mti",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getMti());
-      procedureRequestAS.addInputParam("@i_processing_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getType());
-      procedureRequestAS.addInputParam("@i_processing_origin_account_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type());
-      procedureRequestAS.addInputParam("@i_processing_destiny_account_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type());
-      procedureRequestAS.addInputParam("@i_processing_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getProcessing().getCode());
-      procedureRequestAS.addInputParam("@i_nsu",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getNsu());
-      procedureRequestAS.addInputParam("@i_authorization_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAuthorization_code());
-      procedureRequestAS.addInputParam("@i_card_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_number());
-      procedureRequestAS.addInputParam("@i_card_expiration_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_expiration_date());
-      procedureRequestAS.addInputParam("@i_transaction_origin",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTransaction_origin());
-      procedureRequestAS.addInputParam("@i_installments",ICTSTypes.SQLINT4,String.valueOf(inRequestAuthorizeReversalDock.getInstallments()));
-      procedureRequestAS.addInputParam("@i_installment_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getInstallment_type());
-      procedureRequestAS.addInputParam("@i_card_entry_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_entry().getCode());
-      procedureRequestAS.addInputParam("@i_card_entry_pin",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_entry().getPin());
-      procedureRequestAS.addInputParam("@i_card_entry_mode",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getCard_entry().getMode());
-      procedureRequestAS.addInputParam("@i_mechant_category_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getMerchant_category_code());
-      procedureRequestAS.addInputParam("@i_values_updated_transaction_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getUpdated_transaction_value());
-      procedureRequestAS.addInputParam("@i_values_source_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSource_currency_code());
-      procedureRequestAS.addInputParam("@i_values_settlement_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSettlement_currency_code());
-      procedureRequestAS.addInputParam("@i_values_billing_currency_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getBilling_currency_code());
-      procedureRequestAS.addInputParam("@i_values_source_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSource_value());
-      procedureRequestAS.addInputParam("@i_values_settlement_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getSettlement_value());
-      procedureRequestAS.addInputParam("@i_values_billing_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getBilling_value());
-      procedureRequestAS.addInputParam("@i_values_billing_conversion_rate",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getBilling_conversion_rate());
-      procedureRequestAS.addInputParam("@i_values_cash_back_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getCash_back_value());
-      procedureRequestAS.addInputParam("@i_values_credit__line_usage_fee",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getValues().getCredit_line_usage_fee());
-      procedureRequestAS.addInputParam("@i_establishment",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getEstablishment());
-      procedureRequestAS.addInputParam("@i_terminal_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getTerminal_code());
-      procedureRequestAS.addInputParam("@i_establishment_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getEstablishment_code());
-      procedureRequestAS.addInputParam("@i_retrieval_reference_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getRetrieval_reference_number());
-      procedureRequestAS.addInputParam("@i_brand_response_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getBrand_response_code());
-      procedureRequestAS.addInputParam("@i_advice_reason",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAdvice_reason());
-      procedureRequestAS.addInputParam("@i_advice_reason_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAdvice_reason_code());
-      procedureRequestAS.addInputParam("@i_pos_postal_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPos_postal_code());
-      procedureRequestAS.addInputParam("@i_acquirer_country_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getAcquirer_country_code());
-      procedureRequestAS.addInputParam("@i_preauthorization_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPreauthorization().getType());
-      procedureRequestAS.addInputParam("@i_preauthorization_initial_transaction_uuid",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPreauthorization().getInitial_transaction_uuid());
-      procedureRequestAS.addInputParam("@i_preauthorization_life_cycle",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getPreauthorization().getLife_cycle());
-      procedureRequestAS.addInputParam("@i_token_data_token",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getToken());
-      procedureRequestAS.addInputParam("@i_token_data_requestor_id_token",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getRequestor_id_token());
-      procedureRequestAS.addInputParam("@i_token_data_expiration_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getExpiration_date());
-      procedureRequestAS.addInputParam("@i_token_data_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getToken_data().getStatus());
-      procedureRequestAS.addInputParam("@i_funds_transfer_type",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getFunds_transfer().getType());
-      procedureRequestAS.addInputParam("@i_transaction_indicators_card_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCard_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_cardholder_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCardholder_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_password_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPassword_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_cvv1_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv1_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_ccv2_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv2_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_ccv3_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv3_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_token_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isToken_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_3ds_present",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_3ds_present()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_3ds_valid",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_3ds_valid()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_recurring",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isRecurring()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_allows_partial_approval",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isAllows_partial_approval()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_pin_validated_offline",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPin_validated_offline()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_partially_reversed",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPartially_reversed()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_preauthorization",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPreauthorization()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_crossborder",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_crossborder()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_dcc",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_dcc()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isOnly_supports_purchase()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_international",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_international()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_funds_transfer",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_funds_transfer()));
-      procedureRequestAS.addInputParam("@i_transaction_indicators_is_automated_fuel_dispenser",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_automated_fuel_dispenser()));
-      procedureRequestAS.addInputParam("@i_original_transaction_data_transaction_uuid",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_nsu",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getNsu());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_mti",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_transmission_date_time_gmt",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransmission_date_time_gmt());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_institution_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_institutiion_name",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_accounting_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getAccounting_date());
-      procedureRequestAS.addInputParam("@i_original_transaction_data_retrieval_reference_number",ICTSTypes.SQLVARCHAR,inRequestAuthorizeReversalDock.getOriginal_transaction_data().getRetrieval_reference_number());
-      procedureRequestAS.addInputParam("@i_legacy-id",ICTSTypes.SQLVARCHAR,legacyid);
-      procedureRequestAS.addInputParam("@i_client-id",ICTSTypes.SQLVARCHAR,clientid);
-      procedureRequestAS.addInputParam("@i_uuid",ICTSTypes.SQLVARCHAR,uuid);
-      procedureRequestAS.addInputParam("@i_x-apigw-api-id",ICTSTypes.SQLVARCHAR,xapigwapiid);
+		/**
+		 * Authorize Reversal Dock
+		 */
+		@Override
+		// Return DTO
+		public ResponseAuthorizeReversalDock authorizeReversalDock(String legacyid, String clientid, String uuid,
+				String xapigwapiid, RequestAuthorizeReversalDock inRequestAuthorizeReversalDock)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: authorizeReversalDock");
+			ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock = new ResponseAuthorizeReversalDock();
 
-	  Gson gson = new Gson();
-	  String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);
-	  procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-      
-      //execute procedure
-      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_auth_reversal_dock_api");
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500139");
+			procedureRequestAS.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getAccount_id());
+			procedureRequestAS.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getPerson_id());
+			procedureRequestAS.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getCard_id());
+			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getProduct_id());
+			procedureRequestAS.addInputParam("@i_product_status", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getProduct_status());
+			procedureRequestAS.addInputParam("@i_bank_branch_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getBank_branch_number());
+			procedureRequestAS.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getBank_account_number());
+			procedureRequestAS.addInputParam("@i_transmission_date_time", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTransmission_date_time_gmt());
+			procedureRequestAS.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTerminal_date());
+			procedureRequestAS.addInputParam("@i_terminal_time", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTerminal_time());
+			procedureRequestAS.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversalDock.getMti());
+			procedureRequestAS.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getProcessing().getType());
+			procedureRequestAS.addInputParam("@i_processing_origin_account_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type());
+			procedureRequestAS.addInputParam("@i_processing_destiny_account_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type());
+			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getProcessing().getCode());
+			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversalDock.getNsu());
+			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getAuthorization_code());
+			procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getCard_number());
+			procedureRequestAS.addInputParam("@i_card_expiration_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getCard_expiration_date());
+			procedureRequestAS.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTransaction_origin());
+			procedureRequestAS.addInputParam("@i_installments", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestAuthorizeReversalDock.getInstallments()));
+			procedureRequestAS.addInputParam("@i_installment_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getInstallment_type());
+			procedureRequestAS.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getCard_entry().getCode());
+			procedureRequestAS.addInputParam("@i_card_entry_pin", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getCard_entry().getPin());
+			procedureRequestAS.addInputParam("@i_card_entry_mode", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getCard_entry().getMode());
+			procedureRequestAS.addInputParam("@i_mechant_category_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getMerchant_category_code());
+			procedureRequestAS.addInputParam("@i_values_updated_transaction_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getUpdated_transaction_value());
+			procedureRequestAS.addInputParam("@i_values_source_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getSource_currency_code());
+			procedureRequestAS.addInputParam("@i_values_settlement_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getSettlement_currency_code());
+			procedureRequestAS.addInputParam("@i_values_billing_currency_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getBilling_currency_code());
+			procedureRequestAS.addInputParam("@i_values_source_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getSource_value());
+			procedureRequestAS.addInputParam("@i_values_settlement_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getSettlement_value());
+			procedureRequestAS.addInputParam("@i_values_billing_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getBilling_value());
+			procedureRequestAS.addInputParam("@i_values_billing_conversion_rate", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getBilling_conversion_rate());
+			procedureRequestAS.addInputParam("@i_values_cash_back_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getCash_back_value());
+			procedureRequestAS.addInputParam("@i_values_credit__line_usage_fee", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getCredit_line_usage_fee());
+			procedureRequestAS.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getEstablishment());
+			procedureRequestAS.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTerminal_code());
+			procedureRequestAS.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getEstablishment_code());
+			procedureRequestAS.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getRetrieval_reference_number());
+			procedureRequestAS.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getBrand_response_code());
+			procedureRequestAS.addInputParam("@i_advice_reason", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getAdvice_reason());
+			procedureRequestAS.addInputParam("@i_advice_reason_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getAdvice_reason_code());
+			procedureRequestAS.addInputParam("@i_pos_postal_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getPos_postal_code());
+			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getAcquirer_country_code());
+			procedureRequestAS.addInputParam("@i_preauthorization_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getPreauthorization().getType());
+			procedureRequestAS.addInputParam("@i_preauthorization_initial_transaction_uuid", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getPreauthorization().getInitial_transaction_uuid());
+			procedureRequestAS.addInputParam("@i_preauthorization_life_cycle", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getPreauthorization().getLife_cycle());
+			procedureRequestAS.addInputParam("@i_token_data_token", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getToken_data().getToken());
+			procedureRequestAS.addInputParam("@i_token_data_requestor_id_token", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getToken_data().getRequestor_id_token());
+			procedureRequestAS.addInputParam("@i_token_data_expiration_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getToken_data().getExpiration_date());
+			procedureRequestAS.addInputParam("@i_token_data_status", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getToken_data().getStatus());
+			procedureRequestAS.addInputParam("@i_funds_transfer_type", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getFunds_transfer().getType());
+			procedureRequestAS.addInputParam("@i_transaction_indicators_card_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCard_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_cardholder_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCardholder_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_password_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPassword_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_cvv1_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv1_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_ccv2_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv2_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_ccv3_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isCvv3_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_token_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isToken_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_3ds_present", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_3ds_present()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_3ds_valid", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_3ds_valid()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_recurring", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isRecurring()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_allows_partial_approval", ICTSTypes.SQLBIT,
+					String.valueOf(
+							inRequestAuthorizeReversalDock.getTransaction_indicators().isAllows_partial_approval()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_pin_validated_offline", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPin_validated_offline()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_partially_reversed", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPartially_reversed()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_preauthorization", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isPreauthorization()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_crossborder", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_crossborder()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_dcc", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_dcc()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_only_supports_purchase", ICTSTypes.SQLBIT,
+					String.valueOf(
+							inRequestAuthorizeReversalDock.getTransaction_indicators().isOnly_supports_purchase()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_international", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_international()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_funds_transfer", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_funds_transfer()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_automated_fuel_dispenser", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators()
+							.isIs_automated_fuel_dispenser()));
+			procedureRequestAS.addInputParam("@i_original_transaction_data_transaction_uuid", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_nsu", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getNsu());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_mti", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_transmission_date_time_gmt",
+					ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransmission_date_time_gmt());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_institution_code", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_institutiion_name", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_accounting_date", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getAccounting_date());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_retrieval_reference_number",
+					ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getRetrieval_reference_number());
+			procedureRequestAS.addInputParam("@i_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
+			procedureRequestAS.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, clientid);
+			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, uuid);
+			procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 
-      List<MessageBlock> errors = ErrorUtil.getErrors(response);
-      //throw error
-      if(errors!= null && errors.size()> 0){
-      LOGGER.logDebug("Procedure execution returns error");
-      if ( LOGGER.isDebugEnabled() ) {
-      for (int i = 0; i < errors.size(); i++) {
-      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-      }
-      }
-      throw new CTSRestException("Procedure Response has errors", null, errors);
-      }
-      LOGGER.logDebug("Procedure ok");
-      //Init map returns
-      int mapTotal=0;
-      int mapBlank=0;
-      
-            mapTotal++;
-            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
-                    //----------------Assume Array return
-                    ResponseAuthorizeReversalDock returnResponseAuthorizeReversalDock = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizeReversalDock>() { 
-                    @Override
-                    public ResponseAuthorizeReversalDock mapRow(ResultSetMapper resultSetMapper, int index) {
-                    ResponseAuthorizeReversalDock dto = new ResponseAuthorizeReversalDock();
-                    
-                          dto.setResponse(resultSetMapper.getString(1));
-                          dto.setReason(resultSetMapper.getString(2));
-                    return dto;
-                    }
-                    },false);
-                    outSingleResponseAuthorizeReversalDock=returnResponseAuthorizeReversalDock ;
-                    
-            }else {
-            mapBlank++;
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);
+			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
 
-            }
-          
-      //End map returns
-      if(mapBlank!=0&&mapBlank==mapTotal){
-      LOGGER.logDebug("No data found");
-      throw new CTSRestException("404",null);
-      }
-      
-        LOGGER.logDebug("Ends service execution: authorizeReversalDock");
-        //returns data
-        return outSingleResponseAuthorizeReversalDock;
-      }
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ----------------Assume Array return
+				ResponseAuthorizeReversalDock returnResponseAuthorizeReversalDock = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(0), new RowMapper<ResponseAuthorizeReversalDock>() {
+							@Override
+							public ResponseAuthorizeReversalDock mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversalDock dto = new ResponseAuthorizeReversalDock();
+
+								List<String> arrayList = new ArrayList<>(Arrays.asList(resultSetMapper.getString(1).split(",")));
+								dto.setResponse((ArrayList) arrayList);
+								dto.setReason(resultSetMapper.getString(2));
+								dto.setAuthorization_code(resultSetMapper.getInteger(3));
+								dto.setSeq(resultSetMapper.getString(4));
+								return dto;
+							}
+						}, false);
+
+				outSingleResponseAuthorizeReversalDock = returnResponseAuthorizeReversalDock;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			String seqTran = outSingleResponseAuthorizeReversalDock.getSeq();
+			
+			outSingleResponseAuthorizeReversalDock.setSeq(null);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
+			
+			saveAuthResponse(seqTran, jsonRes);
+
+			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
+			// returns data
+			return outSingleResponseAuthorizeReversalDock;
+		}
     
 }
