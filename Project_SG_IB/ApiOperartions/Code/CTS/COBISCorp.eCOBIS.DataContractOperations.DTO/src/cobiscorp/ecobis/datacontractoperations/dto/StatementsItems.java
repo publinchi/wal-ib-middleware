@@ -27,47 +27,26 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class Header implements Serializable {
-  private String accept;
-  private String x_request_id;
-  private String x_end_user_request_date_time;
-  private String x_end_user_ip;
-  private String x_channel;
-  private String content_type;
-  public String getAccept(){
-    return this.accept;
+public class StatementsItems implements Serializable {
+  private String dateRegistered;
+  private String link;
+  private String fileName;
+  public String getDateRegistered(){
+    return this.dateRegistered;
   }
-  public void setAccept(String accept ){
-    this.accept=accept;
+  public void setDateRegistered(String dateRegistered ){
+    this.dateRegistered=dateRegistered;
   }
-  public String getX_request_id(){
-    return this.x_request_id;
+  public String getLink(){
+    return this.link;
   }
-  public void setX_request_id(String x_request_id ){
-    this.x_request_id=x_request_id;
+  public void setLink(String link ){
+    this.link=link;
   }
-  public String getX_end_user_request_date_time(){
-    return this.x_end_user_request_date_time;
+  public String getFileName(){
+    return this.fileName;
   }
-  public void setX_end_user_request_date_time(String x_end_user_request_date_time ){
-    this.x_end_user_request_date_time=x_end_user_request_date_time;
-  }
-  public String getX_end_user_ip(){
-    return this.x_end_user_ip;
-  }
-  public void setX_end_user_ip(String x_end_user_ip ){
-    this.x_end_user_ip=x_end_user_ip;
-  }
-  public String getX_channel(){
-    return this.x_channel;
-  }
-  public void setX_channel(String x_channel ){
-    this.x_channel=x_channel;
-  }
-  public String getContent_type(){
-    return this.content_type;
-  }
-  public void setContent_type(String content_type ){
-    this.content_type=content_type;
+  public void setFileName(String fileName ){
+    this.fileName=fileName;
   }
 }

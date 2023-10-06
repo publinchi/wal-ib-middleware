@@ -166,6 +166,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getStateByZipCode(ServiceRequestTO requestTO);  
 
   /**
+  * GetStatement List
+  */
+  ServiceResponseTO getStatementList(ServiceRequestTO requestTO);  
+
+  /**
   * View Customer Information
   */
   ServiceResponseTO getUserEntityInformation(ServiceRequestTO requestTO);  

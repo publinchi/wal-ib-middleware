@@ -27,47 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class Header implements Serializable {
-  private String accept;
-  private String x_request_id;
-  private String x_end_user_request_date_time;
-  private String x_end_user_ip;
-  private String x_channel;
-  private String content_type;
-  public String getAccept(){
-    return this.accept;
+public class RequestGetStatementList implements Serializable {
+  private String month;
+  private String year;
+  public String getMonth(){
+    return this.month;
   }
-  public void setAccept(String accept ){
-    this.accept=accept;
+  public void setMonth(String month ){
+    this.month=month;
   }
-  public String getX_request_id(){
-    return this.x_request_id;
+  public String getYear(){
+    return this.year;
   }
-  public void setX_request_id(String x_request_id ){
-    this.x_request_id=x_request_id;
-  }
-  public String getX_end_user_request_date_time(){
-    return this.x_end_user_request_date_time;
-  }
-  public void setX_end_user_request_date_time(String x_end_user_request_date_time ){
-    this.x_end_user_request_date_time=x_end_user_request_date_time;
-  }
-  public String getX_end_user_ip(){
-    return this.x_end_user_ip;
-  }
-  public void setX_end_user_ip(String x_end_user_ip ){
-    this.x_end_user_ip=x_end_user_ip;
-  }
-  public String getX_channel(){
-    return this.x_channel;
-  }
-  public void setX_channel(String x_channel ){
-    this.x_channel=x_channel;
-  }
-  public String getContent_type(){
-    return this.content_type;
-  }
-  public void setContent_type(String content_type ){
-    this.content_type=content_type;
+  public void setYear(String year ){
+    this.year=year;
   }
 }
