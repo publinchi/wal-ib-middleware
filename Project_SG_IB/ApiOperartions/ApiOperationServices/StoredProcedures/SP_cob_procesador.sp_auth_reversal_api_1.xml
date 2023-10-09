@@ -57,5 +57,11 @@
       </columns>
       <queryText></queryText>
     </query>
+    <query>
+      <columns>
+        <column name="movementId" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>
