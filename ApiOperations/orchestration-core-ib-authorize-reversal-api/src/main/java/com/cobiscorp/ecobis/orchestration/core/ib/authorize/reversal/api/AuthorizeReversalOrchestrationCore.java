@@ -344,6 +344,11 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetData data4 = new ResultSetData();
 		
 		metaData4.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
+		
+		IResultSetHeader metaData5 = new ResultSetHeader();
+		IResultSetData data5 = new ResultSetData();
+		
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SQLINT4, 10));
 
 		
 		if (codeReturn == 0) {
@@ -358,6 +363,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				String authorizationCode = anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).isNull()?"0":anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue();
 				String seq = aBagSPJavaOrchestration.get("@o_seq_tran").toString();
+				String movementId = anOriginalProcedureRes.readValueParam("@o_ssn_host");
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -379,6 +385,11 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				row4.addRowData(1, new ResultSetRowColumnData(false, seq));
 				data4.addRow(row4);
+				
+				IResultSetRow row5 = new ResultSetRow();
+				
+				row5.addRowData(1, new ResultSetRowColumnData(false, movementId));
+				data5.addRow(row5);
 				
 			} else {
 				
@@ -420,11 +431,13 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
+		IResultSetBlock resultsetBlock5 = new ResultSetBlock(metaData5, data5);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
+		wProcedureResponse.addResponseBlock(resultsetBlock5);
 		
 		return wProcedureResponse;		
 	}
