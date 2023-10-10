@@ -57,7 +57,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 	private String jsonHead = null;
 
-	public void saveAuthResponse(String seqTran, String jsonRes) throws CTSRestException {
+	public void saveAuthResponse(String trn, String seqTran, String jsonRes) throws CTSRestException {
 		
 		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
 		
@@ -65,6 +65,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		
 		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500142");
 		procedureRequestAS.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "RTA");
+		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
 		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
 		
@@ -394,7 +395,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>2 && response.getResultSets().get(2).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizePurchase>() {
@@ -416,7 +417,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizePurchase>() {
@@ -436,12 +437,36 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null && response.getResultSets().size()>4 && response.getResultSets().get(4).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizePurchase>() {
+							@Override
+							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+
+								dto.setMovementId(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizePurchase.setMovementId(returnResponseAuthorizePurchase.getMovementId());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 	
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Authorize Purchase";
 			
 			String seqTran = outResponseAuthorizePurchase.getSeq();
 			
@@ -450,7 +475,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizePurchase);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 			
 			LOGGER.logDebug("Ends service execution: authorizePurchase");
 			// returns data
@@ -681,6 +706,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String trn = "Authorize Purchase Dock";
+			
 			String seqTran = outSingleResponseAuthorizePurchaseDock.getSeq();
 			
 			outSingleResponseAuthorizePurchaseDock.setSeq(null);
@@ -688,7 +715,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
 			// returns data
@@ -818,7 +845,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>2 && response.getResultSets().get(2).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeWithdrawal>() {
@@ -840,7 +867,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeWithdrawal>() {
@@ -860,12 +887,36 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null && response.getResultSets().size()>4 && response.getResultSets().get(4).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizeWithdrawal>() {
+							@Override
+							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+
+								dto.setMovementId(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeWithdrawal.setMovementId(returnResponseAuthorizeWithdrawal.getMovementId());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Authorize Withdrawal";
 			
 			String seqTran = outResponseAuthorizeWithdrawal.getSeq();
 			
@@ -874,7 +925,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeWithdrawal);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawal");
 			// returns data
@@ -1082,6 +1133,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String trn = "Authorize Withdrawal Dock";
+			
 			String seqTran = outSingleResponseAuthorizeWithdrawalDock.getSeq();
 			
 			outSingleResponseAuthorizeWithdrawalDock.setSeq(null);
@@ -1089,7 +1142,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
 			// returns data
@@ -1218,7 +1271,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>2 && response.getResultSets().get(2).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeDeposit>() {
@@ -1240,7 +1293,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeDeposit>() {
@@ -1260,12 +1313,36 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null && response.getResultSets().size()>4 && response.getResultSets().get(4).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+
+								dto.setMovementId(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeDeposit.setMovementId(returnResponseAuthorizeDeposit.getMovementId());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Authorize Deposit";
 			
 			String seqTran = outResponseAuthorizeDeposit.getSeq();
 			
@@ -1274,7 +1351,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeDeposit);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDeposit");
 			// returns data
@@ -1479,6 +1556,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("404", null);
 			}
 			
+			String trn = "Authorize Deposit Dock";
+			
 			String seqTran = outSingleResponseAuthorizeDepositDock.getSeq();
 			
 			outSingleResponseAuthorizeDepositDock.setSeq(null);
@@ -1486,7 +1565,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
@@ -1635,7 +1714,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>2 && response.getResultSets().get(2).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeReversal>() {
@@ -1657,7 +1736,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			
 			mapTotal++;
-			if (response.getResultSets()!=null&&response.getResultSets().size()>3&&response.getResultSets().get(3).getData().getRows().size()>0) {
+			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
 				// ---------NO Array
 				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizeReversal>() {
@@ -1677,12 +1756,36 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets()!=null && response.getResultSets().size()>4 && response.getResultSets().get(4).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal returnResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+
+								dto.setMovementId(resultSetMapper.getInteger(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseAuthorizeReversal.setMovementId(returnResponseAuthorizeReversal.getMovementId());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
+			String trn = "Authorize Reversal";
 			
 			String seqTran = outResponseAuthorizeReversal.getSeq();
 			
@@ -1691,7 +1794,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 		
 			LOGGER.logDebug("Ends service execution: authorizeReversal");
 			// returns data
@@ -6218,6 +6321,8 @@ int mapBlank=0;
 				throw new CTSRestException("404", null);
 			}
 			
+			String trn = "Authorize Reversal Dock";
+			
 			String seqTran = outSingleResponseAuthorizeReversalDock.getSeq();
 			
 			outSingleResponseAuthorizeReversalDock.setSeq(null);
@@ -6225,7 +6330,7 @@ int mapBlank=0;
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
 			
-			saveAuthResponse(seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
 			// returns data
