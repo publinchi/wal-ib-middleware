@@ -427,7 +427,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getCausa() != null ? respMov.getCausa() : "null") + ",";
 			script = script + (respMov.getIva() != null ? respMov.getIva() : "null") + ",";
 			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ",";
-			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ")\r\n";
+			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ",";
+			script = script + "null, null, null, null, null, null,  null, null, null, null,";
+			script = script + "null, null, null, null, null, null,  null, null, null, null)\r\n";
 		}
 		
 		return script;
