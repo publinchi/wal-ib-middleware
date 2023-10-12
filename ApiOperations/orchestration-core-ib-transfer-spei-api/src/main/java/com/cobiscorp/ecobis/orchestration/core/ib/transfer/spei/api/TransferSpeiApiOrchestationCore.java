@@ -508,7 +508,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-//					movementId = anOriginalProcedureRes.readValueParam(Constants.I_ID_SPEI_ACC).toString().trim();
+					movementId = anOriginalProcedureRes.readValueParam(Constants.I_ID_SPEI_ACC).toString().trim();
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
@@ -1474,3 +1474,4 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 	
 }
+ 
