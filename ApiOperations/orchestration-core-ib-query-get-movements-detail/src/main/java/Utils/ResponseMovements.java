@@ -44,8 +44,7 @@ public class ResponseMovements {
 	private String causa;
 	private String iva;
 	private String comision;
-	private String um_correccion;
-
+	
 	public String getFecha() {
 		return fecha;
 	}
@@ -269,11 +268,5 @@ public class ResponseMovements {
 	}
 	public void setComision(String comision) {
 		this.comision = comision;
-	}
-	public String getUm_correccion() {
-		return um_correccion;
-	}
-	public void setUm_correccion(String um_correccion) {
-		this.um_correccion = um_correccion;
-	}
+	}	
 }
