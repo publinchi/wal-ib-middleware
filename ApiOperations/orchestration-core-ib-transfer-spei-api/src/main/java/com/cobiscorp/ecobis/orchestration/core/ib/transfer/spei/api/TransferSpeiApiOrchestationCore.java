@@ -65,7 +65,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOffl
  * Register Account
  * 
  * @since Abr 17, 2023
- * @author sochoa
+ * @author jcos, nelson, santiago
  * @version 1.0.0
  * 
  */
@@ -508,7 +508,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-					movementId = anOriginalProcedureRes.readValueParam(Constants.I_ID_SPEI_ACC).toString().trim();
+//					movementId = anOriginalProcedureRes.readValueParam(Constants.I_ID_SPEI_ACC).toString().trim();
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
