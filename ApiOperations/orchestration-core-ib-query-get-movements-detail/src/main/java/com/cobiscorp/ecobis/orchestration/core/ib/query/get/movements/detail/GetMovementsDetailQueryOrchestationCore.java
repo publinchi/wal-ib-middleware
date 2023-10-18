@@ -231,6 +231,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			respMovement.setComision(columns[29].getValue());
 			respMovement.setUm_correccion(columns[30].getValue());
 			
+			String um_sec_correccion = columns[31].getValue();
+			
+			if(um_sec_correccion != null) {
+				respMovement.setUm_sec_correccion(Integer.parseInt(um_sec_correccion));	
+			}			
+			
 			if(null!= columns[15].getValue() && !"".equals(columns[15].getValue())) {
 				
 				respMovement.setDataComprobante(columns[15].getValue());
@@ -428,6 +434,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getIva() != null ? respMov.getIva() : "null") + ",";
 			script = script + (respMov.getComision() != null ? respMov.getComision() : "null") + ",";
 			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ",";
+			script = script + (respMov.getUm_sec_correccion() != null ? respMov.getUm_sec_correccion() : "null") + ",";
 			script = script + "null, null, null, null, null, null,  null, null, null, null,";
 			script = script + "null, null, null, null, null, null,  null, null, null, null)\r\n";
 		}
