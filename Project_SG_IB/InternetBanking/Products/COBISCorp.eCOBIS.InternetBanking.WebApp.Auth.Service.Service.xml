@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProduct" id="1">
+  <field type="boolean" name="canGenerate" value="true" />
+  <collection type="List" length="1" id="2" name="templates">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateConfiguration" id="3" index="0">
+      <collection type="List" length="6" id="4" name="templateFileBases">
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateFileBase" id="5" index="0">
+          <field type="String" name="filePath" value="Annotations\JavaInterface.xslt" />
+          <field type="boolean" name="enabled" value="true" />
+          <field type="boolean" name="override" value="true" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateFileBase" id="6" index="1">
+          <field type="String" name="filePath" value="Annotations\JavaService.xslt" />
+          <field type="boolean" name="enabled" value="true" />
+          <field type="boolean" name="override" value="true" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateFileBase" id="7" index="2">
+          <field type="String" name="filePath" value="Annotations\OSGIClass.xslt" />
+          <field type="boolean" name="enabled" value="true" />
+          <field type="boolean" name="override" value="true" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateFileBase" id="8" index="3">
+          <field type="String" name="filePath" value="Annotations\Interceptor.xslt" />
+          <field type="boolean" name="enabled" value="true" />
+          <field type="boolean" name="override" value="false" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateFileBase" id="9" index="4">
+          <field type="String" name="filePath" value="..\Commons\Java\buildProperties.xslt" />
+          <field type="boolean" name="enabled" value="true" />
+          <field type="boolean" name="override" value="true" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGTemplateFileBase" id="10" index="5">
+          <field type="String" name="filePath" value="..\Commons\Java\build.xslt" />
+          <field type="boolean" name="enabled" value="true" />
+          <field type="boolean" name="override" value="true" />
+        </class>
+      </collection>
+      <field type="String" name="id" value="ServiceCTS302" />
+      <field type="String" name="outputFolder" value="{SG-OUTPUT-DIR}\IB\CTS\COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" />
+      <field type="boolean" name="package" value="true" />
+      <enum type="cobiscorp.ecobis.censervicegenerator.dto.commons.TemplateMode" id="11" name="templateMode" value="XSLT" />
+      <field type="String" name="packageTypeName" value="Jar" />
+    </class>
+  </collection>
+  <collection type="List" length="1" id="12" name="classes">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGClassBase" id="13" index="0">
+      <field type="String" name="name" value="Auth" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" />
+      <field type="String" name="version" value="1" />
+      <collection type="Map" length="0" id="14" name="mappingProperties">
+      </collection>
+    </class>
+  </collection>
+  <collection type="List" length="1" id="15" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="16" index="0">
+      <field type="String" name="name" value="MavenGroupId" />
+      <field type="String" name="value" value="com.cobiscorp.channels.ib" />
+      <field type="char" name="type" value="\u0000" />
+    </class>
+  </collection>
+  <field type="String" name="documentation" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" />
+  <field type="boolean" name="autoSelectDTO" value="false" />
+  <field type="boolean" name="autoBuild" value="true" />
+  <field type="boolean" name="autoCleanXml" value="false" />
+  <field type="boolean" name="autoCleanSource" value="false" />
+  <collection type="List" length="1" id="17" name="references">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="18" index="0">
+      <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
+      <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
+      <field type="String" name="documentationLanguage" value="Español" />
+      <field type="String" name="typeName" value="DTO" />
+      <field type="String" name="version" value="4.6.1.0" />
+    </class>
+  </collection>
+  <collection type="List" length="0" id="19" name="externalReferences">
+  </collection>
+  <collection type="List" length="1" id="20" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="21" index="0">
+      <field type="String" name="antTask" value="sign-archive" />
+      <field type="String" name="keyAlias" value="cobisBV" />
+      <field type="String" name="keyPassword" value="cobisbvadminadmin" />
+      <field type="String" name="keyCertificatePassword" value="cobisbvadmin" />
+      <field type="String" name="keyFileName" value="cobisBV.KEYSTORE" />
+      <field type="boolean" name="relativeFolder" value="true" />
+      <field type="String" name="templateId" value="ServiceCTS302" />
+      <field type="String" name="jDKVersion" value="1.6" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.6.0_39" />
+    </class>
+  </collection>
+  <collection type="List" length="6" id="22" name="templateCommands">
+    <field type="String" index="0" value="cmd_Maven install in local repository" />
+    <field type="String" index="1" value="cmd_Maven deploy in remote repository" />
+    <field type="String" index="2" value="cmd_Nuget install in local repository" />
+    <field type="String" index="3" value="cmd_Nuget install in remote repository" />
+    <field type="String" index="4" value="cmd_Net prebuild tasks" />
+    <field type="String" index="5" value="cmd_Java prebuild tasks" />
+  </collection>
+  <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" />
+  <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" />
+  <field type="String" name="documentationLanguage" value="Español" />
+  <field type="String" name="typeName" value="SERVICE" />
+  <field type="String" name="version" value="4.6.1.0" />
+</class>
