@@ -1,4 +1,3 @@
-
 /************************************************************/
 /*                     IMPORTANTE                           */
 /*   Esta aplicacion es parte de los  paquetes bancarios    */
@@ -3996,6 +3995,15 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500097");
 			procedureRequestAS.addInputParam("@i_customer", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestCreateSavingAccount.getCustomerId()));
+			procedureRequestAS.addInputParam("@i_prod", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getProduct()));
+			procedureRequestAS.addInputParam("@i_mon", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getCurrency()));
+			procedureRequestAS.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestCreateSavingAccount.getReasonForOrigination()));	
+			procedureRequestAS.addInputParam("@i_prod_banc", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getProductSubType()));
+			
 			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
 			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
 			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
