@@ -27,47 +27,32 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class Header implements Serializable {
-  private String accept;
-  private String x_request_id;
-  private String x_end_user_request_date_time;
-  private String x_end_user_ip;
-  private String x_channel;
-  private String content_type;
-  public String getAccept(){
-    return this.accept;
+public class ResponseGetStatementList implements Serializable {
+  private Boolean success;
+  private Response response;
+  private StatementsItems[] statementsItems;
+  public Boolean isSuccess(){
+    return this.success;
   }
-  public void setAccept(String accept ){
-    this.accept=accept;
+  public void setSuccess(Boolean success ){
+    this.success=success;
   }
-  public String getX_request_id(){
-    return this.x_request_id;
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
+	}
+	return this.response;
   }
-  public void setX_request_id(String x_request_id ){
-    this.x_request_id=x_request_id;
+  public Response getResponse(){
+    return this.response;
   }
-  public String getX_end_user_request_date_time(){
-    return this.x_end_user_request_date_time;
+  public void setResponse(Response response ){
+    this.response=response;
   }
-  public void setX_end_user_request_date_time(String x_end_user_request_date_time ){
-    this.x_end_user_request_date_time=x_end_user_request_date_time;
+  public StatementsItems[] getStatementsItems(){
+    return this.statementsItems;
   }
-  public String getX_end_user_ip(){
-    return this.x_end_user_ip;
-  }
-  public void setX_end_user_ip(String x_end_user_ip ){
-    this.x_end_user_ip=x_end_user_ip;
-  }
-  public String getX_channel(){
-    return this.x_channel;
-  }
-  public void setX_channel(String x_channel ){
-    this.x_channel=x_channel;
-  }
-  public String getContent_type(){
-    return this.content_type;
-  }
-  public void setContent_type(String content_type ){
-    this.content_type=content_type;
+  public void setStatementsItems(StatementsItems[] statementsItems ){
+    this.statementsItems=statementsItems;
   }
 }

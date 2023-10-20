@@ -21,105 +21,8 @@
 
 package cobiscorp.ecobis.servicecontractoperations.service;
 
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAffiliateCustomer;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAllCustomerQuestions;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDeposit;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeDepositDock;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchase;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizePurchaseDock;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchaseDock;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversal;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawal;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeWithdrawalDock;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAffiliateCustomer;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAllCustomerQuestions;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDepositDock;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawalDock;
-import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.Message;
+import cobiscorp.ecobis.datacontractoperations.dto.*;
 import cobiscorp.ecobis.datacontractoperations.dto.Error;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation;
-import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.CreditAccountResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestEncriptData;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseEncriptData;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestOtp;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseOtp;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
-import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.BeneficiariesResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
-import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
-import cobiscorp.ecobis.datacontractoperations.dto.AddressTypeItems;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseMunicipalityByState;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestOwnAccountsView;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseOwnAccountsView;
-import cobiscorp.ecobis.datacontractoperations.dto.AccountsArray;
-import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.StateByZipCodeResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestRegisterAccountSpei;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseRegisterAccountSpei;
-import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.RegisterBeneficiaryResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestSearchLocationCatalog;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferSpi;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi;
-import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.SearchZipCodeResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.ListZipCode;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestTransferThirdPartyAccount;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateAccountStatus;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCardStatus;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCardStatus;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateAccountStatus;
-import cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.UpdateBeneficiaryResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.UpdateCustomerAddressResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateProfile;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateAllSecurityQA;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateProfile;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateCustomerIdentityCard;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateDeviceActivation;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateCustomerIdentityCard;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateDeviceActivation;
-import cobiscorp.ecobis.datacontractoperations.dto.RequestValidateIdentity;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateIdentity;
-import cobiscorp.ecobis.datacontractoperations.dto.CardApplicationRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.CardApplicationResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.DebitAccountResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenRequest;
-import cobiscorp.ecobis.datacontractoperations.dto.ValidateTokenResponse;
-import   cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
-import   cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
-import   cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversalDock;
-import   cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversalDock;
 
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 import java.util.List;
@@ -286,6 +189,14 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseOwnAccountsView getOwnAccountsView(RequestOwnAccountsView inRequestOwnAccountsView)
 			throws CTSRestException;
+	
+	/**
+	 * Get Statement List
+	 */
+
+	// Have DTO
+	public ResponseGetStatementList getStatementList(RequestGetStatementList inRequestGetStatementList)
+			throws CTSRestException;
 
 	/**
 	 * Find State By zip Code API
@@ -339,7 +250,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException;
 
 	/**
@@ -347,7 +258,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) throws CTSRestException;
 
 	/**
