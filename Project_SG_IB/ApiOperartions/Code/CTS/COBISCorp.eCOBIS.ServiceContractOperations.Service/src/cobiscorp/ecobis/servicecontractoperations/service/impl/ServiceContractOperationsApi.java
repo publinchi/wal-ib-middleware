@@ -108,7 +108,9 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "userCreated", columnIndex = 2),
 		    @CTSColumn(field = "success", columnIndex = 3),
 		    @CTSColumn(field = "response.message", columnIndex = 4),
-		    @CTSColumn(field = "response.code", columnIndex = 5)
+		    @CTSColumn(field = "response.code", columnIndex = 5),
+		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 6),
+		    @CTSColumn(field = "cardId", columnIndex = 7)
       }
     )
   }
@@ -139,13 +141,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "date", param = "@i_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "time", param = "@i_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "merchantCategoryCode", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_amount", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.sourceCurrencyCode", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.settlementCurrencyCode", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.amount", param = "@i_amount", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "institutionName", param = "@i_institution_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminalCode", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
@@ -174,6 +176,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       columns = {
 		    @CTSColumn(field = "response.code", columnIndex = 1),
 		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseAuthorizeDeposit",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeDeposit.class,
+      columns = {
+		    @CTSColumn(field = "authorizationCode", columnIndex = 1)
       }
     )
   }
@@ -205,10 +214,10 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "terminal_date", param = "@i_terminal_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_time", param = "@i_terminal_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.origin_account_type", param = "@i_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.destiny_account_type", param = "@i_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
@@ -216,19 +225,19 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "card_expiration_date", param = "@i_card_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "transaction_origin", param = "@i_transaction_origin", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "institution_code", param = "@i_institution_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "card_entry", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "card_entry", param = "@i_pin", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "card_entry", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.code", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.pin", param = "@i_pin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.mode", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "merchant_category_code", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_billing_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_source_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_billing_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_billing_conversion_rate", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_cash_back_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_credit_line_usage_fee", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_currency_code", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_currency_code", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_currency_code", param = "@i_billing_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_currency_code", param = "@i_source_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_currency_code", param = "@i_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_value", param = "@i_billing_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_conversion_rate", param = "@i_billing_conversion_rate", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.cash_back_value", param = "@i_cash_back_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.credit_line_usage_fee", param = "@i_credit_line_usage_fee", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "establishment", param = "@i_establishment", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_code", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "establishment_code", param = "@i_establishment_code", dataType = ICTSTypes.SQLVARCHAR),
@@ -236,24 +245,24 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "brand_response_code", param = "@i_brand_response_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "pos_postal_code", param = "@i_pos_postal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirer_country_code", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cardholder_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_password_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cvv1_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cvv2_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cvv3_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_token_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_3ds_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_3ds_valid", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_recurring", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_allows_partial_approval", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_pin_validated_offline", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_partially_reversed", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_preauthorization", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_crossborder", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_dcc", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_only_supports_purchase", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_international", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.card_present", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cardholder_present", param = "@i_cardholder_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.password_present", param = "@i_password_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv1_present", param = "@i_cvv1_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv2_present", param = "@i_cvv2_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv3_present", param = "@i_cvv3_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.token_present", param = "@i_token_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_3ds_present", param = "@i_is_3ds_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_3ds_valid", param = "@i_is_3ds_valid", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.recurring", param = "@i_recurring", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.", param = "@i_allows_partial_approval", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.pin_validated_offline", param = "@i_pin_validated_offline", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.partially_reversed", param = "@i_partially_reversed", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.preauthorization", param = "@i_preauthorization", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_crossborder", param = "@i_is_crossborder", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_dcc", param = "@i_is_dcc", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.only_supports_purchase", param = "@i_only_supports_purchase", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_international", param = "@i_is_international", dataType = ICTSTypes.SQLBIT),
 					@CTSInputParam(field = "card_id", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "product_id", param = "@i_product_id", dataType = ICTSTypes.SQLVARCHAR)
 				}
@@ -274,7 +283,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "cardholder_billing_value", columnIndex = 3),
 		    @CTSColumn(field = "response", columnIndex = 4),
 		    @CTSColumn(field = "reason", columnIndex = 5),
-		    @CTSColumn(field = "available_limit", columnIndex = 6)
+		    @CTSColumn(field = "available_limit", columnIndex = 6),
+		    @CTSColumn(field = "authorization_code", columnIndex = 7)
       }
     )
   }
@@ -304,25 +314,25 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "date", param = "@i_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "time", param = "@i_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "cardExpirationDate", param = "@i_card_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cardEntry", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cardEntry", param = "@i_pin", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cardEntry", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cardEntry.code", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cardEntry.pin", param = "@i_pin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cardEntry.mode", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "merchantCategoryCode", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "values.sourceCurrencyCode", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlementCurrencyCode", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.amount", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
 					@CTSInputParam(field = "institutionName", param = "@i_institution_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminalCode", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirerCountryCode", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transactionIndicators", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transactionIndicators", param = "@i_card_holder_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transactionIndicators", param = "@i_cvv2_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transactionIndicators", param = "@i_pin_validated_offline", dataType = ICTSTypes.SQLBIT)
+					@CTSInputParam(field = "transactionIndicators.cardPresent", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transactionIndicators.cardholderPresent", param = "@i_card_holder_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transactionIndicators.cvv2Present", param = "@i_cvv2_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transactionIndicators.pinValidatedOffline", param = "@i_pin_validated_offline", dataType = ICTSTypes.SQLBIT)
 				}
 			)
 		},
@@ -346,6 +356,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "response.code", columnIndex = 1),
 		    @CTSColumn(field = "response.message", columnIndex = 2)
       }
+    ),
+    @CTSResponse(
+      name = "returnResponseAuthorizePurchase",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizePurchase.class,
+      columns = {
+		    @CTSColumn(field = "authorizationCode", columnIndex = 1)
+      }
     )
   }
   
@@ -368,12 +385,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				input = {
 				
 					@CTSInputParam(field = "account_id", param = "@i_account_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "bank_account_number", param = "@i_account_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirer_country_code", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_account_number", param = "@i_bank_account_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_branch_number", param = "@i_bank_branch_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "brand_response_code", param = "@i_brand_response_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.code", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "card_expiration_date", param = "@i_card_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "transaction_indicators.cardholder_present", param = "@i_card_holder_present", dataType = ICTSTypes.SQLBIT),
 					@CTSInputParam(field = "card_id", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR),
@@ -399,9 +418,12 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "preauthorization.initial_transaction_uuid", param = "@i_pre_initial_transaction_uuid", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "preauthorization.life_cycle", param = "@i_pre_life_cycle", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "preauthorization.type", param = "@i_pre_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "product_id", param = "@i_product_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "product_status", param = "@i_product_status", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "retrieval_reference_number", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_currency_code", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_currency_code", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_code", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_date", param = "@i_terminal_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_time", param = "@i_terminal_time", dataType = ICTSTypes.SQLVARCHAR),
@@ -410,6 +432,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "token_data.status", param = "@i_tk_status", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "token_data.token", param = "@i_tk_token", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "transaction_origin", param = "@i_transaction_origin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time_gtm", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "transaction_indicators.allows_partial_approval", param = "@i_trn_allows_partial_approval", dataType = ICTSTypes.SQLBIT),
 					@CTSInputParam(field = "transaction_indicators.card_present", param = "@i_trn_card_present", dataType = ICTSTypes.SQLBIT),
@@ -458,16 +481,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "cardholder_billing_value", columnIndex = 3),
 		    @CTSColumn(field = "response", columnIndex = 4),
 		    @CTSColumn(field = "reason", columnIndex = 5),
-		    @CTSColumn(field = "available_limit", columnIndex = 6)
-      }
-    ),
-    @CTSResponse(
-      name = "returnError",
-      type = cobiscorp.ecobis.datacontractoperations.dto.Error.class,
-      columns = {
-		    @CTSColumn(field = "id", columnIndex = 1),
-		    @CTSColumn(field = "description", columnIndex = 2),
-		    @CTSColumn(field = "code", columnIndex = 3)
+		    @CTSColumn(field = "available_limit", columnIndex = 6),
+		    @CTSColumn(field = "authorization_code", columnIndex = 7)
       }
     )
   }
@@ -498,13 +513,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "date", param = "@i_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "time", param = "@i_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "merchantCategoryCode", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_amount", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.sourceCurrencyCode", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.settlementCurrencyCode", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.amount", param = "@i_amount", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminalCode", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirerCountryCode", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
@@ -513,14 +528,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "establishment", param = "@i_establishment", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "adviceReason", param = "@i_advise_reason", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "adviceReasonCode", param = "@i_advise_reason_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_uuid", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_nsu", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_transmission_date_time_gtm", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_institution_name", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originalTransactionData", param = "@i_origin_processing_code", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "originalTransactionData.uuid", param = "@i_origin_uuid", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.nsu", param = "@i_origin_nsu", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.mti", param = "@i_origin_mti", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.transmissionDateTimeGmt", param = "@i_origin_transmission_date_time_gtm", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.institutionName", param = "@i_origin_institution_name", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.retrievalReferenceNumber", param = "@i_origin_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.type", param = "@i_origin_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "originalTransactionData.code", param = "@i_origin_processing_code", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -543,6 +558,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       columns = {
 		    @CTSColumn(field = "response.code", columnIndex = 1),
 		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseAuthorizeReversal",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversal.class,
+      columns = {
+		    @CTSColumn(field = "authorizationCode", columnIndex = 1)
       }
     )
   }
@@ -660,7 +682,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversalDock.class,
       columns = {
 		    @CTSColumn(field = "response", columnIndex = 1),
-		    @CTSColumn(field = "reason", columnIndex = 2)
+		    @CTSColumn(field = "reason", columnIndex = 2),
+		    @CTSColumn(field = "authorization_code", columnIndex = 3)
       }
     )
   }
@@ -691,13 +714,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "date", param = "@i_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "time", param = "@i_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "merchantCategoryCode", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
+					@CTSInputParam(field = "transaction.", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.settlementCurrencyCode", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction.amount", param = "@i_amount", dataType = ICTSTypes.SQLMONEY),
 					@CTSInputParam(field = "institutionName", param = "@i_institution_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminalCode", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "retrievalReferenceNumber", param = "@i_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
@@ -726,6 +749,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       columns = {
 		    @CTSColumn(field = "response.code", columnIndex = 1),
 		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseAuthorizeWithdrawal",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawal.class,
+      columns = {
+		    @CTSColumn(field = "authorizationCode", columnIndex = 1)
       }
     )
   }
@@ -757,29 +787,29 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "terminal_date", param = "@i_terminal_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_time", param = "@i_terminal_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "processing", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.type", param = "@i_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.origin_account_type", param = "@i_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.destiny_account_type", param = "@i_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "card_number", param = "@i_card_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "card_expiration_date", param = "@i_card_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "transaction_origin", param = "@i_transaction_origin", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "card_entry", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "card_entry", param = "@i_pin", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "card_entry", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.code", param = "@i_card_entry_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.pin", param = "@i_pin", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "card_entry.mode", param = "@i_mode", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "merchant_category_code", param = "@i_merchant_category_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_billing_currency_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_source_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_billing_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_billing_conversion_rate", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_cash_back_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "values", param = "@i_credit_line_usage_fee", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_currency_code", param = "@i_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_currency_code", param = "@i_settlement_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_currency_code", param = "@i_billing_currency_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.source_value", param = "@i_source_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.settlement_value", param = "@i_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_value", param = "@i_billing_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.billing_conversion_rate", param = "@i_billing_conversion_rate", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.cash_back_value", param = "@i_cash_back_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "values.credit_line_usage_fee", param = "@i_credit_line_usage_fee", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "establishment", param = "@i_establishment", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_code", param = "@i_terminal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "establishment_code", param = "@i_establishment_code", dataType = ICTSTypes.SQLVARCHAR),
@@ -787,27 +817,27 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "brand_response_code", param = "@i_brand_response_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "pos_postal_code", param = "@i_pos_postal_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirer_country_code", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "token_data", param = "@i_token", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "token_data", param = "@i_requestor_id_token", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "token_data", param = "@i_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "token_data", param = "@i_status", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cardholder_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_password_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cvv1_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cvv2_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_cvv3_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_token_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_3ds_present", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_3ds_valid", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_recurring", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_allows_partial_approval", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_pin_validated_offline", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_partially_reversed", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_preauthorization", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_crossborder", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_dcc", dataType = ICTSTypes.SQLBIT),
-					@CTSInputParam(field = "transaction_indicators", param = "@i_is_international", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "token_data.token", param = "@i_token", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.requestor_id_token", param = "@i_requestor_id_token", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.expiration_date", param = "@i_expiration_date", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "token_data.status", param = "@i_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_indicators.card_present", param = "@i_card_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cardholder_present", param = "@i_cardholder_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.password_present", param = "@i_password_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv1_present", param = "@i_cvv1_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv2_present", param = "@i_cvv2_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.cvv3_present", param = "@i_cvv3_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.token_present", param = "@i_token_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_3ds_present", param = "@i_is_3ds_present", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_3ds_valid", param = "@i_is_3ds_valid", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.recurring", param = "@i_recurring", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.allows_partial_approval", param = "@i_allows_partial_approval", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.pin_validated_offline", param = "@i_pin_validated_offline", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.partially_reversed", param = "@i_partially_reversed", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.preauthorization", param = "@i_preauthorization", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_crossborder", param = "@i_is_crossborder", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_dcc", param = "@i_is_dcc", dataType = ICTSTypes.SQLBIT),
+					@CTSInputParam(field = "transaction_indicators.is_international", param = "@i_is_international", dataType = ICTSTypes.SQLBIT),
 					@CTSInputParam(field = "card_id", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "product_id", param = "@i_product_id", dataType = ICTSTypes.SQLVARCHAR)
 				}
@@ -824,7 +854,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeWithdrawalDock.class,
       columns = {
 		    @CTSColumn(field = "response", columnIndex = 1),
-		    @CTSColumn(field = "reason", columnIndex = 2)
+		    @CTSColumn(field = "reason", columnIndex = 2),
+		    @CTSColumn(field = "authorization_code", columnIndex = 3)
       }
     )
   }
@@ -859,7 +890,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "countryBirth", param = "@i_countrybirth_code", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "economicSector", param = "@i_economic_sector", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "electronicTransfer", param = "@i_electronic_transfer", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "externalNumber", param = "@i_externalnumber", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "externalNumber", param = "@i_externalnumber", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "gender", param = "@i_gender_code", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "geolocalizationLatitude", param = "@i_geolocatization_latitude", dataType = ICTSTypes.SQLDECIMAL),
 					@CTSInputParam(field = "geolocalizationLongitude", param = "@i_geolocatization_longitude", dataType = ICTSTypes.SQLDECIMAL),
@@ -867,7 +898,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "identityValidated", param = "@i_identity_validated", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "incomeLevel", param = "@i_incomelevel", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "incomeLevelEntity", param = "@i_incomelevel_entity", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "internalNumber", param = "@i_internalnumber", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "internalNumber", param = "@i_internalnumber", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "lastName", param = "@i_lastname", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "legalIncomeSource", param = "@i_legalincomesource", dataType = ICTSTypes.SQLCHAR),
 					@CTSInputParam(field = "email", param = "@i_mail", dataType = ICTSTypes.SQLVARCHAR),
@@ -902,41 +933,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		},
 		defaultRequest = {
     
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500094")
-		},
-  response = {
-  
-    @CTSResponse(
-      name = "returnCreateCustomerResponse",
-      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
-      columns = {
-		    @CTSColumn(field = "success", columnIndex = 1)
-      }
-    ),
-    @CTSResponse(
-      name = "returnCreateCustomerResponse",
-      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
-      columns = {
-		    @CTSColumn(field = "response.code", columnIndex = 1),
-		    @CTSColumn(field = "response.message", columnIndex = 2)
-      }
-    ),
-    @CTSResponse(
-      name = "returnCreateCustomerResponse",
-      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
-      columns = {
-		    @CTSColumn(field = "externalCustomerId", columnIndex = 1)
-      }
-    ),
-    @CTSResponse(
-      name = "returnCreateCustomerResponse",
-      type = cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse.class,
-      columns = {
-		    @CTSColumn(field = "accountNumber", columnIndex = 1)
-      }
-    )
-  }
-  
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500094"),
+				@CTSDefaultInputParam(value = "0", param = "@o_success", dataType = ICTSTypes.SQLBIT, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_code", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "X", param = "@o_message", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "0", param = "@o_customer", dataType = ICTSTypes.SQLINT4, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT),
+				@CTSDefaultInputParam(value = "X", param = "@o_account", dataType = ICTSTypes.SQLVARCHAR, ioType = CTSDefaultInputParam.IOType.INPUT_OUTPUT)
+		}
 	)
 	
   /**
@@ -1010,7 +1013,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "success", columnIndex = 1),
 		    @CTSColumn(field = "response.code", columnIndex = 2),
 		    @CTSColumn(field = "response.message", columnIndex = 3),
-		    @CTSColumn(field = "referenceCode", columnIndex = 4)
+		    @CTSColumn(field = "referenceCode", columnIndex = 4),
+		    @CTSColumn(field = "movementId", columnIndex = 5)
       }
     )
   }
@@ -1106,7 +1110,8 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "success", columnIndex = 1),
 		    @CTSColumn(field = "response.code", columnIndex = 2),
 		    @CTSColumn(field = "response.message", columnIndex = 3),
-		    @CTSColumn(field = "referenceCode", columnIndex = 4)
+		    @CTSColumn(field = "referenceCode", columnIndex = 4),
+		    @CTSColumn(field = "movementId", columnIndex = 5)
       }
     )
   }
@@ -1131,11 +1136,11 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "cstmrAnswer1.questionId", param = "@i_question_1_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrAnswer1.responseId", param = "@i_answer_1_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cstmrAnswer1.answerId", param = "@i_answer_1_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "cstmrAnswer2.questionId", param = "@i_question_2_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrAnswer2.responseId", param = "@i_answer_2_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cstmrAnswer2.answerId", param = "@i_answer_2_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "cstmrAnswer3.questionDescription", param = "@i_question_desc", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrAnswer3.responseDescription", param = "@i_answer_desc", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "cstmrAnswer3.answerDescription", param = "@i_answer_desc", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -1340,7 +1345,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.CstmrAnswers.class,
       columns = {
 		    @CTSColumn(field = "questionId", columnIndex = 1),
-		    @CTSColumn(field = "responseId", columnIndex = 2),
+		    @CTSColumn(field = "answerId", columnIndex = 2),
 		    @CTSColumn(field = "description", columnIndex = 3)
       }
     )
@@ -1399,7 +1404,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "accountingBalance", columnIndex = 18),
 		    @CTSColumn(field = "official", columnIndex = 19),
 		    @CTSColumn(field = "clabeAccountNumber", columnIndex = 20),
-		    @CTSColumn(field = "idDebitCard", columnIndex = 21),
+		    @CTSColumn(field = "cardId", columnIndex = 21),
 		    @CTSColumn(field = "debitCardNumber", columnIndex = 22),
 		    @CTSColumn(field = "stateDebitCard", columnIndex = 23)
       }
@@ -1598,10 +1603,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		},
 		defaultRequest = {
     
-				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500106"),
-				@CTSDefaultInputParam(value = "T", param = "@i_tipo", dataType = ICTSTypes.SQLCHAR),
-				@CTSDefaultInputParam(value = "8", param = "@i_servicio", dataType = ICTSTypes.SQLINT1),
-				@CTSDefaultInputParam(value = "A", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500106")
 		},
   response = {
   
@@ -1639,7 +1641,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 		    @CTSColumn(field = "accountStatementArray.operationType", columnIndex = 6),
 		    @CTSColumn(field = "accountStatementArray.commission", columnIndex = 7),
 		    @CTSColumn(field = "accountStatementArray.iva", columnIndex = 8),
-		    @CTSColumn(field = "accountStatementArray.transactionDate", columnIndex = 9),
+		    @CTSColumn(field = "accountStatementArray.transactionReferenceNumber", columnIndex = 9),
 		    @CTSColumn(field = "accountStatementArray.description", columnIndex = 10),
 		    @CTSColumn(field = "cardDetails.maskedCardNumber", columnIndex = 11),
 		    @CTSColumn(field = "sourceAccount.ownerName", columnIndex = 12),
@@ -1806,6 +1808,61 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
   * {@inheritDoc}
   */
       public ServiceResponseTO getStateByZipCode(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
+		name = "cob_procesador..sp_get_statement_list_api", dbms = "SQLCTS",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestGetStatementList",
+				input = {
+				
+					@CTSInputParam(field = "month", param = "@i_month", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "year", param = "@i_year", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500145")
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseGetStatementList",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetStatementList.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseGetStatementList",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseGetStatementList.class,
+      columns = {
+		    @CTSColumn(field = "response.code", columnIndex = 1),
+		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    ),
+    @CTSResponse(
+      name = "returnStatementsItems",
+      type = cobiscorp.ecobis.datacontractoperations.dto.StatementsItems.class,
+      columns = {
+		    @CTSColumn(field = "fileName", columnIndex = 1),
+		    @CTSColumn(field = "dateRegistered", columnIndex = 2),
+		    @CTSColumn(field = "link", columnIndex = 3)
+      }
+    )
+  }
+  
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getStatementList(ServiceRequestTO requestTO) {
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
@@ -2080,17 +2137,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "originAccountNumber", param = "@i_origin_account_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "destinationAccountNumber", param = "@i_destination_account_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "originAccountAlias", param = "@i_origin_account_alias", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "destinationAccountAlias", param = "@i_destination_account_alias", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "destinationBeneficiaryName", param = "@i_destination_beneficiary_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "amount", param = "@i_amount", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "description", param = "@i_description", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bankId", param = "@i_bank_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bankName", param = "@i_bank_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "destinationAccountOwnerName", param = "@i_destination_account_owner_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "destinationTypeAccount", param = "@i_destination_type_account", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "ownerName", param = "@i_owner_name", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "detail", param = "@i_detail", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "description", param = "@i_detail", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "commission", param = "@i_commission", dataType = ICTSTypes.SQLMONEY),
 					@CTSInputParam(field = "latitude", param = "@i_latitude", dataType = ICTSTypes.SQLMONEY),
 					@CTSInputParam(field = "longitude", param = "@i_longitude", dataType = ICTSTypes.SQLMONEY),
@@ -2131,6 +2184,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
       columns = {
 		    @CTSColumn(field = "trackingKey", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "movementId", columnIndex = 1)
       }
     )
   }
@@ -2191,6 +2251,13 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount.class,
       columns = {
 		    @CTSColumn(field = "referenceCode", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferThirdPartyAccount",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferThirdPartyAccount.class,
+      columns = {
+		    @CTSColumn(field = "movementId", columnIndex = 1)
       }
     )
   }
@@ -2504,11 +2571,11 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				
 					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
 					@CTSInputParam(field = "cstmrVal1.questionId", param = "@i_question_1_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrVal1.responseId", param = "@i_answer_1_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cstmrVal1.answerId", param = "@i_answer_1_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "cstmrVal2.questionId", param = "@i_question_2_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrVal2.responseId", param = "@i_answer_2_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "cstmrVal2.answerId", param = "@i_answer_2_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "cstmrVal3.customQuestionId", param = "@i_question_3_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "cstmrVal3.responseDescription", param = "@i_answer_3_id", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "cstmrVal3.answerDescription", param = "@i_answer_desc", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},

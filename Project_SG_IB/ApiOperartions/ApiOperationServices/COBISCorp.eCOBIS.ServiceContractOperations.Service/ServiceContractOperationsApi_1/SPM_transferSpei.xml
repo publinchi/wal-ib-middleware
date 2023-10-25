@@ -81,6 +81,7 @@
           <field type="String" name="dTOAlias" value="returnResponseTransferSpi" />
           <field type="String" name="dTOPropertyName" value="movementId" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -289,7 +290,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="x-end-user-request-date" />
+      <field type="String" name="key" value="x-end-user-request-date-time" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />

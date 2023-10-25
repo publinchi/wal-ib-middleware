@@ -1,4 +1,3 @@
-
 /************************************************************/
 /*                     IMPORTANTE                           */
 /*   Esta aplicacion es parte de los  paquetes bancarios    */
@@ -3006,6 +3005,134 @@ int mapBlank=0;
 	     return outResponseOwnAccountsView;
 	   }
 	   
+		/**
+		 * Get Statement List
+		 */
+		@Override
+		// Have DTO
+		public ResponseGetStatementList getStatementList(RequestGetStatementList inRequestGetStatementList)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: getStatementList");
+			ResponseGetStatementList outResponseGetStatementList = new ResponseGetStatementList();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_statement_list_api");
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500145");
+			procedureRequestAS.addInputParam("@i_month", ICTSTypes.SQLVARCHAR, inRequestGetStatementList.getMonth());
+			procedureRequestAS.addInputParam("@i_year", ICTSTypes.SQLVARCHAR, inRequestGetStatementList.getYear());
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseGetStatementList returnResponseGetStatementList = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetStatementList>() {
+							@Override
+							public ResponseGetStatementList mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetStatementList dto = new ResponseGetStatementList();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetStatementList.setSuccess(returnResponseGetStatementList.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseGetStatementList returnResponseGetStatementList = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetStatementList>() {
+							@Override
+							public ResponseGetStatementList mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetStatementList dto = new ResponseGetStatementList();
+
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetStatementList.setResponse(returnResponseGetStatementList.getResponse());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().size() > 2
+					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+				// ---------NO Array
+				StatementsItems[] returnResponseStatementsItems = MapperResultUtil
+						.mapToArray(response.getResultSets().get(2), new RowMapper<StatementsItems>() {
+							@Override
+							public StatementsItems mapRow(ResultSetMapper resultSetMapper, int index) {
+								StatementsItems dto = new StatementsItems();
+								
+								dto.setFileName(resultSetMapper.getString(1));
+								dto.setDateRegistered(resultSetMapper.getString(2));
+								dto.setLink(resultSetMapper.getString(3));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetStatementList.setStatementsItems(returnResponseStatementsItems);
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			 String trn = "Get Statement List";
+		      
+		     Gson gson = new Gson();
+		     String jsonReq = gson.toJson(inRequestGetStatementList);
+		
+	         Gson gson2 = new Gson();
+	         String jsonRes = gson2.toJson(outResponseGetStatementList);
+		
+	         saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+			LOGGER.logDebug("Ends service execution: getStatementList");
+			// returns data
+			return outResponseGetStatementList;
+		}
+	   
 	   
 		/**
 		 * Find State By zip Code API
@@ -3868,6 +3995,15 @@ int mapBlank=0;
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500097");
 			procedureRequestAS.addInputParam("@i_customer", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestCreateSavingAccount.getCustomerId()));
+			procedureRequestAS.addInputParam("@i_prod", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getProduct()));
+			procedureRequestAS.addInputParam("@i_mon", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getCurrency()));
+			procedureRequestAS.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR,
+					String.valueOf(inRequestCreateSavingAccount.getReasonForOrigination()));	
+			procedureRequestAS.addInputParam("@i_prod_banc", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestCreateSavingAccount.getProductSubType()));
+			
 			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
 			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
 			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
@@ -3898,11 +4034,21 @@ int mapBlank=0;
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
 			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
 			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
 
 			outResponseCreateSavingAccount.setResponse(response);
-			outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+			
+			if (response != null && response.getCode() == 0) {
+                
+				outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+            
+            } else {
+                
+            	outResponseCreateSavingAccount.setAccountNumber(null);
+            }
+			
 
 			if (outResponseCreateSavingAccount.getAccountNumber() != null
 					&& outResponseCreateSavingAccount.getAccountNumber() != "" && response.getCode() == 0) {
@@ -3913,9 +4059,18 @@ int mapBlank=0;
 
 				outResponseCreateSavingAccount.setSuccess(false);
 			}
+			
+			String trn = "Create Saving Account";
+		      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestCreateSavingAccount);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseCreateSavingAccount);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createSavingAccount");
-
 			return outResponseCreateSavingAccount;
 		}
 	
@@ -4021,7 +4176,7 @@ int mapBlank=0;
 	 */
 	@Override
 	// Have DTO
-	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDate, String xEndUserIp,
+	public ResponseTransferSpi transferSpei(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestTransferSpi inRequestTransferSpi) throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferSpei");
 		ResponseTransferSpi outResponseTransferSpi = new ResponseTransferSpi();
@@ -4031,7 +4186,7 @@ int mapBlank=0;
 		
 		// headers
 		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
 		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
@@ -4190,7 +4345,7 @@ int mapBlank=0;
 		  
 		header.setAccept("application/json");
 		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
 		header.setX_end_user_ip(xEndUserIp);
 		header.setX_channel(xChannel);
 		header.setContent_type("application/json");
@@ -4210,7 +4365,7 @@ int mapBlank=0;
 	 */
 	@Override
 	// Have DTO
-	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDate,
+	public ResponseTransferThirdPartyAccount transferThirdPartyAccount(String xRequestId, String xEndUserRequestDateTime,
 			String xEndUserIp, String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount)
 			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: transferThirdPartyAccount");
@@ -4221,7 +4376,7 @@ int mapBlank=0;
 
 		// headers
 		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDate);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
 		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
@@ -4357,7 +4512,7 @@ int mapBlank=0;
 		  
 		header.setAccept("application/json");
 		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date(xEndUserRequestDate);
+		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
 		header.setX_end_user_ip(xEndUserIp);
 		header.setX_channel(xChannel);
 		header.setContent_type("application/json");

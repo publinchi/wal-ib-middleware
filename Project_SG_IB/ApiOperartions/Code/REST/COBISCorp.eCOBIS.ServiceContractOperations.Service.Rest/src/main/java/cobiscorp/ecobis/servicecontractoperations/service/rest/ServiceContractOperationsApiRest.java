@@ -79,6 +79,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetStatementList;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetStatementList;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
@@ -735,7 +737,11 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: createSavingAccount");
 		ResponseCreateSavingAccount outResponseCreateSavingAccount = new ResponseCreateSavingAccount();
 
-		if (!validateMandatory(new Data("customerId", inRequestCreateSavingAccount.getCustomerId()))) {
+		if (!validateMandatory(
+			new Data("customerId", inRequestCreateSavingAccount.getCustomerId()),
+			new Data("currency", inRequestCreateSavingAccount.getCurrency()),
+			new Data("product", inRequestCreateSavingAccount.getProduct()),
+			new Data("productSubType", inRequestCreateSavingAccount.getProductSubType()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("The request message is not properly formatted").build();
 		} // The request message is not properly formatted
@@ -1033,6 +1039,47 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: getOwnAccountsView");
 		return Response.ok(outResponseOwnAccountsView).build();
+
+	}
+	
+	/**
+	 * Get Statement List
+	 */
+	@POST
+	@Path("/apiOperations/accounts/getStatementList")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response getStatementList(RequestGetStatementList inRequestGetStatementList) {
+		LOGGER.logDebug("Start service execution REST: getStatementList");
+		ResponseGetStatementList outResponseGetStatementList = new ResponseGetStatementList();
+
+		if (!validateMandatory(new Data("month", inRequestGetStatementList.getMonth()),
+				new Data("year", inRequestGetStatementList.getYear()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseGetStatementList = iServiceContractOperationsApiService
+					.getStatementList(inRequestGetStatementList);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: getStatementList");
+		return Response.ok(outResponseGetStatementList).build();
 
 	}
 
@@ -1422,7 +1469,7 @@ public class ServiceContractOperationsApiRest {
 	@Produces({ "application/json" })
 	public Response transferSpei(
 			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
-			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			RequestTransferSpi inRequestTransferSpi) {
@@ -1445,7 +1492,7 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(xRequestId, xEndUserRequestDate,
+			outResponseTransferSpi = iServiceContractOperationsApiService.transferSpei(xRequestId, xEndUserRequestDateTime,
 					xEndUserIp, xChannel, inRequestTransferSpi);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
@@ -1476,7 +1523,7 @@ public class ServiceContractOperationsApiRest {
 	@Produces({ "application/json" })
 	public Response transferThirdPartyAccount(
 			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
-			@NotNull(message = "x-end-user-request-date may not be null") @HeaderParam("x-end-user-request-date") String xEndUserRequestDate,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) {
@@ -1495,7 +1542,7 @@ public class ServiceContractOperationsApiRest {
 
 		try {
 			outResponseTransferThirdPartyAccount = iServiceContractOperationsApiService.transferThirdPartyAccount(
-					xRequestId, xEndUserRequestDate, xEndUserIp, xChannel, inRequestTransferThirdPartyAccount);
+					xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestTransferThirdPartyAccount);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_get_statement_list_api</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_month" dataType="varchar" direction="in" />
+    <parameter name="@i_year" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "succes"="true"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText>SELECT "code"=0,"message"="success"</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="fileName" />
+        <column name="dateRegistered" />
+        <column name="link" />
+      </columns>
+      <queryText>SELECT "fileName"=o_file_name,"dateRegistered"=o_date_registered,"link"=o_link</queryText>
+    </query>
+  </queries>
+</procedure>
