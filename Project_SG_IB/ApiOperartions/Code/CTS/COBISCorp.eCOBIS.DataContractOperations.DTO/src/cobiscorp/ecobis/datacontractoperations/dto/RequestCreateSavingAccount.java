@@ -29,10 +29,38 @@ import java.util.HashMap;
 
 public class RequestCreateSavingAccount implements Serializable {
   private Integer customerId;
+  private Integer currency;
+  private Integer product;
+  private Integer productSubType;
+  private String reasonForOrigination;
   public Integer getCustomerId(){
     return this.customerId;
   }
   public void setCustomerId(Integer customerId ){
     this.customerId=customerId;
+  }
+  public Integer getCurrency(){
+    return this.currency;
+  }
+  public void setCurrency(Integer currency ){
+    this.currency=currency;
+  }
+  public Integer getProduct(){
+    return this.product;
+  }
+  public void setProduct(Integer product ){
+    this.product=product;
+  }
+  public Integer getProductSubType(){
+    return this.productSubType;
+  }
+  public void setProductSubType(Integer productSubType ){
+    this.productSubType=productSubType;
+  }
+  public String getReasonForOrigination(){
+    return this.reasonForOrigination;
+  }
+  public void setReasonForOrigination(String reasonForOrigination ){
+    this.reasonForOrigination=reasonForOrigination;
   }
 }
