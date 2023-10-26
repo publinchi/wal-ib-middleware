@@ -292,7 +292,13 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String wInfo = CLASS_NAME+"[executeTransferSpeiIn] ";
 		logger.logInfo(wInfo+INIT_TASK);
 		IProcedureResponse response = new ProcedureResponseAS();
-
+		
+		response = this.validaLimite(anOriginalRequest);
+		
+		if(response.getReturnCode() != 0) {
+			return response;
+		}
+		
 		IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
 
 		if (logger.isDebugEnabled()) {
@@ -311,6 +317,23 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return response;
 
 
+	}
+	
+	private IProcedureResponse validaLimite(IProcedureRequest anOriginalRequest) {
+		String wInfo = CLASS_NAME+"[validaLimite] ";
+		logger.logInfo(wInfo + INIT_TASK);
+		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+
+		procedureRequest.setSpName("cob_bvirtual..sp_valida_limites_bv_api");
+		procedureRequest.addInputParam("@i_transaccion", ICTSTypes.SQLINT4, "18500069");
+		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));
+		procedureRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+		
+		logger.logInfo(wInfo + END_TASK);
+		
+		return executeCoreBanking(procedureRequest);	
 	}
 
 	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest) {
@@ -506,4 +529,3 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	}
 
 }
-
