@@ -908,7 +908,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
-
+			
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");

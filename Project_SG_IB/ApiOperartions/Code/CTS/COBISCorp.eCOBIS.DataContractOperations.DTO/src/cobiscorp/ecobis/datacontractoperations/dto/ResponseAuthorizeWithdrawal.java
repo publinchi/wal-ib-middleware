@@ -32,7 +32,7 @@ public class ResponseAuthorizeWithdrawal implements Serializable {
   private Response response;
   private Integer authorizationCode;
   private String seq;
-  private int movementId;
+  private Integer movementId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -63,10 +63,10 @@ public class ResponseAuthorizeWithdrawal implements Serializable {
   public void setSeq(String seq ){
     this.seq=seq;
   }
-  public int getMovementId(){
+  public Integer getMovementId(){
     return this.movementId;
   }
-  public void setMovementId(int movementId ){
+  public void setMovementId(Integer movementId ){
     this.movementId=movementId;
   }
 }
