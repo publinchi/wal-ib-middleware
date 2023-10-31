@@ -208,10 +208,9 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "264");
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
-		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
+		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_trn"));
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
@@ -329,6 +328,11 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetData data4 = new ResultSetData();
 		
 		metaData4.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
+		
+		IResultSetHeader metaData5 = new ResultSetHeader();
+		IResultSetData data5 = new ResultSetData();
+		
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SQLINT4, 10));
 
 		
 		if (codeReturn == 0) {
@@ -343,6 +347,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				String authorizationCode = anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).isNull()?"0":anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue();
 				String seq = aBagSPJavaOrchestration.get("@o_seq_tran").toString();
+				String movementId = anOriginalProcedureRes.readValueParam("@o_ssn_host");
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -364,6 +369,11 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				row4.addRowData(1, new ResultSetRowColumnData(false, seq));
 				data4.addRow(row4);
+				
+				IResultSetRow row5 = new ResultSetRow();
+				
+				row5.addRowData(1, new ResultSetRowColumnData(false, movementId));
+				data5.addRow(row5);
 				
 			} else {
 				 
@@ -405,11 +415,13 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
+		IResultSetBlock resultsetBlock5 = new ResultSetBlock(metaData5, data5);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
+		wProcedureResponse.addResponseBlock(resultsetBlock5);
 		
 		return wProcedureResponse;		
 	}

@@ -197,14 +197,6 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
 		
-		String trn = "253";
-		String causa = "102";
-		
-		if (aRequest.readValueParam("@i_origin_type").equals("DEPOSIT")) {
-			trn = "264";
-			causa = "106";
-		}
-
 		request.setSpName("cob_cuentas..sp_retiro_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -222,11 +214,10 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, trn);
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, causa);
-		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
 		request.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_uuid"));
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, trn);
+		request.addInputParam("@i_origin_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_type"));
+		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_trn"));
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
@@ -344,6 +335,11 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetData data4 = new ResultSetData();
 		
 		metaData4.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
+		
+		IResultSetHeader metaData5 = new ResultSetHeader();
+		IResultSetData data5 = new ResultSetData();
+		
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SQLINT4, 10));
 
 		
 		if (codeReturn == 0) {
@@ -358,6 +354,7 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				String authorizationCode = anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).isNull()?"0":anOriginalProcedureRes.getResultSetRowColumnData(3, 1, 1).getValue();
 				String seq = aBagSPJavaOrchestration.get("@o_seq_tran").toString();
+				String movementId = anOriginalProcedureRes.readValueParam("@o_ssn_host");
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -379,6 +376,11 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 				
 				row4.addRowData(1, new ResultSetRowColumnData(false, seq));
 				data4.addRow(row4);
+				
+				IResultSetRow row5 = new ResultSetRow();
+				
+				row5.addRowData(1, new ResultSetRowColumnData(false, movementId));
+				data5.addRow(row5);
 				
 			} else {
 				
@@ -420,11 +422,13 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
+		IResultSetBlock resultsetBlock5 = new ResultSetBlock(metaData5, data5);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
+		wProcedureResponse.addResponseBlock(resultsetBlock5);
 		
 		return wProcedureResponse;		
 	}
