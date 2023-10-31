@@ -198,13 +198,13 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "253");
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "102");
-		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "253");
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
+		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_trn"));
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
+		
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
