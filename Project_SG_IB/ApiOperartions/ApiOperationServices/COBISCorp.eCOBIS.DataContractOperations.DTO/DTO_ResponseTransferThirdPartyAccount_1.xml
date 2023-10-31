@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="4" id="2" name="properties">
+  <collection type="List" length="3" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="success" />
       <field type="String" name="type" value="boolean?" />
@@ -12,19 +12,9 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
-      <field type="String" name="name" value="referenceCode" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="20" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="5" index="2">
       <field type="String" name="name" value="response" />
       <field type="String" name="type" value="Response" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="6" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="5" name="dtoType">
         <field type="String" name="name" value="Response" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -36,7 +26,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="3">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="2">
       <field type="String" name="name" value="movementId" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -48,7 +38,7 @@
     </class>
   </collection>
   <field type="String" name="name" value="ResponseTransferThirdPartyAccount" />
-  <collection type="Map" length="0" id="8" name="templatesProperties">
+  <collection type="Map" length="0" id="7" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />
