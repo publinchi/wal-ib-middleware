@@ -353,7 +353,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		// request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_concept"));
-		String detail = "WAL_VAL_DEF_X";
+		String detail = "";
 		if (!aRequest.readValueParam("@i_detail").equals("null") && !aRequest.readValueParam("@i_detail").trim().isEmpty()) {
 			detail = aRequest.readValueParam("@i_detail");
 		}
@@ -508,7 +508,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-					movementId = anOriginalProcedureRes.readValueParam(Constants.I_ID_SPEI_ACC).toString().trim();
+//					movementId = anOriginalProcedureRes.readValueParam(Constants.I_ID_SPEI_ACC).toString().trim();
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
@@ -1474,4 +1474,3 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 	
 }
- 

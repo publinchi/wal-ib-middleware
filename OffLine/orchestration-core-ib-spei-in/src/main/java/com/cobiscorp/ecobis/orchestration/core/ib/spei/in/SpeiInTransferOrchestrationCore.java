@@ -329,8 +329,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "253");
 		procedureRequest.addInputParam("@i_cta", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_val", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));
-		procedureRequest.addInputParam("@i_causa", ICTSTypes.SYBVARCHAR, "249");
-		procedureRequest.addInputParam("@i_causa_comi", ICTSTypes.SYBVARCHAR, "250");
+		procedureRequest.addInputParam("@i_causa", ICTSTypes.SYBVARCHAR, "2010");
+		procedureRequest.addInputParam("@i_causa_comi", ICTSTypes.SYBVARCHAR, "2011");
 		procedureRequest.addInputParam("@i_mon", ICTSTypes.SYBINT4, "0");
 		procedureRequest.addInputParam("@i_fecha", ICTSTypes.SYBDATETIME, anOriginalRequest.readValueParam("@i_fechaOperacion"));
 		procedureRequest.addInputParam("@i_canal", ICTSTypes.SYBINT4, "9");

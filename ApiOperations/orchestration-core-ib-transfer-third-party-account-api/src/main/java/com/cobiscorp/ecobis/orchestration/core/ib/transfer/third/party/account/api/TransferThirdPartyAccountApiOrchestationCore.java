@@ -547,14 +547,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "106");
-		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "102");
-		anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, "185");
+		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "1010");
+		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "1020");
+		//anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, "185");
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("********** CAUSALES DE TRANSFERENCIA *************");
-			logger.logInfo("********** CAUSA ORIGEN --->>> " + "106");
+			logger.logInfo("********** CAUSA ORIGEN --->>> " + "1010");
 			logger.logInfo("********** CAUSA COMISI --->>> " + "185");
-			logger.logInfo("********** CAUSA DESTIN --->>> " + "102");
+			logger.logInfo("********** CAUSA DESTIN --->>> " + "1020");
 
 			logger.logInfo("********** CLIENTE CORE --->>> " + aBagSPJavaOrchestration.get("ente_mis"));
 			//logger.logInfo("********** ORIGEN --->>> " + request.getOriginatorFunds());

@@ -176,111 +176,92 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       }
 
 
-		/**
-		 * Affiliate Customer
-		 */
-		@Override
-		// Return List
-		public ResponseAffiliateCustomer affiliateCustomer(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, RequestAffiliateCustomer inRequestAffiliateCustomer)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: affiliateCustomer");
-			ResponseAffiliateCustomer outSingleResponseAffiliateCustomer = new ResponseAffiliateCustomer();
+	/**
+         * Affiliate Customer
+         */
+        @Override
+        // Return List
+        public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer)
+                throws CTSRestException {
+            LOGGER.logDebug("Start service execution: affiliateCustomer");
+            ResponseAffiliateCustomer outSingleResponseAffiliateCustomer = new ResponseAffiliateCustomer();
 
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_affiliate_customer");
+            // create procedure
+            ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_affiliate_customer");
 
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+            procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500101");
+            procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+                    String.valueOf(inRequestAffiliateCustomer.getExternalCustomerId()));
+            procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
+                    inRequestAffiliateCustomer.getAccountNumber());
 
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500101");
-			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestAffiliateCustomer.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
-					inRequestAffiliateCustomer.getAccountNumber());
+            // execute procedure
+            ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+                    procedureRequestAS);
 
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
+            List<MessageBlock> errors = ErrorUtil.getErrors(response);
+            // throw error
+            if (errors != null && errors.size() > 0) {
+                LOGGER.logDebug("Procedure execution returns error");
+                if (LOGGER.isDebugEnabled()) {
+                    for (int i = 0; i < errors.size(); i++) {
+                        LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+                    }
+                }
+                throw new CTSRestException("Procedure Response has errors", null, errors);
+            }
+            LOGGER.logDebug("Procedure ok");
+            // Init map returns
+            int mapTotal = 0;
+            int mapBlank = 0;
 
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
+            mapTotal++;
+            if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+                // ----------------Assume Array return
+                ResponseAffiliateCustomer returnResponseAffiliateCustomer = MapperResultUtil
+                        .mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAffiliateCustomer>() {
+                            @Override
+                            public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
+                                ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ----------------Assume Array return
-				ResponseAffiliateCustomer returnResponseAffiliateCustomer = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAffiliateCustomer>() {
-							@Override
-							public ResponseAffiliateCustomer mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAffiliateCustomer dto = new ResponseAffiliateCustomer();
+                                dto.setSuccess(resultSetMapper.getBoolean(3));
+                                dto.responseInstance().setCode(resultSetMapper.getInteger(5));
+                                dto.responseInstance().setMessage(resultSetMapper.getString(4));
+                                dto.setLoginId(resultSetMapper.getInteger(1));
+                                dto.setUserCreated(resultSetMapper.getString(2));
+                                dto.setClabeAccountNumber(resultSetMapper.getString(6));
+                                dto.setCardId(resultSetMapper.getString(7));
+                                return dto;
+                            }
+                        }, false);
 
-								dto.setSuccess(resultSetMapper.getBoolean(3));
-								dto.responseInstance().setCode(resultSetMapper.getInteger(5));
-								dto.responseInstance().setMessage(resultSetMapper.getString(4));
-								dto.setLoginId(resultSetMapper.getInteger(1));
-								dto.setUserCreated(resultSetMapper.getString(2));
-								dto.setClabeAccountNumber(resultSetMapper.getString(6));
-								dto.setCardId(resultSetMapper.getString(7));
-								return dto;
-							}
-						}, false);
+                outSingleResponseAffiliateCustomer = returnResponseAffiliateCustomer;
 
-				outSingleResponseAffiliateCustomer = returnResponseAffiliateCustomer;
+            } else {
+                mapBlank++;
 
-			} else {
-				mapBlank++;
+            }
 
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			String trn = "Affiliate Customer";
-
-			Gson gson = new Gson();
+            // End map returns
+            if (mapBlank != 0 && mapBlank == mapTotal) {
+                LOGGER.logDebug("No data found");
+                throw new CTSRestException("404", null);
+            }
+            
+            String trn = "Affiliate Customer";
+            
+            Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAffiliateCustomer);
-
+			
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAffiliateCustomer);
-
-			Header header = new Header();
-
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-
-			Gson gson3 = new Gson();
-			String jsonHead = gson3.toJson(header);
-
+			
 			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
-			LOGGER.logDebug("Ends service execution: affiliateCustomer");
-			// returns data
-			return outSingleResponseAffiliateCustomer;
-		}
+            LOGGER.logDebug("Ends service execution: affiliateCustomer");
+            // returns data
+            return outSingleResponseAffiliateCustomer;
+        }
          
 		/**
 		 * Authorize Purchase
@@ -927,7 +908,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
-
+			
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
@@ -1825,8 +1806,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		 */
 		@Override
 		// Have DTO
-		public CreateCustomerResponse createCustomer(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, CreateCustomerRequest inCreateCustomerRequest)
+		public CreateCustomerResponse createCustomer(CreateCustomerRequest inCreateCustomerRequest)
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: createCustomer");
 			
@@ -1837,12 +1817,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_api_create_customer");
-			
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
 			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500094");
 			procedureRequestAS.addInputParam("@i_activity_code", ICTSTypes.SQLVARCHAR,
@@ -2009,18 +1983,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outCreateCustomerResponse);
 			
-			Header header = new Header();
-			  
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-		    
-		    Gson gson3 = new Gson();
-		    String jsonHead = gson3.toJson(header);
-			
 			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createCustomer");
@@ -2028,129 +1990,104 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			return outCreateCustomerResponse;
 		}
 	
-		/**
-		 * Service to delete a beneficiary.
-		 */
+    /**
+    * Service to  delete a beneficiary.
+    */
 		@Override
-		// Have DTO
-		public ResponseDeleteBeneficiary deleteBeneficiary(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, RequestDeleteBeneficiary inRequestDeleteBeneficiary)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: deleteBeneficiary");
-			ResponseDeleteBeneficiary outResponseDeleteBeneficiary = new ResponseDeleteBeneficiary();
-
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
-
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500127");
-			procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDeleteBeneficiary.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "D");
-			procedureRequestAS.addInputParam("@i_benf_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestDeleteBeneficiary.getBeneficiaryId()));
-
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseDeleteBeneficiary returnResponseDeleteBeneficiary = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseDeleteBeneficiary>() {
-							@Override
-							public ResponseDeleteBeneficiary mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseDeleteBeneficiary dto = new ResponseDeleteBeneficiary();
-
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseDeleteBeneficiary.setSuccess(returnResponseDeleteBeneficiary.isSuccess());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseDeleteBeneficiary returnResponseDeleteBeneficiary = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseDeleteBeneficiary>() {
-							@Override
-							public ResponseDeleteBeneficiary mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseDeleteBeneficiary dto = new ResponseDeleteBeneficiary();
-
+		//Have DTO
+		public ResponseDeleteBeneficiary deleteBeneficiary(RequestDeleteBeneficiary inRequestDeleteBeneficiary  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: deleteBeneficiary");
+		ResponseDeleteBeneficiary outResponseDeleteBeneficiary  = new ResponseDeleteBeneficiary();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500127");
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteBeneficiary.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");
+		procedureRequestAS.addInputParam("@i_benf_id",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteBeneficiary.getBeneficiaryId()));
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseDeleteBeneficiary returnResponseDeleteBeneficiary = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseDeleteBeneficiary>() { 
+		              @Override
+		              public ResponseDeleteBeneficiary mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseDeleteBeneficiary dto = new ResponseDeleteBeneficiary();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseDeleteBeneficiary.setSuccess(returnResponseDeleteBeneficiary.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseDeleteBeneficiary returnResponseDeleteBeneficiary = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseDeleteBeneficiary>() { 
+		              @Override
+		              public ResponseDeleteBeneficiary mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseDeleteBeneficiary dto = new ResponseDeleteBeneficiary();
+		              
 								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
 								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
-
-				outResponseDeleteBeneficiary.setResponse(returnResponseDeleteBeneficiary.getResponse());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			String trn = "Delete Beneficiary";
-
-			Gson gson = new Gson();
-			String jsonReq = gson.toJson(inRequestDeleteBeneficiary);
-
-			Gson gson2 = new Gson();
-			String jsonRes = gson2.toJson(outResponseDeleteBeneficiary);
-
-			Header header = new Header();
-
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-
-			Gson gson3 = new Gson();
-			String jsonHead = gson3.toJson(header);
-
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-			LOGGER.logDebug("Ends service execution: deleteBeneficiary");
-			// returns data
-			return outResponseDeleteBeneficiary;
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseDeleteBeneficiary.setResponse(returnResponseDeleteBeneficiary.getResponse());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  String trn = "Delete Beneficiary";
+	      
+      	  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestDeleteBeneficiary);
+		
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseDeleteBeneficiary);
+		
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
+		  LOGGER.logDebug("Ends service execution: deleteBeneficiary");
+		  //returns data
+		  return outResponseDeleteBeneficiary;
 		}
 
 	/**
@@ -2310,220 +2247,192 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	}
 	
 	
-	/**
-	 * Get Colony by Municipality
-	 */
-	@Override
-	// Have DTO
-	public ResponseGetColonyByMunicipality getColonyByMunicipality(
-			RequestGetColonyByMunicipality inRequestGetColonyByMunicipality) throws CTSRestException {
-		LOGGER.logDebug("Start service execution: getColonyByMunicipality");
-		ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality = new ResponseGetColonyByMunicipality();
+    /**
+    * Get Colony by Municipality
+    */
+   @Override
+		//Have DTO
+		public ResponseGetColonyByMunicipality getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality  )throws CTSRestException{
+LOGGER.logDebug("Start service execution: getColonyByMunicipality");
+ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality  = new ResponseGetColonyByMunicipality();
+    
+//create procedure
+ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_colony_by_mun_api");
 
-		//create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_get_colony_by_mun_api");
+  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500108");
+procedureRequestAS.addInputParam("@i_zip_code",ICTSTypes.SQLVARCHAR,inRequestGetColonyByMunicipality.getZipCode());
+procedureRequestAS.addInputParam("@i_city_code",ICTSTypes.SQLVARCHAR,inRequestGetColonyByMunicipality.getMunicipality());
+      procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"0");
+      procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"XXX");
+      procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"1");
 
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500108");
-		procedureRequestAS.addInputParam("@i_zip_code", ICTSTypes.SQLVARCHAR,
-				inRequestGetColonyByMunicipality.getZipCode());
-		procedureRequestAS.addInputParam("@i_city_code", ICTSTypes.SQLVARCHAR,
-				inRequestGetColonyByMunicipality.getMunicipality());
-		procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
-		procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "XXX");
-		procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "1");
+//execute procedure
+ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-		//execute procedure
-		ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
+List<MessageBlock> errors = ErrorUtil.getErrors(resp);
+//throw error
+if(errors!= null && errors.size()> 0){
+LOGGER.logDebug("Procedure execution returns error");
+if ( LOGGER.isDebugEnabled() ) {
+for (int i = 0; i < errors.size(); i++) {
+LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+}
+}
+throw new CTSRestException("Procedure Response has errors", null, errors);
+}
+LOGGER.logDebug("Procedure ok");
+//Init map returns
+int mapTotal=0;
+int mapBlank=0;
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(resp);
-		//throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-				}
-			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
-		}
-		LOGGER.logDebug("Procedure ok");
-		//Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
+      mapTotal++;
+      
+  		if (resp.getResultSets() != null && resp.getResultSets().size()>0  &&
+  				resp.getResultSets().get(0).getData().getRows().size() > 0) {
+							//---------NO Array
+							AddressTypeItems [] returnAddressTypeItems = MapperResultUtil.mapToArray(resp.getResultSets().get(0), new RowMapper<AddressTypeItems>() { 
+              @Override
+              public AddressTypeItems mapRow(ResultSetMapper resultSetMapper, int index) {
+              AddressTypeItems dto = new AddressTypeItems();
+              
+                    dto.setCode(resultSetMapper.getString(1));
+                    dto.setValue(resultSetMapper.getString(2));
+              return dto;
+              }
+              },false);
 
-		mapTotal++;
+              outResponseGetColonyByMunicipality.setAddressTypeItems(returnAddressTypeItems);
+                  // break;
+                
+      }else {
+      mapBlank++;
 
-		if (resp.getResultSets() != null && resp.getResultSets().size() > 0
-				&& resp.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ---------NO Array
-			AddressTypeItems[] returnAddressTypeItems = MapperResultUtil.mapToArray(resp.getResultSets().get(0),
-					new RowMapper<AddressTypeItems>() {
-						@Override
-						public AddressTypeItems mapRow(ResultSetMapper resultSetMapper, int index) {
-							AddressTypeItems dto = new AddressTypeItems();
+      }
+      
+      
+	 Response response=new Response();
+	 response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
+	 response.setMessage(getOutValue(String.class, "@o_message", resp.getParams())); 
+	 outResponseGetColonyByMunicipality.setResponse(response);
 
-							dto.setCode(resultSetMapper.getString(1));
-							dto.setValue(resultSetMapper.getString(2));
-							return dto;
-						}
-					}, false);
+	if (response != null && response.getCode() == 0) {
+		outResponseGetColonyByMunicipality.setSuccess(true);
+	} else
+		outResponseGetColonyByMunicipality.setSuccess(false);
+      
+	String trn = "Get Colony By Municipality";
+    
+    Gson gson = new Gson();
+    String jsonReq = gson.toJson(inRequestGetColonyByMunicipality);
 
-			outResponseGetColonyByMunicipality.setAddressTypeItems(returnAddressTypeItems);
-			// break;
+    Gson gson2 = new Gson();
+    String jsonRes = gson2.toJson(outResponseGetColonyByMunicipality);
 
-		} else {
-			mapBlank++;
-
-		}
-
-		Response response = new Response();
-		response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
-		response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
-		outResponseGetColonyByMunicipality.setResponse(response);
-
-		if (response != null && response.getCode() == 0) {
-			outResponseGetColonyByMunicipality.setSuccess(true);
-		} else
-			outResponseGetColonyByMunicipality.setSuccess(false);
-
-		String trn = "Get Colony By Municipality";
-
-		Gson gson = new Gson();
-		String jsonReq = gson.toJson(inRequestGetColonyByMunicipality);
-
-		Gson gson2 = new Gson();
-		String jsonRes = gson2.toJson(outResponseGetColonyByMunicipality);
-
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-		LOGGER.logDebug("Ends service execution: getColonyByMunicipality");
-		// returns data
-		return outResponseGetColonyByMunicipality;
-	}
+    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead); 
+      
+  LOGGER.logDebug("Ends service execution: getColonyByMunicipality");
+  //returns data
+  return outResponseGetColonyByMunicipality;
+}
 
 
 
 	/**
-	 * Check Account Details
-	 */
-	@Override
-	// Return DTO
-	public ResponseGetBalancesDetail getBalancesDetail(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestGetBalancesDetail inRequestGetBalancesDetail)
-			throws CTSRestException {
-		LOGGER.logDebug("Start service execution: getBalancesDetail");
-		ResponseGetBalancesDetail outSingleResponseGetBalancesDetail = new ResponseGetBalancesDetail();
+          * Check Account Details
+          */
+         @Override
+			// Return DTO
+			public  ResponseGetBalancesDetail  getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: getBalancesDetail");
+      ResponseGetBalancesDetail outSingleResponseGetBalancesDetail  = new ResponseGetBalancesDetail();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_balances_detail_api");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500102");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestGetBalancesDetail.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestGetBalancesDetail.getAccountNumber());
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_balances_detail_api");
-
-		// headers
-		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500102");
-		procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
-				String.valueOf(inRequestGetBalancesDetail.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
-				inRequestGetBalancesDetail.getAccountNumber());
-
-		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
-
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		// throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-				}
-			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
-		}
-		LOGGER.logDebug("Procedure ok");
-		// Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ----------------Assume Array return
-			ResponseGetBalancesDetail returnResponseGetBalancesDetail = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetBalancesDetail>() {
-						@Override
-						public ResponseGetBalancesDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseGetBalancesDetail dto = new ResponseGetBalancesDetail();
-
-							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							dto.setAccountName(resultSetMapper.getString(4));
-							dto.setAccountStatus(resultSetMapper.getString(5));
-							dto.setAvailableBalance(resultSetMapper.getBigDecimal(6));
-							dto.setAverageBalance(resultSetMapper.getBigDecimal(7));
-							dto.setCurrencyId(resultSetMapper.getInteger(8));
-							dto.setDeliveryAddress(resultSetMapper.getString(9));
-							dto.setFreezingsNumber(resultSetMapper.getInteger(10));
-							dto.setFrozenAmount(resultSetMapper.getBigDecimal(11));
-							dto.setLastCutoffBalance(resultSetMapper.getString(12));
-							dto.setLastOperationDate(resultSetMapper.getString(13));
-							dto.setOpeningDate(resultSetMapper.getString(14));
-							dto.setOverdraftAmount(resultSetMapper.getBigDecimal(15));
-							dto.setProductId(resultSetMapper.getInteger(16));
-							dto.setToDrawBalance(resultSetMapper.getBigDecimal(17));
-							dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
-							dto.setOfficial(resultSetMapper.getInteger(19));
-							dto.setClabeAccountNumber(resultSetMapper.getString(20));
-							dto.setCardId(resultSetMapper.getString(21));
-							dto.setDebitCardNumber(resultSetMapper.getString(22));
-							dto.setStateDebitCard(resultSetMapper.getString(23));
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+            mapTotal++;
+            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+                    //----------------Assume Array return
+                    ResponseGetBalancesDetail returnResponseGetBalancesDetail = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetBalancesDetail>() { 
+                    @Override
+                    public ResponseGetBalancesDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+                    ResponseGetBalancesDetail dto = new ResponseGetBalancesDetail();
+                    
+                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                          dto.setAccountName(resultSetMapper.getString(4));
+                          dto.setAccountStatus(resultSetMapper.getString(5));
+                          dto.setAvailableBalance(resultSetMapper.getBigDecimal(6));
+                          dto.setAverageBalance(resultSetMapper.getBigDecimal(7));
+                          dto.setCurrencyId(resultSetMapper.getInteger(8));
+                          dto.setDeliveryAddress(resultSetMapper.getString(9));
+                          dto.setFreezingsNumber(resultSetMapper.getInteger(10));
+                          dto.setFrozenAmount(resultSetMapper.getBigDecimal(11));
+                          dto.setLastCutoffBalance(resultSetMapper.getString(12));
+                          dto.setLastOperationDate(resultSetMapper.getString(13));
+                          dto.setOpeningDate(resultSetMapper.getString(14));
+                          dto.setOverdraftAmount(resultSetMapper.getBigDecimal(15));
+                          dto.setProductId(resultSetMapper.getInteger(16));
+                          dto.setToDrawBalance(resultSetMapper.getBigDecimal(17));
+                          dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
+                          dto.setOfficial(resultSetMapper.getInteger(19));
+                          dto.setClabeAccountNumber(resultSetMapper.getString(20));
+                          dto.setCardId(resultSetMapper.getString(21));
+                          dto.setDebitCardNumber(resultSetMapper.getString(22));
+                          dto.setStateDebitCard(resultSetMapper.getString(23));
 							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
 							dto.responseInstance().setMessage(resultSetMapper.getString(3));
-							return dto;
-						}
-					}, false);
-			outSingleResponseGetBalancesDetail = returnResponseGetBalancesDetail;
+                    return dto;
+                    }
+                    },false);
+                    outSingleResponseGetBalancesDetail=returnResponseGetBalancesDetail ;
+                    
+            }else {
+            mapBlank++;
 
-		} else {
-			mapBlank++;
-
-		}
-
-		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
-
-		String trn = "Get Balances Detail";
-
-		Gson gson = new Gson();
-		String jsonReq = gson.toJson(inRequestGetBalancesDetail);
-
-		Gson gson2 = new Gson();
-		String jsonRes = gson2.toJson(outSingleResponseGetBalancesDetail);
-
-		Header header = new Header();
-
-		header.setAccept("application/json");
-		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-		header.setX_end_user_ip(xEndUserIp);
-		header.setX_channel(xChannel);
-		header.setContent_type("application/json");
-
-		Gson gson3 = new Gson();
-		String jsonHead = gson3.toJson(header);
-
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-		LOGGER.logDebug("Ends service execution: getBalancesDetail");
-		// returns data
-		return outSingleResponseGetBalancesDetail;
-	}
+            }
+          
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      
+        String trn = "Get Balances Detail";
+      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestGetBalancesDetail);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleResponseGetBalancesDetail);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+      
+        LOGGER.logDebug("Ends service execution: getBalancesDetail");
+        //returns data
+        return outSingleResponseGetBalancesDetail;
+      }
 
 	    /**
 	    * Get Beneficiary Saving Account
@@ -2664,357 +2573,319 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		}
 
 	
-		/**
-		 * Get catalog
-		 */
-		@Override
-		// Have DTO
-		public ResponseCatalog getCatalog(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
-				String xChannel, RequestCatalog inRequestCatalog) throws CTSRestException {
-			LOGGER.logDebug("Start service execution: getCatalog");
-			ResponseCatalog outResponseCatalog = new ResponseCatalog();
+	/**
+	 * Get catalog
+	 */
+	@Override
+	// Have DTO
+	public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog) throws CTSRestException {
+		LOGGER.logDebug("Start service execution: getCatalog");
+		ResponseCatalog outResponseCatalog = new ResponseCatalog();
 
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_catalog_data");
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_catalog_data");
 
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500087");
+		procedureRequestAS.addInputParam("@i_catalog", ICTSTypes.SQLVARCHAR, inRequestCatalog.getCatalogueTable());
 
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500087");
-			procedureRequestAS.addInputParam("@i_catalog", ICTSTypes.SQLVARCHAR, inRequestCatalog.getCatalogueTable());
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
 
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
 				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
 			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				CatalogueItems[] returnCatalogueItems = MapperResultUtil.mapToArray(response.getResultSets().get(0),
-						new RowMapper<CatalogueItems>() {
-							@Override
-							public CatalogueItems mapRow(ResultSetMapper resultSetMapper, int index) {
-								CatalogueItems dto = new CatalogueItems();
-
-								dto.setCode(resultSetMapper.getString(1));
-								dto.setName(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
-
-				outResponseCatalog.setCatalogueItems(returnCatalogueItems);
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				Response returnResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1),
-						new RowMapper<Response>() {
-							@Override
-							public Response mapRow(ResultSetMapper resultSetMapper, int index) {
-								Response dto = new Response();
-
-								dto.setCode(resultSetMapper.getInteger(1));
-								dto.setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
-
-				outResponseCatalog.setResponse(returnResponse);
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseCatalog returnResponseCatalog = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseCatalog>() {
-							@Override
-							public ResponseCatalog mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseCatalog dto = new ResponseCatalog();
-
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseCatalog.setSuccess(returnResponseCatalog.isSuccess());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			String trn = "Get Catalog";
-
-			Gson gson = new Gson();
-			String jsonReq = gson.toJson(inRequestCatalog);
-
-			Gson gson2 = new Gson();
-			String jsonRes = gson2.toJson(outResponseCatalog);
-			
-			Header header = new Header();
-			  
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-		    
-		    Gson gson3 = new Gson();
-		    String jsonHead = gson3.toJson(header);
-
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-			LOGGER.logDebug("Ends service execution: getCatalog");
-			// returns data
-			return outResponseCatalog;
+			throw new CTSRestException("Procedure Response has errors", null, errors);
 		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			CatalogueItems[] returnCatalogueItems = MapperResultUtil.mapToArray(response.getResultSets().get(0),
+					new RowMapper<CatalogueItems>() {
+						@Override
+						public CatalogueItems mapRow(ResultSetMapper resultSetMapper, int index) {
+							CatalogueItems dto = new CatalogueItems();
+
+							dto.setCode(resultSetMapper.getString(1));
+							dto.setName(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseCatalog.setCatalogueItems(returnCatalogueItems);
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			Response returnResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1),
+					new RowMapper<Response>() {
+						@Override
+						public Response mapRow(ResultSetMapper resultSetMapper, int index) {
+							Response dto = new Response();
+
+							dto.setCode(resultSetMapper.getInteger(1));
+							dto.setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseCatalog.setResponse(returnResponse);
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseCatalog returnResponseCatalog = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2),
+					new RowMapper<ResponseCatalog>() {
+						@Override
+						public ResponseCatalog mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseCatalog dto = new ResponseCatalog();
+
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseCatalog.setSuccess(returnResponseCatalog.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+		
+		String trn = "Get Catalog";
+        
+        Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestCatalog);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseCatalog);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: getCatalog");
+		// returns data
+		return outResponseCatalog;
+	}
 	
-		/**
-		 * Service to obtain the detail of movements of an existing savings account
-		 */
-		@Override
-		// Have DTO
-		public ResponseGetMovementsDetail getMovementsDetail(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, RequestGetMovementsDetail inRequestGetMovementsDetail)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: getMovementsDetail");
-			ResponseGetMovementsDetail outResponseGetMovementsDetail = new ResponseGetMovementsDetail();
+	/**
+	 * Service to obtain the detail of movements of an existing savings account
+	 */
+	@Override
+	// Have DTO
+	public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail)
+			throws CTSRestException {
+		LOGGER.logDebug("Start service execution: getMovementsDetail");
+		ResponseGetMovementsDetail outResponseGetMovementsDetail = new ResponseGetMovementsDetail();
 
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_tr04_cons_mov_ah_api");
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_tr04_cons_mov_ah_api");
+		
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500106");
+		procedureRequestAS.addInputParam("@i_cliente", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
+				inRequestGetMovementsDetail.getAccountNumber());
+		procedureRequestAS.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getNumberOfMovements()));
+		procedureRequestAS.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR,
+				inRequestGetMovementsDetail.getMinDate());
+		procedureRequestAS.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR,
+				inRequestGetMovementsDetail.getMaxDate());
+		procedureRequestAS.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getSequential()));
+		procedureRequestAS.addInputParam("@i_mov_id", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestGetMovementsDetail.getMovementId()));
 
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
 
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500106");
-			procedureRequestAS.addInputParam("@i_cliente", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestGetMovementsDetail.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
-					inRequestGetMovementsDetail.getAccountNumber());
-			procedureRequestAS.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestGetMovementsDetail.getNumberOfMovements()));
-			procedureRequestAS.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR,
-					inRequestGetMovementsDetail.getMinDate());
-			procedureRequestAS.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR,
-					inRequestGetMovementsDetail.getMaxDate());
-			procedureRequestAS.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestGetMovementsDetail.getSequential()));
-			procedureRequestAS.addInputParam("@i_mov_id", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestGetMovementsDetail.getMovementId()));
-
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
 				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
 			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(0), new RowMapper<ResponseGetMovementsDetail>() {
-							@Override
-							public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
-
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseGetMovementsDetail.setSuccess(returnResponseGetMovementsDetail.isSuccess());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(1), new RowMapper<ResponseGetMovementsDetail>() {
-							@Override
-							public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
-
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
-
-				outResponseGetMovementsDetail.setResponse(returnResponseGetMovementsDetail.getResponse());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 2
-					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(2), new RowMapper<ResponseGetMovementsDetail>() {
-							@Override
-							public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
-
-								dto.setNumberOfResults(resultSetMapper.getInteger(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseGetMovementsDetail.setNumberOfResults(returnResponseGetMovementsDetail.getNumberOfResults());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 3
-					&& response.getResultSets().get(3).getData().getRows().size() > 0) {
-				// ---------NO Array
-				AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
-						.mapToArray(response.getResultSets().get(3), new RowMapper<AccountStatementArray>() {
-							@Override
-							public AccountStatementArray mapRow(ResultSetMapper resultSetMapper, int index) {
-								AccountStatementArray dto = new AccountStatementArray();
-
-								dto.setAccountingBalance(resultSetMapper.getBigDecimal(1));
-								dto.setAvailableBalance(resultSetMapper.getBigDecimal(2));
-								dto.setMovementType(resultSetMapper.getString(3));
-								dto.setAmount(resultSetMapper.getBigDecimal(4));
-								dto.setTransactionDate(resultSetMapper.getString(5));
-								dto.setOperationType(resultSetMapper.getString(6));
-								dto.setCommission(resultSetMapper.getString(7));
-								dto.setIva(resultSetMapper.getString(8));
-								dto.setDescription(resultSetMapper.getString(10));
-								dto.setMovementId(resultSetMapper.getString(27));
-								dto.setAuthorizationCode(resultSetMapper.getString(28));
-								dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
-								dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
-								dto.sourceAccountInstance().setAccountNumber(resultSetMapper.getString(13));
-								dto.sourceAccountInstance().setBankName(resultSetMapper.getString(14));
-								dto.destinationAccountInstance().setOwnerName(resultSetMapper.getString(15));
-								dto.destinationAccountInstance().setAccountNumber(resultSetMapper.getString(16));
-								dto.destinationAccountInstance().setBankName(resultSetMapper.getString(17));
-								dto.speiDetailsInstance().setReferenceCode(resultSetMapper.getString(18));
-								dto.speiDetailsInstance().setTrackingId(resultSetMapper.getString(19));
-								dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
-								dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
-								dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
-								dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
-								dto.atmDetailsInstance().setBankBranchCode(resultSetMapper.getString(29));
-								dto.merchantDetailsInstance().setEstablishmentName(resultSetMapper.getString(23));
-								dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
-								dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
-								dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
-
-								return dto;
-							}
-						}, false);
-
-				outResponseGetMovementsDetail.setAccountStatementArray(returnResponseGetMovementsDetail);
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			String trn = "Get Movements Detail";
-
-			Gson gson = new Gson();
-			String jsonReq = gson.toJson(inRequestGetMovementsDetail);
-
-			Gson gson2 = new Gson();
-			String jsonRes = gson2.toJson(outResponseGetMovementsDetail);
-
-			Header header = new Header();
-
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-
-			Gson gson3 = new Gson();
-			String jsonHead = gson3.toJson(header);
-
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-			LOGGER.logDebug("Ends service execution: getMovementsDetail");
-			// returns data
-			return outResponseGetMovementsDetail;
+			throw new CTSRestException("Procedure Response has errors", null, errors);
 		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetMovementsDetail>() {
+						@Override
+						public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setSuccess(returnResponseGetMovementsDetail.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetMovementsDetail>() {
+						@Override
+						public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setResponse(returnResponseGetMovementsDetail.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2
+				&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetMovementsDetail returnResponseGetMovementsDetail = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseGetMovementsDetail>() {
+						@Override
+						public ResponseGetMovementsDetail mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
+
+							dto.setNumberOfResults(resultSetMapper.getInteger(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setNumberOfResults(returnResponseGetMovementsDetail.getNumberOfResults());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 3
+				&& response.getResultSets().get(3).getData().getRows().size() > 0) {
+			// ---------NO Array
+			AccountStatementArray[] returnResponseGetMovementsDetail = MapperResultUtil
+					.mapToArray(response.getResultSets().get(3), new RowMapper<AccountStatementArray>() {
+						@Override
+						public AccountStatementArray mapRow(ResultSetMapper resultSetMapper, int index) {
+							AccountStatementArray dto = new AccountStatementArray();
+
+							dto.setAccountingBalance(resultSetMapper.getBigDecimal(1));
+							dto.setAvailableBalance(resultSetMapper.getBigDecimal(2));
+							dto.setMovementType(resultSetMapper.getString(3));
+							dto.setAmount(resultSetMapper.getBigDecimal(4));
+							dto.setTransactionDate(resultSetMapper.getString(5));
+							dto.setOperationType(resultSetMapper.getString(6));
+							dto.setCommission(resultSetMapper.getString(7));
+							dto.setIva(resultSetMapper.getString(8));
+							dto.setDescription(resultSetMapper.getString(10));
+							dto.setMovementId(resultSetMapper.getString(27));
+							dto.setAuthorizationCode(resultSetMapper.getString(28));
+							dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
+							dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
+							dto.sourceAccountInstance().setAccountNumber(resultSetMapper.getString(13));
+							dto.sourceAccountInstance().setBankName(resultSetMapper.getString(14));
+							dto.destinationAccountInstance().setOwnerName(resultSetMapper.getString(15));
+							dto.destinationAccountInstance().setAccountNumber(resultSetMapper.getString(16));
+							dto.destinationAccountInstance().setBankName(resultSetMapper.getString(17));
+							dto.speiDetailsInstance().setReferenceCode(resultSetMapper.getString(18));
+							dto.speiDetailsInstance().setTrackingId(resultSetMapper.getString(19));
+							dto.speiDetailsInstance().setTransactionReferenceNumber(resultSetMapper.getInteger(9));
+							dto.atmDetailsInstance().setBankName(resultSetMapper.getString(20));
+							dto.atmDetailsInstance().setLocationId(resultSetMapper.getString(21));
+							dto.atmDetailsInstance().setTransactionId(resultSetMapper.getString(22));
+							dto.atmDetailsInstance().setBankBranchCode(resultSetMapper.getString(29));
+							dto.merchantDetailsInstance().setEstablishmentName(resultSetMapper.getString(23));
+							dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
+							dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
+							dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
+							
+							return dto;
+						}
+					}, false);
+
+			outResponseGetMovementsDetail.setAccountStatementArray(returnResponseGetMovementsDetail);
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+		
+		String trn = "Get Movements Detail";
+	      
+	    Gson gson = new Gson();
+	    String jsonReq = gson.toJson(inRequestGetMovementsDetail);
+	
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseGetMovementsDetail);
+	
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: getMovementsDetail");
+		// returns data
+		return outResponseGetMovementsDetail;
+	}
 
 	/**
 	 * Municipality By State
@@ -3549,20 +3420,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	 */
 	@Override
 	// Have DTO
-	public RegisterBeneficiaryResponse registerBeneficiary(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RegisterBeneficiaryRequest inRegisterBeneficiaryRequest)
+	public RegisterBeneficiaryResponse registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest)
 			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: registerBeneficiary");
 		RegisterBeneficiaryResponse outRegisterBeneficiaryResponse = new RegisterBeneficiaryResponse();
 
 		// create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
-
-		// headers
-		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
 		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500096");
 		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
@@ -3641,56 +3505,42 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 		}
 		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().size() > 2
-				&& response.getResultSets().get(2).getData().getRows().size() > 0) {
-			// ---------NO Array
-			RegisteredBeneficiaries[] returnRegisterBeneficiaryResponse = MapperResultUtil
-					.mapToArray(response.getResultSets().get(2), new RowMapper<RegisteredBeneficiaries>() {
-						@Override
-						public RegisteredBeneficiaries mapRow(ResultSetMapper resultSetMapper, int index) {
-							RegisteredBeneficiaries dto = new RegisteredBeneficiaries();
+        if (response.getResultSets()!=null&& response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+							//---------NO Array
+        			RegisteredBeneficiaries[] returnRegisterBeneficiaryResponse = MapperResultUtil.mapToArray(response.getResultSets().get(2), new RowMapper<RegisteredBeneficiaries>() { 
+                @Override
+                public RegisteredBeneficiaries mapRow(ResultSetMapper resultSetMapper, int index) {
+                	RegisteredBeneficiaries dto = new RegisteredBeneficiaries();
+                
+						dto.setId(resultSetMapper.getInteger(1));
+						dto.setNames(resultSetMapper.getString(2));
+                return dto;
+                }
+                },false);
 
-							dto.setId(resultSetMapper.getInteger(1));
-							dto.setNames(resultSetMapper.getString(2));
-							return dto;
-						}
-					}, false);
+                outRegisterBeneficiaryResponse.setRegisteredBeneficiaries(returnRegisterBeneficiaryResponse);
+                    // break;
+                  
+        }else {
+        mapBlank++;
 
-			outRegisterBeneficiaryResponse.setRegisteredBeneficiaries(returnRegisterBeneficiaryResponse);
-			// break;
-
-		} else {
-			mapBlank++;
-
-		}
+        }
 
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
-
-		String trn = "Register Beneficiary";
-
-		Gson gson1 = new Gson();
-		String jsonReq = gson1.toJson(inRegisterBeneficiaryRequest);
-
-		Gson gson2 = new Gson();
-		String jsonRes = gson2.toJson(outRegisterBeneficiaryResponse);
-
-		Header header = new Header();
-
-		header.setAccept("application/json");
-		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-		header.setX_end_user_ip(xEndUserIp);
-		header.setX_channel(xChannel);
-		header.setContent_type("application/json");
-
-		Gson gson3 = new Gson();
-		String jsonHead = gson3.toJson(header);
-
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
+	    String trn = "Register Beneficiary";
+      
+	    Gson gson1 = new Gson();
+	    String jsonReq = gson1.toJson(inRegisterBeneficiaryRequest);
+		
+	    Gson gson2 = new Gson();
+	    String jsonRes = gson2.toJson(outRegisterBeneficiaryResponse);
+		
+	    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 		LOGGER.logDebug("Ends service execution: registerBeneficiary");
 		// returns data
@@ -3791,55 +3641,138 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 	}
 	
+	    /**
+	    * Update customer address
+	    */
+	   @Override
+		//Have DTO
+		public UpdateCustomerAddressResponse updateCustomerAddress(UpdateCustomerAddressRequest inUpdateCustomerAddressRequest  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: updateCustomerAddress");
+		UpdateCustomerAddressResponse outUpdateCustomerAddressResponse  = new UpdateCustomerAddressResponse();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_direccion_dml_api");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500100");
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"U");
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_descripcion",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getReferenceAddress());
+		procedureRequestAS.addInputParam("@i_tipo",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getAddressTypeCode());
+		procedureRequestAS.addInputParam("@i_parroquia",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getTownCode()));
+		procedureRequestAS.addInputParam("@i_ciudad",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getCity()));
+		procedureRequestAS.addInputParam("@i_oficina",ICTSTypes.SQLINT2,"1");
+		procedureRequestAS.addInputParam("@i_provincia",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getProvince()));
+		procedureRequestAS.addInputParam("@i_tipo_prop",ICTSTypes.SQLCHAR,String.valueOf(inUpdateCustomerAddressRequest.getPropertyTypeCode()));
+		procedureRequestAS.addInputParam("@i_codpostal",ICTSTypes.SQLCHAR,String.valueOf(inUpdateCustomerAddressRequest.getZipcode()));
+		procedureRequestAS.addInputParam("@i_calle",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getStreet());
+		procedureRequestAS.addInputParam("@i_tiempo_reside",ICTSTypes.SQLINT4,String.valueOf(inUpdateCustomerAddressRequest.getTimeCurrentReside()));
+		procedureRequestAS.addInputParam("@i_nro",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getExternalNumber());
+		procedureRequestAS.addInputParam("@i_nro_interno",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getInternalNumber());
+		procedureRequestAS.addInputParam("@i_localidad",ICTSTypes.SQLVARCHAR,inUpdateCustomerAddressRequest.getSubdivisioncode());
+		procedureRequestAS.addInputParam("@i_direct",ICTSTypes.SQLVARCHAR,"S");
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateCustomerAddressResponse returnUpdateCustomerAddressResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<UpdateCustomerAddressResponse>() { 
+		              @Override
+		              public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		              UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outUpdateCustomerAddressResponse.setSuccess(returnUpdateCustomerAddressResponse.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateCustomerAddressResponse returnUpdateCustomerAddressResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<UpdateCustomerAddressResponse>() { 
+		              @Override
+		              public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+		              UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
+		              
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outUpdateCustomerAddressResponse.setResponse(returnUpdateCustomerAddressResponse.getResponse());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  String trn = "Update Customer Address";
+		      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inUpdateCustomerAddressRequest);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outUpdateCustomerAddressResponse);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
+		  LOGGER.logDebug("Ends service execution: updateCustomerAddress");
+		  //returns data
+		  return outUpdateCustomerAddressResponse;
+		}
+
 	/**
-	 * Update customer address
+	 * Service to Update Profile
 	 */
 	@Override
-	// Have DTO
-	public UpdateCustomerAddressResponse updateCustomerAddress(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, UpdateCustomerAddressRequest inUpdateCustomerAddressRequest)
+	// Return List
+	public List<ResponseUpdateProfile> updateProfile(RequestUpdateProfile inRequestUpdateProfile)
 			throws CTSRestException {
-		LOGGER.logDebug("Start service execution: updateCustomerAddress");
-		UpdateCustomerAddressResponse outUpdateCustomerAddressResponse = new UpdateCustomerAddressResponse();
+		LOGGER.logDebug("Start service execution: updateProfile");
+		List<ResponseUpdateProfile> outSingleResponseUpdateProfile = new ArrayList<>();
 
 		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_direccion_dml_api");
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_updateProfile");
 
-		// headers
-		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500100");
-		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "U");
-		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
-				String.valueOf(inUpdateCustomerAddressRequest.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR,
-				inUpdateCustomerAddressRequest.getReferenceAddress());
-		procedureRequestAS.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR,
-				inUpdateCustomerAddressRequest.getAddressTypeCode());
-		procedureRequestAS.addInputParam("@i_parroquia", ICTSTypes.SQLINT4,
-				String.valueOf(inUpdateCustomerAddressRequest.getTownCode()));
-		procedureRequestAS.addInputParam("@i_ciudad", ICTSTypes.SQLINT4,
-				String.valueOf(inUpdateCustomerAddressRequest.getCity()));
-		procedureRequestAS.addInputParam("@i_oficina", ICTSTypes.SQLINT2, "1");
-		procedureRequestAS.addInputParam("@i_provincia", ICTSTypes.SQLINT4,
-				String.valueOf(inUpdateCustomerAddressRequest.getProvince()));
-		procedureRequestAS.addInputParam("@i_tipo_prop", ICTSTypes.SQLCHAR,
-				String.valueOf(inUpdateCustomerAddressRequest.getPropertyTypeCode()));
-		procedureRequestAS.addInputParam("@i_codpostal", ICTSTypes.SQLCHAR,
-				String.valueOf(inUpdateCustomerAddressRequest.getZipcode()));
-		procedureRequestAS.addInputParam("@i_calle", ICTSTypes.SQLVARCHAR, inUpdateCustomerAddressRequest.getStreet());
-		procedureRequestAS.addInputParam("@i_tiempo_reside", ICTSTypes.SQLINT4,
-				String.valueOf(inUpdateCustomerAddressRequest.getTimeCurrentReside()));
-		procedureRequestAS.addInputParam("@i_nro", ICTSTypes.SQLVARCHAR,
-				inUpdateCustomerAddressRequest.getExternalNumber());
-		procedureRequestAS.addInputParam("@i_nro_interno", ICTSTypes.SQLVARCHAR,
-				inUpdateCustomerAddressRequest.getInternalNumber());
-		procedureRequestAS.addInputParam("@i_localidad", ICTSTypes.SQLVARCHAR,
-				inUpdateCustomerAddressRequest.getSubdivisioncode());
-		procedureRequestAS.addInputParam("@i_direct", ICTSTypes.SQLVARCHAR, "S");
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500095");
+		procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestUpdateProfile.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_email", ICTSTypes.SQLVARCHAR, inRequestUpdateProfile.getEmail());
+		procedureRequestAS.addInputParam("@i_phoneNumber", ICTSTypes.SQLVARCHAR,
+				inRequestUpdateProfile.getPhoneNumber());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -3863,43 +3796,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 		mapTotal++;
 		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ---------NO Array
-			UpdateCustomerAddressResponse returnUpdateCustomerAddressResponse = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<UpdateCustomerAddressResponse>() {
+			// ----------------Assume Array return
+			List<ResponseUpdateProfile> returnResponseUpdateProfile = MapperResultUtil
+					.mapToList(response.getResultSets().get(0), new RowMapper<ResponseUpdateProfile>() {
 						@Override
-						public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-							UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
+						public ResponseUpdateProfile mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseUpdateProfile dto = new ResponseUpdateProfile();
 
 							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							return dto;
-						}
-					}, false);
-
-			outUpdateCustomerAddressResponse.setSuccess(returnUpdateCustomerAddressResponse.isSuccess());
-			// break;
-
-		} else {
-			mapBlank++;
-
-		}
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-			// ---------NO Array
-			UpdateCustomerAddressResponse returnUpdateCustomerAddressResponse = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<UpdateCustomerAddressResponse>() {
-						@Override
-						public UpdateCustomerAddressResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-							UpdateCustomerAddressResponse dto = new UpdateCustomerAddressResponse();
-
-							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
 							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(3));
 							return dto;
 						}
 					}, false);
-
-			outUpdateCustomerAddressResponse.setResponse(returnUpdateCustomerAddressResponse.getResponse());
-			// break;
+			outSingleResponseUpdateProfile = returnResponseUpdateProfile;
 
 		} else {
 			mapBlank++;
@@ -3911,135 +3821,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			LOGGER.logDebug("No data found");
 			throw new CTSRestException("404", null);
 		}
-
-		String trn = "Update Customer Address";
-
-		Gson gson = new Gson();
-		String jsonReq = gson.toJson(inUpdateCustomerAddressRequest);
-
+		
+		String trn = "Update Profile";
+	      
+      	Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestUpdateProfile);
+		
 		Gson gson2 = new Gson();
-		String jsonRes = gson2.toJson(outUpdateCustomerAddressResponse);
-
-		Header header = new Header();
-
-		header.setAccept("application/json");
-		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-		header.setX_end_user_ip(xEndUserIp);
-		header.setX_channel(xChannel);
-		header.setContent_type("application/json");
-
-		Gson gson3 = new Gson();
-		String jsonHead = gson3.toJson(header);
-
+		String jsonRes = gson2.toJson(outSingleResponseUpdateProfile);
+		
 		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
-		LOGGER.logDebug("Ends service execution: updateCustomerAddress");
+		LOGGER.logDebug("Ends service execution: updateProfile");
 		// returns data
-		return outUpdateCustomerAddressResponse;
+		return outSingleResponseUpdateProfile;
 	}
-
-		/**
-		 * Service to Update Profile
-		 */
-		@Override
-		// Return List
-		public List<ResponseUpdateProfile> updateProfile(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, RequestUpdateProfile inRequestUpdateProfile)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: updateProfile");
-			List<ResponseUpdateProfile> outSingleResponseUpdateProfile = new ArrayList<>();
-
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_updateProfile");
-
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500095");
-			procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestUpdateProfile.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_email", ICTSTypes.SQLVARCHAR, inRequestUpdateProfile.getEmail());
-			procedureRequestAS.addInputParam("@i_phoneNumber", ICTSTypes.SQLVARCHAR,
-					inRequestUpdateProfile.getPhoneNumber());
-
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ----------------Assume Array return
-				List<ResponseUpdateProfile> returnResponseUpdateProfile = MapperResultUtil
-						.mapToList(response.getResultSets().get(0), new RowMapper<ResponseUpdateProfile>() {
-							@Override
-							public ResponseUpdateProfile mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseUpdateProfile dto = new ResponseUpdateProfile();
-
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								dto.responseInstance().setCode(resultSetMapper.getInteger(3));
-								return dto;
-							}
-						}, false);
-				outSingleResponseUpdateProfile = returnResponseUpdateProfile;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			String trn = "Update Profile";
-
-			Gson gson = new Gson();
-			String jsonReq = gson.toJson(inRequestUpdateProfile);
-
-			Gson gson2 = new Gson();
-			String jsonRes = gson2.toJson(outSingleResponseUpdateProfile);
-
-			Header header = new Header();
-
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-
-			Gson gson3 = new Gson();
-			String jsonHead = gson3.toJson(header);
-
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-			LOGGER.logDebug("Ends service execution: updateProfile");
-			// returns data
-			return outSingleResponseUpdateProfile;
-		}
 
 	@Override
 	// Have DTO
@@ -4178,138 +3974,109 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		return outResponseValidateCustomerIdentityCard;
 	}
 	
-	/**
-	 * Service to register beneficiaries for spei transfers.
-	 */
-	@Override
-	// Have DTO
-	public ResponseRegisterAccountSpei registerAccount(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestRegisterAccountSpei inRequestRegisterAccountSpei)
-			throws CTSRestException {
+	    /**
+	    * Service to register beneficiaries for spei transfers.
+	    */
+	   @Override
+			//Have DTO
+			public ResponseRegisterAccountSpei registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei  )throws CTSRestException{
 		LOGGER.logDebug("Start service execution: registerAccount");
-		ResponseRegisterAccountSpei outResponseRegisterAccountSpei = new ResponseRegisterAccountSpei();
-
-		// create procedure
+		ResponseRegisterAccountSpei outResponseRegisterAccountSpei  = new ResponseRegisterAccountSpei();
+		    
+		//create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_register_account_api");
-
-		// headers
-		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500110");
-		procedureRequestAS.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR,
-				inRequestRegisterAccountSpei.getAccountNumberDestination());
-		procedureRequestAS.addInputParam("@i_product_alias", ICTSTypes.SQLVARCHAR,
-				inRequestRegisterAccountSpei.getProductAlias());
-		procedureRequestAS.addInputParam("@i_banco", ICTSTypes.SQLINT4,
-				String.valueOf(inRequestRegisterAccountSpei.getBankId()));
-		procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
-				inRequestRegisterAccountSpei.getAccountNumber());
-		procedureRequestAS.addInputParam("@i_tipo_tercero", ICTSTypes.SQLCHAR,
-				String.valueOf(inRequestRegisterAccountSpei.getTypeDestinationId()));
-		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "I");
-		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
-				String.valueOf(inRequestRegisterAccountSpei.getExternalCustomerId()));
-
-		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
-
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500110");
+		procedureRequestAS.addInputParam("@i_cta_des",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getAccountNumberDestination());
+		procedureRequestAS.addInputParam("@i_product_alias",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getProductAlias());
+		procedureRequestAS.addInputParam("@i_banco",ICTSTypes.SQLINT4,String.valueOf(inRequestRegisterAccountSpei.getBankId()));
+		procedureRequestAS.addInputParam("@i_cta",ICTSTypes.SQLVARCHAR,inRequestRegisterAccountSpei.getAccountNumber());
+		procedureRequestAS.addInputParam("@i_tipo_tercero",ICTSTypes.SQLCHAR,String.valueOf(inRequestRegisterAccountSpei.getTypeDestinationId()));
+		procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"I");
+		procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestRegisterAccountSpei.getExternalCustomerId()));
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
 		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		// throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-				}
-			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
 		}
 		LOGGER.logDebug("Procedure ok");
-		// Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ---------NO Array
-			ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterAccountSpei>() {
-						@Override
-						public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
-
-							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							return dto;
-						}
-					}, false);
-
-			outResponseRegisterAccountSpei.setSuccess(returnResponseRegisterAccountSpei.isSuccess());
-			// break;
-
-		} else {
-			mapBlank++;
-
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterAccountSpei>() { 
+		              @Override
+		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseRegisterAccountSpei.setSuccess(returnResponseRegisterAccountSpei.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterAccountSpei>() { 
+		              @Override
+		              public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
+		              
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseRegisterAccountSpei.setResponse(returnResponseRegisterAccountSpei.getResponse());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
 		}
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-			// ---------NO Array
-			ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterAccountSpei>() {
-						@Override
-						public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
-
-							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-							dto.responseInstance().setMessage(resultSetMapper.getString(2));
-							return dto;
-						}
-					}, false);
-
-			outResponseRegisterAccountSpei.setResponse(returnResponseRegisterAccountSpei.getResponse());
-			// break;
-
-		} else {
-			mapBlank++;
-
+		
+		  String trn = "Register Account to Transfer Spei";
+	      
+		  Gson gson = new Gson();
+		  String jsonReq = gson.toJson(inRequestRegisterAccountSpei);
+			
+		  Gson gson2 = new Gson();
+		  String jsonRes = gson2.toJson(outResponseRegisterAccountSpei);
+			
+		  saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
+		  LOGGER.logDebug("Ends service execution: registerAccount");
+		  //returns data
+		  return outResponseRegisterAccountSpei;
 		}
-
-		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
-
-		String trn = "Register Account to Transfer Spei";
-
-		Gson gson = new Gson();
-		String jsonReq = gson.toJson(inRequestRegisterAccountSpei);
-
-		Gson gson2 = new Gson();
-		String jsonRes = gson2.toJson(outResponseRegisterAccountSpei);
-
-		Header header = new Header();
-
-		header.setAccept("application/json");
-		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-		header.setX_end_user_ip(xEndUserIp);
-		header.setX_channel(xChannel);
-		header.setContent_type("application/json");
-
-		Gson gson3 = new Gson();
-		String jsonHead = gson3.toJson(header);
-
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-		LOGGER.logDebug("Ends service execution: registerAccount");
-		// returns data
-		return outResponseRegisterAccountSpei;
-	}
 
 		/**
 		 * Service to create a savings account for an existing customer
@@ -4370,11 +4137,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
+			
 			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
 			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
 
 			outResponseCreateSavingAccount.setResponse(response);
-			outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+			
+			if (response != null && response.getCode() == 0) {
+                
+				outResponseCreateSavingAccount.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+            
+            } else {
+                
+            	outResponseCreateSavingAccount.setAccountNumber(null);
+            }
+			
 
 			if (outResponseCreateSavingAccount.getAccountNumber() != null
 					&& outResponseCreateSavingAccount.getAccountNumber() != "" && response.getCode() == 0) {
@@ -4385,9 +4162,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 				outResponseCreateSavingAccount.setSuccess(false);
 			}
+			
+			String trn = "Create Saving Account";
+		      
+	      	Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestCreateSavingAccount);
+			
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseCreateSavingAccount);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createSavingAccount");
-
 			return outResponseCreateSavingAccount;
 		}
 	
@@ -4845,134 +4631,109 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	}
 	   
 
-	/**
-	 * Update Account Beneficiary
-	 */
-	@Override
-	// Have DTO
-	public UpdateBeneficiaryResponse updateAccountBeneficiary(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, UpdateBeneficiaryRequest inUpdateBeneficiaryRequest)
-			throws CTSRestException {
-		LOGGER.logDebug("Start service execution: updateAccountBeneficiary");
-		UpdateBeneficiaryResponse outUpdateBeneficiaryResponse = new UpdateBeneficiaryResponse();
-
-		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
-
-		// headers
-		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500126");
-		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
-				String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_numero_producto", ICTSTypes.SQLVARCHAR,
-				inUpdateBeneficiaryRequest.getAccount());
-		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "U");
-
-		Gson gson = new Gson();
+       /**
+       * Update Account Beneficiary
+       */
+	   @Override
+		//Have DTO
+		public UpdateBeneficiaryResponse updateAccountBeneficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException{
+		  LOGGER.logDebug("Start service execution: updateAccountBeneficiary");
+	   UpdateBeneficiaryResponse outUpdateBeneficiaryResponse  = new UpdateBeneficiaryResponse();
+	       
+	   //create procedure
+	   ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
+	   
+	     procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500126");
+	   procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
+	   procedureRequestAS.addInputParam("@i_numero_producto",ICTSTypes.SQLVARCHAR,inUpdateBeneficiaryRequest.getAccount());
+	   procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"U");
+	   
+	   Gson gson = new Gson();
 		String JSON = gson.toJson(inUpdateBeneficiaryRequest.getBeneficiaries());
 		procedureRequestAS.addInputParam("@i_json_beneficiaries", ICTSTypes.SQLVARCHAR, JSON);
 
-		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
-
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		// throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-				}
-			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
-		}
-		LOGGER.logDebug("Procedure ok");
-		// Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ---------NO Array
-			UpdateBeneficiaryResponse returnUpdateBeneficiaryResponse = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<UpdateBeneficiaryResponse>() {
-						@Override
-						public UpdateBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-							UpdateBeneficiaryResponse dto = new UpdateBeneficiaryResponse();
-
-							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							return dto;
-						}
-					}, false);
-
-			outUpdateBeneficiaryResponse.setSuccess(returnUpdateBeneficiaryResponse.isSuccess());
-			// break;
-
-		} else {
-			mapBlank++;
-
-		}
-
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-			// ---------NO Array
-			UpdateBeneficiaryResponse returnUpdateBeneficiaryResponse = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<UpdateBeneficiaryResponse>() {
-						@Override
-						public UpdateBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-							UpdateBeneficiaryResponse dto = new UpdateBeneficiaryResponse();
-
-							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-							dto.responseInstance().setMessage(resultSetMapper.getString(2));
-							return dto;
-						}
-					}, false);
-
-			outUpdateBeneficiaryResponse.setResponse(returnUpdateBeneficiaryResponse.getResponse());
-			// break;
-
-		} else {
-			mapBlank++;
-
-		}
-
-		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
-
-		String trn = "Update Account Beneficiary";
-
-		Gson gson1 = new Gson();
+	   //execute procedure
+	   ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+	
+	   List<MessageBlock> errors = ErrorUtil.getErrors(response);
+	   //throw error
+	   if(errors!= null && errors.size()> 0){
+	   LOGGER.logDebug("Procedure execution returns error");
+	   if ( LOGGER.isDebugEnabled() ) {
+	   for (int i = 0; i < errors.size(); i++) {
+	   LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+	   }
+	   }
+	   throw new CTSRestException("Procedure Response has errors", null, errors);
+	   }
+	   LOGGER.logDebug("Procedure ok");
+	   //Init map returns
+	   int mapTotal=0;
+	   int mapBlank=0;
+	   
+	         mapTotal++;
+	         if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateBeneficiaryResponse returnUpdateBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<UpdateBeneficiaryResponse>() { 
+	                 @Override
+	                 public UpdateBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+	                 UpdateBeneficiaryResponse dto = new UpdateBeneficiaryResponse();
+	                 
+	                       dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+	                 return dto;
+	                 }
+	                 },false);
+	
+	                 outUpdateBeneficiaryResponse.setSuccess(returnUpdateBeneficiaryResponse.isSuccess());
+	                     // break;
+	                   
+	         }else {
+	         mapBlank++;
+	
+	         }
+	       
+	         mapTotal++;
+	         if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									UpdateBeneficiaryResponse returnUpdateBeneficiaryResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<UpdateBeneficiaryResponse>() { 
+	                 @Override
+	                 public UpdateBeneficiaryResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+	                 UpdateBeneficiaryResponse dto = new UpdateBeneficiaryResponse();
+	                 
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+	                 return dto;
+	                 }
+	                 },false);
+	
+	                 outUpdateBeneficiaryResponse.setResponse(returnUpdateBeneficiaryResponse.getResponse());
+	                     // break;
+	                   
+	         }else {
+	         mapBlank++;
+	
+	         }
+	       
+	   //End map returns
+	   if(mapBlank!=0&&mapBlank==mapTotal){
+	   LOGGER.logDebug("No data found");
+	   throw new CTSRestException("404",null);
+	   }
+	   
+	   	String trn = "Update Account Beneficiary";
+	      
+   		Gson gson1 = new Gson();
 		String jsonReq = gson1.toJson(inUpdateBeneficiaryRequest);
-
+		
 		Gson gson2 = new Gson();
 		String jsonRes = gson2.toJson(outUpdateBeneficiaryResponse);
-
-		Header header = new Header();
-
-		header.setAccept("application/json");
-		header.setX_request_id(xRequestId);
-		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-		header.setX_end_user_ip(xEndUserIp);
-		header.setX_channel(xChannel);
-		header.setContent_type("application/json");
-
-		Gson gson3 = new Gson();
-		String jsonHead = gson3.toJson(header);
-
+		
 		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-		LOGGER.logDebug("Ends service execution: updateAccountBebeficiary");
-		// returns data
-		return outUpdateBeneficiaryResponse;
-	}
+	   
+	     LOGGER.logDebug("Ends service execution: updateAccountBebeficiary");
+	     //returns data
+	     return outUpdateBeneficiaryResponse;
+	   }
 	   
 		/**
 		 * Update Account Status
@@ -5084,160 +4845,130 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			return outResponseUpdateAccountStatus;
 		}
 		
-		/**
-		 * Update Card Status
-		 */
-		@Override
-		// Have DTO
-		public ResponseUpdateCardStatus updateCardStatus(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, RequestUpdateCardStatus inRequestUpdateCardStatus)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: updateCardStatus");
-			ResponseUpdateCardStatus outResponseUpdateCardStatus = new ResponseUpdateCardStatus();
+        /**
+        * Update Card Status
+        */
+			@Override
+			//Have DTO
+			public ResponseUpdateCardStatus updateCardStatus(RequestUpdateCardStatus inRequestUpdateCardStatus  )throws CTSRestException{
+			  LOGGER.logDebug("Start service execution: updateCardStatus");
+		    ResponseUpdateCardStatus outResponseUpdateCardStatus  = new ResponseUpdateCardStatus();
+		        
+		    //create procedure
+		    ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_card_status_api");
+		    
+		      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500130");
+		    procedureRequestAS.addInputParam("@i_ente",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateCardStatus.getExternalCustomerId()));
+		    procedureRequestAS.addInputParam("@i_card_status",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getCardStatus());
+		    procedureRequestAS.addInputParam("@i_status_reason",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getStatusReason());
+		    procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getAccountNumber());
+		    procedureRequestAS.addInputParam("@i_type_card",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getTypeCard());
+		    procedureRequestAS.addInputParam("@i_mode",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getMode());
+		    procedureRequestAS.addInputParam("@i_card_id",ICTSTypes.SQLVARCHAR,inRequestUpdateCardStatus.getCardId());
+		    
+		    //execute procedure
+		    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		    List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		    //throw error
+		    if(errors!= null && errors.size()> 0){
+		    LOGGER.logDebug("Procedure execution returns error");
+		    if ( LOGGER.isDebugEnabled() ) {
+		    for (int i = 0; i < errors.size(); i++) {
+		    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		    }
+		    }
+		    throw new CTSRestException("Procedure Response has errors", null, errors);
+		    }
+		    LOGGER.logDebug("Procedure ok");
+		    //Init map returns
+		    int mapTotal=0;
+		    int mapBlank=0;
+		    
+		          mapTotal++;
+		          if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateCardStatus>() { 
+		                  @Override
+		                  public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+		                  ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
+		                  
+		                        dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		                  return dto;
+		                  }
+		                  },false);
+		
+		                  outResponseUpdateCardStatus.setSuccess(returnResponseUpdateCardStatus.isSuccess());
+		                      // break;
+		                    
+		          }else {
+		          mapBlank++;
+		
+		          }
+		        
+		          mapTotal++;
+		          if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseUpdateCardStatus>() { 
+		                  @Override
+		                  public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+		                  ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
+		                  
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		                  return dto;
+		                  }
+		                  },false);
+		
+		                  outResponseUpdateCardStatus.setResponse(returnResponseUpdateCardStatus.getResponse());
+		                      // break;
+		                    
+		          }else {
+		          mapBlank++;
+		
+		          }
+		          
+		          mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().size()>2&&response.getResultSets().get(2).getData().getRows().size()>0 ) {	
+										//---------NO Array
+										ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseUpdateCardStatus>() { 
+		                    @Override
+		                    public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
+		                    
+		                          dto.setCardId(resultSetMapper.getString(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_card_status_api");
+		                    outResponseUpdateCardStatus.setCardId(returnResponseUpdateCardStatus.getCardId());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500130");
-			procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
-					String.valueOf(inRequestUpdateCardStatus.getExternalCustomerId()));
-			procedureRequestAS.addInputParam("@i_card_status", ICTSTypes.SQLVARCHAR,
-					inRequestUpdateCardStatus.getCardStatus());
-			procedureRequestAS.addInputParam("@i_status_reason", ICTSTypes.SQLVARCHAR,
-					inRequestUpdateCardStatus.getStatusReason());
-			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
-					inRequestUpdateCardStatus.getAccountNumber());
-			procedureRequestAS.addInputParam("@i_type_card", ICTSTypes.SQLVARCHAR,
-					inRequestUpdateCardStatus.getTypeCard());
-			procedureRequestAS.addInputParam("@i_mode", ICTSTypes.SQLVARCHAR, inRequestUpdateCardStatus.getMode());
-			procedureRequestAS.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, inRequestUpdateCardStatus.getCardId());
-
-			// execute procedure
-			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(response);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateCardStatus>() {
-							@Override
-							public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
-
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseUpdateCardStatus.setSuccess(returnResponseUpdateCardStatus.isSuccess());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseUpdateCardStatus>() {
-							@Override
-							public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
-
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
-
-				outResponseUpdateCardStatus.setResponse(returnResponseUpdateCardStatus.getResponse());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 2
-					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseUpdateCardStatus returnResponseUpdateCardStatus = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseUpdateCardStatus>() {
-							@Override
-							public ResponseUpdateCardStatus mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseUpdateCardStatus dto = new ResponseUpdateCardStatus();
-
-								dto.setCardId(resultSetMapper.getString(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseUpdateCardStatus.setCardId(returnResponseUpdateCardStatus.getCardId());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			String trn = "Update Card Status";
-
-			Gson gson = new Gson();
-			String jsonReq = gson.toJson(inRequestUpdateCardStatus);
-
-			Gson gson2 = new Gson();
-			String jsonRes = gson2.toJson(outResponseUpdateCardStatus);
-
-			Header header = new Header();
-
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-
-			Gson gson3 = new Gson();
-			String jsonHead = gson3.toJson(header);
-
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-			LOGGER.logDebug("Ends service execution: updateCardStatus");
-			// returns data
-			return outResponseUpdateCardStatus;
-		}
+		            }
+		        
+		    //End map returns
+		    if(mapBlank!=0&&mapBlank==mapTotal){
+		    LOGGER.logDebug("No data found");
+		    throw new CTSRestException("404",null);
+		    }
+		    
+		      String trn = "Update Card Status";
+		      
+		      Gson gson = new Gson();
+		      String jsonReq = gson.toJson(inRequestUpdateCardStatus);
+		
+		      Gson gson2 = new Gson();
+		      String jsonRes = gson2.toJson(outResponseUpdateCardStatus);
+			
+		      saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		    
+		      LOGGER.logDebug("Ends service execution: updateCardStatus");
+		      //returns data
+		      return outResponseUpdateCardStatus;
+		    }
 	   
 	/**
 	 * Validate Identity
