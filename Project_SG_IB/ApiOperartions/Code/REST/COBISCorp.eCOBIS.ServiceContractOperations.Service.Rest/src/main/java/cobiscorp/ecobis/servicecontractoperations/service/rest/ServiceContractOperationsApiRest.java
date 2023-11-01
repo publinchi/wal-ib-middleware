@@ -205,7 +205,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/onboarding/affiliateCustomer")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer) {
+	public Response affiliateCustomer(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestAffiliateCustomer inRequestAffiliateCustomer) {
 		LOGGER.logDebug("Start service execution REST: affiliateCustomer");
 		ResponseAffiliateCustomer outSingleResponseAffiliateCustomer = new ResponseAffiliateCustomer();
 
@@ -217,8 +222,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outSingleResponseAffiliateCustomer = iServiceContractOperationsApiService
-					.affiliateCustomer(inRequestAffiliateCustomer);
+			outSingleResponseAffiliateCustomer = iServiceContractOperationsApiService.affiliateCustomer(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestAffiliateCustomer);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -687,12 +692,16 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/customer/createCustomer")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response createCustomer(CreateCustomerRequest inCreateCustomerRequest) {
+	public Response createCustomer(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			CreateCustomerRequest inCreateCustomerRequest) {
 		LOGGER.logDebug("Start service execution REST: createCustomer");
 		CreateCustomerResponse outCreateCustomerResponse = new CreateCustomerResponse();
 
-		if (!validateMandatory(
-				new Data("birthDate", inCreateCustomerRequest.getBirthDate()),
+		if (!validateMandatory(new Data("birthDate", inCreateCustomerRequest.getBirthDate()),
 				new Data("gender", inCreateCustomerRequest.getGender()),
 				new Data("idNumber", inCreateCustomerRequest.getIdNumber()),
 				new Data("lastName", inCreateCustomerRequest.getLastName()),
@@ -705,7 +714,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outCreateCustomerResponse = iServiceContractOperationsApiService.createCustomer(inCreateCustomerRequest);
+			outCreateCustomerResponse = iServiceContractOperationsApiService.createCustomer(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inCreateCustomerRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -769,42 +779,50 @@ public class ServiceContractOperationsApiRest {
 
 	}
 
-    /**
-    * Service to  delete a beneficiary.
-    */
-  @POST
+	/**
+	 * Service to delete a beneficiary.
+	 */
+	@POST
 	@Path("/apiOperations/onboarding/deleteBeneficiary")
-	@Consumes({"application/json"})
-	@Produces({"application/json"})
-	 public Response  deleteBeneficiary(RequestDeleteBeneficiary inRequestDeleteBeneficiary ){
-	LOGGER.logDebug("Start service execution REST: deleteBeneficiary");
-	ResponseDeleteBeneficiary outResponseDeleteBeneficiary  = new ResponseDeleteBeneficiary();
-	    
-	if(!validateMandatory(new Data("externalCustomerId", inRequestDeleteBeneficiary.getExternalCustomerId()), new Data("beneficiaryId", inRequestDeleteBeneficiary.getBeneficiaryId()))) {
-	  LOGGER.logDebug("400 is returned - Required fields are missing");
-	  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-	}
-	  
-	try {
-	outResponseDeleteBeneficiary=iServiceContractOperationsApiService.deleteBeneficiary( inRequestDeleteBeneficiary );
-	} catch (CTSRestException e) {
-	LOGGER.logError("CTSRestException",e);
-	if ("404".equals(e.getMessage())) {
-	LOGGER.logDebug("404 is returned - No data found");
-	return Response.status(404).entity("No data found").build();
-	}
-	
-	LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-	return Response.status(409).entity(e.getMessageBlockList()).build();
-	} catch (Exception e){
-	LOGGER.logDebug("500 is returned - Code exception");
-	LOGGER.logError("Exception",e);
-	return Response.status(500).entity(e.getMessage()).build();
-	}
-	
-	    LOGGER.logDebug("Ends service execution REST: deleteBeneficiary");
-	    return Response.ok(outResponseDeleteBeneficiary).build();
-	  
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response deleteBeneficiary(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestDeleteBeneficiary inRequestDeleteBeneficiary) {
+		LOGGER.logDebug("Start service execution REST: deleteBeneficiary");
+		ResponseDeleteBeneficiary outResponseDeleteBeneficiary = new ResponseDeleteBeneficiary();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestDeleteBeneficiary.getExternalCustomerId()),
+				new Data("beneficiaryId", inRequestDeleteBeneficiary.getBeneficiaryId()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseDeleteBeneficiary = iServiceContractOperationsApiService.deleteBeneficiary(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestDeleteBeneficiary);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: deleteBeneficiary");
+		return Response.ok(outResponseDeleteBeneficiary).build();
+
 	}
 
 	/**
@@ -890,7 +908,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/getBalancesDetail")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail) {
+	public Response getBalancesDetail(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestGetBalancesDetail inRequestGetBalancesDetail) {
 		LOGGER.logDebug("Start service execution REST: getBalancesDetail");
 		ResponseGetBalancesDetail outSingleResponseGetBalancesDetail = new ResponseGetBalancesDetail();
 
@@ -902,8 +925,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outSingleResponseGetBalancesDetail = iServiceContractOperationsApiService
-					.getBalancesDetail(inRequestGetBalancesDetail);
+			outSingleResponseGetBalancesDetail = iServiceContractOperationsApiService.getBalancesDetail(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestGetBalancesDetail);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -971,7 +994,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/common/getCatalog")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response getCatalog(RequestCatalog inRequestCatalog) {
+	public Response getCatalog(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestCatalog inRequestCatalog) {
 		LOGGER.logDebug("Start service execution REST: getCatalog");
 		ResponseCatalog outResponseCatalog = new ResponseCatalog();
 
@@ -981,7 +1009,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseCatalog = iServiceContractOperationsApiService.getCatalog(inRequestCatalog);
+			outResponseCatalog = iServiceContractOperationsApiService.getCatalog(xRequestId, xEndUserRequestDateTime,
+					xEndUserIp, xChannel, inRequestCatalog);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1090,7 +1119,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/getMovementsDetail")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail) {
+	public Response getMovementsDetail(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestGetMovementsDetail inRequestGetMovementsDetail) {
 		LOGGER.logDebug("Start service execution REST: getMovementsDetail");
 		ResponseGetMovementsDetail outResponseGetMovementsDetail = new ResponseGetMovementsDetail();
 
@@ -1102,8 +1136,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseGetMovementsDetail = iServiceContractOperationsApiService
-					.getMovementsDetail(inRequestGetMovementsDetail);
+			outResponseGetMovementsDetail = iServiceContractOperationsApiService.getMovementsDetail(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestGetMovementsDetail);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1250,7 +1284,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/registerAccount")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei) {
+	public Response registerAccount(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestRegisterAccountSpei inRequestRegisterAccountSpei) {
 		LOGGER.logDebug("Start service execution REST: registerAccount");
 		ResponseRegisterAccountSpei outResponseRegisterAccountSpei = new ResponseRegisterAccountSpei();
 
@@ -1265,8 +1304,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseRegisterAccountSpei = iServiceContractOperationsApiService
-					.registerAccount(inRequestRegisterAccountSpei);
+			outResponseRegisterAccountSpei = iServiceContractOperationsApiService.registerAccount(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestRegisterAccountSpei);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1294,7 +1333,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/onboarding/registerBeneficiary")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest) {
+	public Response registerBeneficiary(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RegisterBeneficiaryRequest inRegisterBeneficiaryRequest) {
 		LOGGER.logDebug("Start service execution REST: registerBeneficiary");
 		RegisterBeneficiaryResponse outRegisterBeneficiaryResponse = new RegisterBeneficiaryResponse();
 
@@ -1320,8 +1364,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outRegisterBeneficiaryResponse = iServiceContractOperationsApiService
-					.registerBeneficiary(inRegisterBeneficiaryRequest);
+			outRegisterBeneficiaryResponse = iServiceContractOperationsApiService.registerBeneficiary(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRegisterBeneficiaryRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1387,19 +1431,31 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/customer/updateCustomerAddress")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response updateCustomerAddress(UpdateCustomerAddressRequest inUpdateCustomerAddressRequest) {
+	public Response updateCustomerAddress(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			UpdateCustomerAddressRequest inUpdateCustomerAddressRequest) {
 		LOGGER.logDebug("Start service execution REST: updateCustomerAddress");
 		UpdateCustomerAddressResponse outUpdateCustomerAddressResponse = new UpdateCustomerAddressResponse();
 
-		if(!validateMandatory(new Data("externalCustomerId", inUpdateCustomerAddressRequest.getExternalCustomerId()), new Data("addressTypeCode", inUpdateCustomerAddressRequest.getAddressTypeCode()), new Data("townCode", inUpdateCustomerAddressRequest.getTownCode()), new Data("city", inUpdateCustomerAddressRequest.getCity()), new Data("province", inUpdateCustomerAddressRequest.getProvince()), new Data("zipcode", inUpdateCustomerAddressRequest.getZipcode()), new Data("street", inUpdateCustomerAddressRequest.getStreet()), new Data("externalNumber", inUpdateCustomerAddressRequest.getExternalNumber()))) {
+		if (!validateMandatory(new Data("externalCustomerId", inUpdateCustomerAddressRequest.getExternalCustomerId()),
+				new Data("addressTypeCode", inUpdateCustomerAddressRequest.getAddressTypeCode()),
+				new Data("townCode", inUpdateCustomerAddressRequest.getTownCode()),
+				new Data("city", inUpdateCustomerAddressRequest.getCity()),
+				new Data("province", inUpdateCustomerAddressRequest.getProvince()),
+				new Data("zipcode", inUpdateCustomerAddressRequest.getZipcode()),
+				new Data("street", inUpdateCustomerAddressRequest.getStreet()),
+				new Data("externalNumber", inUpdateCustomerAddressRequest.getExternalNumber()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
 		}
 
 		try {
-			outUpdateCustomerAddressResponse = iServiceContractOperationsApiService
-					.updateCustomerAddress(inUpdateCustomerAddressRequest);
+			outUpdateCustomerAddressResponse = iServiceContractOperationsApiService.updateCustomerAddress(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inUpdateCustomerAddressRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1427,7 +1483,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/enrollment/updateProfile")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response updateProfile(RequestUpdateProfile inRequestUpdateProfile) {
+	public Response updateProfile(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestUpdateProfile inRequestUpdateProfile) {
 		LOGGER.logDebug("Start service execution REST: updateProfile");
 		List<ResponseUpdateProfile> outSingleResponseUpdateProfile = new ArrayList<>();
 
@@ -1439,7 +1500,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outSingleResponseUpdateProfile = iServiceContractOperationsApiService.updateProfile(inRequestUpdateProfile);
+			outSingleResponseUpdateProfile = iServiceContractOperationsApiService.updateProfile(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestUpdateProfile);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -1563,43 +1625,51 @@ public class ServiceContractOperationsApiRest {
 
 	}
 
-	    /**
-	    * Update Account Beneficiary
-	    */
-	  @POST
-		@Path("/apiOperations/onboarding/updateAccountBeneficiary")
-		@Consumes({"application/json"})
-		@Produces({"application/json"})
-		 public Response  updateAccountBeneficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest ){
+	/**
+	 * Update Account Beneficiary
+	 */
+	@POST
+	@Path("/apiOperations/onboarding/updateAccountBeneficiary")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response updateAccountBeneficiary(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			UpdateBeneficiaryRequest inUpdateBeneficiaryRequest) {
 		LOGGER.logDebug("Start service execution REST: updateAccountBebeficiary");
-		UpdateBeneficiaryResponse outUpdateBeneficiaryResponse  = new UpdateBeneficiaryResponse();
-		    
-		if(!validateMandatory(new Data("externalCustomerId", inUpdateBeneficiaryRequest.getExternalCustomerId()), new Data("account", inUpdateBeneficiaryRequest.getAccount()))) {
-		  LOGGER.logDebug("400 is returned - Required fields are missing");
-		  return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+		UpdateBeneficiaryResponse outUpdateBeneficiaryResponse = new UpdateBeneficiaryResponse();
+
+		if (!validateMandatory(new Data("externalCustomerId", inUpdateBeneficiaryRequest.getExternalCustomerId()),
+				new Data("account", inUpdateBeneficiaryRequest.getAccount()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
 		}
-		  
+
 		try {
-		outUpdateBeneficiaryResponse=iServiceContractOperationsApiService.updateAccountBeneficiary( inUpdateBeneficiaryRequest );
+			outUpdateBeneficiaryResponse = iServiceContractOperationsApiService.updateAccountBeneficiary(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inUpdateBeneficiaryRequest);
 		} catch (CTSRestException e) {
-		LOGGER.logError("CTSRestException",e);
-		if ("404".equals(e.getMessage())) {
-		LOGGER.logDebug("404 is returned - No data found");
-		return Response.status(404).entity("No data found").build();
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
 		}
-		
-		LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-		return Response.status(409).entity(e.getMessageBlockList()).build();
-		} catch (Exception e){
-		LOGGER.logDebug("500 is returned - Code exception");
-		LOGGER.logError("Exception",e);
-		return Response.status(500).entity(e.getMessage()).build();
-		}
-		
-		    LOGGER.logDebug("Ends service execution REST: updateAccountBebeficiary");
-		    return Response.ok(outUpdateBeneficiaryResponse).build();
-		  
-		}
+
+		LOGGER.logDebug("Ends service execution REST: updateAccountBebeficiary");
+		return Response.ok(outUpdateBeneficiaryResponse).build();
+
+	}
 	  
 		/**
 		 * Update Account Status
@@ -1645,43 +1715,52 @@ public class ServiceContractOperationsApiRest {
 
 		}
 
-        /**
-        * Update Card Status
-        */
+		/**
+		 * Update Card Status
+		 */
 		@POST
-	    @Path("/apiOperations/customer/updateCardStatus")
-	    @Consumes({"application/json"})
-	    @Produces({"application/json"})
-	     public Response  updateCardStatus(RequestUpdateCardStatus inRequestUpdateCardStatus ){
-		  LOGGER.logDebug("Start service execution REST: updateCardStatus");
-	    ResponseUpdateCardStatus outResponseUpdateCardStatus  = new ResponseUpdateCardStatus();
-	        
-	    if(!validateMandatory(new Data("externalCustomerId", inRequestUpdateCardStatus.getExternalCustomerId()), new Data("cardStatus", inRequestUpdateCardStatus.getCardStatus()), new Data("typeCard", inRequestUpdateCardStatus.getTypeCard()))) {
-	      LOGGER.logDebug("400 is returned - Required fields are missing");
-	      return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-	    }
-		    
-	    try {
-	    outResponseUpdateCardStatus=iServiceContractOperationsApiService.updateCardStatus( inRequestUpdateCardStatus );
-	    } catch (CTSRestException e) {
-	    LOGGER.logError("CTSRestException",e);
-	    if ("404".equals(e.getMessage())) {
-	    LOGGER.logDebug("404 is returned - No data found");
-	    return Response.status(404).entity("No data found").build();
-	    }
-	
-	    LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-	    return Response.status(409).entity(e.getMessageBlockList()).build();
-	    } catch (Exception e){
-	    LOGGER.logDebug("500 is returned - Code exception");
-	    LOGGER.logError("Exception",e);
-	    return Response.status(500).entity(e.getMessage()).build();
-	    }
-	    
-	        LOGGER.logDebug("Ends service execution REST: updateCardStatus");
-	        return Response.ok(outResponseUpdateCardStatus).build();
-	      
-	    }
+		@Path("/apiOperations/customer/updateCardStatus")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response updateCardStatus(
+				@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+				@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+				@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+				@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+				RequestUpdateCardStatus inRequestUpdateCardStatus) {
+			LOGGER.logDebug("Start service execution REST: updateCardStatus");
+			ResponseUpdateCardStatus outResponseUpdateCardStatus = new ResponseUpdateCardStatus();
+
+			if (!validateMandatory(new Data("externalCustomerId", inRequestUpdateCardStatus.getExternalCustomerId()),
+					new Data("cardStatus", inRequestUpdateCardStatus.getCardStatus()),
+					new Data("typeCard", inRequestUpdateCardStatus.getTypeCard()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+
+			try {
+				outResponseUpdateCardStatus = iServiceContractOperationsApiService.updateCardStatus(xRequestId,
+						xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestUpdateCardStatus);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: updateCardStatus");
+			return Response.ok(outResponseUpdateCardStatus).build();
+
+		}
 	
 	@POST
 	@Path("/apiOperations/onboarding/validateCustomerIdentityCard")
