@@ -229,17 +229,6 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
-		
-		String countryCode = aRequest.readValueParam("@i_acquirer_country_code");
-		String cause = null , causeCommission = null;
-		
-		if (countryCode.equals("484")) {
-			cause = "3050";
-			causeCommission = "3051";
-		} else if (!countryCode.equals("484") || countryCode.isEmpty() || countryCode == null) {
-			cause = "3060";
-			causeCommission = "3061";
-		}
 
 		request.setSpName("cob_cuentas..sp_retiro_atm_api");
 

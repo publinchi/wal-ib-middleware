@@ -224,15 +224,6 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
 		
-		String countryCode = aRequest.readValueParam("@i_acquirer_country_code");
-		String cause = null;
-		
-		if (countryCode.equals("484")) {
-			cause = "3020";
-		} else if (!countryCode.equals("484") || countryCode.isEmpty() || countryCode == null) {
-			cause = "3040";
-		}
-
 		request.setSpName("cob_cuentas..sp_compra_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
