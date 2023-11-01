@@ -7,6 +7,10 @@
   <parameters>
     <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
     <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

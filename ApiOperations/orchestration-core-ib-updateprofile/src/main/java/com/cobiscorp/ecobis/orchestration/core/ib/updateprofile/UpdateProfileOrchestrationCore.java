@@ -17,6 +17,7 @@ import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
@@ -26,6 +27,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
@@ -66,10 +68,36 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 	private void queryUpdateProfile(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest wQueryUpdateProfileRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+		
 		aBagSPJavaOrchestration.clear();
+		
+		String xRequestId = wQueryUpdateProfileRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = wQueryUpdateProfileRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = wQueryUpdateProfileRequest.readValueParam("@x_end_user_ip"); 
+		String xChannel = wQueryUpdateProfileRequest.readValueParam("@x_channel");
 		String idCustomer = wQueryUpdateProfileRequest.readValueParam("@i_externalCustomerId");
 		String mail = wQueryUpdateProfileRequest.readValueParam("@i_email");
 		String phone = wQueryUpdateProfileRequest.readValueParam("@i_phoneNumber");
+		
+		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400324", "x-request-id header is required");
+			return;
+		}
+		
+		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400325", "x-end-user-request-date-time header is required");
+			return;
+		}
+		
+		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400326", "x-end-user-ip header is required");
+			return;
+		}
+		
+		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400327", "x-channel header is required");
+			return;
+		}
 		
 		if (mail.isEmpty()) {
 			aBagSPJavaOrchestration.put("40037", "email must not be empty");
@@ -172,14 +200,18 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 2));
 		
 		if (keyList.get(0).equals("0") || keyList.get(0).equals("18053")) {
+			
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, "true"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(3, new ResultSetRowColumnData(false, keyList.get(0)));
 			data.addRow(row);
-
+						
 		} else {
+			
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(3, new ResultSetRowColumnData(false,  keyList.get(0)));
