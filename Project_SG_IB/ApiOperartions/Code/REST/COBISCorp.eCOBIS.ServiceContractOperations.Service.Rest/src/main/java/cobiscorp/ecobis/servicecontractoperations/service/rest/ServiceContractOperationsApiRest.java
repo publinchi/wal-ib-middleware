@@ -737,7 +737,11 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: createSavingAccount");
 		ResponseCreateSavingAccount outResponseCreateSavingAccount = new ResponseCreateSavingAccount();
 
-		if (!validateMandatory(new Data("customerId", inRequestCreateSavingAccount.getCustomerId()))) {
+		if (!validateMandatory(
+			new Data("customerId", inRequestCreateSavingAccount.getCustomerId()),
+			new Data("currency", inRequestCreateSavingAccount.getCurrency()),
+			new Data("product", inRequestCreateSavingAccount.getProduct()),
+			new Data("productSubType", inRequestCreateSavingAccount.getProductSubType()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("The request message is not properly formatted").build();
 		} // The request message is not properly formatted
