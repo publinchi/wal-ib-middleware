@@ -24,7 +24,7 @@
     <parameter name="@t_show_version" dataType="bit" direction="in" />
     <parameter name="@i_login" dataType="varchar" direction="in" />
     <parameter name="@i_pass" dataType="varchar" direction="in" />
-    <parameter name="@o_access_granted" dataType="binary" direction="out" />
+    <parameter name="@o_access_granted" dataType="varchar" direction="out" />
     <parameter name="@o_description" dataType="varchar" direction="out" />
     <parameter name="@i_servicio" dataType="int" direction="in" />
   </parameters>
@@ -32,14 +32,9 @@
     <query>
       <columns>
         <column name="accessGranted" />
-      </columns>
-      <queryText>SELECT "code"=0,"message"="Success"</queryText>
-    </query>
-    <query>
-      <columns>
         <column name="description" />
       </columns>
-      <queryText>SELECT "accessAuth"="true"</queryText>
+      <queryText>SELECT "code"=0,"message"="Success"</queryText>
     </query>
   </queries>
 </procedure>

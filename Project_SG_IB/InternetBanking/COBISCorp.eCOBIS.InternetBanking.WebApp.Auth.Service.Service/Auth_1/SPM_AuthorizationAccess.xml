@@ -6,37 +6,33 @@
     <field type="String" name="version" value="2" />
   </class>
   <field type="String" name="procedureName" value="cob_procesador..sp_access_authorization_api" />
-  <collection type="List" length="2" id="3" name="queries">
+  <collection type="List" length="1" id="3" name="queries">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="4" index="0">
       <field type="int" name="order" value="1" />
       <field type="boolean" name="mapReturn" value="true" />
-      <collection type="List" length="1" id="5" name="columns">
+      <collection type="List" length="2" id="5" name="columns">
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="6" index="0">
           <field type="int" name="position" value="0" />
           <field type="String" name="columnName" value="accessGranted" />
           <field type="String" name="dTOAlias" value="returnAuthAccessResponse" />
           <field type="String" name="dTOPropertyName" value="accessGranted" />
           <field type="String" name="dataType" value="boolean" />
+          <field type="String" name="format" value="" />
         </class>
-      </collection>
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="7" index="1">
-      <field type="int" name="order" value="2" />
-      <field type="boolean" name="mapReturn" value="true" />
-      <collection type="List" length="1" id="8" name="columns">
-        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="9" index="0">
-          <field type="int" name="position" value="0" />
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="7" index="1">
+          <field type="int" name="position" value="1" />
           <field type="String" name="columnName" value="description" />
           <field type="String" name="dTOAlias" value="returnAuthAccessResponse" />
           <field type="String" name="dTOPropertyName" value="description" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
   </collection>
-  <collection type="List" length="7" id="10" name="parameters">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="11" index="0">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="12" name="parameter">
+  <collection type="List" length="5" id="8" name="parameters">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="9" index="0">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="10" name="parameter">
         <field type="String" name="name" value="@i_login" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
@@ -48,8 +44,8 @@
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="13" index="1">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="14" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="11" index="1">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="12" name="parameter">
         <field type="String" name="name" value="@i_pass" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
@@ -61,29 +57,20 @@
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="15" index="2">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="16" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="13" index="2">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="14" name="parameter">
         <field type="String" name="name" value="@o_access_granted" />
         <field type="String" name="dataType" value="binary" />
         <field type="String" name="direction" value="in out" />
       </class>
       <field type="String" name="mappingTypeName" value="CONSTANT" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="constantValue" value="false" />
-      <field type="String" name="cTSDataType" value="SQLBINARY" />
+      <field type="String" name="constantValue" value="N" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="17" index="3">
-      <reference id="16" name="parameter" />
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="out" />
-      <field type="String" name="dTOAlias" value="outAuthAccessResponse" />
-      <field type="String" name="dTOPropertyName" value="accessGranted" />
-      <field type="String" name="cTSDataType" value="SQLBINARY" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="18" index="4">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="19" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="15" index="3">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="16" name="parameter">
         <field type="String" name="name" value="@o_description" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in out" />
@@ -94,17 +81,8 @@
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="20" index="5">
-      <reference id="19" name="parameter" />
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="out" />
-      <field type="String" name="dTOAlias" value="outAuthAccessResponse" />
-      <field type="String" name="dTOPropertyName" value="description" />
-      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="21" index="6">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="22" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="17" index="4">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="18" name="parameter">
         <field type="String" name="name" value="@i_servicio" />
         <field type="String" name="dataType" value="int" />
         <field type="String" name="direction" value="in" />
@@ -116,11 +94,11 @@
       <field type="boolean" name="allowNull" value="false" />
     </class>
   </collection>
-  <collection type="List" length="0" id="23" name="parametersOpenApi">
+  <collection type="List" length="0" id="19" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="18500140" />
-  <collection type="List" length="3" id="24" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="25" index="0">
+  <collection type="List" length="2" id="20" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="21" index="0">
       <field type="String" name="dTOName" value="AuthAccessRequest" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -130,17 +108,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="26" index="1">
-      <field type="String" name="dTOName" value="AuthAccessResponse" />
-      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
-      <field type="String" name="dTOVersion" value="1" />
-      <field type="int" name="repetition" value="0" />
-      <field type="String" name="alias" value="outAuthAccessResponse" />
-      <field type="String" name="direction" value="out" />
-      <field type="boolean" name="required" value="true" />
-      <field type="String" name="stateDTO" value="" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="27" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="22" index="1">
       <field type="String" name="dTOName" value="AuthAccessResponse" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -151,7 +119,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="2" id="28" name="mappingProperties">
+  <collection type="Map" length="2" id="23" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />
