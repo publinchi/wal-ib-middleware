@@ -2460,6 +2460,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							ResponseGetBalancesDetail dto = new ResponseGetBalancesDetail();
 
 							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+							dto.responseInstance().setMessage(resultSetMapper.getString(3));
 							dto.setAccountName(resultSetMapper.getString(4));
 							dto.setAccountStatus(resultSetMapper.getString(5));
 							dto.setAvailableBalance(resultSetMapper.getBigDecimal(6));
@@ -2477,11 +2479,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							dto.setAccountingBalance(resultSetMapper.getBigDecimal(18));
 							dto.setOfficial(resultSetMapper.getInteger(19));
 							dto.setClabeAccountNumber(resultSetMapper.getString(20));
-							dto.setCardId(resultSetMapper.getString(21));
-							dto.setDebitCardNumber(resultSetMapper.getString(22));
-							dto.setStateDebitCard(resultSetMapper.getString(23));
-							dto.responseInstance().setCode(resultSetMapper.getInteger(2));
-							dto.responseInstance().setMessage(resultSetMapper.getString(3));
+							dto.virtualCardInstance().setCardId(resultSetMapper.getString(21));
+							dto.virtualCardInstance().setDebitCardNumber(resultSetMapper.getString(22));
+							dto.virtualCardInstance().setDebitCardState(resultSetMapper.getString(23));
+							dto.physicalCardInstance().setCardId(resultSetMapper.getString(24));
+							dto.physicalCardInstance().setDebitCardNumber(resultSetMapper.getString(25));
+							dto.physicalCardInstance().setDebitCardState(resultSetMapper.getString(26));
 							return dto;
 						}
 					}, false);
@@ -2490,6 +2493,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		} else {
 			mapBlank++;
 
+		}
+		
+		if (outSingleResponseGetBalancesDetail.getResponse().getCode() != 0) {
+			outSingleResponseGetBalancesDetail.setVirtualCard(null);
+			outSingleResponseGetBalancesDetail.setPhysicalCard(null);
 		}
 
 		// End map returns
