@@ -43,7 +43,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizePurchase authorizePurchase(RequestAuthorizePurchase inRequestAuthorizePurchase)
+	public ResponseAuthorizePurchase authorizePurchase(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizePurchase inRequestAuthorizePurchase)
 			throws CTSRestException;
 
 	/**
@@ -58,7 +59,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizeWithdrawal authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
+	public ResponseAuthorizeWithdrawal authorizeWithdrawal(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
 			throws CTSRestException;
 	
 	/**
@@ -75,7 +77,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizeDeposit authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit)
+	public ResponseAuthorizeDeposit authorizeDeposit(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizeDeposit inRequestAuthorizeDeposit)
 			throws CTSRestException;
 	
 	/**
@@ -91,7 +94,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizeReversal authorizeReversal(RequestAuthorizeReversal inRequestAuthorizeReversal)
+	public ResponseAuthorizeReversal authorizeReversal(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizeReversal inRequestAuthorizeReversal)
 			throws CTSRestException;
 
 	/**
