@@ -31,6 +31,10 @@
     <parameter name="@i_card_holder_present" dataType="bit" direction="in" />
     <parameter name="@i_cvv2_present" dataType="bit" direction="in" />
     <parameter name="@i_pin_validated_offline" dataType="bit" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

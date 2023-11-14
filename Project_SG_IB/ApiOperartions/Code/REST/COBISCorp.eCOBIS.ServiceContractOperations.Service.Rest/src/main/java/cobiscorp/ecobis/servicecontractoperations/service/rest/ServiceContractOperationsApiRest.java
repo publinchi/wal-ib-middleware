@@ -251,7 +251,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/authorization/authorizePurchase")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response authorizePurchase(RequestAuthorizePurchase inRequestAuthorizePurchase) {
+	public Response authorizePurchase(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestAuthorizePurchase inRequestAuthorizePurchase) {
 		LOGGER.logDebug("Start service execution REST: authorizePurchase");
 		ResponseAuthorizePurchase outResponseAuthorizePurchase = new ResponseAuthorizePurchase();
 
@@ -277,18 +282,22 @@ public class ServiceContractOperationsApiRest {
 				new Data("terminalCode", inRequestAuthorizePurchase.getTerminalCode()),
 				new Data("retrievalReferenceNumber", inRequestAuthorizePurchase.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizePurchase.getAcquirerCountryCode()),
-				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isCardPresent()),
-				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isCardholderPresent()),
-				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isCvv2Present()),
-				new Data("transactionIndicators", inRequestAuthorizePurchase.getTransactionIndicators().isPinValidatedOffline()))) {
+				new Data("transactionIndicators",
+						inRequestAuthorizePurchase.getTransactionIndicators().isCardPresent()),
+				new Data("transactionIndicators",
+						inRequestAuthorizePurchase.getTransactionIndicators().isCardholderPresent()),
+				new Data("transactionIndicators",
+						inRequestAuthorizePurchase.getTransactionIndicators().isCvv2Present()),
+				new Data("transactionIndicators",
+						inRequestAuthorizePurchase.getTransactionIndicators().isPinValidatedOffline()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
 		}
 
 		try {
-			outResponseAuthorizePurchase = iServiceContractOperationsApiService
-					.authorizePurchase(inRequestAuthorizePurchase);
+			outResponseAuthorizePurchase = iServiceContractOperationsApiService.authorizePurchase(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestAuthorizePurchase);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -371,65 +380,70 @@ public class ServiceContractOperationsApiRest {
 		}
 
 
-	/**
-	 * Authorize Withdrawal
-	 */
-	@POST
-	@Path("/apiOperations/authorization/authorizeWithdrawal")
-	@Consumes({ "application/json" })
-	@Produces({ "application/json" })
-	public Response authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal) {
-		LOGGER.logDebug("Start service execution REST: authorizeWithdrawal");
-		ResponseAuthorizeWithdrawal outResponseAuthorizeWithdrawal = new ResponseAuthorizeWithdrawal();
+		/**
+		 * Authorize Withdrawal
+		 */
+		@POST
+		@Path("/apiOperations/authorization/authorizeWithdrawal")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response authorizeWithdrawal(
+				@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+				@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+				@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+				@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+				RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal) {
+			LOGGER.logDebug("Start service execution REST: authorizeWithdrawal");
+			ResponseAuthorizeWithdrawal outResponseAuthorizeWithdrawal = new ResponseAuthorizeWithdrawal();
 
-		if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizeWithdrawal.getExternalCustomerId()),
-				new Data("uuid", inRequestAuthorizeWithdrawal.getUuid()),
-				new Data("orderId", inRequestAuthorizeWithdrawal.getOrderId()),
-				new Data("accountNumber", inRequestAuthorizeWithdrawal.getAccountNumber()),
-				new Data("transmissionDateTimeGmt", inRequestAuthorizeWithdrawal.getTransmissionDateTimeGmt()),
-				new Data("date", inRequestAuthorizeWithdrawal.getDate()),
-				new Data("time", inRequestAuthorizeWithdrawal.getTime()),
-				new Data("mti", inRequestAuthorizeWithdrawal.getMti()),
-				new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getType()),
-				new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getCode()),
-				new Data("nsu", inRequestAuthorizeWithdrawal.getNsu()),
-				new Data("merchantCategoryCode", inRequestAuthorizeWithdrawal.getMerchantCategoryCode()),
-				new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSourceCurrencyCode()),
-				new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSettlementCurrencyCode()),
-				new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getAmount()),
-				new Data("institutionName", inRequestAuthorizeWithdrawal.getInstitutionName()),
-				new Data("terminalCode", inRequestAuthorizeWithdrawal.getTerminalCode()),
-				new Data("retrievalReferenceNumber", inRequestAuthorizeWithdrawal.getRetrievalReferenceNumber()),
-				new Data("acquirerCountryCode", inRequestAuthorizeWithdrawal.getAcquirerCountryCode()),
-				new Data("storeNumber", inRequestAuthorizeWithdrawal.getStoreNumber()),
-				new Data("affiliationNumber", inRequestAuthorizeWithdrawal.getAffiliationNumber()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
-		}
-
-		try {
-			outResponseAuthorizeWithdrawal = iServiceContractOperationsApiService
-					.authorizeWithdrawal(inRequestAuthorizeWithdrawal);
-		} catch (CTSRestException e) {
-			LOGGER.logError("CTSRestException", e);
-			if ("404".equals(e.getMessage())) {
-				LOGGER.logDebug("404 is returned - No data found");
-				return Response.status(404).entity("No data found").build();
+			if (!validateMandatory(new Data("externalCustomerId", inRequestAuthorizeWithdrawal.getExternalCustomerId()),
+					new Data("uuid", inRequestAuthorizeWithdrawal.getUuid()),
+					new Data("orderId", inRequestAuthorizeWithdrawal.getOrderId()),
+					new Data("accountNumber", inRequestAuthorizeWithdrawal.getAccountNumber()),
+					new Data("transmissionDateTimeGmt", inRequestAuthorizeWithdrawal.getTransmissionDateTimeGmt()),
+					new Data("date", inRequestAuthorizeWithdrawal.getDate()),
+					new Data("time", inRequestAuthorizeWithdrawal.getTime()),
+					new Data("mti", inRequestAuthorizeWithdrawal.getMti()),
+					new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getType()),
+					new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getCode()),
+					new Data("nsu", inRequestAuthorizeWithdrawal.getNsu()),
+					new Data("merchantCategoryCode", inRequestAuthorizeWithdrawal.getMerchantCategoryCode()),
+					new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSourceCurrencyCode()),
+					new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSettlementCurrencyCode()),
+					new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getAmount()),
+					new Data("institutionName", inRequestAuthorizeWithdrawal.getInstitutionName()),
+					new Data("terminalCode", inRequestAuthorizeWithdrawal.getTerminalCode()),
+					new Data("retrievalReferenceNumber", inRequestAuthorizeWithdrawal.getRetrievalReferenceNumber()),
+					new Data("acquirerCountryCode", inRequestAuthorizeWithdrawal.getAcquirerCountryCode()),
+					new Data("storeNumber", inRequestAuthorizeWithdrawal.getStoreNumber()),
+					new Data("affiliationNumber", inRequestAuthorizeWithdrawal.getAffiliationNumber()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
 			}
 
-			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-			return Response.status(409).entity(e.getMessageBlockList()).build();
-		} catch (Exception e) {
-			LOGGER.logDebug("500 is returned - Code exception");
-			LOGGER.logError("Exception", e);
-			return Response.status(500).entity(e.getMessage()).build();
+			try {
+				outResponseAuthorizeWithdrawal = iServiceContractOperationsApiService.authorizeWithdrawal(xRequestId,
+						xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestAuthorizeWithdrawal);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: authorizeWithdrawal");
+			return Response.ok(outResponseAuthorizeWithdrawal).build();
+
 		}
-
-		LOGGER.logDebug("Ends service execution REST: authorizeWithdrawal");
-		return Response.ok(outResponseAuthorizeWithdrawal).build();
-
-	}
 	
 	/**
 	 * Authorize Withdrawal Dock
@@ -501,7 +515,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/authorization/authorizeDeposit")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit) {
+	public Response authorizeDeposit(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestAuthorizeDeposit inRequestAuthorizeDeposit) {
 		LOGGER.logDebug("Start service execution REST: authorizeDeposit");
 		ResponseAuthorizeDeposit outResponseAuthorizeDeposit = new ResponseAuthorizeDeposit();
 
@@ -532,8 +551,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseAuthorizeDeposit = iServiceContractOperationsApiService
-					.authorizeDeposit(inRequestAuthorizeDeposit);
+			outResponseAuthorizeDeposit = iServiceContractOperationsApiService.authorizeDeposit(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestAuthorizeDeposit);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -624,7 +643,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/authorization/authorizeReversal")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response authorizeReversal(RequestAuthorizeReversal inRequestAuthorizeReversal) {
+	public Response authorizeReversal(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			RequestAuthorizeReversal inRequestAuthorizeReversal) {
 		LOGGER.logDebug("Start service execution REST: authorizeReversal");
 		ResponseAuthorizeReversal outResponseAuthorizeReversal = new ResponseAuthorizeReversal();
 
@@ -652,19 +676,23 @@ public class ServiceContractOperationsApiRest {
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getUuid()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getNsu()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getMti()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getTransmissionDateTimeGmt()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getInstitutionName()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getRetrievalReferenceNumber()),
+				new Data("originalTransactionData",
+						inRequestAuthorizeReversal.getOriginalTransactionData().getTransmissionDateTimeGmt()),
+				new Data("originalTransactionData",
+						inRequestAuthorizeReversal.getOriginalTransactionData().getInstitutionName()),
+				new Data("originalTransactionData",
+						inRequestAuthorizeReversal.getOriginalTransactionData().getRetrievalReferenceNumber()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getType()),
-				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getCode()))) {
+				new Data("originalTransactionData",
+						inRequestAuthorizeReversal.getOriginalTransactionData().getCode()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
 		}
 
 		try {
-			outResponseAuthorizeReversal = iServiceContractOperationsApiService
-					.authorizeReversal(inRequestAuthorizeReversal);
+			outResponseAuthorizeReversal = iServiceContractOperationsApiService.authorizeReversal(xRequestId,
+					xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestAuthorizeReversal);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
