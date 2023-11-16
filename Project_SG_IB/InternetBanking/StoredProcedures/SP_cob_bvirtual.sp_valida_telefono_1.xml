@@ -26,6 +26,7 @@
         <column name="enteLocal" />
         <column name="enteCentral" />
         <column name="name" />
+        <column name="lastConnection" />
       </columns>
       <queryText>SELECT  "enteLocal" = me_ente,"enteCentral" = en_ente_mis </queryText>
     </query>
