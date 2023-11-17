@@ -29,6 +29,7 @@ import java.util.HashMap;
 
 public class ResponseGetBalancesDetail implements Serializable {
   private boolean success;
+  private Response response;
   private String accountName;
   private String accountStatus;
   private java.math.BigDecimal availableBalance;
@@ -46,15 +47,25 @@ public class ResponseGetBalancesDetail implements Serializable {
   private java.math.BigDecimal accountingBalance;
   private Integer official;
   private String clabeAccountNumber;
-  private String cardId;
-  private String debitCardNumber;
-  private String stateDebitCard;
-  private Response response;
+  private VirtualCard virtualCard;
+  private PhysicalCard physicalCard;
   public boolean isSuccess(){
     return this.success;
   }
   public void setSuccess(boolean success ){
     this.success=success;
+  }
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
+	}
+	return this.response;
+  }
+  public Response getResponse(){
+    return this.response;
+  }
+  public void setResponse(Response response ){
+    this.response=response;
   }
   public String getAccountName(){
     return this.accountName;
@@ -158,34 +169,28 @@ public class ResponseGetBalancesDetail implements Serializable {
   public void setClabeAccountNumber(String clabeAccountNumber ){
     this.clabeAccountNumber=clabeAccountNumber;
   }
-  public String getCardId(){
-    return this.cardId;
-  }
-  public void setCardId(String cardId ){
-    this.cardId=cardId;
-  }
-  public String getDebitCardNumber(){
-    return this.debitCardNumber;
-  }
-  public void setDebitCardNumber(String debitCardNumber ){
-    this.debitCardNumber=debitCardNumber;
-  }
-  public String getStateDebitCard(){
-    return this.stateDebitCard;
-  }
-  public void setStateDebitCard(String stateDebitCard ){
-    this.stateDebitCard=stateDebitCard;
-  }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
+  public VirtualCard virtualCardInstance(){
+	if(this.virtualCard==null){
+	this.virtualCard=new VirtualCard();
 	}
-	return this.response;
+	return this.virtualCard;
   }
-  public Response getResponse(){
-    return this.response;
+  public VirtualCard getVirtualCard(){
+    return this.virtualCard;
   }
-  public void setResponse(Response response ){
-    this.response=response;
+  public void setVirtualCard(VirtualCard virtualCard ){
+    this.virtualCard=virtualCard;
+  }
+  public PhysicalCard physicalCardInstance(){
+	if(this.physicalCard==null){
+	this.physicalCard=new PhysicalCard();
+	}
+	return this.physicalCard;
+  }
+  public PhysicalCard getPhysicalCard(){
+    return this.physicalCard;
+  }
+  public void setPhysicalCard(PhysicalCard physicalCard ){
+    this.physicalCard=physicalCard;
   }
 }
