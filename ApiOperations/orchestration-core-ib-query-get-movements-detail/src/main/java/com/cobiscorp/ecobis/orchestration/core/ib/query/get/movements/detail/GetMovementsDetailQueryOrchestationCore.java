@@ -639,7 +639,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String status_spei = columns[40].getValue();
 				String um_correccion = columns[41].getValue();
 
-				if (type_movement.equals("SPEI") || um_correccion.equals("S")) {
+				if (type_movement.equals("SPEI") || (um_correccion.equals("S") && type_movement.equals("P2P"))) {
 
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
@@ -737,19 +737,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 					if (type_auth.equals("WITHDRAWAL")) {
 						movementType = "ATM_DEBIT";
-					}
-
-					if (type_auth.equals("PURCHASE")) {
+					} else if (type_auth.equals("PURCHASE")) {
 						movementType = "PURCHASE_ONLINE";
-					}
-
-					if (type_auth.equals("REVERSAL")) {
-						movementType = "REVERSAL";
-					}
-
-					if (type_auth.equals("CONSULT")) {
-						movementType = "CONSULT";
-					}
+					} else {
+						movementType = type_auth;
+					}				
 				}
 
 				if (operationType.equals("C")) {
