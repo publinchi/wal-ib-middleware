@@ -387,16 +387,14 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
 		reqTMPCentral.setSpName("cobis..sp_account_credit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "16875");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, accountNumber);
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, amount);
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, commission);	 
 	    reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, creditConcept);
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, referenceNumber);
-	    reqTMPCentral.addInputParam("@i_causal",ICTSTypes.SQLINT4, "3081");
-	    reqTMPCentral.addInputParam("@i_trn",ICTSTypes.SQLINT4, "253");
-	    
+		    
 	    reqTMPCentral.addInputParam("@s_ofi",ICTSTypes.SQLINT4, "1");
 	    reqTMPCentral.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 	    reqTMPCentral.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
@@ -425,7 +423,7 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 				logger.logDebug("xxdcxx CREDIT " + columns.toString());
 				reqTMPLocal.setSpName("cob_bvirtual..sp_account_credit_operation_local_api");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
-				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500111");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "16876");
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, accountNumber);
 				reqTMPLocal.addInputParam("@i_amount",ICTSTypes.SQLMONEY, amount);
@@ -502,16 +500,13 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 		reqTMPCentral.setSpName("cobis..sp_account_debit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "16875");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, accountNumber);
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, amount);
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, commission);	 
 	    reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, debitConcept);
-	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, referenceNumber);
-	    reqTMPCentral.addInputParam("@i_causal",ICTSTypes.SQLINT4, "3080");
-	    reqTMPCentral.addInputParam("@i_trn",ICTSTypes.SQLINT4, "264");
-	    
+	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, referenceNumber);    
 	    reqTMPCentral.addInputParam("@s_ofi",ICTSTypes.SQLINT4, "1");
 	    reqTMPCentral.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 	    reqTMPCentral.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
@@ -541,7 +536,7 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 	
 				reqTMPLocal.setSpName("cob_bvirtual..sp_account_debit_operation_local_api");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
-				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
+				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "16876");
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, accountNumber);
 				reqTMPLocal.addInputParam("@i_amount",ICTSTypes.SQLMONEY, amount);
