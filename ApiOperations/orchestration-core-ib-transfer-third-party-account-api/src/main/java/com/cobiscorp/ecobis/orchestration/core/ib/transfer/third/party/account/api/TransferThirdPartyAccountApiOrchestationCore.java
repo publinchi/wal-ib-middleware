@@ -414,6 +414,37 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getDataAccountReq");
 		}
+		
+		String xRequestId = aRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
+		String xChannel = aRequest.readValueParam("@x_channel");
+		String account = aRequest.readValueParam("@i_cta");
+		String destinyAccount = aRequest.readValueParam("@i_cta_des");
+		
+		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+			xRequestId = "E";
+		}
+		
+		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+			xEndUserRequestDateTime = "E";
+		}
+		
+		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+			xEndUserIp = "E";
+		}
+		
+		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+			xChannel = "E";
+		}
+		
+		if (account.equals("null") || account.trim().isEmpty()) {
+			account = "E";
+		}
+		
+		if (destinyAccount.equals("null") || destinyAccount.trim().isEmpty()) {
+			destinyAccount = "E";
+		}
 
 		request.setSpName("cob_bvirtual..sp_get_data_account_api");
 
@@ -422,14 +453,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		//headers
-		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
-		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
-		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 		
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, account);
+		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, destinyAccount);
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
 		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_concepto"));
 		request.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detalle"));
