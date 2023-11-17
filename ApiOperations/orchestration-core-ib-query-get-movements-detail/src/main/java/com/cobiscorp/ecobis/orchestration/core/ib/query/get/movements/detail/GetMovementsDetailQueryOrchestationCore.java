@@ -744,10 +744,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if (type_auth.equals("WITHDRAWAL")) {
 						movementType = "ATM_DEBIT";
 					} else if (type_auth.equals("PURCHASE")) {
-						movementType = "PURCHASE_AT_STORE";
+						movementType = "PURCHASE_ONLINE";
 					} else {
 						movementType = type_auth;
-					}				
+					}	
 				}
 
 				if (operationType.equals("C")) {
