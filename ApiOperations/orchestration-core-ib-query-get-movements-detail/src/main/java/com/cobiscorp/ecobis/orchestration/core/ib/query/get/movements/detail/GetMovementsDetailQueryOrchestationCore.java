@@ -744,10 +744,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if (type_auth.equals("WITHDRAWAL")) {
 						movementType = "ATM_DEBIT";
 					} else if (type_auth.equals("PURCHASE")) {
-						movementType = "PURCHASE_ONLINE";
+						movementType = "PURCHASE_AT_STORE";
 					} else {
 						movementType = type_auth;
-					}	
+					}				
 				}
 
 				if (operationType.equals("C")) {
@@ -917,3 +917,4 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return pattern.matcher(strNum).matches();
 	}
 }
+
