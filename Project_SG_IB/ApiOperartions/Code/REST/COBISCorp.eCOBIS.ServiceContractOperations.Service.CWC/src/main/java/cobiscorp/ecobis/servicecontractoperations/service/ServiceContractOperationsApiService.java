@@ -57,7 +57,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 	private String jsonHead = null;
 
-	public void saveAuthResponse(String trn, String seqTran, String jsonRes) throws CTSRestException {
+	public void saveAuthResponse(String trn, String seqTran, String jsonRes, String jsonHead) throws CTSRestException {
 		
 		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
 		
@@ -68,6 +68,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
 		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		procedureRequestAS.addInputParam("@i_header_trn",ICTSTypes.SQLVARCHAR, jsonHead);
 		
 		//execute procedure
 	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -545,8 +546,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizePurchase);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchase");
 			// returns data
@@ -786,7 +799,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
 			// returns data
@@ -1006,8 +1019,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeWithdrawal);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawal");
 			// returns data
@@ -1224,7 +1249,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
 			// returns data
@@ -1442,8 +1467,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeDeposit);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeDeposit");
 			// returns data
@@ -1657,7 +1694,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
@@ -1896,8 +1933,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversal");
 			// returns data
@@ -6810,7 +6859,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
 			// returns data
