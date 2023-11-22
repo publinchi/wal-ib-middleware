@@ -29,7 +29,6 @@ import java.util.HashMap;
 
 public class ResponseTransferThirdPartyAccount implements Serializable {
   private Boolean success;
-  private String referenceCode;
   private Response response;
   private String movementId;
   public Boolean isSuccess(){
@@ -37,12 +36,6 @@ public class ResponseTransferThirdPartyAccount implements Serializable {
   }
   public void setSuccess(Boolean success ){
     this.success=success;
-  }
-  public String getReferenceCode(){
-    return this.referenceCode;
-  }
-  public void setReferenceCode(String referenceCode ){
-    this.referenceCode=referenceCode;
   }
   public Response responseInstance(){
 	if(this.response==null){

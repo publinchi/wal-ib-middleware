@@ -62,11 +62,44 @@ public class GetCatalogue extends SPJavaOrchestrationBase {
 		}
 
 		try {
+			
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(CLASS_NAME + " Request original:" + anOriginalRequest.getProcedureRequestAsString());
 			}
+			
+			if (anOriginalRequest.readValueParam("@x_request_id").equals("null")
+					|| anOriginalRequest.readValueParam("@x_request_id").trim().isEmpty()) {
 
-			if (anOriginalRequest.readValueParam("@i_catalog") == null
+				errorCode = Util.codeNullUuid;
+				errorMessage = Util.messageNullUuid;
+				isFailed = true;
+			}
+			
+			if (anOriginalRequest.readValueParam("@x_end_user_request_date").equals("null")
+					|| anOriginalRequest.readValueParam("@x_end_user_request_date").trim().isEmpty()) {
+
+				errorCode = Util.codeNullDateTime;
+				errorMessage = Util.messageNullDateTime;
+				isFailed = true;
+			}
+			
+			if (anOriginalRequest.readValueParam("@x_end_user_ip").equals("null")
+					|| anOriginalRequest.readValueParam("@x_end_user_ip").trim().isEmpty()) {
+
+				errorCode = Util.codeNullIP;
+				errorMessage = Util.messageNullIP;
+				isFailed = true;
+			}
+			
+			if (anOriginalRequest.readValueParam("@x_channel").equals("null")
+					|| anOriginalRequest.readValueParam("@x_channel").trim().isEmpty()) {
+
+				errorCode = Util.codeNullChannel;
+				errorMessage = Util.messageNullChannel;
+				isFailed = true;
+			}
+			
+			if (anOriginalRequest.readValueParam("@i_catalog").equals("null")
 					|| anOriginalRequest.readValueParam("@i_catalog").trim().equals("")) {
 
 				errorCode = Util.codeNullTable;
