@@ -65,7 +65,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOffl
  * Register Account
  * 
  * @since Abr 17, 2023
- * @author sochoa
+ * @author jcos, nelson, santiago
  * @version 1.0.0
  * 
  */
@@ -353,7 +353,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		// request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,
 		// aRequest.readValueParam("@i_concept"));
-		String detail = "";
+		String detail = "WAL_VAL_DEF_X";
 		if (!aRequest.readValueParam("@i_detail").equals("null") && !aRequest.readValueParam("@i_detail").trim().isEmpty()) {
 			detail = aRequest.readValueParam("@i_detail");
 		}

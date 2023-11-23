@@ -36,6 +36,10 @@
     <parameter name="@i_origin_retrieval_reference_number" dataType="varchar" direction="in" />
     <parameter name="@i_origin_type" dataType="varchar" direction="in" />
     <parameter name="@i_origin_processing_code" dataType="varchar" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

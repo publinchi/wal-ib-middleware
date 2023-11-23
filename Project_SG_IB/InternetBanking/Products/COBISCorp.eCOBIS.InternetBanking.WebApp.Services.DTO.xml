@@ -775,7 +775,7 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.6" />
-      <field type="String" name="jDKPath" value="C:\Desarrollo\java\jdk1.6.0_45" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.6.0_45" />
     </class>
   </collection>
   <collection type="List" length="6" id="159" name="templateCommands">

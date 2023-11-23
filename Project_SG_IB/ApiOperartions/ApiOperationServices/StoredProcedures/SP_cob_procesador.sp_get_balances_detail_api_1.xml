@@ -35,9 +35,12 @@
         <column name="accountingBalance" />
         <column name="official" />
         <column name="clabeAccountNumber" />
-        <column name="idDebitCard" />
+        <column name="cardId" />
         <column name="debitCardNumber" />
-        <column name="stateDebitCard" />
+        <column name="debitCardState" />
+        <column name="cardId" />
+        <column name="debitCardNumber" />
+        <column name="debitCardState" />
       </columns>
       <queryText>SELECT  "success" = tab.success,"code" = tab.code,"message" = tab.message,"accountName" = tab.accountName,"accountStatus" = tab.accountStatus,"availableBalance" = tab.availableBalance,"averageBalance" = tab.averageBalance,"currencyId" = tab.currencyId,"deliveryAddress" = tab.deliveryAddress,"freezingsNumber" = tab.freezingsNumber,"frozenAmount" = tab.frozenAmount,"lastCutoffBalance" = tab.lastCutoffBalance,"lastOperationDate" = tab.lastOperationDate,"openingDate" = tab.openingDate,"overdraftAmount" = tab.overdraftAmount,"productId" = tab.productId,"toDrawBalance" = tab.toDrawBalance,"accountingBalance" = tab.accountingBalance,"ofical" = tab.ofical,"clabeAccountNumber" = tab.clabeAccountNumber,"idDebitCard" = tab.idDebitCard,"debitCardNumber" = tab.debitCardNumber,"stateDebitCard" = tab.stateDebitCard </queryText>
     </query>

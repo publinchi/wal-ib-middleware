@@ -109,11 +109,31 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logInfo(CLASS_NAME + " Entrando en valDataLocal");
 		}
 		
+		String xRequestId = aRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
+		String xChannel = aRequest.readValueParam("@x_channel");
 		String monto = aRequest.readValueParam("@i_amount");
 		String gtmDateTime = aRequest.readValueParam("@i_transmission_date_time_gtm");
 		String date = aRequest.readValueParam("@i_date");
 		String time = aRequest.readValueParam("@i_time");
 		String expDate = aRequest.readValueParam("@i_card_expiration_date");
+		
+		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+			xRequestId = "E";
+		}
+		
+		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+			xEndUserRequestDateTime = "E";
+		}
+		
+		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+			xEndUserIp = "E";
+		}
+		
+		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+			xChannel = "E";
+		}
 		
 		if (monto != null && !monto.isEmpty() && !isNumeric(monto)) {
 			monto = "";
@@ -140,6 +160,11 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
@@ -259,7 +284,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		LocalDateTime fechaHoraActual = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String fechaActual = fechaHoraActual.format(formato);
-		 
+        	 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaActual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaActual);
