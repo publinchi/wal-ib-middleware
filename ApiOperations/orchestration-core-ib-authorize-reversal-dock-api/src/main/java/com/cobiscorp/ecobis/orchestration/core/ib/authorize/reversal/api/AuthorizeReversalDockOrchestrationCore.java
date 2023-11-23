@@ -283,10 +283,9 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "");
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
 		request.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "");
+		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_trn"));
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));

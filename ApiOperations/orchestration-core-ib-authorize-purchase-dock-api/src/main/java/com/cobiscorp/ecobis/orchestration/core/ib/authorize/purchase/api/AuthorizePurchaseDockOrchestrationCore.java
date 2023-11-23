@@ -223,7 +223,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
 		}
-
+		
 		request.setSpName("cob_cuentas..sp_compra_atm_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -241,10 +241,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_ofi", ICTSTypes.SQLINTN, aRequest.readValueParam("@s_ofi"));
 		request.addInputParam("@i_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
-		request.addInputParam("@i_trn_cen", ICTSTypes.SQLINTN, "264");
-		request.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, "106");
-		request.addInputParam("@i_causa_comision", ICTSTypes.SQLVARCHAR, "141");
-		request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "264");
+		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
+		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_trn"));
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));

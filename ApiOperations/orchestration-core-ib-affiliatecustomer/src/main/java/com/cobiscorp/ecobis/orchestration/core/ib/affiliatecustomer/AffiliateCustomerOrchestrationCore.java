@@ -80,6 +80,10 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		aBagSPJavaOrchestration.clear();
 		
+		String xRequestId = wQueryRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = wQueryRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = wQueryRequest.readValueParam("@x_end_user_ip"); 
+		String xChannel = wQueryRequest.readValueParam("@x_channel");
 		String idCustomer = wQueryRequest.readValueParam("@i_external_customer_id");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String clabe="";
@@ -87,6 +91,26 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		String clabeStatus="";
 		String clabeError="";
 		String tercerOden="";
+		
+		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400324", "x-request-id header is required");
+			return;
+		}
+		
+		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400325", "x-end-user-request-date-time header is required");
+			return;
+		}
+		
+		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400326", "x-end-user-ip header is required");
+			return;
+		}
+		
+		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400327", "x-channel header is required");
+			return;
+		}
 		
 		if (accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("40082", "accountNumber must not be empty");
