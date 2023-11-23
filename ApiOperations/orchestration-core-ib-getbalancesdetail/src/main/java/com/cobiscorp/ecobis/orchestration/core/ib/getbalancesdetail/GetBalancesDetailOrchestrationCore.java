@@ -63,18 +63,47 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, GetBalancesDetailOrchestrationCore start.");		
+		
+		logger.logDebug("Begin flow, GetBalancesDetailOrchestrationCore starts...");	
+		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		queryGetBalancesDetail(aBagSPJavaOrchestration);
+		
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 	
 	private void queryGetBalancesDetail(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest wQueryRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+		
 		aBagSPJavaOrchestration.clear();
+		
+		String xRequestId = wQueryRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = wQueryRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = wQueryRequest.readValueParam("@x_end_user_ip"); 
+		String xChannel = wQueryRequest.readValueParam("@x_channel");
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
+		
+		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400324", "x-request-id header is required");
+			return;
+		}
+		
+		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400325", "x-end-user-request-date-time header is required");
+			return;
+		}
+		
+		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400326", "x-end-user-ip header is required");
+			return;
+		}
+		
+		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("400327", "x-channel header is required");
+			return;
+		}
 		
 		if (accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("40082", "accountNumber must not be empty");
@@ -83,32 +112,42 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 				
 		logger.logDebug("Begin flow, queryGetBalancesDetail with id: " + idCustomer);
 		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));
+		
 		reqTMPCentral.setSpName("cobis..sp_get_balances_detail_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500102");
+		
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
+		
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
 		if (logger.isInfoEnabled()) {
 			logger.logDebug("Ending flow, queryGetBalancesDetail with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
 		IProcedureResponse wProcedureResponseLocal;
 		if (!wProcedureResponseCentral.hasError()) {
+			
 			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
 			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 			
 			if (columns[0].getValue().equals("true")) {
+				
 				this.columnsToReturn = columns;
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				
 				IProcedureRequest reqTMPLocal = (initProcedureRequest(wQueryRequest));
+				
 				reqTMPLocal.setSpName("cob_atm..sp_get_balances_detail_local_api");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
 				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500102");
+				
 				reqTMPLocal.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 				
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+				
 				if (logger.isInfoEnabled()) {
 					logger.logDebug("Ending flow, queryGetBalancesDetail with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
 				}
@@ -123,6 +162,10 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 						this.columnsToReturn[20] = columns[3];
 						this.columnsToReturn[21] = columns[4];
 						this.columnsToReturn[22] = columns[5];
+						this.columnsToReturn[23] = columns[6];
+						this.columnsToReturn[24] = columns[7];
+						this.columnsToReturn[25] = columns[8];
+						
 						return;
 						
 					} else {
@@ -141,7 +184,6 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 			} else  {	
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
-				
 			} 
 			
 		} else {
@@ -152,10 +194,13 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
 		ArrayList<String> keyList = new ArrayList<String>(aBagSPJavaOrchestration.keySet());
+		
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
 		IResultSetRow row = new ResultSetRow();
+		
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
@@ -178,12 +223,17 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("accountingBalance", ICTSTypes.SYBDECIMAL, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("official", ICTSTypes.SYBINT4, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("clabeAccountNumber", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardNumber", ICTSTypes.SYBVARCHAR, 255));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("stateDebitCard", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardIdVC", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardNumberVC", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardStateVC", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardIdPC", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardNumberPC", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("debitCardStatePC", ICTSTypes.SYBVARCHAR, 255));
 
 		if (keyList.get(0).equals("0")) {
+			
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, this.columnsToReturn[0].getValue()));
 			row.addRowData(2, new ResultSetRowColumnData(false, this.columnsToReturn[1].getValue()));
 			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
@@ -207,10 +257,16 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 			row.addRowData(21, new ResultSetRowColumnData(false, this.columnsToReturn[20].getValue()));
 			row.addRowData(22, new ResultSetRowColumnData(false, this.columnsToReturn[21].getValue()));
 			row.addRowData(23, new ResultSetRowColumnData(false, this.columnsToReturn[22].getValue()));
+			row.addRowData(24, new ResultSetRowColumnData(false, this.columnsToReturn[23].getValue()));
+			row.addRowData(25, new ResultSetRowColumnData(false, this.columnsToReturn[24].getValue()));
+			row.addRowData(26, new ResultSetRowColumnData(false, this.columnsToReturn[25].getValue()));
+			
 			data.addRow(row);
 
 		} else {
+			
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, keyList.get(0)));
 			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
@@ -234,11 +290,17 @@ public class GetBalancesDetailOrchestrationCore extends SPJavaOrchestrationBase 
 			row.addRowData(21, new ResultSetRowColumnData(false, null));
 			row.addRowData(22, new ResultSetRowColumnData(false, null));
 			row.addRowData(23, new ResultSetRowColumnData(false, null));
+			row.addRowData(24, new ResultSetRowColumnData(false, null));
+			row.addRowData(25, new ResultSetRowColumnData(false, null));
+			row.addRowData(26, new ResultSetRowColumnData(false, null));
+			
 			data.addRow(row);
 		}
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
-		wProcedureResponse.addResponseBlock(resultBlock);			
+		
+		wProcedureResponse.addResponseBlock(resultBlock);	
+		
 		return wProcedureResponse;		
 	}
 }

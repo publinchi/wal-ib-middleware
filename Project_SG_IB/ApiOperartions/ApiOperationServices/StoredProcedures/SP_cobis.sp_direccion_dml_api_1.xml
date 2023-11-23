@@ -32,6 +32,10 @@
     <parameter name="@i_otro_tipo" dataType="varchar" direction="in" />
     <parameter name="@i_localidad" dataType="varchar" direction="in" />
     <parameter name="@i_direct" dataType="varchar" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

@@ -37,12 +37,6 @@
     </query>
     <query>
       <columns>
-        <column name="referenceCode" />
-      </columns>
-      <queryText>SELECT "referenceCode"=0</queryText>
-    </query>
-    <query>
-      <columns>
         <column name="movementId" />
       </columns>
       <queryText></queryText>

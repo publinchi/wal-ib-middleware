@@ -23,6 +23,10 @@
     <parameter name="@i_tipo_des" dataType="varchar" direction="in" />
     <parameter name="@i_operacion" dataType="char" direction="in" />
     <parameter name="@i_ente" dataType="int" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

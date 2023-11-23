@@ -34,7 +34,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return list
-	public ResponseAffiliateCustomer affiliateCustomer(RequestAffiliateCustomer inRequestAffiliateCustomer)
+	public ResponseAffiliateCustomer affiliateCustomer(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
+			String xChannel, RequestAffiliateCustomer inRequestAffiliateCustomer)
 			throws CTSRestException;
 	
 	/**
@@ -42,7 +43,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizePurchase authorizePurchase(RequestAuthorizePurchase inRequestAuthorizePurchase)
+	public ResponseAuthorizePurchase authorizePurchase(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizePurchase inRequestAuthorizePurchase)
 			throws CTSRestException;
 
 	/**
@@ -57,7 +59,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizeWithdrawal authorizeWithdrawal(RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
+	public ResponseAuthorizeWithdrawal authorizeWithdrawal(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
 			throws CTSRestException;
 	
 	/**
@@ -74,7 +77,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizeDeposit authorizeDeposit(RequestAuthorizeDeposit inRequestAuthorizeDeposit)
+	public ResponseAuthorizeDeposit authorizeDeposit(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizeDeposit inRequestAuthorizeDeposit)
 			throws CTSRestException;
 	
 	/**
@@ -90,7 +94,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseAuthorizeReversal authorizeReversal(RequestAuthorizeReversal inRequestAuthorizeReversal)
+	public ResponseAuthorizeReversal authorizeReversal(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestAuthorizeReversal inRequestAuthorizeReversal)
 			throws CTSRestException;
 
 	/**
@@ -98,7 +103,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public CreateCustomerResponse createCustomer(CreateCustomerRequest inCreateCustomerRequest) throws CTSRestException;
+	public CreateCustomerResponse createCustomer(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
+			String xChannel, CreateCustomerRequest inCreateCustomerRequest) throws CTSRestException;
 
 	/**
 	 * Service to create a savings account for an existing customer
@@ -125,9 +131,11 @@ public interface IServiceContractOperationsApiService {
 	/**
 	 * Delete Beneficiary
 	 */
-	 
-	//Return
-	public ResponseDeleteBeneficiary deleteBeneficiary(RequestDeleteBeneficiary inRequestDeleteBeneficiary  )throws CTSRestException;
+
+	// Return
+	public ResponseDeleteBeneficiary deleteBeneficiary(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestDeleteBeneficiary inRequestDeleteBeneficiary)
+			throws CTSRestException;
 	
 	/**
 	 * Service to generate and send an OTP to the client
@@ -141,7 +149,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return list
-	public ResponseGetBalancesDetail getBalancesDetail(RequestGetBalancesDetail inRequestGetBalancesDetail)
+	public ResponseGetBalancesDetail getBalancesDetail(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestGetBalancesDetail inRequestGetBalancesDetail)
 			throws CTSRestException;
 
 	/**
@@ -156,7 +165,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseCatalog getCatalog(RequestCatalog inRequestCatalog) throws CTSRestException;
+	public ResponseCatalog getCatalog(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
+			String xChannel, RequestCatalog inRequestCatalog) throws CTSRestException;
 
 	/**
 	 * Get Colony by Municipality
@@ -171,7 +181,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseGetMovementsDetail getMovementsDetail(RequestGetMovementsDetail inRequestGetMovementsDetail)
+	public ResponseGetMovementsDetail getMovementsDetail(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestGetMovementsDetail inRequestGetMovementsDetail)
 			throws CTSRestException;
 
 	/**
@@ -219,7 +230,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseRegisterAccountSpei registerAccount(RequestRegisterAccountSpei inRequestRegisterAccountSpei)
+	public ResponseRegisterAccountSpei registerAccount(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestRegisterAccountSpei inRequestRegisterAccountSpei)
 			throws CTSRestException;
 
 	/**
@@ -227,7 +239,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public RegisterBeneficiaryResponse registerBeneficiary(RegisterBeneficiaryRequest inRegisterBeneficiaryRequest)
+	public RegisterBeneficiaryResponse registerBeneficiary(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RegisterBeneficiaryRequest inRegisterBeneficiaryRequest)
 			throws CTSRestException;
 
 	/**
@@ -262,25 +275,29 @@ public interface IServiceContractOperationsApiService {
 			String xChannel, RequestTransferThirdPartyAccount inRequestTransferThirdPartyAccount) throws CTSRestException;
 
 	/**
-    * Update Account Beneficiary
-    */
-	//Have DTO
-	public UpdateBeneficiaryResponse updateAccountBeneficiary(UpdateBeneficiaryRequest inUpdateBeneficiaryRequest  )throws CTSRestException;
+	 * Update Account Beneficiary
+	 */
+	// Have DTO
+	public UpdateBeneficiaryResponse updateAccountBeneficiary(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, UpdateBeneficiaryRequest inUpdateBeneficiaryRequest)
+			throws CTSRestException;
 		  
 	/**
 	 * Update customer address
 	 */
 
 	// Have DTO
-	public UpdateCustomerAddressResponse updateCustomerAddress(
-			UpdateCustomerAddressRequest inUpdateCustomerAddressRequest) throws CTSRestException;
+	public UpdateCustomerAddressResponse updateCustomerAddress(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, UpdateCustomerAddressRequest inUpdateCustomerAddressRequest)
+			throws CTSRestException;
 
 	/**
 	 * Service to Update Profile
 	 */
 
 	// Return list
-	public List<ResponseUpdateProfile> updateProfile(RequestUpdateProfile inRequestUpdateProfile)
+	public List<ResponseUpdateProfile> updateProfile(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
+			String xChannel, RequestUpdateProfile inRequestUpdateProfile)
 			throws CTSRestException;
 
 	// Have DTO
@@ -348,11 +365,12 @@ public interface IServiceContractOperationsApiService {
 			throws CTSRestException;
 
 	/**
-     * Update Card Status
-     */
-      
-	//Have DTO
-	public ResponseUpdateCardStatus updateCardStatus(RequestUpdateCardStatus inRequestUpdateCardStatus )
+	 * Update Card Status
+	 */
+
+	// Have DTO
+	public ResponseUpdateCardStatus updateCardStatus(String xRequestId, String xEndUserRequestDateTime,
+			String xEndUserIp, String xChannel, RequestUpdateCardStatus inRequestUpdateCardStatus)
 			throws CTSRestException;
 			
 	/**
