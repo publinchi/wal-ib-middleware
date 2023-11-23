@@ -92,7 +92,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		logger.logInfo(CLASS_NAME + " code resp account dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
-			if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM"))
+			if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM"))
 			{
 				aBagSPJavaOrchestration.put("success", "success");
 				return wAccountsResp;
