@@ -1294,7 +1294,9 @@
                                             COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.DTO,
                                             COBISCorp.eCOBIS.InternetBanking.WebApp.Enrollment.Service,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO,
-											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service
+											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service,
+											COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO,
+											COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
