@@ -870,7 +870,16 @@
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 
 		<!-- GENERADOR DE SERVICIOS BIB-->
 		<!--<dependency>
