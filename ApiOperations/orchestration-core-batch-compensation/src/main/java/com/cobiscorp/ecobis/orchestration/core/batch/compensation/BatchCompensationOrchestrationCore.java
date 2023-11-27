@@ -201,6 +201,14 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
                                                     }else if(result > 0){
                                                     	valCardDock(anOriginalProcedureRes, aBagSPJavaOrchestration);
                                                     	responseTransactionBag = queryAccountCreditOperation(aBagSPJavaOrchestration);
+                                                    }else{
+                                                    	aBagSPJavaOrchestration.put("ente", 0);
+                                                		aBagSPJavaOrchestration.put("account", 0);
+                                                		aBagSPJavaOrchestration.put("codeErrorApi", "-1");
+                                                		aBagSPJavaOrchestration.put("messageError", "No genera transaccion");
+                                                		aBagSPJavaOrchestration.put("referenceCode","0");
+                                                		aBagSPJavaOrchestration.put("transactionType","NO APLICA");
+                                                		responseTransactionBag.put("-1", "No genera transaccion");
                                                     }
                                                     
                                                     // Hacer algo con los valores obtenidos
