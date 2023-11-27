@@ -235,13 +235,49 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return wAccountsResp;
 	}
 
-	private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest,
-			Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getDataTransfSpeiReq");
+		}
+		
+		String xRequestId = aRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
+		String xChannel = aRequest.readValueParam("@x_channel");
+		String account = aRequest.readValueParam("@i_origin_account_number");
+		String destinyAccount = aRequest.readValueParam("@i_destination_account_number");
+		String bankId = aRequest.readValueParam("@i_bank_id");
+		String bankName = aRequest.readValueParam("@i_bank_name");
+		String destinyOwnerName = aRequest.readValueParam("@i_destination_account_owner_name");
+		String referenceNumber = aRequest.readValueParam("@i_reference_number");
+		
+		if (account.equals("null") || account.trim().isEmpty()) {
+			account = "E";
+		}
+		
+		if (destinyAccount.equals("null") || destinyAccount.trim().isEmpty()) {
+			destinyAccount = "E";
+		}
+		
+		if (bankId.equals("null") || bankId.trim().isEmpty()) {
+			bankId = "E";
+		}
+		
+		if (bankName.equals("null") || bankName.trim().isEmpty()) {
+			bankName = "E";
+		}
+		
+		if (destinyOwnerName.equals("null") || destinyOwnerName.trim().isEmpty()) {
+			destinyOwnerName = "E";
+		}
+		
+		if (referenceNumber.equals("null") || referenceNumber.trim().isEmpty()) {
+			referenceNumber = "E";
+		} else if (referenceNumber.trim().length() != 6) {
+			referenceNumber = "L";
 		}
 
 		request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
@@ -251,18 +287,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		//headers
-		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
-		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
-		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 		
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
-		request.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
-		request.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
+		request.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR, account);
+		request.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR, destinyAccount);
 		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-		request.addInputParam("@i_bank_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_id"));
-		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
-		request.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_owner_name"));
+		request.addInputParam("@i_bank_id", ICTSTypes.SQLVARCHAR, bankId);
+		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, bankName);
+		request.addInputParam("@i_destination_account_owner_name", ICTSTypes.SQLVARCHAR, destinyOwnerName);
 		request.addInputParam("@i_destination_type_account", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_destination_type_account"));
 		
 		request.addInputParam("@i_owner_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_owner_name"));
@@ -270,7 +306,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
 		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
-		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_reference_number"));
+		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, referenceNumber);
 		
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
