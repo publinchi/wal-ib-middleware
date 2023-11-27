@@ -39,6 +39,7 @@ import org.apache.felix.scr.annotations.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.Arrays;
 
 import com.cobiscorp.cobis.cts.rest.client.util.ConverterUtil;
@@ -56,7 +57,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	private static final ILogger LOGGER = LogFactory.getLogger(ServiceContractOperationsApiService.class);
 	private String jsonHead = null;
 
-	public void saveAuthResponse(String trn, String seqTran, String jsonRes) throws CTSRestException {
+	public void saveAuthResponse(String trn, String seqTran, String jsonRes, String jsonHead) throws CTSRestException {
 		
 		LOGGER.logDebug("Start funtion execution: saveAuthResponse");
 		
@@ -67,6 +68,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_trn",ICTSTypes.SQLVARCHAR, trn);
 		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
+		procedureRequestAS.addInputParam("@i_header_trn",ICTSTypes.SQLVARCHAR, jsonHead);
 		
 		//execute procedure
 	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -92,7 +94,47 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		
 		LOGGER.logDebug("Ends funtion execution: saveCobisTrnReqRes");
 	}
+	
+	public boolean isValidMail(String email) {
+		
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z]{2,7}$";
 
+		Pattern pattern = Pattern.compile(emailRegex);
+		
+		if (email == null) {
+			return false;
+		}
+		
+		return pattern.matcher(email).matches();
+	}
+	
+	public boolean isNumeric(String string) {
+		
+		String stringRegex = ".*[0-9].*";
+	
+		Pattern pattern = Pattern.compile(stringRegex);
+		
+		if (string == null) {
+			return false;
+		}
+		
+		return pattern.matcher(string).matches();
+	}
+	
+	public boolean isAlpha(String string) {
+			
+		String stringRegex = "^[a-zñáéíóú A-ZÑÁÉÍÓÚ]*$";
+	
+		Pattern pattern = Pattern.compile(stringRegex);
+		
+		if (string == null) {
+			return false;
+		}
+		
+		return pattern.matcher(string).matches();
+	}
+
+	
          @Override
 			// Return DTO
 			public  CreditAccountResponse  creditOperation(CreditAccountRequest inCreditAccountRequest  )throws CTSRestException{
@@ -504,8 +546,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizePurchase);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchase");
 			// returns data
@@ -745,7 +799,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
 			// returns data
@@ -965,8 +1019,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeWithdrawal);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawal");
 			// returns data
@@ -1183,7 +1249,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
 			// returns data
@@ -1401,8 +1467,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeDeposit);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeDeposit");
 			// returns data
@@ -1616,7 +1694,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
@@ -1855,8 +1933,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
+			
+			Header header = new Header();
 
-			saveAuthResponse(trn, seqTran, jsonRes);
+			header.setAccept("application/json");
+			header.setX_request_id(xRequestId);
+			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+			header.setX_end_user_ip(xEndUserIp);
+			header.setX_channel(xChannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversal");
 			// returns data
@@ -1873,15 +1963,113 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				String xEndUserIp, String xChannel, CreateCustomerRequest inCreateCustomerRequest)
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: createCustomer");
-			
+
 			CreateCustomerResponse outCreateCustomerResponse = new CreateCustomerResponse();
-			
+
 			Response response = new Response();
 			outCreateCustomerResponse.setResponse(response);
 
+			String name = inCreateCustomerRequest.getFirstName();
+			String lastName = inCreateCustomerRequest.getLastName();
+			String secondLastName = inCreateCustomerRequest.getSecondLastName();
+			String secondName = inCreateCustomerRequest.getSecondName();
+			String gender = inCreateCustomerRequest.getGender();
+			String birthDate = inCreateCustomerRequest.getBirthDate();
+			String nationality = inCreateCustomerRequest.getNationality();
+			String idNumber = inCreateCustomerRequest.getIdNumber();
+			String identificationType = inCreateCustomerRequest.getIdentificationType();
+			String identificationNumber = inCreateCustomerRequest.getIdentificationNumber();
+			String email = inCreateCustomerRequest.getEmail();
+
+			if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+				xRequestId = "E";
+			}
+
+			if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+				xEndUserRequestDateTime = "E";
+			}
+
+			if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+				xEndUserIp = "E";
+			}
+
+			if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+				xChannel = "E";
+			}
+
+			if (name.equals("null") || name.trim().isEmpty()) {
+				name = "E";
+			} else if (name.trim().length() < 2) {
+				name = "L";
+			} else if (isNumeric(name)) {
+				name = "N";
+			} else if (!isAlpha(name)) {
+				name = "S";
+			}
+
+			if (lastName.equals("null") || lastName.trim().isEmpty()) {
+				lastName = "E";
+			} else if (lastName.trim().length() < 2) {
+				lastName = "L";
+			} else if (isNumeric(lastName)) {
+				lastName = "N";
+			} else if (!isAlpha(lastName)) {
+				lastName = "S";
+			}
+
+			if (secondLastName.equals("null") || secondLastName.trim().isEmpty()) {
+				secondLastName = "E";
+			} else if (secondLastName.trim().length() < 2) {
+				secondLastName = "L";
+			} else if (isNumeric(secondLastName)) {
+				secondLastName = "N";
+			} else if (!isAlpha(secondLastName)) {
+				secondLastName = "S";
+			}
+
+			if (!secondName.equals("null") && !secondName.isEmpty()) {
+				if (secondName.trim().length() < 2) {
+					secondName = "L";
+				} else if (isNumeric(secondName)) {
+					secondName = "N";
+				} else if (!isAlpha(secondName)) {
+					secondName = "S";
+				}
+			}
+
+			if (gender.equals("null") || gender.trim().isEmpty()) {
+				gender = "E";
+			}
+
+			if (birthDate.equals("null") || birthDate.trim().isEmpty()) {
+				birthDate = "E";
+			}
+
+			if (nationality.equals("null") || nationality.trim().isEmpty()) {
+				nationality = "E";
+			}
+
+			if (idNumber.equals("null") || idNumber.trim().isEmpty()) {
+				idNumber = "E";
+			}
+
+			if (identificationType.equals("null") || identificationType.trim().isEmpty()) {
+				identificationType = "E";
+			}
+
+			if (identificationNumber.equals("null") || identificationNumber.trim().isEmpty()) {
+				identificationNumber = "E";
+			}
+
+			if (!email.equals("null") && !email.isEmpty()) {
+				if (!isValidMail(email)) {
+					email = "I";
+				}
+			}
+
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_api_create_customer");
-			
+
 			// headers
 			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
 			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
@@ -1899,8 +2087,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getAmountTransaction());
 			procedureRequestAS.addInputParam("@i_average_balance", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getAverageBalance());
-			procedureRequestAS.addInputParam("@i_birthdate", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getBirthDate());
+			procedureRequestAS.addInputParam("@i_birthdate", ICTSTypes.SQLVARCHAR, birthDate);
 			procedureRequestAS.addInputParam("@i_city_code", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getCity()));
 			procedureRequestAS.addInputParam("@i_countrybirth_code", ICTSTypes.SQLINT4,
@@ -1911,18 +2098,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getCompanyName());
 			procedureRequestAS.addInputParam("@i_electronic_transfer", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
-
-		      procedureRequestAS.addInputParam("@i_externalnumber",ICTSTypes.SQLVARCHAR,
-		    		  inCreateCustomerRequest.getExternalNumber());
-
-			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR,
-					String.valueOf(inCreateCustomerRequest.getGender()));
+			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLVARCHAR,
+					inCreateCustomerRequest.getExternalNumber());
+			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR, gender);
 			procedureRequestAS.addInputParam("@i_geolocatization_latitude", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inCreateCustomerRequest.getGeolocalizationLatitude()));
 			procedureRequestAS.addInputParam("@i_geolocatization_longitude", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inCreateCustomerRequest.getGeolocalizationLongitude()));
-			procedureRequestAS.addInputParam("@i_identification_number", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getIdNumber());
+			procedureRequestAS.addInputParam("@i_identification_number", ICTSTypes.SQLVARCHAR, idNumber);
 			procedureRequestAS.addInputParam("@i_identity_validated", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getIdentityValidated()));
 			procedureRequestAS.addInputParam("@i_incomelevel", ICTSTypes.SQLVARCHAR,
@@ -1931,14 +2114,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getIncomeLevelEntity());
 			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getInternalNumber());
-			procedureRequestAS.addInputParam("@i_lastname", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getLastName());
+			procedureRequestAS.addInputParam("@i_lastname", ICTSTypes.SQLVARCHAR, lastName);
 			procedureRequestAS.addInputParam("@i_legalincomesource", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getLegalIncomeSource()));
-			procedureRequestAS.addInputParam("@i_mail", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getEmail());
-			procedureRequestAS.addInputParam("@i_name", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getFirstName());
-			procedureRequestAS.addInputParam("@i_nationality", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getNationality());
+			procedureRequestAS.addInputParam("@i_mail", ICTSTypes.SQLVARCHAR, email);
+			procedureRequestAS.addInputParam("@i_name", ICTSTypes.SQLVARCHAR, name);
+			procedureRequestAS.addInputParam("@i_nationality", ICTSTypes.SQLVARCHAR, nationality);
 			procedureRequestAS.addInputParam("@i_noconnectiontoillegalnetworks", ICTSTypes.SQLCHAR,
 					String.valueOf(inCreateCustomerRequest.getNoConnectionIllegalNetworks()));
 			procedureRequestAS.addInputParam("@i_number", ICTSTypes.SQLVARCHAR,
@@ -1951,10 +2132,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inCreateCustomerRequest.getOperationType());
 			procedureRequestAS.addInputParam("@i_other_mexican_account", ICTSTypes.SQLVARCHAR,
 					inCreateCustomerRequest.getOtherMexicanAccount());
-			procedureRequestAS.addInputParam("@i_otherlastname", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getSecondLastName());
-			procedureRequestAS.addInputParam("@i_othername", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getSecondName());
+			procedureRequestAS.addInputParam("@i_otherlastname", ICTSTypes.SQLVARCHAR, secondLastName);
+			procedureRequestAS.addInputParam("@i_othername", ICTSTypes.SQLVARCHAR, secondName);
 			procedureRequestAS.addInputParam("@i_payment_card", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getPaymentCard()));
 			procedureRequestAS.addInputParam("@i_payment_recharge", ICTSTypes.SQLINT4,
@@ -1971,9 +2150,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					String.valueOf(inCreateCustomerRequest.getProvisionCash()));
 			procedureRequestAS.addInputParam("@i_rfc", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getRfc());
 			procedureRequestAS.addInputParam("@i_secondaryidentification_number", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getIdentificationNumber());
+					identificationNumber);
 			procedureRequestAS.addInputParam("@i_secondaryidentification_type_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getIdentificationType());
+					identificationType);
 			procedureRequestAS.addInputParam("@i_street", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getStreet());
 			procedureRequestAS.addInputParam("@i_subdivision_code", ICTSTypes.SQLINT4,
 					String.valueOf(inCreateCustomerRequest.getSubdivisioncode()));
@@ -1992,14 +2171,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
 			procedureRequestAS.addOutputParam("@o_customer", ICTSTypes.SQLINT4, "0");
 			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
-			
 
-			//execute procedure
+			// execute procedure
 			ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
 
 			List<MessageBlock> errors = ErrorUtil.getErrors(resp);
-			//throw error
+			// throw error
 			if (errors != null && errors.size() > 0) {
 				LOGGER.logDebug("Procedure execution returns error");
 				if (LOGGER.isDebugEnabled()) {
@@ -2010,7 +2188,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throw new CTSRestException("Procedure Response has errors", null, errors);
 			}
 			LOGGER.logDebug("Procedure ok");
-			//Init map returns
+			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
 
@@ -2019,23 +2197,24 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-			
+
 			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
 			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
-			
+
 			outCreateCustomerResponse.setResponse(response);
-				
+
 			if (response != null && response.getCode() == 0) {
-                
-                outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
-                outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
-            
-            } else {
-                
-                outCreateCustomerResponse.setExternalCustomerId(null);
-                outCreateCustomerResponse.setAccountNumber(null);
-            }
-			
+
+				outCreateCustomerResponse
+						.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
+				outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
+
+			} else {
+
+				outCreateCustomerResponse.setExternalCustomerId(null);
+				outCreateCustomerResponse.setAccountNumber(null);
+			}
+
 			if (response != null && response.getCode() == 0) {
 
 				outCreateCustomerResponse.setSuccess(true);
@@ -2044,27 +2223,27 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 				outCreateCustomerResponse.setSuccess(false);
 			}
-			
+
 			String trn = "Create Customer";
-		      
-	      	Gson gson = new Gson();
+
+			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inCreateCustomerRequest);
-			
+
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outCreateCustomerResponse);
-			
+
 			Header header = new Header();
-			  
+
 			header.setAccept("application/json");
 			header.setX_request_id(xRequestId);
 			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
 			header.setX_end_user_ip(xEndUserIp);
 			header.setX_channel(xChannel);
 			header.setContent_type("application/json");
-		    
-		    Gson gson3 = new Gson();
-		    String jsonHead = gson3.toJson(header);
-			
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
 			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: createCustomer");
@@ -6680,7 +6859,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
 			
-			saveAuthResponse(trn, seqTran, jsonRes);
+			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
 			// returns data
