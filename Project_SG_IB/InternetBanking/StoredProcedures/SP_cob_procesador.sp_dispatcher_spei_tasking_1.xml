@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_dispatcher_spei_tasking</name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_pay_order" dataType="varchar" direction="in" />
+    <parameter name="@i_operation" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="proceso" />
+        <column name="message" />
+        <column name="code" />
+      </columns>
+      <queryText>SELECT "proceso"="EJECUTADO","message"="EJECUTADO","code"=1</queryText>
+    </query>
+  </queries>
+</procedure>

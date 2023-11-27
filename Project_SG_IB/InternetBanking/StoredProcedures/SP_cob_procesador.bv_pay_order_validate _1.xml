@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>bv_pay_order_validate </name>
+  <type>SQLSERVER</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_pay_order" dataType="varchar" direction="in" />
+    <parameter name="@i_operartion" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="process" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>
