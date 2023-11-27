@@ -497,8 +497,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, request);
 
 			
-		logger.logInfo("JCOS DIRECT SPEI");
-			this.executeTransfer(aBagSPJavaOrchestration);
 
 
 		
