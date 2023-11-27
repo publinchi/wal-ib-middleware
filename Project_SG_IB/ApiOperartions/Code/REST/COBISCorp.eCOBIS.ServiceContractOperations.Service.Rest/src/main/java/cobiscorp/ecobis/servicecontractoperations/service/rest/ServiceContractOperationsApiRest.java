@@ -318,17 +318,22 @@ public class ServiceContractOperationsApiRest {
 
 	}
 	
-	    /**
-	    * Authorize Purchase Dock
-	    */
-	  @POST
-		@Path("/apiOperations/authorization/authorizePurchaseDock")
-		@Consumes({"application/json"})
-		@Produces({"application/json"})
-		 public Response  authorizePurchaseDock(@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock ){
+	/**
+	 * Authorize Purchase Dock
+	 */
+	@POST
+	@Path("/apiOperations/authorizations/purchase")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response authorizePurchaseDock(
+			@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
+			@Null @HeaderParam("legacy-id") String legacyid,
+			@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
+			@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
+			RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) {
 		LOGGER.logDebug("Start service execution REST: authorizePurchaseDock");
-		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock  = new ResponseAuthorizePurchaseDock();
-		    
+		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock = new ResponseAuthorizePurchaseDock();
+
 		if (!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
 				new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()),
 				new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()),
@@ -356,28 +361,29 @@ public class ServiceContractOperationsApiRest {
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
 		}
-		  
+
 		try {
-		outResponseAuthorizePurchaseDock=iServiceContractOperationsApiService.authorizePurchaseDock(xapigwapiid,legacyid,clientid,uuid, inRequestAuthorizePurchaseDock );
+			outResponseAuthorizePurchaseDock = iServiceContractOperationsApiService.authorizePurchaseDock(xapigwapiid,
+					legacyid, clientid, uuid, inRequestAuthorizePurchaseDock);
 		} catch (CTSRestException e) {
-		LOGGER.logError("CTSRestException",e);
-		if ("404".equals(e.getMessage())) {
-		LOGGER.logDebug("404 is returned - No data found");
-		return Response.status(404).entity("No data found").build();
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
 		}
-		
-		LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-		return Response.status(409).entity(e.getMessageBlockList()).build();
-		} catch (Exception e){
-		LOGGER.logDebug("500 is returned - Code exception");
-		LOGGER.logError("Exception",e);
-		return Response.status(500).entity(e.getMessage()).build();
-		}
-		
-		    LOGGER.logDebug("Ends service execution REST: authorizePurchaseDock");
-		    return Response.ok(outResponseAuthorizePurchaseDock).build();
-		  
-		}
+
+		LOGGER.logDebug("Ends service execution REST: authorizePurchaseDock");
+		return Response.ok(outResponseAuthorizePurchaseDock).build();
+
+	}
 
 
 		/**
@@ -445,68 +451,68 @@ public class ServiceContractOperationsApiRest {
 
 		}
 	
-	/**
-	 * Authorize Withdrawal Dock
-	 */
-	@POST
-	@Path("/apiOperations/authorization/authorizeWithdrawalDock")
-	@Consumes({ "application/json" })
-	@Produces({ "application/json" })
-	public Response authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,
-			@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
-			@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
-			@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
-			RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
-		LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
-		ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
+		/**
+		 * Authorize Withdrawal Dock
+		 */
+		@POST
+		@Path("/apiOperations/authorizations/withdrawal")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,
+				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
+				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
+				@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
+				RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
+			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
+			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
 
-		if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
-				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getType()),
-				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
-				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
-				new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
-				new Data("nsu", inRequestAuthorizeWithdrawalDock.getNsu()),
+			if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
+					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getType()),
+					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
+					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
+					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
+					new Data("nsu", inRequestAuthorizeWithdrawalDock.getNsu()),
 //				new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
-				new Data("transaction_origin", inRequestAuthorizeWithdrawalDock.getTransaction_origin()),
-				new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
-				new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
-				new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
-				new Data("merchant_category_code", inRequestAuthorizeWithdrawalDock.getMerchant_category_code()),
-				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_currency_code()),
-				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_currency_code()),
-				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_value()),
-				new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
-				new Data("terminal_code", inRequestAuthorizeWithdrawalDock.getTerminal_code()),
-				new Data("establishment_code", inRequestAuthorizeWithdrawalDock.getEstablishment_code()),
-				new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
-				new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
-		}
-
-		try {
-			outResponseAuthorizeWithdrawalDock = iServiceContractOperationsApiService.authorizeWithdrawalDock(legacyid,
-					clientid, uuid, xapigwapiid, inRequestAuthorizeWithdrawalDock);
-		} catch (CTSRestException e) {
-			LOGGER.logError("CTSRestException", e);
-			if ("404".equals(e.getMessage())) {
-				LOGGER.logDebug("404 is returned - No data found");
-				return Response.status(404).entity("No data found").build();
+					new Data("transaction_origin", inRequestAuthorizeWithdrawalDock.getTransaction_origin()),
+					new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
+					new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
+					new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
+					new Data("merchant_category_code", inRequestAuthorizeWithdrawalDock.getMerchant_category_code()),
+					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_currency_code()),
+					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_currency_code()),
+					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_value()),
+					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
+					new Data("terminal_code", inRequestAuthorizeWithdrawalDock.getTerminal_code()),
+					new Data("establishment_code", inRequestAuthorizeWithdrawalDock.getEstablishment_code()),
+					new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
+					new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
 			}
 
-			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-			return Response.status(409).entity(e.getMessageBlockList()).build();
-		} catch (Exception e) {
-			LOGGER.logDebug("500 is returned - Code exception");
-			LOGGER.logError("Exception", e);
-			return Response.status(500).entity(e.getMessage()).build();
+			try {
+				outResponseAuthorizeWithdrawalDock = iServiceContractOperationsApiService.authorizeWithdrawalDock(
+						legacyid, clientid, uuid, xapigwapiid, inRequestAuthorizeWithdrawalDock);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: authorizeWithdrawalDock");
+			return Response.ok(outResponseAuthorizeWithdrawalDock).build();
+
 		}
-
-		LOGGER.logDebug("Ends service execution REST: authorizeWithdrawalDock");
-		return Response.ok(outResponseAuthorizeWithdrawalDock).build();
-
-	}
 	
 	/**
 	 * Authorize Deposit
@@ -577,7 +583,7 @@ public class ServiceContractOperationsApiRest {
 	 * Authorize Deposit Dock
 	 */
 	@POST
-	@Path("/apiOperations/authorization/authorizeDepositDock")
+	@Path("/apiOperations/authorizations/deposit")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response authorizeDepositDock(@Null @HeaderParam("legacy-id") String legacyid,
@@ -2348,69 +2354,84 @@ public class ServiceContractOperationsApiRest {
         
       }
 
-	  /**
-          * Authorize Reversal Dock
-          */
-        @POST
-      @Path("/apiOperations/authorization/authorizeReversalDock")
-      @Consumes({"application/json"})
-      @Produces({"application/json"})
-       public Response  authorizeReversalDock(@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock ){
-	  LOGGER.logDebug("Start service execution REST: authorizeReversalDock");
-      ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock  = new ResponseAuthorizeReversalDock();
-          
-      if(!validateMandatory(
-			new Data("card_id", inRequestAuthorizeReversalDock.getCard_id()), 
-			new Data("mti", inRequestAuthorizeReversalDock.getMti()), 
-			new Data("processing.type", inRequestAuthorizeReversalDock.getProcessing().getType()), 
-			new Data("processing.origin_account_type", inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type()), 
-			new Data("processing.destiny_account_type", inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type()), 
-			new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()), 
-			new Data("nsu", inRequestAuthorizeReversalDock.getNsu()), 
-			new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()), 
-			new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()), 
-			new Data("installments", inRequestAuthorizeReversalDock.getInstallments()), 
-			new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()), 
-			new Data("card_entry.pin", inRequestAuthorizeReversalDock.getCard_entry().getPin()), 
-			new Data("card_entry.mode", inRequestAuthorizeReversalDock.getCard_entry().getMode()), 
-			new Data("merchant_category_code", inRequestAuthorizeReversalDock.getMerchant_category_code()), 
-			new Data("values.source_currency_code", inRequestAuthorizeReversalDock.getValues().getSource_currency_code()), 
-			new Data("values.billing_currency_code", inRequestAuthorizeReversalDock.getValues().getBilling_currency_code()), 
-			new Data("values.source_value", inRequestAuthorizeReversalDock.getValues().getSource_value()), 
-			new Data("values.billing_value", inRequestAuthorizeReversalDock.getValues().getBilling_value()), 
-			new Data("terminal_code", inRequestAuthorizeReversalDock.getTerminal_code()), 
-			new Data("establishment_code", inRequestAuthorizeReversalDock.getEstablishment_code()), 
-			new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()), 
-			new Data("original_transaction_data.transaction_uuid", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid()),
-			new Data("original_transaction_data.nsu", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getNsu()), 
-			new Data("original_transaction_data.mti", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti()), 
-			new Data("original_transaction_data.institution_code", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code()), 
-			new Data("original_transaction_data.institution_name", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name()), 
-			new Data("original_transaction_data.retrieval_reference_number", inRequestAuthorizeReversalDock.getOriginal_transaction_data().getRetrieval_reference_number()))) {
-        LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-      }
-	    
-      try {
-      outSingleResponseAuthorizeReversalDock=iServiceContractOperationsApiService.authorizeReversalDock(legacyid,clientid,uuid,xapigwapiid, inRequestAuthorizeReversalDock );
-      } catch (CTSRestException e) {
-      LOGGER.logError("CTSRestException",e);
-      if ("404".equals(e.getMessage())) {
-      LOGGER.logDebug("404 is returned - No data found");
-      return Response.status(404).entity("No data found").build();
-      }
+		/**
+		 * Authorize Reversal Dock
+		 */
+		@POST
+		@Path("/apiOperations/authorizations/reversal")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response authorizeReversalDock(@Null @HeaderParam("legacy-id") String legacyid,
+				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
+				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
+				@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
+				RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) {
+			LOGGER.logDebug("Start service execution REST: authorizeReversalDock");
+			ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock = new ResponseAuthorizeReversalDock();
 
-      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-      return Response.status(409).entity(e.getMessageBlockList()).build();
-      } catch (Exception e){
-      LOGGER.logDebug("500 is returned - Code exception");
-      LOGGER.logError("Exception",e);
-      return Response.status(500).entity(e.getMessage()).build();
-      }
-      
-          LOGGER.logDebug("Ends service execution REST: authorizeReversalDock");
-          return Response.ok(outSingleResponseAuthorizeReversalDock).build();
-        
-      }
+			if (!validateMandatory(new Data("card_id", inRequestAuthorizeReversalDock.getCard_id()),
+					new Data("mti", inRequestAuthorizeReversalDock.getMti()),
+					new Data("processing.type", inRequestAuthorizeReversalDock.getProcessing().getType()),
+					new Data("processing.origin_account_type",
+							inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type()),
+					new Data("processing.destiny_account_type",
+							inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type()),
+					new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()),
+					new Data("nsu", inRequestAuthorizeReversalDock.getNsu()),
+					new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()),
+					new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()),
+					new Data("installments", inRequestAuthorizeReversalDock.getInstallments()),
+					new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()),
+					new Data("card_entry.pin", inRequestAuthorizeReversalDock.getCard_entry().getPin()),
+					new Data("card_entry.mode", inRequestAuthorizeReversalDock.getCard_entry().getMode()),
+					new Data("merchant_category_code", inRequestAuthorizeReversalDock.getMerchant_category_code()),
+					new Data("values.source_currency_code",
+							inRequestAuthorizeReversalDock.getValues().getSource_currency_code()),
+					new Data("values.billing_currency_code",
+							inRequestAuthorizeReversalDock.getValues().getBilling_currency_code()),
+					new Data("values.source_value", inRequestAuthorizeReversalDock.getValues().getSource_value()),
+					new Data("values.billing_value", inRequestAuthorizeReversalDock.getValues().getBilling_value()),
+					new Data("terminal_code", inRequestAuthorizeReversalDock.getTerminal_code()),
+					new Data("establishment_code", inRequestAuthorizeReversalDock.getEstablishment_code()),
+					new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()),
+					new Data("original_transaction_data.transaction_uuid",
+							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid()),
+					new Data("original_transaction_data.nsu",
+							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getNsu()),
+					new Data("original_transaction_data.mti",
+							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti()),
+					new Data("original_transaction_data.institution_code",
+							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code()),
+					new Data("original_transaction_data.institution_name",
+							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name()),
+					new Data("original_transaction_data.retrieval_reference_number", inRequestAuthorizeReversalDock
+							.getOriginal_transaction_data().getRetrieval_reference_number()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
 
-}
+			try {
+				outSingleResponseAuthorizeReversalDock = iServiceContractOperationsApiService
+						.authorizeReversalDock(legacyid, clientid, uuid, xapigwapiid, inRequestAuthorizeReversalDock);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: authorizeReversalDock");
+			return Response.ok(outSingleResponseAuthorizeReversalDock).build();
+
+		}
+
+	}
