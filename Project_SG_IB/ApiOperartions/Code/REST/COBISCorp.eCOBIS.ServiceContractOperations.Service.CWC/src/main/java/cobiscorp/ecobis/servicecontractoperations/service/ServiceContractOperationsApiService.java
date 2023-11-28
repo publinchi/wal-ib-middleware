@@ -3178,6 +3178,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setAvailableBalance(resultSetMapper.getBigDecimal(2));
 								dto.setMovementType(resultSetMapper.getString(3));
 								dto.setAmount(resultSetMapper.getBigDecimal(4));
+								dto.setPurchaseAmount(resultSetMapper.getBigDecimal(30));
+								dto.setWithdrawalAmount(resultSetMapper.getBigDecimal(31));
 								dto.setTransactionDate(resultSetMapper.getString(5));
 								dto.setOperationType(resultSetMapper.getString(6));
 								dto.setCommission(resultSetMapper.getString(7));
