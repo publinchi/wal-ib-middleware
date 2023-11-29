@@ -235,15 +235,16 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return wAccountsResp;
 	}
 
-	private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getDataTransfSpeiReq");
 		}
-		
 		String xRequestId = aRequest.readValueParam("@x_request_id");
+
 		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
 		String xChannel = aRequest.readValueParam("@x_channel");
@@ -279,7 +280,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		} else if (referenceNumber.trim().length() != 6) {
 			referenceNumber = "L";
 		}
-
 		request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -307,7 +307,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
 		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, referenceNumber);
-		
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
