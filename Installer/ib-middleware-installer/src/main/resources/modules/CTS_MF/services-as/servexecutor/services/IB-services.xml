@@ -2685,6 +2685,8 @@
 	<!-- 07-May-2013 - AJU - IB0010C -->
 	<service id="InternetBanking.WebApp.Authorization.Service.AuthenticationMetod.GetDigitalSigningMethod" interface="cobiscorp.ecobis.internetbanking.webapp.authorization.service.service.IAuthenticationMetod" method="getDigitalSigningMethod" description="" />
 	<service id="InternetBanking.WebApp.Authorization.Service.AuthenticationMetod.SetDigitalSigningTrace" interface="cobiscorp.ecobis.internetbanking.webapp.authorization.service.service.IAuthenticationMetod" method="setDigitalSigningTrace" description="" />
+	<!-- 26-Nov-2023 - DCO - HST920859 -->
+	<service id="InternetBanking.WebApp.Auth.Services.AuthorizationAccess" interface="cobiscorp.ecobis.internetbanking.webapp.auth.service.service.IAuth" method="authorizationAccess" description="" />
 	<!-- 10-May-2013 - CYA - CQPRD00002146 -->
 	<service id="InternetBanking.WebApp.HSBC.Service.Services.GetTokens" interface="cobiscorp.ecobis.internetbanking.webapp.hsbc.service.service.IServices" method="getTokens" description="" />
 	<!-- 15-May-2013 - PCL - PAGO DE TARJETA DE CREDITO -->         
