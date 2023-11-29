@@ -748,7 +748,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						movementType = "PURCHASE_AT_STORE";
 					} else {
 						movementType = type_auth;
-					}					if (operationType.equals("C")) {
+					}				
+				  if (operationType.equals("C")) {
+					  
 					String copysourceOwnerName = sourceOwnerName;
 					String copydestinyOwnerName = destinyOwnerName;
 					String copysourceAccountNumber = sourceAccountNumber;
