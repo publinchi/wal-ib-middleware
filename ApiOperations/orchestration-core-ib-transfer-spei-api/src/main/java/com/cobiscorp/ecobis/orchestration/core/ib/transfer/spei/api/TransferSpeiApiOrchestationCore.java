@@ -243,8 +243,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getDataTransfSpeiReq");
 		}
+		
 		String xRequestId = aRequest.readValueParam("@x_request_id");
-
 		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
 		String xChannel = aRequest.readValueParam("@x_channel");
@@ -280,6 +280,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		} else if (referenceNumber.trim().length() != 6) {
 			referenceNumber = "L";
 		}
+		
+
 		request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -293,6 +295,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 		
 		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		
 		request.addInputParam("@i_origin_account_number", ICTSTypes.SQLVARCHAR, account);
 		request.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR, destinyAccount);
 		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
@@ -307,6 +310,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
 		request.addInputParam("@i_longitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
 		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, referenceNumber);
+		 
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
@@ -545,9 +549,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					code = "0";
 					message = "Success";
 					success = "true";
-					referenceCode = (String) aBagSPJavaOrchestration.get("@o_id_error");
-					trackingKey = (String) aBagSPJavaOrchestration.get("@o_clave_ratreo");
-					movementId = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
+					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+				//	movementId = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
