@@ -2029,7 +2029,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				secondLastName = "S";
 			}
 
-			if (!secondName.equals("null") && !secondName.isEmpty()) {
+			if (secondName != null && !secondName.isEmpty()) {
 				if (secondName.trim().length() < 2) {
 					secondName = "L";
 				} else if (isNumeric(secondName)) {
@@ -2047,7 +2047,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				birthDate = "E";
 			}
 
-			if (nationality.equals("null") || nationality.trim().isEmpty()) {
+			if (nationality == null || nationality.trim().isEmpty()) {
 				nationality = "E";
 			}
 
@@ -2063,7 +2063,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				identificationNumber = "E";
 			}
 
-			if (!email.equals("null") && !email.isEmpty()) {
+			if (email != null && !email.isEmpty()) {
 				if (!isValidMail(email)) {
 					email = "I";
 				}
