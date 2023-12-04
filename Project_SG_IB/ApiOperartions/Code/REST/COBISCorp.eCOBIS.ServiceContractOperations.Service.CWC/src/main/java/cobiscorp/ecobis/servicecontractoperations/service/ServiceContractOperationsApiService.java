@@ -732,7 +732,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
-			
+
 			// execute procedure
 			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 					procedureRequestAS);
@@ -789,16 +789,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-			
+
 			String trn = "Authorize Purchase Dock";
-			
+
 			String seqTran = outSingleResponseAuthorizePurchaseDock.getSeq();
-			
+
 			outSingleResponseAuthorizePurchaseDock.setSeq(null);
-			
+
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
-			
+
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizePurchaseDock");
@@ -1217,7 +1217,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 											int index) {
 										ResponseAuthorizeWithdrawalDock dto = new ResponseAuthorizeWithdrawalDock();
 
-										List<String> arrayList = new ArrayList<>(Arrays.asList(resultSetMapper.getString(1).split(",")));
+										List<String> arrayList = new ArrayList<>(
+												Arrays.asList(resultSetMapper.getString(1).split(",")));
 										dto.setResponse((ArrayList) arrayList);
 										dto.setReason(resultSetMapper.getString(2));
 										dto.setAuthorization_code(resultSetMapper.getInteger(3));
@@ -1239,16 +1240,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-			
+
 			String trn = "Authorize Withdrawal Dock";
-			
+
 			String seqTran = outSingleResponseAuthorizeWithdrawalDock.getSeq();
-			
+
 			outSingleResponseAuthorizeWithdrawalDock.setSeq(null);
-			
+
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
-			
+
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeWithdrawalDock");
@@ -1603,10 +1604,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isIs_3ds_valid()));
 			procedureRequestAS.addInputParam("@i_recurring", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isRecurring()));
-			procedureRequestAS.addInputParam("@i_allows_partial_approval", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isAllows_partial_approval()));
-			procedureRequestAS.addInputParam("@i_pin_validated_offline", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isPin_validated_offline()));
+			procedureRequestAS.addInputParam("@i_allows_partial_approval", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isAllows_partial_approval()));
+			procedureRequestAS.addInputParam("@i_pin_validated_offline", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isPin_validated_offline()));
 			procedureRequestAS.addInputParam("@i_partially_reversed", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isPartially_reversed()));
 			procedureRequestAS.addInputParam("@i_preauthorization", ICTSTypes.SQLBIT,
@@ -1615,15 +1616,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isIs_crossborder()));
 			procedureRequestAS.addInputParam("@i_is_dcc", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isIs_dcc()));
-			procedureRequestAS.addInputParam("@i_only_supports_purchase", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isOnly_supports_purchase()));
+			procedureRequestAS.addInputParam("@i_only_supports_purchase", ICTSTypes.SQLBIT, String
+					.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isOnly_supports_purchase()));
 			procedureRequestAS.addInputParam("@i_is_international", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isIs_international()));
 			procedureRequestAS.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProduct_id());
-			
+
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeDepositDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -1647,7 +1648,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
-		
+
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -1660,13 +1661,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setApproved_value(resultSetMapper.getString(1));
 								dto.setSettlement_value(resultSetMapper.getString(2));
 								dto.setCardholder_billing_value(resultSetMapper.getString(3));
-								List<String> arrayList = new ArrayList<>(Arrays.asList(resultSetMapper.getString(4).split(",")));
+								List<String> arrayList = new ArrayList<>(
+										Arrays.asList(resultSetMapper.getString(4).split(",")));
 								dto.setResponse((ArrayList) arrayList);
 								dto.setReason(resultSetMapper.getString(5));
 								dto.setAvailable_limit(resultSetMapper.getString(6));
 								dto.setAuthorization_code(resultSetMapper.getInteger(7));
 								dto.setSeq(resultSetMapper.getString(8));
-								
+
 								return dto;
 							}
 						}, false);
@@ -1684,23 +1686,23 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-			
+
 			String trn = "Authorize Deposit Dock";
-			
+
 			String seqTran = outSingleResponseAuthorizeDepositDock.getSeq();
-			
+
 			outSingleResponseAuthorizeDepositDock.setSeq(null);
-			
+
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
-			
+
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeDepositDock");
 			// returns data
 			return outSingleResponseAuthorizeDepositDock;
 		}
-		
+
 		/**
 		 * Authorize Reversal
 		 */
@@ -1933,7 +1935,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outResponseAuthorizeReversal);
-			
+
 			Header header = new Header();
 
 			header.setAccept("application/json");
@@ -2027,7 +2029,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				secondLastName = "S";
 			}
 
-			if (!secondName.equals("null") && !secondName.isEmpty()) {
+			if (secondName != null && !secondName.isEmpty()) {
 				if (secondName.trim().length() < 2) {
 					secondName = "L";
 				} else if (isNumeric(secondName)) {
@@ -2045,7 +2047,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				birthDate = "E";
 			}
 
-			if (nationality.equals("null") || nationality.trim().isEmpty()) {
+			if (nationality == null || nationality.trim().isEmpty()) {
 				nationality = "E";
 			}
 
@@ -2061,7 +2063,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				identificationNumber = "E";
 			}
 
-			if (!email.equals("null") && !email.isEmpty()) {
+			if (email != null && !email.isEmpty()) {
 				if (!isValidMail(email)) {
 					email = "I";
 				}
@@ -3176,6 +3178,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setAvailableBalance(resultSetMapper.getBigDecimal(2));
 								dto.setMovementType(resultSetMapper.getString(3));
 								dto.setAmount(resultSetMapper.getBigDecimal(4));
+								dto.setPurchaseAmount(resultSetMapper.getBigDecimal(30));
+								dto.setWithdrawalAmount(resultSetMapper.getBigDecimal(31));
 								dto.setTransactionDate(resultSetMapper.getString(5));
 								dto.setOperationType(resultSetMapper.getString(6));
 								dto.setCommission(resultSetMapper.getString(7));
@@ -6828,7 +6832,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							public ResponseAuthorizeReversalDock mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeReversalDock dto = new ResponseAuthorizeReversalDock();
 
-								List<String> arrayList = new ArrayList<>(Arrays.asList(resultSetMapper.getString(1).split(",")));
+								List<String> arrayList = new ArrayList<>(
+										Arrays.asList(resultSetMapper.getString(1).split(",")));
 								dto.setResponse((ArrayList) arrayList);
 								dto.setReason(resultSetMapper.getString(2));
 								dto.setAuthorization_code(resultSetMapper.getInteger(3));
@@ -6849,16 +6854,16 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				LOGGER.logDebug("No data found");
 				throw new CTSRestException("404", null);
 			}
-			
+
 			String trn = "Authorize Reversal Dock";
-			
+
 			String seqTran = outSingleResponseAuthorizeReversalDock.getSeq();
-			
+
 			outSingleResponseAuthorizeReversalDock.setSeq(null);
-			
+
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
-			
+
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");

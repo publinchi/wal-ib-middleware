@@ -46,6 +46,8 @@ public class AccountStatementArray implements Serializable {
   private StoreDetails storeDetails;
   private String movementId;
   private String authorizationCode;
+  private java.math.BigDecimal purchaseAmount;
+  private java.math.BigDecimal withdrawalAmount;
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
@@ -195,5 +197,17 @@ public class AccountStatementArray implements Serializable {
   }
   public void setAuthorizationCode(String authorizationCode ){
     this.authorizationCode=authorizationCode;
+  }
+  public java.math.BigDecimal getPurchaseAmount(){
+    return this.purchaseAmount;
+  }
+  public void setPurchaseAmount(java.math.BigDecimal purchaseAmount ){
+    this.purchaseAmount=purchaseAmount;
+  }
+  public java.math.BigDecimal getWithdrawalAmount(){
+    return this.withdrawalAmount;
+  }
+  public void setWithdrawalAmount(java.math.BigDecimal withdrawalAmount ){
+    this.withdrawalAmount=withdrawalAmount;
   }
 }
