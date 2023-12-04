@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="1" id="2" name="properties">
   <collection type="List" length="5" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="customerId" />
@@ -55,7 +54,6 @@
     </class>
   </collection>
   <field type="String" name="name" value="RequestCreateSavingAccount" />
-  <collection type="Map" length="0" id="4" name="templatesProperties">
   <collection type="Map" length="0" id="8" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
