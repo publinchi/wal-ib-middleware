@@ -65,6 +65,7 @@
           <field type="String" name="dTOAlias" value="returnResponseAuthorizePurchaseDock" />
           <field type="String" name="dTOPropertyName" value="authorization_code" />
           <field type="String" name="dataType" value="int?" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>
@@ -1248,7 +1249,7 @@
     </entry>
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="apiOperations/authorization/authorizePurchaseDock" />
+      <value type="String" value="apiOperations/authorizations/purchase" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />

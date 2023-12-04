@@ -1,5 +1,6 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.query.get.movements.detail;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -576,8 +577,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankBranchCode", ICTSTypes.SQLVARCHAR, 30));
 
-			/*metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountSA", ICTSTypes.SQLINT4, 64));
-			metaData0.addColumnMetaData(new ResultSetHeaderColumn("typeAccountDA", ICTSTypes.SQLINT4, 64));*/
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("purchaseAmount", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("withdrawalAmount", ICTSTypes.SQLMONEY, 25));
 
 
 			IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
@@ -644,7 +645,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String status_spei = columns[40].getValue();
 				String um_correccion = columns[41].getValue();
 
-				if (type_movement.equals("SPEI") || um_correccion.equals("S")) {
+				if (type_movement.equals("SPEI") || (um_correccion.equals("S") && type_movement.equals("P2P"))) {
 
 					movementType = "SPEI_";
 					if (operationType.equals("D")) {
@@ -742,22 +743,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 					if (type_auth.equals("WITHDRAWAL")) {
 						movementType = "ATM_DEBIT";
-					}
-
-					if (type_auth.equals("PURCHASE")) {
-						movementType = "PURCHASE_ONLINE";
-					}
-
-					if (type_auth.equals("REVERSAL")) {
-						movementType = "REVERSAL";
-					}
-
-					if (type_auth.equals("CONSULT")) {
-						movementType = "CONSULT";
-					}
+					
+					} else if (type_auth.equals("PURCHASE")) {
+						movementType = "PURCHASE_AT_STORE";
+					} else {
+						movementType = type_auth;
+					}	
+					
 				}
-
-				if (operationType.equals("C")) {
+				  if (operationType.equals("C")) {
+					  
 					String copysourceOwnerName = sourceOwnerName;
 					String copydestinyOwnerName = destinyOwnerName;
 					String copysourceAccountNumber = sourceAccountNumber;
@@ -769,16 +764,31 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					sourceOwnerName = copydestinyOwnerName;
 					sourceAccountNumber = copydestinyAccountNumber;
 				}
+				
+				String amount = columns[5].getValue();
+				String iva_val = columns[33].getValue();
+				String purchaseVal = null, withdrawalVal = null;
+				
+				if (type_movement.equals("ISO") && movementType.equals("PURCHASE WITH CASHBACK")) {
+					BigDecimal bigDecimalAmount = new BigDecimal(amount);
+					BigDecimal bigDecimalIva = new BigDecimal(iva_val);
+					
+					amount = bigDecimalAmount.add(bigDecimalIva).toString();
+					iva_val = null;
+					purchaseVal = bigDecimalAmount.toString();
+					withdrawalVal = bigDecimalIva.toString();
+					
+				}
 
 
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
 				rowDat.addRowData(3, new ResultSetRowColumnData(false, movementType));//2?
-				rowDat.addRowData(4, new ResultSetRowColumnData(false, columns[5].getValue()));
+				rowDat.addRowData(4, new ResultSetRowColumnData(false, amount));
 				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
 				rowDat.addRowData(7, new ResultSetRowColumnData(false, columns[34].getValue()));
-				rowDat.addRowData(8, new ResultSetRowColumnData(false, columns[33].getValue()));
+				rowDat.addRowData(8, new ResultSetRowColumnData(false, iva_val));
 				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[24].getValue()));//8, 11?
 				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue()));
 
@@ -810,8 +820,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 				rowDat.addRowData(29, new ResultSetRowColumnData(false, columns[39].getValue()));
 
-				/*rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[33].getValue()));
-				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[34].getValue()));*/
+				rowDat.addRowData(30, new ResultSetRowColumnData(false, purchaseVal));
+				rowDat.addRowData(31, new ResultSetRowColumnData(false, withdrawalVal));
 
 
 				data0.addRow(rowDat);
@@ -909,3 +919,4 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return pattern.matcher(strNum).matches();
 	}
 }
+

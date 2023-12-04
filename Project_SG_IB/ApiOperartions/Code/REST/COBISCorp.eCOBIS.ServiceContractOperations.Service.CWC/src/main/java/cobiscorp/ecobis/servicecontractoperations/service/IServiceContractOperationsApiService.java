@@ -48,11 +48,12 @@ public interface IServiceContractOperationsApiService {
 			throws CTSRestException;
 
 	/**
-    * Authorize Purchase Dock
-    */
-        
-	//Have DTO
-	public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid,String legacyid,String clientid,String uuid,RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock  )throws CTSRestException;
+	 * Authorize Purchase Dock
+	 */
+
+	// Have DTO
+	public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid, String legacyid, String clientid,
+			String uuid, RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) throws CTSRestException;
 	  
 	/**
 	 * Authorize Withdrawal
@@ -396,10 +397,11 @@ public interface IServiceContractOperationsApiService {
 	public ResponseUpdateCredentials updateCredentials(RequestUpdateCredentials inRequestUpdateCredentials  )throws CTSRestException;
 
 	/**
-	* Authorize Reversal Dock
-    */
-        
+	 * Authorize Reversal Dock
+	 */
+
 	// Return DTO
-	public  ResponseAuthorizeReversalDock  authorizeReversalDock(String legacyid,String clientid,String uuid,String xapigwapiid,RequestAuthorizeReversalDock inRequestAuthorizeReversalDock  )throws CTSRestException;
+	public ResponseAuthorizeReversalDock authorizeReversalDock(String legacyid, String clientid, String uuid,
+			String xapigwapiid, RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) throws CTSRestException;
 
 }
