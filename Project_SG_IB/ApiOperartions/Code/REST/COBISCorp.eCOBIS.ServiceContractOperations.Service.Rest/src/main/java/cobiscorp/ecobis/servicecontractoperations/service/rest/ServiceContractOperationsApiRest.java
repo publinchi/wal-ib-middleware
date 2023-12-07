@@ -134,7 +134,7 @@ import java.util.List;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-@Path("/cobis/api/Waltmart/ServiceContractOperations")
+@Path("/cobis/api/Walmart/ServiceContractOperations")
 @Component
 @Service({ ServiceContractOperationsApiRest.class })
 public class ServiceContractOperationsApiRest {
