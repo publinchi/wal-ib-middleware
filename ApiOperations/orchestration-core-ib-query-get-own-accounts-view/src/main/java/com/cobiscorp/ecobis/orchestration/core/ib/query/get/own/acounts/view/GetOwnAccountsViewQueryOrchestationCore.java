@@ -1,5 +1,7 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.query.get.own.acounts.view;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +42,11 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.CurrencyRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.CurrencyResponse;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceGetCurrencies;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+
 
 import Utils.ConstantsMessageResponse;
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
@@ -64,6 +70,9 @@ public class GetOwnAccountsViewQueryOrchestationCore extends SPJavaOrchestration
 	private static final String CLASS_NAME = "GetOwnAccountsViewQueryOrchestationCore--->";
 	// private static final String SERVICE_OUTPUT_VALUES =
 	// "com.cobiscorp.cobis.cts.service.response.output";
+	private static final int ERROR40004 = 40004;
+	private static final int ERROR40003 = 40003;
+	private static final int ERROR40002 = 40002;
 
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
@@ -153,7 +162,56 @@ public class GetOwnAccountsViewQueryOrchestationCore extends SPJavaOrchestration
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
 		if (login.containsKey("o_login")) {
-			return getOwnAccounts(anOriginalRequest);
+			ServerRequest serverRequest = new ServerRequest();
+			serverRequest.setChannelId("8");
+			ServerResponse responseServer = null;
+			try 
+			{
+				responseServer = getServerStatus(serverRequest);
+			} catch (CTSServiceException e)
+			{
+				if(logger.isErrorEnabled())
+				{
+					logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
+				}
+				
+			} catch (CTSInfrastructureException e)
+			{
+				if(logger.isErrorEnabled())
+				{
+					logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
+				}
+			}
+			
+			if (responseServer == null) 
+			{
+				if(logger.isErrorEnabled())
+				{
+					logger.logError("ResponseServer is null validate is online server code:"+responseServer.getReturnCode());
+				}
+				return processResponseError();
+			} else 
+			{
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("ResponseServer is not null");
+				}
+				if (responseServer.getOnLine()) 
+				{
+					if(logger.isDebugEnabled())
+					{
+						logger.logDebug("server is online");
+					}
+					return getOwnAccounts(anOriginalRequest);					
+				} else {
+					if(logger.isDebugEnabled())
+					{
+						logger.logDebug("server is offline");
+					}
+					return getOwnAccountsOffline(anOriginalRequest);
+				}
+			}
+	
 		} else {
 			return processResponseError();
 		}
@@ -256,6 +314,50 @@ public class GetOwnAccountsViewQueryOrchestationCore extends SPJavaOrchestration
 		return responseLogin;
 	}
 
+	
+	public ServerResponse getServerStatus(ServerRequest serverRequest) throws CTSServiceException, CTSInfrastructureException {
+		IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
+		aServerStatusRequest.setSpName("cobis..sp_server_status");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
+		aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
+		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
+		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_en_linea", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_fecha_proceso", ICTSTypes.SYBVARCHAR, "XXXX");
+		if (logger.isDebugEnabled())
+			logger.logDebug("Request Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
+		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
+		if (logger.isDebugEnabled())
+			logger.logDebug("Response Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
+		ServerResponse serverResponse = new ServerResponse();
+		
+		serverResponse.setSuccess(true);
+		Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
+		serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
+		if (wServerStatusResp.getReturnCode() == 0) {
+			serverResponse.setOfflineWithBalances(true);
+			if (wServerStatusResp.readValueParam("@o_en_linea") != null)
+				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
+			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003 || wServerStatusResp.getReturnCode() == ERROR40004) {
+			serverResponse.setOnLine(false);
+			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
+		}
+		if (logger.isDebugEnabled())
+			logger.logDebug("Respuesta Devuelta: " + serverResponse);
+		if (logger.isInfoEnabled())
+			logger.logInfo("TERMINANDO SERVICIO");
+		return serverResponse;
+	}
 	private IProcedureResponse getOwnAccounts(IProcedureRequest aRequest) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -281,6 +383,36 @@ public class GetOwnAccountsViewQueryOrchestationCore extends SPJavaOrchestration
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getLoginById");
+		}
+
+		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse getOwnAccountsOffline(IProcedureRequest aRequest) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getOwnAccountsOffline");
+		}
+
+		request.setSpName("cob_ahorros..sp_get_own_account_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_customer_id"));
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking Local BER: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getOwnAccountsOffline");
 		}
 
 		return wProductsQueryResp;
