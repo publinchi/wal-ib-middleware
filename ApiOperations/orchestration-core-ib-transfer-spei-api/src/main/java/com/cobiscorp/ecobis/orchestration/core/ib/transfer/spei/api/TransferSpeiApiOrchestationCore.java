@@ -529,15 +529,29 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_referencia"));
 		}
 
+		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 		String code = null, message, success, referenceCode = null, trackingKey = null, movementId = null, 
 		executionStatus = null;
-		Integer codeReturn = anOriginalProcedureRes.getReturnCode(); 
+		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Mensaje NJ_912006");
+			logger.logInfo(anOriginalProcedureRes.getProcedureResponseAsString());
+			logger.logInfo(anOriginalProcedureRes.toString());
+			logger.logInfo("The code return is: " + codeReturn.toString());
+			logger.logInfo("successConnector is: " + successConnector);
+			logger.logInfo("movementId: " + anOriginalProcedureRes.readValueParam("@o_referencia"));
+			logger.logInfo("ssn_branch: " + anOriginalRequest.readValueParam("@s_ssn_branch"));
+			logger.logInfo("referenceCode: " + (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC));
+			logger.logInfo("trackingKey: " + (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO));
+			
+		}
 		
 		movementId = anOriginalProcedureRes.readValueParam("@o_referencia");
 
 		logger.logInfo("xdcxv2 --->" + movementId);
-		if (codeReturn == 0) {
+		if (codeReturn == 0 || codeReturn == 50000) {
 			if (null != movementId) {
 				IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
 				
@@ -551,7 +565,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-				//	movementId = anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim();
+					
+					if (codeReturn == 50000 && movementId.equals("0")) {
+						movementId = anOriginalRequest.readValueParam("@s_ssn_branch");
+					}
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
@@ -582,10 +599,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		} else {
 			
+			logger.logInfo("bnbn false--->" + this.returnCode);
 			executionStatus = "ERROR";
 			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
-			if (this.returnCode == 1875285) {
+			if (this.returnCode == 1875285 || this.returnCode == 2600069) {
 				code = "400178";
 				message = "The amount to be transferred exceeds the current account balance";		
 				success = "false";
@@ -595,6 +613,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				success = "false";
 			}
 			else {
+				logger.logInfo("bnbn false2--->" + this.returnCode);
 				code = String.valueOf(codeReturn);
 				message = anOriginalProcedureRes.getMessage(1).getMessageText();
 				success = "false";
