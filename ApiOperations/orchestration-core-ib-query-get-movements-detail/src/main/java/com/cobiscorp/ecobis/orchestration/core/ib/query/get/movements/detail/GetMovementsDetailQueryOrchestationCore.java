@@ -22,6 +22,8 @@ import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
@@ -40,9 +42,9 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
-
-import com.cobiscorp.cobis.cts.utils.BDDUtil;
-
+import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 
 import Utils.ResponseMovements;
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
@@ -66,6 +68,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	private static final String CLASS_NAME = "GetMovementsDetailQueryOrchestationCore--->";
 	// private static final String SERVICE_OUTPUT_VALUES =
 	// "com.cobiscorp.cobis.cts.service.response.output";
+	private static final int ERROR40004 = 40004;
+	private static final int ERROR40003 = 40003;
+	private static final int ERROR40002 = 40002;
 
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
@@ -103,10 +108,57 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 													   Map<String, Object> aBagSPJavaOrchestration) {
 
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		anProcedureResponse = getMovementsDetail(anOriginalRequest);
-
+		
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setChannelId("8");
+		ServerResponse responseServer = null;
+		try 
+		{
+			responseServer = getServerStatus(serverRequest);
+		} catch (CTSServiceException e)
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
+			}
+			
+		} catch (CTSInfrastructureException e)
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
+			}
+		}
+		
+		if (responseServer == null) 
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.logError("ResponseServer is null validate is online server code:"+responseServer.getReturnCode());
+			}
+			return processResponseError(anProcedureResponse);
+		} else 
+		{
+			if(logger.isDebugEnabled())
+			{
+				logger.logDebug("ResponseServer is not null");
+			}
+			if (responseServer.getOnLine()) 
+			{
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("server is online");
+				}
+				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);				
+			} else {
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("server is offline");
+				}
+				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
+			}
+		}
 		if (anProcedureResponse.getResultSets().size()>2) {
 
 			proccessResponseCentralToObject(anProcedureResponse, aBagSPJavaOrchestration);
@@ -124,13 +176,55 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			return processResponseError(anProcedureResponse);
 		}
 	}
-
-	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest) {
+	public ServerResponse getServerStatus(ServerRequest serverRequest) throws CTSServiceException, CTSInfrastructureException {
+			IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
+			aServerStatusRequest.setSpName("cobis..sp_server_status");
+			aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
+			aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
+			aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
+			aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+			aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
+			aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
+			aServerStatusRequest.addOutputParam("@o_en_linea", ICTSTypes.SYBCHAR, "S");
+			aServerStatusRequest.addOutputParam("@o_fecha_proceso", ICTSTypes.SYBVARCHAR, "XXXX");
+			if (logger.isDebugEnabled())
+				logger.logDebug("Request Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
+			IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
+			if (logger.isDebugEnabled())
+				logger.logDebug("Response Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
+			ServerResponse serverResponse = new ServerResponse();
+			
+			serverResponse.setSuccess(true);
+			Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
+			serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
+			if (wServerStatusResp.getReturnCode() == 0) {
+				serverResponse.setOfflineWithBalances(true);
+				if (wServerStatusResp.readValueParam("@o_en_linea") != null)
+					serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
+				if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					try {
+						serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+			} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003 || wServerStatusResp.getReturnCode() == ERROR40004) {
+				serverResponse.setOnLine(false);
+				serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
+			}
+			if (logger.isDebugEnabled())
+				logger.logDebug("Respuesta Devuelta: " + serverResponse);
+			if (logger.isInfoEnabled())
+				logger.logInfo("TERMINANDO SERVICIO");
+			return serverResponse;
+		}
+	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest, String targetServer) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getMovementsDetail");
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(CLASS_NAME + " Entrando en getMovementsDetail :"+targetServer );
 		}
 
 		String minDate = aRequest.readValueParam("@i_fecha_ini");
@@ -151,8 +245,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
 
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, targetServer);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
