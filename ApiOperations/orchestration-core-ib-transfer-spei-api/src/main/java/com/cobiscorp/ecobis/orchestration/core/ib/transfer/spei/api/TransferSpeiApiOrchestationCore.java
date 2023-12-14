@@ -566,7 +566,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
 					
-					if (codeReturn == 50000 && movementId.equals("0")) {
+					if (codeReturn == 50000) {
 						movementId = anOriginalRequest.readValueParam("@s_ssn_branch");
 					}
 					
@@ -666,7 +666,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			// Agregar info 3
 			IResultSetRow row3 = new ResultSetRow();
 			row3.addRowData(1, new ResultSetRowColumnData(false,
-					anOriginalProcedureRes.readValueParam("@o_referencia").toString().trim()));
+					movementId));
 			data3.addRow(row3);
 		}
 		
