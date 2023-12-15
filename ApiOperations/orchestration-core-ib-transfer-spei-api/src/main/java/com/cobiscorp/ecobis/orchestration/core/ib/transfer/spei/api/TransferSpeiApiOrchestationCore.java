@@ -204,7 +204,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
 
-		return processResponseTransfer(anProcedureResponse, aBagSPJavaOrchestration);
+		return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
 
 	}
 
@@ -522,7 +522,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return responseTransferSpei;*/
 	}
 
-	public IProcedureResponse processResponseTransfer(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseTransfer(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processResponseAccounts--->");
@@ -559,6 +559,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					
 					executionStatus = "CORRECT";
 					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 					
 					code = "0";
 					message = "Success";
@@ -693,6 +694,53 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		return anOriginalProcedureResponse;
 	}
+	
+private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en transactionRegister");
+		}
+
+		request.setSpName("cob_bvirtual..sp_bv_transaction_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_culture"));
+		
+		request.addInputParam("@i_trn", ICTSTypes.SQLINTN, "18500115");
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_ente_bv"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
+		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
+		request.addInputParam("@i_beneficiary", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_owner_name"));
+		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
+		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
+		request.addInputParam("@i_prod", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_prod"));
+		request.addInputParam("@i_prod_des", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_destination_type_account"));
+		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
+		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
+		request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("@i_ssn_branch"));
+		request.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_reference_number"));
+		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
+		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking transactionRegister: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de transactionRegister");
+		}
+	} 
 	
 	private void updateTransferStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
 		
