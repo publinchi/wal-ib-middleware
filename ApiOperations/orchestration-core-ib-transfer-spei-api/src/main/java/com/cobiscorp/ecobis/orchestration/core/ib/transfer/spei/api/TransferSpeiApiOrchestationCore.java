@@ -255,6 +255,22 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String destinyOwnerName = aRequest.readValueParam("@i_destination_account_owner_name");
 		String referenceNumber = aRequest.readValueParam("@i_reference_number");
 		
+		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+			xRequestId = "E";
+		}
+		
+		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+			xEndUserRequestDateTime = "E";
+		}
+		
+		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+			xEndUserIp = "E";
+		}
+		
+		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+			xChannel = "E";
+		}
+		
 		if (account.equals("null") || account.trim().isEmpty()) {
 			account = "E";
 		}
