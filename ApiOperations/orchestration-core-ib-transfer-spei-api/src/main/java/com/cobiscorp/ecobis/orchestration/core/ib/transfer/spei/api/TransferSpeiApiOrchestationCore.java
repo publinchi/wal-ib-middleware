@@ -255,22 +255,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String destinyOwnerName = aRequest.readValueParam("@i_destination_account_owner_name");
 		String referenceNumber = aRequest.readValueParam("@i_reference_number");
 		
-		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
-			xRequestId = "E";
-		}
-		
-		if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
-			xEndUserRequestDateTime = "E";
-		}
-		
-		if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
-			xEndUserIp = "E";
-		}
-		
-		if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
-			xChannel = "E";
-		}
-		
 		if (account.equals("null") || account.trim().isEmpty()) {
 			account = "E";
 		}
@@ -507,17 +491,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		//IProcedureResponse responseTransferSpei = executeCoreBanking(request);
 		
 		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
-		
 		mapInterfaces.put("coreServer", coreServer);
 		mapInterfaces.put("coreService", coreService);
 		mapInterfaces.put("coreServiceNotification", coreServiceNotification);
-		
 		Utils.validateComponentInstance(mapInterfaces);
-		
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA SPI");
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, request);
-		
 		try {
 			executeStepsTransactionsBase(request, aBagSPJavaOrchestration);
 		} catch (CTSServiceException e) {
@@ -527,7 +507,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return processResponse(request, aBagSPJavaOrchestration);
 		
 		//IProcedureResponse responseTransferSpei = executeTransfer(aBagSPJavaOrchestration);
@@ -580,7 +559,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					
 					executionStatus = "CORRECT";
 					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
-					
 					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 					
 					code = "0";
@@ -717,7 +695,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return anOriginalProcedureResponse;
 	}
 	
-	private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -1403,7 +1381,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.setReferenceNumber(anOriginalRequest.readValueParam("@i_reference_number"));
 		request.setServicio(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
 
-		//TRANSACCIONALIDAD
+//TRANSACCIONALIDAD
 		String transaccionSpei = anOriginalRequest.readValueParam("@i_transaccion_spei");
 		if (null == transaccionSpei) { // Si esta en offline no hay ssn de debito
 			transaccionSpei = anOriginalRequest.readValueParam("@s_ssn"); // se obtiene ssn de CTS
@@ -1412,7 +1390,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.setSsnDebito(transaccionSpei);
 		request.setSsnBranchDebito(anOriginalRequest.readValueParam("@s_ssn_branch"));
 
-		//CTS VARIABLE
+//CTS VARIABLE
 		request.setCtsSsn(anOriginalRequest.readValueParam("@s_ssn"));
 		request.setCtsServ(anOriginalRequest.readValueParam("@s_srv"));
 		request.setCtsUser(anOriginalRequest.readValueParam("@s_user"));
@@ -1420,7 +1398,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.setCtsRol(anOriginalRequest.readValueParam("@s_rol"));
 		request.setCtsDate(anOriginalRequest.readValueParam("@s_date"));
 
-		// VARIABLE DE ORIGEN
+// VARIABLE DE ORIGEN
 		logger.logInfo(wInfo + " trn_origen: " + anOriginalRequest.readValueFieldInHeader("trn_origen"));
 		request.setTrnOrigen(anOriginalRequest.readValueFieldInHeader("trn_origen"));
 		request.setUser(anOriginalRequest.readValueFieldInHeader("user"));
