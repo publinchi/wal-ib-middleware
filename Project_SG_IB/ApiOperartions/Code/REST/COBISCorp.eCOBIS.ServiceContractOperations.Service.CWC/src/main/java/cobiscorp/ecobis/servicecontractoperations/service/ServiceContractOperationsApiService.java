@@ -384,6 +384,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizePurchase.getRetrievalReferenceNumber());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchase.getAcquirerCountryCode());
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizePurchase.getTokens62().getAffiliationNumber()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizePurchase.getTokens62().getStoreNumber()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchase.getTokens62().getPosId());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchase.getTokens62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchase.getTokens62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchase.getTokens62().getPinpad());
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizePurchase.getTransactionIndicators().isCardPresent()));
 			procedureRequestAS.addInputParam("@i_card_holder_present", ICTSTypes.SQLBIT,
@@ -558,6 +570,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson3 = new Gson();
 			String jsonHead = gson3.toJson(header);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -728,6 +742,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizePurchaseDock.getValues().getSource_currency_code());
 			procedureRequestAS.addInputParam("@i_val_source_value", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchaseDock.getValues().getSource_value());
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTokens_62().getAffiliation_number()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizePurchaseDock.getTokens_62().getStore_number()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTokens_62().getPos_id());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTokens_62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTokens_62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getTokens_62().getPinpad());
 
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
@@ -798,6 +824,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizePurchaseDock);
+			
+			Header_dock header_dock = new Header_dock();
+
+			header_dock.setAccept("application/json");
+			header_dock.setLegacy_id(legacyid);
+			header_dock.setClient_id(clientid);
+			header_dock.setUuid(uuid);
+			header_dock.setX_apigw_api_id(xapigwapiid);
+			header_dock.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header_dock);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -861,10 +901,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawal.getRetrievalReferenceNumber());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawal.getAcquirerCountryCode());
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeWithdrawal.getStoreNumber()));
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeWithdrawal.getAffiliationNumber()));
+					String.valueOf(inRequestAuthorizeWithdrawal.getTokens62().getAffiliationNumber()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeWithdrawal.getTokens62().getStoreNumber()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawal.getTokens62().getPosId());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawal.getTokens62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawal.getTokens62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawal.getTokens62().getPinpad());
 
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawal);
@@ -1031,6 +1079,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson3 = new Gson();
 			String jsonHead = gson3.toJson(header);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -1135,6 +1185,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAcquirer_country_code());
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getPos_id());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());
 			procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
 			procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
@@ -1249,6 +1311,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeWithdrawalDock);
+			
+			Header_dock header_dock = new Header_dock();
+
+			header_dock.setAccept("application/json");
+			header_dock.setLegacy_id(legacyid);
+			header_dock.setClient_id(clientid);
+			header_dock.setUuid(uuid);
+			header_dock.setX_apigw_api_id(xapigwapiid);
+			header_dock.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header_dock);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -1311,10 +1387,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDeposit.getRetrievalReferenceNumber());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDeposit.getAcquirerCountryCode());
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDeposit.getStoreNumber()));
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDeposit.getAffiliationNumber()));
+					String.valueOf(inRequestAuthorizeDeposit.getTokens62().getAffiliationNumber()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDeposit.getTokens62().getStoreNumber()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTokens62().getPosId());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTokens62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTokens62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDeposit.getTokens62().getPinpad());
 
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeDeposit);
@@ -1480,6 +1564,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson3 = new Gson();
 			String jsonHead = gson3.toJson(header);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -1584,6 +1670,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAcquirer_country_code());
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getStore_number()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getPos_id());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getPinpad());
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()));
 			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT,
@@ -1695,6 +1793,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeDepositDock);
+			
+			Header_dock header_dock = new Header_dock();
+
+			header_dock.setAccept("application/json");
+			header_dock.setLegacy_id(legacyid);
+			header_dock.setClient_id(clientid);
+			header_dock.setUuid(uuid);
+			header_dock.setX_apigw_api_id(xapigwapiid);
+			header_dock.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header_dock);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -1755,10 +1867,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversal.getRetrievalReferenceNumber());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversal.getAcquirerCountryCode());
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeReversal.getStoreNumber()));
 			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeReversal.getAffiliationNumber()));
+					String.valueOf(inRequestAuthorizeReversal.getTokens62().getAffiliationNumber()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeReversal.getTokens62().getStoreNumber()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTokens62().getPosId());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTokens62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTokens62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversal.getTokens62().getPinpad());
 			procedureRequestAS.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversal.getEstablishment());
 			procedureRequestAS.addInputParam("@i_advise_reason", ICTSTypes.SQLVARCHAR,
@@ -1947,6 +2067,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson3 = new Gson();
 			String jsonHead = gson3.toJson(header);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
@@ -5071,7 +5193,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			throw new CTSRestException("404", null);
 		}
 
-		String trn = "Transfer to third party account";
+		String trn = "Transfer to Third Party Account";
 
 		Gson gson = new Gson();
 		String jsonReq = gson.toJson(inRequestTransferThirdPartyAccount);
@@ -6717,6 +6839,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversalDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAcquirer_country_code());
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeReversalDock.getTokens_62().getAffiliation_number()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeReversalDock.getTokens_62().getStore_number()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTokens_62().getPos_id());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTokens_62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTokens_62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTokens_62().getPinpad());
 			procedureRequestAS.addInputParam("@i_preauthorization_type", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getPreauthorization().getType());
 			procedureRequestAS.addInputParam("@i_preauthorization_initial_transaction_uuid", ICTSTypes.SQLVARCHAR,
@@ -6863,6 +6997,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			Gson gson2 = new Gson();
 			String jsonRes = gson2.toJson(outSingleResponseAuthorizeReversalDock);
+			
+			Header_dock header_dock = new Header_dock();
+
+			header_dock.setAccept("application/json");
+			header_dock.setLegacy_id(legacyid);
+			header_dock.setClient_id(clientid);
+			header_dock.setUuid(uuid);
+			header_dock.setX_apigw_api_id(xapigwapiid);
+			header_dock.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header_dock);
+			
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 

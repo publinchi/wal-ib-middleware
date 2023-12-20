@@ -56,6 +56,7 @@ public class RequestAuthorizeWithdrawalDock implements Serializable {
   private String brand_response_code;
   private String pos_postal_code;
   private String acquirer_country_code;
+  private Tokens_62 tokens_62;
   private WithdrawalDock_token_data token_data;
   private WithdrawalDock_transaction_indicators transaction_indicators;
   public String getAccount_id(){
@@ -243,6 +244,18 @@ public class RequestAuthorizeWithdrawalDock implements Serializable {
   }
   public void setAcquirer_country_code(String acquirer_country_code ){
     this.acquirer_country_code=acquirer_country_code;
+  }
+  public Tokens_62 tokens_62Instance(){
+	if(this.tokens_62==null){
+	this.tokens_62=new Tokens_62();
+	}
+	return this.tokens_62;
+  }
+  public Tokens_62 getTokens_62(){
+    return this.tokens_62;
+  }
+  public void setTokens_62(Tokens_62 tokens_62 ){
+    this.tokens_62=tokens_62;
   }
   public WithdrawalDock_token_data token_dataInstance(){
 	if(this.token_data==null){

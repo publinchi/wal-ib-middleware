@@ -60,6 +60,7 @@ public class RequestAuthorizeReversalDock implements Serializable {
   private String pos_postal_code;
   private String acquirer_country_code;
   private Reversal_preauthorization preauthorization;
+  private Tokens_62 tokens_62;
   private Reversal_token_data token_data;
   private Reversal_funds_transfer funds_transfer;
   private Reversal_transaction_indicators transaction_indicators;
@@ -279,6 +280,18 @@ public class RequestAuthorizeReversalDock implements Serializable {
   }
   public void setPreauthorization(Reversal_preauthorization preauthorization ){
     this.preauthorization=preauthorization;
+  }
+  public Tokens_62 tokens_62Instance(){
+	if(this.tokens_62==null){
+	this.tokens_62=new Tokens_62();
+	}
+	return this.tokens_62;
+  }
+  public Tokens_62 getTokens_62(){
+    return this.tokens_62;
+  }
+  public void setTokens_62(Tokens_62 tokens_62 ){
+    this.tokens_62=tokens_62;
   }
   public Reversal_token_data token_dataInstance(){
 	if(this.token_data==null){

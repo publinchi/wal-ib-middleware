@@ -23,8 +23,6 @@
     <parameter name="@i_terminal_code" dataType="varchar" direction="in" />
     <parameter name="@i_retrieval_reference_number" dataType="varchar" direction="in" />
     <parameter name="@i_acquirer_country_code" dataType="varchar" direction="in" />
-    <parameter name="@i_store_number" dataType="decimal" direction="in" />
-    <parameter name="@i_affiliation_number" dataType="decimal" direction="in" />
     <parameter name="@i_establishment" dataType="varchar" direction="in" />
     <parameter name="@i_advise_reason" dataType="varchar" direction="in" />
     <parameter name="@i_advise_reason_code" dataType="varchar" direction="in" />
@@ -40,6 +38,12 @@
     <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
     <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
     <parameter name="@x_channel" dataType="varchar" direction="in" />
+    <parameter name="@i_affiliation_number" dataType="decimal" direction="in" />
+    <parameter name="@i_store_number" dataType="decimal" direction="in" />
+    <parameter name="@i_pos_id" dataType="varchar" direction="in" />
+    <parameter name="@i_cashier" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction" dataType="varchar" direction="in" />
+    <parameter name="@i_pinpad" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
