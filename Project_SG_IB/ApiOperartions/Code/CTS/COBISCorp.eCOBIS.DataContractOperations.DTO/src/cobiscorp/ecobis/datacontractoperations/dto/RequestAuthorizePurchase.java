@@ -46,6 +46,7 @@ public class RequestAuthorizePurchase implements Serializable {
   private String retrievalReferenceNumber;
   private String acquirerCountryCode;
   private TransactionIndicators transactionIndicators;
+  private Tokens62 tokens62;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -177,5 +178,17 @@ public class RequestAuthorizePurchase implements Serializable {
   }
   public void setTransactionIndicators(TransactionIndicators transactionIndicators ){
     this.transactionIndicators=transactionIndicators;
+  }
+  public Tokens62 tokens62Instance(){
+	if(this.tokens62==null){
+	this.tokens62=new Tokens62();
+	}
+	return this.tokens62;
+  }
+  public Tokens62 getTokens62(){
+    return this.tokens62;
+  }
+  public void setTokens62(Tokens62 tokens62 ){
+    this.tokens62=tokens62;
   }
 }

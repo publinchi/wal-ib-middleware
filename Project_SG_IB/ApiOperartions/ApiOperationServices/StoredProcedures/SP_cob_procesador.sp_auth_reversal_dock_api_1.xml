@@ -90,6 +90,12 @@
     <parameter name="@i_client-id" dataType="varchar" direction="in" />
     <parameter name="@i_uuid" dataType="varchar" direction="in" />
     <parameter name="@i_x-apigw-api-id" dataType="varchar" direction="in" />
+    <parameter name="@i_affiliation_number" dataType="decimal" direction="in" />
+    <parameter name="@i_store_number" dataType="decimal" direction="in" />
+    <parameter name="@i_pos_id" dataType="varchar" direction="in" />
+    <parameter name="@i_cashier" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction" dataType="varchar" direction="in" />
+    <parameter name="@i_pinpad" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
