@@ -44,8 +44,7 @@ public class RequestAuthorizeDeposit implements Serializable {
   private String terminalCode;
   private String retrievalReferenceNumber;
   private String acquirerCountryCode;
-  private java.math.BigDecimal storeNumber;
-  private java.math.BigDecimal affiliationNumber;
+  private Tokens62 tokens62;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -154,16 +153,16 @@ public class RequestAuthorizeDeposit implements Serializable {
   public void setAcquirerCountryCode(String acquirerCountryCode ){
     this.acquirerCountryCode=acquirerCountryCode;
   }
-  public java.math.BigDecimal getStoreNumber(){
-    return this.storeNumber;
+  public Tokens62 tokens62Instance(){
+	if(this.tokens62==null){
+	this.tokens62=new Tokens62();
+	}
+	return this.tokens62;
   }
-  public void setStoreNumber(java.math.BigDecimal storeNumber ){
-    this.storeNumber=storeNumber;
+  public Tokens62 getTokens62(){
+    return this.tokens62;
   }
-  public java.math.BigDecimal getAffiliationNumber(){
-    return this.affiliationNumber;
-  }
-  public void setAffiliationNumber(java.math.BigDecimal affiliationNumber ){
-    this.affiliationNumber=affiliationNumber;
+  public void setTokens62(Tokens62 tokens62 ){
+    this.tokens62=tokens62;
   }
 }

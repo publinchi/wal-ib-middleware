@@ -118,6 +118,10 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		String date = aRequest.readValueParam("@i_date");
 		String time = aRequest.readValueParam("@i_time");
 		String originGtm = aRequest.readValueParam("@i_origin_transmission_date_time_gtm");
+		String posId = aRequest.readValueParam("@i_pos_id");
+		String cashier = aRequest.readValueParam("@i_cashier");
+		String transaction = aRequest.readValueParam("@i_transaction");
+		String pinpad = aRequest.readValueParam("@i_pinpad");
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -154,6 +158,22 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		if (originGtm != null && !originGtm.isEmpty() && !isGtmDateTime(originGtm)) {
 			originGtm = "I";
 		}
+		
+		if (posId == null || posId.trim().isEmpty()) {
+			posId = "E";
+		}
+		
+		if (cashier == null || cashier.trim().isEmpty()) {
+			cashier = "E";
+		}
+		
+		if (transaction == null || transaction.trim().isEmpty()) {
+			transaction = "E";
+		}
+		
+		if (pinpad == null || pinpad.trim().isEmpty()) {
+			pinpad = "E";
+		}
 
 		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
@@ -184,8 +204,12 @@ public class AuthorizeReversalOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_terminalCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_retrievalReferenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_retrieval_reference_number"));
 		request.addInputParam("@i_acquirerCountryCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
-		request.addInputParam("@i_storeNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
 		request.addInputParam("@i_affiliationNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		request.addInputParam("@i_storeNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
+		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, posId);
+		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
+		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
 		request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
 		request.addInputParam("@i_adviceReason", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_advise_reason"));
 		request.addInputParam("@i_adviceReasonCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_advise_reason_code"));
