@@ -39,7 +39,7 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   private String terminal_date;
   private String terminal_time;
   private String mti;
-  private AuthorizePurchaseDock_processing processing;
+  private PurchaseDock_processing processing;
   private String account_type_indicator;
   private String nsu;
   private String authorization_code;
@@ -48,20 +48,21 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   private String transaction_origin;
   private String installment_type;
   private Integer installments;
-  private AuthorizePurchaseDock_card_entry card_entry;
+  private PurchaseDock_card_entry card_entry;
   private String merchant_category_code;
-  private AuthorizePurchaseDock_values values;
+  private PurchaseDock_values values;
   private String establishment;
-  private AuthorizePurchaseDock_preauthorization preauthorization;
+  private PurchaseDock_preauthorization preauthorization;
   private String terminal_code;
   private String establishment_code;
   private String retrieval_reference_number;
   private String brand_response_code;
   private String pos_postal_code;
   private String acquirer_country_code;
-  private AuthorizePurchaseDock_token_data token_data;
-  private AuthorizePurchaseDock_funds_transfer funds_transfer;
-  private AuthorizePurchaseDock_transaction_indicators transaction_indicators;
+  private Tokens_62 tokens_62;
+  private PurchaseDock_token_data token_data;
+  private PurchaseDock_funds_transfer funds_transfer;
+  private PurchaseDock_transaction_indicators transaction_indicators;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -128,16 +129,16 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   public void setMti(String mti ){
     this.mti=mti;
   }
-  public AuthorizePurchaseDock_processing processingInstance(){
+  public PurchaseDock_processing processingInstance(){
 	if(this.processing==null){
-	this.processing=new AuthorizePurchaseDock_processing();
+	this.processing=new PurchaseDock_processing();
 	}
 	return this.processing;
   }
-  public AuthorizePurchaseDock_processing getProcessing(){
+  public PurchaseDock_processing getProcessing(){
     return this.processing;
   }
-  public void setProcessing(AuthorizePurchaseDock_processing processing ){
+  public void setProcessing(PurchaseDock_processing processing ){
     this.processing=processing;
   }
   public String getAccount_type_indicator(){
@@ -188,16 +189,16 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   public void setInstallments(Integer installments ){
     this.installments=installments;
   }
-  public AuthorizePurchaseDock_card_entry card_entryInstance(){
+  public PurchaseDock_card_entry card_entryInstance(){
 	if(this.card_entry==null){
-	this.card_entry=new AuthorizePurchaseDock_card_entry();
+	this.card_entry=new PurchaseDock_card_entry();
 	}
 	return this.card_entry;
   }
-  public AuthorizePurchaseDock_card_entry getCard_entry(){
+  public PurchaseDock_card_entry getCard_entry(){
     return this.card_entry;
   }
-  public void setCard_entry(AuthorizePurchaseDock_card_entry card_entry ){
+  public void setCard_entry(PurchaseDock_card_entry card_entry ){
     this.card_entry=card_entry;
   }
   public String getMerchant_category_code(){
@@ -206,16 +207,16 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   public void setMerchant_category_code(String merchant_category_code ){
     this.merchant_category_code=merchant_category_code;
   }
-  public AuthorizePurchaseDock_values valuesInstance(){
+  public PurchaseDock_values valuesInstance(){
 	if(this.values==null){
-	this.values=new AuthorizePurchaseDock_values();
+	this.values=new PurchaseDock_values();
 	}
 	return this.values;
   }
-  public AuthorizePurchaseDock_values getValues(){
+  public PurchaseDock_values getValues(){
     return this.values;
   }
-  public void setValues(AuthorizePurchaseDock_values values ){
+  public void setValues(PurchaseDock_values values ){
     this.values=values;
   }
   public String getEstablishment(){
@@ -224,16 +225,16 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   public void setEstablishment(String establishment ){
     this.establishment=establishment;
   }
-  public AuthorizePurchaseDock_preauthorization preauthorizationInstance(){
+  public PurchaseDock_preauthorization preauthorizationInstance(){
 	if(this.preauthorization==null){
-	this.preauthorization=new AuthorizePurchaseDock_preauthorization();
+	this.preauthorization=new PurchaseDock_preauthorization();
 	}
 	return this.preauthorization;
   }
-  public AuthorizePurchaseDock_preauthorization getPreauthorization(){
+  public PurchaseDock_preauthorization getPreauthorization(){
     return this.preauthorization;
   }
-  public void setPreauthorization(AuthorizePurchaseDock_preauthorization preauthorization ){
+  public void setPreauthorization(PurchaseDock_preauthorization preauthorization ){
     this.preauthorization=preauthorization;
   }
   public String getTerminal_code(){
@@ -272,40 +273,52 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   public void setAcquirer_country_code(String acquirer_country_code ){
     this.acquirer_country_code=acquirer_country_code;
   }
-  public AuthorizePurchaseDock_token_data token_dataInstance(){
+  public Tokens_62 tokens_62Instance(){
+	if(this.tokens_62==null){
+	this.tokens_62=new Tokens_62();
+	}
+	return this.tokens_62;
+  }
+  public Tokens_62 getTokens_62(){
+    return this.tokens_62;
+  }
+  public void setTokens_62(Tokens_62 tokens_62 ){
+    this.tokens_62=tokens_62;
+  }
+  public PurchaseDock_token_data token_dataInstance(){
 	if(this.token_data==null){
-	this.token_data=new AuthorizePurchaseDock_token_data();
+	this.token_data=new PurchaseDock_token_data();
 	}
 	return this.token_data;
   }
-  public AuthorizePurchaseDock_token_data getToken_data(){
+  public PurchaseDock_token_data getToken_data(){
     return this.token_data;
   }
-  public void setToken_data(AuthorizePurchaseDock_token_data token_data ){
+  public void setToken_data(PurchaseDock_token_data token_data ){
     this.token_data=token_data;
   }
-  public AuthorizePurchaseDock_funds_transfer funds_transferInstance(){
+  public PurchaseDock_funds_transfer funds_transferInstance(){
 	if(this.funds_transfer==null){
-	this.funds_transfer=new AuthorizePurchaseDock_funds_transfer();
+	this.funds_transfer=new PurchaseDock_funds_transfer();
 	}
 	return this.funds_transfer;
   }
-  public AuthorizePurchaseDock_funds_transfer getFunds_transfer(){
+  public PurchaseDock_funds_transfer getFunds_transfer(){
     return this.funds_transfer;
   }
-  public void setFunds_transfer(AuthorizePurchaseDock_funds_transfer funds_transfer ){
+  public void setFunds_transfer(PurchaseDock_funds_transfer funds_transfer ){
     this.funds_transfer=funds_transfer;
   }
-  public AuthorizePurchaseDock_transaction_indicators transaction_indicatorsInstance(){
+  public PurchaseDock_transaction_indicators transaction_indicatorsInstance(){
 	if(this.transaction_indicators==null){
-	this.transaction_indicators=new AuthorizePurchaseDock_transaction_indicators();
+	this.transaction_indicators=new PurchaseDock_transaction_indicators();
 	}
 	return this.transaction_indicators;
   }
-  public AuthorizePurchaseDock_transaction_indicators getTransaction_indicators(){
+  public PurchaseDock_transaction_indicators getTransaction_indicators(){
     return this.transaction_indicators;
   }
-  public void setTransaction_indicators(AuthorizePurchaseDock_transaction_indicators transaction_indicators ){
+  public void setTransaction_indicators(PurchaseDock_transaction_indicators transaction_indicators ){
     this.transaction_indicators=transaction_indicators;
   }
 }
