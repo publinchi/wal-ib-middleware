@@ -316,6 +316,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			} else {
 				
 				executionStatus = "ERROR";
+				updateLimitStatus(aBagSPJavaOrchestration);
 				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
@@ -328,6 +329,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			executionStatus = "ERROR";
 			referenceCode = null;
 			
+			updateLimitStatus(aBagSPJavaOrchestration);
 			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 			if (codeReturn == 250046)
@@ -490,6 +492,35 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 	}
 
+	private void updateLimitStatus(Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateLimitStatus");
+		}
+
+		request.setSpName("cob_bvirtual..sp_update_bv_acumulado");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq_limite", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq_limite_out"));
+		request.addInputParam("@i_seq_limite_2", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq_limite_in"));
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
+		}
+	}
 
 	private IProcedureResponse transferThirdAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
@@ -720,6 +751,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod_alias", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_nom_beneficiary", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_seq_limite_out", ICTSTypes.SQLVARCHAR, "0");
+		request.addOutputParam("@o_seq_limite_in", ICTSTypes.SQLVARCHAR, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -740,6 +773,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		aBagSPJavaOrchestration.put("o_ente_bv", wProductsQueryResp.readValueParam("@o_ente_bv"));
 		aBagSPJavaOrchestration.put("o_login_des", wProductsQueryResp.readValueParam("@o_login_des"));
 		aBagSPJavaOrchestration.put("o_ente_bv_des", wProductsQueryResp.readValueParam("@o_ente_bv_des"));
+		aBagSPJavaOrchestration.put("o_seq_limite_out", wProductsQueryResp.readValueParam("@o_seq_limite_out"));
+		aBagSPJavaOrchestration.put("o_seq_limite_in", wProductsQueryResp.readValueParam("@o_seq_limite_in"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking getDataAccountReq DCO : " + wProductsQueryResp.getProcedureResponseAsString());
