@@ -403,5 +403,12 @@ public interface IServiceContractOperationsApiService {
 	// Return DTO
 	public ResponseAuthorizeReversalDock authorizeReversalDock(String legacyid, String clientid, String uuid,
 			String xapigwapiid, RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) throws CTSRestException;
+	
+	 /**
+     * Delete Contact
+     */
+   
+	//Have DTO
+	public ResponseDeleteContact deleteContact(RequestDeleteContact inRequestDeleteContact  )throws CTSRestException;
 
 }

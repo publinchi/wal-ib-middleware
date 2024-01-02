@@ -2471,5 +2471,43 @@ public class ServiceContractOperationsApiRest {
 			return Response.ok(outSingleResponseAuthorizeReversalDock).build();
 
 		}
+        /**
+         * Delete Contact
+         */
+     @POST
+     @Path("/apiOperations/accounts/deleteContact")
+     @Consumes({"application/json"})
+     @Produces({"application/json"})
+      public Response  deleteContact(RequestDeleteContact inRequestDeleteContact ){
+	  LOGGER.logDebug("Start service execution REST: deleteContact");
+     ResponseDeleteContact outResponseDeleteContact  = new ResponseDeleteContact();
+         
+     if(!validateMandatory(new Data("accountNumber", inRequestDeleteContact.getAccountNumber()), new Data("externalCustomerId", inRequestDeleteContact.getExternalCustomerId()))) {
+       LOGGER.logDebug("400 is returned - Required fields are missing");
+       return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+     }
+	    
+     try {
+     outResponseDeleteContact=iServiceContractOperationsApiService.deleteContact( inRequestDeleteContact );
+     } catch (CTSRestException e) {
+     LOGGER.logError("CTSRestException",e);
+     if ("404".equals(e.getMessage())) {
+     LOGGER.logDebug("404 is returned - No data found");
+     return Response.status(404).entity("No data found").build();
+     }
+
+     LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+     return Response.status(409).entity(e.getMessageBlockList()).build();
+     } catch (Exception e){
+     LOGGER.logDebug("500 is returned - Code exception");
+     LOGGER.logError("Exception",e);
+     return Response.status(500).entity(e.getMessage()).build();
+     }
+     
+         LOGGER.logDebug("Ends service execution REST: deleteContact");
+         return Response.ok(outResponseDeleteContact).build();
+       
+     }
+   
 
 	}
