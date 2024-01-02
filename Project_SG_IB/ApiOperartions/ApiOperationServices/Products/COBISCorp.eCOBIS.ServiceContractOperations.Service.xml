@@ -120,20 +120,25 @@
       <collection type="Map" length="1" id="28" name="mappingProperties">
         <entry>
           <key type="String" value="path" />
-          <value type="String" value="Waltmart/ServiceContractOperations" />
+          <value type="String" value="Walmart/ServiceContractOperations" />
         </entry>
       </collection>
     </class>
   </collection>
-  <collection type="List" length="0" id="29" name="properties">
+  <collection type="List" length="1" id="29" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="30" index="0">
+      <field type="String" name="name" value="UseNamingConvention" />
+      <field type="String" name="value" value="false" />
+      <field type="char" name="type" value="\u0000" />
+    </class>
   </collection>
   <field type="String" name="documentation" value="Services" />
   <field type="boolean" name="autoSelectDTO" value="false" />
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="1" id="30" name="references">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="31" index="0">
+  <collection type="List" length="1" id="31" name="references">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="32" index="0">
       <field type="String" name="name" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="displayName" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="documentationLanguage" value="Español" />
@@ -141,23 +146,22 @@
       <field type="String" name="version" value="1.0.0.0" />
     </class>
   </collection>
-  <collection type="List" length="0" id="32" name="externalReferences">
+  <collection type="List" length="0" id="33" name="externalReferences">
   </collection>
-  <collection type="List" length="3" id="33" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="34" index="0">
+  <collection type="List" length="3" id="34" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="35" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobis" />
       <field type="String" name="keyPassword" value="cobisadminadmin" />
       <field type="String" name="keyCertificatePassword" value="cobisadmin" />
       <field type="String" name="keyFileName" value="cobis.keystore" />
       <field type="boolean" name="relativeFolder" value="true" />
-      <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="ServiceCTS302" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_251" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJavaMavenCommand" id="35" index="1">
-      <collection type="List" length="2" id="36" name="mavenTaskList">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJavaMavenCommand" id="36" index="1">
+      <collection type="List" length="2" id="37" name="mavenTaskList">
         <field type="String" index="0" value="clean" />
         <field type="String" index="1" value="install" />
       </collection>
@@ -169,10 +173,10 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="CWCJavaService" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_251" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJavaMavenCommand" id="37" index="2">
-      <collection type="List" length="2" id="38" name="mavenTaskList">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJavaMavenCommand" id="38" index="2">
+      <collection type="List" length="2" id="39" name="mavenTaskList">
         <field type="String" index="0" value="clean" />
         <field type="String" index="1" value="install" />
       </collection>
@@ -184,10 +188,10 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="CWCjavaRestService" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_251" />
     </class>
   </collection>
-  <collection type="List" length="0" id="39" name="templateCommands">
+  <collection type="List" length="0" id="40" name="templateCommands">
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.ServiceContractOperations.Service" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.ServiceContractOperations.Service" />
