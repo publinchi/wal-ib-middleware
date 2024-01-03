@@ -156,6 +156,7 @@
       <field type="String" name="keyCertificatePassword" value="cobisadmin" />
       <field type="String" name="keyFileName" value="cobis.keystore" />
       <field type="boolean" name="relativeFolder" value="true" />
+      <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="ServiceCTS302" />
       <field type="String" name="jDKVersion" value="1.8" />
       <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_251" />

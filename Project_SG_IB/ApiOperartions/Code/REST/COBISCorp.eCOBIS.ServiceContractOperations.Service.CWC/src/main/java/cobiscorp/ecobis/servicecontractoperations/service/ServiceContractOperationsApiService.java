@@ -7031,13 +7031,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     //create procedure
     ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_tercero_bv_api");
     
-      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
+    procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
     procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");
     procedureRequestAS.addInputParam("@i_cuenta",ICTSTypes.SQLVARCHAR,inRequestDeleteContact.getAccountNumber());
     procedureRequestAS.addInputParam("@i_cliente_mis",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getExternalCustomerId()));
-    
+
     //execute procedure
-    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),"SQLCANALES",procedureRequestAS);
+    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),null ,procedureRequestAS);
 
     List<MessageBlock> errors = ErrorUtil.getErrors(response);
     //throw error

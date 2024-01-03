@@ -183,7 +183,7 @@
   </collection>
   <collection type="Map" length="3" id="32" name="mappingProperties">
     <entry>
-      <key type="String" value="targetId" />
+      <key type="String" value="dbms" />
       <value type="String" value="SQLCANALES" />
     </entry>
     <entry>
