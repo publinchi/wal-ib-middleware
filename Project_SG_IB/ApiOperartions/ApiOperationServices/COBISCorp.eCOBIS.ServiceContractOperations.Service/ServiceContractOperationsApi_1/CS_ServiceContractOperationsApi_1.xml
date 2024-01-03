@@ -6,7 +6,7 @@
   <collection type="Map" length="1" id="2" name="mappingProperties">
     <entry>
       <key type="String" value="path" />
-      <value type="String" value="Waltmart/ServiceContractOperations" />
+      <value type="String" value="Walmart/ServiceContractOperations" />
     </entry>
   </collection>
 </class>
