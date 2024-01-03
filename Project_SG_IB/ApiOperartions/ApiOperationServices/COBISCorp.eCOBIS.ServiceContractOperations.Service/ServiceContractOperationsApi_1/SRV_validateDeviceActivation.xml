@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGService" id="1">
   <field type="String" name="name" value="validateDeviceActivation" />
-  <field type="String" name="iD" value="ServiceContractOperationsApi.ServiceContractOperationsApi.validateDeviceActivation_1" />
+  <field type="String" name="iD" value="ServiceContractOperationsApi.ServiceContractOperationsApi.validateDeviceActivation" />
   <collection type="Map" length="0" id="2" name="properties">
   </collection>
   <collection type="Map" length="2" id="3" name="documentation">
