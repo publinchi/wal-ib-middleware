@@ -7054,8 +7054,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_tercero_bv_api");
     
     procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
-    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");    
-    procedureRequestAS.addInputParam("@i_codigo",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getRegisterAccountId()));
+    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");
+    procedureRequestAS.addInputParam("@i_cuenta",ICTSTypes.SQLVARCHAR,inRequestDeleteContact.getAccountNumber());
+    procedureRequestAS.addInputParam("@i_cliente_mis",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getExternalCustomerId()));
 
     //execute procedure
     ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),null ,procedureRequestAS);
