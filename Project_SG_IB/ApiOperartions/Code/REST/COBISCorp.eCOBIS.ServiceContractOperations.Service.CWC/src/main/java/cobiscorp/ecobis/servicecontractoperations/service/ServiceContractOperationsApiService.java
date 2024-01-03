@@ -7018,5 +7018,100 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// returns data
 			return outSingleResponseAuthorizeReversalDock;
 		}
+		
+        /**
+        * Delete Contact
+        */
+       @Override
+			//Have DTO
+		public ResponseDeleteContact deleteContact(RequestDeleteContact inRequestDeleteContact  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: deleteContact");
+    ResponseDeleteContact outResponseDeleteContact  = new ResponseDeleteContact();
+        
+    //create procedure
+    ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_tercero_bv_api");
+    
+    procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
+    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");
+    procedureRequestAS.addInputParam("@i_cuenta",ICTSTypes.SQLVARCHAR,inRequestDeleteContact.getAccountNumber());
+    procedureRequestAS.addInputParam("@i_cliente_mis",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getExternalCustomerId()));
+
+    //execute procedure
+    ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),null ,procedureRequestAS);
+
+    List<MessageBlock> errors = ErrorUtil.getErrors(response);
+    //throw error
+    if(errors!= null && errors.size()> 0){
+    LOGGER.logDebug("Procedure execution returns error");
+    if ( LOGGER.isDebugEnabled() ) {
+    for (int i = 0; i < errors.size(); i++) {
+    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+    }
+    }
+    throw new CTSRestException("Procedure Response has errors", null, errors);
+    }
+    LOGGER.logDebug("Procedure ok");
+    //Init map returns
+    int mapTotal=0;
+    int mapBlank=0;
+    
+          mapTotal++;
+          if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+								//---------NO Array
+								ResponseDeleteContact returnResponseDeleteContact = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseDeleteContact>() { 
+                  @Override
+                  public ResponseDeleteContact mapRow(ResultSetMapper resultSetMapper, int index) {
+                  ResponseDeleteContact dto = new ResponseDeleteContact();
+                  
+                      //dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                        outResponseDeleteContact.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                  return dto;
+                  }
+                  },false);
+								
+             //     outResponseDeleteContact.set(returnResponseDeleteContact);
+                      // break;
+                    
+          }else {
+          mapBlank++;
+
+          }
+        
+          mapTotal++;
+          if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+								//---------NO Array
+								Response returnResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<Response>() { 
+                  @Override
+                  public Response mapRow(ResultSetMapper resultSetMapper, int index) {
+                  Response dto = new Response();
+                  
+                        dto.setCode(resultSetMapper.getInteger(1));
+                        dto.setMessage(resultSetMapper.getString(2));
+                        
+                  return dto;
+                  }
+                  },false);
+
+								
+                  outResponseDeleteContact.setResponse(returnResponse
+                		  );
+                      // break;
+                    
+          }else {
+          mapBlank++;
+
+          }
+        
+    //End map returns
+    if(mapBlank!=0&&mapBlank==mapTotal){
+    LOGGER.logDebug("No data found");
+    throw new CTSRestException("404",null);
+    }
+    
+      LOGGER.logDebug("Ends service execution: deleteContact");
+      //returns data
+      return outResponseDeleteContact;
+    }
+  
     
 }
