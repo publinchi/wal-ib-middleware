@@ -88,6 +88,12 @@
     <parameter name="@i_val_settlement_value" dataType="varchar" direction="in" />
     <parameter name="@i_val_source_currency_code" dataType="varchar" direction="in" />
     <parameter name="@i_val_source_value" dataType="varchar" direction="in" />
+    <parameter name="@i_affiliation_number" dataType="decimal" direction="in" />
+    <parameter name="@i_store_number" dataType="decimal" direction="in" />
+    <parameter name="@i_pos_id" dataType="varchar" direction="in" />
+    <parameter name="@i_cashier" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction" dataType="varchar" direction="in" />
+    <parameter name="@i_pinpad" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
