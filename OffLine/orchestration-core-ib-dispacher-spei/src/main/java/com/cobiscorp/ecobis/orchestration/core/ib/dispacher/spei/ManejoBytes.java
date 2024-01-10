@@ -1,8 +1,8 @@
-package com.cobiscorp.orchestrator.trf.spei.util;
+package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.spei;
 
 import com.cobiscorp.cobis.commons.domains.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
-import com.cobiscorp.orchestrator.trf.spei.dto.SpeiRequest;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.SpeiRequest;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;

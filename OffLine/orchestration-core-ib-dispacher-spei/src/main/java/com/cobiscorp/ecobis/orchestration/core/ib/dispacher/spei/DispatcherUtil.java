@@ -20,6 +20,7 @@ import javax.xml.bind.Unmarshaller;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.SpeiRequest;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 
 /**
@@ -78,23 +79,7 @@ public class DispatcherUtil {
 		  
 	  }
 	  
-	    public static Calendar getCalendarFromStringAndFormat(String aDate, SimpleDateFormat aFormat) {
-	        Calendar calendar = Calendar.getInstance();
-
-	        try{
-	            if(null != aDate && !"".equals(aDate)){
-	                calendar.setTime(aFormat.parse(aDate));
-	                return calendar;
-	            }
-	        }catch (Exception e){
-	            logger.logError("Error fecha: ",e);
-	        }
-
-
-	        return null;
-	    }
-	    
-	    
+    
 	    public static Calendar getCalendarFromStringAndFormat(String aDate, SimpleDateFormat aFormat) {
 	        Calendar calendar = Calendar.getInstance();
 
@@ -112,17 +97,11 @@ public class DispatcherUtil {
 	    }
 	  
 		public  String doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
-			// TODO Auto-generated method stub
-		
 			String signed="";
-			
-			
-			try {
-				
-				
-				
-				mensaje message=(mensaje)aBagSPJavaOrchestration.get("speiTransaction");
-				byte [] byteArray= ManejoBytes.ArmaTramaBytes(message.getOrdenpago());
+			try 
+			{		
+				SpeiRequest srequest=(SpeiRequest)aBagSPJavaOrchestration.get("speiTransaction");
+				byte [] byteArray= ManejoBytes.ArmaTramaBytes(srequest);
 				
 			    String privateKeyFileName = System.getProperty(COBIS_HOME) + "/CTS_MF/security/certificado";
 			    logger.logInfo("Pathx: " + privateKeyFileName);
