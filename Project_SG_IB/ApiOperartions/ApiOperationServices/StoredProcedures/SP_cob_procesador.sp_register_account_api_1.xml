@@ -42,5 +42,11 @@
       </columns>
       <queryText>SELECT "code"=w_error,"message"=w_message</queryText>
     </query>
+    <query>
+      <columns>
+        <column name="uniqueId" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>

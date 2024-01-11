@@ -52,8 +52,10 @@ import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteContact;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteContact;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
@@ -2482,7 +2484,7 @@ public class ServiceContractOperationsApiRest {
 	  LOGGER.logDebug("Start service execution REST: deleteContact");
      ResponseDeleteContact outResponseDeleteContact  = new ResponseDeleteContact();
          
-     if(!validateMandatory(new Data("accountNumber", inRequestDeleteContact.getAccountNumber()), new Data("externalCustomerId", inRequestDeleteContact.getExternalCustomerId()))) {
+     if(!validateMandatory(new Data("uniqueId", inRequestDeleteContact.getUniqueId()))) {
        LOGGER.logDebug("400 is returned - Required fields are missing");
        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
      }
