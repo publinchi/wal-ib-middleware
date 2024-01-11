@@ -4634,6 +4634,28 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			mapBlank++;
 
 		}
+		
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2 && response.getResultSets().get(2).getData().getRows().size() > 0) {			
+			// ---------NO Array
+			ResponseRegisterAccountSpei returnResponseRegisterAccountSpei = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterAccountSpei>() {
+						@Override
+						public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
+
+							dto.setUniqueId(resultSetMapper.getInteger(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterAccountSpei.setUniqueId(returnResponseRegisterAccountSpei.getUniqueId());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
 
 		// End map returns
 		if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -7032,9 +7054,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_tercero_bv_api");
     
     procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
-    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");
-    procedureRequestAS.addInputParam("@i_cuenta",ICTSTypes.SQLVARCHAR,inRequestDeleteContact.getAccountNumber());
-    procedureRequestAS.addInputParam("@i_cliente_mis",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getExternalCustomerId()));
+    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");    
+    procedureRequestAS.addInputParam("@i_codigo",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getUniqueId()));
 
     //execute procedure
     ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),null ,procedureRequestAS);
