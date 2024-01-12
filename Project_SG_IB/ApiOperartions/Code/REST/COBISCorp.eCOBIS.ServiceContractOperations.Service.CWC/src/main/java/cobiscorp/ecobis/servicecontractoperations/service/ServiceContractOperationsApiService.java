@@ -4301,11 +4301,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		 */
 		@Override
 		// Return List
-		public List<ResponseUpdateProfile> updateProfile(String xRequestId, String xEndUserRequestDateTime,
+		public ResponseUpdateProfile updateProfile(String xRequestId, String xEndUserRequestDateTime,
 				String xEndUserIp, String xChannel, RequestUpdateProfile inRequestUpdateProfile)
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: updateProfile");
-			List<ResponseUpdateProfile> outSingleResponseUpdateProfile = new ArrayList<>();
+			ResponseUpdateProfile outSingleResponseUpdateProfile = new ResponseUpdateProfile();
 
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_updateProfile");
@@ -4346,8 +4346,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 				// ----------------Assume Array return
-				List<ResponseUpdateProfile> returnResponseUpdateProfile = MapperResultUtil
-						.mapToList(response.getResultSets().get(0), new RowMapper<ResponseUpdateProfile>() {
+				ResponseUpdateProfile returnResponseUpdateProfile = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUpdateProfile>() {
 							@Override
 							public ResponseUpdateProfile mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseUpdateProfile dto = new ResponseUpdateProfile();
