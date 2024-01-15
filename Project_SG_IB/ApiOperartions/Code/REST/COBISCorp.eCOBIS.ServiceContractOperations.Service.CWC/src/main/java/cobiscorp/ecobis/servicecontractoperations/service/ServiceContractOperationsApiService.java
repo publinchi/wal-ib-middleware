@@ -4644,12 +4644,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 						public ResponseRegisterAccountSpei mapRow(ResultSetMapper resultSetMapper, int index) {
 							ResponseRegisterAccountSpei dto = new ResponseRegisterAccountSpei();
 
-							dto.setUniqueId(resultSetMapper.getInteger(1));
+							dto.setRegisterAccountId(resultSetMapper.getInteger(1));
 							return dto;
 						}
 					}, false);
 
-			outResponseRegisterAccountSpei.setUniqueId(returnResponseRegisterAccountSpei.getUniqueId());
+			outResponseRegisterAccountSpei.setRegisterAccountId(returnResponseRegisterAccountSpei.getRegisterAccountId());
 			// break;
 
 		} else {
@@ -7055,7 +7055,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     
     procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
     procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");    
-    procedureRequestAS.addInputParam("@i_codigo",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getUniqueId()));
+    procedureRequestAS.addInputParam("@i_codigo",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getRegisterAccountId()));
 
     //execute procedure
     ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),null ,procedureRequestAS);
