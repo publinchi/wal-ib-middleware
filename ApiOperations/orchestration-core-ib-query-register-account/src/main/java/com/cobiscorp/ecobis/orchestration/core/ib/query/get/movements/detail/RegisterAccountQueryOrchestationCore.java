@@ -110,11 +110,19 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		
 		IResultSetHeader metaData3 = new ResultSetHeader();
 		IResultSetData data3 = new ResultSetData();		
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("uniqueId", ICTSTypes.SQLINT4, 10));
 		String registerAccountId = anOriginalProcedureRes.readValueParam("@o_siguiente_tercero");
 		
+		String uniqueId = anOriginalProcedureRes.readValueParam("@o_siguiente_tercero");
+
+
+
 		IResultSetRow row = new ResultSetRow();
+		row.addRowData(1,
+				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
 		row.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
 		row.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue()));
+
 		data.addRow(row);
 
 		IResultSetRow row2 = new ResultSetRow();
@@ -126,6 +134,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		
 		metaData3.addColumnMetaData(new ResultSetHeaderColumn("registerAccountId", ICTSTypes.SQLINT4, 10));
 		IResultSetRow row3 = new ResultSetRow();
+		row3.addRowData(1, new ResultSetRowColumnData(false, uniqueId));
 		row3.addRowData(1, new ResultSetRowColumnData(false, registerAccountId));
 		data3.addRow(row3);
 
@@ -223,6 +232,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
+			logger.logDebug("Unique Id es " +  wProductsQueryResp.readValueParam("@o_siguiente_tercero"));
 			logger.logDebug("Register Account Id es " +  wProductsQueryResp.readValueParam("@o_siguiente_tercero"));
 		}		
 
