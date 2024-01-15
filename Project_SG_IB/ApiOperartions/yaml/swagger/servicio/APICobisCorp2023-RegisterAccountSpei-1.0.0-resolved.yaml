@@ -138,7 +138,7 @@ components:
           example: true
         response:
           $ref: '#/components/schemas/Response'
-        uniqueId:
+        registerAccountId:
           maxLength: 8
           type: integer
           description: Account identifier

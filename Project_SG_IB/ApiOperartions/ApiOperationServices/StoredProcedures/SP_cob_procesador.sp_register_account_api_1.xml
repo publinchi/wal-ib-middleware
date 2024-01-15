@@ -44,7 +44,7 @@
     </query>
     <query>
       <columns>
-        <column name="uniqueId" />
+        <column name="registerAccountId" />
       </columns>
       <queryText></queryText>
     </query>

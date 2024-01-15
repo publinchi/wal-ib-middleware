@@ -96,7 +96,7 @@ components:
       - uniqueId
       type: object
       properties:
-        uniqueId:
+        registerAccountId:
           maxLength: 9
           minLength: 1
           type: integer
