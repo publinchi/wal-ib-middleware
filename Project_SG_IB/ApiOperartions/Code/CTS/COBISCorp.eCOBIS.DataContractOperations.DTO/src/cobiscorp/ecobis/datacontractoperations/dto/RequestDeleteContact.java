@@ -27,28 +27,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterAccountSpei implements Serializable {
-  private Boolean success;
-  private Response response;
+public class RequestDeleteContact implements Serializable {
   private Integer uniqueId;
-  public Boolean isSuccess(){
-    return this.success;
-  }
-  public void setSuccess(Boolean success ){
-    this.success=success;
-  }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
-  }
-  public Response getResponse(){
-    return this.response;
-  }
-  public void setResponse(Response response ){
-    this.response=response;
-  }
   public Integer getUniqueId(){
     return this.uniqueId;
   }
