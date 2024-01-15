@@ -171,7 +171,8 @@ public class ServiceContractOperationsApiRest {
 				new Data("amount", inCreditAccountRequest.getAmount()),
 				new Data("commission", inCreditAccountRequest.getCommission()),
 				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
-				new Data("creditConcept", inCreditAccountRequest.getCreditConcept()))) {
+				new Data("latitude", inCreditAccountRequest.getLatitude()),
+				new Data("longitude", inCreditAccountRequest.getLongitude()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -2152,7 +2153,9 @@ public class ServiceContractOperationsApiRest {
 				new Data("amount", inDebitAccountRequest.getAmount()),
 				new Data("commission", inDebitAccountRequest.getCommission()),
 				new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()),
-				new Data("debitConcept", inDebitAccountRequest.getDebitConcept()))) {
+				new Data("debitConcept", inDebitAccountRequest.getDebitConcept()),
+				new Data("latitude", inDebitAccountRequest.getLatitude()),
+				new Data("longitude", inDebitAccountRequest.getLongitude()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
