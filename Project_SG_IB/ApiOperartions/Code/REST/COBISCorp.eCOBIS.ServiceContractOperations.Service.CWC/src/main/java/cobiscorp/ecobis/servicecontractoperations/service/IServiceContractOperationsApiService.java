@@ -297,7 +297,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return list
-	public List<ResponseUpdateProfile> updateProfile(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
+	public ResponseUpdateProfile updateProfile(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestUpdateProfile inRequestUpdateProfile)
 			throws CTSRestException;
 
