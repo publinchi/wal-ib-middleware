@@ -1558,7 +1558,7 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			RequestUpdateProfile inRequestUpdateProfile) {
 		LOGGER.logDebug("Start service execution REST: updateProfile");
-		List<ResponseUpdateProfile> outSingleResponseUpdateProfile = new ArrayList<>();
+		ResponseUpdateProfile outSingleResponseUpdateProfile = new ResponseUpdateProfile();
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestUpdateProfile.getExternalCustomerId()),
 				new Data("email", inRequestUpdateProfile.getEmail()),
