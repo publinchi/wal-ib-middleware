@@ -1,12 +1,18 @@
 ---
 openapi: 3.0.0
 info:
-  title: Register Account Spei
-  description: Service to register beneficiaries for spei transfers..
+  title: Register Account  to Transfer
+  description: Service to register beneficiaries to Transfer.
   version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/APITesting2023/RegisterAccountSpei/1.0.0
+- url: https://virtserver.swaggerhub.com/APICobisCorp2023/RegisterAccountSpei/1.0.0
   description: SwaggerHub API Auto Mocking
+- url: https://servicesapi.devcobistopaz.com/CWCREST/services/resources/cobis/api/Walmart/ServiceContractOperations
+  description: Development Server
+- url: https://servicesapi.stgcobis.com/CWCREST/services/resources/cobis/api/Waltmart/ServiceContractOperations
+  description: Staging Server
+- url: https://servicesapi.preprodcobis.com/CWCREST/services/resources/cobis/api/Walmart/ServiceContractOperations
+  description: Pre-Production Server
 tags:
 - name: Register Account Spei
   description: Service to register beneficiaries for spei transfers.
@@ -17,6 +23,43 @@ paths:
       - Register Account Spei
       summary: Service to register beneficiaries for spei transfers.
       operationId: registerAccount
+      parameters:
+      - name: x-request-id
+        in: header
+        description: Request identifier (uuid)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 42dbbc77-73be-4996-bade-dd3989dfc50a
+      - name: x-end-user-request-date-time
+        in: header
+        description: Request date and time
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 2023-09-20 10:15:01.750
+      - name: x-end-user-ip
+        in: header
+        description: User request IP direction
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 192.228.17.57
+      - name: x-channel
+        in: header
+        description: API gateway channel identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "8"
       requestBody:
         content:
           application/json:
@@ -25,7 +68,11 @@ paths:
         required: true
       responses:
         "400":
-          description: The data sent is incorrect or corrupted
+          description: Description of errors regarding the execution of the service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
         "500":
           description: An error occurred on the server
         "401":
@@ -39,45 +86,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRegisterAccountSpei'
       security:
-      - bearerAuth: []
+      - OAuth2_Development: []
+      - OAuth2_Staging: []
+      - OAuth2_PreProd: []
 components:
   schemas:
     RequestRegisterAccountSpei:
+      required:
+      - accountNumber
+      - accountNumberDestination
+      - externalCustomerId
+      - mailAdress
+      - typeDestinationId
       properties:
-        accountNumber:
-          maxLength: 20
-          type: string
-          description: account number
-          example: "04000000027"
-        accountNumberDestination:
-          maxLength: 20
-          type: string
-          description: account number
-          example: "5568576731"
-        typeDestinationId:
-          maxLength: 2
-          type: integer
-          description: Type destination Id, please check catalog "bv_tipo_cta_trn_ter
-          example: 0
         externalCustomerId:
           maxLength: 12
           type: integer
           description: External Customer Id
-          example: 220
+          example: 3
+        accountNumber:
+          maxLength: 15
+          type: string
+          description: Account number
+          example: "03000000027"
+        accountNumberDestination:
+          maxLength: 20
+          type: string
+          description: Account number destination
+          example: "515480000035352017"
+        typeDestinationId:
+          maxLength: 3
+          type: integer
+          description: "Type destination Id,  (Use the \"getCatalog\" service with table \"bv_tipo_cta_trn_ter\")"
+          example: 40
+        bankId:
+          maxLength: 12
+          type: integer
+          description: "Bank ID, parameter that activates by default the registration for SPEI type accounts. Registered banks can be found in Table \"bv_ifis_pago_directo\""
+          example: 40012
+        productAlias:
+          maxLength: 32
+          type: string
+          description: Beneficiary. The parameter is required when entering the "bankId" parameter
+          example: Carlos Olmos
+      description: Parameters required to register third-party accounts and SPEI accounts
     ResponseRegisterAccountSpei:
       properties:
         success:
           type: boolean
           description: result process
           example: true
-        statusRegister:
-          maxLength: 20
-          type: string
-          description: Registration result
-          example: existing
-        message:
-          $ref: '#/components/schemas/Message'
-    Message:
+        response:
+          $ref: '#/components/schemas/Response'
+        registerAccountId:
+          maxLength: 8
+          type: integer
+          description: Account identifier
+          example: 21579265
+      description: Service response when executed
+    Response:
       type: object
       properties:
         code:
@@ -90,6 +157,457 @@ components:
           type: string
           description: Result Mesagge Code
           example: success
+    Error40121:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error40121_response'
+      description: accountNumberDestination must be a number
+    Error400099:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400099_response'
+      description: The entered customer code does not exist
+    Error400101:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400101_response'
+      description: The account number entered does not belong to the customer
+    Error400159:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400159_response'
+      description: The account is already registered
+    Error400160:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400160_response'
+      description: The source account does not exist
+    Error400161:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400161_response'
+      description: Destination account does not exist
+    Error400162:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400162_response'
+      description: Bank ID does not exist
+    Error400163:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400163_response'
+      description: The productAlias of the SPEI account must not be empty when bankId parameter is present
+    Error400164:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400164_response'
+      description: The target account type does not exist
+    Error400165:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400165_response'
+      description: The destination account cannot be the same as the source account
+    Error400166:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400166_response'
+      description: The destination account is required
+    Error400167:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400167_response'
+      description: The source account is required
+    Error400168:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400168_response'
+      description: "The destination account length, cell phone type (10) must be 10 characters"
+    Error400169:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400169_response'
+      description: "The length of the destination account, type Debit Card (3) must be 16 characters"
+    Error400170:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400170_response'
+      description: "The length of the destination account, type Interbank Clabe (40) must be 18 characters"
+    Error400171:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400171_response'
+      description: "The length of the destination account, type Savings account (4) must be 11 characters"
+    Error400175:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400175_response'
+      description: The customer is not affiliated in channels
+    Error400324:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: result process
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400324_response'
+      description: x-request-id header is required
+    Error400325:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: result process
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400325_response'
+      description: x-end-user-request-date-time header is required
+    Error400326:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: result process
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400326_response'
+      description: x-end-user-ip header is required
+    Error400327:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: result process
+          example: false
+        response:
+          $ref: '#/components/schemas/Error400327_response'
+      description: x-channel header is required
+    inline_response_400:
+      oneOf:
+      - $ref: '#/components/schemas/Error40121'
+      - $ref: '#/components/schemas/Error400099'
+      - $ref: '#/components/schemas/Error400101'
+      - $ref: '#/components/schemas/Error400159'
+      - $ref: '#/components/schemas/Error400160'
+      - $ref: '#/components/schemas/Error400161'
+      - $ref: '#/components/schemas/Error400162'
+      - $ref: '#/components/schemas/Error400163'
+      - $ref: '#/components/schemas/Error400164'
+      - $ref: '#/components/schemas/Error400165'
+      - $ref: '#/components/schemas/Error400166'
+      - $ref: '#/components/schemas/Error400167'
+      - $ref: '#/components/schemas/Error400168'
+      - $ref: '#/components/schemas/Error400169'
+      - $ref: '#/components/schemas/Error400170'
+      - $ref: '#/components/schemas/Error400171'
+      - $ref: '#/components/schemas/Error400175'
+      - $ref: '#/components/schemas/Error400324'
+      - $ref: '#/components/schemas/Error400325'
+      - $ref: '#/components/schemas/Error400326'
+      - $ref: '#/components/schemas/Error400327'
+    Error40121_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 40121
+        message:
+          type: string
+          description: message error
+          example: accountNumberDestination must be a number
+    Error400099_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400099
+        message:
+          type: string
+          description: message error
+          example: The entered customer code does not exist
+    Error400101_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400101
+        message:
+          type: string
+          description: message error
+          example: The account number entered does not belong to the customer
+    Error400159_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400159
+        message:
+          type: string
+          description: message error
+          example: The account is already registered
+    Error400160_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400160
+        message:
+          type: string
+          description: message error
+          example: The source account does not exist
+    Error400161_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400161
+        message:
+          type: string
+          description: message error
+          example: Destination account does not exist
+    Error400162_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400162
+        message:
+          type: string
+          description: message error
+          example: Bank ID does not exist
+    Error400163_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400163
+        message:
+          type: string
+          description: message error
+          example: The productAlias of the SPEI account must not be empty when bankId parameter is present
+    Error400164_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400164
+        message:
+          type: string
+          description: message error
+          example: The target account type does not exist
+    Error400165_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400165
+        message:
+          type: string
+          description: message error
+          example: The destination account cannot be the same as the source account
+    Error400166_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400166
+        message:
+          type: string
+          description: message error
+          example: The destination account is required
+    Error400167_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400167
+        message:
+          type: string
+          description: message error
+          example: The source account is required
+    Error400168_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400168
+        message:
+          type: string
+          description: message error
+          example: "The destination account length, cell phone type (10) must be 10 characters"
+    Error400169_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400169
+        message:
+          type: string
+          description: message error
+          example: "The length of the destination account, type Debit Card (3) must be 16 characters"
+    Error400170_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400170
+        message:
+          type: string
+          description: message error
+          example: "The length of the destination account, type Interbank Clabe (40) must be 18 characters"
+    Error400171_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400171
+        message:
+          type: string
+          description: message error
+          example: "The length of the destination account, type Savings account (4) must be 11 characters"
+    Error400175_response:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: code error
+          example: 400175
+        message:
+          type: string
+          description: message error
+          example: The customer is not affiliated in channels
+    Error400324_response:
+      type: object
+      properties:
+        code:
+          maxLength: 10
+          type: integer
+          description: Result Code
+          example: 400324
+        message:
+          maxLength: 500
+          type: string
+          example: x-request-id header is required
+    Error400325_response:
+      type: object
+      properties:
+        code:
+          maxLength: 10
+          type: integer
+          description: Result Code
+          example: 400325
+        message:
+          maxLength: 500
+          type: string
+          example: x-end-user-request-date header is required
+    Error400326_response:
+      type: object
+      properties:
+        code:
+          maxLength: 10
+          type: integer
+          description: Result Code
+          example: 400326
+        message:
+          maxLength: 500
+          type: string
+          example: x-end-user-ip header is required
+    Error400327_response:
+      type: object
+      properties:
+        code:
+          maxLength: 10
+          type: integer
+          description: Result Code
+          example: 400327
+        message:
+          maxLength: 500
+          type: string
+          example: x-channel header is required
   responses:
     Unauthorized:
       description: Unauthorized service
@@ -102,7 +620,27 @@ components:
     "403Forbidden":
       description: The request has been denied.
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    OAuth2_Staging:
+      type: oauth2
+      description: This API uses OAuth 2
+      flows:
+        clientCredentials:
+          tokenUrl: https://keycloak.stgcobis.com/realms/walmart/protocol/openid-connect/token
+          refreshUrl: https://keycloak.stgcobis.com/realms/walmart/protocol/openid-connect/token
+          scopes: {}
+    OAuth2_Development:
+      type: oauth2
+      description: This API uses OAuth 2
+      flows:
+        clientCredentials:
+          tokenUrl: https://keycloak.devcobistopaz.com/realms/walmart/protocol/openid-connect/token
+          refreshUrl: https://keycloak.devcobistopaz.com/realms/walmart/protocol/openid-connect/token
+          scopes: {}
+    OAuth2_PreProd:
+      type: oauth2
+      description: This API uses OAuth 2
+      flows:
+        clientCredentials:
+          tokenUrl: https://keycloak.preprodcobis.com/realms/walmart/protocol/openid-connect/token
+          refreshUrl: https://keycloak.preprodcobis.com/realms/walmart/protocol/openid-connect/token
+          scopes: {}
