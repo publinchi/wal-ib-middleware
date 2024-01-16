@@ -113,6 +113,10 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
+		String pos_id = aRequest.readValueParam("@i_pos_id");
+		String cashier = aRequest.readValueParam("@i_cashier");
+		String transaction = aRequest.readValueParam("@i_transaction");
+		String pinpad = aRequest.readValueParam("@i_pinpad");
 		
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
@@ -145,6 +149,22 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			exp_date = "";
 		} else if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
 			exp_date = "I";
+		}
+		
+		if (pos_id == null || pos_id.trim().isEmpty()) {
+			pos_id = "E";
+		}
+		
+		if (cashier == null || cashier.trim().isEmpty()) {
+			cashier = "E";
+		}
+		
+		if (transaction == null || transaction.trim().isEmpty()) {
+			transaction = "E";
+		}
+		
+		if (pinpad == null || pinpad.trim().isEmpty()) {
+			pinpad = "E";
 		}
 
 		
@@ -184,6 +204,12 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
 		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
+		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
+		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
+		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
+		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 			

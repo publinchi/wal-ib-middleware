@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class ResponseRegisterAccountSpei implements Serializable {
   private Boolean success;
   private Response response;
+  private Integer uniqueId;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -47,5 +48,11 @@ public class ResponseRegisterAccountSpei implements Serializable {
   }
   public void setResponse(Response response ){
     this.response=response;
+  }
+  public Integer getUniqueId(){
+    return this.uniqueId;
+  }
+  public void setUniqueId(Integer uniqueId ){
+    this.uniqueId=uniqueId;
   }
 }

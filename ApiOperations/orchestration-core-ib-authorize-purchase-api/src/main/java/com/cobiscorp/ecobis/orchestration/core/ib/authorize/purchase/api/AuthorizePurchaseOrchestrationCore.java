@@ -118,6 +118,10 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		String date = aRequest.readValueParam("@i_date");
 		String time = aRequest.readValueParam("@i_time");
 		String expDate = aRequest.readValueParam("@i_card_expiration_date");
+		String posId = aRequest.readValueParam("@i_pos_id");
+		String cashier = aRequest.readValueParam("@i_cashier");
+		String transaction = aRequest.readValueParam("@i_transaction");
+		String pinpad = aRequest.readValueParam("@i_pinpad");
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -154,6 +158,22 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		if (expDate != null && !expDate.isEmpty() && !isExpDate(expDate)) {
 			expDate = "I";
 		}
+		
+		if (posId == null || posId.trim().isEmpty()) {
+			posId = "E";
+		}
+		
+		if (cashier == null || cashier.trim().isEmpty()) {
+			cashier = "E";
+		}
+		
+		if (transaction == null || transaction.trim().isEmpty()) {
+			transaction = "E";
+		}
+		
+		if (pinpad == null || pinpad.trim().isEmpty()) {
+			pinpad = "E";
+		}
 
 		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
@@ -188,6 +208,12 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_terminalCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_retrievalReferenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_retrieval_reference_number"));
 		request.addInputParam("@i_acquirerCountryCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
+		request.addInputParam("@i_affiliationNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		request.addInputParam("@i_storeNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
+		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, posId);
+		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
+		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
 		request.addInputParam("@i_cardPresent", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_card_present"));
 		request.addInputParam("@i_cardholderPresent", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_card_holder_present"));
 		request.addInputParam("@i_cvv2Present", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_cvv2_present"));
