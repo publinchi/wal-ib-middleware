@@ -87,7 +87,6 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 			logger.logInfo(CLASS_NAME + " Entrando en updaterCardStatus: " );
 		}
 		aBagSPJavaOrchestration.put("ente_mis", aRequest.readValueParam("@i_ente"));
-		aBagSPJavaOrchestration.put("account_number", aRequest.readValueParam("@i_account_number"));
 		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		String flag = "S";
@@ -409,6 +408,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
 		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+		
+		request.addInputParam("@x_val", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_val")!=null?aRequest.readValueParam("@x_val"):null);
 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
@@ -441,6 +442,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put("o_id_person_dock", wProductsQueryResp.readValueParam("@o_id_person_dock"));
 		aBagSPJavaOrchestration.put("o_id_account_dock", wProductsQueryResp.readValueParam("@o_id_account_dock"));
 		aBagSPJavaOrchestration.put("o_id_card_atm", wProductsQueryResp.readValueParam("@o_id_card_atm"));
+		aBagSPJavaOrchestration.put("account_number", wProductsQueryResp.readValueParam("@o_account"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking getDataCardDock: " + wProductsQueryResp.getProcedureResponseAsString());
