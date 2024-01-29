@@ -109,36 +109,33 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
 		
 		IResultSetHeader metaData3 = new ResultSetHeader();
-		IResultSetData data3 = new ResultSetData();
-		metaData3.addColumnMetaData(new ResultSetHeaderColumn("uniqueId", ICTSTypes.SQLINT4, 10));
-		metaData3.addColumnMetaData(new ResultSetHeaderColumn("registerAccountId", ICTSTypes.SQLINT4, 10));
-		
-		String uniqueId = anOriginalProcedureRes.readValueParam("@o_siguiente_tercero");
+		IResultSetData data3 = new ResultSetData();		
 		String registerAccountId = anOriginalProcedureRes.readValueParam("@o_siguiente_tercero");
-
+		
 		IResultSetRow row = new ResultSetRow();
-		row.addRowData(1,
-				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
+		row.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
 		row.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue()));
-
 		data.addRow(row);
 
 		IResultSetRow row2 = new ResultSetRow();
 		row2.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue()));
 		data2.addRow(row2);
+		logger.logInfo("registerAccountId --->" + registerAccountId);
+		if (registerAccountId != null && registerAccountId.equals("0"))
+			registerAccountId =  null;
 		
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("registerAccountId", ICTSTypes.SQLINT4, 10));
 		IResultSetRow row3 = new ResultSetRow();
-		row3.addRowData(1, new ResultSetRowColumnData(false, uniqueId));
 		row3.addRowData(1, new ResultSetRowColumnData(false, registerAccountId));
 		data3.addRow(row3);
 
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);		
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);				
 		
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);				
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
 		return anOriginalProcedureResponse;
@@ -226,7 +223,6 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Unique Id es " +  wProductsQueryResp.readValueParam("@o_siguiente_tercero"));
 			logger.logDebug("Register Account Id es " +  wProductsQueryResp.readValueParam("@o_siguiente_tercero"));
 		}		
 
