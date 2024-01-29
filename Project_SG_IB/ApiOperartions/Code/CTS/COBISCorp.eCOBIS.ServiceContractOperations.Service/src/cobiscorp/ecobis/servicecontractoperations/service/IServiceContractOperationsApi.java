@@ -111,6 +111,11 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO deleteBeneficiary(ServiceRequestTO requestTO);  
 
   /**
+  * Delete Contact
+  */
+  ServiceResponseTO deleteContact(ServiceRequestTO requestTO);  
+
+  /**
   * Encrypt Data
   */
   ServiceResponseTO encryptData(ServiceRequestTO requestTO);  
@@ -169,6 +174,11 @@ public interface IServiceContractOperationsApi{
   * GetStatement List
   */
   ServiceResponseTO getStatementList(ServiceRequestTO requestTO);  
+
+  /**
+  * Transaction Limit API
+  */
+  ServiceResponseTO getTransactionLimit(ServiceRequestTO requestTO);  
 
   /**
   * View Customer Information

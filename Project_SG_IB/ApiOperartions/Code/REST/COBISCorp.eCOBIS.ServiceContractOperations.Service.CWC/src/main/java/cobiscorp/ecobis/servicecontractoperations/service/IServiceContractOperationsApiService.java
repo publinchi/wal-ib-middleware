@@ -209,6 +209,15 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseGetStatementList getStatementList(RequestGetStatementList inRequestGetStatementList)
 			throws CTSRestException;
+	
+	/**
+	 * Transaction Limit API
+	 */
+
+	// Have DTO
+	public ResponseGetTransactionLimit getTransactionLimit(String xrequestid, String xenduserrequestdatetime,
+			String xenduserip, String xchannel, RequestGetTransactionLimit inRequestGetTransactionLimit)
+			throws CTSRestException;
 
 	/**
 	 * Find State By zip Code API
