@@ -535,7 +535,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ",";
 			script = script + (respMov.getUm_sec_correccion() != null ? respMov.getUm_sec_correccion() : "null") + ",";
 			script = script + "null, null, null, null, null, null,  null, null, null, null,";
-			script = script + "null, null, null, null, null, null,  null, null, null, null)\r\n";
+			script = script + "null, null, null, null, null, null,  null, null, null, null, null, null)\r\n";
 		}
 
 		return script;
@@ -672,6 +672,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("purchaseAmount", ICTSTypes.SQLMONEY, 25));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("withdrawalAmount", ICTSTypes.SQLMONEY, 25));
+			
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("uuid", ICTSTypes.SQLVARCHAR, 32));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SQLVARCHAR, 32));
 
 
 			IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
@@ -916,6 +919,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(30, new ResultSetRowColumnData(false, purchaseVal));
 				rowDat.addRowData(31, new ResultSetRowColumnData(false, withdrawalVal));
 
+				rowDat.addRowData(32, new ResultSetRowColumnData(false, columns[42].getValue()));
+				rowDat.addRowData(33, new ResultSetRowColumnData(false, columns[43].getValue()));
 
 				data0.addRow(rowDat);
 			}

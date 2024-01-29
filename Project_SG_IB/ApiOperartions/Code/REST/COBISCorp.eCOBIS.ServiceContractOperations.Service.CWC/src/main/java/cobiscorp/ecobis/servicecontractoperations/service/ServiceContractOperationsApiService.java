@@ -3309,7 +3309,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setDescription(resultSetMapper.getString(10));
 								dto.setMovementId(resultSetMapper.getString(27));
 								dto.setAuthorizationCode(resultSetMapper.getString(28));
+								dto.setClientRequestId(resultSetMapper.getString(32));
 								dto.cardDetailsInstance().setMaskedCardNumber(resultSetMapper.getString(11));
+								dto.cardDetailsInstance().setCardId(resultSetMapper.getString(33));
 								dto.sourceAccountInstance().setOwnerName(resultSetMapper.getString(12));
 								dto.sourceAccountInstance().setAccountNumber(resultSetMapper.getString(13));
 								dto.sourceAccountInstance().setBankName(resultSetMapper.getString(14));
