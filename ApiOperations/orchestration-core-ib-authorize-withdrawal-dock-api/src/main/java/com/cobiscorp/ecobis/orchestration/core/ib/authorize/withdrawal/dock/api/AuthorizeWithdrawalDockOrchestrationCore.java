@@ -175,6 +175,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		//headers
+		request.addInputParam("@x_legacy_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_legacy_id"));
 		request.addInputParam("@x_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client_id"));
 		request.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_apigw_api_id"));
@@ -214,21 +215,24 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 			
 		request.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");
-		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");		
+		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("ente es " +  wProductsQueryResp.readValueParam("@o_ente"));
-		}
-		
-		if (logger.isDebugEnabled()) {
 			logger.logDebug("cta es " +  wProductsQueryResp.readValueParam("@o_cta"));
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq"));
+			logger.logDebug("reentry es " +  wProductsQueryResp.readValueParam("@o_reentry"));
 		}
 		
 		aBagSPJavaOrchestration.put("amount", aRequest.readValueParam("@i_source_value"));
 		aBagSPJavaOrchestration.put("ente", wProductsQueryResp.readValueParam("@o_ente"));
 		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
+		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
+		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -361,6 +365,38 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			logger.logInfo(CLASS_NAME + " Saliendo de registerLogBd");
 		}
 	}
+	
+	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
+		}
+
+		request.setSpName("cob_bvirtual..sp_update_transfer_status");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("seq"));
+		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("reentry"));
+		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
+		}
+	}
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -374,6 +410,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+		String executionStatus = null;
 		
 		logger.logInfo("return code resp--->" + codeReturn );
 
@@ -398,6 +435,9 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 				
 				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
+				executionStatus = "ERROR";
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 				IResultSetRow row = new ResultSetRow();
 	
 				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
@@ -410,6 +450,9 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			} else {
 				 
 				logger.logDebug("Ending flow, processResponse successful...");
+				
+				executionStatus = "CORRECT";
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 				
@@ -426,6 +469,9 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
+			
+			executionStatus = "ERROR";
+			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
 			IResultSetRow row = new ResultSetRow();
 			
