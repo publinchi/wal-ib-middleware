@@ -83,6 +83,8 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipalit
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetStatementList;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetStatementList;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetTransactionLimit;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetTransactionLimit;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
@@ -1178,6 +1180,54 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: getStatementList");
 		return Response.ok(outResponseGetStatementList).build();
+
+	}
+	
+	/**
+	 * Transaction Limit API
+	 */
+	@POST
+	@Path("/apiOperations/accounts/getTransactionLimit")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response getTransactionLimit(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,
+			RequestGetTransactionLimit inRequestGetTransactionLimit) {
+		LOGGER.logDebug("Start service execution REST: getTransactionLimit");
+		ResponseGetTransactionLimit outResponseGetTransactionLimit = new ResponseGetTransactionLimit();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestGetTransactionLimit.getExternalCustomerId()),
+				new Data("accountNumber", inRequestGetTransactionLimit.getAccountNumber()),
+				new Data("transactionType", inRequestGetTransactionLimit.getTransactionType()),
+				new Data("transactionSubType", inRequestGetTransactionLimit.getTransactionSubType()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseGetTransactionLimit = iServiceContractOperationsApiService.getTransactionLimit(xrequestid,
+					xenduserrequestdatetime, xenduserip, xchannel, inRequestGetTransactionLimit);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: getTransactionLimit");
+		return Response.ok(outResponseGetTransactionLimit).build();
 
 	}
 

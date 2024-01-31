@@ -27,32 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterAccountSpei implements Serializable {
-  private Boolean success;
-  private Response response;
-  private Integer registerAccountId;
-  public Boolean isSuccess(){
-    return this.success;
+public class BalanceAmount implements Serializable {
+  private java.math.BigDecimal amount;
+  private String currency;
+  public java.math.BigDecimal getAmount(){
+    return this.amount;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setAmount(java.math.BigDecimal amount ){
+    this.amount=amount;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
+  public String getCurrency(){
+    return this.currency;
   }
-  public Response getResponse(){
-    return this.response;
-  }
-  public void setResponse(Response response ){
-    this.response=response;
-  }
-  public Integer getRegisterAccountId(){
-    return this.registerAccountId;
-  }
-  public void setRegisterAccountId(Integer registerAccountId ){
-    this.registerAccountId=registerAccountId;
+  public void setCurrency(String currency ){
+    this.currency=currency;
   }
 }

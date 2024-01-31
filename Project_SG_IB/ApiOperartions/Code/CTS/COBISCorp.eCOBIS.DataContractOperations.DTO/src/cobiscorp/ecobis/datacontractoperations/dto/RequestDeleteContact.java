@@ -28,11 +28,11 @@ import java.util.HashMap;
 
 
 public class RequestDeleteContact implements Serializable {
-  private Integer uniqueId;
-  public Integer getUniqueId(){
-    return this.uniqueId;
+  private Integer registerAccountId;
+  public Integer getRegisterAccountId(){
+    return this.registerAccountId;
   }
-  public void setUniqueId(Integer uniqueId ){
-    this.uniqueId=uniqueId;
+  public void setRegisterAccountId(Integer registerAccountId ){
+    this.registerAccountId=registerAccountId;
   }
 }
