@@ -16,6 +16,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
+import com.cobis.trfspeiservice.bsl.dto.RegisterSpeiSpResponse;
 import com.cobis.trfspeiservice.bsl.dto.SpeiMappingRequest;
 import com.cobis.trfspeiservice.bsl.dto.SpeiMappingResponse;
 import com.cobis.trfspeiservice.bsl.serv.ISpeiServiceOrchestration;
@@ -98,7 +99,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	private static final String S_SERVICIO_LOCAL = "@s_servicio";
 	private static final String I_PROD_LOCAL = "@i_prod";
 	private static final String CANCEL_OPERATION = "0";
-	private boolean successConnector = true;
+	private boolean successConnector = false;
 	private int returnCode = 0;
 
 	private static ILogger logger = LogFactory.getLogger(TransferSpeiApiOrchestationCore.class);
@@ -567,7 +568,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		movementId = anOriginalProcedureRes.readValueParam("@o_referencia");
 
 		logger.logInfo("xdcxv2 --->" + movementId);
-		if (codeReturn == 0 || codeReturn == 50000) {
+		if (codeReturn == 0 || codeReturn == 50000 || codeReturn == 1) {
 			if (null != movementId) {
 				IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
 				
@@ -594,9 +595,16 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					executionStatus = "ERROR";
 					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 					
-					code = (String) aBagSPJavaOrchestration.get("@o_id_error");
-					message = (String) aBagSPJavaOrchestration.get("@o_mensaje_error");
-					success = "false";
+					if (codeReturn == 1) {
+						code = "500024";
+						message = "Error connecting with SPEI provider";
+						success = "false";
+					} else {
+						code = (String) aBagSPJavaOrchestration.get("@o_id_error");
+						message = (String) aBagSPJavaOrchestration.get("@o_mensaje_error");
+						success = "false";
+					}
+					
 					movementId = null;
 					
 					logger.logInfo("bnbn false--->" + movementId);
@@ -711,7 +719,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return anOriginalProcedureResponse;
 	}
 	
-private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+	private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -926,7 +934,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
 			} else {
 				logger.logDebug("On massive transacction");
 				idMovement = aBagSPJavaOrchestration.get("ssn_operation").toString();
-				;
+				
 			}
 
 			originalRequestClone.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, refBranch);
@@ -974,10 +982,23 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
 							if (logger.isDebugEnabled()) {
 								logger.logDebug("Spei do it");
 							}
-							SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
+							
+							//speiOrchestration = null;
+							try {
+								SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
+								responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
+										aBagSPJavaOrchestration);
+							} catch(Exception e) {
+								if (logger.isDebugEnabled()) {
+									logger.logDebug("Fin executeTransfer 3");
+								}
+								
+								reverseSpei(requestSpei, aBagSPJavaOrchestration);
+								
+								responseTransfer.setReturnCode(1);
+							} 
 
-							responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
-									aBagSPJavaOrchestration);
+							
 						} else
 							logger.logDebug(":::: No Aplica Transaccion no valida " + idTransaccion);
 					} else {
@@ -1046,6 +1067,38 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
 		}
 
 		return responseTransfer;
+	}
+
+	private void reverseSpei(SpeiMappingRequest request, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		RegisterSpeiSpResponse requestSp = new RegisterSpeiSpResponse();
+        requestSp.setMonto(String.valueOf(request.getMonto()));
+        requestSp.setMoneda("0");
+        requestSp.setProcesoOrigen(Constants.ORIGIN_PROCESS_SINGLE_SPEI);
+        requestSp.setTransactionCore(request.getSsnDebito());
+        requestSp.setServicio(request.getServicio());
+        requestSp.setTipoError(Constants.SPEI_ERROR_TYPE);
+        requestSp.setCuentaOrigen(request.getCuentaOrdenante());
+
+        requestSp.setTrnOrigen(request.getTrnOrigen());
+        requestSp.setUser(request.getUser());
+        requestSp.setOffice(request.getOffice());
+        requestSp.setServer(request.getServer());
+        requestSp.setTerminal(request.getTerminal());
+        requestSp.setComision(originalRequest.readValueParam("@i_comision"));
+        requestSp.setConcepto(Constants.ERROR_SPEI);
+        IProcedureRequest wProcedureRequest = new ProcedureRequestAS();
+        SpReverseSpeiSent.initializeSpReverseSpei(wProcedureRequest, requestSp);
+        
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(wProcedureRequest);
+        
+        if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking reverseSpei: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de reverseSpei");
+		}
 	}
 
 	public IProcedureResponse executeTransferSPI(IProcedureRequest anOriginalRequest,

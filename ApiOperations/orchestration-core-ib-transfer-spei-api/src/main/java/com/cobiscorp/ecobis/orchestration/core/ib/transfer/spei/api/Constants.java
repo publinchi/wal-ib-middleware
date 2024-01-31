@@ -57,6 +57,10 @@ public class Constants {
     //MENSAJES
     public static final String INIT_TASK = "init task ---->";
     public static final String END_TASK = "end task ---->";
+    
+    public static final String ORIGIN_PROCESS_SINGLE_SPEI = "1";
+    public static final String SPEI_ERROR_TYPE = "7";
+    public static final String ERROR_SPEI = "ERROR EN TRANSFERENCIA SPEI";
 
 
 
