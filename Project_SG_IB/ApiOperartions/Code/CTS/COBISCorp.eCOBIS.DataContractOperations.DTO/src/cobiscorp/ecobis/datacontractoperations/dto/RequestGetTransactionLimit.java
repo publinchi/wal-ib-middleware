@@ -27,32 +27,33 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterAccountSpei implements Serializable {
-  private Boolean success;
-  private Response response;
-  private Integer registerAccountId;
-  public Boolean isSuccess(){
-    return this.success;
+public class RequestGetTransactionLimit implements Serializable {
+  private Integer externalCustomerId;
+  private String accountNumber;
+  private String transactionType;
+  private String transactionSubType;
+  public Integer getExternalCustomerId(){
+    return this.externalCustomerId;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setExternalCustomerId(Integer externalCustomerId ){
+    this.externalCustomerId=externalCustomerId;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
+  public String getAccountNumber(){
+    return this.accountNumber;
   }
-  public Response getResponse(){
-    return this.response;
+  public void setAccountNumber(String accountNumber ){
+    this.accountNumber=accountNumber;
   }
-  public void setResponse(Response response ){
-    this.response=response;
+  public String getTransactionType(){
+    return this.transactionType;
   }
-  public Integer getRegisterAccountId(){
-    return this.registerAccountId;
+  public void setTransactionType(String transactionType ){
+    this.transactionType=transactionType;
   }
-  public void setRegisterAccountId(Integer registerAccountId ){
-    this.registerAccountId=registerAccountId;
+  public String getTransactionSubType(){
+    return this.transactionSubType;
+  }
+  public void setTransactionSubType(String transactionSubType ){
+    this.transactionSubType=transactionSubType;
   }
 }

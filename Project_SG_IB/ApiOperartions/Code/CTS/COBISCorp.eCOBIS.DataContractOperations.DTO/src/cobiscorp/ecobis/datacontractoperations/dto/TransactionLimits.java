@@ -27,32 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterAccountSpei implements Serializable {
-  private Boolean success;
-  private Response response;
-  private Integer registerAccountId;
-  public Boolean isSuccess(){
-    return this.success;
+public class TransactionLimits implements Serializable {
+  private String transactionSubType;
+  private TransactionSubTypeLimits[] transactionSubTypeLimits;
+  public String getTransactionSubType(){
+    return this.transactionSubType;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setTransactionSubType(String transactionSubType ){
+    this.transactionSubType=transactionSubType;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
+  public TransactionSubTypeLimits[] getTransactionSubTypeLimits(){
+    return this.transactionSubTypeLimits;
   }
-  public Response getResponse(){
-    return this.response;
-  }
-  public void setResponse(Response response ){
-    this.response=response;
-  }
-  public Integer getRegisterAccountId(){
-    return this.registerAccountId;
-  }
-  public void setRegisterAccountId(Integer registerAccountId ){
-    this.registerAccountId=registerAccountId;
+  public void setTransactionSubTypeLimits(TransactionSubTypeLimits[] transactionSubTypeLimits ){
+    this.transactionSubTypeLimits=transactionSubTypeLimits;
   }
 }
