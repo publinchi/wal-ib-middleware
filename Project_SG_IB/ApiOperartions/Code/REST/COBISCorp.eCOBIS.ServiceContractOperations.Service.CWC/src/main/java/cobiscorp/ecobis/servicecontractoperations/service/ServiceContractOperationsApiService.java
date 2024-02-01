@@ -2190,7 +2190,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 
 			if (email != null && !email.isEmpty()) {
-				if (!isValidMail(email)) {
+				if (!isValidMail(email) || email.length() > 50) {
 					email = "I";
 				}
 			}
