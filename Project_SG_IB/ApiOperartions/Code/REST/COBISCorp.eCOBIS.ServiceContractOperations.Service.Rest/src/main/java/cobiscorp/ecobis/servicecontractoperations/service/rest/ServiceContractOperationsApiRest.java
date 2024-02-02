@@ -348,7 +348,8 @@ public class ServiceContractOperationsApiRest {
 			inRequestAuthorizePurchaseDock.getTokens_62().setPinpad(adtInf.get(5));
 		}
 				
-		if (!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
+		if (!validateMandatory(
+				//new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
 				new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()),
 				new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()),
 				new Data("card_entry.pin", inRequestAuthorizePurchaseDock.getCard_entry().getPin()),
@@ -510,7 +511,7 @@ public class ServiceContractOperationsApiRest {
 					new Data("processing.destiny_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
 					new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
 					new Data("nsu", inRequestAuthorizeWithdrawalDock.getNsu()),
-//				new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
+                    //new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
 					new Data("transaction_origin", inRequestAuthorizeWithdrawalDock.getTransaction_origin()),
 					new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
 					new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
@@ -522,7 +523,7 @@ public class ServiceContractOperationsApiRest {
 					new Data("values.billing_value", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
 					new Data("terminal_code", inRequestAuthorizeWithdrawalDock.getTerminal_code()),
 					new Data("establishment_code", inRequestAuthorizeWithdrawalDock.getEstablishment_code()),
-					new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
+					//new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
 					new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()),
 					//new Data("tokens_62.affiliation_number", inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()),
 					//new Data("tokens_62.store_number", inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()),
@@ -2465,7 +2466,7 @@ public class ServiceContractOperationsApiRest {
 							inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type()),
 					new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()),
 					new Data("nsu", inRequestAuthorizeReversalDock.getNsu()),
-					new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()),
+					//new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()),
 					new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()),
 					new Data("installments", inRequestAuthorizeReversalDock.getInstallments()),
 					new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()),
@@ -2480,7 +2481,7 @@ public class ServiceContractOperationsApiRest {
 					new Data("values.billing_value", inRequestAuthorizeReversalDock.getValues().getBilling_value()),
 					new Data("terminal_code", inRequestAuthorizeReversalDock.getTerminal_code()),
 					new Data("establishment_code", inRequestAuthorizeReversalDock.getEstablishment_code()),
-					new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()),
+					//new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()),
 					//new Data("tokens_62.affiliation_number", inRequestAuthorizeReversalDock.getTokens_62().getAffiliation_number()),
 					//new Data("tokens_62.store_number", inRequestAuthorizeReversalDock.getTokens_62().getStore_number()),
 					//new Data("tokens_62.pos_id", inRequestAuthorizeReversalDock.getTokens_62().getPos_id()),

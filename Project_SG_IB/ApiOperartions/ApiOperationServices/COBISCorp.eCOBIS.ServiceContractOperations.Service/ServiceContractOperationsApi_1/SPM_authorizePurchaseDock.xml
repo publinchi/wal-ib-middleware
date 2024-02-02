@@ -106,7 +106,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizePurchaseDock" />
-      <field type="String" name="dTOPropertyName" value="account_type_indicator" />
+      <field type="String" name="dTOPropertyName" value="transaction_type_indicator" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="true" />
     </class>

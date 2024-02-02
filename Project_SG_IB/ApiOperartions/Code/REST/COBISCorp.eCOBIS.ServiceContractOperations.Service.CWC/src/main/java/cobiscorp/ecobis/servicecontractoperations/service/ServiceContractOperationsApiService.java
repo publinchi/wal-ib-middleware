@@ -597,7 +597,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchaseDock.getAccount_id());
 			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizePurchaseDock.getAccount_type_indicator());
+					inRequestAuthorizePurchaseDock.getTransaction_type_indicator());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchaseDock.getAcquirer_country_code());
 			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
@@ -1136,7 +1136,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getProcessing().getCode());
 			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getAccount_type_indicator());
+					inRequestAuthorizeWithdrawalDock.getTransaction_type_indicator());
 			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeWithdrawalDock.getNsu());
 			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAuthorization_code());
@@ -1621,7 +1621,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProcessing().getCode());
 			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getAccount_type_indicator());
+					inRequestAuthorizeDepositDock.getTransaction_type_indicator());
 			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDepositDock.getNsu());
 			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAuthorization_code());
