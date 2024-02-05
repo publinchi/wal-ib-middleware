@@ -39,13 +39,10 @@
     <query>
       <columns>
         <column name="transactionSubType" />
-        <column name=" transactionLimitType" />
+        <column name=" transactionLimitsType" />
         <column name=" amount" />
         <column name=" currency" />
-        <column name=" transactionLimitsType" />
-        <column name="  amount" />
-        <column name=" currency" />
-        <column name="  amount" />
+        <column name=" amount" />
         <column name=" currency" />
       </columns>
       <queryText>SELECT "transactionSubType", "transactionLimitsType", " amount", "currency", "amount", "currency"</queryText>

@@ -3,12 +3,7 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.get.transaction.limit.api;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -195,7 +190,7 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de trnDataCentral");
+			logger.logInfo(CLASS_NAME + " Saliendo de getDataLocal");
 		}
 
 		return wProductsQueryResp;
@@ -243,14 +238,67 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		IResultSetData data4 = new ResultSetData();
 		
 		metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionSubType", ICTSTypes.SQLVARCHAR, 255));
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitType", ICTSTypes.SQLVARCHAR, 255));
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("amountTCL", ICTSTypes.SQLMONEY, 64));	
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("currencyTCL", ICTSTypes.SQLVARCHAR, 10));
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
-		metaData4.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));	
+
+		//metaData5
+		IResultSetHeader metaData5 = new ResultSetHeader();
+		IResultSetData data5 = new ResultSetData();
+		
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
+		metaData5.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));
+		
+		//metaData6
+		IResultSetHeader metaData6 = new ResultSetHeader();
+		IResultSetData data6 = new ResultSetData();
+		
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));
+		
+		//metaData7
+		IResultSetHeader metaData7 = new ResultSetHeader();
+		IResultSetData data7 = new ResultSetData();
+		
+		metaData7.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
+		metaData7.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
+		metaData7.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
+		metaData7.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
+		metaData7.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));	
+		
+		
+		//metaData8
+		IResultSetHeader metaData8 = new ResultSetHeader();
+		IResultSetData data8 = new ResultSetData();
+		
+		metaData8.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
+		metaData8.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
+		metaData8.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
+		metaData8.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
+		metaData8.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));
+		
+		//metaData9
+		IResultSetHeader metaData9 = new ResultSetHeader();
+		IResultSetData data9 = new ResultSetData();
+		
+		metaData9.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
+		metaData9.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
+		metaData9.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
+		metaData9.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
+		metaData9.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));
+		
+		//metaData10
+		IResultSetHeader metaData10 = new ResultSetHeader();
+		IResultSetData data10 = new ResultSetData();
+		
+		metaData10.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 255));
+		metaData10.addColumnMetaData(new ResultSetHeaderColumn("amountCL", ICTSTypes.SQLMONEY, 64));	
+		metaData10.addColumnMetaData(new ResultSetHeaderColumn("currencyCL", ICTSTypes.SQLVARCHAR, 10));
+		metaData10.addColumnMetaData(new ResultSetHeaderColumn("amountBA", ICTSTypes.SQLMONEY, 64));	
+		metaData10.addColumnMetaData(new ResultSetHeaderColumn("currencyBA", ICTSTypes.SQLVARCHAR, 10));
 		
 		
 		if (codeReturn == 0) {
@@ -303,9 +351,10 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 						
 						//data4
 						IResultSetRow row4 = new ResultSetRow();
+						
 						IResultSetRowColumnData[] columns1 = iResultSetRow1.getColumnsAsArray();
 						
-						String transactionSubtype, transactionLimitsType = null;
+						String transactionSubtype, transactionLimitsType, currency = null;
 						
 						transactionSubtype = columns1[1].getValue();
 						
@@ -347,15 +396,17 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 						}
 						
 						row4.addRowData(1, new ResultSetRowColumnData(false, transactionSubtype));
-						row4.addRowData(2, new ResultSetRowColumnData(false, columns1[2].getValue()));
-						row4.addRowData(3, new ResultSetRowColumnData(false, columns1[3].getValue()));
-						row4.addRowData(4, new ResultSetRowColumnData(false, columns1[4].getValue()));
 						
+						data4.addRow(row4);
+		
 						//transactionSubTypeLimitsArray
 						IResultSetBlock resulsetOrigin2 = anOriginalProcedureRes.getResultSet(i);
 						IResultSetRow[] rowsTemp2 = resulsetOrigin2.getData().getRowsAsArray();
 						
 						for (IResultSetRow iResultSetRow2 : rowsTemp2) {
+							
+							//data5
+							IResultSetRow row5 = new ResultSetRow();
 							
 							IResultSetRowColumnData[] columns2 = iResultSetRow2.getColumnsAsArray();
 							
@@ -365,6 +416,10 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 								
 								transactionLimitsType = null;
 									
+							} else if (transactionLimitsType.equals("A")) {
+								
+								transactionLimitsType = "TRANSACTION";
+							
 							} else if (transactionLimitsType.equals("D")) {
 								
 								transactionLimitsType = "DAILY";
@@ -382,15 +437,49 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 								transactionLimitsType = "UNDEFINED";
 							}
 							
-							row4.addRowData(5, new ResultSetRowColumnData(false, transactionLimitsType));
-							row4.addRowData(6, new ResultSetRowColumnData(false, columns2[1].getValue()));
-							row4.addRowData(7, new ResultSetRowColumnData(false, columns2[2].getValue()));
-							row4.addRowData(8, new ResultSetRowColumnData(false, columns2[3].getValue()));
-							row4.addRowData(9, new ResultSetRowColumnData(false, columns2[4].getValue()));
+							currency = columns2[4].getValue();
 							
-						}
+							if (currency == null) {
+								
+								currency = null;
+									
+							} else if (currency.equals("0") || currency.equals("7")) {
+								
+								currency = "MXN";
+							
+							}
+							
+							row5.addRowData(1, new ResultSetRowColumnData(false, transactionLimitsType));
+							row5.addRowData(2, new ResultSetRowColumnData(false, columns2[1].getValue()));
+							row5.addRowData(3, new ResultSetRowColumnData(false, columns2[2].getValue()));
+							row5.addRowData(4, new ResultSetRowColumnData(false, columns2[3].getValue()));
+							row5.addRowData(5, new ResultSetRowColumnData(false, currency));
+							
+							if (i == 4) {
+								
+								data5.addRow(row5);
+								
+							} else if (i == 5) {
+								
+								data6.addRow(row5);
+								
+							} else if (i == 6) {
+								
+								data7.addRow(row5);
+								
+							} else if (i == 7) {
+								
+								data8.addRow(row5);
+								
+							} else if (i == 8) {
+								
+								data9.addRow(row5);
+								
+							} else if (i == 9) {
 
-						data4.addRow(row4);
+								data10.addRow(row5);
+							}
+						}
 						
 						i = i + 1;
 					}
@@ -458,6 +547,12 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
+		IResultSetBlock resultsetBlock5 = new ResultSetBlock(metaData5, data5);
+		IResultSetBlock resultsetBlock6 = new ResultSetBlock(metaData6, data6);
+		IResultSetBlock resultsetBlock7 = new ResultSetBlock(metaData7, data7);
+		IResultSetBlock resultsetBlock8 = new ResultSetBlock(metaData8, data8);
+		IResultSetBlock resultsetBlock9 = new ResultSetBlock(metaData9, data9);
+		IResultSetBlock resultsetBlock10 = new ResultSetBlock(metaData10, data10);
 		
 		wProcedureResponse.setReturnCode(200);
 
@@ -465,6 +560,12 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
+		wProcedureResponse.addResponseBlock(resultsetBlock5);
+		wProcedureResponse.addResponseBlock(resultsetBlock6);
+		wProcedureResponse.addResponseBlock(resultsetBlock7);
+		wProcedureResponse.addResponseBlock(resultsetBlock8);
+		wProcedureResponse.addResponseBlock(resultsetBlock9);
+		wProcedureResponse.addResponseBlock(resultsetBlock10);
 		
 		return wProcedureResponse;		
 	}
