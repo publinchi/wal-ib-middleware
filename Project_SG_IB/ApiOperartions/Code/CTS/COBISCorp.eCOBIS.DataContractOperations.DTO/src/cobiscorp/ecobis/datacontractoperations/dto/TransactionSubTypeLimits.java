@@ -28,29 +28,9 @@ import java.util.HashMap;
 
 
 public class TransactionSubTypeLimits implements Serializable {
-  private String transactionLimitType;
-  private ConfiguredTransactionalLimit configuredTransactionalLimit;
   private String transactionLimitsType;
   private ConfiguredLimit configuredLimit;
   private BalanceAmount balanceAmount;
-  public String getTransactionLimitType(){
-    return this.transactionLimitType;
-  }
-  public void setTransactionLimitType(String transactionLimitType ){
-    this.transactionLimitType=transactionLimitType;
-  }
-  public ConfiguredTransactionalLimit configuredTransactionalLimitInstance(){
-	if(this.configuredTransactionalLimit==null){
-	this.configuredTransactionalLimit=new ConfiguredTransactionalLimit();
-	}
-	return this.configuredTransactionalLimit;
-  }
-  public ConfiguredTransactionalLimit getConfiguredTransactionalLimit(){
-    return this.configuredTransactionalLimit;
-  }
-  public void setConfiguredTransactionalLimit(ConfiguredTransactionalLimit configuredTransactionalLimit ){
-    this.configuredTransactionalLimit=configuredTransactionalLimit;
-  }
   public String getTransactionLimitsType(){
     return this.transactionLimitsType;
   }
