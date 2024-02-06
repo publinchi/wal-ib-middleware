@@ -597,7 +597,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchaseDock.getAccount_id());
 			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizePurchaseDock.getAccount_type_indicator());
+					inRequestAuthorizePurchaseDock.getTransaction_type_indicator());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchaseDock.getAcquirer_country_code());
 			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
@@ -754,7 +754,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizePurchaseDock.getTokens_62().getTransaction());
 			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizePurchaseDock.getTokens_62().getPinpad());
-
+			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizePurchaseDock.getAdditional_information());
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizePurchaseDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -1135,7 +1136,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getProcessing().getCode());
 			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getAccount_type_indicator());
+					inRequestAuthorizeWithdrawalDock.getTransaction_type_indicator());
 			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeWithdrawalDock.getNsu());
 			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAuthorization_code());
@@ -1243,6 +1244,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getProduct_id());
+			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getAdditional_information());
 
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawalDock);
@@ -1618,7 +1621,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProcessing().getCode());
 			procedureRequestAS.addInputParam("@i_account_type_indicator", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getAccount_type_indicator());
+					inRequestAuthorizeDepositDock.getTransaction_type_indicator());
 			procedureRequestAS.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDepositDock.getNsu());
 			procedureRequestAS.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAuthorization_code());
@@ -1722,7 +1725,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProduct_id());
-
+			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getAdditional_information());
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeDepositDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -6956,7 +6960,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, clientid);
 			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, uuid);
 			procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
-
+			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getAdditional_information());
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -7135,6 +7140,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       //returns data
       return outResponseDeleteContact;
     }
-  
+   	 
+    
     
 }

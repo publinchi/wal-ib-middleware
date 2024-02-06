@@ -38,7 +38,7 @@
       </collection>
     </class>
   </collection>
-  <collection type="List" length="91" id="9" name="parameters">
+  <collection type="List" length="86" id="9" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="10" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="11" name="parameter">
         <field type="String" name="name" value="@i_account_id" />
@@ -1146,86 +1146,21 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="180" index="85">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="181" name="parameter">
-        <field type="String" name="name" value="@i_affiliation_number" />
-        <field type="String" name="dataType" value="decimal" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inRequestAuthorizeReversalDock" />
-      <field type="String" name="dTOPropertyName" value="tokens_62.affiliation_number" />
-      <field type="String" name="cTSDataType" value="SQLDECIMAL" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="182" index="86">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="183" name="parameter">
-        <field type="String" name="name" value="@i_store_number" />
-        <field type="String" name="dataType" value="decimal" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inRequestAuthorizeReversalDock" />
-      <field type="String" name="dTOPropertyName" value="tokens_62.store_number" />
-      <field type="String" name="cTSDataType" value="SQLDECIMAL" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="184" index="87">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="185" name="parameter">
-        <field type="String" name="name" value="@i_pos_id" />
+        <field type="String" name="name" value="@i_additional_information" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
       </class>
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestAuthorizeReversalDock" />
-      <field type="String" name="dTOPropertyName" value="tokens_62.pos_id" />
-      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="186" index="88">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="187" name="parameter">
-        <field type="String" name="name" value="@i_cashier" />
-        <field type="String" name="dataType" value="varchar" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inRequestAuthorizeReversalDock" />
-      <field type="String" name="dTOPropertyName" value="tokens_62.cashier" />
-      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="188" index="89">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="189" name="parameter">
-        <field type="String" name="name" value="@i_transaction" />
-        <field type="String" name="dataType" value="varchar" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inRequestAuthorizeReversalDock" />
-      <field type="String" name="dTOPropertyName" value="tokens_62.transaction" />
-      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="190" index="90">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="191" name="parameter">
-        <field type="String" name="name" value="@i_pinpad" />
-        <field type="String" name="dataType" value="varchar" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inRequestAuthorizeReversalDock" />
-      <field type="String" name="dTOPropertyName" value="tokens_62.pinpad" />
+      <field type="String" name="dTOPropertyName" value="additional_information" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
   </collection>
-  <collection type="List" length="4" id="192" name="parametersOpenApi">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="193" index="0">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="194" name="parameter">
+  <collection type="List" length="4" id="182" name="parametersOpenApi">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="183" index="0">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="184" name="parameter">
         <field type="String" name="name" value="legacy-id" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
@@ -1237,8 +1172,8 @@
       <field type="boolean" name="allowNull" value="true" />
       <field type="String" name="paramType" value="HEADER" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="195" index="1">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="196" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="185" index="1">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="186" name="parameter">
         <field type="String" name="name" value="client-id" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
@@ -1250,8 +1185,8 @@
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="197" index="2">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="198" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="187" index="2">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="188" name="parameter">
         <field type="String" name="name" value="uuid" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
@@ -1263,8 +1198,8 @@
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="199" index="3">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="200" name="parameter">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGMappingParameterOpenApi" id="189" index="3">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="190" name="parameter">
         <field type="String" name="name" value="x-apigw-api-id" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
@@ -1278,8 +1213,8 @@
     </class>
   </collection>
   <field type="String" name="trnCode" value="18500139" />
-  <collection type="List" length="3" id="201" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="202" index="0">
+  <collection type="List" length="3" id="191" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="192" index="0">
       <field type="String" name="dTOName" value="RequestAuthorizeReversalDock" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -1289,7 +1224,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="203" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="193" index="1">
       <field type="String" name="dTOName" value="ResponseAuthorizeReversalDock" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -1299,7 +1234,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="204" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="194" index="2">
       <field type="String" name="dTOName" value="ResponseAuthorizeReversalDock" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -1310,7 +1245,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="3" id="205" name="mappingProperties">
+  <collection type="Map" length="3" id="195" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />
