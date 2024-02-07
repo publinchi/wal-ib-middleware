@@ -517,13 +517,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
         aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, request);
         
-        IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
+        
         
         if (logger.isInfoEnabled()) {
             logger.logInfo(" start executeBanpay--->");
             logger.logInfo("xdcxv --->" + aBagSPJavaOrchestration);
         }
-        executeBanpay(aBagSPJavaOrchestration, wProcedureResponse, request);
         
         try {
             executeStepsTransactionsBase(request, aBagSPJavaOrchestration);
@@ -987,10 +986,13 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                             if (logger.isDebugEnabled()) {
                                 logger.logDebug("Spei do it");
                             }
-                            SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
+                            
+                            //SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
+                            IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
+                            executeBanpay(aBagSPJavaOrchestration, wProcedureResponse, originalRequest);
 
-                            responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
-                                    aBagSPJavaOrchestration);
+                            //responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
+                                    //aBagSPJavaOrchestration);
                         } else
                             logger.logDebug(":::: No Aplica Transaccion no valida " + idTransaccion);
                     } else {
@@ -1638,7 +1640,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             anOriginalRequest.addInputParam("@i_nombre_beneficiario", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_nombre_benef"));
             anOriginalRequest.addInputParam("@i_nombre_ordenante", ICTSTypes.SQLVARCHAR, data.get(1));
-            anOriginalRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, ""); // OPCIONAL
+            anOriginalRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_reference_number")); // OPCIONAL
             anOriginalRequest.addInputParam("@i_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "ND"); // OPCIONAL
             anOriginalRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, data.get(2));
             anOriginalRequest.addInputParam("@i_tipo_cuenta_beneficiario", ICTSTypes.SQLINT1,
