@@ -28,6 +28,7 @@ import com.cobiscorp.cobis.cts.rest.client.dto.MessageBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
+import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
 import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
@@ -3851,6 +3852,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			mapTotal++;
 			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
+				
+				final int[] i = {4};
+				
 				// ---------NO Array
 				TransactionLimits[] returnTransactionLimits = MapperResultUtil
 						.mapToArray(response.getResultSets().get(3), new RowMapper<TransactionLimits>() {
@@ -3859,33 +3863,37 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								TransactionLimits dto = new TransactionLimits();
 
 								dto.setTransactionSubType(resultSetMapper.getString(1));
-
+								
 								TransactionSubTypeLimits[] returnTransactionSubTypeLimits = MapperResultUtil.mapToArray(
-										response.getResultSets().get(3), new RowMapper<TransactionSubTypeLimits>() {
+										response.getResultSets().get(i[0]), new RowMapper<TransactionSubTypeLimits>() {
 											@Override
 											public TransactionSubTypeLimits mapRow(ResultSetMapper resultSetMapper,
 													int index) {
 												TransactionSubTypeLimits dto = new TransactionSubTypeLimits();
 
-												dto.setTransactionLimitType(resultSetMapper.getString(2));
-												dto.configuredTransactionalLimitInstance().setAmount(resultSetMapper.getBigDecimal(3));
-												dto.configuredTransactionalLimitInstance().setCurrency(resultSetMapper.getString(4));
-												dto.setTransactionLimitsType(resultSetMapper.getString(5));
-												dto.configuredLimitInstance().setAmount(resultSetMapper.getBigDecimal(6));
-												dto.configuredLimitInstance().setCurrency(resultSetMapper.getString(7));
-												dto.balanceAmountInstance().setAmount(resultSetMapper.getBigDecimal(8));
-												dto.balanceAmountInstance().setCurrency(resultSetMapper.getString(9));
-
+												dto.setTransactionLimitsType(resultSetMapper.getString(1));
+												dto.configuredLimitInstance().setAmount(resultSetMapper.getBigDecimal(2));
+												dto.configuredLimitInstance().setCurrency(resultSetMapper.getString(3));
+												dto.balanceAmountInstance().setAmount(resultSetMapper.getBigDecimal(4));
+												dto.balanceAmountInstance().setCurrency(resultSetMapper.getString(5));
+												
+												if (dto.balanceAmountInstance().getAmount() == null) {
+													dto.setBalanceAmount(null);
+												}
+												
 												return dto;
 											}
 										}, false);
 
 								dto.setTransactionSubTypeLimits(returnTransactionSubTypeLimits);
+								
+								i[0]++;
 
 								return dto;
 							}
+							
 						}, false);
-
+				
 				outResponseGetTransactionLimit.setTransactionLimits(returnTransactionLimits);
 				// break;
 
