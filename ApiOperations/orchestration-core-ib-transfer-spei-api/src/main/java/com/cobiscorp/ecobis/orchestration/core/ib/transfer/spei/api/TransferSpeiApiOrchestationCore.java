@@ -989,7 +989,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                             
                             //SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
                             IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
-                            executeBanpay(aBagSPJavaOrchestration, wProcedureResponse, originalRequest);
+                            executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
 
                             //responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
                                     //aBagSPJavaOrchestration);
@@ -1551,6 +1551,8 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
     private IProcedureResponse executeBanpay(Map<String, Object> aBagSPJavaOrchestration,
             IProcedureResponse responseTransfer, IProcedureRequest originalRequest)
     {
+    	
+    	aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
         // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
         List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
         // SE ACTUALIZA TABLA DE SECUENCIAL SPEI
@@ -1669,11 +1671,11 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             anOriginalRequest.addInputParam("@i_prefijo_rastreo", ICTSTypes.SQLVARCHAR, loadded.getTrackingKeyPrefix());
             anOriginalRequest.addInputParam("@i_base_url", ICTSTypes.SQLVARCHAR, loadded.getBaseUrl());
 
-            String claveRastreo = loadded.getTrackingKeyPrefix()+Methods.getActualDateYyyymmdd()+ anOriginalRequest.readValueParam("@i_transaccion_spei");
+            String claveRastreo = loadded.getTrackingKeyPrefix()+Methods.getActualDateYyyymmdd()+bag.get("@o_referencia");
             anOriginalRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR,claveRastreo) ;
             bag.put("@i_clave_rastreo", claveRastreo);
 
-            anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+            anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, (String) bag.get("@o_referencia"));
             anOriginalRequest.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_ssn_branch"));
             
             //idenficador de operacion se deberia
