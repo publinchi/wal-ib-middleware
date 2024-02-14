@@ -416,9 +416,13 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 								
 								transactionLimitsType = null;
 									
-							} else if (transactionLimitsType.equals("A")) {
+							} else if (transactionLimitsType.equals("MIN")) {
 								
-								transactionLimitsType = "TRANSACTION";
+								transactionLimitsType = "MIN_TXN_LIMIT";
+							
+							} else if (transactionLimitsType.equals("MAX")) {
+								
+								transactionLimitsType = "MAX_TXN_LIMIT";
 							
 							} else if (transactionLimitsType.equals("D")) {
 								
