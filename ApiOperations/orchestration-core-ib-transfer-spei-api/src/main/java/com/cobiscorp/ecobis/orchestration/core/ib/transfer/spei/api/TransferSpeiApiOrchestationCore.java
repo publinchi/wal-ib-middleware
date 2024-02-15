@@ -988,8 +988,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                             }
                             
                             //SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
-                            IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
-                            executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+                            responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
 
                             //responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
                                     //aBagSPJavaOrchestration);
@@ -1573,7 +1572,8 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                 {
                     logger.logDebug("Error SPEI");
                 }
-
+                
+                this.successConnector = false;
                 return Utils.returnException(1, ERROR_SPEI);
             } else
             {
@@ -1584,6 +1584,9 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                 // SE ADJUNTA LA CLAVE DE RASTREO
                 responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
                         respuesta.get(2));
+                
+                this.successConnector = true;
+                aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, respuesta.get(2));
 
                 /*
                  * String wPrcessingSpeiMessage = "PENDIENTE";
@@ -1604,6 +1607,8 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             speiRollback(originalRequest, aBagSPJavaOrchestration);
             //SE REGISTRA EN LOCAL CASO DE ERROR
             persistDataLocalOnFailureSpei(originalRequest, aBagSPJavaOrchestration);
+            
+            this.successConnector = false;
 
             return Utils.returnException(1, ERROR_SPEI);
         }
