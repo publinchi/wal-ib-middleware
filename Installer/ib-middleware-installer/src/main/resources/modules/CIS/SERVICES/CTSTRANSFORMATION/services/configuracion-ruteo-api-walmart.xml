@@ -453,5 +453,21 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
+	<!-- 18500155 ORQUESTACION TRANSACTION LIMIT API-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetTransactionLimit">
+		<conditions>
+		  <condition param="trn">
+			<value>18500155</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetTransactionLimitOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 
 </csp-config>

@@ -27,10 +27,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterAccountSpei implements Serializable {
+public class ResponseGetTransactionLimit implements Serializable {
   private Boolean success;
   private Response response;
-  private Integer registerAccountId;
+  private Integer externalCustomerId;
+  private String accountNumber;
+  private String transactionType;
+  private TransactionLimits[] transactionLimits;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -49,10 +52,28 @@ public class ResponseRegisterAccountSpei implements Serializable {
   public void setResponse(Response response ){
     this.response=response;
   }
-  public Integer getRegisterAccountId(){
-    return this.registerAccountId;
+  public Integer getExternalCustomerId(){
+    return this.externalCustomerId;
   }
-  public void setRegisterAccountId(Integer registerAccountId ){
-    this.registerAccountId=registerAccountId;
+  public void setExternalCustomerId(Integer externalCustomerId ){
+    this.externalCustomerId=externalCustomerId;
+  }
+  public String getAccountNumber(){
+    return this.accountNumber;
+  }
+  public void setAccountNumber(String accountNumber ){
+    this.accountNumber=accountNumber;
+  }
+  public String getTransactionType(){
+    return this.transactionType;
+  }
+  public void setTransactionType(String transactionType ){
+    this.transactionType=transactionType;
+  }
+  public TransactionLimits[] getTransactionLimits(){
+    return this.transactionLimits;
+  }
+  public void setTransactionLimits(TransactionLimits[] transactionLimits ){
+    this.transactionLimits=transactionLimits;
   }
 }

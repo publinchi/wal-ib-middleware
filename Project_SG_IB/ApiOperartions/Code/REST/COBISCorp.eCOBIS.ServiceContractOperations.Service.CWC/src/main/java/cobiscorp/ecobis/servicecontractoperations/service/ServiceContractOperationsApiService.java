@@ -28,6 +28,7 @@ import com.cobiscorp.cobis.cts.rest.client.dto.MessageBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
+import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
 import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
@@ -3757,6 +3758,212 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			LOGGER.logDebug("Ends service execution: getStatementList");
 			// returns data
 			return outResponseGetStatementList;
+		}
+		
+		/**
+		 * Transaction Limit API
+		 */
+		@Override
+		// Have DTO
+		public ResponseGetTransactionLimit getTransactionLimit(String xrequestid, String xenduserrequestdatetime,
+				String xenduserip, String xchannel, RequestGetTransactionLimit inRequestGetTransactionLimit)
+				throws CTSRestException {
+			LOGGER.logDebug("Start service execution: getTransactionLimit");
+			ResponseGetTransactionLimit outResponseGetTransactionLimit = new ResponseGetTransactionLimit();
+
+			// create procedure
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_transaction_limit_api");
+			
+			// headers
+			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500155");
+			procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+					String.valueOf(inRequestGetTransactionLimit.getExternalCustomerId()));
+			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
+					inRequestGetTransactionLimit.getAccountNumber());
+			procedureRequestAS.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR,
+					inRequestGetTransactionLimit.getTransactionType());
+			procedureRequestAS.addInputParam("@i_transaction_subtype", ICTSTypes.SQLVARCHAR,
+					inRequestGetTransactionLimit.getTransactionSubType());
+
+			// execute procedure
+			ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+					procedureRequestAS);
+
+			List<MessageBlock> errors = ErrorUtil.getErrors(response);
+			// throw error
+			if (errors != null && errors.size() > 0) {
+				LOGGER.logDebug("Procedure execution returns error");
+				if (LOGGER.isDebugEnabled()) {
+					for (int i = 0; i < errors.size(); i++) {
+						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+					}
+				}
+				throw new CTSRestException("Procedure Response has errors", null, errors);
+			}
+			LOGGER.logDebug("Procedure ok");
+			// Init map returns
+			int mapTotal = 0;
+			int mapBlank = 0;
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseGetTransactionLimit returnResponseGetTransactionLimit = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(0), new RowMapper<ResponseGetTransactionLimit>() {
+							@Override
+							public ResponseGetTransactionLimit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetTransactionLimit dto = new ResponseGetTransactionLimit();
+
+								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetTransactionLimit.setSuccess(returnResponseGetTransactionLimit.isSuccess());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseGetTransactionLimit returnResponseGetTransactionLimit = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(1), new RowMapper<ResponseGetTransactionLimit>() {
+							@Override
+							public ResponseGetTransactionLimit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetTransactionLimit dto = new ResponseGetTransactionLimit();
+
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetTransactionLimit.setResponse(returnResponseGetTransactionLimit.getResponse());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets()!=null && response.getResultSets().size()>2 && response.getResultSets().get(2).getData().getRows().size()>0) {
+				// ---------NO Array
+				ResponseGetTransactionLimit returnResponseGetTransactionLimit = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(2), new RowMapper<ResponseGetTransactionLimit>() {
+							@Override
+							public ResponseGetTransactionLimit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseGetTransactionLimit dto = new ResponseGetTransactionLimit();
+
+								dto.setExternalCustomerId(resultSetMapper.getInteger(1));
+								dto.setAccountNumber(resultSetMapper.getString(2));
+								dto.setTransactionType(resultSetMapper.getString(3));
+								return dto;
+							}
+						}, false);
+
+				outResponseGetTransactionLimit.setExternalCustomerId(returnResponseGetTransactionLimit.getExternalCustomerId());
+				outResponseGetTransactionLimit.setAccountNumber(returnResponseGetTransactionLimit.getAccountNumber());
+				outResponseGetTransactionLimit.setTransactionType(returnResponseGetTransactionLimit.getTransactionType());
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			mapTotal++;
+			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
+				
+				final int[] i = {4};
+				
+				// ---------NO Array
+				TransactionLimits[] returnTransactionLimits = MapperResultUtil
+						.mapToArray(response.getResultSets().get(3), new RowMapper<TransactionLimits>() {
+							@Override
+							public TransactionLimits mapRow(ResultSetMapper resultSetMapper, int index) {
+								TransactionLimits dto = new TransactionLimits();
+
+								dto.setTransactionSubType(resultSetMapper.getString(1));
+								
+								TransactionSubTypeLimits[] returnTransactionSubTypeLimits = MapperResultUtil.mapToArray(
+										response.getResultSets().get(i[0]), new RowMapper<TransactionSubTypeLimits>() {
+											@Override
+											public TransactionSubTypeLimits mapRow(ResultSetMapper resultSetMapper,
+													int index) {
+												TransactionSubTypeLimits dto = new TransactionSubTypeLimits();
+
+												dto.setTransactionLimitsType(resultSetMapper.getString(1));
+												dto.configuredLimitInstance().setAmount(resultSetMapper.getBigDecimal(2));
+												dto.configuredLimitInstance().setCurrency(resultSetMapper.getString(3));
+												dto.balanceAmountInstance().setAmount(resultSetMapper.getBigDecimal(4));
+												dto.balanceAmountInstance().setCurrency(resultSetMapper.getString(5));
+												
+												if (dto.balanceAmountInstance().getAmount() == null) {
+													dto.setBalanceAmount(null);
+												}
+												
+												return dto;
+											}
+										}, false);
+
+								dto.setTransactionSubTypeLimits(returnTransactionSubTypeLimits);
+								
+								i[0]++;
+
+								return dto;
+							}
+							
+						}, false);
+				
+				outResponseGetTransactionLimit.setTransactionLimits(returnTransactionLimits);
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
+			// End map returns
+			if (mapBlank != 0 && mapBlank == mapTotal) {
+				LOGGER.logDebug("No data found");
+				throw new CTSRestException("404", null);
+			}
+			
+			String trn = "Get Transaction Limit";
+
+			Gson gson = new Gson();
+			String jsonReq = gson.toJson(inRequestGetTransactionLimit);
+
+			Gson gson2 = new Gson();
+			String jsonRes = gson2.toJson(outResponseGetTransactionLimit);
+
+			Header header = new Header();
+
+			header.setAccept("application/json");
+			header.setX_request_id(xrequestid);
+			header.setX_end_user_request_date_time(xenduserrequestdatetime);
+			header.setX_end_user_ip(xenduserip);
+			header.setX_channel(xchannel);
+			header.setContent_type("application/json");
+
+			Gson gson3 = new Gson();
+			String jsonHead = gson3.toJson(header);
+
+			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+			
+			LOGGER.logDebug("Ends service execution: getTransactionLimit");
+			// returns data
+			return outResponseGetTransactionLimit;
 		}
 	   
 	   

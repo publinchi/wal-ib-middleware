@@ -27,32 +27,38 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterAccountSpei implements Serializable {
-  private Boolean success;
-  private Response response;
-  private Integer registerAccountId;
-  public Boolean isSuccess(){
-    return this.success;
+public class TransactionSubTypeLimits implements Serializable {
+  private String transactionLimitsType;
+  private ConfiguredLimit configuredLimit;
+  private BalanceAmount balanceAmount;
+  public String getTransactionLimitsType(){
+    return this.transactionLimitsType;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setTransactionLimitsType(String transactionLimitsType ){
+    this.transactionLimitsType=transactionLimitsType;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
+  public ConfiguredLimit configuredLimitInstance(){
+	if(this.configuredLimit==null){
+	this.configuredLimit=new ConfiguredLimit();
 	}
-	return this.response;
+	return this.configuredLimit;
   }
-  public Response getResponse(){
-    return this.response;
+  public ConfiguredLimit getConfiguredLimit(){
+    return this.configuredLimit;
   }
-  public void setResponse(Response response ){
-    this.response=response;
+  public void setConfiguredLimit(ConfiguredLimit configuredLimit ){
+    this.configuredLimit=configuredLimit;
   }
-  public Integer getRegisterAccountId(){
-    return this.registerAccountId;
+  public BalanceAmount balanceAmountInstance(){
+	if(this.balanceAmount==null){
+	this.balanceAmount=new BalanceAmount();
+	}
+	return this.balanceAmount;
   }
-  public void setRegisterAccountId(Integer registerAccountId ){
-    this.registerAccountId=registerAccountId;
+  public BalanceAmount getBalanceAmount(){
+    return this.balanceAmount;
+  }
+  public void setBalanceAmount(BalanceAmount balanceAmount ){
+    this.balanceAmount=balanceAmount;
   }
 }
