@@ -100,6 +100,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String S_SERVICIO_LOCAL = "@s_servicio";
     private static final String I_PROD_LOCAL = "@i_prod";
     private static final String CANCEL_OPERATION = "0";
+    private static final String OPERATING_INSTITUTION = "90715";
     private boolean successConnector = true;
     private int returnCode = 0;
 
@@ -1686,6 +1687,8 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             //idenficador de operacion se deberia
             anOriginalRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");
             
+            anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getOperatingInstitutionFromParameters(anOriginalRequest));
+            
             // SE HACE LA LLAMADA AL CONECTOR
             // SE HACE LA LLAMADA AL CONECTOR
  			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
@@ -1775,7 +1778,47 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
         return response;
     }
     
-    private AccendoConnectionData retrieveAccendoConnectionData(){
+    private String getOperatingInstitutionFromParameters(IProcedureRequest anOriginalRequest) {
+    	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+		reqTMPCentral.addInputParam("@i_valor",ICTSTypes.SQLVARCHAR, "CBCCDK");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, "CBCCDK");
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, "ACH");	 
+	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "0");
+	    reqTMPCentral.addInputParam("@i_criterio",ICTSTypes.SQLINT4, "0");
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (!wProcedureResponseCentral.hasError()) {
+			
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+				
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					return columns[3].getValue();
+				} else {
+					return OPERATING_INSTITUTION;
+				}
+			} else {
+				return OPERATING_INSTITUTION;
+			}
+			 
+			
+		} else {
+			return OPERATING_INSTITUTION;
+		}
+		
+	}
+
+	private AccendoConnectionData retrieveAccendoConnectionData(){
         String wInfo = "[RegisterAccountsJobImpl][retrieveSpeiConnectionData] ";
 
         logger.logInfo(wInfo + "init task ------>");
