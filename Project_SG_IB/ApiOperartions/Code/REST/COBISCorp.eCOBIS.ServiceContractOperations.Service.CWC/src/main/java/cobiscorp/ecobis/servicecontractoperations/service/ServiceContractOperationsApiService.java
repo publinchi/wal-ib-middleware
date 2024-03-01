@@ -2626,8 +2626,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..administra_token");
 
 		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500090");
-		procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
-				String.valueOf(inRequestOtp.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR,
+				inRequestOtp.getCardId());
+		procedureRequestAS.addInputParam("@i_otp", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestOtp.getOtp()));
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
