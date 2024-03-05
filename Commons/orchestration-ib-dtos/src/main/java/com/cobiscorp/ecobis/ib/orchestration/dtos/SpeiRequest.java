@@ -1,8 +1,6 @@
 package com.cobiscorp.ecobis.ib.orchestration.dtos;
 
-import com.cobiscorp.ecobis.ib.application.dtos.BaseRequest;
-
-public class SpeiRequest extends BaseRequest{
+public class SpeiRequest {
 
 	private String idSpei;
 	private String folioOrigen;
@@ -192,7 +190,6 @@ public class SpeiRequest extends BaseRequest{
 		this.firma = firma;
 	}
 
-	@Override
 	public String toString() {
 		return "{" +
 				"idSpei='" + idSpei + '\'' +
