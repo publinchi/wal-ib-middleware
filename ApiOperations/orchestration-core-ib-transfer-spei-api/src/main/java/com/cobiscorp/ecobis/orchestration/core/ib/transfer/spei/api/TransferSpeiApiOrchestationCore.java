@@ -2,6 +2,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1638,7 +1639,9 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             List<String> data = speiData(anOriginalRequest, bag);
 
             //FECHA
-            Date fecha = new Date();
+            String proccessDate = getParam(anOriginalRequest, "PRODAK", "AHO");
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date fecha = dateFormat.parse(proccessDate);
             SimpleDateFormat forma = new SimpleDateFormat("yyyyMMdd");
             anOriginalRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR, forma.format(fecha));
             anOriginalRequest.addInputParam("@i_institucion_contraparte", ICTSTypes.SQLVARCHAR,
@@ -1687,7 +1690,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             //idenficador de operacion se deberia
             anOriginalRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");
             
-            anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getOperatingInstitutionFromParameters(anOriginalRequest));
+            anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getParam(anOriginalRequest, "CBCCDK", "AHO"));
             
             // SE HACE LA LLAMADA AL CONECTOR
             // SE HACE LA LLAMADA AL CONECTOR
@@ -1696,6 +1699,11 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
  			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500115");
             // SE EJECUTA
             IProcedureResponse connectorSpeiResponse = executeProvider(anOriginalRequest, bag);
+
+            //se regresan a la trn original, para el registro de spei
+            anOriginalRequest.removeParam("@t_trn");
+            anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "1870013");
+            anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1870013");
             // SE VALIDA LA RESPUESTA
             if (!connectorSpeiResponse.hasError()) {
                 if (logger.isDebugEnabled()) {
@@ -1778,18 +1786,17 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
         return response;
     }
     
-    private String getOperatingInstitutionFromParameters(IProcedureRequest anOriginalRequest) {
+    private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
     	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
 		reqTMPCentral.setSpName("cobis..sp_parametro");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
-		reqTMPCentral.addInputParam("@i_valor",ICTSTypes.SQLVARCHAR, "CBCCDK");
-		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, "CBCCDK");
-		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, "ACH");	 
-	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "0");
-	    reqTMPCentral.addInputParam("@i_criterio",ICTSTypes.SQLINT4, "0");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
+	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isInfoEnabled()) {
@@ -1803,7 +1810,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
 				
 				if (resultSetRows.length > 0) {
 					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-					return columns[3].getValue();
+					return columns[2].getValue();
 				} else {
 					return OPERATING_INSTITUTION;
 				}
@@ -2037,11 +2044,12 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
             request.setSpName("cob_bvirtual..sp_reverso_spei");
             request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18009");
-
+            	
+            
             // DATOS CUENTA ORIGEN
-            request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, bag.get("@o_cuenta_ori").toString());
+            request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
             request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, ERROR_SPEI);
-            request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, bag.get("@o_monto").toString());
+            request.addInputParam("@i_monto", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_val"));
             request.addInputParam("@i_mon", ICTSTypes.SQLINT1, bag.get("@o_mon").toString());
             request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
             request.addInputParam("@i_tipo_error", ICTSTypes.SQLINTN, "7");
