@@ -17,6 +17,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
+import com.cobis.trfspeiservice.bsl.dto.RegisterSpeiSpResponse;
 import com.cobis.trfspeiservice.bsl.dto.SpeiMappingRequest;
 import com.cobis.trfspeiservice.bsl.dto.SpeiMappingResponse;
 import com.cobis.trfspeiservice.bsl.serv.ISpeiServiceOrchestration;
@@ -586,53 +587,60 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         movementId = anOriginalProcedureRes.readValueParam("@o_referencia");
 
-        logger.logInfo("xdcxv2 --->" + movementId);
-        if (codeReturn == 0 || codeReturn == 50000) {
-            if (null != movementId) {
-                IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
-                
-                if (this.successConnector) {
-                    
-                    executionStatus = "CORRECT";
-                    updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
-                    trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
-                    
-                    code = "0";
-                    message = "Success";
-                    success = "true";
-                    referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
-                    trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-                    
-                    if (codeReturn == 50000) {
-                        movementId = anOriginalRequest.readValueParam("@s_ssn_branch");
-                    }
-                    
-                    logger.logInfo("bnbn true--->" + movementId);
-                    
-                } else {
-                    
-                    executionStatus = "ERROR";
-                    updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
-                    
-                    code = (String) aBagSPJavaOrchestration.get("@o_id_error");
-                    message = (String) aBagSPJavaOrchestration.get("@o_mensaje_error");
-                    success = "false";
-                    movementId = null;
-                    
-                    logger.logInfo("bnbn false--->" + movementId);
-                }
-                
-            } else {
-                
-                executionStatus = "ERROR";
-                updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
-                
-                code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
-                message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
-                success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
-                
-                logger.logInfo("bnbn false--->" + movementId);
-            }
+		logger.logInfo("xdcxv2 --->" + movementId);
+		if (codeReturn == 0 || codeReturn == 50000 || codeReturn == 1) {
+			if (null != movementId) {
+				IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
+				
+				if (this.successConnector) {
+					
+					executionStatus = "CORRECT";
+					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+					
+					code = "0";
+					message = "Success";
+					success = "true";
+					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
+					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+					
+					if (codeReturn == 50000) {
+						movementId = anOriginalRequest.readValueParam("@s_ssn_branch");
+					}
+					
+					logger.logInfo("bnbn true--->" + movementId);
+					
+				} else {
+					
+					executionStatus = "ERROR";
+					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+					
+					if (codeReturn == 1) {
+						code = "500024";
+						message = "Error connecting with SPEI provider";
+						success = "false";
+					} else {
+						code = (String) aBagSPJavaOrchestration.get("@o_id_error");
+						message = (String) aBagSPJavaOrchestration.get("@o_mensaje_error");
+						success = "false";
+					}
+					
+					movementId = null;
+					
+					logger.logInfo("bnbn false--->" + movementId);
+				}
+				
+			} else {
+				
+				executionStatus = "ERROR";
+				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
+				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
+				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
+				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+				
+				logger.logInfo("bnbn false--->" + movementId);
+			}
 
         } else {
             
@@ -788,21 +796,22 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
 
         request.setSpName("cob_bvirtual..sp_update_transfer_status");
 
-        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-                IMultiBackEndResolverService.TARGET_LOCAL);
-        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-        
-        request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
-        request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
-        request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-        
-        logger.logDebug("Request Corebanking registerLog: " + request.toString());
-        
-        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-        
-        if (logger.isDebugEnabled()) {
-            logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
-        }
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
+		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
+		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_referencia"));
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
 
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
@@ -1071,8 +1080,40 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
             responseTransfer.addParam("@o_idTransaccion", ICTSTypes.SQLVARCHAR, idTransaccion.length(), idTransaccion);
         }
 
-        return responseTransfer;
-    }
+		return responseTransfer;
+	}
+
+	private void reverseSpei(SpeiMappingRequest request, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		RegisterSpeiSpResponse requestSp = new RegisterSpeiSpResponse();
+        requestSp.setMonto(String.valueOf(request.getMonto()));
+        requestSp.setMoneda("0");
+        requestSp.setProcesoOrigen(Constants.ORIGIN_PROCESS_SINGLE_SPEI);
+        requestSp.setTransactionCore(request.getSsnDebito());
+        requestSp.setServicio(request.getServicio());
+        requestSp.setTipoError(Constants.SPEI_ERROR_TYPE);
+        requestSp.setCuentaOrigen(request.getCuentaOrdenante());
+
+        requestSp.setTrnOrigen(request.getTrnOrigen());
+        requestSp.setUser(request.getUser());
+        requestSp.setOffice(request.getOffice());
+        requestSp.setServer(request.getServer());
+        requestSp.setTerminal(request.getTerminal());
+        requestSp.setComision(originalRequest.readValueParam("@i_comision"));
+        requestSp.setConcepto(Constants.ERROR_SPEI);
+        IProcedureRequest wProcedureRequest = new ProcedureRequestAS();
+        SpReverseSpeiSent.initializeSpReverseSpei(wProcedureRequest, requestSp);
+        
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(wProcedureRequest);
+        
+        if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking reverseSpei: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de reverseSpei");
+		}
+	}
 
     public IProcedureResponse executeTransferSPI(IProcedureRequest anOriginalRequest,
             Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {

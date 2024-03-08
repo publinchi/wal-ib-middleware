@@ -100,7 +100,6 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
-
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
@@ -108,25 +107,36 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
+		
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();		
+		String registerAccountId = anOriginalProcedureRes.readValueParam("@o_siguiente_tercero");
+		
 		IResultSetRow row = new ResultSetRow();
-
-		row.addRowData(1,
-				new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
+		row.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue()));
 		row.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue()));
-
 		data.addRow(row);
 
 		IResultSetRow row2 = new ResultSetRow();
 		row2.addRowData(1, new ResultSetRowColumnData(false, anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue()));
 		data2.addRow(row2);
+		logger.logInfo("registerAccountId --->" + registerAccountId);
+		if (registerAccountId != null && registerAccountId.equals("0"))
+			registerAccountId =  null;
+		
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("registerAccountId", ICTSTypes.SQLINT4, 10));
+		IResultSetRow row3 = new ResultSetRow();
+		row3.addRowData(1, new ResultSetRowColumnData(false, registerAccountId));
+		data3.addRow(row3);
 
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);		
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);				
 		
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);				
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
 		return anOriginalProcedureResponse;
 	}
@@ -137,16 +147,24 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en registerAccount");
 		}
-		
+		String typeThird = aRequest.readValueParam("@i_tipo_tercero").toString(); 
+		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+		if("40".equals(typeThird))
+		{
+			wAccountsResp = validateSpeiAccount(aRequest);
+			if(wAccountsResp.getReturnCode()!=0)
+			{
+				return wAccountsResp;
+			}
+		}
 		String type = aRequest.readValueParam("@i_banco");
 		logger.logInfo(CLASS_NAME + " xdx" + aRequest.readValueParam("@i_banco"));
 		if (type.equals("0") || type == null)
 			type = "B";
 		else
 			type = "O";
-			
-		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		
+				
 		wAccountsResp = getCurpByAccount(aRequest, aBagSPJavaOrchestration, type);
 		
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
@@ -207,8 +225,14 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_prod", ICTSTypes.SQLVARCHAR, product);
 		request.addInputParam("@i_prod_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_tipo_tercero"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		
+		request.addOutputParam("@o_siguiente_tercero", ICTSTypes.SQLINTN, "0");
 				
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Register Account Id es " +  wProductsQueryResp.readValueParam("@o_siguiente_tercero"));
+		}		
 
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -266,6 +290,65 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		return wProductsQueryResp;
 	}
 
+	private IProcedureResponse validateSpeiAccount(IProcedureRequest aRequest)
+	{
+		//result 1
+		IResultSetHeader headerRs0 = new ResultSetHeader();
+		IResultSetData data0 = new ResultSetData();
+		IResultSetRow row0 = new ResultSetRow();
+		//result 2		
+		IResultSetHeader headerRs1 = new ResultSetHeader();
+		IResultSetData data1 = new ResultSetData();
+		IResultSetRow row1 = new ResultSetRow();
+		
+		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		
+		String bankid = aRequest.readValueParam("@i_banco");
+        String clabe = aRequest.readValueParam("@i_cta_des");
+        String bankidLastThreeDigits = "";
+        String clabeFirstThreeDigits = "";
+        Integer code = 0;
+        String message= "success";
+        //validacion cuanta clave con bankid
+        
+        if(bankid!=null && bankid.length()>=3 )// Obteniendo los últimos tres dígitos de bankid
+        {
+        	bankidLastThreeDigits = bankid.substring(bankid.length() - 3);
+        }
+        
+        if(clabe!=null && clabe.length()>=3 )// Obteniendo los primeros tres dígitos de clabe
+        {
+        	clabeFirstThreeDigits = clabe.substring(0, 3);
+        }
+
+        // Validando si coinciden
+        if (!bankidLastThreeDigits.equals(clabeFirstThreeDigits)) {
+        	code = 400599;
+        	message = "The account does not belong to the banking institution.";
+        	
+        }
+		
+        row0.addRowData(1, new ResultSetRowColumnData(false,"success"));
+		data0.addRow(row0);
+		
+        row1.addRowData(1, new ResultSetRowColumnData(false, String.valueOf(code)));
+		row1.addRowData(2, new ResultSetRowColumnData(false,message));
+		data1.addRow(row1);
+		
+		headerRs0.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+		headerRs1.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		headerRs1.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		
+		IResultSetBlock resultsetBlock0 = new ResultSetBlock(headerRs0, data0);
+		IResultSetBlock resultsetBlock1 = new ResultSetBlock(headerRs1, data1);
+		
+		anProcedureResponse.addResponseBlock(resultsetBlock0);	
+		anProcedureResponse.addResponseBlock(resultsetBlock1);	
+		anProcedureResponse.setReturnCode(code);
+		
+		return anProcedureResponse;
+	}
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 			Map<String, Object> aBagSPJavaOrchestration) {

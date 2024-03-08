@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="34" id="2" name="properties">
+  <collection type="List" length="36" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="account_id" />
       <field type="String" name="type" value="string" />
@@ -86,7 +86,7 @@
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="required" value="false" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
@@ -113,9 +113,9 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="14" index="11">
       <field type="String" name="name" value="processing" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_processing" />
+      <field type="String" name="type" value="PurchaseDock_processing" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="15" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_processing" />
+        <field type="String" name="name" value="PurchaseDock_processing" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -127,7 +127,7 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="16" index="12">
-      <field type="String" name="name" value="account_type_indicator" />
+      <field type="String" name="name" value="transaction_type_indicator" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
@@ -171,7 +171,7 @@
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="required" value="false" />
       <field type="boolean" name="encrypted" value="false" />
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
@@ -208,9 +208,9 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="24" index="20">
       <field type="String" name="name" value="card_entry" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_card_entry" />
+      <field type="String" name="type" value="PurchaseDock_card_entry" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="25" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_card_entry" />
+        <field type="String" name="name" value="PurchaseDock_card_entry" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -233,9 +233,9 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="27" index="22">
       <field type="String" name="name" value="values" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_values" />
+      <field type="String" name="type" value="PurchaseDock_values" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="28" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_values" />
+        <field type="String" name="name" value="PurchaseDock_values" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -258,9 +258,9 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="30" index="24">
       <field type="String" name="name" value="preauthorization" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_preauthorization" />
+      <field type="String" name="type" value="PurchaseDock_preauthorization" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="31" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_preauthorization" />
+        <field type="String" name="name" value="PurchaseDock_preauthorization" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -332,10 +332,10 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="38" index="31">
-      <field type="String" name="name" value="token_data" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_token_data" />
+      <field type="String" name="name" value="tokens_62" />
+      <field type="String" name="type" value="Tokens_62" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="39" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_token_data" />
+        <field type="String" name="name" value="Tokens_62" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -347,10 +347,10 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="40" index="32">
-      <field type="String" name="name" value="funds_transfer" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_funds_transfer" />
+      <field type="String" name="name" value="token_data" />
+      <field type="String" name="type" value="PurchaseDock_token_data" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_funds_transfer" />
+        <field type="String" name="name" value="PurchaseDock_token_data" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -362,10 +362,10 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="42" index="33">
-      <field type="String" name="name" value="transaction_indicators" />
-      <field type="String" name="type" value="AuthorizePurchaseDock_transaction_indicators" />
+      <field type="String" name="name" value="funds_transfer" />
+      <field type="String" name="type" value="PurchaseDock_funds_transfer" />
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="43" name="dtoType">
-        <field type="String" name="name" value="AuthorizePurchaseDock_transaction_indicators" />
+        <field type="String" name="name" value="PurchaseDock_funds_transfer" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
       </class>
@@ -376,9 +376,34 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="44" index="34">
+      <field type="String" name="name" value="transaction_indicators" />
+      <field type="String" name="type" value="PurchaseDock_transaction_indicators" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="45" name="dtoType">
+        <field type="String" name="name" value="PurchaseDock_transaction_indicators" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="46" index="35">
+      <field type="String" name="name" value="additional_information" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="RequestAuthorizePurchaseDock" />
-  <collection type="Map" length="0" id="44" name="templatesProperties">
+  <collection type="Map" length="0" id="47" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />

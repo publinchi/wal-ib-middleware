@@ -118,6 +118,10 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		String date = aRequest.readValueParam("@i_date");
 		String time = aRequest.readValueParam("@i_time");
 		String expDate = aRequest.readValueParam("@i_card_expiration_date");
+		String posId = aRequest.readValueParam("@i_pos_id");
+		String cashier = aRequest.readValueParam("@i_cashier");
+		String transaction = aRequest.readValueParam("@i_transaction");
+		String pinpad = aRequest.readValueParam("@i_pinpad");
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -154,6 +158,22 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		if (expDate != null && !expDate.isEmpty() && !isExpDate(expDate)) {
 			expDate = "I";
 		}
+		
+		if (posId == null || posId.trim().isEmpty()) {
+			posId = "E";
+		}
+		
+		if (cashier == null || cashier.trim().isEmpty()) {
+			cashier = "E";
+		}
+		
+		if (transaction == null || transaction.trim().isEmpty()) {
+			transaction = "E";
+		}
+		
+		if (pinpad == null || pinpad.trim().isEmpty()) {
+			pinpad = "E";
+		}
 
 		request.setSpName("cob_atm..sp_bv_valida_trn_atm_api");
 
@@ -188,14 +208,31 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		request.addInputParam("@i_terminalCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_retrievalReferenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_retrieval_reference_number"));
 		request.addInputParam("@i_acquirerCountryCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
+		request.addInputParam("@i_affiliationNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		request.addInputParam("@i_storeNumber", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
+		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, posId);
+		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
+		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
 		request.addInputParam("@i_cardPresent", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_card_present"));
 		request.addInputParam("@i_cardholderPresent", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_card_holder_present"));
 		request.addInputParam("@i_cvv2Present", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_cvv2_present"));
 		request.addInputParam("@i_pinValidatedOffline", ICTSTypes.SQLBIT, aRequest.readValueParam("@i_pin_validated_offline"));
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "PURCHASE");
+		
+		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 				
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("secuencial es " +  wProductsQueryResp.readValueParam("@o_seq"));
+			logger.logDebug("reentry es " +  wProductsQueryResp.readValueParam("@o_reentry"));
+		}
+		
+		aBagSPJavaOrchestration.put("o_seq", wProductsQueryResp.readValueParam("@o_seq"));
+		aBagSPJavaOrchestration.put("o_reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -317,6 +354,38 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logInfo(CLASS_NAME + " Saliendo de registerLogBd");
 		}
 	}
+	
+	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
+		}
+
+		request.setSpName("cob_bvirtual..sp_update_transfer_status");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
+		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
+		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_ssn_host"));
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
+		}
+	}
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -330,6 +399,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+		String executionStatus = null;
 		
 		logger.logInfo("return code resp--->" + codeReturn );
 
@@ -374,6 +444,9 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				String seq = aBagSPJavaOrchestration.get("@o_seq_tran").toString();
 				String movementId = anOriginalProcedureRes.readValueParam("@o_ssn_host");
 				
+				executionStatus = "CORRECT";
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
@@ -408,6 +481,9 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 				String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				String message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				
+				executionStatus = "ERROR";
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, success));
@@ -423,6 +499,9 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
+			
+			executionStatus = "ERROR";
+			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
 			IResultSetRow row = new ResultSetRow();
 			

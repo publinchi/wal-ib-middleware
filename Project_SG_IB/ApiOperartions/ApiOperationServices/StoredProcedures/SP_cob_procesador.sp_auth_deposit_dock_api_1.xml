@@ -69,6 +69,7 @@
     <parameter name="@i_is_international" dataType="bit" direction="in" />
     <parameter name="@i_card_id" dataType="varchar" direction="in" />
     <parameter name="@i_product_id" dataType="varchar" direction="in" />
+    <parameter name="@i_additional_information" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

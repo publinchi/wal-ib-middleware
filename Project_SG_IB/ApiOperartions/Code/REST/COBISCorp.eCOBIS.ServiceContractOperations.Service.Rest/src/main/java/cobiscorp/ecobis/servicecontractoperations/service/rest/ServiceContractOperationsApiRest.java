@@ -48,12 +48,13 @@ import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.CreateCustomerResponse;
 import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryRequest;
 import cobiscorp.ecobis.datacontractoperations.dto.GetBeneficiaryResponse;
-import cobiscorp.ecobis.datacontractoperations.dto.Message;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCreateSavingAccount;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteBeneficiary;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestDeleteContact;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDefineSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteBeneficiary;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseDeleteContact;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseValidateAllSecurityQA;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestDeviceActivation;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCreateSavingAccount;
@@ -81,13 +82,13 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestGetColonyByMunicipalit
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetStatementList;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetStatementList;
+import cobiscorp.ecobis.datacontractoperations.dto.RequestGetTransactionLimit;
+import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetTransactionLimit;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetBalancesDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetColonyByMunicipality;
-import cobiscorp.ecobis.datacontractoperations.dto.ResponseSearchLocationCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetMovementsDetail;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestCatalog;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseCatalog;
-import cobiscorp.ecobis.datacontractoperations.dto.CatalogueItems;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestGetUserEntityInformation;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestMunicipalityByState;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseGetUserEntityInformation;
@@ -121,6 +122,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.RequestUpdateCredentials;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseUpdateCredentials;
 import cobiscorp.ecobis.datacontractoperations.dto.RequestAuthorizeReversalDock;
 import cobiscorp.ecobis.datacontractoperations.dto.ResponseAuthorizeReversalDock;
+import cobiscorp.ecobis.datacontractoperations.dto.Tokens_62;
 
 import org.apache.felix.scr.annotations.*;
 import com.cobiscorp.cobis.commons.log.ILogger;
@@ -130,11 +132,9 @@ import javax.validation.constraints.Null;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.List;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.math.BigDecimal;
 
-@Path("/cobis/api/Waltmart/ServiceContractOperations")
+@Path("/cobis/api/Walmart/ServiceContractOperations")
 @Component
 @Service({ ServiceContractOperationsApiRest.class })
 public class ServiceContractOperationsApiRest {
@@ -169,7 +169,8 @@ public class ServiceContractOperationsApiRest {
 				new Data("amount", inCreditAccountRequest.getAmount()),
 				new Data("commission", inCreditAccountRequest.getCommission()),
 				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
-				new Data("creditConcept", inCreditAccountRequest.getCreditConcept()))) {
+				new Data("latitude", inCreditAccountRequest.getLatitude()),
+				new Data("longitude", inCreditAccountRequest.getLongitude()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -267,29 +268,31 @@ public class ServiceContractOperationsApiRest {
 				new Data("date", inRequestAuthorizePurchase.getDate()),
 				new Data("time", inRequestAuthorizePurchase.getTime()),
 				new Data("mti", inRequestAuthorizePurchase.getMti()),
-				new Data("processing", inRequestAuthorizePurchase.getProcessing().getType()),
-				new Data("processing", inRequestAuthorizePurchase.getProcessing().getCode()),
+				new Data("processing.type", inRequestAuthorizePurchase.getProcessing().getType()),
+				new Data("processing.code", inRequestAuthorizePurchase.getProcessing().getCode()),
 				new Data("nsu", inRequestAuthorizePurchase.getNsu()),
 				new Data("cardExpirationDate", inRequestAuthorizePurchase.getCardExpirationDate()),
-				new Data("cardEntry", inRequestAuthorizePurchase.getCardEntry().getCode()),
-				new Data("cardEntry", inRequestAuthorizePurchase.getCardEntry().getPin()),
-				new Data("cardEntry", inRequestAuthorizePurchase.getCardEntry().getMode()),
+				new Data("cardEntry.code", inRequestAuthorizePurchase.getCardEntry().getCode()),
+				new Data("cardEntry.pin", inRequestAuthorizePurchase.getCardEntry().getPin()),
+				new Data("cardEntry.mode", inRequestAuthorizePurchase.getCardEntry().getMode()),
 				new Data("merchantCategoryCode", inRequestAuthorizePurchase.getMerchantCategoryCode()),
-				new Data("values", inRequestAuthorizePurchase.getValues().getSourceCurrencyCode()),
-				new Data("values", inRequestAuthorizePurchase.getValues().getSettlementCurrencyCode()),
-				new Data("values", inRequestAuthorizePurchase.getValues().getAmount()),
+				new Data("values.sourceCurrencyCode", inRequestAuthorizePurchase.getValues().getSourceCurrencyCode()),
+				new Data("values.settlementCurrencyCode", inRequestAuthorizePurchase.getValues().getSettlementCurrencyCode()),
+				new Data("values.amount", inRequestAuthorizePurchase.getValues().getAmount()),
 				new Data("institutionName", inRequestAuthorizePurchase.getInstitutionName()),
 				new Data("terminalCode", inRequestAuthorizePurchase.getTerminalCode()),
 				new Data("retrievalReferenceNumber", inRequestAuthorizePurchase.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizePurchase.getAcquirerCountryCode()),
-				new Data("transactionIndicators",
-						inRequestAuthorizePurchase.getTransactionIndicators().isCardPresent()),
-				new Data("transactionIndicators",
-						inRequestAuthorizePurchase.getTransactionIndicators().isCardholderPresent()),
-				new Data("transactionIndicators",
-						inRequestAuthorizePurchase.getTransactionIndicators().isCvv2Present()),
-				new Data("transactionIndicators",
-						inRequestAuthorizePurchase.getTransactionIndicators().isPinValidatedOffline()))) {
+				new Data("tokens62.affiliationNumber", inRequestAuthorizePurchase.getTokens62().getAffiliationNumber()),
+				new Data("tokens62.storeNumber", inRequestAuthorizePurchase.getTokens62().getStoreNumber()),
+				new Data("tokens62.posId", inRequestAuthorizePurchase.getTokens62().getPosId()),
+				new Data("tokens62.cashier", inRequestAuthorizePurchase.getTokens62().getCashier()),
+				new Data("tokens62.transaction", inRequestAuthorizePurchase.getTokens62().getTransaction()),
+				new Data("tokens62.pinPad", inRequestAuthorizePurchase.getTokens62().getPinpad()),
+				new Data("transactionIndicators.isCardPresent", inRequestAuthorizePurchase.getTransactionIndicators().isCardPresent()),
+				new Data("transactionIndicators.isCardHolderPresent", inRequestAuthorizePurchase.getTransactionIndicators().isCardholderPresent()),
+				new Data("transactionIndicators.isCvv2Present", inRequestAuthorizePurchase.getTransactionIndicators().isCvv2Present()),
+				new Data("transactionIndicators.isPinValidatedOffline", inRequestAuthorizePurchase.getTransactionIndicators().isPinValidatedOffline()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -333,8 +336,22 @@ public class ServiceContractOperationsApiRest {
 			RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) {
 		LOGGER.logDebug("Start service execution REST: authorizePurchaseDock");
 		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock = new ResponseAuthorizePurchaseDock();
-
-		if (!validateMandatory(new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
+		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+		//del nuevo campo aditional_information, para ingresar al tokens 62 
+		ArrayList<String> adtInf = aditionalData(inRequestAuthorizePurchaseDock.getAdditional_information());
+		if(adtInf != null && !adtInf.isEmpty())
+		{
+			inRequestAuthorizePurchaseDock.setTokens_62(new Tokens_62());
+			inRequestAuthorizePurchaseDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+			inRequestAuthorizePurchaseDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+			inRequestAuthorizePurchaseDock.getTokens_62().setPos_id(adtInf.get(2));
+			inRequestAuthorizePurchaseDock.getTokens_62().setCashier(adtInf.get(3));
+			inRequestAuthorizePurchaseDock.getTokens_62().setTransaction(adtInf.get(4));
+			inRequestAuthorizePurchaseDock.getTokens_62().setPinpad(adtInf.get(5));
+		}
+				
+		if (!validateMandatory(
+				//new Data("authorization_code", inRequestAuthorizePurchaseDock.getAuthorization_code()),
 				new Data("card_id", inRequestAuthorizePurchaseDock.getCard_id()),
 				new Data("card_entry.code", inRequestAuthorizePurchaseDock.getCard_entry().getCode()),
 				new Data("card_entry.pin", inRequestAuthorizePurchaseDock.getCard_entry().getPin()),
@@ -356,7 +373,14 @@ public class ServiceContractOperationsApiRest {
 				new Data("values.billing_value", inRequestAuthorizePurchaseDock.getValues().getBilling_value()),
 				new Data("values.source_currency_code",
 						inRequestAuthorizePurchaseDock.getValues().getSource_currency_code()),
-				new Data("values.source_value", inRequestAuthorizePurchaseDock.getValues().getSource_value()))) {
+				new Data("values.source_value", inRequestAuthorizePurchaseDock.getValues().getSource_value()),
+				//new Data("tokens_62.affiliation_number", inRequestAuthorizePurchaseDock.getTokens_62().getAffiliation_number()),
+				//new Data("tokens_62.store_number", inRequestAuthorizePurchaseDock.getTokens_62().getStore_number()),
+				//new Data("tokens_62.pos_id", inRequestAuthorizePurchaseDock.getTokens_62().getPos_id()),
+				//new Data("tokens_62.cashier", inRequestAuthorizePurchaseDock.getTokens_62().getCashier()),
+				//new Data("tokens_62.transaction", inRequestAuthorizePurchaseDock.getTokens_62().getTransaction()),
+				//new Data("tokens_62.pin_pad", inRequestAuthorizePurchaseDock.getTokens_62().getPinpad()),
+				new Data("additional_information", inRequestAuthorizePurchaseDock.getAdditional_information()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -410,19 +434,23 @@ public class ServiceContractOperationsApiRest {
 					new Data("date", inRequestAuthorizeWithdrawal.getDate()),
 					new Data("time", inRequestAuthorizeWithdrawal.getTime()),
 					new Data("mti", inRequestAuthorizeWithdrawal.getMti()),
-					new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getType()),
-					new Data("processing", inRequestAuthorizeWithdrawal.getProcessing().getCode()),
+					new Data("processing.type", inRequestAuthorizeWithdrawal.getProcessing().getType()),
+					new Data("processing.code", inRequestAuthorizeWithdrawal.getProcessing().getCode()),
 					new Data("nsu", inRequestAuthorizeWithdrawal.getNsu()),
 					new Data("merchantCategoryCode", inRequestAuthorizeWithdrawal.getMerchantCategoryCode()),
-					new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSourceCurrencyCode()),
-					new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getSettlementCurrencyCode()),
-					new Data("transaction", inRequestAuthorizeWithdrawal.getTransaction().getAmount()),
+					new Data("transaction.sourceCurrencyCode", inRequestAuthorizeWithdrawal.getTransaction().getSourceCurrencyCode()),
+					new Data("transaction.settlementCurrencyCode", inRequestAuthorizeWithdrawal.getTransaction().getSettlementCurrencyCode()),
+					new Data("transaction.amount", inRequestAuthorizeWithdrawal.getTransaction().getAmount()),
 					new Data("institutionName", inRequestAuthorizeWithdrawal.getInstitutionName()),
 					new Data("terminalCode", inRequestAuthorizeWithdrawal.getTerminalCode()),
 					new Data("retrievalReferenceNumber", inRequestAuthorizeWithdrawal.getRetrievalReferenceNumber()),
 					new Data("acquirerCountryCode", inRequestAuthorizeWithdrawal.getAcquirerCountryCode()),
-					new Data("storeNumber", inRequestAuthorizeWithdrawal.getStoreNumber()),
-					new Data("affiliationNumber", inRequestAuthorizeWithdrawal.getAffiliationNumber()))) {
+					new Data("tokens62.affiliationNumber", inRequestAuthorizeWithdrawal.getTokens62().getAffiliationNumber()),
+					new Data("tokens62.storeNumber", inRequestAuthorizeWithdrawal.getTokens62().getStoreNumber()),
+					new Data("tokens62.posId", inRequestAuthorizeWithdrawal.getTokens62().getPosId()),
+					new Data("tokens62.cashier", inRequestAuthorizeWithdrawal.getTokens62().getCashier()),
+					new Data("tokens62.transaction", inRequestAuthorizeWithdrawal.getTokens62().getTransaction()),
+					new Data("tokens62.pinPad", inRequestAuthorizeWithdrawal.getTokens62().getPinpad()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
 				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 						.build();
@@ -466,26 +494,46 @@ public class ServiceContractOperationsApiRest {
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
 			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
 
+			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+			//del nuevo campo aditional_information, para ingresar al tokens 62 
+			ArrayList<String> adtInf = aditionalData(inRequestAuthorizeWithdrawalDock.getAdditional_information());
+			if(adtInf != null && !adtInf.isEmpty())
+			{
+				inRequestAuthorizeWithdrawalDock.setTokens_62(new Tokens_62());
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setPos_id(adtInf.get(2));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setCashier(adtInf.get(3));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setTransaction(adtInf.get(4));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setPinpad(adtInf.get(5));
+			}
 			if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
-					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getType()),
-					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
-					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
-					new Data("processing", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
+					new Data("processing.type", inRequestAuthorizeWithdrawalDock.getProcessing().getType()),
+					new Data("processing.origin_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
+					new Data("processing.destiny_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
+					new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
 					new Data("nsu", inRequestAuthorizeWithdrawalDock.getNsu()),
-//				new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
+                    //new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
 					new Data("transaction_origin", inRequestAuthorizeWithdrawalDock.getTransaction_origin()),
-					new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
-					new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
-					new Data("card_entry", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
+					new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
+					new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
+					new Data("card_entry.mode", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
 					new Data("merchant_category_code", inRequestAuthorizeWithdrawalDock.getMerchant_category_code()),
-					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_currency_code()),
-					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_currency_code()),
-					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getSource_value()),
-					new Data("values", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
+					new Data("values.source_currency_code", inRequestAuthorizeWithdrawalDock.getValues().getSource_currency_code()),
+					new Data("values.billing_currency_code", inRequestAuthorizeWithdrawalDock.getValues().getBilling_currency_code()),
+					new Data("values.source_value", inRequestAuthorizeWithdrawalDock.getValues().getSource_value()),
+					new Data("values.billing_value", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
 					new Data("terminal_code", inRequestAuthorizeWithdrawalDock.getTerminal_code()),
 					new Data("establishment_code", inRequestAuthorizeWithdrawalDock.getEstablishment_code()),
-					new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
-					new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
+					//new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
+					new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()),
+					//new Data("tokens_62.affiliation_number", inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()),
+					//new Data("tokens_62.store_number", inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()),
+					//new Data("tokens_62.pos_id", inRequestAuthorizeWithdrawalDock.getTokens_62().getPos_id()),
+					//new Data("tokens_62.cashier", inRequestAuthorizeWithdrawalDock.getTokens_62().getCashier()),
+					//new Data("tokens_62.transaction", inRequestAuthorizeWithdrawalDock.getTokens_62().getTransaction()),
+					//new Data("tokens_62.pinpad", inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad()),
+					new Data("additional_information", inRequestAuthorizeWithdrawalDock.getAdditional_information()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
 				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 						.build();
@@ -538,19 +586,23 @@ public class ServiceContractOperationsApiRest {
 				new Data("date", inRequestAuthorizeDeposit.getDate()),
 				new Data("time", inRequestAuthorizeDeposit.getTime()),
 				new Data("mti", inRequestAuthorizeDeposit.getMti()),
-				new Data("processing", inRequestAuthorizeDeposit.getProcessing().getType()),
-				new Data("processing", inRequestAuthorizeDeposit.getProcessing().getCode()),
+				new Data("processing.type", inRequestAuthorizeDeposit.getProcessing().getType()),
+				new Data("processing.code", inRequestAuthorizeDeposit.getProcessing().getCode()),
 				new Data("nsu", inRequestAuthorizeDeposit.getNsu()),
 				new Data("merchantCategoryCode", inRequestAuthorizeDeposit.getMerchantCategoryCode()),
-				new Data("transaction", inRequestAuthorizeDeposit.getTransaction().getSourceCurrencyCode()),
-				new Data("transaction", inRequestAuthorizeDeposit.getTransaction().getSettlementCurrencyCode()),
-				new Data("transaction", inRequestAuthorizeDeposit.getTransaction().getAmount()),
+				new Data("transaction.sourceCurrencyCode", inRequestAuthorizeDeposit.getTransaction().getSourceCurrencyCode()),
+				new Data("transaction.settlementCurrencyCode", inRequestAuthorizeDeposit.getTransaction().getSettlementCurrencyCode()),
+				new Data("transaction.amount", inRequestAuthorizeDeposit.getTransaction().getAmount()),
 				new Data("institutionName", inRequestAuthorizeDeposit.getInstitutionName()),
 				new Data("terminalCode", inRequestAuthorizeDeposit.getTerminalCode()),
 				new Data("retrievalReferenceNumber", inRequestAuthorizeDeposit.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizeDeposit.getAcquirerCountryCode()),
-				new Data("storeNumber", inRequestAuthorizeDeposit.getStoreNumber()),
-				new Data("affiliationNumber", inRequestAuthorizeDeposit.getAffiliationNumber()))) {
+				new Data("tokens62.affiliationNumber", inRequestAuthorizeDeposit.getTokens62().getAffiliationNumber()),
+				new Data("tokens62.storeNumber", inRequestAuthorizeDeposit.getTokens62().getStoreNumber()),
+				new Data("tokens62.posId", inRequestAuthorizeDeposit.getTokens62().getPosId()),
+				new Data("tokens62.cashier", inRequestAuthorizeDeposit.getTokens62().getCashier()),
+				new Data("tokens62.transaction", inRequestAuthorizeDeposit.getTokens62().getTransaction()),
+				new Data("tokens62.pinPad", inRequestAuthorizeDeposit.getTokens62().getPinpad()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -593,27 +645,47 @@ public class ServiceContractOperationsApiRest {
 			RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) {
 		LOGGER.logDebug("Start service execution REST: authorizeDepositDock");
 		ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
-
+		
+		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+		//del nuevo campo aditional_information, para ingresar al tokens 62 
+		ArrayList<String> adtInf = aditionalData(inRequestAuthorizeDepositDock.getAdditional_information());
+		if(adtInf != null && !adtInf.isEmpty())
+		{
+			inRequestAuthorizeDepositDock.setTokens_62(new Tokens_62());
+			inRequestAuthorizeDepositDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+			inRequestAuthorizeDepositDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+			inRequestAuthorizeDepositDock.getTokens_62().setPos_id(adtInf.get(2));
+			inRequestAuthorizeDepositDock.getTokens_62().setCashier(adtInf.get(3));
+			inRequestAuthorizeDepositDock.getTokens_62().setTransaction(adtInf.get(4));
+			inRequestAuthorizeDepositDock.getTokens_62().setPinpad(adtInf.get(5));
+		}
 		if (!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()),
-				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getType()),
-				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()),
-				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()),
-				new Data("processing", inRequestAuthorizeDepositDock.getProcessing().getCode()),
+				new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()),
+				new Data("processing.origin_account_type", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()),
+				new Data("processing.destiny_account_type", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()),
+				new Data("processing.code", inRequestAuthorizeDepositDock.getProcessing().getCode()),
 				new Data("nsu", inRequestAuthorizeDepositDock.getNsu()),
-//				new Data("card_expiration_date", inRequestAuthorizeDepositDock.getCard_expiration_date()),
+             //	new Data("card_expiration_date", inRequestAuthorizeDepositDock.getCard_expiration_date()),
 				new Data("transaction_origin", inRequestAuthorizeDepositDock.getTransaction_origin()),
-				new Data("card_entry", inRequestAuthorizeDepositDock.getCard_entry().getCode()),
-				new Data("card_entry", inRequestAuthorizeDepositDock.getCard_entry().getPin()),
-				new Data("card_entry", inRequestAuthorizeDepositDock.getCard_entry().getMode()),
+				new Data("card_entry.code", inRequestAuthorizeDepositDock.getCard_entry().getCode()),
+				new Data("card_entry.pin", inRequestAuthorizeDepositDock.getCard_entry().getPin()),
+				new Data("card_entry.mode", inRequestAuthorizeDepositDock.getCard_entry().getMode()),
 				new Data("merchant_category_code", inRequestAuthorizeDepositDock.getMerchant_category_code()),
-				new Data("values", inRequestAuthorizeDepositDock.getValues().getSource_currency_code()),
-				new Data("values", inRequestAuthorizeDepositDock.getValues().getBilling_currency_code()),
-				new Data("values", inRequestAuthorizeDepositDock.getValues().getSource_value()),
-				new Data("values", inRequestAuthorizeDepositDock.getValues().getBilling_value()),
+				new Data("values.source_currency_code", inRequestAuthorizeDepositDock.getValues().getSource_currency_code()),
+				new Data("values.billing_currency_code", inRequestAuthorizeDepositDock.getValues().getBilling_currency_code()),
+				new Data("values.source_value", inRequestAuthorizeDepositDock.getValues().getSource_value()),
+				new Data("values.billing_value", inRequestAuthorizeDepositDock.getValues().getBilling_value()),
 				new Data("terminal_code", inRequestAuthorizeDepositDock.getTerminal_code()),
 				new Data("establishment_code", inRequestAuthorizeDepositDock.getEstablishment_code()),
 				new Data("card_id", inRequestAuthorizeDepositDock.getCard_id()),
-				new Data("transaction_indicators", inRequestAuthorizeDepositDock.getTransaction_indicators()))) {
+				//new Data("tokens_62.affiliation_number", inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()),
+				//new Data("tokens_62.store_number", inRequestAuthorizeDepositDock.getTokens_62().getStore_number()),
+				//new Data("tokens_62.pos_id", inRequestAuthorizeDepositDock.getTokens_62().getPos_id()),
+				//new Data("tokens_62.cashier", inRequestAuthorizeDepositDock.getTokens_62().getCashier()),
+				//new Data("tokens_62.transaction", inRequestAuthorizeDepositDock.getTokens_62().getTransaction()),
+				//new Data("tokens_62.pinpad", inRequestAuthorizeDepositDock.getTokens_62().getPinpad()),
+				new Data("transaction_indicators", inRequestAuthorizeDepositDock.getTransaction_indicators()),
+				new Data("additional_information", inRequestAuthorizeDepositDock.getAdditional_information()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -666,18 +738,22 @@ public class ServiceContractOperationsApiRest {
 				new Data("date", inRequestAuthorizeReversal.getDate()),
 				new Data("time", inRequestAuthorizeReversal.getTime()),
 				new Data("mti", inRequestAuthorizeReversal.getMti()),
-				new Data("processing", inRequestAuthorizeReversal.getProcessing().getType()),
-				new Data("processing", inRequestAuthorizeReversal.getProcessing().getCode()),
+				new Data("processing.type", inRequestAuthorizeReversal.getProcessing().getType()),
+				new Data("processing.code", inRequestAuthorizeReversal.getProcessing().getCode()),
 				new Data("nsu", inRequestAuthorizeReversal.getNsu()),
 				new Data("merchantCategoryCode", inRequestAuthorizeReversal.getMerchantCategoryCode()),
-				new Data("transaction", inRequestAuthorizeReversal.getTransaction().getSourceCurrencyCode()),
-				new Data("transaction", inRequestAuthorizeReversal.getTransaction().getSettlementCurrencyCode()),
-				new Data("transaction", inRequestAuthorizeReversal.getTransaction().getAmount()),
+				new Data("transaction.sourceCurrencyCode", inRequestAuthorizeReversal.getTransaction().getSourceCurrencyCode()),
+				new Data("transaction.settlementCurrencyCode", inRequestAuthorizeReversal.getTransaction().getSettlementCurrencyCode()),
+				new Data("transaction.amount", inRequestAuthorizeReversal.getTransaction().getAmount()),
 				new Data("terminalCode", inRequestAuthorizeReversal.getTerminalCode()),
 				new Data("retrievalReferenceNumber", inRequestAuthorizeReversal.getRetrievalReferenceNumber()),
 				new Data("acquirerCountryCode", inRequestAuthorizeReversal.getAcquirerCountryCode()),
-				new Data("storeNumber", inRequestAuthorizeReversal.getStoreNumber()),
-				new Data("affiliationNumber", inRequestAuthorizeReversal.getAffiliationNumber()),
+				new Data("tokens62.affiliationNumber", inRequestAuthorizeReversal.getTokens62().getAffiliationNumber()),
+				new Data("tokens62.storeNumber", inRequestAuthorizeReversal.getTokens62().getStoreNumber()),
+				new Data("tokens62.posId", inRequestAuthorizeReversal.getTokens62().getPosId()),
+				new Data("tokens62.cashier", inRequestAuthorizeReversal.getTokens62().getCashier()),
+				new Data("tokens62.transaction", inRequestAuthorizeReversal.getTokens62().getTransaction()),
+				new Data("tokens62.pinPad", inRequestAuthorizeReversal.getTokens62().getPinpad()),
 				new Data("establishment", inRequestAuthorizeReversal.getEstablishment()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getUuid()),
 				new Data("originalTransactionData", inRequestAuthorizeReversal.getOriginalTransactionData().getNsu()),
@@ -908,7 +984,7 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: generateTransactionFactor");
 		ResponseOtp outSingleResponseOtp = new ResponseOtp();
 
-		if (!validateMandatory(new Data("externalCustomerId", inRequestOtp.getExternalCustomerId()))) {
+		if (!validateMandatory(new Data("cardId", inRequestOtp.getCardId())) && !validateMandatory(new Data("otp", inRequestOtp.getOtp()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("The request message is not properly formatted").build();
 		}
@@ -1143,6 +1219,54 @@ public class ServiceContractOperationsApiRest {
 
 		LOGGER.logDebug("Ends service execution REST: getStatementList");
 		return Response.ok(outResponseGetStatementList).build();
+
+	}
+	
+	/**
+	 * Transaction Limit API
+	 */
+	@POST
+	@Path("/apiOperations/accounts/getTransactionLimit")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response getTransactionLimit(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,
+			RequestGetTransactionLimit inRequestGetTransactionLimit) {
+		LOGGER.logDebug("Start service execution REST: getTransactionLimit");
+		ResponseGetTransactionLimit outResponseGetTransactionLimit = new ResponseGetTransactionLimit();
+
+		if (!validateMandatory(new Data("externalCustomerId", inRequestGetTransactionLimit.getExternalCustomerId()),
+				new Data("accountNumber", inRequestGetTransactionLimit.getAccountNumber()),
+				new Data("transactionType", inRequestGetTransactionLimit.getTransactionType()),
+				new Data("transactionSubType", inRequestGetTransactionLimit.getTransactionSubType()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outResponseGetTransactionLimit = iServiceContractOperationsApiService.getTransactionLimit(xrequestid,
+					xenduserrequestdatetime, xenduserip, xchannel, inRequestGetTransactionLimit);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logDebug("Ends service execution REST: getTransactionLimit");
+		return Response.ok(outResponseGetTransactionLimit).build();
 
 	}
 
@@ -1524,7 +1648,7 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			RequestUpdateProfile inRequestUpdateProfile) {
 		LOGGER.logDebug("Start service execution REST: updateProfile");
-		List<ResponseUpdateProfile> outSingleResponseUpdateProfile = new ArrayList<>();
+		ResponseUpdateProfile outSingleResponseUpdateProfile = new ResponseUpdateProfile();
 
 		if (!validateMandatory(new Data("externalCustomerId", inRequestUpdateProfile.getExternalCustomerId()),
 				new Data("email", inRequestUpdateProfile.getEmail()),
@@ -2118,7 +2242,9 @@ public class ServiceContractOperationsApiRest {
 				new Data("amount", inDebitAccountRequest.getAmount()),
 				new Data("commission", inDebitAccountRequest.getCommission()),
 				new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()),
-				new Data("debitConcept", inDebitAccountRequest.getDebitConcept()))) {
+				new Data("debitConcept", inDebitAccountRequest.getDebitConcept()),
+				new Data("latitude", inDebitAccountRequest.getLatitude()),
+				new Data("longitude", inDebitAccountRequest.getLongitude()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -2368,7 +2494,19 @@ public class ServiceContractOperationsApiRest {
 				RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) {
 			LOGGER.logDebug("Start service execution REST: authorizeReversalDock");
 			ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock = new ResponseAuthorizeReversalDock();
-
+			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+			//del nuevo campo aditional_information, para ingresar al tokens 62 
+			ArrayList<String> adtInf = aditionalData(inRequestAuthorizeReversalDock.getAdditional_information());
+			if(adtInf != null && !adtInf.isEmpty())
+			{
+				inRequestAuthorizeReversalDock.setTokens_62(new Tokens_62());
+				inRequestAuthorizeReversalDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+				inRequestAuthorizeReversalDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+				inRequestAuthorizeReversalDock.getTokens_62().setPos_id(adtInf.get(2));
+				inRequestAuthorizeReversalDock.getTokens_62().setCashier(adtInf.get(3));
+				inRequestAuthorizeReversalDock.getTokens_62().setTransaction(adtInf.get(4));
+				inRequestAuthorizeReversalDock.getTokens_62().setPinpad(adtInf.get(5));
+			}
 			if (!validateMandatory(new Data("card_id", inRequestAuthorizeReversalDock.getCard_id()),
 					new Data("mti", inRequestAuthorizeReversalDock.getMti()),
 					new Data("processing.type", inRequestAuthorizeReversalDock.getProcessing().getType()),
@@ -2378,7 +2516,7 @@ public class ServiceContractOperationsApiRest {
 							inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type()),
 					new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()),
 					new Data("nsu", inRequestAuthorizeReversalDock.getNsu()),
-					new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()),
+					//new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()),
 					new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()),
 					new Data("installments", inRequestAuthorizeReversalDock.getInstallments()),
 					new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()),
@@ -2393,7 +2531,13 @@ public class ServiceContractOperationsApiRest {
 					new Data("values.billing_value", inRequestAuthorizeReversalDock.getValues().getBilling_value()),
 					new Data("terminal_code", inRequestAuthorizeReversalDock.getTerminal_code()),
 					new Data("establishment_code", inRequestAuthorizeReversalDock.getEstablishment_code()),
-					new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()),
+					//new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()),
+					//new Data("tokens_62.affiliation_number", inRequestAuthorizeReversalDock.getTokens_62().getAffiliation_number()),
+					//new Data("tokens_62.store_number", inRequestAuthorizeReversalDock.getTokens_62().getStore_number()),
+					//new Data("tokens_62.pos_id", inRequestAuthorizeReversalDock.getTokens_62().getPos_id()),
+					//new Data("tokens_62.cashier", inRequestAuthorizeReversalDock.getTokens_62().getCashier()),
+					//new Data("tokens_62.transaction", inRequestAuthorizeReversalDock.getTokens_62().getTransaction()),
+					//new Data("tokens_62.pinpad", inRequestAuthorizeReversalDock.getTokens_62().getPinpad()),
 					new Data("original_transaction_data.transaction_uuid",
 							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid()),
 					new Data("original_transaction_data.nsu",
@@ -2405,7 +2549,8 @@ public class ServiceContractOperationsApiRest {
 					new Data("original_transaction_data.institution_name",
 							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name()),
 					new Data("original_transaction_data.retrieval_reference_number", inRequestAuthorizeReversalDock
-							.getOriginal_transaction_data().getRetrieval_reference_number()))) {
+							.getOriginal_transaction_data().getRetrieval_reference_number()),
+					new Data("additional_information", inRequestAuthorizeReversalDock.getAdditional_information()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
 				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 						.build();
@@ -2433,5 +2578,62 @@ public class ServiceContractOperationsApiRest {
 			return Response.ok(outSingleResponseAuthorizeReversalDock).build();
 
 		}
+        /**
+         * Delete Contact
+         */
+     @POST
+     @Path("/apiOperations/accounts/deleteContact")
+     @Consumes({"application/json"})
+     @Produces({"application/json"})
+      public Response  deleteContact(RequestDeleteContact inRequestDeleteContact ){
+	  LOGGER.logDebug("Start service execution REST: deleteContact");
+     ResponseDeleteContact outResponseDeleteContact  = new ResponseDeleteContact();
+         
+     if(!validateMandatory(new Data("uniqueId", inRequestDeleteContact.getRegisterAccountId()))) {
+       LOGGER.logDebug("400 is returned - Required fields are missing");
+       return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+     }
+	    
+     try {
+     outResponseDeleteContact=iServiceContractOperationsApiService.deleteContact( inRequestDeleteContact );
+     } catch (CTSRestException e) {
+     LOGGER.logError("CTSRestException",e);
+     if ("404".equals(e.getMessage())) {
+     LOGGER.logDebug("404 is returned - No data found");
+     return Response.status(404).entity("No data found").build();
+     }
+
+     LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+     return Response.status(409).entity(e.getMessageBlockList()).build();
+     } catch (Exception e){
+     LOGGER.logDebug("500 is returned - Code exception");
+     LOGGER.logError("Exception",e);
+     return Response.status(500).entity(e.getMessage()).build();
+     }
+     
+         LOGGER.logDebug("Ends service execution REST: deleteContact");
+         return Response.ok(outResponseDeleteContact).build();
+       
+     }
+     //funcion para dividir el objeto de datos adicionales
+	 private  ArrayList<String> aditionalData(String additionalInformation)
+	 {
+ 		String[] arrAdtInf = null;
+ 		
+ 		int max = 0;
+ 		if(additionalInformation != null)
+ 		{
+ 			arrAdtInf = additionalInformation.split("R");
+ 			max = arrAdtInf.length;
+ 		}
+ 		
+ 		ArrayList< String > lstAddInf = new ArrayList<String>();
+ 		for (int i = 1; i < max; i++)
+ 		{
+ 			lstAddInf.add(arrAdtInf[i].substring(3,arrAdtInf[i].length()));
+ 		}
+ 		return lstAddInf;
+ 		
+	 }
 
 	}

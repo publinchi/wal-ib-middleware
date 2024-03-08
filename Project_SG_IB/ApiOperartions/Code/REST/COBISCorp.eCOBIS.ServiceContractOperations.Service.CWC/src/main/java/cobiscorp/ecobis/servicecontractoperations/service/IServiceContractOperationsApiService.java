@@ -209,6 +209,15 @@ public interface IServiceContractOperationsApiService {
 	// Have DTO
 	public ResponseGetStatementList getStatementList(RequestGetStatementList inRequestGetStatementList)
 			throws CTSRestException;
+	
+	/**
+	 * Transaction Limit API
+	 */
+
+	// Have DTO
+	public ResponseGetTransactionLimit getTransactionLimit(String xrequestid, String xenduserrequestdatetime,
+			String xenduserip, String xchannel, RequestGetTransactionLimit inRequestGetTransactionLimit)
+			throws CTSRestException;
 
 	/**
 	 * Find State By zip Code API
@@ -297,7 +306,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return list
-	public List<ResponseUpdateProfile> updateProfile(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
+	public ResponseUpdateProfile updateProfile(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestUpdateProfile inRequestUpdateProfile)
 			throws CTSRestException;
 
@@ -403,5 +412,12 @@ public interface IServiceContractOperationsApiService {
 	// Return DTO
 	public ResponseAuthorizeReversalDock authorizeReversalDock(String legacyid, String clientid, String uuid,
 			String xapigwapiid, RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) throws CTSRestException;
+	
+	 /**
+     * Delete Contact
+     */
+   
+	//Have DTO
+	public ResponseDeleteContact deleteContact(RequestDeleteContact inRequestDeleteContact  )throws CTSRestException;
 
 }

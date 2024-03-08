@@ -88,6 +88,7 @@
     <parameter name="@i_val_settlement_value" dataType="varchar" direction="in" />
     <parameter name="@i_val_source_currency_code" dataType="varchar" direction="in" />
     <parameter name="@i_val_source_value" dataType="varchar" direction="in" />
+    <parameter name="@i_additional_information" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

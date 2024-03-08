@@ -1,5 +1,7 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.transfer.third.party.account.api;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -10,11 +12,15 @@ import org.apache.felix.scr.annotations.Service;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
+import com.cobiscorp.cobis.commons.components.ComponentLocator;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
+import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
@@ -31,6 +37,10 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.cts.reentry.api.IReentryPersister;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 
 /**
  * Register Account
@@ -50,7 +60,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	private static ILogger logger = LogFactory.getLogger(TransferThirdPartyAccountApiOrchestationCore.class);
 	private static final String CLASS_NAME = "TransferThirdPartyAccountApiOrchestationCore--->";
 	protected static final String COBIS_CONTEXT = "COBIS";
-
+	
+	private static final int ERROR40004 = 40004;
+	private static final int ERROR40003 = 40003;
+	private static final int ERROR40002 = 40002;
+	
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
 	protected static final String CHANNEL_REQUEST = "8";
@@ -81,15 +95,185 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-
+		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-
-		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		
-		anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setChannelId("8");
+		ServerResponse responseServer = null;
+		try {
+			responseServer = getServerStatus(serverRequest);
+		} catch (CTSServiceException e) {
+			logger.logError(e.toString());
+		} catch (CTSInfrastructureException e) {
+			logger.logError(e.toString());
+		}
+		
+		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
+		aBagSPJavaOrchestration.put("flowRty", flowRty);
+		logger.logDebug("Response Online: " + responseServer.getOnLine());
+		
+		if (responseServer != null && !responseServer.getOnLine()) {
+			aBagSPJavaOrchestration.put("IsReentry", "S");
+			if (!flowRty){
+				logger.logDebug("evaluateExecuteReentry FALSE");
+				anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+				
+				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+				
+				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
+				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+					wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
+					logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
+					if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+						return wAccountsRespVal;
+					}
+				}
+				else
+				{
+					return wAccountsResp;
+				}
+				anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+				/*if(anProcedureResponse.getReturnCode()==0){
+					anOriginalRequest.removeParam("@o_fecha_tran");
+					anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
+					//anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+				}
+				else
+					return anProcedureResponse;*/
+				
+				//aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
+			}
+			else{
+				logger.logDebug("evaluateExecuteReentry FALSE");
+				IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
+				logger.logDebug("Respose Exeption:: " + resp.toString());
+				return resp;
+			}
+			
+			logger.logDebug("Res IsReentry:: " + "S");
+		} else {
+			aBagSPJavaOrchestration.put("IsReentry", "N");
+			logger.logDebug("Res IsReentry:: " + "N");
+			anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+		}
 		
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 
+	}
+	
+	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
+		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
+			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
+				return true;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
+		IProcedureRequest request = wQueryRequest.clone();
+		ComponentLocator componentLocator = null;
+	    IReentryPersister reentryPersister = null;
+	    componentLocator = ComponentLocator.getInstance(this);
+	    
+	    /*String originCode = request.readValueParam("@i_originCode");
+	    logger.logDebug("@i_originCode = " + originCode);
+		if (originCode == null) {
+			logger.logDebug("Entre @i_originCode");
+			request.addInputParam("@i_originCode",ICTSTypes.SQLINT4, "");
+		}*/
+	    
+	    //Utils.addInputParam(request, "@i_externalCustomerId", ICTSTypes.SQLINT4,  request.readValueParam("@i_externalCustomerId"));
+	    aBagSPJavaOrchestration.put("rty_ssn",request.readValueFieldInHeader("ssn"));
+	    
+	    reentryPersister = (IReentryPersister) componentLocator.find(IReentryPersister.class, REENTRY_FILTER);
+        if (reentryPersister == null)
+            throw new COBISInfrastructureRuntimeException("Service IReentryPersister was not found");
+        
+        request.removeFieldInHeader("sessionId");
+        request.addFieldInHeader("reentryPriority", 'S', "5");
+        request.addFieldInHeader("REENTRY_SSN_TRX", 'S', request.readValueFieldInHeader("ssn"));
+        request.addFieldInHeader("targetId", 'S', "local");
+        request.removeFieldInHeader("serviceMethodName");
+        request.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', request.readValueFieldInHeader("trn"));
+        request.removeParam("@t_rty");
+        
+        Boolean reentryResponse = reentryPersister.addTransaction(request);
+
+        IProcedureResponse response = initProcedureResponse(request);
+        if (!reentryResponse.booleanValue()) {
+        	logger.logDebug("Ending flow, saveReentry failed");
+            response.addFieldInHeader("executionResult", 'S', "1");
+            response.addMessage(1, "Ocurrio un error al tratar de registrar la transaccion en el Reentry CORE COBIS");
+        } else {
+        	logger.logDebug("Ending flow, saveReentry success");
+            response.addFieldInHeader("executionResult", 'S', "0");
+        }
+
+        return response;
+	}
+	
+	public ServerResponse getServerStatus(ServerRequest serverRequest) throws CTSServiceException, CTSInfrastructureException {
+
+		IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
+		aServerStatusRequest.setSpName("cobis..sp_server_status");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
+		aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
+		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
+		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_en_linea", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_fecha_proceso", ICTSTypes.SYBVARCHAR, "XXXX");
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Request Corebanking TTPA: " + aServerStatusRequest.getProcedureRequestAsString());
+
+		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Response Corebanking TTPA: " + wServerStatusResp.getProcedureResponseAsString());
+
+		ServerResponse serverResponse = new ServerResponse();
+		
+		serverResponse.setSuccess(true);
+		Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
+		serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
+
+		if (wServerStatusResp.getReturnCode() == 0) {
+			serverResponse.setOfflineWithBalances(true);
+
+			if (wServerStatusResp.readValueParam("@o_en_linea") != null)
+				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
+
+			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003 || wServerStatusResp.getReturnCode() == ERROR40004) {
+			serverResponse.setOnLine(false);
+			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
+		}
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Respuesta Devuelta: " + serverResponse);
+		if (logger.isInfoEnabled())
+			logger.logInfo("TERMINANDO SERVICIO");
+
+		return serverResponse;
 	}
 
 	public IProcedureResponse processResponseTransfer(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
@@ -108,7 +292,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		logger.logInfo("xdcxv2 --->" + referenceCode );
 		logger.logInfo("xdcxv3 --->" + codeReturn );
 		if (codeReturn == 0){
-			if (null != referenceCode) {
+			if (null != referenceCode || aBagSPJavaOrchestration.get("IsReentry").equals("S") ) {
 				
 				executionStatus = "CORRECT";
 				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
@@ -116,8 +300,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				code = "0";
 				message = "Success";
 				success = "true";
-				// referenceCode =
-				// anOriginalProcedureRes.readValueParam("@o_referencia");
+
+				if(aBagSPJavaOrchestration.get("IsReentry").equals("S")){
+					referenceCode = aBagSPJavaOrchestration.containsKey("rty_ssn")?aBagSPJavaOrchestration.get("rty_ssn").toString():"0";
+					aBagSPJavaOrchestration.put("ssn",referenceCode);
+				}
+				else{
+					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+				}
 
 				// Notificacion debito
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N11");
@@ -127,6 +317,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			} else {
 				
 				executionStatus = "ERROR";
+				updateLimitStatus(aBagSPJavaOrchestration);
 				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
@@ -139,6 +330,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			executionStatus = "ERROR";
 			referenceCode = null;
 			
+			updateLimitStatus(aBagSPJavaOrchestration);
 			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 			if (codeReturn == 250046)
@@ -224,6 +416,52 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return anOriginalProcedureResponse;
 	}
 	
+	private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en transactionRegister");
+		}
+
+		request.setSpName("cob_bvirtual..sp_bv_transaction_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_culture"));
+		
+		request.addInputParam("@i_trn", ICTSTypes.SQLINTN, "18500114");
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_ente_bv"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+		request.addInputParam("@i_beneficiary", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_nom_beneficiary"));
+		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
+		request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
+		request.addInputParam("@i_prod", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_prod"));
+		request.addInputParam("@i_prod_des", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_prod_des"));
+		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_concepto"));
+		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
+		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_comision"));
+		request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_ssn_branch"));
+		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
+		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking transactionRegister: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de transactionRegister");
+		}
+	}
+	
 	private void updateTransferStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -241,6 +479,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("ssn")?aBagSPJavaOrchestration.get("ssn").toString():null);
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
@@ -255,6 +494,35 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 	}
 
+	private void updateLimitStatus(Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateLimitStatus");
+		}
+
+		request.setSpName("cob_bvirtual..sp_update_bv_acumulado");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq_limite", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq_limite_out"));
+		request.addInputParam("@i_seq_limite_2", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq_limite_in"));
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
+		}
+	}
 
 	private IProcedureResponse transferThirdAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
@@ -303,108 +571,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 
 		return wAccountsRespVal;
-	}
-	
-	private IProcedureResponse executeTransfer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
-		IProcedureRequest request = new ProcedureRequestAS();
-		final String METHOD_NAME = "[executeTransferThirdAccount]";
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en executeTransfer");
-		}
-
-		request.addInputParam("@s_cliente", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_ente_bv").toString().trim());
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
-		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_login").toString().trim());
-		
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-		request.addInputParam("@i_mon", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_mon").toString().trim());
-		request.addInputParam("@i_prod", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_prod").toString().trim());
-		
-		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
-		request.addInputParam("@i_mon_des", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_mon_des").toString().trim());
-		request.addInputParam("@i_prod_des", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_prod_des").toString().trim());
-		request.addInputParam("@i_nom_beneficiary", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_nom_beneficiary").toString().trim());
-		request.addInputParam("@i_nom_cliente_benef", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("o_prod_alias").toString().trim());
-		
-		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
-		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_concepto"));
-		request.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR, "null / null");
-		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_comision"));
-		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
-		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
-		
-		request.addInputParam("@t_ejec", ICTSTypes.SQLINT4, "R");
-		request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
-		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1800012");
-
-		logger.logInfo(METHOD_NAME + " Datos Cabecera");
-		// Date fecha = new Date();
-		request.setSpName("cob_procesador..p_tr_transferencias_ter");
-		// request.addFieldInHeader(ICOBISTS.HEADER_PROCESS_DATE,
-		// ICOBISTS.HEADER_DATE_TYPE, forma.format("01/05/2023"));
-		request.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
-		request.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
-				"(service.identifier=ThirdPartyTransferOrchestrationCore)");
-		request.addFieldInHeader(ICOBISTS.HEADER_SOURCE, ICOBISTS.HEADER_NUMBER_TYPE, "13");
-		request.addFieldInHeader(ICOBISTS.HEADER_TROL, ICOBISTS.HEADER_NUMBER_TYPE, "96");
-		request.addFieldInHeader(ICOBISTS.HEADER_LOGIN, ICOBISTS.HEADER_STRING_TYPE, "COBISBV"); // *
-		request.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
-		request.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, ""); // *
-		request.addFieldInHeader("rol", ICOBISTS.HEADER_NUMBER_TYPE, "96");
-		// request.addFieldInHeader("ssn", ICOBISTS.HEADER_NUMBER_TYPE,
-		// request.readValueParam("@ssn_branch"));
-		request.addFieldInHeader("originalRequestIsCobProcesador", ICOBISTS.HEADER_STRING_TYPE, "true");
-		// request.addFieldInHeader("ssnLog", ICOBISTS.HEADER_NUMBER_TYPE,
-		// request.readValueParam("@ssn_branch"));
-		request.addFieldInHeader("sesn", ICOBISTS.HEADER_NUMBER_TYPE, "0");
-		request.addFieldInHeader("authorizationService", ICOBISTS.HEADER_STRING_TYPE, "COBISBV");
-		request.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
-		request.addFieldInHeader("supportOffline", ICOBISTS.HEADER_CHARACTER_TYPE, "N");
-		request.addFieldInHeader("term", ICOBISTS.HEADER_STRING_TYPE, "0:0:0:0:0:0:0:1");
-		request.addFieldInHeader("serviceId", ICOBISTS.HEADER_STRING_TYPE,
-				"InternetBanking.WebApp.Transfers.Transfer.TransferToThird");
-		request.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
-		request.addFieldInHeader("filial", ICOBISTS.HEADER_NUMBER_TYPE, "1");
-		request.addFieldInHeader("servicio", ICOBISTS.HEADER_NUMBER_TYPE, "8");
-		request.addFieldInHeader("org", ICOBISTS.HEADER_STRING_TYPE, "U");
-		request.addFieldInHeader("contextId", ICOBISTS.HEADER_STRING_TYPE, "COBISBV");
-		// request.addFieldInHeader("sessionId", ICOBISTS.HEADER_STRING_TYPE,
-		// "S");
-		request.addFieldInHeader("serviceName", ICOBISTS.HEADER_STRING_TYPE, "cob_procesador..sp_tr_transferencias_ter");
-		request.addFieldInHeader("perfil", ICOBISTS.HEADER_NUMBER_TYPE, "13");
-		// request.addFieldInHeader("ssn_branch", ICOBISTS.HEADER_NUMBER_TYPE,
-		// request.readValueParam("@ssn_branch"));
-		request.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
-
-		request.addFieldInHeader("trn", ICOBISTS.HEADER_NUMBER_TYPE, "1800012");
-		request.addFieldInHeader("ofi", ICOBISTS.HEADER_NUMBER_TYPE, "1");
-		// request.addFieldInHeader("serviceExecutionId",
-		// ICOBISTS.HEADER_STRING_TYPE, request.readValueParam("@ssn_branch"));
-		request.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
-		request.addFieldInHeader("srv", ICOBISTS.HEADER_STRING_TYPE, "BRANCHSRV");
-		request.addFieldInHeader("culture", ICOBISTS.HEADER_STRING_TYPE, "ES-EC");
-		request.addFieldInHeader("spType", ICOBISTS.HEADER_STRING_TYPE, "Sybase");
-		request.addFieldInHeader("lsrv", ICOBISTS.HEADER_STRING_TYPE, "CTSSRV");
-		request.addFieldInHeader("user", ICOBISTS.HEADER_STRING_TYPE, "usuariobv");
-
-		request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "1800012");
-		request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
-
-		logger.logInfo(request);
-
-		IProcedureResponse responseTransferThirdAccount = executeCoreBanking(request);
-
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + responseTransferThirdAccount.getProcedureResponseAsString());
-		}
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de executeTransfer");
-		}
-
-		return responseTransferThirdAccount;
 	}
 
 	private IProcedureResponse getDataAccountReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -467,6 +633,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_comision"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
+		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
+			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
+			
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
 		
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
@@ -480,6 +651,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_prod_alias", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_nom_beneficiary", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_seq_limite_out", ICTSTypes.SQLVARCHAR, "0");
+		request.addOutputParam("@o_seq_limite_in", ICTSTypes.SQLVARCHAR, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -500,6 +673,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		aBagSPJavaOrchestration.put("o_ente_bv", wProductsQueryResp.readValueParam("@o_ente_bv"));
 		aBagSPJavaOrchestration.put("o_login_des", wProductsQueryResp.readValueParam("@o_login_des"));
 		aBagSPJavaOrchestration.put("o_ente_bv_des", wProductsQueryResp.readValueParam("@o_ente_bv_des"));
+		aBagSPJavaOrchestration.put("o_seq_limite_out", wProductsQueryResp.readValueParam("@o_seq_limite_out"));
+		aBagSPJavaOrchestration.put("o_seq_limite_in", wProductsQueryResp.readValueParam("@o_seq_limite_in"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking getDataAccountReq DCO : " + wProductsQueryResp.getProcedureResponseAsString());
@@ -556,18 +731,18 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return wProductsQueryResp;
 	}
 
-
 	private IProcedureResponse executeThirdAccountTransferCobis(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Ejecutando transferencia a terceros CORE COBIS" + request);
 
-		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		IProcedureRequest anOriginalRequest = request;
 		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
 		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
+
+		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null)
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 		
-		//anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN, ICOBISTS.HEADER_NUMBER_TYPE, 	request.getReferenceNumber());
-		//anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE,	request.getReferenceNumberBranch());
 		anOriginalRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18306");
 
@@ -607,16 +782,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (request.readValueParam("@i_dest_fondos") != null)
 			anOriginalRequest.addInputParam("@i_dest_fondos", ICTSTypes.SQLVARCHAR,
 					request.readValueParam("@i_dest_fondos"));
-
-		/*if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "SSN_BRANCH enviado al local " + request.getReferenceNumberBranch());
-
-		if (request.getReferenceNumberBranch() != null)
-			anOriginalRequest.addInputParam("@s_ssn_branch", ICTSTypes.SQLINT4, request.getReferenceNumberBranch());
 		
-		if (request.getReferenceNumber() != null)
-			anOriginalRequest.addInputParam("@s_ssn", ICTSTypes.SQLINT4, request.getReferenceNumber());*/
-
 		anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon").toString());
 		
 		anOriginalRequest.addInputParam("@i_prod_org", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
@@ -642,10 +808,88 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		anOriginalRequest.addInputParam("@i_servicio", ICTSTypes.SYBINT4, "8");
 		
+		anOriginalRequest.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Data enviada a ejecutar api:" + anOriginalRequest.toString());
+		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("ssn branch es " +  response.readValueParam("@o_ssn_branch"));
+		}
+
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Respuesta Devuelta del Core api:" + response.getProcedureResponseAsString());
+
+		logger.logInfo(CLASS_NAME + "Parametro @o_fecha_tran: " + response.readValueParam("@o_fecha_tran"));
+		response.readValueParam("@o_fecha_tran");
+		
+		logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+		if(response.readValueFieldInHeader("ssn")!=null)
+		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("o_ssn_branch", response.readValueParam("@o_ssn_branch"));
+		
+		return response;
+	}
+	
+	private IProcedureResponse executeOfflineThirdAccountTransferCobis(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()){
+			logger.logInfo(CLASS_NAME + "Ejecutando transferencia Offline a terceros CORE COBIS" + anOriginalRequest);
+			logger.logInfo("********** CAUSALES DE TRANSFERENCIA *************");
+			logger.logInfo("********** CAUSA ORIGEN --->>> " + "1010");
+			logger.logInfo("********** CAUSA COMISI --->>> " + "185");
+			logger.logInfo("********** CAUSA DESTIN --->>> " + "1020");
+
+			logger.logInfo("********** CLIENTE CORE --->>> " + aBagSPJavaOrchestration.get("ente_mis"));
+		}
+		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		
+		anOriginalRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18306");
+
+		anOriginalRequest.setSpName("cob_bvirtual..sp_bv_transaccion_off_api"); 
+		anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18306");
+		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
+		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
+		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "1010");
+		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "1020");
+		//anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, "185");
+		anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
+		anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SYBINT4, "8");
+		anOriginalRequest.addInputParam("@s_filial", ICTSTypes.SQLINT4, "1");
+		anOriginalRequest.addInputParam("@s_cliente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("o_ente_bv"));
+		anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon").toString());
+		anOriginalRequest.addInputParam("@i_prod", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
+		anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon_des").toString());
+		anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod_des").toString());
+
+		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");
+		
+		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
+		anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SYBCHAR, "F");
+		anOriginalRequest.addInputParam("@i_graba_notif", ICTSTypes.SYBCHAR, "N");
+		anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SYBCHAR, "N");
+		
+		//-anOriginalRequest.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, request.readValueParam("@i_latitud"));
+		//-anOriginalRequest.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, request.readValueParam("@i_longitud"));
+		anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
+		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
+		anOriginalRequest.addInputParam("@i_beneficiary", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_nom_beneficiary"));
+		
+
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
+		anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
+		
+		
+		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Data enviada a ejecutar api:" + anOriginalRequest);
 		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
 
 		if (logger.isInfoEnabled())

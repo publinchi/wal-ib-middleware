@@ -115,6 +115,10 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
 		String original_gtm_date_time = aRequest.readValueParam("@i_original_transaction_data_transmission_date_time_gmt");
+		String pos_id = aRequest.readValueParam("@i_pos_id");
+		String cashier = aRequest.readValueParam("@i_cashier");
+		String transaction = aRequest.readValueParam("@i_transaction");
+		String pinpad = aRequest.readValueParam("@i_pinpad");
 		
 		
 		if (values_3 != null && !values_3.isEmpty() && !isNumeric(values_3)) {
@@ -175,6 +179,22 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 
         }
 		
+		if (pos_id == null || pos_id.trim().isEmpty()) {
+			pos_id = "E";
+		}
+		
+		if (cashier == null || cashier.trim().isEmpty()) {
+			cashier = "E";
+		}
+		
+		if (transaction == null || transaction.trim().isEmpty()) {
+			transaction = "E";
+		}
+		
+		if (pinpad == null || pinpad.trim().isEmpty()) {
+			pinpad = "E";
+		}
+		
 		
 		request.setSpName("cob_atm..sp_bv_valida_dock_reversal_api");
 
@@ -209,12 +229,19 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
 		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
+		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
+		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
+		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
+		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
 		request.addInputParam("@i_original_transaction_data_transaction_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
 		request.addInputParam("@i_original_transaction_data_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_nsu"));
 		request.addInputParam("@i_original_transaction_data_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_mti"));
 		request.addInputParam("@i_original_transaction_data_institution_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institution_code"));
 		request.addInputParam("@i_original_transaction_data_institution_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institutiion_name"));
 		request.addInputParam("@i_original_transaction_data_retrieval_reference_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_retrieval_reference_number"));
+		request.addInputParam("@i_legacy_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_legacy-id"));
 		request.addInputParam("@i_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_client-id"));
 		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
 		request.addInputParam("@i_x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_x-apigw-api-id"));
@@ -223,17 +250,23 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		
 		request.addOutputParam("@o_accountNumber", ICTSTypes.SQLVARCHAR, "X");		
 		request.addOutputParam("@o_externalCustomerId", ICTSTypes.SQLINTN, "0");		
-		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");		
+		request.addOutputParam("@o_card_mask", ICTSTypes.SQLVARCHAR, "X");	
+		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("@o_accountNumber es " +  wProductsQueryResp.readValueParam("@o_accountNumber"));
 			logger.logDebug("@o_externalCustomerId es " +  wProductsQueryResp.readValueParam("@o_externalCustomerId"));
+			logger.logDebug("@o_seq es " +  wProductsQueryResp.readValueParam("@o_seq"));
+			logger.logDebug("@o_reentry es " +  wProductsQueryResp.readValueParam("@o_reentry"));
 		}
 		
 		aBagSPJavaOrchestration.put("@o_accountNumber", wProductsQueryResp.readValueParam("@o_accountNumber"));
 		aBagSPJavaOrchestration.put("@o_externalCustomerId", wProductsQueryResp.readValueParam("@o_externalCustomerId"));
+		aBagSPJavaOrchestration.put("@o_seq", wProductsQueryResp.readValueParam("@o_seq"));
+		aBagSPJavaOrchestration.put("@o_reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -371,6 +404,38 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 			logger.logInfo(CLASS_NAME + " Saliendo de registerLogBd");
 		}
 	}
+	
+	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
+		}
+
+		request.setSpName("cob_bvirtual..sp_update_transfer_status");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("@o_seq"));
+		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("@o_reentry"));
+		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
+		}
+	}
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -384,6 +449,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+		String executionStatus = null;
 		
 		logger.logInfo("return code resp--->" + codeReturn );
 
@@ -408,6 +474,9 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				
 				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
+				executionStatus = "ERROR";
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
 				IResultSetRow row = new ResultSetRow();
 	
 				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
@@ -420,6 +489,9 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 			} else {
 				 
 				logger.logDebug("Ending flow, processResponse successful...");
+				
+				executionStatus = "CORRECT";
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 				
@@ -436,6 +508,9 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		} else {
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
+			
+			executionStatus = "ERROR";
+			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
 			IResultSetRow row = new ResultSetRow();
 			

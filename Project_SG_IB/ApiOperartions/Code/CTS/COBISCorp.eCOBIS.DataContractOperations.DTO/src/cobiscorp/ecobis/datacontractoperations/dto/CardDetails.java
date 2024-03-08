@@ -29,10 +29,17 @@ import java.util.HashMap;
 
 public class CardDetails implements Serializable {
   private String maskedCardNumber;
+  private String cardId;
   public String getMaskedCardNumber(){
     return this.maskedCardNumber;
   }
   public void setMaskedCardNumber(String maskedCardNumber ){
     this.maskedCardNumber=maskedCardNumber;
+  }
+  public String getCardId(){
+    return this.cardId;
+  }
+  public void setCardId(String cardId ){
+    this.cardId=cardId;
   }
 }

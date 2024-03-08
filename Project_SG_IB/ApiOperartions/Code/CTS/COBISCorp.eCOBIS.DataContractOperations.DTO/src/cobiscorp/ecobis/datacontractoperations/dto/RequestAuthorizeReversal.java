@@ -43,12 +43,11 @@ public class RequestAuthorizeReversal implements Serializable {
   private String terminalCode;
   private String retrievalReferenceNumber;
   private String acquirerCountryCode;
-  private java.math.BigDecimal storeNumber;
-  private java.math.BigDecimal affiliationNumber;
   private String establishment;
   private String adviceReason;
   private String adviceReasonCode;
   private OriginalTransactionData originalTransactionData;
+  private Tokens62 tokens62;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -151,18 +150,6 @@ public class RequestAuthorizeReversal implements Serializable {
   public void setAcquirerCountryCode(String acquirerCountryCode ){
     this.acquirerCountryCode=acquirerCountryCode;
   }
-  public java.math.BigDecimal getStoreNumber(){
-    return this.storeNumber;
-  }
-  public void setStoreNumber(java.math.BigDecimal storeNumber ){
-    this.storeNumber=storeNumber;
-  }
-  public java.math.BigDecimal getAffiliationNumber(){
-    return this.affiliationNumber;
-  }
-  public void setAffiliationNumber(java.math.BigDecimal affiliationNumber ){
-    this.affiliationNumber=affiliationNumber;
-  }
   public String getEstablishment(){
     return this.establishment;
   }
@@ -192,5 +179,17 @@ public class RequestAuthorizeReversal implements Serializable {
   }
   public void setOriginalTransactionData(OriginalTransactionData originalTransactionData ){
     this.originalTransactionData=originalTransactionData;
+  }
+  public Tokens62 tokens62Instance(){
+	if(this.tokens62==null){
+	this.tokens62=new Tokens62();
+	}
+	return this.tokens62;
+  }
+  public Tokens62 getTokens62(){
+    return this.tokens62;
+  }
+  public void setTokens62(Tokens62 tokens62 ){
+    this.tokens62=tokens62;
   }
 }

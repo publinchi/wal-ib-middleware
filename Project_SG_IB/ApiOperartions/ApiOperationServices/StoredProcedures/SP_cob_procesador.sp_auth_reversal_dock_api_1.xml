@@ -90,6 +90,7 @@
     <parameter name="@i_client-id" dataType="varchar" direction="in" />
     <parameter name="@i_uuid" dataType="varchar" direction="in" />
     <parameter name="@i_x-apigw-api-id" dataType="varchar" direction="in" />
+    <parameter name="@i_additional_information" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
