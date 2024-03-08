@@ -1003,15 +1003,29 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                                 logger.logDebug("Spei do it");
                             }
                             
-                            
                             String typeConnector = getParam(originalRequest, "COSPEI", "AHO");
                             
-                            if (typeConnector != null && typeConnector.equals("KARPAY")) {
-                            	responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
-                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
-                            	SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
-                                responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer, aBagSPJavaOrchestration);                            	
-                            } 
+                            try {
+
+	                            if (typeConnector != null && typeConnector.equals("KARPAY")) {
+	                            	responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+	                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
+	                            	SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
+	                                responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer, aBagSPJavaOrchestration);                            	
+	                            } 
+                            } catch (Exception e) {
+                            	if (logger.isDebugEnabled()) {
+									logger.logDebug("Fin executeTransfer 3");
+								}
+								
+                            	if (typeConnector != null && typeConnector.equals("KARPAY")) {
+                            		speiRollback(originalRequest, aBagSPJavaOrchestration);
+	                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
+	                            	reverseSpei(requestSpei, aBagSPJavaOrchestration);                            	
+	                            } 																
+								
+								responseTransfer.setReturnCode(1);
+                            }
 
                         } else
                             logger.logDebug(":::: No Aplica Transaccion no valida " + idTransaccion);
