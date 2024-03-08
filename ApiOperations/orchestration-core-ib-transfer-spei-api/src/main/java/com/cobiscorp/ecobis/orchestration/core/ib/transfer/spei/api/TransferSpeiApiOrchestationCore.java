@@ -103,7 +103,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String I_PROD_LOCAL = "@i_prod";
     private static final String CANCEL_OPERATION = "0";
     private static final String OPERATING_INSTITUTION = "90715";
-    private boolean successConnector = true;
+    private boolean successConnector = false;
     private int returnCode = 0;
 
     private static ILogger logger = LogFactory.getLogger(TransferSpeiApiOrchestationCore.class);
@@ -225,7 +225,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 
         if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-        	int prod_des =  (Integer) aBagSPJavaOrchestration.get("o_prod");
+        	int prod_des =  Integer.parseInt((String) aBagSPJavaOrchestration.get("o_prod"));
         	
         	if (prod_des == 3) {
         		
@@ -739,7 +739,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         return anOriginalProcedureResponse;
     }
     
-private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+    private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
         
         IProcedureRequest request = new ProcedureRequestAS();
 
@@ -1018,11 +1018,7 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
 									logger.logDebug("Fin executeTransfer 3");
 								}
 								
-                            	if (typeConnector != null && typeConnector.equals("KARPAY")) {
-                            		speiRollback(originalRequest, aBagSPJavaOrchestration);
-	                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
-	                            	reverseSpei(requestSpei, aBagSPJavaOrchestration);                            	
-	                            } 																
+                            	reverseSpei(requestSpei, aBagSPJavaOrchestration);  															
 								
 								responseTransfer.setReturnCode(1);
                             }
