@@ -224,6 +224,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 
         if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+        	int prod_des =  (Integer) aBagSPJavaOrchestration.get("o_prod");
+        	
+        	if (prod_des == 3) {
+        		
+        	}
 
             IProcedureResponse wTransferResponse = new ProcedureResponseAS();
             logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod")
@@ -989,11 +994,16 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
                                 logger.logDebug("Spei do it");
                             }
                             
-                            //SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
-                            responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+                            
+                            String typeConnector = getParam(originalRequest, "COSPEI", "AHO");
+                            
+                            if (typeConnector != null && typeConnector.equals("KARPAY")) {
+                            	responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
+                            	SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
+                                responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer, aBagSPJavaOrchestration);                            	
+                            } 
 
-                            //responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer,
-                                    //aBagSPJavaOrchestration);
                         } else
                             logger.logDebug(":::: No Aplica Transaccion no valida " + idTransaccion);
                     } else {
@@ -2200,4 +2210,68 @@ private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aRes
         // SE REGRESA RESPUESTA
         return fres;
     }
+    
+    private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureResponse connectorAccountResponse = null;
+
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		aBagSPJavaOrchestration.remove("trn_virtual");
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en findCardByPanConector");
+		}
+		try {
+			// PARAMETROS DE ENTRADA		
+			anOriginalRequest.addInputParam("@i_destination_account_number", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_destination_account_number"));
+			anOriginalRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "FCP");
+
+			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+					"(service.identifier=TransferSpeiApiOrchestationCore)");
+			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+
+			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18500115");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500115");
+
+			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500115");
+			
+			// SE HACE LA LLAMADA AL CONECTOR
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorDock)");
+			anOriginalRequest.setSpName("cob_procesador..sp_transfer_spei_api");
+
+			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500115");
+			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500115");
+
+			
+			
+			// SE EJECUTA CONECTOR
+			connectorAccountResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
+
+			if (logger.isDebugEnabled())
+				logger.logDebug("findCardByPanConector response: " + connectorAccountResponse);
+
+			if (connectorAccountResponse.readValueParam("@o_card_number") != null)
+				aBagSPJavaOrchestration.put("@o_card_number", connectorAccountResponse.readValueParam("@o_card_number"));
+			else
+				aBagSPJavaOrchestration.put("@o_card_number", "null");
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			connectorAccountResponse = null;
+			logger.logInfo(CLASS_NAME +" Error Catastrofico de findCardByPanConector");
+
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + "--> findCardByPanConector");
+			}
+		}
+
+		return connectorAccountResponse	;
+
+	}
 }
