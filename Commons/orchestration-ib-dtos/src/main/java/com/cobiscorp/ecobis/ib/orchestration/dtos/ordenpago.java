@@ -3,6 +3,7 @@ package com.cobiscorp.ecobis.ib.orchestration.dtos;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -49,6 +50,9 @@ public class ordenpago implements Serializable{
 		this.OpToClave = opToClave;
 		this.OpConceptoPag2 = opConceptoPag2;
 	}
+	
+	@XmlAttribute  
+	private String Id;
 	
 	@XmlElement
 	private String OpFechaOper;
@@ -458,7 +462,13 @@ public class ordenpago implements Serializable{
 		this.OpConceptoPag2 = opConceptoPag2;
 	}
     
-    
+	public synchronized String getId() {
+		return this.Id;
+	}
+
+	public synchronized void setId(String Id) {
+		this.Id = Id;
+	}
     
     
 }
