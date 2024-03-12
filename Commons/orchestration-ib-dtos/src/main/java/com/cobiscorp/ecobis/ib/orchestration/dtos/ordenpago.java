@@ -20,7 +20,7 @@ public class ordenpago implements Serializable{
 			int opMeClave, String opUsuClave, String opNomOrd, int opTcClaveOrd, String opCuentaOrd,
 			String opRfcCurpOrd, String opNomBen, int opTcClaveBen, String opCuentaBen, String opNomBen2,
 			int opTcClaveBen2, String opCuentaBen2, String opConceptoPago, int opRefNumerica, String opFirmaDig,
-			int opToClave, String opConceptoPag2) {
+			int opToClave, String opConceptoPag2, String Id) {
 		super();
 		this.OpFechaOper = opFechaOper;
 		this.OpFolio = opFolio;
@@ -49,9 +49,9 @@ public class ordenpago implements Serializable{
 		this.opFirmaDig = opFirmaDig;
 		this.OpToClave = opToClave;
 		this.OpConceptoPag2 = opConceptoPag2;
+		this.Id = Id;
 	}
 	
-	@XmlAttribute  
 	private String Id;
 	
 	@XmlElement
@@ -461,7 +461,8 @@ public class ordenpago implements Serializable{
 	public synchronized void setOpConceptoPag2(String opConceptoPag2) {
 		this.OpConceptoPag2 = opConceptoPag2;
 	}
-    
+	
+	@XmlAttribute
 	public synchronized String getId() {
 		return this.Id;
 	}

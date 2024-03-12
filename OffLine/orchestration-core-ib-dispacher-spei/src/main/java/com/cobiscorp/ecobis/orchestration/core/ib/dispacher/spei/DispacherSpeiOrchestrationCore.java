@@ -492,8 +492,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			procedureRequest.setSpName("cob_bvirtual..sp_act_transfer_spei");
 			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
 					IMultiBackEndResolverService.TARGET_LOCAL);
-			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "1800195");
-			procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "1800195");
+			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500161");
+			procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
 			procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
 			procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 			
@@ -514,7 +514,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		responseXml.setErrCodigo(Integer.valueOf( String.valueOf( aBagSPJavaOrchestration.get("validateCode"))));
 		responseXml.setErrDescripcion(String.valueOf( aBagSPJavaOrchestration.get("messajeCode")));
 		responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
-		responseXml.setId(msjIn.getOrdenpago().getId());
+		responseXml.setId(msjIn.getOrdenpago().getOpCveRastreo());
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_CARGOS_RESPUESTA);
 		msg.setRespuesta(responseXml);
 		
