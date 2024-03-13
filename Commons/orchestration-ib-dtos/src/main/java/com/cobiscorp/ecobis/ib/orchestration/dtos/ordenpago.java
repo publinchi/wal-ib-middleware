@@ -51,7 +51,7 @@ public class ordenpago implements Serializable{
 		this.OpConceptoPag2 = opConceptoPag2;
 		this.Id = Id;
 	}
-	
+	@XmlAttribute(name="Id")
 	private String Id;
 	
 	@XmlElement
@@ -462,7 +462,6 @@ public class ordenpago implements Serializable{
 		this.OpConceptoPag2 = opConceptoPag2;
 	}
 	
-	@XmlAttribute
 	public synchronized String getId() {
 		return this.Id;
 	}

@@ -483,7 +483,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		Respuesta responseXml = new Respuesta();
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		String response;
-				
+		if(logger.isDebugEnabled())
+			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
 		if( validateFields(aBagSPJavaOrchestration))
 		{
 			//llamar sp cambio de estado transfer spei 
@@ -514,7 +515,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		responseXml.setErrCodigo(Integer.valueOf( String.valueOf( aBagSPJavaOrchestration.get("validateCode"))));
 		responseXml.setErrDescripcion(String.valueOf( aBagSPJavaOrchestration.get("messajeCode")));
 		responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
-		responseXml.setId(msjIn.getOrdenpago().getOpCveRastreo());
+		responseXml.setId(msjIn.getOrdenpago().getId());
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_CARGOS_RESPUESTA);
 		msg.setRespuesta(responseXml);
 		
@@ -561,7 +562,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			}else
 			if(Integer.valueOf(msjIn.getOrdenpago().getOpInsClave())==null)
 			{
-				aBagSPJavaOrchestration.put("validateCode", 57);
+				aBagSPJavaOrchestration.put("validateCode", 5);
 				aBagSPJavaOrchestration.put("messajeCode", "La clave de institución  ordenante es obligatoria para este Tipo de Pago");
 				validate = false; 
 			}else
@@ -612,7 +613,82 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				aBagSPJavaOrchestration.put("messajeCode", "La clave del banco usuario es obligatoria para este Tipo de Pago");
 				validate = false;	 
 			}
-		}
+		}else
+			if("ODPS_LIQUIDADAS_ABONOS".equals(msjIn.getCategoria()))
+			{
+
+				if(msjIn.getOrdenpago().getOpFechaOper()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 93);
+					aBagSPJavaOrchestration.put("messajeCode", "La fecha de operación  es obligatoria");
+					validate = false;
+				}else
+				if(Integer.valueOf(msjIn.getOrdenpago().getOpFolio())==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 445);
+					aBagSPJavaOrchestration.put("messajeCode", "El Folio CoDi es obligatorio");
+					validate = false;
+				}else
+				if(Integer.valueOf(msjIn.getOrdenpago().getOpInsClave())==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 5);
+					aBagSPJavaOrchestration.put("messajeCode", "La clave de institución  ordenante es obligatoria para este Tipo de Pago");
+					validate = false; 
+				}else
+				if(msjIn.getOrdenpago().getOpMonto()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 9);
+					aBagSPJavaOrchestration.put("messajeCode", "El Monto es obligatorio");
+					validate = false;
+				}else
+				if(Integer.valueOf(msjIn.getOrdenpago().getOpTpClave())==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 57);
+					aBagSPJavaOrchestration.put("messajeCode", "La clave del pago es obligatorio para este Tipo de Pago");
+					validate = false;
+				}else
+				if(msjIn.getOrdenpago().getOpCveRastreo()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 92);
+					aBagSPJavaOrchestration.put("messajeCode", "La clave de rastreo es obligatoria");
+					validate = false;
+				}else
+				if(msjIn.getOrdenpago().getOpEstado()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 98);
+					aBagSPJavaOrchestration.put("messajeCode", "El Estado del envío  es obligatorio");
+					validate = false;
+				}else
+				if(msjIn.getOrdenpago().getOpTipoOrden()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 106);
+					aBagSPJavaOrchestration.put("messajeCode", "Tipo de orden es requerido.");
+					validate = false; 
+				}else
+				if(Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad())==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 85);
+					aBagSPJavaOrchestration.put("messajeCode", "La prioridad de la orden es un dato obligatorio");
+					validate = false;	 
+				}else
+				if(Integer.valueOf(msjIn.getOrdenpago().getOpMeClave())==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 93);
+					aBagSPJavaOrchestration.put("messajeCode", "La fecha de operación  es obligatoria");
+					validate = false;	 
+				}if(msjIn.getOrdenpago().getOpTopologia()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 87);
+					aBagSPJavaOrchestration.put("messajeCode", "La Topología  de la orden es obligatorio");
+					validate = false;	 
+				}else
+				if(msjIn.getOrdenpago().getOpUsuClave()==null)
+				{
+					aBagSPJavaOrchestration.put("validateCode", 158);
+					aBagSPJavaOrchestration.put("messajeCode", "La clave del banco usuario es obligatoria para este Tipo de Pago");
+					validate = false;	 
+				}
+			}
 		
 		return validate;
 	}
