@@ -5,7 +5,8 @@
   <type>SYBASE</type>
   <version>1</version>
   <parameters>
-    <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+    <parameter name="@i_card_id" dataType="varchar" direction="in" />
+    <parameter name="@i_otp" dataType="int" direction="in" />
   </parameters>
   <queries>
     <query>

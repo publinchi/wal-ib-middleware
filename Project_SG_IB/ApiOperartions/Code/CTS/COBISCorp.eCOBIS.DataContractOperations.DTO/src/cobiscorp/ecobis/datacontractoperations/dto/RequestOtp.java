@@ -28,11 +28,18 @@ import java.util.HashMap;
 
 
 public class RequestOtp implements Serializable {
-  private Integer externalCustomerId;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+  private String cardId;
+  private Integer otp;
+  public String getCardId(){
+    return this.cardId;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public void setCardId(String cardId ){
+    this.cardId=cardId;
+  }
+  public Integer getOtp(){
+    return this.otp;
+  }
+  public void setOtp(Integer otp ){
+    this.otp=otp;
   }
 }
