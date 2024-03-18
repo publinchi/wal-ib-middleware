@@ -2285,17 +2285,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
 			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
 
-			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18500115");
-			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500115");
+			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18500112");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500112");
 
-			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500115");
+			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500112");
 			
 			// SE HACE LA LLAMADA AL CONECTOR
 			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorDock)");
 			anOriginalRequest.setSpName("cob_procesador..sp_transfer_spei_api");
 
-			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500115");
-			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500115");
+			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500112");
+			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500112");
 
 			
 			
