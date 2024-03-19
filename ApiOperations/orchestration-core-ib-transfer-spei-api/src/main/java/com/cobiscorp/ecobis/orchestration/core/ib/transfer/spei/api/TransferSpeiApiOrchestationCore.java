@@ -1872,18 +1872,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				if (resultSetRows.length > 0) {
 					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
 					return columns[2].getValue();
-				} else {
-					return OPERATING_INSTITUTION;
-				}
-			} else {
-				return OPERATING_INSTITUTION;
-			}
-			 
-			
-		} else {
-			return OPERATING_INSTITUTION;
-		}
+				} 
+			} 			
+		} 
 		
+		return "";
 	}
 
 	private AccendoConnectionData retrieveAccendoConnectionData(){
