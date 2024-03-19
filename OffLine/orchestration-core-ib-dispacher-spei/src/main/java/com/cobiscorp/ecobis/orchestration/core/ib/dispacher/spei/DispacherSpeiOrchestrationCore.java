@@ -527,8 +527,75 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	@Override
 	protected Object paymentIn(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// TODO validar firma
+		Mensaje msg = new Mensaje();
+		Respuesta responseXml = new Respuesta();
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		String response;
+		if(logger.isDebugEnabled())
+			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
+		if( validateFields(aBagSPJavaOrchestration))
+		{
+			//llamar sp cambio de estado transfer spei 
+			IProcedureRequest procedureRequest = initProcedureRequest(request);
+
+			procedureRequest.setSpName("cob_procesador..sp_bv_spei_transaction");
+			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500069");
+			procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500069");
+			request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500069");
+			request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
+			request.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
+			request.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
+			request.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+					"(service.identifier=SpeiInTransferOrchestrationCore)");
+			request.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+			procedureRequest.addInputParam("@i_cuentaBeneficiario", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCuentaBen());
+			procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, msjIn.getOrdenpago().getOpMonto().toString());
+			procedureRequest.addInputParam("@i_fechaOperacion", ICTSTypes.SYBDATETIME, msjIn.getOrdenpago().getOpFechaOper());
+			procedureRequest.addInputParam("@i_cuentaOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
+			procedureRequest.addInputParam("@i_conceptoPago", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
+			procedureRequest.addInputParam("@i_institucionOrdenante", ICTSTypes.SYBINT4, String.valueOf(msjIn.getOrdenpago().getOpInsClave()));
+			procedureRequest.addInputParam("@i_institucionBeneficiaria", ICTSTypes.SYBINT4, "90715");
+			procedureRequest.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getId());
+			procedureRequest.addInputParam("@i_claveRastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+			procedureRequest.addInputParam("@i_nombreOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
+			procedureRequest.addInputParam("@i_rfcCurpOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
+			procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
+			procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
+			procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
+
+			procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
+			procedureRequest.addOutputParam("@o_nombre_beneficiario", ICTSTypes.SQLVARCHAR, "");
+			procedureRequest.addOutputParam("@o_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "");
+			procedureRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "");
+			procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
+			procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
+			procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
+			
+			
+			procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
+			procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+			
+			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+			
+			if(logger.isDebugEnabled())
+				logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
+			
+			responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
+			responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
+		} else {
+			responseXml.setErrCodigo(Integer.valueOf( String.valueOf( aBagSPJavaOrchestration.get("validateCode"))));
+			responseXml.setErrDescripcion(String.valueOf( aBagSPJavaOrchestration.get("messajeCode")));
+		}
+		
+		responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
+		responseXml.setId(msjIn.getOrdenpago().getId());
+		msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
+		msg.setRespuesta(responseXml);
+		
+		response = toStringXmlObject( msg);  
+		aBagSPJavaOrchestration.put("result", response);
+		return response;
 	}
 	
 	private String toStringXmlObject(Object obj)
