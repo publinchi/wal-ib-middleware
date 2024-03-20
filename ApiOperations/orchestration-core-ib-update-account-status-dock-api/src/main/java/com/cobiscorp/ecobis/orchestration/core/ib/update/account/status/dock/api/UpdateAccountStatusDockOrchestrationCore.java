@@ -426,6 +426,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				data2.addRow(row2);
 				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
 				
+				// Fecha de cambio de estado por un sub-bloqueo
 				if (flagSubBloqueo)
 				{
 					IResultSetRow row3 = new ResultSetRow();
@@ -471,6 +472,13 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);
 		
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		
+		wProcedureResponse.addResponseBlock(resultsetBlock);
+		wProcedureResponse.addResponseBlock(resultsetBlock2);
+		
+		// Fecha de cambio de estado general
 		if (flag == true && flagSubBloqueo == false)
 		{
 			IResultSetRow row3 = new ResultSetRow();
@@ -480,13 +488,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
 		}
-		
-		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		
-
-		wProcedureResponse.addResponseBlock(resultsetBlock);
-		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		
 		return wProcedureResponse;		
