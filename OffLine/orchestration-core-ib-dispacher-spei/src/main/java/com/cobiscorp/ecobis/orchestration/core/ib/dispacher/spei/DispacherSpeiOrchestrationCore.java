@@ -1,5 +1,8 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.spei;
 
+import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
+
+import java.io.File;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +18,7 @@ import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
+import com.cobiscorp.cobis.commons.crypt.ReadAlgn;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
@@ -194,16 +198,35 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		IProcedureResponse response = null;
-		IProcedureRequest originalByNotify = anOriginalRequest;
-
-		if (logger.isInfoEnabled())
-			logger.logInfo("JCOS DispacherSpeiOrchestrationCore: executeJavaOrchestration");
-
-		logger.logInfo(anOriginalRequest);
-
+		
+		if (logger.isDebugEnabled())
+		{
+			logger.logDebug("JCOS DispacherSpeiOrchestrationCore: executeJavaOrchestration");
+			logger.logDebug(anOriginalRequest);
+		}
+		 //archivo credenciales llave jks
+        String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty("jksAlgncon");
+        //archivo path llave jks
+        String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty("jksurl");
+        File jksAlgn = new File(pathAlgnJks);
+        if (jksAlgn.exists()) {
+            ReadAlgn rjksAlgncon = new ReadAlgn(pathAlgnJks);
+            aBagSPJavaOrchestration.put("alias", rjksAlgncon.leerParametros().getProperty("l"));
+            aBagSPJavaOrchestration.put("keyPass", rjksAlgncon.leerParametros().getProperty("p"));
+            aBagSPJavaOrchestration.put("jksAlgncon", pathAlgnJks);
+        }else
+        {
+        	if (logger.isDebugEnabled())
+    		{
+    			logger.logDebug("jksAlgncon:"+pathAlgnJks);
+    			logger.logDebug("jksurl:"+pathCertificado);
+    		}
+        }
 		// METODO GUARDAR XML
-
+        if (logger.isDebugEnabled())
+		{
+			logger.logDebug("No existe archivo jks:"+pathCertificado);
+		}
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "SPEI DISPACHER");
 		mensaje message = null;
 
@@ -214,9 +237,6 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			message = plot.getDataMessage(xmls);
 			if (message != null) {
 				aBagSPJavaOrchestration.put("speiTransaction", message);
-				/*if(message.getOrdenpago().getOpFirmaDig()!=null) {
-					this.doSignature(anOriginalRequest, aBagSPJavaOrchestration);
-				}*/
 				executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 			}
 			
