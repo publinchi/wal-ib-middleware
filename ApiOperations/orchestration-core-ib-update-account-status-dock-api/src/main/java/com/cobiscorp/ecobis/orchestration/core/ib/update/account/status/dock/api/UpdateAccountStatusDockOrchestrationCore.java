@@ -404,12 +404,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		IResultSetData data3 = new ResultSetData();
 		metaData3.addColumnMetaData(new ResultSetHeaderColumn("accountStatusChangeTime", ICTSTypes.SYBVARCHAR, 255));
 		
+		Boolean flag = aBagSPJavaOrchestration.containsKey("success");
 		String accountStatus = aBagSPJavaOrchestration.get("accountStatus").toString().trim();
 		Boolean flagSubBloqueo = Arrays.asList("BV","BM","EBM").contains(accountStatus);
 		
 		if (codeReturn == 0) {
-			
-		Boolean flag = aBagSPJavaOrchestration.containsKey("success");
 		
 		logger.logDebug("response conector dock: " + anOriginalProcedureRes.toString());
 		logger.logDebug("code o_assign_date: " + flag);
@@ -433,6 +432,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 					String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate").toString();
 					row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
 					data3.addRow(row3);
+					IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+					wProcedureResponse.addResponseBlock(resultsetBlock3);
 				}
 				
 			} else {
@@ -470,22 +471,23 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);
 		
-		if (!flagSubBloqueo)
+		if (flag == true && flagSubBloqueo == false)
 		{
 			IResultSetRow row3 = new ResultSetRow();
 			String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate2").toString();
 			row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
 			data3.addRow(row3);
+			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+			wProcedureResponse.addResponseBlock(resultsetBlock3);
 		}
-		
 		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+		
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
-		wProcedureResponse.addResponseBlock(resultsetBlock3);
+		
 		
 		return wProcedureResponse;		
 	}
