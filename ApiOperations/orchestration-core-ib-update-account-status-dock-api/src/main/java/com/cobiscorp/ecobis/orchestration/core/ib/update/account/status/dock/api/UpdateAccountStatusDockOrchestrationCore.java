@@ -6,6 +6,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.update.account.status.dock.ap
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -27,6 +28,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -49,11 +51,12 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 		@Property(name = "service.spName", value = "cob_procesador..sp_update_account_status_api")})
 public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestrationBase {
 	
-	private ILogger logger = (ILogger) this.getLogger();
 	private static final String CLASS_NAME = "UpdateAccountStatusDockOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String UPDATE_ACCOUNT_STATUS	= "UPDATE_ACCOUNT_STATUS";
 	protected static final String MODE_OPERATION = "PYS";
+	
+	private ILogger logger = (ILogger) this.getLogger();
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -85,6 +88,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		aBagSPJavaOrchestration.put("period", aRequest.readValueParam("@i_period"));
 		String accountStatus = aRequest.readValueParam("@i_account_status");
 	
+		//Add output params
+		aRequest.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
+		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		
 		wAccountsResp = valDataCentral(aRequest, aBagSPJavaOrchestration);
@@ -95,6 +101,12 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM"))
 			{
 				aBagSPJavaOrchestration.put("success", "success");
+				
+				if (wAccountsResp.readValueParam("@o_changedStateDate") != null)
+					aBagSPJavaOrchestration.put("o_changedStateDate", wAccountsResp.readValueParam("@o_changedStateDate"));
+				else
+					aBagSPJavaOrchestration.put("o_changedStateDate", "null");
+				
 				return wAccountsResp;
 			}
 			IProcedureResponse wAccountsValDataLocal = new ProcedureResponseAS();
@@ -352,6 +364,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
+		aBagSPJavaOrchestration.put("o_changedStateDate2", fechaActual );
+
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
@@ -386,6 +400,12 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("accountStatusChangeTime", ICTSTypes.SYBVARCHAR, 255));
+		
+		String accountStatus = aBagSPJavaOrchestration.get("accountStatus").toString().trim();
+		Boolean flagSubBloqueo = Arrays.asList("BV","BM","EBM").contains(accountStatus);
 		
 		if (codeReturn == 0) {
 			
@@ -407,6 +427,14 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				data2.addRow(row2);
 				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
 				
+				if (flagSubBloqueo)
+				{
+					IResultSetRow row3 = new ResultSetRow();
+					String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate").toString();
+					row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
+					data3.addRow(row3);
+				}
+				
 			} else {
 				logger.logDebug("Ending flow, processResponse error");
 				
@@ -418,10 +446,13 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row.addRowData(1, new ResultSetRowColumnData(false, success));
 				data.addRow(row);
 				
+				if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM"))
+				{
 				IResultSetRow row2 = new ResultSetRow();
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
+				}
 			}
 		} else {
 			
@@ -436,14 +467,25 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
 			data2.addRow(row2);
 		}
-
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		
+		registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);
+		
+		if (!flagSubBloqueo)
+		{
+			IResultSetRow row3 = new ResultSetRow();
+			String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate2").toString();
+			row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
+			data3.addRow(row3);
+		}
+		
+		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
-		
-		registerLogBd(anOriginalProcedureRes, aBagSPJavaOrchestration);
+		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		
 		return wProcedureResponse;		
 	}
