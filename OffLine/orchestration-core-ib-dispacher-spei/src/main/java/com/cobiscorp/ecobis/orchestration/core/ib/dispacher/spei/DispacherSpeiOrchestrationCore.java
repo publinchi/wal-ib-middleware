@@ -400,8 +400,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				procedureRequest.addOutputParam("@o_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "");
 				procedureRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "");
 				procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
-				procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
-				procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
+				procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "-1");
+				procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "Error desconocido");
 				
 				
 				procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			

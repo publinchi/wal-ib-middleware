@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -20,17 +18,27 @@ public class ManejoBytes {
  
    	public static byte[] armaTramaBytes(mensaje msj, Map<String, Object> aBagSPJavaOrchestration) throws Exception {
         final String METHOD_NAME = "[ArmaTramaBytes]";
-       
         byte wFirma[];
         //FechaOperacion + CveInstOrd + CveInstBen +
         //CveRastreo + Monto + CuentaOrd + CuentaBen
+        if(logger.isDebugEnabled())
+        {
+        	logger.logDebug("OpFechaOper:"+getDate(msj.getOrdenpago().getOpFechaOper()));
+        	logger.logDebug("opinsclave:"+msj.getOrdenpago().getOpInsClave());
+        	logger.logDebug("opinsclaveben:"+Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString()));
+        	logger.logDebug("clave rastreo:"+msj.getOrdenpago().getOpCveRastreo());
+        	logger.logDebug("opmonto:"+msj.getOrdenpago().getOpMonto());
+        	logger.logDebug("CuentaOrd:"+msj.getOrdenpago().getOpCuentaOrd());
+        	logger.logDebug("CuentaBen:"+msj.getOrdenpago().getOpCuentaBen());
+        	
+        }
         wFirma = ByteBuffer.allocate(0).array();
-      
+        
         wFirma = concatByte(wFirma, formateoFrima(getDate(msj.getOrdenpago().getOpFechaOper()))); //OpFechaOper
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpInsClave()));//opinsclave
         wFirma = concatByte(wFirma, formateoFrima(Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString())));//opinsclaveben
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCveRastreo()));//clave rastreo
-        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpMonto()));//opmonto
+        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpMonto().doubleValue()));//opmonto
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //CuentaBen
         logDebug(METHOD_NAME,toString(wFirma));        
