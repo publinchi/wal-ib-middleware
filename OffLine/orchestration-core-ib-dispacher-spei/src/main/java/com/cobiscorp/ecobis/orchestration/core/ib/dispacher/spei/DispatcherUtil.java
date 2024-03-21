@@ -102,7 +102,7 @@ public class DispatcherUtil {
 			try 
 			{		
 				mensaje msj = (mensaje)aBagSPJavaOrchestration.get("speiTransaction");
-				byte [] byteArray= ManejoBytes.armaTramaBytes(msj);
+				byte [] byteArray= ManejoBytes.armaTramaBytes(msj, aBagSPJavaOrchestration);
 				signed = signDataPrivateKey(byteArray, aBagSPJavaOrchestration);
 
 			}catch (Exception xe) {
@@ -120,7 +120,7 @@ public class DispatcherUtil {
 	        String signed = "";
 	        try {
 	        	//signDataPrivateKey();
-	        	String keystorePath = aBagSPJavaOrchestration.get("jksAlgncon").toString();
+	        	String keystorePath = aBagSPJavaOrchestration.get("jksurl").toString();
 	        	
 	  	        // Contraseña del keystore
 	  	        String keystorePassword = aBagSPJavaOrchestration.get("keyPass").toString();

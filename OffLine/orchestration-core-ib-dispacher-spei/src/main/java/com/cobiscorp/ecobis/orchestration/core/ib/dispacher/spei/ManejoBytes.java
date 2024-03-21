@@ -6,27 +6,29 @@ import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-
+import java.util.Map;
 
 public class ManejoBytes {
 
     private static ILogger logger = LogFactory.getLogger(ManejoBytes.class);
  
-   	public static byte[] armaTramaBytes(mensaje msj) throws Exception {
+   	public static byte[] armaTramaBytes(mensaje msj, Map<String, Object> aBagSPJavaOrchestration) throws Exception {
         final String METHOD_NAME = "[ArmaTramaBytes]";
        
         byte wFirma[];
         //FechaOperacion + CveInstOrd + CveInstBen +
         //CveRastreo + Monto + CuentaOrd + CuentaBen
         wFirma = ByteBuffer.allocate(0).array();
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-       
-        wFirma = concatByte(wFirma, formateoFrima(formato.format( msj.getOrdenpago().getOpFechaOper()))); //OpFechaOper
-        wFirma = concatByte(wFirma, formateoFrima(Integer.parseInt("90715")));//bankid walmart
+      
+        wFirma = concatByte(wFirma, formateoFrima(getDate(msj.getOrdenpago().getOpFechaOper()))); //OpFechaOper
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpInsClave()));//opinsclave
+        wFirma = concatByte(wFirma, formateoFrima(Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString())));//opinsclaveben
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCveRastreo()));//clave rastreo
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpMonto()));//opmonto
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
@@ -35,7 +37,14 @@ public class ManejoBytes {
         return wFirma;
         
     }
-   
+   	private static Date getDate(String aDate) throws ParseException {
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        String wAño = aDate.substring(0, 4);
+        String wMes = aDate.substring(4, 6);
+        String wDia = aDate.substring(6, 8);
+        Date dFechaOperacion = formato.parse(wDia + "/" + wMes + "/" + wAño);
+        return dFechaOperacion;
+    }
     private static byte[] concatByte(byte[] aPrimero, byte[] aSegundo) {
         // System.out.println(toString(aPrimero));
         // System.out.println(toString(aSegundo));
