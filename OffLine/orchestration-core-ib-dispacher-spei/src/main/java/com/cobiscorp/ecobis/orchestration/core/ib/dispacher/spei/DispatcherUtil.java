@@ -2,10 +2,12 @@ package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.spei;
 
 import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 
+import java.io.FileInputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
+import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -78,23 +80,7 @@ public class DispatcherUtil {
 		  
 	  }
 	  
-	    public static Calendar getCalendarFromStringAndFormat(String aDate, SimpleDateFormat aFormat) {
-	        Calendar calendar = Calendar.getInstance();
-
-	        try{
-	            if(null != aDate && !"".equals(aDate)){
-	                calendar.setTime(aFormat.parse(aDate));
-	                return calendar;
-	            }
-	        }catch (Exception e){
-	            logger.logError("Error fecha: ",e);
-	        }
-
-
-	        return null;
-	    }
-	    
-	    
+    
 	    public static Calendar getCalendarFromStringAndFormat(String aDate, SimpleDateFormat aFormat) {
 	        Calendar calendar = Calendar.getInstance();
 
@@ -111,39 +97,15 @@ public class DispatcherUtil {
 	        return null;
 	    }
 	  
-		public  String doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
-			// TODO Auto-generated method stub
-		
+		public String doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
 			String signed="";
-			
-			
-			try {
-				
-				
-				
-				mensaje message=(mensaje)aBagSPJavaOrchestration.get("speiTransaction");
-				byte [] byteArray= ManejoBytes.ArmaTramaBytes(message.getOrdenpago());
-				
-			    String privateKeyFileName = System.getProperty(COBIS_HOME) + "/CTS_MF/security/certificado";
-			    logger.logInfo("Pathx: " + privateKeyFileName);
-				
-			     byte[] key = Files.readAllBytes(Paths.get(privateKeyFileName));
-			     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(key);
-		         PrivateKey finalKey = keyFactory.generatePrivate(keySpec);
-		         logger.logInfo(finalKey.getAlgorithm());
-		         
-		          if (finalKey instanceof PrivateKey) {	               
-		                PrivateKey pk = (PrivateKey) finalKey;	                
-		                signed = this.sign(byteArray, pk);	    
-		                logger.logInfo( "FIRMA DIGITAL A COMPARAR ::::"+signed);
-		            } else {
-		            	 logger.logInfo( "No se recupero el PRIVATE KEY ERROR EN FIRMA!!!::::::::::::::::::::::::::::::::");
-		            }
-			     
+			try 
+			{		
+				mensaje msj = (mensaje)aBagSPJavaOrchestration.get("speiTransaction");
+				byte [] byteArray= ManejoBytes.armaTramaBytes(msj, aBagSPJavaOrchestration);
+				signed = signDataPrivateKey(byteArray, aBagSPJavaOrchestration);
+
 			}catch (Exception xe) {
-				
-				
 				logger.logInfo("::::::::::Error al FIRMAR::::::::::");
 				logger.logError(xe);
 				
@@ -152,8 +114,52 @@ public class DispatcherUtil {
 			return signed;
 			
 		}  
-	  
-	    private  String sign(byte[] in, PrivateKey PrivateKey) throws Exception {
+	   
+	   public static String signDataPrivateKey(byte[] firmaDigital, Map<String, Object> aBagSPJavaOrchestration) {
+	       	       
+	        String signed = "";
+	        try {
+	        	//signDataPrivateKey();
+	        	String keystorePath = aBagSPJavaOrchestration.get("jksurl").toString();
+	        	
+	  	        // Contraseña del keystore
+	  	        String keystorePassword = aBagSPJavaOrchestration.get("keyPass").toString();
+	  	        // Alias de la clave privada en el keystore
+	  	        String alias = aBagSPJavaOrchestration.get("alias").toString();
+
+	  	        // Cargar el keystore desde el archivo
+	  	        KeyStore keystore;
+	  			keystore = KeyStore.getInstance("JKS");
+			    keystore.load(new FileInputStream(keystorePath), keystorePassword.toCharArray());
+	
+		        // Obtener la clave privada y el certificado asociado
+		        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(alias,
+		                new KeyStore.PasswordProtection(keystorePassword.toCharArray()));
+	
+		        PrivateKey finalKey = privateKeyEntry.getPrivateKey();
+		        
+		        if(logger.isDebugEnabled())
+		        	logger.logDebug("Signature: " + finalKey.getAlgorithm());	
+		      
+		       if (finalKey instanceof PrivateKey) {
+                    PrivateKey pk = (PrivateKey) finalKey;
+	                signed = sign(firmaDigital, pk);
+	            } else {
+	            	 if(logger.isDebugEnabled())
+	 		        	logger.logDebug("Error Signature" );	
+	            }
+
+	        } catch (Exception xe) {
+	        	 if(logger.isDebugEnabled())
+		        	logger.logDebug("Signature error: " + xe.getMessage());	
+	        	
+	        } 
+	        if(logger.isDebugEnabled())
+	        	logger.logDebug("Signature: " +signed);	
+	        
+	        return signed;
+	    }
+	    private static String sign(byte[] in, PrivateKey PrivateKey) throws Exception {
 	        Signature signed = Signature.getInstance("SHA256withRSA");
 	        signed.initSign(PrivateKey);
 	        signed.update(in);

@@ -3,6 +3,7 @@ package com.cobiscorp.ecobis.ib.orchestration.dtos;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -19,7 +20,7 @@ public class ordenpago implements Serializable{
 			int opMeClave, String opUsuClave, String opNomOrd, int opTcClaveOrd, String opCuentaOrd,
 			String opRfcCurpOrd, String opNomBen, int opTcClaveBen, String opCuentaBen, String opNomBen2,
 			int opTcClaveBen2, String opCuentaBen2, String opConceptoPago, int opRefNumerica, String opFirmaDig,
-			int opToClave, String opConceptoPag2) {
+			int opToClave, String opConceptoPag2, String Id) {
 		super();
 		this.OpFechaOper = opFechaOper;
 		this.OpFolio = opFolio;
@@ -48,7 +49,10 @@ public class ordenpago implements Serializable{
 		this.opFirmaDig = opFirmaDig;
 		this.OpToClave = opToClave;
 		this.OpConceptoPag2 = opConceptoPag2;
+		this.Id = Id;
 	}
+	@XmlAttribute(name="Id")
+	private String Id;
 	
 	@XmlElement
 	private String OpFechaOper;
@@ -457,8 +461,14 @@ public class ordenpago implements Serializable{
 	public synchronized void setOpConceptoPag2(String opConceptoPag2) {
 		this.OpConceptoPag2 = opConceptoPag2;
 	}
-    
-    
+	
+	public synchronized String getId() {
+		return this.Id;
+	}
+
+	public synchronized void setId(String Id) {
+		this.Id = Id;
+	}
     
     
 }

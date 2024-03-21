@@ -115,10 +115,10 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 		IProcedureResponse responseTransfer = null;
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId(anOriginalRequest.readValueFieldInHeader("servicio"));
-		ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
+		/*ServerResponse responseServer = getCoreServer().getServerStatus(serverRequest);
 		logger.logInfo("SERVER RESPONSE: " + responseServer.toString());
-		aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
-		mensaje message = (mensaje) aBagSPJavaOrchestration.get("plot");
+		aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);*/
+		mensaje message = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 
 		/*
 		 * if(anOriginalRequest.readValueFieldInHeader("comision") != null) { if
@@ -141,19 +141,34 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 
 			if (message.getCategoria() != null) {
 
-				if (message.getCategoria().equals("ODPS_LIQUIDADAS_CARGOS")) {
+				if (message.getCategoria().equals("ODPS_LIQUIDADAS_CARGOS")) 
+				{
+					if (logger.isDebugEnabled())
+					{
+						logger.logDebug("ODPS_LIQUIDADAS_CARGOS" );
+					}
+					chargesSettled(anOriginalRequest, aBagSPJavaOrchestration);
+				}else
+					if(message.getCategoria().equals("ODPS_LIQUIDADAS_ABONOS")) 
+					{
+						if (logger.isDebugEnabled())
+						{
+							logger.logDebug("ODPS_LIQUIDADAS_ABONOS");
+						}
+						paymentIn(anOriginalRequest, aBagSPJavaOrchestration);
+					}else
+						if (message.getCategoria().equals("ODPS_CANCELADAS_LOCAL")) 
+						{
+							if (logger.isDebugEnabled())
+							{
+								logger.logDebug("ODPS_LIQUIDADAS_ABONOS");
+							}
+							
+						} else 
+							if (message.getCategoria().equals("ODPS_CANCELADAS_X_BANXICO")) 
+							{
 
-					invokeNotifyDeposit(anOriginalRequest, aBagSPJavaOrchestration);
-
-				} else if (message.getCategoria().equals("ODPS_LIQUIDADAS_CARGOS")) {
-
-				} else if (message.getCategoria().equals("ODPS_LIQUIDADAS_ABONOS")) {
-
-				} else if (message.getCategoria().equals("ODPS_CANCELADAS_LOCAL")) {
-
-				} else if (message.getCategoria().equals("ODPS_CANCELADAS_X_BANXICO")) {
-
-				}
+							}
 
 			}
 		}
@@ -168,7 +183,10 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 
 	protected abstract Boolean doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration);
 
-	protected abstract Object invokeNotifyDeposit(IProcedureRequest request,
+	protected abstract Object chargesSettled(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration);
+	
+	protected abstract Object paymentIn(IProcedureRequest request,
 			Map<String, Object> aBagSPJavaOrchestration);
 
 }
