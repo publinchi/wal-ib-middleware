@@ -88,9 +88,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		aBagSPJavaOrchestration.put("period", aRequest.readValueParam("@i_period"));
 		String accountStatus = aRequest.readValueParam("@i_account_status");
 	
-		//Add output params
-		aRequest.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
-		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		
 		wAccountsResp = valDataCentral(aRequest, aBagSPJavaOrchestration);
@@ -164,6 +161,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_blockingValue"));
 		request.addInputParam("@i_period", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_period"));
 		
+		//Add output params
+		aRequest.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
