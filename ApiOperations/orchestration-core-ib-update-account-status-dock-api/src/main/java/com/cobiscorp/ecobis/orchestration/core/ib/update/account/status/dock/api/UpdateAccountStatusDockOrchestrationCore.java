@@ -431,13 +431,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				// Fecha de cambio de estado por un sub-bloqueo
 				if (flagSubBloqueo == true)
 				{
-					logger.logDebug("Ending flow, processResponse success with code for sub-blocking ");
+					logger.logDebug("Ending flow, processResponse success with code: changedStateDate ");
 					IResultSetRow row3 = new ResultSetRow();
 					String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate").toString();
 					row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
 					data3.addRow(row3);
-					IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
-					wProcedureResponse.addResponseBlock(resultsetBlock3);
 				}
 				
 				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
@@ -484,8 +482,13 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
-		// Fecha de cambio de estado general
-		if (flag == true && flagSubBloqueo == false)
+		// Fecha de cambio de estado sub-bloqueo
+		if (flag == true && flagSubBloqueo == true) {
+			logger.logDebug("Ending flow, processResponse success with code for sub-blocking state");
+			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+			wProcedureResponse.addResponseBlock(resultsetBlock3);
+		} 
+		else if (flag == true && flagSubBloqueo == false) // Fecha de cambio de estado general
 		{
 			logger.logDebug("Ending flow, processResponse success with code for general state");
 			IResultSetRow row3 = new ResultSetRow();
@@ -494,7 +497,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			data3.addRow(row3);
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
-		}
+		} 
 		
 		
 		return wProcedureResponse;		
