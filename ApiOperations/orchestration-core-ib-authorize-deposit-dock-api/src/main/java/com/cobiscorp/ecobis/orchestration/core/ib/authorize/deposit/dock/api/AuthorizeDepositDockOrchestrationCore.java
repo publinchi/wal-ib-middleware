@@ -88,11 +88,10 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 			aBagSPJavaOrchestration.put("IsReentry", "S");
 			if (!flowRty){
 				
-				IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
-				wAuthValDataLocal = valDataLocal(anOriginalRequest, aBagSPJavaOrchestration);
-				if(wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+				anProcedureResponse = valDataLocal(anOriginalRequest, aBagSPJavaOrchestration);
+				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 					
-					logger.logDebug("Code Error local" + wAuthValDataLocal.getResultSetRowColumnData(2, 1, 2));
+					logger.logDebug("Code Error local" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
 					anProcedureResponse = valTranDataCentralOff(anOriginalRequest, aBagSPJavaOrchestration);		
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
@@ -673,8 +672,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(7, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
-				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
+				row.addRowData(7, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_ssn_branch")));
+				row.addRowData(8, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_seq_tran")));
 				
 				data.addRow(row);
 			}

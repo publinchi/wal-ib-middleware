@@ -87,11 +87,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			aBagSPJavaOrchestration.put("IsReentry", "S");
 			if (!flowRty){
 				
-				IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
-				wAuthValDataLocal = valDataLocalDock(anOriginalRequest, aBagSPJavaOrchestration);
-				if(wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+				anProcedureResponse = valDataLocalDock(anOriginalRequest, aBagSPJavaOrchestration);
+				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 					
-					logger.logDebug("Code Error local" + wAuthValDataLocal.getResultSetRowColumnData(2, 1, 2));
+					logger.logDebug("Code Error local" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
 					anProcedureResponse = valTranDataCentralOff(anOriginalRequest, aBagSPJavaOrchestration);		
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
