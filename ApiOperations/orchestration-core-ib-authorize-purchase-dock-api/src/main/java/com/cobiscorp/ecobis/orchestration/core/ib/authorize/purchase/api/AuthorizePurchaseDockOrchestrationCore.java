@@ -246,7 +246,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_source_value", ICTSTypes.SQLMONEY, s_amount);
 		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
-		request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
+	  //request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
 		
 		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
@@ -662,7 +662,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				executionStatus = "CORRECT";
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
-				notifyPurchaseDock(aRequest, aBagSPJavaOrchestration);
+				//notifyPurchaseDock(aRequest, aBagSPJavaOrchestration);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
 					registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
@@ -713,7 +713,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		return wProcedureResponse;		
 	}
 	
-	private void notifyPurchaseDock(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	/*private void notifyPurchaseDock(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
         
         IProcedureRequest request = new ProcedureRequestAS();
 
@@ -754,7 +754,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Saliendo de notifyPurchaseDock...");
         }
-    }
+    }*/
 	
 	public boolean isNumeric(String strNum) {
 

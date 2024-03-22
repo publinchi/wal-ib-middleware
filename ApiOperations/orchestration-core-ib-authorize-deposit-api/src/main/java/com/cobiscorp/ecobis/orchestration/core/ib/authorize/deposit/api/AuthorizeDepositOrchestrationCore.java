@@ -615,7 +615,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				executionStatus = "CORRECT";
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
-				notifyDeposit(aRequest, aBagSPJavaOrchestration);
+				//notifyDeposit(aRequest, aBagSPJavaOrchestration);
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -700,7 +700,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		return wProcedureResponse;		
 	}
 	
-	private void notifyDeposit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	/*private void notifyDeposit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
         
         IProcedureRequest request = new ProcedureRequestAS();
 
@@ -741,7 +741,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Saliendo de notifyDeposit...");
         }
-    }
+    }*/
 	
 	public boolean isNumeric(String strNum) {
 		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
