@@ -40,7 +40,7 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   private String terminal_time;
   private String mti;
   private PurchaseDock_processing processing;
-  private String account_type_indicator;
+  private String transaction_type_indicator;
   private String nsu;
   private String authorization_code;
   private String card_number;
@@ -63,6 +63,7 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   private PurchaseDock_token_data token_data;
   private PurchaseDock_funds_transfer funds_transfer;
   private PurchaseDock_transaction_indicators transaction_indicators;
+  private String additional_information;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -141,11 +142,11 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   public void setProcessing(PurchaseDock_processing processing ){
     this.processing=processing;
   }
-  public String getAccount_type_indicator(){
-    return this.account_type_indicator;
+  public String getTransaction_type_indicator(){
+    return this.transaction_type_indicator;
   }
-  public void setAccount_type_indicator(String account_type_indicator ){
-    this.account_type_indicator=account_type_indicator;
+  public void setTransaction_type_indicator(String transaction_type_indicator ){
+    this.transaction_type_indicator=transaction_type_indicator;
   }
   public String getNsu(){
     return this.nsu;
@@ -320,5 +321,11 @@ public class RequestAuthorizePurchaseDock implements Serializable {
   }
   public void setTransaction_indicators(PurchaseDock_transaction_indicators transaction_indicators ){
     this.transaction_indicators=transaction_indicators;
+  }
+  public String getAdditional_information(){
+    return this.additional_information;
+  }
+  public void setAdditional_information(String additional_information ){
+    this.additional_information=additional_information;
   }
 }
