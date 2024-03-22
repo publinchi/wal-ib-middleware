@@ -99,8 +99,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			{
 				aBagSPJavaOrchestration.put("success", "success");
 				
-				if (wAccountsResp.readValueParam("@o_changedStateDate") != null)
-					aBagSPJavaOrchestration.put("o_changedStateDate", wAccountsResp.readValueParam("@o_changedStateDate"));
+				String changedStateDate = wAccountsResp.readValueParam("@o_changedStateDate");
+				logger.logInfo(CLASS_NAME + "AccountStatus Changed TO:" + String.valueOf(accountStatus.trim())
+						+ ", AT changedStateDate: " + String.valueOf(changedStateDate));
+				if (changedStateDate != null)
+					aBagSPJavaOrchestration.put("o_changedStateDate", changedStateDate);
 				else
 					aBagSPJavaOrchestration.put("o_changedStateDate", "null");
 				
@@ -162,7 +165,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_period", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_period"));
 		
 		//Add output params
-		aRequest.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
@@ -404,14 +407,15 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		metaData3.addColumnMetaData(new ResultSetHeaderColumn("accountStatusChangeTime", ICTSTypes.SYBVARCHAR, 255));
 		
 		Boolean flag = aBagSPJavaOrchestration.containsKey("success");
-		String accountStatus = aBagSPJavaOrchestration.get("accountStatus").toString().trim();
-		Boolean flagSubBloqueo = Arrays.asList("BV","BM","EBM").contains(accountStatus);
+		String accountStatus = aBagSPJavaOrchestration.get("accountStatus").toString();
+		Boolean flagSubBloqueo = accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM");
 		
 		if (codeReturn == 0) {
 		
 		logger.logDebug("response conector dock: " + anOriginalProcedureRes.toString());
 		logger.logDebug("code o_assign_date: " + flag);
 		logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+		logger.logDebug("account status: " + String.valueOf(flagSubBloqueo) + "flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
@@ -423,11 +427,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row2.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row2.addRowData(2, new ResultSetRowColumnData(false, "Success"));
 				data2.addRow(row2);
-				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
 				
 				// Fecha de cambio de estado por un sub-bloqueo
-				if (flagSubBloqueo)
+				if (flagSubBloqueo == true)
 				{
+					logger.logDebug("Ending flow, processResponse success with code for sub-blocking ");
 					IResultSetRow row3 = new ResultSetRow();
 					String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate").toString();
 					row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
@@ -435,6 +439,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 					IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 					wProcedureResponse.addResponseBlock(resultsetBlock3);
 				}
+				
+				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
+				
 				
 			} else {
 				logger.logDebug("Ending flow, processResponse error");
@@ -447,7 +454,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row.addRowData(1, new ResultSetRowColumnData(false, success));
 				data.addRow(row);
 				
-				if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM"))
+				if (flagSubBloqueo == true)
 				{
 				IResultSetRow row2 = new ResultSetRow();
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
@@ -480,6 +487,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		// Fecha de cambio de estado general
 		if (flag == true && flagSubBloqueo == false)
 		{
+			logger.logDebug("Ending flow, processResponse success with code for general state");
 			IResultSetRow row3 = new ResultSetRow();
 			String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate2").toString();
 			row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
