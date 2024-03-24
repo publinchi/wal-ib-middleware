@@ -1708,8 +1708,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAcquirer_country_code());
-			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
+			//procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+				//	String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
 			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getStore_number()));
 			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
