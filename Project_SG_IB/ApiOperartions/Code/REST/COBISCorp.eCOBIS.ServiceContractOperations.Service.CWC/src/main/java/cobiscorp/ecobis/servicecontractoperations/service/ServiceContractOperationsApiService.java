@@ -1216,7 +1216,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAcquirer_country_code());
-			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+			/*procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()));
 			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()));
@@ -1227,7 +1227,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getTokens_62().getTransaction());
 			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());*/
 			procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
 			procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
@@ -1708,8 +1708,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAcquirer_country_code());
-			//procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-				//	String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
+			/*procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
 			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
 					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getStore_number()));
 			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
@@ -1719,7 +1719,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getTokens_62().getTransaction());
 			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getPinpad());
+					inRequestAuthorizeDepositDock.getTokens_62().getPinpad());*/
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()));
 			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT,

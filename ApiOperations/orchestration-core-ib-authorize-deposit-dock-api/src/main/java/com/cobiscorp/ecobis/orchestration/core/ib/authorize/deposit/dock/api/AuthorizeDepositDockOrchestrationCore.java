@@ -113,10 +113,10 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
-		String pos_id = aRequest.readValueParam("@i_pos_id");
+		/*String pos_id = aRequest.readValueParam("@i_pos_id");
 		String cashier = aRequest.readValueParam("@i_cashier");
 		String transaction = aRequest.readValueParam("@i_transaction");
-		String pinpad = aRequest.readValueParam("@i_pinpad");
+		String pinpad = aRequest.readValueParam("@i_pinpad");*/
 		String establishment = aRequest.readValueParam("@i_establishment");
 		String retrieval_reference_number = aRequest.readValueParam("@i_retrieval_reference_number");
 
@@ -223,12 +223,12 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		/*request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
 		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
 		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
 		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
 		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
-		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);*/
 		request.addInputParam("@i_creation_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_creation_date"));
 		request.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR, retrieval_reference_number);
 		request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, establishment);

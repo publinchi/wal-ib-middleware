@@ -113,10 +113,10 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
-		String pos_id = aRequest.readValueParam("@i_pos_id");
+		/*String pos_id = aRequest.readValueParam("@i_pos_id");
 		String cashier = aRequest.readValueParam("@i_cashier");
 		String transaction = aRequest.readValueParam("@i_transaction");
-		String pinpad = aRequest.readValueParam("@i_pinpad");
+		String pinpad = aRequest.readValueParam("@i_pinpad");*/
 		
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
@@ -205,12 +205,12 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
 		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
-		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
+		/*request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
 		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
 		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
 		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
 		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
-		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
+		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);*/
 		request.addInputParam("@i_external_account_id", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_external_account_id"));
 		request.addInputParam("@i_dest_asset_code", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_dest_asset_code"));
 		request.addInputParam("@i_date_time_gmt", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_date_time_gmt"));
