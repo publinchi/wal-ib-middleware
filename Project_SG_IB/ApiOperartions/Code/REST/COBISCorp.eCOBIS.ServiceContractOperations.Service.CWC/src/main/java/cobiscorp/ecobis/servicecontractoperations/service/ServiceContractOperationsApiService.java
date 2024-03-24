@@ -1276,7 +1276,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getProduct_id());
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAdditional_information());
-
+			procedureRequestAS.addInputParam("@i_card_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
+		    procedureRequestAS.addInputParam("@i_account_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
+		    procedureRequestAS.addInputParam("@i_is_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isOnly_supports_purchase()));
+		      
+			
+			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawalDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -1757,6 +1762,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getProduct_id());
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAdditional_information());
+			procedureRequestAS.addInputParam("@i_creation_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getCreation_date());
+		    procedureRequestAS.addInputParam("@i_origin_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getOrigin_asset_code());
+		    procedureRequestAS.addInputParam("@i_dest_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getDest_asset_code());
+		    procedureRequestAS.addInputParam("@i_date_time_gmt",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getDate_time_gmt());
+		    procedureRequestAS.addInputParam("@i_rate",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getRate());
+		    procedureRequestAS.addInputParam("@i_spread_percent",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getSpread_percent());
+		    procedureRequestAS.addInputParam("@i_final_billing_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getFinal_billing_value());
+		      
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeDepositDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);

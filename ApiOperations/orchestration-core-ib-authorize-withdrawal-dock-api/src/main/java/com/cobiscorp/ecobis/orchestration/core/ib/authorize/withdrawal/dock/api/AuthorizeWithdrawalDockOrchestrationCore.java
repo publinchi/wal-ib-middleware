@@ -151,7 +151,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 			exp_date = "I";
 		}
 		
-		if (pos_id == null || pos_id.trim().isEmpty()) {
+		/*if (pos_id == null || pos_id.trim().isEmpty()) {
 			pos_id = "E";
 		}
 		
@@ -165,7 +165,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		
 		if (pinpad == null || pinpad.trim().isEmpty()) {
 			pinpad = "E";
-		}
+		}*/
 
 		
 		request.setSpName("cob_atm..sp_bv_val_trn_atm_dock_api");
@@ -211,6 +211,14 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
 		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
 		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
+		request.addInputParam("@i_external_account_id", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_external_account_id"));
+		request.addInputParam("@i_dest_asset_code", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_dest_asset_code"));
+		request.addInputParam("@i_date_time_gmt", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_date_time_gmt"));
+		request.addInputParam("@i_final_billing_value", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_final_billing_value"));
+		request.addInputParam("@i_card_status", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_card_status"));
+		request.addInputParam("@i_account_status", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_account_status"));
+		request.addInputParam("@i_is_only_supports_purchase", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_is_only_supports_purchase"));
+
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 			

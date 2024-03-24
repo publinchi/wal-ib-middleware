@@ -72,6 +72,13 @@
     <parameter name="@i_card_id" dataType="varchar" direction="in" />
     <parameter name="@i_product_id" dataType="varchar" direction="in" />
     <parameter name="@i_additional_information" dataType="varchar" direction="in" />
+    <parameter name="@i_external_account_id" dataType="varchar" direction="in" />
+    <parameter name="@i_dest_asset_code" dataType="varchar" direction="in" />
+    <parameter name="@i_date_time_gmt" dataType="varchar" direction="in" />
+    <parameter name="@i_final_billing_value" dataType="varchar" direction="in" />
+    <parameter name="@i_card_status" dataType="varchar" direction="in" />
+    <parameter name="@i_account_status" dataType="varchar" direction="in" />
+    <parameter name="@i_is_only_supports_purchase" dataType="bit" direction="in" />
   </parameters>
   <queries>
     <query>

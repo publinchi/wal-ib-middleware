@@ -159,7 +159,7 @@
       <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="ServiceCTS302" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJavaMavenCommand" id="36" index="1">
       <collection type="List" length="2" id="37" name="mavenTaskList">
@@ -174,7 +174,7 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="CWCJavaService" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJavaMavenCommand" id="38" index="2">
       <collection type="List" length="2" id="39" name="mavenTaskList">
@@ -189,7 +189,7 @@
       <field type="boolean" name="relativeFolder" value="true" />
       <field type="String" name="templateId" value="CWCjavaRestService" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_211" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
     </class>
   </collection>
   <collection type="List" length="0" id="40" name="templateCommands">
