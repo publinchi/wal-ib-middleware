@@ -158,7 +158,7 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="28" index="9">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="29" name="parameter">
-        <field type="String" name="name" value="@i_transmission_date_time_gtm" />
+        <field type="String" name="name" value="@i_transmission_date_time_gmt" />
         <field type="String" name="dataType" value="varchar" />
         <field type="String" name="direction" value="in" />
       </class>

@@ -1150,7 +1150,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getBank_branch_number());
 			procedureRequestAS.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getBank_account_number());
-			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getTransmission_date_time_gmt());
 			procedureRequestAS.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getTerminal_date());
@@ -1399,7 +1399,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDeposit.getOrderId());
 			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDeposit.getAccountNumber());
-			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDeposit.getTransmissionDateTimeGmt());
 			procedureRequestAS.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getDate());
 			procedureRequestAS.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getTime());

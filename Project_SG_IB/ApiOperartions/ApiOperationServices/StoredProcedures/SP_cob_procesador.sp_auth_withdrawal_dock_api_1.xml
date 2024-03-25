@@ -14,7 +14,7 @@
     <parameter name="@i_product_status" dataType="varchar" direction="in" />
     <parameter name="@i_bank_branch_number" dataType="varchar" direction="in" />
     <parameter name="@i_bank_account_number" dataType="varchar" direction="in" />
-    <parameter name="@i_transmission_date_time_gtm" dataType="varchar" direction="in" />
+    <parameter name="@i_transmission_date_time_gmt" dataType="varchar" direction="in" />
     <parameter name="@i_terminal_date" dataType="varchar" direction="in" />
     <parameter name="@i_terminal_time" dataType="varchar" direction="in" />
     <parameter name="@i_mti" dataType="varchar" direction="in" />

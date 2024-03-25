@@ -109,7 +109,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		String s_amount = aRequest.readValueParam("@i_source_value");
 		String b_amount = aRequest.readValueParam("@i_billing_value");
-		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gtm");
+		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gmt");
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
