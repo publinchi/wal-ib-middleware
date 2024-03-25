@@ -24,6 +24,8 @@ import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
+import com.cobiscorp.cobis.csp.domains.ICSP;
+import com.cobiscorp.cobis.csp.services.IProvider;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
@@ -78,10 +80,10 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		anProcedureResponse = updaterCardStatus(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		if(anProcedureResponse.getReturnCode()==0){
+		//if(anProcedureResponse.getReturnCode()==0){
 			
 			anProcedureResponse = processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
-		}
+		//}
 		
 		return anProcedureResponse;
 		//return processResponseCardAppl(anProcedureResponse);
@@ -108,42 +110,49 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		String accreditation = aBagSPJavaOrchestration.get("o_accreditation").toString();
 		
+	 	if (logger.isDebugEnabled()) {
+			 logger.logDebug("accreditation_1: " + accreditation);
+			 logger.logDebug("o_type_card: " + aBagSPJavaOrchestration.get("o_type_card").toString());
+			 logger.logDebug("mode: " + aBagSPJavaOrchestration.get("mode").toString());
+			 logger.logDebug("o_incomm_card: " + aBagSPJavaOrchestration.get("o_incomm_card").toString());
+	 	}
+		
 		//REASIGNACIÓN Y CANCELACIÓN DE TARJETAS
 		if(aBagSPJavaOrchestration.get("o_type_card").toString().equals("PHYSICAL") && aBagSPJavaOrchestration.get("mode").toString().equals("N")) {
 			
 			//FLUJO INCOMM
-			/*if (aBagSPJavaOrchestration.get("o_incomm_card").toString().equals("Y")) {
+			if (aBagSPJavaOrchestration.get("o_incomm_card").toString().equals("Y")) {
 				
 				IProcedureResponse wAccountsRespIncomm = new ProcedureResponseAS();
 				
 				 wAccountsRespIncomm = executeIncommConector(aRequest, aBagSPJavaOrchestration);
 			
+				if (logger.isDebugEnabled()) {
 				 logger.logDebug("Response Corebanking executeIncommConnector: "+wAccountsRespIncomm.getProcedureResponseAsString());
+					 logger.logDebug("wAccountsRespIncomm.toString(): " + wAccountsRespIncomm.toString());
+					 logger.logDebug("wAccountsRespIncomm.getResultSets(): " + wAccountsRespIncomm.getResultSets().toString());					 
+					 logger.logDebug("wAccountsRespIncomm.getReturnCode(): " + wAccountsRespIncomm.getReturnCode());
+
+					 logger.logDebug("aRequest.getProcedureRequestAsString(): " + aRequest.getProcedureRequestAsString());
+					 logger.logDebug("aRequest.toString(): " + aRequest.toString());
+					 
+					 logger.logDebug("aBagSPJavaOrchestration.toString(): " + aBagSPJavaOrchestration.toString());
+				}
 
 				 registerLogIncommBd(aRequest, wAccountsRespIncomm, aBagSPJavaOrchestration);
 				 
 				 switch (wAccountsRespIncomm.getReturnCode()) {
-				 
 					 case 0:
-						 
-						 if (!validateActivationDate(wAccountsRespIncomm)) { 
-								
+						if (!validateActivationDate(wAccountsRespIncomm))	
 								accreditation = "N";
-						 }
-						 
 						 break;
-					 
-					 case 1:
-						 
-						 accreditation = "N";
-						 
-						 break;
-						 
 					 default:
-						
 						 return wAccountsRespIncomm;
 				 }
-			}*/
+			}
+			
+			if (logger.isDebugEnabled()) 
+				 logger.logDebug("accreditation_2: " + accreditation);
 			
 			if(aBagSPJavaOrchestration.get("o_assigned").toString().equals("Y")) {
 				
@@ -225,10 +234,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 				}
 		}
 		
-		if (accreditation == "Y") {
+		if (logger.isDebugEnabled()) 
+			 logger.logDebug("accreditation_3: " + accreditation);
 			
+		if (accreditation == "Y") 
 			accountAccreditation(aRequest,  aBagSPJavaOrchestration);
-		}
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
@@ -264,7 +274,13 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
             
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             
+            if (logger.isDebugEnabled()) 
+            	logger.logDebug("value: " + value.toString());
+            
             Date activationDate = format.parse(value);
+            
+            if (logger.isDebugEnabled()) 
+            	logger.logDebug("activationDate: " + activationDate.toString());
             
             Calendar cal = Calendar.getInstance();
             
@@ -273,6 +289,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
             
             Date fechaLimite = cal.getTime();
             Date fechaActual = new Date();
+
+            if (logger.isDebugEnabled()) {
+            	logger.logDebug("fechaLimite: " + fechaLimite.toString());
+            	logger.logDebug("fechaActual: " + fechaActual.toString());
+    		}
 
             if (fechaLimite.after(fechaActual)) {
             	
@@ -305,13 +326,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500160");
+		request.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
 		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, "50");
-		request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, "0");
-		request.addInputParam("@i_creditConcept", ICTSTypes.SQLVARCHAR, "Incomm card accreditation");
 	
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
@@ -917,28 +936,25 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		}
 		
 		try {
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorIncomm)");
 			
-			//PARÁMETROS DE ENTRADA
-			anOriginalRequest.addInputParam("@i_van", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_incomm_card_id").toString());
+			anOriginalRequest.setSpName("cob_procesador..sp_con_incomm");
 			
-			
-			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
-					"(service.identifier=UpdateCardDockOrchestrationCore)");
-			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
-			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
-			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
-			anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
-			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
-
-			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18500160");
+			anOriginalRequest.addFieldInHeader(IProvider.EXTERNAL_PROVIDER, ICOBISTS.HEADER_STRING_TYPE, "1");
+			anOriginalRequest.addFieldInHeader("channel", ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.ID_CHANNEL_SERVICE_INTEGRATION);
+			anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_STRING_TYPE, "18500160");
 			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500160");
-
+			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CISConnectorIncomm)");
+			anOriginalRequest.addFieldInHeader("csp.skip.transformation", ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
+			anOriginalRequest.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
+			
+			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "transformAndSend");
+			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingTransformationProvider");
 			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500160");
 			
-			// SE HACE LA LLAMADA AL CONECTOR
-			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorIncomm)");
-			anOriginalRequest.setSpName("cob_procesador..sp_con_incomm");
-
+			//PARÁMETROS DE ENTRADA
+			anOriginalRequest.addInputParam("@i_van", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_incomm_card_id").toString());	
 			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500160");
 			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500160");
 
@@ -1242,6 +1258,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en registerLogIncommBd");
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("aRequest: " + aRequest.toString());
+			logger.logDebug("aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
 		}
 
 		request.setSpName("cob_atm..sp_insert_data_dock_api");
