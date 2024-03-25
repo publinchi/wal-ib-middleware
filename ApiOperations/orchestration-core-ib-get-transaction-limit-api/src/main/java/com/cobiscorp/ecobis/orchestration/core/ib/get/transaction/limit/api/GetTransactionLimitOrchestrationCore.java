@@ -362,31 +362,31 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 							
 							transactionSubtype = null;
 							
-						} else if (transactionSubtype.equals("18700103")) {
+						} else if (transactionSubtype.equals("1020")) {
 							
 							transactionSubtype = "P2P_CREDIT";
 							
-						} else if (transactionSubtype.equals("18500069")) {
+						} else if (transactionSubtype.equals("20402080")) {
 							
 							transactionSubtype = "SPEI_CREDIT";
 							
-						} else if (transactionSubtype.equals("18500134")) {
+						} else if (transactionSubtype.equals("40104130")) {
 							
 							transactionSubtype = "CREDIT_AT_STORE";
 							
-						} else if (transactionSubtype.equals("18059")) {
+						} else if (transactionSubtype.equals("1010")) {
 							
 							transactionSubtype = "P2P_DEBIT";
 
-						} else if (transactionSubtype.equals("1870013")) {
+						} else if (transactionSubtype.equals("20102050")) {
 							
 							transactionSubtype = "SPEI_DEBIT";
 
-						} else if (transactionSubtype.equals("18700104")) {
+						} else if (transactionSubtype.equals("30503060")) {
 							
 							transactionSubtype = "ATM_DEBIT";
 							
-						} else if (transactionSubtype.equals("18500133")) {
+						} else if (transactionSubtype.equals("40204140")) {
 							
 							transactionSubtype = "DEBIT_AT_STORE";
 							
