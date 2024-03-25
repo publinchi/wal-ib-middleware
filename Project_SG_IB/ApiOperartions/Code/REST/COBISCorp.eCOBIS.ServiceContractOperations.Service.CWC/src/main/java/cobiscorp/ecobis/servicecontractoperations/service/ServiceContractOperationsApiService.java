@@ -1698,20 +1698,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAcquirer_country_code());
-			/*procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getStore_number()));
-			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getPos_id());
-			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getCashier());
-			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getTransaction());
-			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getPinpad());*/
-			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()));
+			
+			LOGGER.logDebug(inRequestAuthorizeDepositDock);
+			
+			String indicator="false";
+			
+			if(inRequestAuthorizeDepositDock.getTransaction_indicators()!=null &&inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()) {
+				indicator="true";
+			}
+			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,indicator);
+			indicator="false";
+			
+			
 			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isCardholder_present()));
 			procedureRequestAS.addInputParam("@i_password_present", ICTSTypes.SQLBIT,
