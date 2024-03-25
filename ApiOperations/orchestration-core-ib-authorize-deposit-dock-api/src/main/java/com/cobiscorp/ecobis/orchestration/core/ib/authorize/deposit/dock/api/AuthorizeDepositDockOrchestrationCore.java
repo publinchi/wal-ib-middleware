@@ -138,9 +138,9 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			b_amount = "";
 		}
 		
-		if(gtm_date_time.equals("null")){
+		if(gtm_date_time==null ||gtm_date_time.equals("null")){
 			gtm_date_time  = "";
-		} else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+		} else if (!gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
 			gtm_date_time = "I";
 		}
 		

@@ -1630,7 +1630,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getBank_branch_number());
 			procedureRequestAS.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getBank_account_number());
-			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getTransmission_date_time_gmt());
 			procedureRequestAS.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getTerminal_date());
