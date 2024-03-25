@@ -470,4 +470,21 @@
 		<mappings keepMode="1"/>
 	</config>
 
+	<!-- 18500085 DISPACHER-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 18500085">
+		<conditions>
+			<condition param="trn">
+				<value>18500085</value>
+			</condition>
+		</conditions>
+		<indicators>	
+			<indicator name="externalProvider" value="1" />
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=DispacherSpeiOrchestrationCore)"/>
+		</indicators>		
+		<mappings keepMode="1">
+		</mappings>
+	</config>
+
+
 </csp-config>
