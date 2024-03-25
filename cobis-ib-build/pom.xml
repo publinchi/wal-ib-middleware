@@ -205,6 +205,7 @@
 		<module>../ApiOperations/orchestration-core-ib-transfer-spei-api</module>
 		<module>../ApiOperations/orchestration-core-batch-compensation</module>
 		<module>../ApiOperations/orchestration-core-ib-get-transaction-limit-api</module>
+		<module>../ApiOperations/orchestration-core-api-template</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>

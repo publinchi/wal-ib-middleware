@@ -293,6 +293,7 @@
 		<staff id="30" name="orchestration-core-ib-transfer-spei-api" version="4.6.1.0" />
 		<staff id="31" name="orchestration-core-batch-compensation" version="4.6.1.0" />
 		<staff id="32" name="orchestration-core-ib-get-transaction-limit-api" version="4.6.1.0" />
+		<staff id="33" name="orchestration-core-api-template" version="4.6.1.0" />
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
