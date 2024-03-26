@@ -486,62 +486,17 @@ public class ServiceContractOperationsApiRest {
 		@Path("/apiOperations/authorizations/withdrawal")
 		@Consumes({ "application/json" })
 		@Produces({ "application/json" })
-		public Response authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,
-				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
-				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
-				@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
-				RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
+		public Response  authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock ){
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
 			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
 
-			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
-			//del nuevo campo aditional_information, para ingresar al tokens 62 
-			ArrayList<String> adtInf = aditionalData(inRequestAuthorizeWithdrawalDock.getAdditional_information());
-			if(adtInf != null && !adtInf.isEmpty())
-			{
-				inRequestAuthorizeWithdrawalDock.setTokens_62(new Tokens_62());
-				inRequestAuthorizeWithdrawalDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
-				inRequestAuthorizeWithdrawalDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
-				inRequestAuthorizeWithdrawalDock.getTokens_62().setPos_id(adtInf.get(2));
-				inRequestAuthorizeWithdrawalDock.getTokens_62().setCashier(adtInf.get(3));
-				inRequestAuthorizeWithdrawalDock.getTokens_62().setTransaction(adtInf.get(4));
-				inRequestAuthorizeWithdrawalDock.getTokens_62().setPinpad(adtInf.get(5));
-			}
-			if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
-					new Data("processing.type", inRequestAuthorizeWithdrawalDock.getProcessing().getType()),
-					new Data("processing.origin_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
-					new Data("processing.destiny_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
-					new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
-					new Data("nsu", inRequestAuthorizeWithdrawalDock.getNsu()),
-                    //new Data("card_expiration_date", inRequestAuthorizeWithdrawalDock.getCard_expiration_date()),
-					new Data("transaction_origin", inRequestAuthorizeWithdrawalDock.getTransaction_origin()),
-					new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.getCard_entry().getCode()),
-					new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
-					new Data("card_entry.mode", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
-					new Data("merchant_category_code", inRequestAuthorizeWithdrawalDock.getMerchant_category_code()),
-					new Data("values.source_currency_code", inRequestAuthorizeWithdrawalDock.getValues().getSource_currency_code()),
-					new Data("values.billing_currency_code", inRequestAuthorizeWithdrawalDock.getValues().getBilling_currency_code()),
-					new Data("values.source_value", inRequestAuthorizeWithdrawalDock.getValues().getSource_value()),
-					new Data("values.billing_value", inRequestAuthorizeWithdrawalDock.getValues().getBilling_value()),
-					new Data("terminal_code", inRequestAuthorizeWithdrawalDock.getTerminal_code()),
-					new Data("establishment_code", inRequestAuthorizeWithdrawalDock.getEstablishment_code()),
-					//new Data("brand_response_code", inRequestAuthorizeWithdrawalDock.getBrand_response_code()),
-					new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()),
-					//new Data("tokens_62.affiliation_number", inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()),
-					//new Data("tokens_62.store_number", inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()),
-					//new Data("tokens_62.pos_id", inRequestAuthorizeWithdrawalDock.getTokens_62().getPos_id()),
-					//new Data("tokens_62.cashier", inRequestAuthorizeWithdrawalDock.getTokens_62().getCashier()),
-					//new Data("tokens_62.transaction", inRequestAuthorizeWithdrawalDock.getTokens_62().getTransaction()),
-					//new Data("tokens_62.pinpad", inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad()),
-					new Data("additional_information", inRequestAuthorizeWithdrawalDock.getAdditional_information()))) {
+		      if(!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()), new Data("processing.type", inRequestAuthorizeWithdrawalDock.getMti()), new Data("processing.origin_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()), new Data("processing.destiny_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()), new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()), new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.card_entryInstance().getCode()), new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()), new Data("card_entry.mode", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()), new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
-				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-						.build();
+		        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
 			}
 
 			try {
-				outResponseAuthorizeWithdrawalDock = iServiceContractOperationsApiService.authorizeWithdrawalDock(
-						legacyid, clientid, uuid, xapigwapiid, inRequestAuthorizeWithdrawalDock);
+		      outResponseAuthorizeWithdrawalDock=iServiceContractOperationsApiService.authorizeWithdrawalDock(legacyid,clientid,uuid,xapigwapiid, inRequestAuthorizeWithdrawalDock );
 			} catch (CTSRestException e) {
 				LOGGER.logError("CTSRestException", e);
 				if ("404".equals(e.getMessage())) {
@@ -646,46 +601,7 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: authorizeDepositDock");
 		ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
 		
-		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
-		//del nuevo campo aditional_information, para ingresar al tokens 62 
-		ArrayList<String> adtInf = aditionalData(inRequestAuthorizeDepositDock.getAdditional_information());
-		if(adtInf != null && !adtInf.isEmpty())
-		{
-			inRequestAuthorizeDepositDock.setTokens_62(new Tokens_62());
-			inRequestAuthorizeDepositDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
-			inRequestAuthorizeDepositDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
-			inRequestAuthorizeDepositDock.getTokens_62().setPos_id(adtInf.get(2));
-			inRequestAuthorizeDepositDock.getTokens_62().setCashier(adtInf.get(3));
-			inRequestAuthorizeDepositDock.getTokens_62().setTransaction(adtInf.get(4));
-			inRequestAuthorizeDepositDock.getTokens_62().setPinpad(adtInf.get(5));
-		}
-		if (!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()),
-				new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()),
-				new Data("processing.origin_account_type", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()),
-				new Data("processing.destiny_account_type", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()),
-				new Data("processing.code", inRequestAuthorizeDepositDock.getProcessing().getCode()),
-				new Data("nsu", inRequestAuthorizeDepositDock.getNsu()),
-             //	new Data("card_expiration_date", inRequestAuthorizeDepositDock.getCard_expiration_date()),
-				new Data("transaction_origin", inRequestAuthorizeDepositDock.getTransaction_origin()),
-				new Data("card_entry.code", inRequestAuthorizeDepositDock.getCard_entry().getCode()),
-				new Data("card_entry.pin", inRequestAuthorizeDepositDock.getCard_entry().getPin()),
-				new Data("card_entry.mode", inRequestAuthorizeDepositDock.getCard_entry().getMode()),
-				new Data("merchant_category_code", inRequestAuthorizeDepositDock.getMerchant_category_code()),
-				new Data("values.source_currency_code", inRequestAuthorizeDepositDock.getValues().getSource_currency_code()),
-				new Data("values.billing_currency_code", inRequestAuthorizeDepositDock.getValues().getBilling_currency_code()),
-				new Data("values.source_value", inRequestAuthorizeDepositDock.getValues().getSource_value()),
-				new Data("values.billing_value", inRequestAuthorizeDepositDock.getValues().getBilling_value()),
-				new Data("terminal_code", inRequestAuthorizeDepositDock.getTerminal_code()),
-				new Data("establishment_code", inRequestAuthorizeDepositDock.getEstablishment_code()),
-				new Data("card_id", inRequestAuthorizeDepositDock.getCard_id()),
-				//new Data("tokens_62.affiliation_number", inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()),
-				//new Data("tokens_62.store_number", inRequestAuthorizeDepositDock.getTokens_62().getStore_number()),
-				//new Data("tokens_62.pos_id", inRequestAuthorizeDepositDock.getTokens_62().getPos_id()),
-				//new Data("tokens_62.cashier", inRequestAuthorizeDepositDock.getTokens_62().getCashier()),
-				//new Data("tokens_62.transaction", inRequestAuthorizeDepositDock.getTokens_62().getTransaction()),
-				//new Data("tokens_62.pinpad", inRequestAuthorizeDepositDock.getTokens_62().getPinpad()),
-				new Data("transaction_indicators", inRequestAuthorizeDepositDock.getTransaction_indicators()),
-				new Data("additional_information", inRequestAuthorizeDepositDock.getAdditional_information()))) {
+	      if(!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()), new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()), new Data("processing.origin_account_type", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()), new Data("processing.destiny_account_type", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()), new Data("processing.code", inRequestAuthorizeDepositDock.getProcessing().getCode()), new Data("card_entry.code", inRequestAuthorizeDepositDock.getCard_entry().getCode()), new Data("card_entry.pin", inRequestAuthorizeDepositDock.getCard_entry().getPin()), new Data("card_entry.mode", inRequestAuthorizeDepositDock.getCard_entry().getMode()), new Data("establishment", inRequestAuthorizeDepositDock.getEstablishment()), new Data("retrieval_reference_number", inRequestAuthorizeDepositDock.getRetrieval_reference_number()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -713,6 +629,7 @@ public class ServiceContractOperationsApiRest {
 		return Response.ok(outResponseAuthorizeDepositDock).build();
 
 	}
+	
 	
 	/**
 	 * Authorize Reversal

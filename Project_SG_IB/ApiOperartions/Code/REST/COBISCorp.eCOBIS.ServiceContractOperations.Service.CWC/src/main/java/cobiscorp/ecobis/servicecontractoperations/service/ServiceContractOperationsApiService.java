@@ -1150,7 +1150,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getBank_branch_number());
 			procedureRequestAS.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getBank_account_number());
-			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getTransmission_date_time_gmt());
 			procedureRequestAS.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getTerminal_date());
@@ -1216,18 +1216,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAcquirer_country_code());
-			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()));
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()));
-			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getTokens_62().getPos_id());
-			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getTokens_62().getCashier());
-			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getTokens_62().getTransaction());
-			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());
+			if(inRequestAuthorizeWithdrawalDock.getToken_data() != null) {
 			procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
 			procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
@@ -1236,6 +1225,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getToken_data().getExpiration_date());
 			procedureRequestAS.addInputParam("@i_status", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getToken_data().getStatus());
+			}
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isCard_present()));
 			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT, String
@@ -1276,7 +1266,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getProduct_id());
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAdditional_information());
+			procedureRequestAS.addInputParam("@i_card_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
+		    procedureRequestAS.addInputParam("@i_account_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
+		    procedureRequestAS.addInputParam("@i_is_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isOnly_supports_purchase()));
 
+			
+			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeWithdrawalDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -1394,7 +1389,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDeposit.getOrderId());
 			procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDeposit.getAccountNumber());
-			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDeposit.getTransmissionDateTimeGmt());
 			procedureRequestAS.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getDate());
 			procedureRequestAS.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, inRequestAuthorizeDeposit.getTime());
@@ -1635,7 +1630,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getBank_branch_number());
 			procedureRequestAS.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getBank_account_number());
-			procedureRequestAS.addInputParam("@i_transmission_date_time_gtm", ICTSTypes.SQLVARCHAR,
+			procedureRequestAS.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getTransmission_date_time_gmt());
 			procedureRequestAS.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getTerminal_date());
@@ -1703,20 +1698,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAcquirer_country_code());
-			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getStore_number()));
-			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getPos_id());
-			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getCashier());
-			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getTransaction());
-			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getTokens_62().getPinpad());
-			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()));
+			
+			LOGGER.logDebug(inRequestAuthorizeDepositDock);
+			
+			String indicator="false";
+			
+			if(inRequestAuthorizeDepositDock.getTransaction_indicators()!=null &&inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()) {
+				indicator="true";
+			}
+			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,indicator);
+			indicator="false";
+			
+			
 			procedureRequestAS.addInputParam("@i_cardholder_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeDepositDock.getTransaction_indicators().isCardholder_present()));
 			procedureRequestAS.addInputParam("@i_password_present", ICTSTypes.SQLBIT,
@@ -1755,8 +1748,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProduct_id());
-			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeDepositDock.getAdditional_information());
+
+			procedureRequestAS.addInputParam("@i_creation_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getCreation_date());
+		    procedureRequestAS.addInputParam("@i_origin_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getOrigin_asset_code());
+		    procedureRequestAS.addInputParam("@i_dest_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getDest_asset_code());
+		    procedureRequestAS.addInputParam("@i_date_time_gmt",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getDate_time_gmt());
+		    procedureRequestAS.addInputParam("@i_rate",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getRate());
+		    procedureRequestAS.addInputParam("@i_spread_percent",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getSpread_percent());
+		    procedureRequestAS.addInputParam("@i_final_billing_value",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getFinal_billing_value());
+		      
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeDepositDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);

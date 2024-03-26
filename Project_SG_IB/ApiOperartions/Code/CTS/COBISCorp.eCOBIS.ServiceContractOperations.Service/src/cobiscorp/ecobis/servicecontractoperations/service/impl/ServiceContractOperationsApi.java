@@ -221,7 +221,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "product_status", param = "@i_product_status", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_branch_number", param = "@i_bank_branch_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_account_number", param = "@i_bank_account_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time_gtm", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time_gmt", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_date", param = "@i_terminal_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_time", param = "@i_terminal_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
@@ -229,7 +229,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "processing.origin_account_type", param = "@i_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "processing.destiny_account_type", param = "@i_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "card_number", param = "@i_card_number", dataType = ICTSTypes.SQLVARCHAR),
@@ -276,12 +276,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "transaction_indicators.is_international", param = "@i_is_international", dataType = ICTSTypes.SQLBIT),
 					@CTSInputParam(field = "card_id", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "product_id", param = "@i_product_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.affiliation_number", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.store_number", param = "@i_store_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.pos_id", param = "@i_pos_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.cashier", param = "@i_cashier", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.transaction", param = "@i_transaction", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.pinpad", param = "@i_pinpad", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "additional_information", param = "@i_additional_information", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "creation_date", param = "@i_creation_date", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.origin_asset_code", param = "@i_origin_asset_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.dest_asset_code", param = "@i_dest_asset_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.date_time_gmt", param = "@i_date_time_gmt", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.rate", param = "@i_rate", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.spread_percent", param = "@i_spread_percent", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.final_billing_value", param = "@i_final_billing_value", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -416,7 +418,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				
 					@CTSInputParam(field = "account_id", param = "@i_account_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_account_number", param = "@i_account_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "acquirer_country_code", param = "@i_acquirer_country_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_account_number", param = "@i_bank_account_number", dataType = ICTSTypes.SQLVARCHAR),
@@ -493,12 +495,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "values.settlement_value", param = "@i_val_settlement_value", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "values.source_currency_code", param = "@i_val_source_currency_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "values.source_value", param = "@i_val_source_value", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.affiliation_number", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.store_number", param = "@i_store_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.pos_id", param = "@i_pos_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.cashier", param = "@i_cashier", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.transaction", param = "@i_transaction", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.pinpad", param = "@i_pinpad", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "additional_information", param = "@i_additional_information", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -715,12 +712,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "original_transaction_data.institution_name", param = "@i_original_transaction_data_institutiion_name", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "original_transaction_data.accounting_date", param = "@i_original_transaction_data_accounting_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "original_transaction_data.retrieval_reference_number", param = "@i_original_transaction_data_retrieval_reference_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.affiliation_number", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.store_number", param = "@i_store_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.pos_id", param = "@i_pos_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.cashier", param = "@i_cashier", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.transaction", param = "@i_transaction", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.pinpad", param = "@i_pinpad", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "additional_information", param = "@i_additional_information", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},
@@ -847,7 +839,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "product_status", param = "@i_product_status", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_branch_number", param = "@i_bank_branch_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "bank_account_number", param = "@i_bank_account_number", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time_gtm", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transmission_date_time_gmt", param = "@i_transmission_date_time_gmt", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_date", param = "@i_terminal_date", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "terminal_time", param = "@i_terminal_time", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "mti", param = "@i_mti", dataType = ICTSTypes.SQLVARCHAR),
@@ -855,7 +847,7 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "processing.origin_account_type", param = "@i_origin_account_type", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "processing.destiny_account_type", param = "@i_destiny_account_type", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "processing.code", param = "@i_processing_code", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "account_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_type_indicator", param = "@i_account_type_indicator", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "nsu", param = "@i_nsu", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "authorization_code", param = "@i_authorization_code", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "card_number", param = "@i_card_number", dataType = ICTSTypes.SQLVARCHAR),
@@ -904,12 +896,14 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 					@CTSInputParam(field = "transaction_indicators.is_international", param = "@i_is_international", dataType = ICTSTypes.SQLBIT),
 					@CTSInputParam(field = "card_id", param = "@i_card_id", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "product_id", param = "@i_product_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.affiliation_number", param = "@i_affiliation_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.store_number", param = "@i_store_number", dataType = ICTSTypes.SQLDECIMAL),
-					@CTSInputParam(field = "tokens_62.pos_id", param = "@i_pos_id", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.cashier", param = "@i_cashier", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.transaction", param = "@i_transaction", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "tokens_62.pinpad", param = "@i_pinpad", dataType = ICTSTypes.SQLVARCHAR)
+					@CTSInputParam(field = "additional_information", param = "@i_additional_information", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "external_account_id", param = "@i_external_account_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.dest_asset_code", param = "@i_dest_asset_code", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.date_time_gmt", param = "@i_date_time_gmt", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "exchange_rate.final_billing_value", param = "@i_final_billing_value", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "account_status", param = "@i_card_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "account_status", param = "@i_account_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transaction_indicators.only_supports_purchase", param = "@i_is_only_supports_purchase", dataType = ICTSTypes.SQLBIT)
 				}
 			)
 		},
@@ -1395,7 +1389,6 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
 				name = "inRequestOtp",
 				input = {
 				
-					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4)
 				}
 			)
 		},

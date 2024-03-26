@@ -45,6 +45,7 @@ public class WithdrawalDock_transaction_indicators implements Serializable {
   private Boolean is_crossborder;
   private Boolean is_dcc;
   private Boolean is_international;
+  private Boolean only_supports_purchase;
   public Boolean isCard_present(){
     return this.card_present;
   }
@@ -146,5 +147,11 @@ public class WithdrawalDock_transaction_indicators implements Serializable {
   }
   public void setIs_international(Boolean is_international ){
     this.is_international=is_international;
+  }
+  public Boolean isOnly_supports_purchase(){
+    return this.only_supports_purchase;
+  }
+  public void setOnly_supports_purchase(Boolean only_supports_purchase ){
+    this.only_supports_purchase=only_supports_purchase;
   }
 }

@@ -109,14 +109,12 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		String s_amount = aRequest.readValueParam("@i_source_value");
 		String b_amount = aRequest.readValueParam("@i_billing_value");
-		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gtm");
+		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gmt");
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
-		String pos_id = aRequest.readValueParam("@i_pos_id");
-		String cashier = aRequest.readValueParam("@i_cashier");
-		String transaction = aRequest.readValueParam("@i_transaction");
-		String pinpad = aRequest.readValueParam("@i_pinpad");
+		String establishment = aRequest.readValueParam("@i_establishment");
+		String retrieval_reference_number = aRequest.readValueParam("@i_retrieval_reference_number");
 				
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
@@ -135,9 +133,9 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			b_amount = "";
 		}
 		
-		if(gtm_date_time.equals("null")){
+		if(gtm_date_time==null ||gtm_date_time.equals("null")){
 			gtm_date_time  = "";
-		} else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
+		} else if (!gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
 			gtm_date_time = "I";
 		}
 		
@@ -159,22 +157,6 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			exp_date = "I";
 		}
 		
-		if (pos_id == null || pos_id.trim().isEmpty()) {
-			pos_id = "E";
-		}
-		
-		if (cashier == null || cashier.trim().isEmpty()) {
-			cashier = "E";
-		}
-		
-		if (transaction == null || transaction.trim().isEmpty()) {
-			transaction = "E";
-		}
-		
-		if (pinpad == null || pinpad.trim().isEmpty()) {
-			pinpad = "E";
-		}
-			
 		
 		request.setSpName("cob_atm..sp_bv_val_trn_atm_dock_api");
 
@@ -191,6 +173,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_person_id"));
 		request.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
+		request.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_account_number"));
 		request.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR, gtm_date_time);
 		request.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, date);
 		request.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, time);
@@ -212,12 +195,22 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
-		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
-		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
-		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
-		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
-		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
+		request.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR, retrieval_reference_number);
+		request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, establishment);
+		request.addInputParam("@i_dest_asset_code", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_dest_asset_code"));
+		request.addInputParam("@i_date_time_gmt", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_date_time_gmt"));
+		request.addInputParam("@i_final_billing_value", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_final_billing_value"));
+		request.addInputParam("@i_origin_asset_code", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_origin_asset_code"));
+		request.addInputParam("@i_rate", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_rate"));
+		request.addInputParam("@i_spread_percent", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_spread_percent"));
+		request.addInputParam("@i_creation_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_creation_date"));
+		
+		
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "PURCHASE");
+		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
+			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
 			
@@ -290,6 +283,7 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "D");
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
