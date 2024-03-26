@@ -179,6 +179,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 			logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 			if(response.readValueFieldInHeader("ssn")!=null){
 				aBagSPJavaOrchestration.put("@o_ssn_host", response.readValueFieldInHeader("ssn"));
+				aBagSPJavaOrchestration.put("authorizationCode", response.readValueParam("@o_ssn"));
 				aBagSPJavaOrchestration.put("@o_ssn_branch", response.readValueFieldInHeader("ssn_branch"));
 			}
 		}
@@ -381,7 +382,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 	
 	private IProcedureResponse trnDataCentral(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
-		IProcedureRequest request = new ProcedureRequestAS();
+		IProcedureRequest request = initProcedureRequest(aRequest);
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
@@ -428,6 +429,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
@@ -653,9 +655,9 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
-				row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_ssn_branch")));
-				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_seq_tran")));
+				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ (String)aBagSPJavaOrchestration.get("@o_ssn_host")));
+				row.addRowData(3, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
+				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
 				data.addRow(row);	
 			}

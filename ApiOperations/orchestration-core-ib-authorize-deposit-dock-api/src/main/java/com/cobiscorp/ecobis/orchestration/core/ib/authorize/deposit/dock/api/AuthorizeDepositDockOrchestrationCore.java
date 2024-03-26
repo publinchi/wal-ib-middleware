@@ -316,7 +316,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 	
 	private IProcedureResponse trnDataCentral(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
-		IProcedureRequest request = new ProcedureRequestAS();
+		IProcedureRequest request = initProcedureRequest(aRequest);
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
@@ -363,6 +363,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
@@ -565,6 +566,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		//anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
 		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
 
+		anOriginalRequest.addOutputParam("@o_ssn", ICTSTypes.SQLINTN, "0");
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
 		anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
@@ -585,6 +588,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 			if(response.readValueFieldInHeader("ssn")!=null)
 			aBagSPJavaOrchestration.put("@o_ssn_host", response.readValueFieldInHeader("ssn"));
+			aBagSPJavaOrchestration.put("authorizationCode", response.readValueParam("@o_ssn"));
+			aBagSPJavaOrchestration.put("@o_ssn_branch", response.readValueFieldInHeader("ssn_branch"));
 		}
 		else{
 			aBagSPJavaOrchestration.put("code_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -672,8 +677,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(7, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_ssn_branch")));
-				row.addRowData(8, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_seq_tran")));
+				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
+				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
 				data.addRow(row);
 			}
