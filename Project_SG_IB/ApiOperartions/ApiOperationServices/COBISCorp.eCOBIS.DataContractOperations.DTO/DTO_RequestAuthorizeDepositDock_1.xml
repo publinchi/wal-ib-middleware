@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="32" id="2" name="properties">
+  <collection type="List" length="34" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="account_id" />
       <field type="String" name="type" value="string" />
@@ -346,9 +346,34 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="40" index="32">
+      <field type="String" name="name" value="creation_date" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="41" index="33">
+      <field type="String" name="name" value="exchange_rate" />
+      <field type="String" name="type" value="DepositDock_exchange_rate" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="42" name="dtoType">
+        <field type="String" name="name" value="DepositDock_exchange_rate" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="RequestAuthorizeDepositDock" />
-  <collection type="Map" length="0" id="40" name="templatesProperties">
+  <collection type="Map" length="0" id="43" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />
