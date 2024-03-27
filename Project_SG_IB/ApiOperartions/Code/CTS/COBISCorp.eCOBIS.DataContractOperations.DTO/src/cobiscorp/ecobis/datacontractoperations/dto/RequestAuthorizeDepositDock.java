@@ -286,7 +286,7 @@ public class RequestAuthorizeDepositDock implements Serializable {
   }
   public String getCreation_date(){
     return this.creation_date;
-}
+  }
   public void setCreation_date(String creation_date ){
     this.creation_date=creation_date;
   }
