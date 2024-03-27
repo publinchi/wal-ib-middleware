@@ -161,8 +161,8 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
 		String xChannel = aRequest.readValueParam("@x_channel");
-		String monto = aRequest.readValueParam("@i_amount");
-		String gtmDateTime = aRequest.readValueParam("@i_transmission_date_time_gtm");
+		String monto = aRequest.readValueParam("@i_amount");		                                 
+		String gtmDateTime = aRequest.readValueParam("@i_transmission_date_time_gmt");
 		String date = aRequest.readValueParam("@i_date");
 		String time = aRequest.readValueParam("@i_time");
 		String posId = aRequest.readValueParam("@i_pos_id");
