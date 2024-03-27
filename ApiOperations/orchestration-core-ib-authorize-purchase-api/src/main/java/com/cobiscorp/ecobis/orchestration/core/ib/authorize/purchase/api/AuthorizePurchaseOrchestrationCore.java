@@ -114,7 +114,7 @@ public class AuthorizePurchaseOrchestrationCore extends SPJavaOrchestrationBase 
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
 		String xChannel = aRequest.readValueParam("@x_channel");
 		String monto = aRequest.readValueParam("@i_amount");
-		String gtmDateTime = aRequest.readValueParam("@i_transmission_date_time_gtm");
+		String gtmDateTime = aRequest.readValueParam("@i_transmission_date_time_gmt");
 		String date = aRequest.readValueParam("@i_date");
 		String time = aRequest.readValueParam("@i_time");
 		String expDate = aRequest.readValueParam("@i_card_expiration_date");
