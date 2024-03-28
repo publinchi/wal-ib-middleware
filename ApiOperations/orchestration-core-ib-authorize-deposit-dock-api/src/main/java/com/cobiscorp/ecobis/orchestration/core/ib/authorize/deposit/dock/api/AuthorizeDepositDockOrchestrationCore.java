@@ -207,9 +207,9 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 		
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "PURCHASE");
-		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
+		if(aBagSPJavaOrchestration.get("IsReentry")!=null && aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
-		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+		if(aBagSPJavaOrchestration.get("flowRty")!=null && aBagSPJavaOrchestration.get("flowRty").equals(true))
 			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
