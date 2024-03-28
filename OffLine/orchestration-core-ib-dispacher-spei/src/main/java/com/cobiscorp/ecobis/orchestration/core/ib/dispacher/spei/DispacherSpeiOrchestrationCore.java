@@ -5,6 +5,7 @@ import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXB;
 
@@ -394,7 +395,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
 				procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
 				procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
-	
+				procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen()));
 				procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
 				procedureRequest.addOutputParam("@o_nombre_beneficiario", ICTSTypes.SQLVARCHAR, "");
 				procedureRequest.addOutputParam("@o_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "");
@@ -618,10 +619,27 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 158);
 					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
 					validate = false;	 
+				}else
+				if(msjIn.getOrdenpago().getOpTcClaveBen()==3)
+				{
+					if(digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
+					{
+						
+					}else
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.");
+					}
+					validate = false;	 
 				}
 			}
 		
 		return validate;
 	}
+	  public boolean digitValidateNum(String cadena) {
+	        // Patrón para buscar solo dígitos numéricos
+	        Pattern patron = Pattern.compile("^\\d+$");
+	        return patron.matcher(cadena).matches();
+	    }
 
 }
