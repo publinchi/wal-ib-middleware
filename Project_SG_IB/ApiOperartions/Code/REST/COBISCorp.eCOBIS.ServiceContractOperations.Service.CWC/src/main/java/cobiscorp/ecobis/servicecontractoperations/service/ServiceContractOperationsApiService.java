@@ -1307,9 +1307,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 											int index) {
 										ResponseAuthorizeWithdrawalDock dto = new ResponseAuthorizeWithdrawalDock();
 
-										List<String> arrayList = new ArrayList<>(
-												Arrays.asList(resultSetMapper.getString(1).split(",")));
-										dto.setResponse((ArrayList) arrayList);
+										/*List<String> arrayList = new ArrayList<>(
+												Arrays.asList(resultSetMapper.getString(1).split(",")));*/
+										dto.setResponse(resultSetMapper.getString(1));
 										dto.setReason(resultSetMapper.getString(2));
 										dto.setAuthorization_code(resultSetMapper.getInteger(3));
 										dto.setSeq(resultSetMapper.getString(4));
@@ -1794,9 +1794,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setApproved_value(resultSetMapper.getString(1));
 								dto.setSettlement_value(resultSetMapper.getString(2));
 								dto.setCardholder_billing_value(resultSetMapper.getString(3));
-								List<String> arrayList = new ArrayList<>(
-										Arrays.asList(resultSetMapper.getString(4).split(",")));
-								dto.setResponse((ArrayList) arrayList);
+								/*List<String> arrayList = new ArrayList<>(
+										Arrays.asList(resultSetMapper.getString(4).split(",")));*/
+								dto.setResponse(resultSetMapper.getString(4));
 								dto.setReason(resultSetMapper.getString(5));
 								dto.setAvailable_limit(resultSetMapper.getString(6));
 								dto.setAuthorization_code(resultSetMapper.getInteger(7));
