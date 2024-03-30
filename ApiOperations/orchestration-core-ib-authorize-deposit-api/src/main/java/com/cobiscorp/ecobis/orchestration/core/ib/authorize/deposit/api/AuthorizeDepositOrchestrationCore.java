@@ -211,6 +211,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
 			
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -221,6 +222,7 @@ public class AuthorizeDepositOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		aBagSPJavaOrchestration.put("o_seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("o_reentry", wProductsQueryResp.readValueParam("@o_reentry"));
+		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
 			
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
