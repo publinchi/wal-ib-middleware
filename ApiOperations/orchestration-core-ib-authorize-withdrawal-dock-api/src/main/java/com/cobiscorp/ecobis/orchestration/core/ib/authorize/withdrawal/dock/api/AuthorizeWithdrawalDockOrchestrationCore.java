@@ -322,6 +322,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -339,6 +340,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
 		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
+		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -397,6 +399,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "D");
+		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_type_transaction"));
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
