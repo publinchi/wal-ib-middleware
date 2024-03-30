@@ -251,8 +251,6 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_rate", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_rate"));
 		request.addInputParam("@i_spread_percent", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_spread_percent"));
 		
-		
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "PURCHASE");
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
@@ -265,6 +263,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 			
@@ -282,6 +281,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("cta", wProductsQueryResp.readValueParam("@o_cta"));
 		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
+		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -339,6 +339,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "D");
+		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_type_transaction"));
 
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
@@ -399,6 +400,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_canal", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_type_transaction"));
 		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@t_trn"));
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
