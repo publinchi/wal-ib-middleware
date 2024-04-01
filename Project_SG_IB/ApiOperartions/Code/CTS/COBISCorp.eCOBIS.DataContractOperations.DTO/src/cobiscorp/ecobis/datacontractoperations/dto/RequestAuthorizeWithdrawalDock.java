@@ -60,6 +60,10 @@ public class RequestAuthorizeWithdrawalDock implements Serializable {
   private WithdrawalDock_token_data token_data;
   private WithdrawalDock_transaction_indicators transaction_indicators;
   private String additional_information;
+  private String external_account_id;
+  private WithdrawalDock_exchange_rate exchange_rate;
+  private String card_status;
+  private String account_status;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -287,5 +291,35 @@ public class RequestAuthorizeWithdrawalDock implements Serializable {
   }
   public void setAdditional_information(String additional_information ){
     this.additional_information=additional_information;
+  }
+  public String getExternal_account_id(){
+    return this.external_account_id;
+  }
+  public void setExternal_account_id(String external_account_id ){
+    this.external_account_id=external_account_id;
+  }
+  public WithdrawalDock_exchange_rate exchange_rateInstance(){
+	if(this.exchange_rate==null){
+	this.exchange_rate=new WithdrawalDock_exchange_rate();
+	}
+	return this.exchange_rate;
+  }
+  public WithdrawalDock_exchange_rate getExchange_rate(){
+    return this.exchange_rate;
+  }
+  public void setExchange_rate(WithdrawalDock_exchange_rate exchange_rate ){
+    this.exchange_rate=exchange_rate;
+  }
+  public String getCard_status(){
+    return this.card_status;
+  }
+  public void setCard_status(String card_status ){
+    this.card_status=card_status;
+  }
+  public String getAccount_status(){
+    return this.account_status;
+  }
+  public void setAccount_status(String account_status ){
+    this.account_status=account_status;
   }
 }

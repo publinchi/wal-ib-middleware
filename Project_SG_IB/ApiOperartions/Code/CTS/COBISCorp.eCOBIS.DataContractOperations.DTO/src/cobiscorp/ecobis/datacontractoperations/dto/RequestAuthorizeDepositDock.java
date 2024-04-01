@@ -60,6 +60,8 @@ public class RequestAuthorizeDepositDock implements Serializable {
   private Tokens_62 tokens_62;
   private DepositDock_transaction_indicators transaction_indicators;
   private String additional_information;
+  private String creation_date;
+  private DepositDock_exchange_rate exchange_rate;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -281,5 +283,23 @@ public class RequestAuthorizeDepositDock implements Serializable {
   }
   public void setAdditional_information(String additional_information ){
     this.additional_information=additional_information;
+  }
+  public String getCreation_date(){
+    return this.creation_date;
+  }
+  public void setCreation_date(String creation_date ){
+    this.creation_date=creation_date;
+  }
+  public DepositDock_exchange_rate exchange_rateInstance(){
+	if(this.exchange_rate==null){
+	this.exchange_rate=new DepositDock_exchange_rate();
+	}
+	return this.exchange_rate;
+  }
+  public DepositDock_exchange_rate getExchange_rate(){
+    return this.exchange_rate;
+  }
+  public void setExchange_rate(DepositDock_exchange_rate exchange_rate ){
+    this.exchange_rate=exchange_rate;
   }
 }

@@ -1212,6 +1212,11 @@
 			<artifactId>orchestration-core-ib-get-transaction-limit-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+	    	<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+	    	<artifactId>orchestration-core-api-template</artifactId>
+	    	<version>4.6.1.0</version>
+   		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1598,7 +1603,9 @@
 							orchestration-core-ib-query-get-movements-detail,
 							orchestration-core-batch-compensation,
 							orchestration-core-ib-get-statement-list-api,
-							orchestration-core-ib-dispacher-spei
+							orchestration-core-ib-dispacher-spei,
+							orchestration-core-ib-get-transaction-limit-api,
+							orchestration-core-api-template
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>

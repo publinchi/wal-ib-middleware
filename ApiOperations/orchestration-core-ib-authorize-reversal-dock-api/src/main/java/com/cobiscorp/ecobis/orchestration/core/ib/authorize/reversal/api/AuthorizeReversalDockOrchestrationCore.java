@@ -86,11 +86,10 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 			if (!flowRty){
 				logger.logDebug("evaluateExecuteReentry False");
 				
-				IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
-				wAuthValDataLocal = valDataLocal(anOriginalRequest, aBagSPJavaOrchestration);
-				if(wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+				anProcedureResponse = valDataLocal(anOriginalRequest, aBagSPJavaOrchestration);
+				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 					
-					logger.logDebug("Code Error local" + wAuthValDataLocal.getResultSetRowColumnData(2, 1, 2));
+					logger.logDebug("Code Error local" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
 					anProcedureResponse = valTranDataCentralOff(anOriginalRequest, aBagSPJavaOrchestration);		
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
@@ -123,7 +122,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
+			logger.logInfo(CLASS_NAME + " Entrando en valTranDataCentralOff");
 		}
 		
 		request.setSpName("cob_cuentas..sp_val_central_data_off");
@@ -175,7 +174,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de trnDataCentral");
+			logger.logInfo(CLASS_NAME + " Saliendo de valTranDataCentralOff");
 		}
 
 		return wProductsQueryResp;
@@ -242,6 +241,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 			if(response.readValueFieldInHeader("ssn")!=null){
 				aBagSPJavaOrchestration.put("@o_ssn_host", response.readValueFieldInHeader("ssn"));
+				aBagSPJavaOrchestration.put("authorizationCode", response.readValueParam("@o_ssn"));
 				aBagSPJavaOrchestration.put("@o_ssn_branch", response.readValueFieldInHeader("ssn_branch"));
 			}
 		}
@@ -521,7 +521,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
-		
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "D");
+
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		
@@ -533,6 +534,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
+		aBagSPJavaOrchestration.put("authorizationCode",wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
@@ -700,7 +702,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
-				row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("@o_ssn_branch")));
+				row.addRowData(3, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
 				if(aBagSPJavaOrchestration.containsKey("@o_seq_tran"))
 					row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
 				

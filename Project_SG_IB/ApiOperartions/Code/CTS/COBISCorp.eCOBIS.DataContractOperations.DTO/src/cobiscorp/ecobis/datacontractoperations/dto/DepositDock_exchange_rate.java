@@ -27,33 +27,47 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseAuthorizeWithdrawalDock implements Serializable {
-  private String response;
-  private String reason;
-  private Integer authorization_code;
-  private String seq;
-  public String getResponse(){
-    return this.response;
+public class DepositDock_exchange_rate implements Serializable {
+  private String origin_asset_code;
+  private String dest_asset_code;
+  private String date_time_gmt;
+  private String rate;
+  private String spread_percent;
+  private String final_billing_value;
+  public String getOrigin_asset_code(){
+    return this.origin_asset_code;
   }
-  public void setResponse(String response ){
-    this.response=response;
+  public void setOrigin_asset_code(String origin_asset_code ){
+    this.origin_asset_code=origin_asset_code;
   }
-  public String getReason(){
-    return this.reason;
+  public String getDest_asset_code(){
+    return this.dest_asset_code;
   }
-  public void setReason(String reason ){
-    this.reason=reason;
+  public void setDest_asset_code(String dest_asset_code ){
+    this.dest_asset_code=dest_asset_code;
   }
-  public Integer getAuthorization_code(){
-    return this.authorization_code;
+  public String getDate_time_gmt(){
+    return this.date_time_gmt;
   }
-  public void setAuthorization_code(Integer authorization_code ){
-    this.authorization_code=authorization_code;
+  public void setDate_time_gmt(String date_time_gmt ){
+    this.date_time_gmt=date_time_gmt;
   }
-  public String getSeq(){
-    return this.seq;
+  public String getRate(){
+    return this.rate;
   }
-  public void setSeq(String seq ){
-    this.seq=seq;
+  public void setRate(String rate ){
+    this.rate=rate;
+  }
+  public String getSpread_percent(){
+    return this.spread_percent;
+  }
+  public void setSpread_percent(String spread_percent ){
+    this.spread_percent=spread_percent;
+  }
+  public String getFinal_billing_value(){
+    return this.final_billing_value;
+  }
+  public void setFinal_billing_value(String final_billing_value ){
+    this.final_billing_value=final_billing_value;
   }
 }
