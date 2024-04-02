@@ -23,6 +23,8 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
@@ -199,8 +201,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = null;
-		IProcedureRequest originalByNotify = anOriginalRequest;
-
+		
 		if (logger.isInfoEnabled())
 			logger.logInfo("SpeiInTransferOrchestrationCore: executeJavaOrchestration");
 
@@ -214,7 +215,19 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		Utils.validateComponentInstance(mapInterfaces);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA SPEI IN");
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
-		try {
+		
+		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_idTipoPago"));
+		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
+		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
+		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
+		try 
+		{
+			if(codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock
+			{
+				//anOriginalRequest.readValueParam("@i_cuentaBeneficiario")
+				
+			}
+			
 			response = executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 		} catch (CTSServiceException e) {
 			e.printStackTrace();
@@ -528,5 +541,154 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		// TODO Auto-generated method stub
 
 	}
+	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
+    	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
+	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
 
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (!wProcedureResponseCentral.hasError()) {
+			
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+				
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					return columns[2].getValue();
+				} 
+			} 
+		} 
+		
+		return "";
+	}
+	
+	
+	private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureResponse connectorAccountResponse = null;
+
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		aBagSPJavaOrchestration.remove("trn_virtual");
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en findCardByPanConector");
+		}
+		try {
+			// PARAMETROS DE ENTRADA		
+			anOriginalRequest.addInputParam("@i_pan", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("pan"));
+			anOriginalRequest.addInputParam("@i_iv", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("iv"));
+			anOriginalRequest.addInputParam("@i_aes", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("aes"));
+			anOriginalRequest.addInputParam("@i_mode", ICTSTypes.SQLVARCHAR, "GCM");
+			anOriginalRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "FCP");
+
+			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+					"(service.identifier=SpeiInTransferOrchestrationCore)");
+			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+
+			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18500112");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500112");
+
+			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500112");
+			
+			// SE HACE LA LLAMADA AL CONECTOR
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorDock)");
+			anOriginalRequest.setSpName("cob_procesador..sp_transfer_spei_api");
+
+			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500112");
+			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500112");			
+			
+			// SE EJECUTA CONECTOR
+			connectorAccountResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
+
+			if (logger.isDebugEnabled())
+				logger.logDebug("findCardByPanConector response: " + connectorAccountResponse);
+
+			if (connectorAccountResponse.readValueParam("@o_status") != null)
+				aBagSPJavaOrchestration.put("@o_status", connectorAccountResponse.readValueParam("@o_status"));
+			else
+				aBagSPJavaOrchestration.put("@o_status", "null");
+			
+			if (connectorAccountResponse.readValueParam("@o_id_card") != null)
+				aBagSPJavaOrchestration.put("@o_id_card", connectorAccountResponse.readValueParam("@o_id_card"));
+			else
+				aBagSPJavaOrchestration.put("@o_id_card", "null");
+			
+			if (connectorAccountResponse.readValueParam("@o_response_find_card") != null)
+				aBagSPJavaOrchestration.put("@o_response_find_card", connectorAccountResponse.readValueParam("@o_response_find_card"));
+			else
+				aBagSPJavaOrchestration.put("@o_response_find_card", "null");
+			
+			if (connectorAccountResponse.readValueParam("@o_request_find_card") != null)
+				aBagSPJavaOrchestration.put("@o_request_find_card", connectorAccountResponse.readValueParam("@o_request_find_card"));
+			else
+				aBagSPJavaOrchestration.put("@o_request_find_card", "null");
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			aBagSPJavaOrchestration.put("@o_card_number", "null");
+			connectorAccountResponse = null;
+			logger.logInfo(CLASS_NAME +" Error Catastrofico de findCardByPanConector");
+
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + "--> findCardByPanConector");
+			}
+		}
+		return connectorAccountResponse;
+	}
+	
+	private IProcedureResponse findCardId(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en findCardId");
+		}
+
+		request.setSpName("cob_bvirtual..sp_val_data_tarjeta");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_id_dock", ICTSTypes.SQLVARCHAR, aResponse.readValueParam("@o_id_card"));
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "C");
+		
+		request.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_type_card", ICTSTypes.SQLVARCHAR, "X");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("o_account es " +  wProductsQueryResp.readValueParam("@o_account"));
+		}
+		
+		aBagSPJavaOrchestration.put("o_account", wProductsQueryResp.readValueParam("@o_account"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking findCardId DCO : " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de findCardId");
+		}
+		return wProductsQueryResp;
+	}
 }
