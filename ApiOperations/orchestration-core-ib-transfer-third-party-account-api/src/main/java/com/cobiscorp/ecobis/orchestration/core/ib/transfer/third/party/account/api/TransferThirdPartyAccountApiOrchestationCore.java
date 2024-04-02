@@ -122,7 +122,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			}
 			IProcedureResponse anProcedureResFind = findCardId(anOriginalRequest, anProcedureResPan,aBagSPJavaOrchestration);
 			if (anProcedureResFind.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-				anOriginalRequest.setValueParam("@i_cta", (String) aBagSPJavaOrchestration.get("o_account"));
+				anOriginalRequest.setValueParam("@i_cta_des", (String) aBagSPJavaOrchestration.get("o_account"));
 				logger.logDebug("ACCOUNT RESPONSE:: " + anOriginalRequest.readValueParam("@i_cta"));
 			}
 			else{

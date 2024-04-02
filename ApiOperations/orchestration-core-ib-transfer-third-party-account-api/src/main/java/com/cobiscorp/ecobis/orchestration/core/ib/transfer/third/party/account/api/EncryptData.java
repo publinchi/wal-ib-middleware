@@ -21,6 +21,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -51,7 +52,8 @@ public class EncryptData {
         	logger.logDebug("[INI]: SecretKey encryptWithAESGCM.. " + scrKey);
             if(scrKey == null){
             	logger.logDebug("[pulbicKey]:: NO CONTENT");
-	            secretKey = getAESKey(256);
+	            //secretKey = getAESKey(256);
+	            secretKey = generateAESKey(256);
             
             	logger.logDebug("[publicPemReader]:: INIT");
             	PemReader publicPemReader = new PemReader(new StringReader(new String(decoder.decode(pk.getBytes()))));
@@ -186,6 +188,13 @@ public class EncryptData {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(size, SecureRandom.getInstanceStrong());
         return keyGen.generateKey();
+    }
+    
+    public static SecretKey generateAESKey(int size) {
+        byte[] keyBytes = new byte[size / 8];
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(keyBytes);
+        return new SecretKeySpec(keyBytes, "AES");
     }
 
     public static byte[] getRandomNonce(int numBytes) {
