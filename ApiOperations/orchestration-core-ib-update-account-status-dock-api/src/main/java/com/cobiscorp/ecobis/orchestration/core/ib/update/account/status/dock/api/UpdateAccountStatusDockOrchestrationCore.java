@@ -667,9 +667,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		wAccountsResp = getCardsByCustomer(aRequest, aBagSPJavaOrchestration);
 				
 		// MO - ? no se que hace esto
-		if(wAccountsResp.getResultSets().size()>1 && !wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+		/*if(wAccountsResp.getResultSets().size()>1 && !wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			return wAccountsResp;
-		}
+		}*/
 				
 		IResultSetHeaderColumn[]  headers = (IResultSetHeaderColumn[]) aBagSPJavaOrchestration.get("cardsResultSetHeaders");
 		logger.logDebug(CLASS_NAME + "Response headers: updaterCardStatus : headers: " + headers);
