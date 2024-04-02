@@ -1,8 +1,5 @@
-package com.cobiscorp.ecobis.orchestration.core.ib.transfer.third.party.account.api;
+package com.cobiscorp.ecobis.ib.orchestration.base.utils.transfers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -34,7 +31,7 @@ public class EncryptData {
 	private static byte[] iv = null;
 	private static SecretKey secretKey = null;
 	private static byte[] scrKey = null;
-    private static ILogger logger = LogFactory.getLogger(TransferThirdPartyAccountApiOrchestationCore.class);
+    private static ILogger logger = LogFactory.getLogger(EncryptData.class);
     
     public static Map<String, Object> encryptWithAESGCM(String pan) {
     	
@@ -42,7 +39,6 @@ public class EncryptData {
     	
         String OUTPUT_FORMAT = "%-15s:%s";
         String pk = "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF2Z1pFMlhCZjBFbHFFUzd6VjBVNApLa0IrdjBsd1g5aFFYMWtNcSs3WEhQTk0vZThRNjUrN1RxL0piTS9UNEpNZnQ5a0x5UGV5YTNtM1o5TVd3RGFiCkh0eUlvYTlmS056WjNxZUh2VVIxWkRiSllkSHRNelJydXVYdnI2OElDQm5rOHhET0FEUVJHemMwWlRYZDllcW8KdktoUVFrRnFJUlBWMWhzWGZFdzEzN1Q2NjAyNmswTmZodWpMcGtPZVVwUndYNWJMbEQxeGFsdE1WK2t4UTZsMgpsMDExcnVkdU9pMkI2RWduVlBhYk50a3ZPaU1pbXZLKzY5ODg4ZTBWZzNpZGNURTNqRURpYnBMMXNaam5wd0N4CkJMNDdXQURqSGtDODliR2VhQ2w3bHl4aW8wZ05RQ1VsUkQxOWlqazg2WTRCNnR1TGNwQUlrK1Exb3d5OHo5aU8KMVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==";
-        //String txt = "5332740142623684";
         Map<String, Object> dataMapEncrypt = new HashMap<String, Object>();
         Base64.Decoder decoder = Base64.getDecoder();
         
@@ -52,24 +48,16 @@ public class EncryptData {
         	logger.logDebug("[INI]: SecretKey encryptWithAESGCM.. " + scrKey);
             if(scrKey == null){
             	logger.logDebug("[pulbicKey]:: NO CONTENT");
-	            //secretKey = getAESKey(256);
 	            secretKey = generateAESKey(256);
-            
-            	logger.logDebug("[publicPemReader]:: INIT");
             	PemReader publicPemReader = new PemReader(new StringReader(new String(decoder.decode(pk.getBytes()))));
-                logger.logDebug("[publicPemReader]:: " + publicPemReader.toString());
                 PemObject publicPemObjEncr = publicPemReader.readPemObject();
-                logger.logDebug("[publicPemObj]:: " + publicPemObjEncr.toString());
-                logger.logDebug("[publicPemObj]:: getContent::" + publicPemObjEncr.getContent());
-                
                 publicPemReader.close();	
                 scrKey = publicPemObjEncr.getContent();
             }
             
             aes = secretKey.getEncoded();
             iv = getRandomNonce(12);
-            
-            logger.logDebug("[INI]: KeyFactory encryptWithAESGCM ");
+
             KeyFactory publicKeyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(scrKey);
             PublicKey publicKey = publicKeyFactory.generatePublic(keySpec);
@@ -84,8 +72,6 @@ public class EncryptData {
             cipherGCM.init(Cipher.ENCRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
             byte[] enc = cipherGCM.doFinal(pan.getBytes(StandardCharsets.UTF_8));
 
-            logger.logDebug("[INI]: after encryptWithAESGCM ");
-            
             dataMapEncrypt.put("pan", Base64.getEncoder().encodeToString(enc));
             dataMapEncrypt.put("iv", Base64.getEncoder().encodeToString(iv));
             dataMapEncrypt.put("aes", Base64.getEncoder().encodeToString(aesCipher));
@@ -97,97 +83,10 @@ public class EncryptData {
             logger.logDebug("[INI]: before encryptWithAESGCM ");
             
         } catch (Exception e) {
-        	logger.logDebug("[ERORR]:::" + e);
         	logger.logDebug("[ERORR MESSAGGE]:::" + e.getMessage());
         }
         
         return dataMapEncrypt;
-    }    
-   
-
-    public static Map<String, Object> encryptWithAESGCM2(String pan) {
-    	
-    	logger.logDebug("[INI]: encryptWithAESGCM ");
-    	
-        String OUTPUT_FORMAT = "%-15s:%s";
-        String pk = "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF2Z1pFMlhCZjBFbHFFUzd6VjBVNApLa0IrdjBsd1g5aFFYMWtNcSs3WEhQTk0vZThRNjUrN1RxL0piTS9UNEpNZnQ5a0x5UGV5YTNtM1o5TVd3RGFiCkh0eUlvYTlmS056WjNxZUh2VVIxWkRiSllkSHRNelJydXVYdnI2OElDQm5rOHhET0FEUVJHemMwWlRYZDllcW8KdktoUVFrRnFJUlBWMWhzWGZFdzEzN1Q2NjAyNmswTmZodWpMcGtPZVVwUndYNWJMbEQxeGFsdE1WK2t4UTZsMgpsMDExcnVkdU9pMkI2RWduVlBhYk50a3ZPaU1pbXZLKzY5ODg4ZTBWZzNpZGNURTNqRURpYnBMMXNaam5wd0N4CkJMNDdXQURqSGtDODliR2VhQ2w3bHl4aW8wZ05RQ1VsUkQxOWlqazg2WTRCNnR1TGNwQUlrK1Exb3d5OHo5aU8KMVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==";
-        //String txt = "5332740142623684";
-        Map<String, Object> dataMapEncrypt = new HashMap<String, Object>();
-
-        ByteArrayInputStream inputStream = null;
-        InputStreamReader reader = null;
-        PemReader pemReader = null;
-        
-        try {
-        	
-            SecretKey secretKey = getAESKey(256);
-            byte[] iv = getRandomNonce(12);
-            byte[] aes = secretKey.getEncoded();
-
-            Base64.Decoder decoder = Base64.getDecoder();
-
-            logger.logDebug("[INI]: SecretKey encryptWithAESGCM ");
-            
-            byte[] decodedBytes = decoder.decode(pk.getBytes());
-            inputStream = new ByteArrayInputStream(decodedBytes);
-            reader = new InputStreamReader(inputStream);
-            pemReader = new PemReader(reader);
-
-            PemObject pemObject = pemReader.readPemObject();
-
-            logger.logDebug("[INI]: KeyFactory encryptWithAESGCM ");
-            KeyFactory publicKeyFactory = KeyFactory.getInstance("RSA");
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(pemObject.getContent());
-            PublicKey publicKey = publicKeyFactory.generatePublic(keySpec);
-
-            //encrypt with OAEP
-            Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPPadding");
-            OAEPParameterSpec OAEPParams = new OAEPParameterSpec("SHA-256", "MGF1", new MGF1ParameterSpec("SHA-256"), PSource.PSpecified.DEFAULT);
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey, OAEPParams);
-            byte[] aesCipher = cipher.doFinal(aes);
-
-            Cipher cipherGCM = Cipher.getInstance("AES/GCM/NoPadding");
-            cipherGCM.init(Cipher.ENCRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
-            byte[] enc = cipherGCM.doFinal(pan.getBytes(StandardCharsets.UTF_8));
-
-            logger.logDebug("[INI]: after encryptWithAESGCM ");
-            
-            dataMapEncrypt.put("pan", Base64.getEncoder().encodeToString(enc));
-            dataMapEncrypt.put("iv", Base64.getEncoder().encodeToString(iv));
-            dataMapEncrypt.put("aes", Base64.getEncoder().encodeToString(aesCipher));
-            
-            logger.logDebug( (OUTPUT_FORMAT) + " ENCRYPT " + Base64.getEncoder().encodeToString((enc)) );
-            logger.logDebug( (OUTPUT_FORMAT) + " IV " + Base64.getEncoder().encodeToString(iv));
-            logger.logDebug( (OUTPUT_FORMAT) + " KEY ENCRYPTED"+ Base64.getEncoder().encodeToString(aesCipher));
-
-            logger.logDebug("[INI]: before encryptWithAESGCM ");
-            
-        } catch (Exception e) {
-        	logger.logDebug("[ERORR]:::" + e);
-        	 logger.logDebug("[ERORR MESSAGGE]:::" + e.getMessage());
-        }finally {
-            try {
-                if (pemReader != null) {
-                    pemReader.close();
-                }
-                if (reader != null) {
-                    reader.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-            	logger.logDebug(e);
-            }
-        }
-        
-        return dataMapEncrypt;
-    }
-
-    public static SecretKey getAESKey(int size) throws NoSuchAlgorithmException {
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(size, SecureRandom.getInstanceStrong());
-        return keyGen.generateKey();
     }
     
     public static SecretKey generateAESKey(int size) {

@@ -121,15 +121,6 @@
       <artifactId>orchestration-ib-base</artifactId>
       <version>4.6.1.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk18on</artifactId>
-      <version>1.77</version>
-    </dependency>
-    <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.70</version> <!-- Debes verificar la última versión disponible -->
-    </dependency>
+    
   </dependencies>
 </project>
