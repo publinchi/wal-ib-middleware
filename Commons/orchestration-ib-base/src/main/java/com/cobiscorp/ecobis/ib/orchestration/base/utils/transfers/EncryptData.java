@@ -33,12 +33,12 @@ public class EncryptData {
 	private static byte[] scrKey = null;
     private static ILogger logger = LogFactory.getLogger(EncryptData.class);
     
-    public static Map<String, Object> encryptWithAESGCM(String pan) {
+    public static Map<String, Object> encryptWithAESGCM(String pan, String pk) {
     	
     	logger.logDebug("[INI]: encryptWithAESGCM-- ");
     	
         String OUTPUT_FORMAT = "%-15s:%s";
-        String pk = "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF2Z1pFMlhCZjBFbHFFUzd6VjBVNApLa0IrdjBsd1g5aFFYMWtNcSs3WEhQTk0vZThRNjUrN1RxL0piTS9UNEpNZnQ5a0x5UGV5YTNtM1o5TVd3RGFiCkh0eUlvYTlmS056WjNxZUh2VVIxWkRiSllkSHRNelJydXVYdnI2OElDQm5rOHhET0FEUVJHemMwWlRYZDllcW8KdktoUVFrRnFJUlBWMWhzWGZFdzEzN1Q2NjAyNmswTmZodWpMcGtPZVVwUndYNWJMbEQxeGFsdE1WK2t4UTZsMgpsMDExcnVkdU9pMkI2RWduVlBhYk50a3ZPaU1pbXZLKzY5ODg4ZTBWZzNpZGNURTNqRURpYnBMMXNaam5wd0N4CkJMNDdXQURqSGtDODliR2VhQ2w3bHl4aW8wZ05RQ1VsUkQxOWlqazg2WTRCNnR1TGNwQUlrK1Exb3d5OHo5aU8KMVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==";
+        //String pk = "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF2Z1pFMlhCZjBFbHFFUzd6VjBVNApLa0IrdjBsd1g5aFFYMWtNcSs3WEhQTk0vZThRNjUrN1RxL0piTS9UNEpNZnQ5a0x5UGV5YTNtM1o5TVd3RGFiCkh0eUlvYTlmS056WjNxZUh2VVIxWkRiSllkSHRNelJydXVYdnI2OElDQm5rOHhET0FEUVJHemMwWlRYZDllcW8KdktoUVFrRnFJUlBWMWhzWGZFdzEzN1Q2NjAyNmswTmZodWpMcGtPZVVwUndYNWJMbEQxeGFsdE1WK2t4UTZsMgpsMDExcnVkdU9pMkI2RWduVlBhYk50a3ZPaU1pbXZLKzY5ODg4ZTBWZzNpZGNURTNqRURpYnBMMXNaam5wd0N4CkJMNDdXQURqSGtDODliR2VhQ2w3bHl4aW8wZ05RQ1VsUkQxOWlqazg2WTRCNnR1TGNwQUlrK1Exb3d5OHo5aU8KMVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==";
         Map<String, Object> dataMapEncrypt = new HashMap<String, Object>();
         Base64.Decoder decoder = Base64.getDecoder();
         
