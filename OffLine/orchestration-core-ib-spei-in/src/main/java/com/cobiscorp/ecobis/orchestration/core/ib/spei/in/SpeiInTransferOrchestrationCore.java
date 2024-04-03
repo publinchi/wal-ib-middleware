@@ -70,8 +70,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	/**
 	 * Read configuration of parent component
 	 */
+	private java.util.Properties properties;
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
+		logger.logInfo(" loadConfiguration INI TransferThirdPartyAccountApiOrchestationCore");
+		properties = arg0.getProperties("//property");
 	}
 
 	/**
@@ -225,33 +228,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		Utils.validateComponentInstance(mapInterfaces);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA SPEI IN");
-		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);
-		
-		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipo_destino"));
-		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
-		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
-		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
-		
-		if (logger.isInfoEnabled())
-			logger.logInfo("codTarDeb: "+codTarDeb);
-
+		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);	
 		try 
 		{
-			if(logger.isInfoEnabled())
-			{
-				logger.logInfo("codTar:"+codTarDeb + " opTcClaveBen:"+opTcClaveBen);
-			}
-			if(codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock
-			{
-				response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
-			}
-			if(response.getReturnCode()!=0)
-			{
-				return mappingResponse(response, aBagSPJavaOrchestration);
-			}else
-			{
-				response = executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
-			}
+			response = executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 		} catch (CTSServiceException e) {
 			e.printStackTrace();
 		} catch (CTSInfrastructureException e) {
@@ -329,6 +309,27 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		logger.logInfo(wInfo+INIT_TASK);
 		IProcedureResponse response = new ProcedureResponseAS();
 		
+		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipo_destino"));
+		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
+		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
+		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
+		
+		if (logger.isInfoEnabled())
+			logger.logInfo("codTarDeb: "+codTarDeb);
+		
+		if(logger.isInfoEnabled())
+		{
+			logger.logInfo("codTar:"+codTarDeb + " opTcClaveBen:"+opTcClaveBen);
+		}
+		if(codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock
+		{
+			response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+		if(response.getReturnCode() != 0)
+		{
+			return response;
+		}
+		
 		response = this.validaLimite(anOriginalRequest);
 		
 		if(response.getReturnCode() != 0) {
@@ -386,7 +387,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.setSpName("cob_ahorros..sp_ah_spei_entrante");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "253");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "253");
-		procedureRequest.addInputParam("@i_cta", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+		procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_val", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));
 		procedureRequest.addInputParam("@i_causa", ICTSTypes.SYBVARCHAR, "2010");
 		procedureRequest.addInputParam("@i_causa_comi", ICTSTypes.SYBVARCHAR, "2011");
@@ -406,7 +407,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_rfcCurpOrdenante"));
 		procedureRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
 		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_idTipoPago"));
-		procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
+		//procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
 		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipo_destino"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "I");
 		procedureRequest.addInputParam("@i_xml_request", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_string_request"));
@@ -728,7 +729,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		}
 		IProcedureResponse anProcedureResponse =  new ProcedureResponseAS();
 
-		Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaBen);
+		
+		Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaBen, properties.get("publicKey").toString());
 		if(logger.isDebugEnabled())
 		{
 			logger.logDebug("[res]: + ctaDestEncrypt " + dataMapEncrypt);
