@@ -61,6 +61,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	private static ILogger logger = LogFactory.getLogger(TransferThirdPartyAccountApiOrchestationCore.class);
 	private static final String CLASS_NAME = "TransferThirdPartyAccountApiOrchestationCore--->";
 	protected static final String COBIS_CONTEXT = "COBIS";
+	private java.util.Properties properties;
 	
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
@@ -74,7 +75,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	 * Read configuration of parent component
 	 */
 	@Override
-	public void loadConfiguration(IConfigurationReader arg0) {
+	public void loadConfiguration(IConfigurationReader configurationReader)	{
+		logger.logInfo(" loadConfiguration INI TransferThirdPartyAccountApiOrchestationCore");
+		properties = configurationReader.getProperties("//property");
+		logger.logInfo("imp--: " + properties.toString());
 	}
 
 	/**
@@ -103,9 +107,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		if(ctaDest.length()==16){
 			logger.logDebug("[Length]: + ctaDest " + ctaDest.length());
-			Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaDest);
+			Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaDest, properties.get("publicKey").toString());
 			logger.logDebug("[res]: + ctaDestEncrypt " + dataMapEncrypt);
-			
+			aBagSPJavaOrchestration.put("valTercero", "N");
 			aBagSPJavaOrchestration.putAll(dataMapEncrypt);
 			IProcedureResponse anProcedureResPan = findCardByPanConector(anOriginalRequest, aBagSPJavaOrchestration);
 			
@@ -124,10 +128,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			IProcedureResponse anProcedureResFind = findCardId(anOriginalRequest, anProcedureResPan,aBagSPJavaOrchestration);
 			if (anProcedureResFind.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 				anOriginalRequest.setValueParam("@i_cta_des", (String) aBagSPJavaOrchestration.get("o_account"));
-				logger.logDebug("ACCOUNT RESPONSE:: " + anOriginalRequest.readValueParam("@i_cta"));
+				logger.logDebug("ACCOUNT RESPONSE:: " + anOriginalRequest.readValueParam("@i_cta_des"));
 			}
 			else{
-				processResponseTransfer(anOriginalRequest, anProcedureResFind, aBagSPJavaOrchestration);
+				return anProcedureResFind;
 			}
 		}
 		
@@ -769,6 +773,9 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 			
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
 			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
+		
+		if(aBagSPJavaOrchestration.containsKey("valTercero"))
+			request.addInputParam("@i_val_tercero", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("valTercero"));
 		
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
