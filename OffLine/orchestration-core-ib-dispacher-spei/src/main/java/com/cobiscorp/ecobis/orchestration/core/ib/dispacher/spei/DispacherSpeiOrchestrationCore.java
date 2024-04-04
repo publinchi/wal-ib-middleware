@@ -663,19 +663,29 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
 					validate = false;	 
 				}else
-				if(msjIn.getOrdenpago().getOpTcClaveBen()==3)
+				//valida tipo de cuentas entrantes
+				if(!validateAccountType(request, opTcClaveBen, aBagSPJavaOrchestration ))
 				{
-					if(digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
+					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 400602);
+					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El tipo de destino no existe en el catalogo [bv_tipo_cuenta_spei].");
+					validate = false;	
+				}else
+				{ 
+					if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTarDeb")))
 					{
-						
-					}else
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.");
+						if( !digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
+						{
+							aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 34);
+							aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La cuenta del beneficiario solo puede ser numérica");
+							validate = false;	
+						}else
+							if(!(msjIn.getOrdenpago().getOpCuentaBen().length()==16))
+							{
+								aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
+								aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.");
+								validate = false;	
+							}
 					}
-					validate = false;	 
-				}
-			}
 						
 				}
 
@@ -683,10 +693,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		return validate;
 	}
-	  public boolean digitValidateNum(String cadena) {
-	        // Patrón para buscar solo dígitos numéricos
-	        Pattern patron = Pattern.compile("^\\d+$");
-	        return patron.matcher(cadena).matches();
-	    }
+	public boolean digitValidateNum(String cadena) 
+	{
+	    Pattern patron = Pattern.compile("^\\d+$");
+	    return patron.matcher(cadena).matches();
+    }
 
 }
