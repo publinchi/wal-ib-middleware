@@ -617,7 +617,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				executionStatus = "CORRECT";
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
-				//notifyDeposit(aRequest, aBagSPJavaOrchestration);
+				notifyDeposit(aRequest, aBagSPJavaOrchestration);
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -702,7 +702,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		return wProcedureResponse;		
 	}
 	
-	/*private void notifyDeposit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private void notifyDeposit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
         
         IProcedureRequest request = new ProcedureRequestAS();
 
@@ -719,7 +719,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
         request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
 		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
         
-        request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, "Depósito en cuenta Cashi realizado exitosamente");
+        request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, "Deposit IDC");
         request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N42");
         request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
         request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
@@ -743,7 +743,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Saliendo de notifyDeposit...");
         }
-    }*/
+    }
 	
 	public boolean isNumeric(String strNum) {
 		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");

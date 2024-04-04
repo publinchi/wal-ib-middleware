@@ -355,7 +355,7 @@
   </collection>
   <collection type="List" length="0" id="60" name="parametersOpenApi">
   </collection>
-  <field type="String" name="trnCode" value="18500162" />
+  <field type="String" name="trnCode" value="18500096" />
   <collection type="List" length="4" id="61" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="62" index="0">
       <field type="String" name="dTOName" value="RegisterBeneficiaryRequest" />
@@ -398,15 +398,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="4" id="66" name="mappingProperties">
-    <entry>
-      <key type="String" value="dbms" />
-      <value type="String" value="SQLCTS" />
-    </entry>
-    <entry>
-      <key type="String" value="CISservice" />
-      <value type="String" value="true" />
-    </entry>
+  <collection type="Map" length="2" id="66" name="mappingProperties">
     <entry>
       <key type="String" value="Path" />
       <value type="String" value="apiOperations/onboarding/registerBeneficiary" />

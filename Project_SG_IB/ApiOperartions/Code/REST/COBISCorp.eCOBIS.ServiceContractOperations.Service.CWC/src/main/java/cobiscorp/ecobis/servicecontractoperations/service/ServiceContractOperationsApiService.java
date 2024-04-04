@@ -2424,7 +2424,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			ResponseDeleteBeneficiary outResponseDeleteBeneficiary = new ResponseDeleteBeneficiary();
 
 			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_beneficiaries_operations_api");
+			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
 
 			// headers
 			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
@@ -2432,7 +2432,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500162");
+			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500127");
 			procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
 					String.valueOf(inRequestDeleteBeneficiary.getExternalCustomerId()));
 			procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "D");
@@ -4160,7 +4160,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		RegisterBeneficiaryResponse outRegisterBeneficiaryResponse = new RegisterBeneficiaryResponse();
 
 		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_beneficiaries_operations_api");
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
 
 		// headers
 		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
@@ -4168,7 +4168,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500162");
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500096");
 		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
 				String.valueOf(inRegisterBeneficiaryRequest.getExternalCustomerId()));
 		procedureRequestAS.addInputParam("@i_numero_producto", ICTSTypes.SQLVARCHAR,
@@ -5502,7 +5502,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		UpdateBeneficiaryResponse outUpdateBeneficiaryResponse = new UpdateBeneficiaryResponse();
 
 		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_beneficiaries_operations_api");
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
 
 		// headers
 		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
@@ -5510,7 +5510,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500162");
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500126");
 		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
 				String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
 		procedureRequestAS.addInputParam("@i_numero_producto", ICTSTypes.SQLVARCHAR,
