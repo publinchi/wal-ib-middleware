@@ -5720,8 +5720,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								return dto;
 							}
 						}, false);
-				
-				outResponseUpdateAccountStatus.setAccountStatusChangeTime(returnResponseUpdateAccountStatus.getAccountStatusChangeTime());
+				if (!"NA".equals(returnResponseUpdateAccountStatus.getAccountStatusChangeTime()))
+				{
+					outResponseUpdateAccountStatus.setAccountStatusChangeTime(returnResponseUpdateAccountStatus.getAccountStatusChangeTime());
+				}
 				// break;
 
 			} else {
