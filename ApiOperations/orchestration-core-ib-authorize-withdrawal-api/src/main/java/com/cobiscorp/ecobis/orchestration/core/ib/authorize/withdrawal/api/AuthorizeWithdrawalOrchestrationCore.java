@@ -436,6 +436,8 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 				executionStatus = "CORRECT";
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
+				notifyWithdrawal(aRequest, aBagSPJavaOrchestration);
+				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
@@ -518,6 +520,49 @@ public class AuthorizeWithdrawalOrchestrationCore extends SPJavaOrchestrationBas
 		
 		return wProcedureResponse;		
 	}
+	
+	private void notifyWithdrawal(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en notifyWithdrawal...");
+        }
+        
+        request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_LOCAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+        
+        request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+        
+        request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, "Withdrawal IDC");
+        request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N42");
+        request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+        request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
+        request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+        request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+        request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+        request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_institution_name"));
+        request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@i_external_customer_id"));
+        request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
+        request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_account_number"));
+        request.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_amount"));
+        request.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
+        request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_branch").toString());
+        
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+        
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Saliendo de notifyWithdrawal...");
+        }
+    }
 	
 	public boolean isNumeric(String strNum) {
 		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
