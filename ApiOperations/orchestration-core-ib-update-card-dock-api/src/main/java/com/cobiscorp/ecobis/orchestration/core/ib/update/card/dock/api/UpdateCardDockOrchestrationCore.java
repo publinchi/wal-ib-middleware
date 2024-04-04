@@ -82,7 +82,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		//if(anProcedureResponse.getReturnCode()==0){
 			
-			anProcedureResponse = processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
+		anProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
 		//}
 		
 		return anProcedureResponse;
@@ -1528,7 +1528,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wProcedureResponse;		
 	}
 	
-	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseApi(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logInfo("processResponseApi [INI] --->" );
 		
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
@@ -1573,6 +1573,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
+				
+				notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
 				
 				IResultSetRow row = new ResultSetRow();
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
@@ -1644,6 +1646,92 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		return wProcedureResponse;		
 	}
+	
+	private void notifyCardStatusUpdate(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en notifyCardStatusUpdate...");
+        }
+        
+        String tittle = null;
+        
+        if (anOriginalRequest.readValueParam("@i_mode").equals("N")) {
+        	
+        	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
+        		
+        		tittle = "Activación de tarjeta virtual realizada exitosamente";
+        		
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
+        		
+        		tittle = "Activación de tarjeta física realizada exitosamente";
+        	}
+        	
+        } else {
+        	
+        	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
+        		
+        		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
+        			
+        			tittle = "Desbloqueo de tarjeta virtual realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
+        			
+        			tittle = "Bloqueo de tarjeta virtual realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
+        			
+        			tittle = "Cancelación de tarjeta virtual realizada exitosamente";
+        		}
+        		
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
+        		
+        		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
+        			
+        			tittle = "Desbloqueo de tarjeta física realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
+        			
+        			tittle = "Bloqueo de tarjeta física realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
+        			
+        			tittle = "Cancelación de tarjeta física realizada exitosamente";
+        		}
+        	}
+        } 
+        
+        request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_LOCAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+        
+        request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+        
+        request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, tittle);
+        request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N85");
+        request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+        request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
+        request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+        request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+        request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+        request.addInputParam("@i_aux2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_card_id"));
+        request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
+        request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
+        
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+        
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Saliendo de notifyCardStatusUpdate...");
+        }
+    }
 	
 	private IProcedureResponse registerAtmCobis(Map<String, Object> aBagSPJavaOrchestration) {
 
