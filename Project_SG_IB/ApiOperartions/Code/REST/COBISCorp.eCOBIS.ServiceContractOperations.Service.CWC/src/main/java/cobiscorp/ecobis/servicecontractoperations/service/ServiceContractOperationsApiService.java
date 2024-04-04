@@ -2631,6 +2631,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				inRequestOtp.getCardId());
 		procedureRequestAS.addInputParam("@i_otp", ICTSTypes.SQLINT4,
 				String.valueOf(inRequestOtp.getOtp()));
+		procedureRequestAS.addInputParam("@i_external_customer_id", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestOtp.getExternalCustomerId()));
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,

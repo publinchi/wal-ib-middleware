@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class RequestOtp implements Serializable {
   private String cardId;
   private Integer otp;
+  private Integer externalCustomerId;
   public String getCardId(){
     return this.cardId;
   }
@@ -41,5 +42,11 @@ public class RequestOtp implements Serializable {
   }
   public void setOtp(Integer otp ){
     this.otp=otp;
+  }
+  public Integer getExternalCustomerId(){
+    return this.externalCustomerId;
+  }
+  public void setExternalCustomerId(Integer externalCustomerId ){
+    this.externalCustomerId=externalCustomerId;
   }
 }
