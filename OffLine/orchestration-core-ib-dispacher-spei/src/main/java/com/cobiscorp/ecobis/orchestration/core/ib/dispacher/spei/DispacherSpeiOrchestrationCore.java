@@ -5,6 +5,7 @@ import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXB;
 
@@ -300,7 +301,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		String response;
 		if(logger.isDebugEnabled())
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
-		if( validateFields(aBagSPJavaOrchestration))
+		if( validateFields(request,aBagSPJavaOrchestration))
 		{
 			//llamar sp cambio de estado transfer spei 
 			IProcedureRequest procedureRequest = initProcedureRequest(request);
@@ -348,6 +349,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		String response;
 		String paramInsBen = getParam(request, "CBCCDK", "AHO");
+		String codTarDeb = getParam(request, "CODTAR", "BVI");
+		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
 		if(logger.isDebugEnabled())
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
@@ -355,7 +358,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		DispatcherUtil util = new DispatcherUtil();
 		String sign = util.doSignature(request, aBagSPJavaOrchestration);
 		
-		if( validateFields(aBagSPJavaOrchestration))
+		if( validateFields(request, aBagSPJavaOrchestration))
 		{
 			if(logger.isDebugEnabled())
 			{
@@ -394,7 +397,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
 				procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
 				procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
-	
+				procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen()));
 				procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
 				procedureRequest.addOutputParam("@o_nombre_beneficiario", ICTSTypes.SQLVARCHAR, "");
 				procedureRequest.addOutputParam("@o_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "");
@@ -462,6 +465,46 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return "";
 	}
 	
+	private boolean validateAccountType(IProcedureRequest anOriginalRequest, String accountType, Map<String, Object> aBagSPJavaOrchestration) 
+	{
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Begin validateAccountType");
+		}
+		boolean validate = true ;
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cob_bvirtual..sp_valida_tipo_destino");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500163");
+		reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500163");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
+		reqTMPCentral.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, accountType);
+
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Ending flow, validateAccountType with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (wProcedureResponseCentral.hasError()) {
+			validate = false;
+		}else
+		{
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+			
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+				
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					aBagSPJavaOrchestration.put("tipoDestino", columns[0].getValue());
+				} 
+			} 
+		}
+		
+		return validate;
+	}
 	private String toStringXmlObject(Object obj)
 	{
 		StringWriter wOrdenPago = new StringWriter();
@@ -471,11 +514,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return xmlOrdenPago;
 	}
 	
-	private Boolean validateFields(Map<String, Object> aBagSPJavaOrchestration)
+	private Boolean validateFields(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
 	{
 		
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		Boolean validate = true; 
+		String opTcClaveBen = String.format("%02d", msjIn.getOrdenpago().getOpTcClaveBen());
 		
 		if("ODPS_LIQUIDADAS_CARGOS".equals(msjIn.getCategoria()))
 		{
@@ -618,10 +662,41 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 158);
 					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
 					validate = false;	 
+				}else
+				//valida tipo de cuentas entrantes
+				if(!validateAccountType(request, opTcClaveBen, aBagSPJavaOrchestration ))
+				{
+					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 400602);
+					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El tipo de destino no existe en el catalogo [bv_tipo_cuenta_spei].");
+					validate = false;	
+				}else
+				{ 
+					if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTarDeb")))
+					{
+						if( !digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
+						{
+							aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 34);
+							aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La cuenta del beneficiario solo puede ser numérica");
+							validate = false;	
+						}else
+							if(!(msjIn.getOrdenpago().getOpCuentaBen().length()==16))
+							{
+								aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
+								aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.");
+								validate = false;	
+							}
+					}
+						
 				}
+
 			}
 		
 		return validate;
 	}
+	public boolean digitValidateNum(String cadena) 
+	{
+	    Pattern patron = Pattern.compile("^\\d+$");
+	    return patron.matcher(cadena).matches();
+    }
 
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -207,8 +208,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 
-        anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
-
+        anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+        if(anProcedureResponse.getReturnCode()==0)
+        {
+        	anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
+        }
         return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
 
     }
@@ -2318,4 +2322,120 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return connectorAccountResponse	;
 
 	}
+	private IProcedureResponse validateCardAccount(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
+	{
+		Integer opTcclaveBenAux  = Integer.parseInt(request.readValueParam("@i_destination_type_account"));
+		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
+		String destAccoutNumber = request.readValueParam("@i_destination_account_number");
+		String codTarDeb = getParam(request, "CODTAR", "BVI");
+		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
+		
+	    Integer code = 0;
+        String message = "success";
+        String result = "true";
+		
+	    if(!validateAccountType(request, opTcClaveBen, aBagSPJavaOrchestration ))
+		{
+	    	code = 400602;
+	    	message = "El tipo de destino no existe en el catalogo [bv_tipo_cuenta_spei].";
+	    	result = "false";
+		}else
+		{ 
+			if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTarDeb")))
+			{
+				if( !digitValidateNum(destAccoutNumber))
+				{
+					code = 34;
+			    	message = "La cuenta del beneficiario solo puede ser numérica";
+			    	result = "false";
+				}else
+					if(!(destAccoutNumber.length()==16))
+					{
+						code = 38;
+				    	message = "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.";
+				    	result = "false";
+					}
+			}
+				
+		}
+	    //result 1
+		IResultSetHeader headerRs0 = new ResultSetHeader();
+		IResultSetData data0 = new ResultSetData();
+		IResultSetRow row0 = new ResultSetRow();
+		//result 2		
+		IResultSetHeader headerRs1 = new ResultSetHeader();
+		IResultSetData data1 = new ResultSetData();
+		IResultSetRow row1 = new ResultSetRow();
+	  		
+  		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+
+        row0.addRowData(1, new ResultSetRowColumnData(false, result));
+		data0.addRow(row0);
+		
+        row1.addRowData(1, new ResultSetRowColumnData(false, String.valueOf(code)));
+		row1.addRowData(2, new ResultSetRowColumnData(false,message));
+		data1.addRow(row1);
+		
+		headerRs0.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+		headerRs1.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		headerRs1.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		
+		
+		IResultSetBlock resultsetBlock0 = new ResultSetBlock(headerRs0, data0);
+		IResultSetBlock resultsetBlock1 = new ResultSetBlock(headerRs1, data1);
+		
+		anProcedureResponse.addResponseBlock(resultsetBlock0);	
+		anProcedureResponse.addResponseBlock(resultsetBlock1);	
+		anProcedureResponse.setReturnCode(code);
+		anProcedureResponse.addMessage(code, message);
+		
+		return anProcedureResponse;
+	}
+	
+	private boolean validateAccountType(IProcedureRequest anOriginalRequest, String accountType, Map<String, Object> aBagSPJavaOrchestration) 
+	{
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Begin validateAccountType");
+		}
+		boolean validate = true ;
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cob_bvirtual..sp_valida_tipo_destino");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500163");
+		reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500163");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
+		reqTMPCentral.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, accountType);
+
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Ending flow, validateAccountType with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (wProcedureResponseCentral.hasError()) {
+			validate = false;
+		}else
+		{
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+			
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+				
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					aBagSPJavaOrchestration.put("tipoDestino", columns[0].getValue());
+				} 
+			} 
+		}
+		
+		return validate;
+	}
+	
+	public boolean digitValidateNum(String cadena) 
+	{
+	    Pattern patron = Pattern.compile("^\\d+$");
+	    return patron.matcher(cadena).matches();
+    }
 }
