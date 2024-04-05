@@ -2364,7 +2364,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			outCreateCustomerResponse.setResponse(response);
 
-			if (response != null && response.getCode() == 0) {
+			if (response != null && (response.getCode() == 0 || response.getCode() == 18054)){
 
 				outCreateCustomerResponse
 						.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
@@ -2376,7 +2376,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				outCreateCustomerResponse.setAccountNumber(null);
 			}
 
-			if (response != null && response.getCode() == 0) {
+			if (response != null && (response.getCode() == 0 || response.getCode() == 18054)) {
 
 				outCreateCustomerResponse.setSuccess(true);
 
