@@ -1468,7 +1468,8 @@
 											orchestration-core-ib-authorization-template,
 											orchestration-core-ib-activate-card,
 											orchestration-ib-expenses-accounts-template,
-											orchestration-ib-expenses-accounts
+											orchestration-ib-expenses-accounts,
+											orchestration-core-ib-dispacher-spei
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
@@ -1608,7 +1609,6 @@
 							orchestration-core-ib-query-get-movements-detail,
 							orchestration-core-batch-compensation,
 							orchestration-core-ib-get-statement-list-api,
-							orchestration-core-ib-dispacher-spei,
 							orchestration-core-ib-get-transaction-limit-api,
 							orchestration-core-api-template,
 							orchestration-core-ib-beneficiaries-operations-api
