@@ -261,6 +261,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_apigw-api-id"));
 
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "PURCHASE");
+		request.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))

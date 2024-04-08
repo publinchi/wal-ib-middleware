@@ -313,6 +313,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_account_status", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_is_only_supports_purchase", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_is_only_supports_purchase"));
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
+		request.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
