@@ -309,7 +309,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		logger.logInfo(wInfo+INIT_TASK);
 		IProcedureResponse response = new ProcedureResponseAS();
 		
-		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipo_destino"));
+		if (logger.isDebugEnabled())
+			logger.logDebug("@i_tipoCuentaBeneficiario: " + anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));		
+		
+		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
 		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
@@ -363,14 +366,37 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 
-		procedureRequest.setSpName("cob_bvirtual..sp_valida_limites_bv_api");
-		procedureRequest.addInputParam("@i_transaccion", ICTSTypes.SQLINT4, "18500069");
-		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));
-		procedureRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+		procedureRequest.setSpName("cob_bvirtual..sp_bv_valida_limites");
+		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18500069");
+		procedureRequest.addInputParam("@i_tipo_trn", ICTSTypes.SQLINT4, "253");
+		procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
+		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));		
+		if (anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario").equals("10")) 
+			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+		else
+			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+				
+		Integer code = 0;
+        String message = "success";
+		IProcedureResponse anProcedureResponse =  executeCoreBanking(procedureRequest);
+		
+		if(!anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){			
+			code = Integer.parseInt(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
+			message = anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue();
+			anProcedureResponse.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
+			anProcedureResponse.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
+			
+			logger.logDebug("Code Error local" + code);
+			logger.logDebug("Message Error local" + message);
+		}
+	
+		anProcedureResponse.setReturnCode(code);
+		if(code!=0)
+			anProcedureResponse.addMessage(code, message);
 		
 		logger.logInfo(wInfo + END_TASK);
 		
-		return executeCoreBanking(procedureRequest);	
+		return anProcedureResponse;	
 	}
 
 	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest) {
@@ -408,7 +434,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
 		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_idTipoPago"));
 		//procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
-		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipo_destino"));
+		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "I");
 		procedureRequest.addInputParam("@i_xml_request", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_string_request"));
 		procedureRequest.addInputParam("@i_tipo_ejecucion", ICTSTypes.SQLVARCHAR, isReentryExecution ? "F" : "L");
