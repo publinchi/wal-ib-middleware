@@ -211,6 +211,8 @@ public class AuthorizeDepositDockOrchestrationCore extends SPJavaOrchestrationBa
 			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "DEPOSIT");
+		request.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
+		
 			
 		request.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");
