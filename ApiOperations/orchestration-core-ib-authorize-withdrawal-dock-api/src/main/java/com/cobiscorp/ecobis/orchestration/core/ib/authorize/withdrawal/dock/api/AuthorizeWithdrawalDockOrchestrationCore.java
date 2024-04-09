@@ -650,20 +650,21 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 			executionStatus = "ERROR";
 			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
+			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
+			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			
 			IResultSetRow row = new ResultSetRow();
 			
-			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
+			row.addRowData(5, new ResultSetRowColumnData(false,  mesageError + " [" + codeError + "]"));
+			row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
+			row.addRowData(8, new ResultSetRowColumnData(false, null));
 			
 			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			
-			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
-			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
-			
-			data2.addRow(row2);
-			
-			wProcedureResponse.setReturnCode(1);
 		}
 		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
