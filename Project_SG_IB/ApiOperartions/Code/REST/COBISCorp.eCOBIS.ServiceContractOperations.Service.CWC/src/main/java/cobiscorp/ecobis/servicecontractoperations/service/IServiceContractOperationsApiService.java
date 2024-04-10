@@ -133,10 +133,10 @@ public interface IServiceContractOperationsApiService {
 	 * Delete Beneficiary
 	 */
 
-	// Return
+	/*// Return
 	public ResponseDeleteBeneficiary deleteBeneficiary(String xRequestId, String xEndUserRequestDateTime,
 			String xEndUserIp, String xChannel, RequestDeleteBeneficiary inRequestDeleteBeneficiary)
-			throws CTSRestException;
+			throws CTSRestException;*/
 	
 	/**
 	 * Service to generate and send an OTP to the client

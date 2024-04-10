@@ -809,7 +809,7 @@ public class ServiceContractOperationsApiRest {
 	/**
 	 * Service to delete a beneficiary.
 	 */
-	@POST
+/*	@POST
 	@Path("/apiOperations/onboarding/deleteBeneficiary")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
@@ -850,7 +850,7 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Ends service execution REST: deleteBeneficiary");
 		return Response.ok(outResponseDeleteBeneficiary).build();
 
-	}
+	}*/
 
 	/**
 	 * Encrypt Data

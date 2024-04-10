@@ -425,7 +425,7 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 				message = "Success";
 				success = "true";
 
-				if(aBagSPJavaOrchestration.get("IsReentry").equals("S")){
+				if(aBagSPJavaOrchestration.get("IsReentry")!=null && aBagSPJavaOrchestration.get("IsReentry").equals("S")){
 					referenceCode = aBagSPJavaOrchestration.containsKey("rty_ssn")?aBagSPJavaOrchestration.get("rty_ssn").toString():"0";
 					aBagSPJavaOrchestration.put("ssn",referenceCode);
 				}
@@ -869,10 +869,10 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_comision"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
-		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
+		if(aBagSPJavaOrchestration.get("IsReentry")!=null && aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 			
-		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+		if (aBagSPJavaOrchestration.get("flowRty")!=null &&  aBagSPJavaOrchestration.get("flowRty").equals(true))
 			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
 		
 		if(aBagSPJavaOrchestration.containsKey("valTercero"))
