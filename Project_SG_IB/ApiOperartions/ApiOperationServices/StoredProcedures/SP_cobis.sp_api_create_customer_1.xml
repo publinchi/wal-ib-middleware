@@ -64,6 +64,9 @@
     <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
     <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
     <parameter name="@x_channel" dataType="varchar" direction="in" />
+    <parameter name="@i_deviceFingerprint" dataType="varchar" direction="in" />
+    <parameter name="@i_otpValidatedDate" dataType="varchar" direction="in" />
+    <parameter name="@i_otpValidated" dataType="bit" direction="in" />
   </parameters>
   <queries />
 </procedure>
