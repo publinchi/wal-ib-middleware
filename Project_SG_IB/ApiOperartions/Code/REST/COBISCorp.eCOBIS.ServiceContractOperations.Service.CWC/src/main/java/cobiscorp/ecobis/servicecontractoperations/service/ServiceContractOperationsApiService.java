@@ -2113,304 +2113,117 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		}
         
 
-		/**
-		 * Create new customers
-		 */
-		@Override
-		// Have DTO
-		public CreateCustomerResponse createCustomer(String xRequestId, String xEndUserRequestDateTime,
-				String xEndUserIp, String xChannel, CreateCustomerRequest inCreateCustomerRequest)
-				throws CTSRestException {
-			LOGGER.logDebug("Start service execution: createCustomer");
+    
+          /**
+          * Create new customers
+          */
+         @Override
+			//Have DTO
+			public CreateCustomerResponse createCustomer(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,CreateCustomerRequest inCreateCustomerRequest  )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: createCustomer");
+      CreateCustomerResponse outCreateCustomerResponse  = new CreateCustomerResponse();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_api_create_customer");
+      
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500094");
+      procedureRequestAS.addInputParam("@i_activity_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getActivity());
+      procedureRequestAS.addInputParam("@i_address",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getReferenceAddress());
+      procedureRequestAS.addInputParam("@i_address_type_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getAddressTypeCode());
+      procedureRequestAS.addInputParam("@i_amount_transaction",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getAmountTransaction());
+      procedureRequestAS.addInputParam("@i_average_balance",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getAverageBalance());
+      procedureRequestAS.addInputParam("@i_birthdate",ICTSTypes.SQLDATETIME,String.valueOf(ConverterUtil.calendarToString(inCreateCustomerRequest.getBirthDate())));
+      procedureRequestAS.addInputParam("@i_city_code",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getCity()));
+      procedureRequestAS.addInputParam("@i_civil_status",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getCivilStatus());
+      procedureRequestAS.addInputParam("@i_company_name",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getCompanyName());
+      procedureRequestAS.addInputParam("@i_countrybirth_code",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getCountryBirth()));
+      procedureRequestAS.addInputParam("@i_economic_sector",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getEconomicSector());
+      procedureRequestAS.addInputParam("@i_electronic_transfer",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
+      procedureRequestAS.addInputParam("@i_externalnumber",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getExternalNumber());
+      procedureRequestAS.addInputParam("@i_gender_code",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getGender()));
+      procedureRequestAS.addInputParam("@i_geolocatization_latitude",ICTSTypes.SQLDECIMAL,String.valueOf(inCreateCustomerRequest.getGeolocalizationLatitude()));
+      procedureRequestAS.addInputParam("@i_geolocatization_longitude",ICTSTypes.SQLDECIMAL,String.valueOf(inCreateCustomerRequest.getGeolocalizationLongitude()));
+      procedureRequestAS.addInputParam("@i_identification_number",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIdNumber());
+      procedureRequestAS.addInputParam("@i_identity_validated",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getIdentityValidated()));
+      procedureRequestAS.addInputParam("@i_incomelevel",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIncomeLevel());
+      procedureRequestAS.addInputParam("@i_incomelevel_entity",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIncomeLevelEntity());
+      procedureRequestAS.addInputParam("@i_internalnumber",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getInternalNumber());
+      procedureRequestAS.addInputParam("@i_lastname",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getLastName());
+      procedureRequestAS.addInputParam("@i_legalincomesource",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getLegalIncomeSource()));
+      procedureRequestAS.addInputParam("@i_mail",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getEmail());
+      procedureRequestAS.addInputParam("@i_name",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getFirstName());
+      procedureRequestAS.addInputParam("@i_nationality",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getNationality());
+      procedureRequestAS.addInputParam("@i_noconnectiontoillegalnetworks",ICTSTypes.SQLCHAR,String.valueOf(inCreateCustomerRequest.getNoConnectionIllegalNetworks()));
+      procedureRequestAS.addInputParam("@i_number",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getPhoneNumber());
+      procedureRequestAS.addInputParam("@i_number_transaction",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getNumberTransaction());
+      procedureRequestAS.addInputParam("@i_occupation_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getOccupation());
+      procedureRequestAS.addInputParam("@i_operation_type",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getOperationType());
+      procedureRequestAS.addInputParam("@i_other_mexican_account",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getOtherMexicanAccount());
+      procedureRequestAS.addInputParam("@i_otherlastname",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getSecondLastName());
+      procedureRequestAS.addInputParam("@i_othername",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getSecondName());
+      procedureRequestAS.addInputParam("@i_payment_card",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getPaymentCard()));
+      procedureRequestAS.addInputParam("@i_payment_recharge",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getPaymentRecharge()));
+      procedureRequestAS.addInputParam("@i_payment_service",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getServicesPay()));
+      procedureRequestAS.addInputParam("@i_propertytype_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getPropertyTypeCode());
+      procedureRequestAS.addInputParam("@i_province_code",ICTSTypes.SQLINT2,String.valueOf(inCreateCustomerRequest.getProvince()));
+      procedureRequestAS.addInputParam("@i_provincebirth_code",ICTSTypes.SQLINT2,String.valueOf(inCreateCustomerRequest.getProvinceBirth()));
+      procedureRequestAS.addInputParam("@i_provision_cash",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getProvisionCash()));
+      procedureRequestAS.addInputParam("@i_rfc",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getRfc());
+      procedureRequestAS.addInputParam("@i_secondaryidentification_number",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIdentificationNumber());
+      procedureRequestAS.addInputParam("@i_secondaryidentification_type_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getIdentificationType());
+      procedureRequestAS.addInputParam("@i_street",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getStreet());
+      procedureRequestAS.addInputParam("@i_subdivision_code",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getSubdivisioncode()));
+      procedureRequestAS.addInputParam("@i_timeincurrentresidence",ICTSTypes.SQLINT4,String.valueOf(inCreateCustomerRequest.getTimeCurrentReside()));
+      procedureRequestAS.addInputParam("@i_town_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getTownCode());
+      procedureRequestAS.addInputParam("@i_validity_date",ICTSTypes.SQLDATETIME,String.valueOf(ConverterUtil.calendarToString(inCreateCustomerRequest.getValidityDate())));
+      procedureRequestAS.addInputParam("@i_zipcode_code",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getZipcode());
+      procedureRequestAS.addOutputParam("@o_success",ICTSTypes.SQLBIT,"0");
+      procedureRequestAS.addOutputParam("@o_code",ICTSTypes.SQLINT4,"0");
+      procedureRequestAS.addOutputParam("@o_message",ICTSTypes.SQLVARCHAR,"X");
+      procedureRequestAS.addOutputParam("@o_customer",ICTSTypes.SQLINT4,"0");
+      procedureRequestAS.addOutputParam("@o_account",ICTSTypes.SQLVARCHAR,"X");
+      procedureRequestAS.addInputParam("@x_request_id",ICTSTypes.SQLVARCHAR,xrequestid);
+      procedureRequestAS.addInputParam("@x_end_user_request_date",ICTSTypes.SQLVARCHAR,xenduserrequestdatetime);
+      procedureRequestAS.addInputParam("@x_end_user_ip",ICTSTypes.SQLVARCHAR,xenduserip);
+      procedureRequestAS.addInputParam("@x_channel",ICTSTypes.SQLVARCHAR,xchannel);
+      procedureRequestAS.addInputParam("@i_deviceFingerprint",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getDeviceFingerprint());
+      procedureRequestAS.addInputParam("@i_otpValidatedDate",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getOtpValidatedDate());
+      procedureRequestAS.addInputParam("@i_otpValidated",ICTSTypes.SQLBIT,String.valueOf(inCreateCustomerRequest.getOtpValidated()));
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
-			CreateCustomerResponse outCreateCustomerResponse = new CreateCustomerResponse();
-
-			Response response = new Response();
-			outCreateCustomerResponse.setResponse(response);
-
-			String name = inCreateCustomerRequest.getFirstName();
-			String lastName = inCreateCustomerRequest.getLastName();
-			String secondLastName = inCreateCustomerRequest.getSecondLastName();
-			String secondName = inCreateCustomerRequest.getSecondName();
-			String gender = inCreateCustomerRequest.getGender();
-			String birthDate = inCreateCustomerRequest.getBirthDate();
-			String nationality = inCreateCustomerRequest.getNationality();
-			String idNumber = inCreateCustomerRequest.getIdNumber();
-			String identificationType = inCreateCustomerRequest.getIdentificationType();
-			String identificationNumber = inCreateCustomerRequest.getIdentificationNumber();
-			String email = inCreateCustomerRequest.getEmail();
-
-			if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
-				xRequestId = "E";
-			}
-
-			if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
-				xEndUserRequestDateTime = "E";
-			}
-
-			if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
-				xEndUserIp = "E";
-			}
-
-			if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
-				xChannel = "E";
-			}
-
-			if (name.equals("null") || name.trim().isEmpty()) {
-				name = "E";
-			} else if (name.trim().length() < 2) {
-				name = "L";
-			} else if (isNumeric(name)) {
-				name = "N";
-			} else if (!isAlpha(name)) {
-				name = "S";
-			}
-
-			if (lastName.equals("null") || lastName.trim().isEmpty()) {
-				lastName = "E";
-			} else if (lastName.trim().length() < 2) {
-				lastName = "L";
-			} else if (isNumeric(lastName)) {
-				lastName = "N";
-			} else if (!isAlpha(lastName)) {
-				lastName = "S";
-			}
-
-			if (secondLastName.equals("null") || secondLastName.trim().isEmpty()) {
-				secondLastName = "E";
-			} else if (secondLastName.trim().length() < 2) {
-				secondLastName = "L";
-			} else if (isNumeric(secondLastName)) {
-				secondLastName = "N";
-			} else if (!isAlpha(secondLastName)) {
-				secondLastName = "S";
-			}
-
-			if (secondName != null && !secondName.isEmpty()) {
-				if (secondName.trim().length() < 2) {
-					secondName = "L";
-				} else if (isNumeric(secondName)) {
-					secondName = "N";
-				} else if (!isAlpha(secondName)) {
-					secondName = "S";
-				}
-			}
-
-			if (gender.equals("null") || gender.trim().isEmpty()) {
-				gender = "E";
-			}
-
-			if (birthDate.equals("null") || birthDate.trim().isEmpty()) {
-				birthDate = "E";
-			} else if (!isDate(birthDate)) {
-				birthDate = "I";
-			}
-
-			if (nationality == null || nationality.trim().isEmpty()) {
-				nationality = "E";
-			}
-
-			if (idNumber.equals("null") || idNumber.trim().isEmpty()) {
-				idNumber = "E";
-			}
-
-			if (identificationType.equals("null") || identificationType.trim().isEmpty()) {
-				identificationType = "E";
-			}
-
-			if (identificationNumber.equals("null") || identificationNumber.trim().isEmpty()) {
-				identificationNumber = "E";
-			}
-
-			if (email != null && !email.isEmpty()) {
-				if (!isValidMail(email) || email.length() > 50) {
-					email = "I";
-				}
-			}
-
-			// create procedure
-			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cobis..sp_api_create_customer");
-
-			// headers
-			procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
-			procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
-			procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
-			procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-			procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500094");
-			procedureRequestAS.addInputParam("@i_activity_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getActivity());
-			procedureRequestAS.addInputParam("@i_address", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getReferenceAddress());
-			procedureRequestAS.addInputParam("@i_address_type_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getAddressTypeCode());
-			procedureRequestAS.addInputParam("@i_amount_transaction", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getAmountTransaction());
-			procedureRequestAS.addInputParam("@i_average_balance", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getAverageBalance());
-			procedureRequestAS.addInputParam("@i_birthdate", ICTSTypes.SQLVARCHAR, birthDate);
-			procedureRequestAS.addInputParam("@i_city_code", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getCity()));
-			procedureRequestAS.addInputParam("@i_countrybirth_code", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getCountryBirth()));
-			procedureRequestAS.addInputParam("@i_civil_status", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getCivilStatus());
-			procedureRequestAS.addInputParam("@i_company_name", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getCompanyName());
-			procedureRequestAS.addInputParam("@i_electronic_transfer", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getElectronicTransfer()));
-			procedureRequestAS.addInputParam("@i_externalnumber", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getExternalNumber());
-			procedureRequestAS.addInputParam("@i_gender_code", ICTSTypes.SQLCHAR, gender);
-			procedureRequestAS.addInputParam("@i_geolocatization_latitude", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inCreateCustomerRequest.getGeolocalizationLatitude()));
-			procedureRequestAS.addInputParam("@i_geolocatization_longitude", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inCreateCustomerRequest.getGeolocalizationLongitude()));
-			procedureRequestAS.addInputParam("@i_identification_number", ICTSTypes.SQLVARCHAR, idNumber);
-			procedureRequestAS.addInputParam("@i_identity_validated", ICTSTypes.SQLCHAR,
-					String.valueOf(inCreateCustomerRequest.getIdentityValidated()));
-			procedureRequestAS.addInputParam("@i_incomelevel", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getIncomeLevel());
-			procedureRequestAS.addInputParam("@i_incomelevel_entity", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getIncomeLevelEntity());
-			procedureRequestAS.addInputParam("@i_internalnumber", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getInternalNumber());
-			procedureRequestAS.addInputParam("@i_lastname", ICTSTypes.SQLVARCHAR, lastName);
-			procedureRequestAS.addInputParam("@i_legalincomesource", ICTSTypes.SQLCHAR,
-					String.valueOf(inCreateCustomerRequest.getLegalIncomeSource()));
-			procedureRequestAS.addInputParam("@i_mail", ICTSTypes.SQLVARCHAR, email);
-			procedureRequestAS.addInputParam("@i_name", ICTSTypes.SQLVARCHAR, name);
-			procedureRequestAS.addInputParam("@i_nationality", ICTSTypes.SQLVARCHAR, nationality);
-			procedureRequestAS.addInputParam("@i_noconnectiontoillegalnetworks", ICTSTypes.SQLCHAR,
-					String.valueOf(inCreateCustomerRequest.getNoConnectionIllegalNetworks()));
-			procedureRequestAS.addInputParam("@i_number", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getPhoneNumber());
-			procedureRequestAS.addInputParam("@i_number_transaction", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getNumberTransaction());
-			procedureRequestAS.addInputParam("@i_occupation_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getOccupation());
-			procedureRequestAS.addInputParam("@i_operation_type", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getOperationType());
-			procedureRequestAS.addInputParam("@i_other_mexican_account", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getOtherMexicanAccount());
-			procedureRequestAS.addInputParam("@i_otherlastname", ICTSTypes.SQLVARCHAR, secondLastName);
-			procedureRequestAS.addInputParam("@i_othername", ICTSTypes.SQLVARCHAR, secondName);
-			procedureRequestAS.addInputParam("@i_payment_card", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getPaymentCard()));
-			procedureRequestAS.addInputParam("@i_payment_recharge", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getPaymentRecharge()));
-			procedureRequestAS.addInputParam("@i_payment_service", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getServicesPay()));
-			procedureRequestAS.addInputParam("@i_propertytype_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getPropertyTypeCode());
-			procedureRequestAS.addInputParam("@i_province_code", ICTSTypes.SQLINT2,
-					String.valueOf(inCreateCustomerRequest.getProvince()));
-			procedureRequestAS.addInputParam("@i_provincebirth_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getProvinceBirth());
-			procedureRequestAS.addInputParam("@i_provision_cash", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getProvisionCash()));
-			procedureRequestAS.addInputParam("@i_rfc", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getRfc());
-			procedureRequestAS.addInputParam("@i_secondaryidentification_number", ICTSTypes.SQLVARCHAR,
-					identificationNumber);
-			procedureRequestAS.addInputParam("@i_secondaryidentification_type_code", ICTSTypes.SQLVARCHAR,
-					identificationType);
-			procedureRequestAS.addInputParam("@i_street", ICTSTypes.SQLVARCHAR, inCreateCustomerRequest.getStreet());
-			procedureRequestAS.addInputParam("@i_subdivision_code", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getSubdivisioncode()));
-			procedureRequestAS.addInputParam("@i_timeincurrentresidence", ICTSTypes.SQLINT4,
-					String.valueOf(inCreateCustomerRequest.getTimeCurrentReside()));
-			procedureRequestAS.addInputParam("@i_town_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getTownCode());
-			procedureRequestAS.addInputParam("@i_validity_date", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getValidityDate());
-			procedureRequestAS.addInputParam("@i_zipcode_code", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getZipcode());
-			procedureRequestAS.addInputParam("@i_economic_sector", ICTSTypes.SQLVARCHAR,
-					inCreateCustomerRequest.getEconomicSector());
-			procedureRequestAS.addOutputParam("@o_success", ICTSTypes.SQLBIT, "0");
-			procedureRequestAS.addOutputParam("@o_code", ICTSTypes.SQLINT4, "0");
-			procedureRequestAS.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
-			procedureRequestAS.addOutputParam("@o_customer", ICTSTypes.SQLINT4, "0");
-			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
-
-			// execute procedure
-			ProcedureResponseAS resp = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-					procedureRequestAS);
-
-			List<MessageBlock> errors = ErrorUtil.getErrors(resp);
-			// throw error
-			if (errors != null && errors.size() > 0) {
-				LOGGER.logDebug("Procedure execution returns error");
-				if (LOGGER.isDebugEnabled()) {
-					for (int i = 0; i < errors.size(); i++) {
-						LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-					}
-				}
-				throw new CTSRestException("Procedure Response has errors", null, errors);
-			}
-			LOGGER.logDebug("Procedure ok");
-			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
-
-			// End map returns
-			if (mapBlank != 0 && mapBlank == mapTotal) {
-				LOGGER.logDebug("No data found");
-				throw new CTSRestException("404", null);
-			}
-
-			response.setCode(getOutValue(Integer.class, "@o_code", resp.getParams()));
-			response.setMessage(getOutValue(String.class, "@o_message", resp.getParams()));
-
-			outCreateCustomerResponse.setResponse(response);
-
-			if (response != null && response.getCode() == 0) {
-
-				outCreateCustomerResponse
-						.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
-				outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", resp.getParams()));
-
-			} else {
-
-				outCreateCustomerResponse.setExternalCustomerId(null);
-				outCreateCustomerResponse.setAccountNumber(null);
-			}
-
-			if (response != null && response.getCode() == 0) {
-
-				outCreateCustomerResponse.setSuccess(true);
-
-			} else {
-
-				outCreateCustomerResponse.setSuccess(false);
-			}
-
-			String trn = "Create Customer";
-
-			Gson gson = new Gson();
-			String jsonReq = gson.toJson(inCreateCustomerRequest);
-
-			Gson gson2 = new Gson();
-			String jsonRes = gson2.toJson(outCreateCustomerResponse);
-
-			Header header = new Header();
-
-			header.setAccept("application/json");
-			header.setX_request_id(xRequestId);
-			header.setX_end_user_request_date_time(xEndUserRequestDateTime);
-			header.setX_end_user_ip(xEndUserIp);
-			header.setX_channel(xChannel);
-			header.setContent_type("application/json");
-
-			Gson gson3 = new Gson();
-			String jsonHead = gson3.toJson(header);
-
-			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
-			LOGGER.logDebug("Ends service execution: createCustomer");
-			// returns data
-			return outCreateCustomerResponse;
-		}
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+      
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+      LOGGER.logDebug("No data found");
+      throw new CTSRestException("404",null);
+      }
+      outCreateCustomerResponse.setSuccess(getOutValue(Byte.class, "@o_success", response.getParams()));
+            outCreateCustomerResponse.setResponse.code(getOutValue(Integer.class, "@o_code", response.getParams()));
+            outCreateCustomerResponse.setResponse.message(getOutValue(String.class, "@o_message", response.getParams()));
+            outCreateCustomerResponse.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", response.getParams()));
+            outCreateCustomerResponse.setAccountNumber(getOutValue(String.class, "@o_account", response.getParams()));
+            
+        LOGGER.logDebug("Ends service execution: createCustomer");
+        //returns data
+        return outCreateCustomerResponse;
+      }
 	
 		/**
 		 * Service to delete a beneficiary.
