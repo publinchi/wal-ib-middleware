@@ -380,9 +380,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
         String message = "success";
 		IProcedureResponse anProcedureResponse =  executeCoreBanking(procedureRequest);
 		
-		if(!anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){			
-			code = Integer.parseInt(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
-			message = anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue();
+		logDebug("anProcedureResponse: " + anProcedureResponse);
+		
+		if(anProcedureResponse.getReturnCode() != 0){			
+			code = anProcedureResponse.getReturnCode();
+			message = anProcedureResponse.getMessage(1).getMessageText();
 			anProcedureResponse.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 			anProcedureResponse.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
 			
