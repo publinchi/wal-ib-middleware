@@ -1306,13 +1306,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 									public ResponseAuthorizeWithdrawalDock mapRow(ResultSetMapper resultSetMapper,
 											int index) {
 										ResponseAuthorizeWithdrawalDock dto = new ResponseAuthorizeWithdrawalDock();
-
+																	
+										dto.setApproved_value(resultSetMapper.getString(1));
+										dto.setSettlement_value(resultSetMapper.getString(2));
+										dto.setCardholder_billing_value(resultSetMapper.getString(3));
 										/*List<String> arrayList = new ArrayList<>(
-												Arrays.asList(resultSetMapper.getString(1).split(",")));*/
-										dto.setResponse(resultSetMapper.getString(1));
-										dto.setReason(resultSetMapper.getString(2));
-										dto.setAuthorization_code(resultSetMapper.getInteger(3));
-										dto.setSeq(resultSetMapper.getString(4));
+												Arrays.asList(resultSetMapper.getString(4).split(",")));*/
+										dto.setResponse(resultSetMapper.getString(4));
+										dto.setReason(resultSetMapper.getString(5));
+										dto.setAvailable_limit(resultSetMapper.getString(6));
+										dto.setAuthorization_code(resultSetMapper.getInteger(7));
+										dto.setSeq(resultSetMapper.getString(8));
+										
+										
 										return dto;
 									}
 								}, false);
