@@ -194,8 +194,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_is_only_supports_purchase", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_is_only_supports_purchase"));
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
 		request.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
-		if(aBagSPJavaOrchestration.get("IsReentry")!=null 
-				&& aBagSPJavaOrchestration.get("IsReentry").equals("S"))
+		if(aBagSPJavaOrchestration.get("IsReentry")!=null && aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty")!=null && aBagSPJavaOrchestration.get("flowRty").equals(true))
 			request.addInputParam("@i_val_uuid", ICTSTypes.SQLCHAR, "S");
