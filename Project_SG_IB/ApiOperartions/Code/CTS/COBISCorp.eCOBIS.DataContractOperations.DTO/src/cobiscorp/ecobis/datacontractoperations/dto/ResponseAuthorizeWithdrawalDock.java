@@ -28,10 +28,32 @@ import java.util.HashMap;
 
 
 public class ResponseAuthorizeWithdrawalDock implements Serializable {
+  private String approved_value;
+  private String settlement_value;
+  private String cardholder_billing_value;
   private String response;
   private String reason;
+  private String available_limit;
   private Integer authorization_code;
   private String seq;
+  public String getApproved_value(){
+    return this.approved_value;
+  }
+  public void setApproved_value(String approved_value ){
+    this.approved_value=approved_value;
+  }
+  public String getSettlement_value(){
+    return this.settlement_value;
+  }
+  public void setSettlement_value(String settlement_value ){
+    this.settlement_value=settlement_value;
+  }
+  public String getCardholder_billing_value(){
+    return this.cardholder_billing_value;
+  }
+  public void setCardholder_billing_value(String cardholder_billing_value ){
+    this.cardholder_billing_value=cardholder_billing_value;
+  }
   public String getResponse(){
     return this.response;
   }
@@ -43,6 +65,12 @@ public class ResponseAuthorizeWithdrawalDock implements Serializable {
   }
   public void setReason(String reason ){
     this.reason=reason;
+  }
+  public String getAvailable_limit(){
+    return this.available_limit;
+  }
+  public void setAvailable_limit(String available_limit ){
+    this.available_limit=available_limit;
   }
   public Integer getAuthorization_code(){
     return this.authorization_code;
