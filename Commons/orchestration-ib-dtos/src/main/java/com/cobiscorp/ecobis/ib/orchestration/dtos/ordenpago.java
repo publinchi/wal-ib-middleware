@@ -67,6 +67,15 @@ public class ordenpago implements Serializable{
 	private BigDecimal OpMonto;
 	
 	@XmlElement
+	private BigDecimal OpIva;
+	
+	@XmlElement
+	private int paqFolioOri;
+	
+	@XmlElement
+	private int opFolioOri;
+	
+	@XmlElement
 	private int OpTpClave;
 	
 	@XmlElement
@@ -470,5 +479,34 @@ public class ordenpago implements Serializable{
 		this.Id = Id;
 	}
     
+	public synchronized BigDecimal getOpIva()
+	{
+		return OpIva;
+	}
+
+	public synchronized void setOpIva(BigDecimal opIva)
+	{
+		OpIva = opIva;
+	}
+
+	public synchronized int getPaqFolioOri()
+	{
+		return paqFolioOri;
+	}
+
+	public synchronized void setPaqFolioOri(int paqFolioOri)
+	{
+		this.paqFolioOri = paqFolioOri;
+	}
+
+	public synchronized int getOpFolioOri()
+	{
+		return opFolioOri;
+	}
+
+	public synchronized void setOpFolioOri(int opFolioOri)
+	{
+		this.opFolioOri = opFolioOri;
+	}
     
 }
