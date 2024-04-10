@@ -28,14 +28,14 @@ import java.util.HashMap;
 
 
 public class ResponseAuthorizeWithdrawalDock implements Serializable {
-  private ArrayList response;
+  private String response;
   private String reason;
   private Integer authorization_code;
   private String seq;
-  public ArrayList getResponse(){
+  public String getResponse(){
     return this.response;
   }
-  public void setResponse(ArrayList response ){
+  public void setResponse(String response ){
     this.response=response;
   }
   public String getReason(){

@@ -313,6 +313,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_account_status", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_is_only_supports_purchase", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_is_only_supports_purchase"));
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
+		request.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
@@ -591,8 +592,12 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
 
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("approved_value", ICTSTypes.SQLMONEY4, 50));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("settlement_value", ICTSTypes.SQLMONEY4, 50));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardholder_billing_value", ICTSTypes.SQLVARCHAR, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("available_limit", ICTSTypes.SQLMONEY4, 25));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
@@ -649,20 +654,21 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 			executionStatus = "ERROR";
 			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
+			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
+			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			
 			IResultSetRow row = new ResultSetRow();
 			
-			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
+			row.addRowData(5, new ResultSetRowColumnData(false,  mesageError + " [" + codeError + "]"));
+			row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
+			row.addRowData(8, new ResultSetRowColumnData(false, null));
 			
 			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			
-			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
-			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
-			
-			data2.addRow(row2);
-			
-			wProcedureResponse.setReturnCode(1);
 		}
 		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);

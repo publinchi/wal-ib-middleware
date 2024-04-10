@@ -31,7 +31,7 @@ public class ResponseAuthorizeDepositDock implements Serializable {
   private String approved_value;
   private String settlement_value;
   private String cardholder_billing_value;
-  private ArrayList response;
+  private String response;
   private String reason;
   private String available_limit;
   private Integer authorization_code;
@@ -54,10 +54,10 @@ public class ResponseAuthorizeDepositDock implements Serializable {
   public void setCardholder_billing_value(String cardholder_billing_value ){
     this.cardholder_billing_value=cardholder_billing_value;
   }
-  public ArrayList getResponse(){
+  public String getResponse(){
     return this.response;
   }
-  public void setResponse(ArrayList response ){
+  public void setResponse(String response ){
     this.response=response;
   }
   public String getReason(){
