@@ -619,10 +619,14 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				
 				IResultSetRow row = new ResultSetRow();
 	
-				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
-				row.addRowData(3, new ResultSetRowColumnData(false, null));
-				row.addRowData(4, new ResultSetRowColumnData(false, null));
+				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
+				row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
+				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(7, new ResultSetRowColumnData(false, null));
+				row.addRowData(8, new ResultSetRowColumnData(false, null));
 				
 				data.addRow(row);
 				
@@ -639,10 +643,14 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				
 				IResultSetRow row = new ResultSetRow();
 				
-				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ (String)aBagSPJavaOrchestration.get("@o_ssn_host")));
-				row.addRowData(3, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
-				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
+				row.addRowData(1, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("amount").toString()));
+				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
+				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
+				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
+				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
 				data.addRow(row);	
 			}
