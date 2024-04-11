@@ -2369,6 +2369,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
+			int responseCodeCustomer = 10012;
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -2381,7 +2382,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 			outCreateCustomerResponse.setResponse(response);
 
-			if (response != null && response.getCode() == 0) {
+			if (response != null && (response.getCode() == 0 || response.getCode() == responseCodeCustomer)){
 
 				outCreateCustomerResponse
 						.setExternalCustomerId(getOutValue(Integer.class, "@o_customer", resp.getParams()));
@@ -2393,7 +2394,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				outCreateCustomerResponse.setAccountNumber(null);
 			}
 
-			if (response != null && response.getCode() == 0) {
+			if (response != null && (response.getCode() == 0 || response.getCode() == responseCodeCustomer)) {
 
 				outCreateCustomerResponse.setSuccess(true);
 
