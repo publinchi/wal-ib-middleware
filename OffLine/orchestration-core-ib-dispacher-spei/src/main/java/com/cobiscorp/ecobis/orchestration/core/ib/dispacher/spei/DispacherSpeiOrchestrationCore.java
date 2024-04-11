@@ -4,8 +4,11 @@ import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -421,7 +424,16 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				
 				if(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0)
 				{
+					//falta implementar las tablas de auditoria y generacion de secuenciales
 					IProcedureResponse responseCda = getWsEsice(request, aBagSPJavaOrchestration);
+					if(responseCda.getReturnCode()!=0)
+					{
+						if(logger.isDebugEnabled()) {
+							logger.logInfo("CDA mensaje: "+responseCda.readValueParam("@o_msj_respuesta"));
+							logger.logInfo("CDA respuesta: "+responseCda.readValueParam("@o_cod_respuesta"));
+						}
+						
+					}
 				}
 					
 				responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
@@ -724,18 +736,30 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HHmmssSSS");
         String horaHHmmss = horaActual.format(formatter);
         String horaHHmmssSSS = horaActual.format(formatter2);
+        
+        SimpleDateFormat sdfEntrada = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdfSalida = new SimpleDateFormat("ddMMyyyy");
+        Date opFechaOperAux;
+        String opFechaOper ="";       
+        
 		try {
+
+			opFechaOperAux = sdfEntrada.parse(msjIn.getOrdenpago().getOpFechaOper());
+			opFechaOper = sdfSalida.format(opFechaOperAux);
 			
 			anOriginalRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "CDA");
 			// etiquetas se maneja dentro de nuestra base de datos OJO cambiar		
 			anOriginalRequest.addInputParam("@i_id_cda", ICTSTypes.SQLINT4, msjIn.getOrdenpago().getId());
 			anOriginalRequest.addInputParam("@i_id_mensaje", ICTSTypes.SQLINT4, msjIn.getOrdenpago().getId());
-			//Atributos		
+			//Atributos	
+			anOriginalRequest.addInputParam("@i_op_fecha_oper", ICTSTypes.SQLINT4, opFechaOper);
 			anOriginalRequest.addInputParam("@i_op_hora_abono", ICTSTypes.SQLVARCHAR, horaHHmmss);
 			anOriginalRequest.addInputParam("@i_op_cve_rastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-			anOriginalRequest.addInputParam("@i_op_folio_orig_odp", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getOpFolioOri()));
+			anOriginalRequest.addInputParam("@i_op_folio_orig_odp", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getOpFolio()));
 			anOriginalRequest.addInputParam("@i_op_folio_orig_paq", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getPaqFolioOri()));
 			anOriginalRequest.addInputParam("@i_op_clave_emisor", ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
+			anOriginalRequest.addInputParam("@i_op_nombre_emisor", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
+			
 			anOriginalRequest.addInputParam("@i_op_nom_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
 			anOriginalRequest.addInputParam("@i_op_tp_cta_ord", ICTSTypes.SQLINT4, String.valueOf(msjIn.getOrdenpago().getOpTcClaveOrd()));
 			anOriginalRequest.addInputParam("@i_op_cuenta_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
@@ -747,10 +771,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			anOriginalRequest.addInputParam("@i_op_rfc_curp_ben", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
 			anOriginalRequest.addInputParam("@i_op_concepto_pag", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
 			anOriginalRequest.addInputParam("@i_op_tipo_pag", ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			anOriginalRequest.addInputParam("@i_op_iva", ICTSTypes.SQLMONEY, String.valueOf(msjIn.getOrdenpago().getOpIva()));
+			anOriginalRequest.addInputParam("@i_op_iva", ICTSTypes.SQLMONEY, "0");
 			anOriginalRequest.addInputParam("@i_op_monto", ICTSTypes.SQLMONEY, String.valueOf( msjIn.getOrdenpago().getOpMonto()));
 			anOriginalRequest.addInputParam("@i_op_hora00", ICTSTypes.SQLVARCHAR, horaHHmmssSSS);
-			anOriginalRequest.addInputParam("@i_op_fecha_abono", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFechaOper());
+			anOriginalRequest.addInputParam("@i_op_fecha_abono", ICTSTypes.SQLVARCHAR, opFechaOper);
 			
 			// SE HACE LA LLAMADA AL CONECTOR
 			
