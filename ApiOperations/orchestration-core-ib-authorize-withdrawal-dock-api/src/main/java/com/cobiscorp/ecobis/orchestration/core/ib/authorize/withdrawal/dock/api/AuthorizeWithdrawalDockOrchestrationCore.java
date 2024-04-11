@@ -654,7 +654,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
+				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_ssn_host").toString().substring(0,6))); 
 				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
 				data.addRow(row);	
