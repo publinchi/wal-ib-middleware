@@ -873,6 +873,11 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		if (logger.isInfoEnabled())
 			logger.logInfo(CLASS_NAME + "Ejecutando transferencia a terceros CORE COBIS" + request);
 
+		String concepto = request.readValueParam("@i_concepto");
+		if(concepto == null || concepto.trim().isEmpty()){
+			concepto = "Transferencia Cashi";
+		}
+
 		IProcedureRequest anOriginalRequest = request;
 		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
 		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -935,7 +940,7 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		
 		anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY, request.readValueParam("@i_val"));
 		
-		anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, request.readValueParam("@i_concepto"));
+		anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, concepto);
 		
 		if (request.readValueParam("@i_reference_number") != null)
 			anOriginalRequest.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR, request.readValueParam("@i_reference_number"));	
