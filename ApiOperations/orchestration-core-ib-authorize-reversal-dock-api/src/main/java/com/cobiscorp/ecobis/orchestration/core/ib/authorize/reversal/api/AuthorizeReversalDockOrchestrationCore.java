@@ -425,6 +425,10 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString():null);
+		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -433,6 +437,12 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
+		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
+		{
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
 		}
@@ -480,8 +490,8 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				
 				IResultSetRow row = new ResultSetRow();
 	
-				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
+				row.addRowData(1, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
+				row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
 				row.addRowData(3, new ResultSetRowColumnData(false, null));
 				row.addRowData(4, new ResultSetRowColumnData(false, null));
 				
@@ -499,7 +509,7 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ aBagSPJavaOrchestration.get("@o_ssn_host").toString()));
+				row.addRowData(2, new ResultSetRowColumnData(false, "0")); //aBagSPJavaOrchestration.get("@o_ssn_host")
 				row.addRowData(3, new ResultSetRowColumnData(false, anOriginalProcedureRes.readValueParam("@o_ssn_branch")));
 				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
 				
@@ -513,20 +523,18 @@ public class AuthorizeReversalDockOrchestrationCore extends SPJavaOrchestrationB
 			executionStatus = "ERROR";
 			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
+			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
+			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			
+			
 			IResultSetRow row = new ResultSetRow();
 			
-			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(1, new ResultSetRowColumnData(false, mesageError));
+			row.addRowData(2, new ResultSetRowColumnData(false, codeError));
+			row.addRowData(3, new ResultSetRowColumnData(false, null));
+			row.addRowData(4, new ResultSetRowColumnData(false, null));
 			
 			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			
-			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
-			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
-			
-			data2.addRow(row2);
-			
-			wProcedureResponse.setReturnCode(1);
 		}
 		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
