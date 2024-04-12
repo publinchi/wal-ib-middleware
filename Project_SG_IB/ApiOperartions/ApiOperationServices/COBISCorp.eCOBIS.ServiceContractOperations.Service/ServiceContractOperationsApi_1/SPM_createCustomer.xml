@@ -827,7 +827,7 @@
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
       <field type="String" name="dTOPropertyName" value="deviceFingerprint" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="130" index="65">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="131" name="parameter">
@@ -840,7 +840,7 @@
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
       <field type="String" name="dTOPropertyName" value="otpValidatedDate" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="132" index="66">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="133" name="parameter">
@@ -853,7 +853,7 @@
       <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
       <field type="String" name="dTOPropertyName" value="otpValidated" />
       <field type="String" name="cTSDataType" value="SQLBIT" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
   </collection>
   <collection type="List" length="0" id="134" name="parametersOpenApi">
