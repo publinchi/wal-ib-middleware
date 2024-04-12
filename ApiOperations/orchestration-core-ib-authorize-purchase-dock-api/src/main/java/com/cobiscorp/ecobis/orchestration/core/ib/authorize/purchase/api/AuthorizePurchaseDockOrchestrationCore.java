@@ -594,6 +594,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString():null);
+		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -602,6 +606,12 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
+		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
+		{
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
 		}
@@ -655,8 +665,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-				row.addRowData(5, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
+				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
+				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(7, new ResultSetRowColumnData(false, null));
 				row.addRowData(8, new ResultSetRowColumnData(false, null));
@@ -682,7 +692,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(5, new ResultSetRowColumnData(false, "Transaction "+ (String) aBagSPJavaOrchestration.get("@o_ssn_host")));
+				row.addRowData(5, new ResultSetRowColumnData(false, "0")); //(String) aBagSPJavaOrchestration.get("@o_ssn_host")
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
 				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
@@ -705,8 +715,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			row.addRowData(1, new ResultSetRowColumnData(false, "0"));
 			row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 			row.addRowData(3, new ResultSetRowColumnData(false, "0"));
-			row.addRowData(4, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-			row.addRowData(5, new ResultSetRowColumnData(false,  mesageError + " [" + codeError + "]"));
+			row.addRowData(4, new ResultSetRowColumnData(false, mesageError));
+			row.addRowData(5, new ResultSetRowColumnData(false, codeError));
 			row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 			row.addRowData(7, new ResultSetRowColumnData(false, null));
 			row.addRowData(8, new ResultSetRowColumnData(false, null));
