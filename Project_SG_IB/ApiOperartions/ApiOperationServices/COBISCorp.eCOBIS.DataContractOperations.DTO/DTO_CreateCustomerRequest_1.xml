@@ -513,7 +513,7 @@
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="54" index="51">
       <field type="String" name="name" value="otpValidatedDate" />
-      <field type="String" name="type" value="string" />
+      <field type="String" name="type" value="dateTime?" />
       <field type="boolean" name="isCollection" value="false" />
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="false" />

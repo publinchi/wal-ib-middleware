@@ -2347,7 +2347,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addOutputParam("@o_customer", ICTSTypes.SQLINT4, "0");
 			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
 		    procedureRequestAS.addInputParam("@i_deviceFingerprint",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getDeviceFingerprint());
-		    procedureRequestAS.addInputParam("@i_otpValidatedDate",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getOtpValidatedDate());
+		    procedureRequestAS.addInputParam("@i_otpValidatedDate",ICTSTypes.SQLDATETIME,inCreateCustomerRequest.getOtpValidatedDate());
 		    procedureRequestAS.addInputParam("@i_otpValidated",ICTSTypes.SQLBIT,inCreateCustomerRequest.isOtpValidated().toString());		
 
 			// execute procedure
