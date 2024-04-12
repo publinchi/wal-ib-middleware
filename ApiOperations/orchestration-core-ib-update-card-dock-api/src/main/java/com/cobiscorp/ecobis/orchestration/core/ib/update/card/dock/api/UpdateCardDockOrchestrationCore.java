@@ -160,6 +160,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 					
 					cancelCardAtm(aRequest, aBagSPJavaOrchestration);
 					
+					notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
+					
 					IProcedureResponse wAccountsRespDock = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
 					
 					registerLogBd(wAccountsRespDock, aBagSPJavaOrchestration);
@@ -1597,16 +1599,24 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         }
         
         String tittle = null;
+        String cardId = anOriginalRequest.readValueParam("@i_card_id");
         
         if (anOriginalRequest.readValueParam("@i_mode").equals("N")) {
         	
         	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
         		
+        		cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
         		tittle = "Activación de tarjeta virtual realizada exitosamente";
         		
         	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
         		
         		tittle = "Activación de tarjeta física realizada exitosamente";
+        		
+        		if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+        			
+        			tittle = "Cancelación de tarjeta física realizada exitosamente";
+        			cardId = aBagSPJavaOrchestration.get("o_assigned_card").toString();
+        		}
         	}
         	
         } else {
@@ -1659,7 +1669,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
         request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
         request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
-        request.addInputParam("@i_aux2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_card_id"));
+        request.addInputParam("@i_aux2", ICTSTypes.SQLVARCHAR, cardId);
         request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
         request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
         

@@ -454,35 +454,73 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en sendMail");
 		}
-
+		
+		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
+		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
+		String titulo = null;
+		
+		if (status.equals("A")) {
+			
+			titulo = "Cuenta activada exitosamente";
+			value = "0";
+			
+		} else if (status.equals("B")) {
+			
+			titulo = "Cuenta bloqueada exitosamente";
+			value = "0";
+			
+		} else if (status.equals("C")) {
+			
+			titulo = "Cuenta cancelada exitosamente";
+			value = "0";
+			
+		} else if (status.equals("BV")) {
+			
+			titulo = "Cuenta bloqueada por valores";
+			
+		} else if (status.equals("EBV")) {
+			
+			titulo = "Cuenta desbloqueada por valores";
+			
+		} else if (status.equals("BM")) {
+			
+			if (value.equals("1")) {
+				
+				titulo = "Cuenta bloqueada por movimientos: contra crédito";
+				
+			} else if (value.equals("2")) {
+				
+				titulo = "Cuenta bloqueada por movimientos: contra débito";
+				
+			} else if (value.equals("3")) {
+				
+				titulo = "Cuenta bloqueada por movimientos: contra crédito y débito";
+			}
+			
+		} else if (status.equals("EBM")) {
+			
+			if (value.equals("1")) {
+				
+				titulo = "Cuenta desbloqueada por movimientos: contra crédito";
+				
+			} else if (value.equals("2")) {
+				
+				titulo = "Cuenta desbloqueada por movimientos: contra débito";
+				
+			} else if (value.equals("3")) {
+				
+				titulo = "Cuenta desbloqueada por movimientos: contra crédito y débito";
+			}
+		}
+		
 		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
-		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
-		String titulo = "";
-		if (status.equals("A")) {
-			titulo = "Cuenta Activada";
-		} else if (status.equals("B")) {
-			titulo = "Cuenta Bloqueada";
-		} else if (status.equals("C")) {
-			titulo = "Cuenta Cancelada";
-		} else if (status.equals("BV")) {
-			titulo = "Cuenta Bloqueada por valores, por el valor de: " + value;
-		} else if (status.equals("BM")) {
-			if (value.equals("1")) {
-				titulo = "Cuenta Bloqueada por movimientos: contra credito";
-			} else if (value.equals("2")) {
-				titulo = "Cuenta Bloqueada por movimientos: contra debito";
-			} else if (value.equals("3")) {
-				titulo = "Cuenta Bloqueada por movimientos: contra credito y debito";
-			}
-			
-		} 
-		
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
 		
 		request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, titulo);
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
@@ -490,19 +528,15 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("bv_ente") != null ? aBagSPJavaOrchestration.get("bv_ente").toString() : "0");
 		request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N45");
 		
-		
 		request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "3");
 		request.addInputParam("@i_num_producto", ICTSTypes.SQLVARCHAR, "");
 		request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
 		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("login") != null ? aBagSPJavaOrchestration.get("login").toString() : "login");
 		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
-		request.addInputParam("@i_mensaje", ICTSTypes.SQLVARCHAR, "Cliente Afiliad");
+		request.addInputParam("@i_mensaje", ICTSTypes.SQLVARCHAR, "Actualización de cuenta");
 		request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
-		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, "ayuda 1");
+		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, value);
 		request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
-		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
-		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
-		
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -513,6 +547,5 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de sendMail");
 		}
-		
 	}
 }
