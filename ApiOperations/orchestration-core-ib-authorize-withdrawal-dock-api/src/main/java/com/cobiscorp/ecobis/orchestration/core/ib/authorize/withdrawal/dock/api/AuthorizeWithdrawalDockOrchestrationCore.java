@@ -313,6 +313,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_account_status", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_account_status"));
 		request.addInputParam("@i_is_only_supports_purchase", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_is_only_supports_purchase"));
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "WITHDRAWAL");
+		request.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_acquirer_country_code"));
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
@@ -559,6 +560,10 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString():null);
+		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -566,7 +571,13 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-
+		
+		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
+		{
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
 		}
@@ -591,8 +602,12 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
 
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("approved_value", ICTSTypes.SQLMONEY4, 50));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("settlement_value", ICTSTypes.SQLMONEY4, 50));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardholder_billing_value", ICTSTypes.SQLVARCHAR, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("available_limit", ICTSTypes.SQLMONEY4, 25));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
@@ -614,16 +629,25 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				
 				IResultSetRow row = new ResultSetRow();
 	
-				row.addRowData(1, new ResultSetRowColumnData(false, "SYSTEM_ERROR"));
-				row.addRowData(2, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("message_error").toString() + " [" + aBagSPJavaOrchestration.get("code_error").toString() + "]"));
-				row.addRowData(3, new ResultSetRowColumnData(false, null));
-				row.addRowData(4, new ResultSetRowColumnData(false, null));
+				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
+				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(7, new ResultSetRowColumnData(false, null));
+				row.addRowData(8, new ResultSetRowColumnData(false, null));
 				
 				data.addRow(row);
 				
 			} else {
 				 
 				logger.logDebug("Ending flow, processResponse successful...");
+				
+				
+				logger.logDebug("Numero de autorizacion OK JC");				
+				logger.logDebug(aBagSPJavaOrchestration.get("authorizationCode"));
+				
 				
 				executionStatus = "CORRECT";
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
@@ -634,10 +658,14 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				
 				IResultSetRow row = new ResultSetRow();
 				
-				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "Transaction "+ (String)aBagSPJavaOrchestration.get("@o_ssn_host")));
-				row.addRowData(3, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
-				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
+				row.addRowData(1, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("amount").toString()));
+				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
+				row.addRowData(5, new ResultSetRowColumnData(false, "0"));  // aBagSPJavaOrchestration.get("@o_ssn_host").toString())
+				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_ssn_host").toString().substring(0,6))); 
+				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
 				data.addRow(row);	
 			}
@@ -649,20 +677,21 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 			executionStatus = "ERROR";
 			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
+			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
+			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			
 			IResultSetRow row = new ResultSetRow();
 			
-			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+			row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(4, new ResultSetRowColumnData(false, mesageError));
+			row.addRowData(5, new ResultSetRowColumnData(false, codeError));
+			row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+			row.addRowData(7, new ResultSetRowColumnData(false, null));
+			row.addRowData(8, new ResultSetRowColumnData(false, null));
 			
 			data.addRow(row);
-			
-			IResultSetRow row2 = new ResultSetRow();
-			
-			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
-			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
-			
-			data2.addRow(row2);
-			
-			wProcedureResponse.setReturnCode(1);
 		}
 		
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);

@@ -78,6 +78,9 @@ public class CreateCustomerRequest implements Serializable {
   private String geolocalizationLatitude;
   private String identityValidated;
   private String economicSector;
+  private String deviceFingerprint;
+  private java.util.Calendar otpValidatedDate;
+  private Boolean otpValidated;
   public String getFirstName(){
     return this.firstName;
   }
@@ -377,5 +380,23 @@ public class CreateCustomerRequest implements Serializable {
   }
   public void setEconomicSector(String economicSector ){
     this.economicSector=economicSector;
+  }
+  public String getDeviceFingerprint(){
+    return this.deviceFingerprint;
+  }
+  public void setDeviceFingerprint(String deviceFingerprint ){
+    this.deviceFingerprint=deviceFingerprint;
+  }
+  public java.util.Calendar getOtpValidatedDate(){
+    return this.otpValidatedDate;
+  }
+  public void setOtpValidatedDate(java.util.Calendar otpValidatedDate ){
+    this.otpValidatedDate=otpValidatedDate;
+  }
+  public Boolean isOtpValidated(){
+    return this.otpValidated;
+  }
+  public void setOtpValidated(Boolean otpValidated ){
+    this.otpValidated=otpValidated;
   }
 }

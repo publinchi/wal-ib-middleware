@@ -82,7 +82,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		//if(anProcedureResponse.getReturnCode()==0){
 			
-			anProcedureResponse = processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
+		anProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
 		//}
 		
 		return anProcedureResponse;
@@ -142,11 +142,17 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 				registerLogIncommBd(aRequest, wAccountsRespIncomm, aBagSPJavaOrchestration);
 				 
 				switch (wAccountsRespIncomm.getReturnCode()) {				 
-					case 0:						 
-						if (!validateActivationDate(wAccountsRespIncomm))	
+					case 0:
+						if (logger.isDebugEnabled()) {
+							 logger.logDebug("Entrando en switch case = 0");
+					 	}
+						if (!validateActivationDate(aBagSPJavaOrchestration))	
 							accreditation = "N";						 
 						break;	
 					default:
+						if (logger.isDebugEnabled()) {
+							 logger.logDebug("Entrando en switch case != 0");
+					 	}
 						return wAccountsRespIncomm;
 				}
 			}
@@ -159,6 +165,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 				if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
 					
 					cancelCardAtm(aRequest, aBagSPJavaOrchestration);
+					
+					notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
 					
 					IProcedureResponse wAccountsRespDock = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
 					
@@ -252,19 +260,43 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wAccountsResp;
 	}
 	
-	public boolean validateActivationDate(IProcedureResponse reponseIncommCard) {
+	public boolean validateActivationDate(Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en validateActivationDate");
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("@o_responseGetStatus: " + aBagSPJavaOrchestration.get("o_response_get_status").toString());
+		}
 				
 		try {
 			
             // Parsear el JSON
-            JSONObject jsonObject = new JSONObject(reponseIncommCard.readValueParam("@o_responseGetStatus").toString());
+            JSONObject jsonObject = new JSONObject(aBagSPJavaOrchestration.get("o_response_get_status").toString());
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("jsonObject: " + jsonObject.toString());
+    		}
 
             // Obtener el objeto "metaFields"
             JSONObject productResp = jsonObject.getJSONObject("RetailTransactionTVResponse").getJSONObject("productResp");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("productResp: " + productResp.toString());
+    		}
+            
             JSONObject metaFields = productResp.getJSONObject("inventoryRespInfo").getJSONObject("metaFields");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("metaFields: " + metaFields.toString());
+    		}
 
             // Obtener el array "metafield"
             JSONArray metafieldArray = metaFields.getJSONArray("metafield");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("metafieldArray: " + metafieldArray.toString());
+    		}
             
             String value = null;
             
@@ -272,6 +304,10 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
             for (int i = 0; i < metafieldArray.length(); i++) {
             	
                 JSONObject metafield = metafieldArray.getJSONObject(i);
+                
+                if (logger.isDebugEnabled()) {
+        			logger.logDebug("metafield: " + metafield.toString());
+        		}
    
                 value = metafield.getString("value");  
             }
@@ -311,6 +347,10 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         } catch (ParseException e) {
 	
 			e.printStackTrace();
+		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de validateActivationDate");
 		}
 		
 		return false;
@@ -1469,7 +1509,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wProcedureResponse;		
 	}
 	
-	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseApi(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logInfo("processResponseApi [INI] --->" );
 		
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
@@ -1514,6 +1554,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
+				
+				notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
 				
 				IResultSetRow row = new ResultSetRow();
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
@@ -1585,6 +1627,100 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		return wProcedureResponse;		
 	}
+	
+	private void notifyCardStatusUpdate(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en notifyCardStatusUpdate...");
+        }
+        
+        String tittle = null;
+        String cardId = anOriginalRequest.readValueParam("@i_card_id");
+        
+        if (anOriginalRequest.readValueParam("@i_mode").equals("N")) {
+        	
+        	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
+        		
+        		cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
+        		tittle = "Activación de tarjeta virtual realizada exitosamente";
+        		
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
+        		
+        		tittle = "Activación de tarjeta física realizada exitosamente";
+        		
+        		if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+        			
+        			tittle = "Cancelación de tarjeta física realizada exitosamente";
+        			cardId = aBagSPJavaOrchestration.get("o_assigned_card").toString();
+        		}
+        	}
+        	
+        } else {
+        	
+        	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
+        		
+        		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
+        			
+        			tittle = "Desbloqueo de tarjeta virtual realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
+        			
+        			tittle = "Bloqueo de tarjeta virtual realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
+        			
+        			tittle = "Cancelación de tarjeta virtual realizada exitosamente";
+        		}
+        		
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
+        		
+        		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
+        			
+        			tittle = "Desbloqueo de tarjeta física realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
+        			
+        			tittle = "Bloqueo de tarjeta física realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
+        			
+        			tittle = "Cancelación de tarjeta física realizada exitosamente";
+        		}
+        	}
+        } 
+        
+        request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_LOCAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+        
+        request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+        
+        request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, tittle);
+        request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N85");
+        request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+        request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
+        request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+        request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+        request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+        request.addInputParam("@i_aux2", ICTSTypes.SQLVARCHAR, cardId);
+        request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
+        request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
+        
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+        
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Saliendo de notifyCardStatusUpdate...");
+        }
+    }
 	
 	private IProcedureResponse registerAtmCobis(Map<String, Object> aBagSPJavaOrchestration) {
 
