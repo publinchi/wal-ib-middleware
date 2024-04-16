@@ -374,6 +374,8 @@ public class ServiceContractOperationsApiRest {
 				new Data("values.source_currency_code",
 						inRequestAuthorizePurchaseDock.getValues().getSource_currency_code()),
 				new Data("values.source_value", inRequestAuthorizePurchaseDock.getValues().getSource_value()),
+				new Data("establishment", inRequestAuthorizePurchaseDock.getEstablishment()),
+				new Data("establishment_code", inRequestAuthorizePurchaseDock.getEstablishment_code()),
 				//new Data("tokens_62.affiliation_number", inRequestAuthorizePurchaseDock.getTokens_62().getAffiliation_number()),
 				//new Data("tokens_62.store_number", inRequestAuthorizePurchaseDock.getTokens_62().getStore_number()),
 				//new Data("tokens_62.pos_id", inRequestAuthorizePurchaseDock.getTokens_62().getPos_id()),
@@ -489,7 +491,19 @@ public class ServiceContractOperationsApiRest {
 		public Response  authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock ){
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
 			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
-
+			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+			//del nuevo campo aditional_information, para ingresar al tokens 62 
+			ArrayList<String> adtInf = aditionalData(inRequestAuthorizeWithdrawalDock.getAdditional_information());
+			if(adtInf != null && !adtInf.isEmpty())
+			{
+				inRequestAuthorizeWithdrawalDock.setTokens_62(new Tokens_62());
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setPos_id(adtInf.get(2));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setCashier(adtInf.get(3));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setTransaction(adtInf.get(4));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setPinpad(adtInf.get(5));
+			}
 		      if(!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()), new Data("processing.type", inRequestAuthorizeWithdrawalDock.getMti()), new Data("processing.origin_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()), new Data("processing.destiny_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()), new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()), new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.card_entryInstance().getCode()), new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()), new Data("card_entry.mode", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()), new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
 		        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
@@ -600,7 +614,19 @@ public class ServiceContractOperationsApiRest {
 			RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) {
 		LOGGER.logDebug("Start service execution REST: authorizeDepositDock");
 		ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
-		
+		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+		//del nuevo campo aditional_information, para ingresar al tokens 62 
+		ArrayList<String> adtInf = aditionalData(inRequestAuthorizeDepositDock.getAdditional_information());
+		if(adtInf != null && !adtInf.isEmpty())
+		{
+			inRequestAuthorizeDepositDock.setTokens_62(new Tokens_62());
+			inRequestAuthorizeDepositDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+			inRequestAuthorizeDepositDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+			inRequestAuthorizeDepositDock.getTokens_62().setPos_id(adtInf.get(2));
+			inRequestAuthorizeDepositDock.getTokens_62().setCashier(adtInf.get(3));
+			inRequestAuthorizeDepositDock.getTokens_62().setTransaction(adtInf.get(4));
+			inRequestAuthorizeDepositDock.getTokens_62().setPinpad(adtInf.get(5));
+		}
 	      if(!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()), new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()), new Data("processing.origin_account_type", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()), new Data("processing.destiny_account_type", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()), new Data("processing.code", inRequestAuthorizeDepositDock.getProcessing().getCode()), new Data("card_entry.code", inRequestAuthorizeDepositDock.getCard_entry().getCode()), new Data("card_entry.pin", inRequestAuthorizeDepositDock.getCard_entry().getPin()), new Data("card_entry.mode", inRequestAuthorizeDepositDock.getCard_entry().getMode()), new Data("establishment", inRequestAuthorizeDepositDock.getEstablishment()), new Data("retrieval_reference_number", inRequestAuthorizeDepositDock.getRetrieval_reference_number()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
