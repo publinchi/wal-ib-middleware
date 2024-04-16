@@ -142,11 +142,17 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 				 registerLogIncommBd(aRequest, wAccountsRespIncomm, aBagSPJavaOrchestration);
 				 
 				 switch (wAccountsRespIncomm.getReturnCode()) {
-					 case 0:
-						if (!validateActivationDate(wAccountsRespIncomm))	
+					case 0:
+						if (logger.isDebugEnabled()) {
+							 logger.logDebug("Entrando en switch case = 0");
+					 	}
+						if (!validateActivationDate(aBagSPJavaOrchestration))	
 								accreditation = "N";
 						 break;
 					 default:
+						if (logger.isDebugEnabled()) {
+							 logger.logDebug("Entrando en switch case != 0");
+					 	}
 						 return wAccountsRespIncomm;
 				 }
 			}
@@ -252,19 +258,43 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wAccountsResp;
 	}
 	
-	public boolean validateActivationDate(IProcedureResponse reponseIncommCard) {
+	public boolean validateActivationDate(Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en validateActivationDate");
+		}
+				
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("@o_responseGetStatus: " + aBagSPJavaOrchestration.get("o_response_get_status").toString());
+		}
 				
 		try {
 			
             // Parsear el JSON
-            JSONObject jsonObject = new JSONObject(reponseIncommCard.readValueParam("@o_responseGetStatus").toString());
+            JSONObject jsonObject = new JSONObject(aBagSPJavaOrchestration.get("o_response_get_status").toString());
+
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("jsonObject: " + jsonObject.toString());
+    		}
 
             // Obtener el objeto "metaFields"
             JSONObject productResp = jsonObject.getJSONObject("RetailTransactionTVResponse").getJSONObject("productResp");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("productResp: " + productResp.toString());
+    		}
+            
             JSONObject metaFields = productResp.getJSONObject("inventoryRespInfo").getJSONObject("metaFields");
+
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("metaFields: " + metaFields.toString());
+    		}
 
             // Obtener el array "metafield"
             JSONArray metafieldArray = metaFields.getJSONArray("metafield");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("metafieldArray: " + metafieldArray.toString());
+    		}
             
             String value = null;
             
@@ -272,6 +302,10 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
             for (int i = 0; i < metafieldArray.length(); i++) {
             	
                 JSONObject metafield = metafieldArray.getJSONObject(i);
+   
+                if (logger.isDebugEnabled()) {
+        			logger.logDebug("metafield: " + metafield.toString());
+        		}
    
                 value = metafield.getString("value");  
             }
@@ -311,6 +345,10 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         } catch (ParseException e) {
 	
 			e.printStackTrace();
+		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de validateActivationDate");
 		}
 		
 		return false;
