@@ -5544,7 +5544,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: updateAccountStatus");
 			ResponseUpdateAccountStatus outResponseUpdateAccountStatus = new ResponseUpdateAccountStatus();
-
+			
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
 					"cob_procesador..sp_update_account_status_api");
@@ -5609,7 +5609,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
-
+								
 								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
 								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 								return dto;
@@ -5623,6 +5623,31 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(2), new RowMapper<ResponseUpdateAccountStatus>() {
+							@Override
+							public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
+								
+								dto.setAccountStatusChangeTime(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+				if (!"NA".equals(returnResponseUpdateAccountStatus.getAccountStatusChangeTime()))
+				{
+					outResponseUpdateAccountStatus.setAccountStatusChangeTime(returnResponseUpdateAccountStatus.getAccountStatusChangeTime());
+				}
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
