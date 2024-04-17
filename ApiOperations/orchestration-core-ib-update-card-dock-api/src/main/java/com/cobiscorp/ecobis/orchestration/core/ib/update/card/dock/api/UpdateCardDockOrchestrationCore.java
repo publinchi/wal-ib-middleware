@@ -249,7 +249,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		if (logger.isDebugEnabled()) 
 			 logger.logDebug("accreditation_3: " + accreditation);
 		
-		if (accreditation == "Y") 
+		if (accreditation.trim().equals("Y")) 
 			accountAccreditation(aRequest,  aBagSPJavaOrchestration);
 
 		if (logger.isInfoEnabled()) {
