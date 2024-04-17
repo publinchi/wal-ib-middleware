@@ -249,7 +249,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		if (logger.isDebugEnabled()) 
 			 logger.logDebug("accreditation_3: " + accreditation);
 		
-		if (accreditation == "Y") 
+		if (accreditation.trim().equals("Y")) 
 			accountAccreditation(aRequest,  aBagSPJavaOrchestration);
 
 		if (logger.isInfoEnabled()) {
@@ -387,6 +387,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
 		request.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
+		
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLINT2, "1");
 		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
