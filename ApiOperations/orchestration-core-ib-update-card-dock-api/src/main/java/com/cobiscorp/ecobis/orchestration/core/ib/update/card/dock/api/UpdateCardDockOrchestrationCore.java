@@ -388,6 +388,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		request.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
 		
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLINT2, "1");
+		
 		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
 		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, "50");
