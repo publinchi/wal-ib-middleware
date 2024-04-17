@@ -301,21 +301,24 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
             String value = null;
             
             // Iterar sobre los elementos del array para encontrar el objeto deseado
-            for (int i = 0; i < metafieldArray.length(); i++) {
-            	
+            for (int i = 0; i < metafieldArray.length(); i++) {            	
                 JSONObject metafield = metafieldArray.getJSONObject(i);
-                
                 if (logger.isDebugEnabled()) {
         			logger.logDebug("metafield: " + metafield.toString());
         		}
-   
-                value = metafield.getString("value");  
+                
+                String name = metafield.getString("name");
+                
+                if (name.equals("ActivationDateTime")) {
+                	value = metafield.getString("value"); 
+                	break;
+                }
             }
-            
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             
             if (logger.isDebugEnabled()) 
             	logger.logDebug("value: " + value.toString());
+            
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             
             Date activationDate = format.parse(value);
             
@@ -325,7 +328,18 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
             Calendar cal = Calendar.getInstance();
             
             cal.setTime(activationDate);
-            cal.add(Calendar.DAY_OF_MONTH, 30);
+            
+            int diasHabiles = 0;
+            
+            while (diasHabiles < 30) {
+            	cal.add(Calendar.DAY_OF_MONTH, 1);
+            	
+            	int diaSemana = cal.get(Calendar.DAY_OF_WEEK);
+                
+                if (!(diaSemana == Calendar.SATURDAY || diaSemana == Calendar.SUNDAY)) {
+                    diasHabiles++;
+                }
+            }
             
             Date fechaLimite = cal.getTime();
             Date fechaActual = new Date();
@@ -341,11 +355,13 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
              }
            
         } catch (JSONException  e) {
-        	
+        	if (logger.isDebugEnabled()) 
+            	logger.logDebug("JSONException: " + e.getMessage());        	
             e.printStackTrace();
             
         } catch (ParseException e) {
-	
+        	if (logger.isDebugEnabled()) 
+            	logger.logDebug("ParseException: " + e.getMessage());        	
 			e.printStackTrace();
 		}
 		
