@@ -495,7 +495,19 @@ public class ServiceContractOperationsApiRest {
 				RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
 			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
-
+			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+			//del nuevo campo aditional_information, para ingresar al tokens 62 
+			ArrayList<String> adtInf = aditionalData(inRequestAuthorizeWithdrawalDock.getAdditional_information());
+			if(adtInf != null && !adtInf.isEmpty())
+			{
+				inRequestAuthorizeWithdrawalDock.setTokens_62(new Tokens_62());
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setPos_id(adtInf.get(2));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setCashier(adtInf.get(3));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setTransaction(adtInf.get(4));
+				inRequestAuthorizeWithdrawalDock.getTokens_62().setPinpad(adtInf.get(5));
+			}
 			if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
 					new Data("processing.type", inRequestAuthorizeWithdrawalDock.getMti()),
 					new Data("processing.origin_account_type",
@@ -619,7 +631,19 @@ public class ServiceContractOperationsApiRest {
 			RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) {
 		LOGGER.logDebug("Start service execution REST: authorizeDepositDock");
 		ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
-
+		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
+		//del nuevo campo aditional_information, para ingresar al tokens 62 
+		ArrayList<String> adtInf = aditionalData(inRequestAuthorizeDepositDock.getAdditional_information());
+		if(adtInf != null && !adtInf.isEmpty())
+		{
+			inRequestAuthorizeDepositDock.setTokens_62(new Tokens_62());
+			inRequestAuthorizeDepositDock.getTokens_62().setAffiliation_number(new BigDecimal(adtInf.get(0)));
+			inRequestAuthorizeDepositDock.getTokens_62().setStore_number(new BigDecimal(adtInf.get(1)));
+			inRequestAuthorizeDepositDock.getTokens_62().setPos_id(adtInf.get(2));
+			inRequestAuthorizeDepositDock.getTokens_62().setCashier(adtInf.get(3));
+			inRequestAuthorizeDepositDock.getTokens_62().setTransaction(adtInf.get(4));
+			inRequestAuthorizeDepositDock.getTokens_62().setPinpad(adtInf.get(5));
+		}
 		if (!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()),
 				new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()),
 				new Data("processing.origin_account_type",
@@ -838,7 +862,7 @@ public class ServiceContractOperationsApiRest {
 	/**
 	 * Service to delete a beneficiary.
 	 */
-	@POST
+	/*@POST
 	@Path("/apiOperations/onboarding/deleteBeneficiary")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
@@ -880,7 +904,7 @@ public class ServiceContractOperationsApiRest {
 		return Response.ok(outResponseDeleteBeneficiary).build();
 
 	}
-
+*/
 	/**
 	 * Encrypt Data
 	 */
