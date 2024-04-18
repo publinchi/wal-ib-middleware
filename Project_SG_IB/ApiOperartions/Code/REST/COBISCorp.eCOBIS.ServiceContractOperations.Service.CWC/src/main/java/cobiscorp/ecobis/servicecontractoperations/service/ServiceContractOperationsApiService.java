@@ -3285,6 +3285,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 								dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 								dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
+								dto.commissionDetailsInstance().setReason(resultSetMapper.getString(34));
 
 								return dto;
 							}
@@ -6353,16 +6354,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       //create procedure
       ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_debit_operation_api");
       
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
+      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getExternalCustomerId()));
       procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getAccountNumber());
       procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLMONEY,String.valueOf(inDebitAccountRequest.getAmount()));
-      procedureRequestAS.addInputParam("@i_commission",ICTSTypes.SQLMONEY,String.valueOf(inDebitAccountRequest.getCommission()));
-      procedureRequestAS.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i,String.valueOf(inDebitAccountRequest.getLatitude()));
-      procedureRequestAS.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i,String.valueOf(inDebitAccountRequest.getLongitude()));
       procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getReferenceNumber());
-      procedureRequestAS.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitConcept());
       procedureRequestAS.addInputParam("@i_originCode",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getOriginCode()));
+      procedureRequestAS.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitReason());
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);

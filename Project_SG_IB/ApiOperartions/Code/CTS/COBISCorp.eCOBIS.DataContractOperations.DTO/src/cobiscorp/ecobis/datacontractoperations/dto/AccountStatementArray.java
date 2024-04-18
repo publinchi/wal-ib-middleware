@@ -49,6 +49,7 @@ public class AccountStatementArray implements Serializable {
   private java.math.BigDecimal purchaseAmount;
   private java.math.BigDecimal withdrawalAmount;
   private String clientRequestId;
+  private CommissionDetails commissionDetails;
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
@@ -216,5 +217,17 @@ public class AccountStatementArray implements Serializable {
   }
   public void setClientRequestId(String clientRequestId ){
     this.clientRequestId=clientRequestId;
+  }
+  public CommissionDetails commissionDetailsInstance(){
+	if(this.commissionDetails==null){
+	this.commissionDetails=new CommissionDetails();
+	}
+	return this.commissionDetails;
+  }
+  public CommissionDetails getCommissionDetails(){
+    return this.commissionDetails;
+  }
+  public void setCommissionDetails(CommissionDetails commissionDetails ){
+    this.commissionDetails=commissionDetails;
   }
 }
