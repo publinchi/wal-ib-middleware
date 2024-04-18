@@ -85,12 +85,190 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		
 		IProcedureRequest wQueryRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		aBagSPJavaOrchestration.clear();
+		String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
+		String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
+		String referenceNumber = anOriginalRequest.readValueParam("@i_referenceNumber");
+		BigDecimal amount = new BigDecimal(anOriginalRequest.readValueParam("@i_amount"));
+		
+		if (amount.compareTo(new BigDecimal("0")) != 1) {
+			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
+			return;
+		}
+		
+		if (accountNumber.isEmpty()) {
+			aBagSPJavaOrchestration.put("40082", "accountNumber must not be empty");
+			return;
+		}
+		
+		if (referenceNumber.isEmpty()) {
+			aBagSPJavaOrchestration.put("40092", "referenceNumber must not be empty");
+			return;
+		}
+		
+		if (referenceNumber.length() != 6) {
+			aBagSPJavaOrchestration.put("40104", "referenceNumber must have 6 digits");
+			return;
+		}
+				
+		logger.logDebug("Begin flow, queryAccountDebitOperation Offline with id: " + idCustomer);
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cob_bvirtual..sp_account_operation_val_api");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', IMultiBackEndResolverService.TARGET_LOCAL);
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
+		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
+		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
+		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
+		//reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_commission"));	 
+	    //eqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_debditConcept"));
+	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_originCode"));
+	    
+	    reqTMPCentral.addOutputParam("@o_ente_bv", ICTSTypes.SQLINT4, "0");
+	    reqTMPCentral.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
+	    reqTMPCentral.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
+	    reqTMPCentral.addOutputParam("@o_mon", ICTSTypes.SQLINT4, "0");
+		
+	    IProcedureResponse wProcedureResponseVal = executeCoreBanking(reqTMPCentral);
+		
+	    aBagSPJavaOrchestration.put("o_prod", wProcedureResponseVal.readValueParam("@o_prod"));
+		aBagSPJavaOrchestration.put("o_mon", wProcedureResponseVal.readValueParam("@o_mon"));
+		aBagSPJavaOrchestration.put("o_login", wProcedureResponseVal.readValueParam("@o_login"));
+		aBagSPJavaOrchestration.put("o_ente_bv", wProcedureResponseVal.readValueParam("@o_ente_bv"));
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, queryAccountDebitOperation Offline with wProcedureResponseCentral: " + wProcedureResponseVal.getProcedureResponseAsString());
+		}
+		
+		if (!wProcedureResponseVal.hasError()) {			
+			IResultSetRow resultSetRow = wProcedureResponseVal.getResultSet(1).getData().getRowsAsArray()[0];
+			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
+			
+			if (columns[0].getValue().equals("true")) {
+				
+				if (logger.isInfoEnabled()){
+					logger.logInfo("Ejecutando transferencia Offline a terceros CORE COBIS" + anOriginalRequest);
+					logger.logInfo("********** CAUSALES DE TRANSFERENCIA *************");
+					logger.logInfo("********** CAUSA ORIGEN --->>> " + "4060");
+					logger.logInfo("********** CLIENTE CORE --->>> " + aBagSPJavaOrchestration.get("ente_mis"));
+
+				}
+				//IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+				anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+				anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+						IMultiBackEndResolverService.TARGET_LOCAL);
+				anOriginalRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+				anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500111");
+
+				anOriginalRequest.setSpName("cob_bvirtual..sp_bv_transaccion_off_api"); 
+
+				anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500118");
+				anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
+				anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+				anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
+				anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "4060");
+				//anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "4050");
+				anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
+				anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SYBINT4, "8");
+				anOriginalRequest.addInputParam("@s_filial", ICTSTypes.SQLINT4, "1");
+				anOriginalRequest.addInputParam("@s_cliente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("o_ente_bv"));
+				anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId"));
+				anOriginalRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
+				anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_amount"));
+				//anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_commission"));
+				anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_creditConcept"));
+				
+				anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon").toString());
+				anOriginalRequest.addInputParam("@i_prod", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
+				//anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon_des").toString());
+				//anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod_des").toString());
+
+				anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");
+				anOriginalRequest.addInputParam("@i_type_response", ICTSTypes.SYBCHAR, "S");
+				
+				anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
+				anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SYBCHAR, "F");
+				anOriginalRequest.addInputParam("@i_graba_notif", ICTSTypes.SYBCHAR, "N");
+				anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SYBCHAR, "N");
+				anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
+				anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
+				//anOriginalRequest.addInputParam("@i_beneficiary", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_nom_beneficiary"));
+				
+				if (logger.isDebugEnabled())
+					logger.logDebug("Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
+				anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
+				
+				anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+
+				if (logger.isDebugEnabled())
+					logger.logDebug("Data enviada a ejecutar api:" + anOriginalRequest);
+				IProcedureResponse response = executeCoreBanking(anOriginalRequest);
+
+				if (logger.isInfoEnabled())
+					logger.logInfo("Respuesta Devuelta del Core api:" + response.getProcedureResponseAsString());
+
+				logger.logInfo("Parametro @o_fecha_tran: " + response.readValueParam("@o_fecha_tran"));
+				response.readValueParam("@o_fecha_tran");
+				
+				logger.logInfo("Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+				if(response.readValueFieldInHeader("ssn")!=null)
+				aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
+				
+				if (!response.hasError()) {
+
+					resultSetRow = response.getResultSet(1).getData().getRowsAsArray()[0];
+					columns = resultSetRow.getColumnsAsArray();
+					
+					if (columns[0].getValue().equals("true")) {
+						this.columnsToReturn = columns;
+						logger.logInfo("DCO LOG COLUMNS[1]: " + this.columnsToReturn[1].getValue());
+						
+						for(int i = 0; i< this.columnsToReturn.length;i++)
+							logger.logInfo("DCO LOG COLUMNS["+i+"]: " + this.columnsToReturn[i].getValue());
+						
+						
+						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+						return;
+						
+					} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
+						
+						aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+						return;
+					} 
+					
+				} else {
+					aBagSPJavaOrchestration.put("50045", "Error account debit operation");
+					return;
+				}
+								
+			} else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("40012")) {
+				
+				aBagSPJavaOrchestration.put(columns[1].getValue(), "Customer with externalCustomerId: " + idCustomer + " does not exist");
+				return;
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
+				return;
+			}
+				
+			 
+		} else {
+			aBagSPJavaOrchestration.put("50045", "Error account debit operation");
+			return;
+		}
+	}
+
+	
+	private void queryAccountDebitOperation(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest wQueryRequest) {
+		
+		String reentryCode = (String)aBagSPJavaOrchestration.get("REENTRY_SSN");
+		
+		aBagSPJavaOrchestration.clear();
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
-		String debitConcept = wQueryRequest.readValueParam("@i_debitConcept");
+		String debitReason = wQueryRequest.readValueParam("@i_debitReason");
 		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
-		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));
 		
 		/*String originCode = wQueryRequest.readValueParam("@i_originCode");
 		
@@ -100,11 +278,6 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
-			return;
-		}
-		
-		if (commission.compareTo(new BigDecimal("0")) != 1 && commission.compareTo(new BigDecimal("0")) != 0) {
-			aBagSPJavaOrchestration.put("40108", "commission must be greater than or equal to 0");
 			return;
 		}
 		
@@ -123,11 +296,20 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			return;
 		}
 		
-		if (debitConcept.isEmpty()) {
-			aBagSPJavaOrchestration.put("40106", "debitConcept must not be empty");
+		if (debitReason.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("40123", "debitReason must not be empty");
 			return;
 		}
 				
+		if(debitReason.trim().equals("Card delivery fee")){
+			debitReason = "Comisión envío de tarjeta a domicilio";
+		}else if(debitReason.trim().equals("False chargeback claim")){
+			debitReason = "Comisión aclaración improcedente";
+		}else{
+			aBagSPJavaOrchestration.put("40124", "debit reason not found");
+			return;
+		}
+			
 		logger.logDebug("Begin flow, queryAccountDebitOperation with id: " + idCustomer);
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
@@ -137,9 +319,11 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
-		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
-	    reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
+		//reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
+	    //reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
+		reqTMPCentral.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR, debitReason);
+	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isInfoEnabled()) {
@@ -161,11 +345,11 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 				reqTMPLocal.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
-				reqTMPLocal.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
-				reqTMPLocal.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
-				reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
+				//reqTMPLocal.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
+				//reqTMPLocal.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
+				//reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
 				reqTMPLocal.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_referenceNumber"));
-				reqTMPLocal.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
+				//reqTMPLocal.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 				reqTMPLocal.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 				
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
