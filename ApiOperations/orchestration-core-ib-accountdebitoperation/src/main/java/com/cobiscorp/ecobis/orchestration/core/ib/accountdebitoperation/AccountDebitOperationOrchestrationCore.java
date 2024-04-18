@@ -438,9 +438,9 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		}
 
 		if(debitReason.trim().equals("Card delivery fee")){
-			debitReason = "Comisión envío de tarjeta a domicilio";
+			debitReason = "8110";
 		}else if(debitReason.trim().equals("False chargeback claim")){
-			debitReason = "Comisión aclaración improcedente";
+			debitReason = "3101";
 		}else{
 			aBagSPJavaOrchestration.put("40124", "debit reason not found");
 			return;
