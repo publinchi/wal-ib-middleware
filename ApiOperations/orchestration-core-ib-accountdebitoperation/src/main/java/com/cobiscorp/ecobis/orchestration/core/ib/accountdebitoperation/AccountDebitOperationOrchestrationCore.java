@@ -4,11 +4,10 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.accountdebitoperation;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -17,10 +16,14 @@ import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
+import com.cobiscorp.cobis.commons.components.ComponentLocator;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
+import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
+import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
@@ -30,6 +33,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
@@ -38,9 +42,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
-import com.cobiscorp.cobis.crypt.ICobisCrypt;
-import com.cobiscorp.cobis.commons.components.ComponentLocator;
-
+import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 
 /**
@@ -60,6 +63,10 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
 
+	private static final int ERROR40004 = 40004;
+	private static final int ERROR40003 = 40003;
+	private static final int ERROR40002 = 40002;
+
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 		
@@ -70,28 +77,170 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		logger.logDebug("Begin flow, AccountDebitOperation start.");		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
-		/*if (true) {
-			saveReentry(anOriginalRequest);
-			aBagSPJavaOrchestration.clear();
-			aBagSPJavaOrchestration.put("40004","Server is offline");
-			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-		}*/
+		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		
-		queryAccountDebitOperation(aBagSPJavaOrchestration);
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setChannelId("8");
+		ServerResponse responseServer = null;
+		try {
+			responseServer = getServerStatus(serverRequest);
+		} catch (CTSServiceException e) {
+			logger.logError(e.toString());
+		} catch (CTSInfrastructureException e) {
+			logger.logError(e.toString());
+		}
+		
+		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
+		aBagSPJavaOrchestration.put("flowRty", flowRty);
+		logger.logDebug("Response Online: " + responseServer.getOnLine() + " Response flowRty" + flowRty);
+		if (responseServer != null && !responseServer.getOnLine()) {
+			aBagSPJavaOrchestration.put("IsReentry", "S");
+			if (!flowRty){
+				logger.logDebug("evaluateExecuteReentry");
+				anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+
+				executeOfflineTransacction(aBagSPJavaOrchestration, anOriginalRequest);
+			}
+			else{
+				logger.logDebug("evaluateExecuteReentry FALSE");
+				anProcedureResponse = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
+				logger.logDebug("Respose Exeption:: " + anProcedureResponse.toString());
+				aBagSPJavaOrchestration.clear();
+				aBagSPJavaOrchestration.put("50041", "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
+				return anProcedureResponse;				
+			}
+			
+			logger.logDebug("Res IsReentry:: " + "S");
+		} else {
+			aBagSPJavaOrchestration.put("IsReentry", "N");
+			logger.logDebug("Res IsReentry:: " + "N");
+			queryAccountDebitOperation(aBagSPJavaOrchestration, anOriginalRequest);
+		}
+		
+		
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 	
-	private void queryAccountDebitOperation(Map<String, Object> aBagSPJavaOrchestration) {
+	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
+		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
+			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
+				return true;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
+		IProcedureRequest request = wQueryRequest.clone();
+		ComponentLocator componentLocator = null;
+	    IReentryPersister reentryPersister = null;
+	    componentLocator = ComponentLocator.getInstance(this);
+	    
+	    aBagSPJavaOrchestration.put("rty_ssn",request.readValueFieldInHeader("ssn"));
+	    
+	    reentryPersister = (IReentryPersister) componentLocator.find(IReentryPersister.class, REENTRY_FILTER);
+        if (reentryPersister == null)
+            throw new COBISInfrastructureRuntimeException("Service IReentryPersister was not found");
+        
+        request.removeFieldInHeader("sessionId");
+        request.addFieldInHeader("reentryPriority", 'S', "5");
+        request.addFieldInHeader("REENTRY_SSN_TRX", 'S', request.readValueFieldInHeader("ssn"));
+        request.addFieldInHeader("targetId", 'S', "local");
+        request.removeFieldInHeader("serviceMethodName");
+        request.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', request.readValueFieldInHeader("trn"));
+        request.removeParam("@t_rty");
+        
+        Boolean reentryResponse = reentryPersister.addTransaction(request);
+
+        IProcedureResponse response = initProcedureResponse(request);
+        if (!reentryResponse.booleanValue()) {
+        	logger.logDebug("Ending flow, saveReentry failed");
+            response.addFieldInHeader("executionResult", 'S', "1");
+            response.addMessage(1, "Ocurrio un error al tratar de registrar la transaccion en el Reentry CORE COBIS");
+        } else {
+        	logger.logDebug("Ending flow, saveReentry success");
+            response.addFieldInHeader("executionResult", 'S', "0");
+        }
+
+        return response;
+	}
+	
+	public ServerResponse getServerStatus(ServerRequest serverRequest) throws CTSServiceException, CTSInfrastructureException {
+
+		IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
+		aServerStatusRequest.setSpName("cobis..sp_server_status");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
+		aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
+		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
+		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_en_linea", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_fecha_proceso", ICTSTypes.SYBVARCHAR, "XXXX");
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Request Corebanking TTPA: " + aServerStatusRequest.getProcedureRequestAsString());
+
+		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Response Corebanking TTPA: " + wServerStatusResp.getProcedureResponseAsString());
+
+		ServerResponse serverResponse = new ServerResponse();
 		
-		IProcedureRequest wQueryRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+		serverResponse.setSuccess(true);
+		Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
+		serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
+
+		if (wServerStatusResp.getReturnCode() == 0) {
+			serverResponse.setOfflineWithBalances(true);
+
+			if (wServerStatusResp.readValueParam("@o_en_linea") != null)
+				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
+
+			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003 || wServerStatusResp.getReturnCode() == ERROR40004) {
+			serverResponse.setOnLine(false);
+			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
+		}
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Respuesta Devuelta: " + serverResponse);
+		if (logger.isInfoEnabled())
+			logger.logInfo("TERMINANDO SERVICIO");
+
+		return serverResponse;
+	}
+	
+	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
+		logger.logDebug("execute executeOfflineTransacction: ");
 		aBagSPJavaOrchestration.clear();
 		String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = anOriginalRequest.readValueParam("@i_referenceNumber");
+		String debitConcept = anOriginalRequest.readValueParam("@i_debitConcept");
 		BigDecimal amount = new BigDecimal(anOriginalRequest.readValueParam("@i_amount"));
+		BigDecimal commission = new BigDecimal(anOriginalRequest.readValueParam("@i_commission"));
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
+			return;
+		}
+		
+		if (commission.compareTo(new BigDecimal("0")) != 1 && commission.compareTo(new BigDecimal("0")) != 0) {
+			aBagSPJavaOrchestration.put("40108", "commission must be greater than or equal to 0");
 			return;
 		}
 		
@@ -110,6 +259,11 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			return;
 		}
 				
+		if (debitConcept.isEmpty()) {
+			aBagSPJavaOrchestration.put("40106", "debitConcept must not be empty");
+			return;
+		}
+				
 		logger.logDebug("Begin flow, queryAccountDebitOperation Offline with id: " + idCustomer);
 		
 		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
@@ -119,6 +273,8 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
+		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_commission"));	 
+	    reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_debditConcept"));
 		//reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_commission"));	 
 	    //eqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_debditConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_originCode"));
@@ -174,6 +330,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 				anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId"));
 				anOriginalRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
 				anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_amount"));
+				anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_commission"));
 				//anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_commission"));
 				anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_creditConcept"));
 				
@@ -267,17 +424,18 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
+		String debitConcept = wQueryRequest.readValueParam("@i_debitConcept");
 		String debitReason = wQueryRequest.readValueParam("@i_debitReason");
 		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
-		
-		/*String originCode = wQueryRequest.readValueParam("@i_originCode");
-		
-		if (originCode == null) {
-			wQueryRequest.setValueParam("@i_originCode", "");
-		}*/
+		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
+			return;
+		}
+		
+		if (commission.compareTo(new BigDecimal("0")) != 1 && commission.compareTo(new BigDecimal("0")) != 0) {
+			aBagSPJavaOrchestration.put("40108", "commission must be greater than or equal to 0");
 			return;
 		}
 		
@@ -295,12 +453,14 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			aBagSPJavaOrchestration.put("40104", "referenceNumber must have 6 digits");
 			return;
 		}
-		
+
+		if (debitConcept.isEmpty()) {
+			aBagSPJavaOrchestration.put("40106", "debitConcept must not be empty");
 		if (debitReason.trim().isEmpty()) {
 			aBagSPJavaOrchestration.put("40123", "debitReason must not be empty");
 			return;
 		}
-				
+
 		if(debitReason.trim().equals("Card delivery fee")){
 			debitReason = "Comisión envío de tarjeta a domicilio";
 		}else if(debitReason.trim().equals("False chargeback claim")){
@@ -312,13 +472,23 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			
 		logger.logDebug("Begin flow, queryAccountDebitOperation with id: " + idCustomer);
 		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(wQueryRequest));		
+		IProcedureRequest reqTMPCentral = wQueryRequest;	
+		
+		if(reentryCode!=null){
+			logger.logDebug("Flow: " + reentryCode);
+			reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_SSN, reentryCode);
+		}
+			
 		reqTMPCentral.setSpName("cobis..sp_account_debit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
+		reqTMPCentral.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
+		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
+	    reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 		//reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
 	    //reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
@@ -345,10 +515,14 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 				reqTMPLocal.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_accountNumber"));
 				reqTMPLocal.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
+				reqTMPLocal.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
+				reqTMPLocal.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
+				reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
 				//reqTMPLocal.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));
 				//reqTMPLocal.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_latitude"));
 				//reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
 				reqTMPLocal.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_referenceNumber"));
+				reqTMPLocal.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 				//reqTMPLocal.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 				reqTMPLocal.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 				
