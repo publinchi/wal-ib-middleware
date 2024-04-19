@@ -846,6 +846,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						movementType = type_auth;
 					}	
 					
+				} else if(type_movement.equals("BONUS")){
+					movementType = "BONUS";
 				}
 				  if (operationType.equals("C")) {
 					  
