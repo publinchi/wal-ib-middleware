@@ -1216,6 +1216,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getAcquirer_country_code());
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getAffiliation_number()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeWithdrawalDock.getTokens_62().getStore_number()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getPos_id());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());
+			
 			if(inRequestAuthorizeWithdrawalDock.getToken_data() != null) {
 			procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
@@ -1712,9 +1725,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getAcquirer_country_code());
-			
-			LOGGER.logDebug(inRequestAuthorizeDepositDock);
-			
+			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getAffiliation_number()));
+			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
+					String.valueOf(inRequestAuthorizeDepositDock.getTokens_62().getStore_number()));
+			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getPos_id());
+			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getCashier());
+			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getTransaction());
+			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getTokens_62().getPinpad());
+					
 			String indicator="false";
 			
 			if(inRequestAuthorizeDepositDock.getTransaction_indicators()!=null &&inRequestAuthorizeDepositDock.getTransaction_indicators().isCard_present()) {
@@ -5521,7 +5544,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				throws CTSRestException {
 			LOGGER.logDebug("Start service execution: updateAccountStatus");
 			ResponseUpdateAccountStatus outResponseUpdateAccountStatus = new ResponseUpdateAccountStatus();
-
+			
 			// create procedure
 			ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
 					"cob_procesador..sp_update_account_status_api");
@@ -5586,7 +5609,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
-
+								
 								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
 								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 								return dto;
@@ -5600,6 +5623,31 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				mapBlank++;
 
 			}
+			
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseUpdateAccountStatus returnResponseUpdateAccountStatus = MapperResultUtil.mapOneRowToObject(
+						response.getResultSets().get(2), new RowMapper<ResponseUpdateAccountStatus>() {
+							@Override
+							public ResponseUpdateAccountStatus mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseUpdateAccountStatus dto = new ResponseUpdateAccountStatus();
+								
+								dto.setAccountStatusChangeTime(resultSetMapper.getString(1));
+								return dto;
+							}
+						}, false);
+				if (!"NA".equals(returnResponseUpdateAccountStatus.getAccountStatusChangeTime()))
+				{
+					outResponseUpdateAccountStatus.setAccountStatusChangeTime(returnResponseUpdateAccountStatus.getAccountStatusChangeTime());
+				}
+				// break;
+
+			} else {
+				mapBlank++;
+
+			}
+
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
