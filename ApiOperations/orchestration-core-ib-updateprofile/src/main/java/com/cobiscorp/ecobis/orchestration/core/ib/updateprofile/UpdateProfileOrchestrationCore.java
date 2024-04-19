@@ -104,7 +104,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 			return;
 		}
 		
-		if (!isValidMail(mail)) {
+		if (!isValidMail(mail) || mail.length() > 50) {
 			aBagSPJavaOrchestration.put("40122", "email is not valid");
 			return;
 		}
