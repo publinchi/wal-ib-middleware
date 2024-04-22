@@ -530,10 +530,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 					data3.addRow(row3);
 				}
 				
-				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
+				sendMail(anOriginalRequest, aBagSPJavaOrchestration);			
 				
-				
-			} else { // Error de validacion en el procedure
+
 			} else { // Error de VALIDACION en el procedure
 				logger.logDebug("Ending flow, processResponse error");
 				
@@ -553,10 +552,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
 				
-			}
+				}
 			}
 		} else { //Error en la ejecucion del procedure de datos
-		} else { //Error en la EJECUCION del procedure de datos
+
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
@@ -633,7 +632,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
 		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
-		String titulo = null;
+
 		
 		String titulo = "";
 		if (status.equals("A")) {
