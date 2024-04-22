@@ -503,9 +503,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		else if (codeReturn == 0) {
 		
 		logger.logDebug("response conector dock: " + anOriginalProcedureRes.toString());
-		logger.logDebug("code o_assign_date: " + flag);
+		logger.logDebug("flag respose: " + flag);
 		logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-		logger.logDebug("account status: " + String.valueOf(flagSubBloqueo) + "flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
+		logger.logDebug("account status: " + String.valueOf(accountStatus) + ", flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
@@ -531,7 +531,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				sendMail(anOriginalRequest, aBagSPJavaOrchestration);
 				
 				
-			} else { // Error de validacion en el procedure
+			} else { // Error de VALIDACION en el procedure
 				logger.logDebug("Ending flow, processResponse error");
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
@@ -542,15 +542,14 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row.addRowData(1, new ResultSetRowColumnData(false, success));
 				data.addRow(row);
 				
-				if (flagSubBloqueo == true)
-				{
-					IResultSetRow row2 = new ResultSetRow();
-					row2.addRowData(1, new ResultSetRowColumnData(false, code));
-					row2.addRowData(2, new ResultSetRowColumnData(false, message));
-					data2.addRow(row2);
-				}
+				// Agrega codigo y mensaje de error para cualquier validacion del procedure
+				IResultSetRow row2 = new ResultSetRow();
+				row2.addRowData(1, new ResultSetRowColumnData(false, code));
+				row2.addRowData(2, new ResultSetRowColumnData(false, message));
+				data2.addRow(row2);
+				
 			}
-		} else { //Error en la ejecucion del procedure de datos
+		} else { //Error en la EJECUCION del procedure de datos
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
@@ -601,7 +600,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		{
 			logger.logDebug("Ending flow, processResponse error or failed");
 			IResultSetRow row3 = new ResultSetRow();
-			row3.addRowData(1, new ResultSetRowColumnData(false, "NA"));
+			//NA, para que en el service sea removida esta fila de la respueta Json
+			row3.addRowData(1, new ResultSetRowColumnData(false, "NA")); 
 			data3.addRow(row3);
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
