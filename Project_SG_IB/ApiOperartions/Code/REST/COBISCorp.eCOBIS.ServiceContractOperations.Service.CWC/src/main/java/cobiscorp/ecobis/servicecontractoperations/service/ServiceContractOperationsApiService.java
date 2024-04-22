@@ -3804,51 +3804,53 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 
 			mapTotal++;
+			
+
+			
 			if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
 				
-				final int[] i = {4};
-				
-				// ---------NO Array
-				TransactionLimits[] returnTransactionLimits = MapperResultUtil
-						.mapToArray(response.getResultSets().get(3), new RowMapper<TransactionLimits>() {
-							@Override
-							public TransactionLimits mapRow(ResultSetMapper resultSetMapper, int index) {
-								TransactionLimits dto = new TransactionLimits();
+			
+				if (response.getResultSets() != null && response.getResultSets().size() > 3 && response.getResultSets().get(3).getData().getRows().size() > 0) {
+				    List<ResultSetRow> datos = response.getResultSets().get(3).getData().getRows();
+				    List<TransactionLimits> listLimites = new ArrayList<>();
+				    TransactionLimits limite = null;
+				    String subtype = null;
+				    List<TransactionSubTypeLimits> listSubtipos = new ArrayList<>();
 
-								dto.setTransactionSubType(resultSetMapper.getString(1));
-								
-								TransactionSubTypeLimits[] returnTransactionSubTypeLimits = MapperResultUtil.mapToArray(
-										response.getResultSets().get(i[0]), new RowMapper<TransactionSubTypeLimits>() {
-											@Override
-											public TransactionSubTypeLimits mapRow(ResultSetMapper resultSetMapper,
-													int index) {
-												TransactionSubTypeLimits dto = new TransactionSubTypeLimits();
+				    for (ResultSetRow row : datos) {
+				        if (subtype == null || !subtype.equals(row.getRowData(1, false).getValue().trim())) {
+				            if (listSubtipos.size() > 0 && subtype != null) {
+				                limite.setTransactionSubType(subtype);
+				                limite.setTransactionSubTypeLimits(listSubtipos.toArray(new TransactionSubTypeLimits[0]));
+				                listLimites.add(limite);
+				                listSubtipos = new ArrayList<>();
+				            }
+				            subtype = row.getRowData(1, false).getValue();
+				            limite = new TransactionLimits();
+				        }
 
-												dto.setTransactionLimitsType(resultSetMapper.getString(1));
-												dto.configuredLimitInstance().setAmount(resultSetMapper.getBigDecimal(2));
-												dto.configuredLimitInstance().setCurrency(resultSetMapper.getString(3));
-												dto.balanceAmountInstance().setAmount(resultSetMapper.getBigDecimal(4));
-												dto.balanceAmountInstance().setCurrency(resultSetMapper.getString(5));
-												
-												if (dto.balanceAmountInstance().getAmount() == null) {
-													dto.setBalanceAmount(null);
-												}
-												
-												return dto;
-											}
-										}, false);
+				        TransactionSubTypeLimits subLimite = new TransactionSubTypeLimits();
+				        subLimite.setTransactionLimitsType(row.getRowData(2, false).getValue());
+				        ConfiguredLimit conf = new ConfiguredLimit();
+				        conf.setCurrency(row.getRowData(4, false).getValue());
+				        conf.setAmount(new BigDecimal(row.getRowData(3, false).getValue()));
+				        subLimite.setConfiguredLimit(conf);
+				        BalanceAmount bal = new BalanceAmount();
+				        bal.setCurrency(row.getRowData(6, false).getValue());
+				        bal.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+				        subLimite.setBalanceAmount(bal);
+				        listSubtipos.add(subLimite);
+				    }
 
-								dto.setTransactionSubTypeLimits(returnTransactionSubTypeLimits);
-								
-								i[0]++;
+	
+				    if (limite != null && subtype != null) {
+				        limite.setTransactionSubType(subtype);
+				        limite.setTransactionSubTypeLimits(listSubtipos.toArray(new TransactionSubTypeLimits[0]));
+				        listLimites.add(limite);
+				    }
 
-								return dto;
-							}
-							
-						}, false);
-				
-				outResponseGetTransactionLimit.setTransactionLimits(returnTransactionLimits);
-				// break;
+				    outResponseGetTransactionLimit.setTransactionLimits(listLimites.toArray(new TransactionLimits[0]));
+				}
 
 			} else {
 				mapBlank++;
@@ -3887,6 +3889,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// returns data
 			return outResponseGetTransactionLimit;
 		}
+	   	   
 	   
 	   
 		/**
