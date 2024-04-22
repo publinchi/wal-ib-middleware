@@ -129,7 +129,7 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		request.addOutputParam("@o_trn_subtype_4", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_trn_subtype_5", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_trn_subtype_6", ICTSTypes.SQLVARCHAR, "X");
-				
+	*/			
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		if (logger.isDebugEnabled()) {
@@ -147,7 +147,7 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("subtype4", wProductsQueryResp.readValueParam("@o_trn_subtype_4"));
 		aBagSPJavaOrchestration.put("subtype5", wProductsQueryResp.readValueParam("@o_trn_subtype_5"));
 		aBagSPJavaOrchestration.put("subtype6", wProductsQueryResp.readValueParam("@o_trn_subtype_6"));
-	*/
+
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
