@@ -132,7 +132,7 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 	*/			
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
-		if (logger.isDebugEnabled()) {
+/*		if (logger.isDebugEnabled()) {
 			logger.logDebug("subtype1 es " +  wProductsQueryResp.readValueParam("@o_trn_subtype_1"));
 			logger.logDebug("subtype2 es " +  wProductsQueryResp.readValueParam("@o_trn_subtype_2"));
 			logger.logDebug("subtype3 es " +  wProductsQueryResp.readValueParam("@o_trn_subtype_3"));
@@ -147,7 +147,7 @@ public class GetTransactionLimitOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("subtype4", wProductsQueryResp.readValueParam("@o_trn_subtype_4"));
 		aBagSPJavaOrchestration.put("subtype5", wProductsQueryResp.readValueParam("@o_trn_subtype_5"));
 		aBagSPJavaOrchestration.put("subtype6", wProductsQueryResp.readValueParam("@o_trn_subtype_6"));
-
+*/ 
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking valDataLocal: " + wProductsQueryResp.getProcedureResponseAsString());
