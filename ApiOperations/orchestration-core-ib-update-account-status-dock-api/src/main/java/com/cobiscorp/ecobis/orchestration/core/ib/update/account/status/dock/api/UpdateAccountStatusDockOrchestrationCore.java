@@ -504,8 +504,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		logger.logDebug("response conector dock: " + anOriginalProcedureRes.toString());
 		logger.logDebug("code o_assign_date: " + flag);
+		logger.logDebug("flag respose: " + flag);
 		logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
 		logger.logDebug("account status: " + String.valueOf(flagSubBloqueo) + "flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
+		logger.logDebug("account status: " + String.valueOf(accountStatus) + ", flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
@@ -532,6 +534,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				
 				
 			} else { // Error de validacion en el procedure
+			} else { // Error de VALIDACION en el procedure
 				logger.logDebug("Ending flow, processResponse error");
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
@@ -544,13 +547,16 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				
 				if (flagSubBloqueo == true)
 				{
+				// Agrega codigo y mensaje de error para cualquier validacion del procedure
 				IResultSetRow row2 = new ResultSetRow();
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
+				
 			}
 			}
 		} else { //Error en la ejecucion del procedure de datos
+		} else { //Error en la EJECUCION del procedure de datos
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
@@ -601,6 +607,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		{
 			logger.logDebug("Ending flow, processResponse error or failed");
 			IResultSetRow row3 = new ResultSetRow();
+			//NA, para que en el service sea removida esta fila de la respueta Json
 			row3.addRowData(1, new ResultSetRowColumnData(false, "NA"));
 			data3.addRow(row3);
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
@@ -626,25 +633,77 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
 		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
+		String titulo = null;
+		
 		String titulo = "";
 		if (status.equals("A")) {
+			
+			titulo = "Cuenta activada exitosamente";
+			value = "0";
+			
 			titulo = "Cuenta Activada";
 		} else if (status.equals("B")) {
+			
+			titulo = "Cuenta bloqueada exitosamente";
+			value = "0";
+			
 			titulo = "Cuenta Bloqueada";
 		} else if (status.equals("C")) {
+			
+			titulo = "Cuenta cancelada exitosamente";
+			value = "0";
+			
 			titulo = "Cuenta Cancelada";
 		} else if (status.equals("BV")) {
+			
+			titulo = "Cuenta bloqueada por valores";
+			
+		} else if (status.equals("EBV")) {
+			
+			titulo = "Cuenta desbloqueada por valores";
+			
 			titulo = "Cuenta Bloqueada por valores, por el valor de: " + value;
 		} else if (status.equals("BM")) {
+			
 			if (value.equals("1")) {
+				
+				titulo = "Cuenta bloqueada por movimientos: contra crédito";
+				
 				titulo = "Cuenta Bloqueada por movimientos: contra credito";
 			} else if (value.equals("2")) {
+				
+				titulo = "Cuenta bloqueada por movimientos: contra débito";
+				
 				titulo = "Cuenta Bloqueada por movimientos: contra debito";
 			} else if (value.equals("3")) {
+				
+				titulo = "Cuenta bloqueada por movimientos: contra crédito y débito";
 				titulo = "Cuenta Bloqueada por movimientos: contra credito y debito";
 			}
 			
+		} else if (status.equals("EBM")) {
+			
+			if (value.equals("1")) {
+				
+				titulo = "Cuenta desbloqueada por movimientos: contra crédito";
+				
+			} else if (value.equals("2")) {
+				
+				titulo = "Cuenta desbloqueada por movimientos: contra débito";
+				
+			} else if (value.equals("3")) {
+				
+				titulo = "Cuenta desbloqueada por movimientos: contra crédito y débito";
 		} 
+		}
+		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+		
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
 		
 		request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, titulo);
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
@@ -658,8 +717,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
 		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("login") != null ? aBagSPJavaOrchestration.get("login").toString() : "login");
 		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+		request.addInputParam("@i_mensaje", ICTSTypes.SQLVARCHAR, "Actualización de cuenta");
 		request.addInputParam("@i_mensaje", ICTSTypes.SQLVARCHAR, "Cliente Afiliad");
 		request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
+		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, value);
 		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, "ayuda 1");
 		request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
 		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
