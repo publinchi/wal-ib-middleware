@@ -2211,11 +2211,8 @@ public class ServiceContractOperationsApiRest {
 		if (!validateMandatory(new Data("externalCustomerId", inDebitAccountRequest.getExternalCustomerId()),
 				new Data("accountNumber", inDebitAccountRequest.getAccountNumber()),
 				new Data("amount", inDebitAccountRequest.getAmount()),
-				new Data("commission", inDebitAccountRequest.getCommission()),
 				new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()),
-				new Data("debitConcept", inDebitAccountRequest.getDebitConcept()),
-				new Data("latitude", inDebitAccountRequest.getLatitude()),
-				new Data("longitude", inDebitAccountRequest.getLongitude()))) {
+				new Data("debitReason", inDebitAccountRequest.getDebitReason()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();

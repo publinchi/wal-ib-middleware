@@ -535,7 +535,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ",";
 			script = script + (respMov.getUm_sec_correccion() != null ? respMov.getUm_sec_correccion() : "null") + ",";
 			script = script + "null, null, null, null, null, null,  null, null, null, null,";
-			script = script + "null, null, null, null, null, null,  null, null, null, null, null, null)\r\n";
+			script = script + "null, null, null, null, null, null,  null, null, null, null, null, null, null)\r\n";
 		}
 
 		return script;
@@ -676,13 +676,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("uuid", ICTSTypes.SQLVARCHAR, 32));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SQLVARCHAR, 32));
 
+			//commissionDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLVARCHAR, 50));
+
 
 			IResultSetBlock resulsetOrigin = anOriginalProcedureRes.getResultSet(4);
 			IResultSetRow[] rowsTemp = resulsetOrigin.getData().getRowsAsArray();
 			IResultSetData data0 = new ResultSetData();
 
 			for (IResultSetRow iResultSetRow : rowsTemp) {
-
+				
 				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
 				IResultSetRow rowDat = new ResultSetRow();
 
@@ -731,7 +734,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				if (sourceOwnerName != null) {
 					sourceOwnerName = sourceOwnerName.trim();
 				}
-
+			
 				String type_movement = columns[35].getValue();
 				String is_dock_idc = columns[36].getValue();
 				String type_auth = columns[37].getValue();
@@ -846,8 +849,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						movementType = type_auth;
 					}	
 					
+
 				} else if(type_movement.equals("BONUS")){
 					movementType = "BONUS";
+				}
+
+				} else if (type_movement.equals("COMMISSION")){
+					movementType = "COMMISSION";
+
 				}
 				  if (operationType.equals("C")) {
 					  
@@ -878,6 +887,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					
 				}
 
+				String reason_commission = columns[44].getValue();
+				if(reason_commission != null){
+					if(reason_commission.trim().equals("8110")){
+						reason_commission = "Card delivery fee";
+					}else if(reason_commission.trim().equals("3101")){
+						reason_commission = "False chargeback claim";
+					}else{
+						reason_commission = "";
+					}
+				}
 
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
@@ -923,6 +942,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 				rowDat.addRowData(32, new ResultSetRowColumnData(false, columns[42].getValue()));
 				rowDat.addRowData(33, new ResultSetRowColumnData(false, columns[43].getValue()));
+				rowDat.addRowData(34, new ResultSetRowColumnData(false, reason_commission));
 
 				data0.addRow(rowDat);
 			}

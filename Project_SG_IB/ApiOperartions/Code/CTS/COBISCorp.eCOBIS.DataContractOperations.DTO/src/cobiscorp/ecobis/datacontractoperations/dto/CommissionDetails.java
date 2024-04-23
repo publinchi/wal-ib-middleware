@@ -27,47 +27,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class DebitAccountRequest implements Serializable {
-  private Integer externalCustomerId;
-  private String accountNumber;
-  private java.math.BigDecimal amount;
-  private String referenceNumber;
-  private Integer originCode;
-  private String debitReason;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+public class CommissionDetails implements Serializable {
+  private String reason;
+  public String getReason(){
+    return this.reason;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
-  public String getAccountNumber(){
-    return this.accountNumber;
-  }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
-  }
-  public java.math.BigDecimal getAmount(){
-    return this.amount;
-  }
-  public void setAmount(java.math.BigDecimal amount ){
-    this.amount=amount;
-  }
-  public String getReferenceNumber(){
-    return this.referenceNumber;
-  }
-  public void setReferenceNumber(String referenceNumber ){
-    this.referenceNumber=referenceNumber;
-  }
-  public Integer getOriginCode(){
-    return this.originCode;
-  }
-  public void setOriginCode(Integer originCode ){
-    this.originCode=originCode;
-  }
-  public String getDebitReason(){
-    return this.debitReason;
-  }
-  public void setDebitReason(String debitReason ){
-    this.debitReason=debitReason;
+  public void setReason(String reason ){
+    this.reason=reason;
   }
 }
