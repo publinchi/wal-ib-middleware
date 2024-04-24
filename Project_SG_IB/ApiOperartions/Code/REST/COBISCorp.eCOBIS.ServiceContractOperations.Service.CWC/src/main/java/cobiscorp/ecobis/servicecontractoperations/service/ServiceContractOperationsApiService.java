@@ -1342,7 +1342,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 										        numeroCadena = ceros.toString();
 										    }
 										    dto.setAuthorization_code(Integer.parseInt(numeroCadena));
-										}		
+										}
 										dto.setSeq(resultSetMapper.getString(8));
 										
 										
