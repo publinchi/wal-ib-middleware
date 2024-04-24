@@ -533,6 +533,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				sendMail(anOriginalRequest, aBagSPJavaOrchestration);			
 				
 
+			} else { // Error de validacion en el procedure
+
 			} else { // Error de VALIDACION en el procedure
 				logger.logDebug("Ending flow, processResponse error");
 				
@@ -551,10 +553,12 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
-				
+			}
+			
 				}
 			}
 		} else { //Error en la ejecucion del procedure de datos
+		} else { //Error en la EJECUCION del procedure de datos
 
 			
 			logger.logDebug("Ending flow, processResponse failed with code: ");
@@ -623,7 +627,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en sendMail");
 		}
-
+		
 		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -632,9 +636,13 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
 		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
-
+		String titulo = null;
 		
 		String titulo = "";
+		
+		String titulo = "";
+
+
 		if (status.equals("A")) {
 			
 			titulo = "Cuenta activada exitosamente";
@@ -693,10 +701,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			} else if (value.equals("3")) {
 				
 				titulo = "Cuenta desbloqueada por movimientos: contra crédito y débito";
-		} 
+			}
 		}
-		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
 		
+		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
