@@ -29,6 +29,7 @@ import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
 import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
+import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
 import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
@@ -3835,10 +3836,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				        conf.setCurrency(row.getRowData(4, false).getValue());
 				        conf.setAmount(new BigDecimal(row.getRowData(3, false).getValue()));
 				        subLimite.setConfiguredLimit(conf);
+				        
+				        if(!(row.getRowData(2, false).getValue().contains("TXN"))){
 				        BalanceAmount bal = new BalanceAmount();
 				        bal.setCurrency(row.getRowData(6, false).getValue());
 				        bal.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
 				        subLimite.setBalanceAmount(bal);
+				        }
 				        listSubtipos.add(subLimite);
 				    }
 
