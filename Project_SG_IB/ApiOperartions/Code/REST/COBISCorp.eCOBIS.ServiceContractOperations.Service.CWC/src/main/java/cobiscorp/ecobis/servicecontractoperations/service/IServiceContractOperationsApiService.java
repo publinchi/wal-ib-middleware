@@ -133,8 +133,8 @@ public interface IServiceContractOperationsApiService {
 	 * Delete Beneficiary
 	 */
 
-	/*// Return
-	public ResponseDeleteBeneficiary deleteBeneficiary(String xRequestId, String xEndUserRequestDateTime,
+	// Return
+	/*public ResponseDeleteBeneficiary deleteBeneficiary(String xRequestId, String xEndUserRequestDateTime,
 			String xEndUserIp, String xChannel, RequestDeleteBeneficiary inRequestDeleteBeneficiary)
 			throws CTSRestException;*/
 	

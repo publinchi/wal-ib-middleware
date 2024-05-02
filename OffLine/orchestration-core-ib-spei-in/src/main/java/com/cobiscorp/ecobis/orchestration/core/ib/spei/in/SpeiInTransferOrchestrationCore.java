@@ -370,12 +370,12 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18500069");
 		procedureRequest.addInputParam("@i_tipo_trn", ICTSTypes.SQLINT4, "253");
 		procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
-		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));
+		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));		
 		if (anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario").equals("10")) 
 			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		else
 			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
-		
+				
 		Integer code = 0;
         String message = "success";
 		IProcedureResponse anProcedureResponse =  executeCoreBanking(procedureRequest);
@@ -437,7 +437,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_idTipoPago"));
 		//procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
 		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
-		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipo_destino"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "I");
 		procedureRequest.addInputParam("@i_xml_request", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_string_request"));
 		procedureRequest.addInputParam("@i_tipo_ejecucion", ICTSTypes.SQLVARCHAR, isReentryExecution ? "F" : "L");

@@ -81,7 +81,6 @@ public class CreateCustomerRequest implements Serializable {
   private String deviceFingerprint;
   private java.util.Calendar otpValidatedDate;
   private Boolean otpValidated;
-
   public String getFirstName(){
     return this.firstName;
   }

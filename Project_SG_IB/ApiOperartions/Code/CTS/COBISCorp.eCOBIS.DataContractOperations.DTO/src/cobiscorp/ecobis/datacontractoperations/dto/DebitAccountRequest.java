@@ -31,12 +31,9 @@ public class DebitAccountRequest implements Serializable {
   private Integer externalCustomerId;
   private String accountNumber;
   private java.math.BigDecimal amount;
-  private java.math.BigDecimal commission;
-  private java.math.BigDecimal latitude;
-  private java.math.BigDecimal longitude;
   private String referenceNumber;
-  private String debitConcept;
   private Integer originCode;
+  private String debitReason;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -55,40 +52,22 @@ public class DebitAccountRequest implements Serializable {
   public void setAmount(java.math.BigDecimal amount ){
     this.amount=amount;
   }
-  public java.math.BigDecimal getCommission(){
-    return this.commission;
-  }
-  public void setCommission(java.math.BigDecimal commission ){
-    this.commission=commission;
-  }
-  public java.math.BigDecimal getLatitude(){
-    return this.latitude;
-  }
-  public void setLatitude(java.math.BigDecimal latitude ){
-    this.latitude=latitude;
-  }
-  public java.math.BigDecimal getLongitude(){
-    return this.longitude;
-  }
-  public void setLongitude(java.math.BigDecimal longitude ){
-    this.longitude=longitude;
-  }
   public String getReferenceNumber(){
     return this.referenceNumber;
   }
   public void setReferenceNumber(String referenceNumber ){
     this.referenceNumber=referenceNumber;
   }
-  public String getDebitConcept(){
-    return this.debitConcept;
-  }
-  public void setDebitConcept(String debitConcept ){
-    this.debitConcept=debitConcept;
-  }
   public Integer getOriginCode(){
     return this.originCode;
   }
   public void setOriginCode(Integer originCode ){
     this.originCode=originCode;
+  }
+  public String getDebitReason(){
+    return this.debitReason;
+  }
+  public void setDebitReason(String debitReason ){
+    this.debitReason=debitReason;
   }
 }

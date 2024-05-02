@@ -1608,7 +1608,6 @@
 							orchestration-core-ib-transfer-spei-api,
 							orchestration-core-ib-query-get-movements-detail,
 							orchestration-core-batch-compensation,
-							orchestration-core-ib-get-transaction-limit-api,
 							orchestration-core-ib-get-statement-list-api,
 							orchestration-core-ib-get-transaction-limit-api,
 							orchestration-core-api-template,

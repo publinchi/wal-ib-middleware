@@ -1231,14 +1231,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());
 			
 			if(inRequestAuthorizeWithdrawalDock.getToken_data() != null) {
-			procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
-			procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getRequestor_id_token());
-			procedureRequestAS.addInputParam("@i_expiration_date", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getExpiration_date());
-			procedureRequestAS.addInputParam("@i_status", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getStatus());
+				procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
+				procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getRequestor_id_token());
+				procedureRequestAS.addInputParam("@i_expiration_date", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getExpiration_date());
+				procedureRequestAS.addInputParam("@i_status", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getStatus());	
 			}
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isCard_present()));
@@ -1283,7 +1283,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_card_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
 		    procedureRequestAS.addInputParam("@i_account_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
 		    procedureRequestAS.addInputParam("@i_is_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isOnly_supports_purchase()));
-
+		      
 			
 			
 			Gson gson = new Gson();
@@ -1791,7 +1791,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProduct_id());
-
+			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getAdditional_information());
 			procedureRequestAS.addInputParam("@i_creation_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getCreation_date());
 		    procedureRequestAS.addInputParam("@i_origin_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getOrigin_asset_code());
 		    procedureRequestAS.addInputParam("@i_dest_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getDest_asset_code());
@@ -3309,6 +3310,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.merchantDetailsInstance().setTransactionId(resultSetMapper.getString(24));
 								dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
 								dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
+								dto.commissionDetailsInstance().setReason(resultSetMapper.getString(34));
 
 								return dto;
 							}
@@ -6383,16 +6385,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       //create procedure
       ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_debit_operation_api");
       
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
+      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
       procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getExternalCustomerId()));
       procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getAccountNumber());
       procedureRequestAS.addInputParam("@i_amount",ICTSTypes.SQLMONEY,String.valueOf(inDebitAccountRequest.getAmount()));
-      procedureRequestAS.addInputParam("@i_commission",ICTSTypes.SQLMONEY,String.valueOf(inDebitAccountRequest.getCommission()));
-      procedureRequestAS.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i,String.valueOf(inDebitAccountRequest.getLatitude()));
-      procedureRequestAS.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i,String.valueOf(inDebitAccountRequest.getLongitude()));
       procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getReferenceNumber());
-      procedureRequestAS.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitConcept());
       procedureRequestAS.addInputParam("@i_originCode",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getOriginCode()));
+      procedureRequestAS.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitReason());
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -7172,7 +7171,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
 			procedureRequestAS.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, clientid);
 			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, uuid);
-		//	procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
+			procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAdditional_information());
 			Gson gson = new Gson();
