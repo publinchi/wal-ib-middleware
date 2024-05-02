@@ -685,7 +685,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			IResultSetData data0 = new ResultSetData();
 
 			for (IResultSetRow iResultSetRow : rowsTemp) {
-
+				
 				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
 				IResultSetRow rowDat = new ResultSetRow();
 
@@ -734,7 +734,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				if (sourceOwnerName != null) {
 					sourceOwnerName = sourceOwnerName.trim();
 				}
-
+			
 				String type_movement = columns[35].getValue();
 				String is_dock_idc = columns[36].getValue();
 				String type_auth = columns[37].getValue();

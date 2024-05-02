@@ -29,7 +29,6 @@ import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
 import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
-import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
 import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
@@ -1231,14 +1230,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeWithdrawalDock.getTokens_62().getPinpad());
 			
 			if(inRequestAuthorizeWithdrawalDock.getToken_data() != null) {
-			procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
-			procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getRequestor_id_token());
-			procedureRequestAS.addInputParam("@i_expiration_date", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getExpiration_date());
-			procedureRequestAS.addInputParam("@i_status", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeWithdrawalDock.getToken_data().getStatus());
+				procedureRequestAS.addInputParam("@i_token", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getToken());
+				procedureRequestAS.addInputParam("@i_requestor_id_token", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getRequestor_id_token());
+				procedureRequestAS.addInputParam("@i_expiration_date", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getExpiration_date());
+				procedureRequestAS.addInputParam("@i_status", ICTSTypes.SQLVARCHAR,
+						inRequestAuthorizeWithdrawalDock.getToken_data().getStatus());	
 			}
 			procedureRequestAS.addInputParam("@i_card_present", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isCard_present()));
@@ -1283,7 +1282,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_card_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
 		    procedureRequestAS.addInputParam("@i_account_status",ICTSTypes.SQLVARCHAR,inRequestAuthorizeWithdrawalDock.getAccount_status());
 		    procedureRequestAS.addInputParam("@i_is_only_supports_purchase",ICTSTypes.SQLBIT,String.valueOf(inRequestAuthorizeWithdrawalDock.getTransaction_indicators().isOnly_supports_purchase()));
-
+		      
 			
 			
 			Gson gson = new Gson();
@@ -1786,7 +1785,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeDepositDock.getCard_id());
 			procedureRequestAS.addInputParam("@i_product_id", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeDepositDock.getProduct_id());
-
+			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeDepositDock.getAdditional_information());
 			procedureRequestAS.addInputParam("@i_creation_date",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getCreation_date());
 		    procedureRequestAS.addInputParam("@i_origin_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getOrigin_asset_code());
 		    procedureRequestAS.addInputParam("@i_dest_asset_code",ICTSTypes.SQLVARCHAR,inRequestAuthorizeDepositDock.getExchange_rate().getDest_asset_code());
@@ -7148,7 +7148,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
 			procedureRequestAS.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, clientid);
 			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, uuid);
-		//	procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
+			procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAdditional_information());
 			Gson gson = new Gson();

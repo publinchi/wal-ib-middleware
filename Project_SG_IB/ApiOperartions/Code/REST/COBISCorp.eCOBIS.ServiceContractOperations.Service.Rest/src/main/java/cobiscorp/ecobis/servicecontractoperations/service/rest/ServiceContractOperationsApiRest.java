@@ -488,7 +488,11 @@ public class ServiceContractOperationsApiRest {
 		@Path("/apiOperations/authorizations/withdrawal")
 		@Consumes({ "application/json" })
 		@Produces({ "application/json" })
-		public Response  authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock ){
+		public Response authorizeWithdrawalDock(@Null @HeaderParam("legacy-id") String legacyid,
+				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
+				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
+				@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
+				RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
 			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
 			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
@@ -504,13 +508,26 @@ public class ServiceContractOperationsApiRest {
 				inRequestAuthorizeWithdrawalDock.getTokens_62().setTransaction(adtInf.get(4));
 				inRequestAuthorizeWithdrawalDock.getTokens_62().setPinpad(adtInf.get(5));
 			}
-		      if(!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()), new Data("processing.type", inRequestAuthorizeWithdrawalDock.getMti()), new Data("processing.origin_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()), new Data("processing.destiny_account_type", inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()), new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()), new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.card_entryInstance().getCode()), new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()), new Data("card_entry.mode", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()), new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
+			if (!validateMandatory(new Data("mti", inRequestAuthorizeWithdrawalDock.getMti()),
+					new Data("processing.type", inRequestAuthorizeWithdrawalDock.getMti()),
+					new Data("processing.origin_account_type",
+							inRequestAuthorizeWithdrawalDock.getProcessing().getOrigin_account_type()),
+					new Data("processing.destiny_account_type",
+							inRequestAuthorizeWithdrawalDock.getProcessing().getDestiny_account_type()),
+					new Data("processing.code", inRequestAuthorizeWithdrawalDock.getProcessing().getCode()),
+					new Data("card_entry.code", inRequestAuthorizeWithdrawalDock.card_entryInstance().getCode()),
+					new Data("card_entry.pin", inRequestAuthorizeWithdrawalDock.getCard_entry().getPin()),
+					new Data("card_entry.mode", inRequestAuthorizeWithdrawalDock.getCard_entry().getMode()),
+					new Data("establishment", inRequestAuthorizeWithdrawalDock.getEstablishment()),
+					new Data("card_id", inRequestAuthorizeWithdrawalDock.getCard_id()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
-		        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
 			}
 
 			try {
-		      outResponseAuthorizeWithdrawalDock=iServiceContractOperationsApiService.authorizeWithdrawalDock(legacyid,clientid,uuid,xapigwapiid, inRequestAuthorizeWithdrawalDock );
+				outResponseAuthorizeWithdrawalDock = iServiceContractOperationsApiService.authorizeWithdrawalDock(
+						legacyid, clientid, uuid, xapigwapiid, inRequestAuthorizeWithdrawalDock);
 			} catch (CTSRestException e) {
 				LOGGER.logError("CTSRestException", e);
 				if ("404".equals(e.getMessage())) {
@@ -627,7 +644,18 @@ public class ServiceContractOperationsApiRest {
 			inRequestAuthorizeDepositDock.getTokens_62().setTransaction(adtInf.get(4));
 			inRequestAuthorizeDepositDock.getTokens_62().setPinpad(adtInf.get(5));
 		}
-	      if(!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()), new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()), new Data("processing.origin_account_type", inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()), new Data("processing.destiny_account_type", inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()), new Data("processing.code", inRequestAuthorizeDepositDock.getProcessing().getCode()), new Data("card_entry.code", inRequestAuthorizeDepositDock.getCard_entry().getCode()), new Data("card_entry.pin", inRequestAuthorizeDepositDock.getCard_entry().getPin()), new Data("card_entry.mode", inRequestAuthorizeDepositDock.getCard_entry().getMode()), new Data("establishment", inRequestAuthorizeDepositDock.getEstablishment()), new Data("retrieval_reference_number", inRequestAuthorizeDepositDock.getRetrieval_reference_number()))) {
+		if (!validateMandatory(new Data("mti", inRequestAuthorizeDepositDock.getMti()),
+				new Data("processing.type", inRequestAuthorizeDepositDock.getProcessing().getType()),
+				new Data("processing.origin_account_type",
+						inRequestAuthorizeDepositDock.getProcessing().getOrigin_account_type()),
+				new Data("processing.destiny_account_type",
+						inRequestAuthorizeDepositDock.getProcessing().getDestiny_account_type()),
+				new Data("processing.code", inRequestAuthorizeDepositDock.getProcessing().getCode()),
+				new Data("card_entry.code", inRequestAuthorizeDepositDock.getCard_entry().getCode()),
+				new Data("card_entry.pin", inRequestAuthorizeDepositDock.getCard_entry().getPin()),
+				new Data("card_entry.mode", inRequestAuthorizeDepositDock.getCard_entry().getMode()),
+				new Data("establishment", inRequestAuthorizeDepositDock.getEstablishment()), 
+				new Data("retrieval_reference_number", inRequestAuthorizeDepositDock.getRetrieval_reference_number()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();
@@ -655,8 +683,7 @@ public class ServiceContractOperationsApiRest {
 		return Response.ok(outResponseAuthorizeDepositDock).build();
 
 	}
-	
-	
+
 	/**
 	 * Authorize Reversal
 	 */
@@ -835,7 +862,7 @@ public class ServiceContractOperationsApiRest {
 	/**
 	 * Service to delete a beneficiary.
 	 */
-/*	@POST
+	/*@POST
 	@Path("/apiOperations/onboarding/deleteBeneficiary")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
@@ -876,8 +903,8 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Ends service execution REST: deleteBeneficiary");
 		return Response.ok(outResponseDeleteBeneficiary).build();
 
-	}*/
-
+	}
+*/
 	/**
 	 * Encrypt Data
 	 */
