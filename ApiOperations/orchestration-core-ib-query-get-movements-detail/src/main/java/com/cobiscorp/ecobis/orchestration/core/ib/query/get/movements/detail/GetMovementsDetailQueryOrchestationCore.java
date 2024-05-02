@@ -535,7 +535,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			script = script + (respMov.getUm_correccion() != null ? "'" + respMov.getUm_correccion() + "'" : "null") + ",";
 			script = script + (respMov.getUm_sec_correccion() != null ? respMov.getUm_sec_correccion() : "null") + ",";
 			script = script + "null, null, null, null, null, null,  null, null, null, null,";
-			script = script + "null, null, null, null, null, null,  null, null, null, null, null, null, null)\r\n";
+			script = script + "null, null, null, null, null, null,  null, null, null, null, null, null, null, null)\r\n";
 		}
 
 		return script;
@@ -743,6 +743,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				//String referenciaSpei = columns[22].getValue();
 				String status_spei = columns[40].getValue();
 				String um_correccion = columns[41].getValue();
+				String location_id_atm = columns[27].getValue();
+				String name_location_atm = columns[45].getValue();
+				String transaction_id_atm = columns[28].getValue();
+				String bank_branch_code = columns[39].getValue();
+				String establisment_name_store = columns[31].getValue();
+				String transaction_id_store = columns[32].getValue();
 
 				if (type_movement.equals("SPEI") || (um_correccion.equals("S") && type_movement.equals("P2P"))) {
 
@@ -849,11 +855,25 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						movementType = type_auth;
 					}	
 					
-				} else if (type_movement.equals("COMMISSION")){
-					movementType = "COMMISSION";
+					if (movementType.equals("PURCHASE_AT_STORE") || movementType.equals("PURCHASE_WITH_CASHBACK")) {
+						 
+						establisment_name_store = name_location_atm;
+						transaction_id_store = location_id_atm;
+						
+						name_location_atm = null;
+						location_id_atm = null;
+						transaction_id_atm = null;
+						bank_branch_code = null;
+					}
+					
+
 				} else if(type_movement.equals("BONUS")){
 					movementType = "BONUS";
+				} else if (type_movement.equals("COMMISSION")){
+					movementType = "COMMISSION";
+
 				}
+				
 				  if (operationType.equals("C")) {
 					  
 					String copysourceOwnerName = sourceOwnerName;
@@ -919,19 +939,19 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(19, new ResultSetRowColumnData(false, columns[23].getValue()));
 
 				rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
-				rowDat.addRowData(21, new ResultSetRowColumnData(false, columns[27].getValue()));
-				rowDat.addRowData(22, new ResultSetRowColumnData(false, columns[28].getValue()));
+				rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+				rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
 
 				rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
 				rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
 
-				rowDat.addRowData(25, new ResultSetRowColumnData(false, columns[31].getValue()));
-				rowDat.addRowData(26, new ResultSetRowColumnData(false, columns[32].getValue()));
+				rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+				rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
 
 				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
 
-				rowDat.addRowData(29, new ResultSetRowColumnData(false, columns[39].getValue()));
+				rowDat.addRowData(29, new ResultSetRowColumnData(false, bank_branch_code));
 
 				rowDat.addRowData(30, new ResultSetRowColumnData(false, purchaseVal));
 				rowDat.addRowData(31, new ResultSetRowColumnData(false, withdrawalVal));
@@ -1035,4 +1055,3 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return pattern.matcher(strNum).matches();
 	}
 }
-
