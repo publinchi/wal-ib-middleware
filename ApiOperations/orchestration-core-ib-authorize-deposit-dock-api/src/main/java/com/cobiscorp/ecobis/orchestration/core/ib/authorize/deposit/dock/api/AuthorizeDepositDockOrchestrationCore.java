@@ -96,11 +96,9 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 						logger.logDebug("Code Error central" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
+						anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 						logger.logDebug("executeOfflineWithdrawalCobis " + anProcedureResponse.toString() );
 						anProcedureResponse = executeOfflineDepositCobis(anOriginalRequest, aBagSPJavaOrchestration);
-						if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-							anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-						}
 					}
 				}				
 			}
@@ -317,11 +315,16 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
+		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
+			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
+			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");
+		}
+		else{
+			request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+		}
+		request.removeParam("@i_json_req");
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, aRequest.readValueParam("@t_trn"));
-		
-		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null)
-			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 		
 		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("cta").toString());
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
@@ -380,7 +383,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en trnDataCentral");
+			logger.logInfo(CLASS_NAME + " Entrando en valTranDataCentralOff Deposit");
 		}
 
 		request.setSpName("cob_cuentas..sp_val_central_data_off");
@@ -425,11 +428,11 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		}
 				
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking trnValDataCentralOff: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking valTranDataCentralOff Deposit: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de trnValDataCentralOff");
+			logger.logInfo(CLASS_NAME + " Saliendo de valTranDataCentralOff Deposit");
 		}
 
 		return wProductsQueryResp;
@@ -460,7 +463,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 
 		request.addInputParam("@i_external_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_uuid"));
 		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
-		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, aResponse.readValueParam("@o_ssn_host"));
+		request.addInputParam("@i_transacion", ICTSTypes.SQLINT4, (String) aBagSPJavaOrchestration.get("@o_ssn_host"));
 		request.addInputParam("@i_reverse_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_uuid"));
 		request.addInputParam("@i_transaction_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
@@ -547,19 +550,19 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		anOriginalRequest.setSpName("cob_bvirtual..sp_bv_transaccion_off_api"); 
 
 		anOriginalRequest.addInputParam("@i_type_response", ICTSTypes.SYBCHAR, "M");
-		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
+		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SQLINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		anOriginalRequest.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@o_causal"));
+		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@o_causal"));
 		anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
-		anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SYBINT4, "8");
-		anOriginalRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("account"));
-		anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_source_value"));
+		anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SQLINT4, "8");
+		anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("cta").toString());
+		anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, aBagSPJavaOrchestration.get("amount").toString());
 		anOriginalRequest.addInputParam("@s_filial", ICTSTypes.SQLINT4, "1");		
 		anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("ente"));
 		anOriginalRequest.addInputParam("@s_cliente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("ente_bv"));		
-		anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, (String)aBagSPJavaOrchestration.get("0"));
-		anOriginalRequest.addInputParam("@i_prod", ICTSTypes.SQLINT2, (String)aBagSPJavaOrchestration.get("4"));
+		anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, "0");
+		anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, "4");
 		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");		
 		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
 		anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SYBCHAR, "F");
@@ -645,7 +648,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
 				executionStatus = "ERROR";
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -665,10 +669,10 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse successful...");
 				
 				executionStatus = "CORRECT";
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
 					registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				}
 				
 				IResultSetRow row = new ResultSetRow();
@@ -690,7 +694,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			executionStatus = "ERROR";
-			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
 			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
 			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";

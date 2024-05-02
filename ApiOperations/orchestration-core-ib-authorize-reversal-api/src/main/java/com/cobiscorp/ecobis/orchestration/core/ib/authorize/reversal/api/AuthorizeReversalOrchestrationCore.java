@@ -580,7 +580,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_ssn_host"));
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
@@ -640,8 +640,8 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		
 		if (codeReturn == 0) {
 			
-			if (anOriginalProcedureRes.readValueParam("@o_ssn_host") != null
-					&& !anOriginalProcedureRes.readValueParam("@o_ssn_host").equals("0")
+			if (aBagSPJavaOrchestration.containsKey("@o_ssn_host")
+					&& !aBagSPJavaOrchestration.get("@o_ssn_host").equals("0")
 					&& aBagSPJavaOrchestration.get("flowRty").equals(false))
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 

@@ -153,7 +153,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 
 		String s_amount = aRequest.readValueParam("@i_val_source_value");
 		String b_amount = aRequest.readValueParam("@i_val_billing_value");
-		//String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gmt");
+		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time_gmt");
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
@@ -220,7 +220,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_person_id"));
 		request.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
-		//request.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR, gtm_date_time);
+		request.addInputParam("@i_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR, gtm_date_time);
 		request.addInputParam("@i_date", ICTSTypes.SQLVARCHAR, date);
 		request.addInputParam("@i_time", ICTSTypes.SQLVARCHAR, time);
 		
@@ -452,7 +452,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		if (logger.isInfoEnabled()){
 			logger.logInfo(CLASS_NAME + "Ejecutando executeOfflinePurchaseCobis CORE COBIS" + anOrgRequest);
 			logger.logInfo("********** CAUSALES DE TRANSFERENCIA *************");
-			logger.logInfo("********** CAUSA ORIGEN --->>> " + aBagSPJavaOrchestration.get("@o_causal"));
+			logger.logInfo("********** CAUSA ORIGEN --->>> " + (String)aBagSPJavaOrchestration.get("@o_causal"));
 			
 			logger.logInfo("********** CLIENTE CORE --->>> " + aBagSPJavaOrchestration.get("ente"));
 
@@ -466,13 +466,13 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 
 		anOriginalRequest.setSpName("cob_bvirtual..sp_bv_transaccion_off_api"); 
 
-		anOriginalRequest.addInputParam("@i_type_response", ICTSTypes.SYBCHAR, "M");
-		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
+		anOriginalRequest.addInputParam("@i_type_response", ICTSTypes.SQLCHAR, "M");
+		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SQLINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		anOriginalRequest.addInputParam("@i_causa", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@o_causal"));
+		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("@o_causal"));
 		anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
-		anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SYBINT4, "8");
+		anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SQLINT4, "8");
 		anOriginalRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("account"));
 		anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_val_source_value"));
 		anOriginalRequest.addInputParam("@s_filial", ICTSTypes.SQLINT4, "1");		
@@ -480,11 +480,11 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		anOriginalRequest.addInputParam("@s_cliente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("ente_bv"));		
 		anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, "0");
 		anOriginalRequest.addInputParam("@i_prod", ICTSTypes.SQLINT2, "4");
-		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");		
-		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
-		anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SYBCHAR, "F");
-		anOriginalRequest.addInputParam("@i_graba_notif", ICTSTypes.SYBCHAR, "N");
-		anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SYBCHAR, "N");
+		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");		
+		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SQLCHAR, "N");
+		anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SQLCHAR, "F");
+		anOriginalRequest.addInputParam("@i_graba_notif", ICTSTypes.SQLCHAR, "N");
+		anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SQLCHAR, "N");
 		//anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
 		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
 
@@ -507,7 +507,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logInfo(CLASS_NAME + "Parametro @o_fecha_tran: " + response.readValueParam("@o_fecha_tran"));
 			response.readValueParam("@o_fecha_tran");
 			
-			logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+			logger.logInfo(CLASS_NAME + "Parametro PU @ssn: " + response.readValueFieldInHeader("ssn"));
 			if(response.readValueFieldInHeader("ssn")!=null){
 				aBagSPJavaOrchestration.put("@o_ssn_host", response.readValueFieldInHeader("ssn"));
 				aBagSPJavaOrchestration.put("authorizationCode", response.readValueParam("@o_ssn"));
@@ -659,7 +659,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
 				executionStatus = "ERROR";
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				IResultSetRow row = new ResultSetRow();
 				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
@@ -678,12 +679,12 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse successful...");
 				
 				executionStatus = "CORRECT";
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				notifyPurchaseDock(aRequest, aBagSPJavaOrchestration);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
 					registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				}
 				
 				IResultSetRow row = new ResultSetRow();
@@ -705,7 +706,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			executionStatus = "ERROR";
-			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
 			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
 			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
