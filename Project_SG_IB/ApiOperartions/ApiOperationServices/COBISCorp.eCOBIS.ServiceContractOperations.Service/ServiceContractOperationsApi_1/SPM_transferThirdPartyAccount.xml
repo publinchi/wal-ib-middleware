@@ -58,7 +58,7 @@
       </collection>
     </class>
   </collection>
-  <collection type="List" length="13" id="14" name="parameters">
+  <collection type="List" length="14" id="14" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="15" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="16" name="parameter">
         <field type="String" name="name" value="@i_ente" />
@@ -122,7 +122,7 @@
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
       <field type="String" name="dTOPropertyName" value="description" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
+      <field type="boolean" name="allowNull" value="true" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="25" index="5">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="26" name="parameter">
@@ -135,7 +135,7 @@
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
       <field type="String" name="dTOPropertyName" value="commission" />
       <field type="String" name="cTSDataType" value="SQLMONEY" />
-      <field type="boolean" name="allowNull" value="true" />
+      <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="27" index="6">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="28" name="parameter">
@@ -148,7 +148,7 @@
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
       <field type="String" name="dTOPropertyName" value="latitude" />
       <field type="String" name="cTSDataType" value="SQLMONEY" />
-      <field type="boolean" name="allowNull" value="true" />
+      <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="29" index="7">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="30" name="parameter">
@@ -161,7 +161,7 @@
       <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
       <field type="String" name="dTOPropertyName" value="longitude" />
       <field type="String" name="cTSDataType" value="SQLMONEY" />
-      <field type="boolean" name="allowNull" value="true" />
+      <field type="boolean" name="allowNull" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="31" index="8">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="32" name="parameter">
@@ -228,12 +228,25 @@
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="41" index="13">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="42" name="parameter">
+        <field type="String" name="name" value="@i_otp_code" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inRequestTransferThirdPartyAccount" />
+      <field type="String" name="dTOPropertyName" value="otpCode" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="true" />
+    </class>
   </collection>
-  <collection type="List" length="0" id="41" name="parametersOpenApi">
+  <collection type="List" length="0" id="43" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="18500114" />
-  <collection type="List" length="3" id="42" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="43" index="0">
+  <collection type="List" length="3" id="44" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="45" index="0">
       <field type="String" name="dTOName" value="RequestTransferThirdPartyAccount" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -243,7 +256,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="44" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="46" index="1">
       <field type="String" name="dTOName" value="ResponseTransferThirdPartyAccount" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -253,7 +266,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="45" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="47" index="2">
       <field type="String" name="dTOName" value="ResponseTransferThirdPartyAccount" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -264,7 +277,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="4" id="46" name="mappingProperties">
+  <collection type="Map" length="4" id="48" name="mappingProperties">
     <entry>
       <key type="String" value="dbms" />
       <value type="String" value="SQLCTS" />
