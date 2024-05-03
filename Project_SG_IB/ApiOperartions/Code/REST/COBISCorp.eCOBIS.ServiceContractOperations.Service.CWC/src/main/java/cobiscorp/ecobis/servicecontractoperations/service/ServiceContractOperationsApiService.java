@@ -5126,6 +5126,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				String.valueOf(inRequestTransferSpi.getLongitude()));
 		procedureRequestAS.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
 				inRequestTransferSpi.getReferenceNumber());
+		procedureRequestAS.addInputParam("@i_otp_code", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getOtpCode());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -5310,6 +5312,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
 		procedureRequestAS.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR,
 				inRequestTransferThirdPartyAccount.getDetail());
+		procedureRequestAS.addInputParam("@i_otp_code", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getOtpCode());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
