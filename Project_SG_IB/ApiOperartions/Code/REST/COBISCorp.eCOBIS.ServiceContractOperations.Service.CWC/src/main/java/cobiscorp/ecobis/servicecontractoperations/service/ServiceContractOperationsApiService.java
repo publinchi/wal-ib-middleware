@@ -29,6 +29,7 @@ import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
 import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
+import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
 import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
@@ -5103,6 +5104,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				String.valueOf(inRequestTransferSpi.getLongitude()));
 		procedureRequestAS.addInputParam("@i_reference_number", ICTSTypes.SQLVARCHAR,
 				inRequestTransferSpi.getReferenceNumber());
+		procedureRequestAS.addInputParam("@i_otp_code", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getOtpCode());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -5287,6 +5290,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				String.valueOf(inRequestTransferThirdPartyAccount.getLongitude()));
 		procedureRequestAS.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR,
 				inRequestTransferThirdPartyAccount.getDetail());
+		procedureRequestAS.addInputParam("@i_otp_code", ICTSTypes.SQLVARCHAR,
+				inRequestTransferThirdPartyAccount.getOtpCode());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
