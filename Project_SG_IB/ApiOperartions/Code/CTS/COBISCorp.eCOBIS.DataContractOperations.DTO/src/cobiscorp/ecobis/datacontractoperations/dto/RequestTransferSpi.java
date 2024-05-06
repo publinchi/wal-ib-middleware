@@ -42,6 +42,7 @@ public class RequestTransferSpi implements Serializable {
   private java.math.BigDecimal latitude;
   private java.math.BigDecimal longitude;
   private String referenceNumber;
+  private String otpCode;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -125,5 +126,11 @@ public class RequestTransferSpi implements Serializable {
   }
   public void setReferenceNumber(String referenceNumber ){
     this.referenceNumber=referenceNumber;
+  }
+  public String getOtpCode(){
+    return this.otpCode;
+  }
+  public void setOtpCode(String otpCode ){
+    this.otpCode=otpCode;
   }
 }
