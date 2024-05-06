@@ -49,6 +49,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -65,6 +67,9 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotifica
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api.dto.AccendoConnectionData;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api.util.Methods;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOfflineTemplate;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
+import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 
 /**
  * Register Account
@@ -113,6 +118,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
     protected static final String CHANNEL_REQUEST = "8";
+    
+    @Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
+	private IAdminTokenUser tokenService;
+
+	public void setTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = tokenService;
+	}
+
+	public void unsetTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = null;
+	}
 
     /**
      * Instance plugin to use services other core banking
@@ -268,6 +284,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String bankName = aRequest.readValueParam("@i_bank_name");
         String destinyOwnerName = aRequest.readValueParam("@i_destination_account_owner_name");
         String referenceNumber = aRequest.readValueParam("@i_reference_number");
+        String otpCode = aRequest.readValueParam("@i_otp_code");
+        String otpReturnCode = null;
         
         if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
             xRequestId = "E";
@@ -311,7 +329,31 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             referenceNumber = "L";
         }
         
-
+        if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
+			
+			String login = null;
+			
+			getLoginById(aRequest, aBagSPJavaOrchestration);
+			
+			login = aBagSPJavaOrchestration.get("o_login").toString();
+			
+			logger.logDebug("User login: "+login);
+			
+			if (!login.equals("X")) {
+			
+				DataTokenResponse  wResponseOtp = validateOTPCode(aRequest, aBagSPJavaOrchestration);
+					
+				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
+				
+				if(!wResponseOtp.getSuccess()) {
+					
+					otpReturnCode = wResponseOtp.getMessage().getCode();
+					
+					logger.logDebug("ValidateOTP return code: "+otpReturnCode);
+				}
+			}
+		}
+        
         request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
 
         request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -336,6 +378,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         request.addInputParam("@i_owner_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_owner_name"));
         request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detail"));
+        request.addInputParam("@i_otp_return_code", ICTSTypes.SQLVARCHAR, otpReturnCode);
         request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_commission"));
         request.addInputParam("@i_latitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitude"));
         request.addInputParam("@i_longitude", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
@@ -381,6 +424,66 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         return wProductsQueryResp;
     }
+    
+    private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getLoginById...");
+		}
+		
+		request.setSpName("cob_bvirtual..sp_bv_get_login_data");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+
+		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("login es: " +  wProductsQueryResp.readValueParam("@o_login"));
+		}
+		
+		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getLoginById: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getLoginById...");
+		}
+		
+		return wProductsQueryResp;
+	}
+    
+    private DataTokenResponse validateOTPCode(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) { 
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en validateOTPCode...");
+		}
+		
+		DataTokenRequest tokenRequest = new DataTokenRequest();
+		
+		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
+		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
+		tokenRequest.setChannel(8);
+		
+		DataTokenResponse tokenResponse = this.tokenService.validateTokenUser(tokenRequest);
+		
+		logger.logDebug("Token response: "+tokenResponse.getSuccess());
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de validateOTPCode...");
+		}
+		
+		return tokenResponse;
+	}
 
     private IProcedureResponse executeTransferApi(IProcedureRequest aRequest,
             Map<String, Object> aBagSPJavaOrchestration) {

@@ -115,19 +115,23 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 		if (login.containsKey("o_login")) {
 
 			DataTokenRequest tokenRequest = new DataTokenRequest();
+			
 			tokenRequest.setLogin(login.get("o_login"));
 			tokenRequest.setToken(anOriginalRequest.readValueParam("@i_token"));
-			tokenRequest.setChannel(CHANNEL_REQUEST);
+			tokenRequest.setChannel(8);
 
 			responseOtp = validateTransactionFactor(tokenRequest);
 
 			return processResponseOtp(responseOtp);
+			
 		} else {
 
 			message.setCode(String.valueOf(ConstantsMessageResponse.MSG40020.getIdMessage()));
 			message.setMessage(ConstantsMessageResponse.MSG40020.getDescriptionMessage());
+			
 			responseOtp.setMessage(message);
 			responseOtp.setSuccess(true);
+			
 			return processResponseOtp(responseOtp);
 		}
 
@@ -152,6 +156,7 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+		
 		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_mail_ente", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_num_phone", ICTSTypes.SQLVARCHAR, "X");
@@ -168,6 +173,7 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 		}
 
 		logger.logDebug("readValueParam @o_login: " + wProductsQueryResp.readValueParam("@o_login"));
+		
 		login = wProductsQueryResp.readValueParam("@o_login");
 		numPhone = wProductsQueryResp.readValueParam("@o_num_phone");
 		mail = wProductsQueryResp.readValueParam("@o_mail_ente");
@@ -176,12 +182,15 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 		if (!login.equals("X")) {
 			responseLogin.put("o_login", login);
 		}
+		
 		if (!numPhone.equals("X")) {
 			responseLogin.put("o_num_phone", numPhone);
 		}
+		
 		if (!mail.equals("X")) {
 			responseLogin.put("o_mail", mail);
 		}
+		
 		if (!ente.equals("X")) {
 			responseLogin.put("o_ente", ente);
 		}
@@ -199,26 +208,34 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 	public TransactionFactorResponse validateTransactionFactor(DataTokenRequest tokenRequest) {
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("API generateTransactionFactor INICIA: ");
+			logger.logDebug("API validateTransactionFactor INICIA: ");
 		}
 
-		tokenRequest.setChannel(8);
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Ejecucion de generateTokenUser INICIA: ");
+			logger.logDebug("Ejecución de validateTokenUser INICIA: ");
 		}
+		
 		TransactionFactorResponse response = new TransactionFactorResponse();
 		DataTokenResponse tokenResponse = this.tokenService.validateTokenUser(tokenRequest);
 		
 		response.setSuccess(tokenResponse.getSuccess());
+		
 		if (tokenResponse.getSuccess()) {
+			
 			Message message = new Message();
+			
 			message.setCode("0");
 			message.setMessage("Success");
+			
 			response.setMessage(message);
+			
 		} else {
+			
 			Message message = new Message();
+			
 			message.setCode("50047");
 			message.setMessage("Error validating OTP");
+			
 			response.setMessage(message);
 		}
 		
@@ -228,6 +245,7 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 	public IProcedureResponse processResponseOtp(TransactionFactorResponse responseOtp) {
 
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug("Transform Procedure Response");
 
@@ -244,6 +262,7 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 		row.addRowData(1, new ResultSetRowColumnData(false, responseOtp.getSuccess().toString()));
 		row.addRowData(2, new ResultSetRowColumnData(false, responseOtp.getMessage().getCode()));
 		row.addRowData(3, new ResultSetRowColumnData(false, responseOtp.getMessage().getMessage()));
+		
 		data.addRow(row);
 
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
@@ -251,6 +270,7 @@ public class ValidateTransactionFactorOrchestrationCore extends SPJavaOrchestrat
 		wProcedureResponse.addResponseBlock(resultBlock);
 
 		wProcedureResponse.setReturnCode(Integer.parseInt(responseOtp.getMessage().getCode()));
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug("transformProcedureResponse Final -->" + wProcedureResponse.getProcedureResponseAsString());
 

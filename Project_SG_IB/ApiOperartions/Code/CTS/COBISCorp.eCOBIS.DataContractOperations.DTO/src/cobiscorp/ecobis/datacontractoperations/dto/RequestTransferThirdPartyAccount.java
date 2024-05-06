@@ -37,6 +37,7 @@ public class RequestTransferThirdPartyAccount implements Serializable {
   private java.math.BigDecimal commission;
   private java.math.BigDecimal latitude;
   private java.math.BigDecimal longitude;
+  private String otpCode;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -90,5 +91,11 @@ public class RequestTransferThirdPartyAccount implements Serializable {
   }
   public void setLongitude(java.math.BigDecimal longitude ){
     this.longitude=longitude;
+  }
+  public String getOtpCode(){
+    return this.otpCode;
+  }
+  public void setOtpCode(String otpCode ){
+    this.otpCode=otpCode;
   }
 }
