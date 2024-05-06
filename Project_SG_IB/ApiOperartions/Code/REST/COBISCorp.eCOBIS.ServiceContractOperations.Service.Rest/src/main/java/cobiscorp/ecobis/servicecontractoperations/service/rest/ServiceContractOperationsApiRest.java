@@ -2518,7 +2518,10 @@ public class ServiceContractOperationsApiRest {
 							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name()),
 					new Data("original_transaction_data.retrieval_reference_number", inRequestAuthorizeReversalDock
 							.getOriginal_transaction_data().getRetrieval_reference_number()),
-					new Data("additional_information", inRequestAuthorizeReversalDock.getAdditional_information()))) {
+					new Data("additional_information", inRequestAuthorizeReversalDock.getAdditional_information()),
+					new Data("exchange_rate.dest_asset_code", inRequestAuthorizeReversalDock.getExchange_rate().getDest_asset_code()),
+					new Data("exchange_rate.date_time_gmt", inRequestAuthorizeReversalDock.getExchange_rate().getDate_time_gmt()),
+					new Data("exchange_rate.final_billing_value", inRequestAuthorizeReversalDock.getExchange_rate().getFinal_billing_value()))) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
 				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 						.build();

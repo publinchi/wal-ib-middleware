@@ -302,6 +302,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		String cashier = aRequest.readValueParam("@i_cashier");
 		String transaction = aRequest.readValueParam("@i_transaction");
 		String pinpad = aRequest.readValueParam("@i_pinpad");
+	    String dest_asset_code = aRequest.readValueParam("@i_exchange_rate_dest_asset_code");
+		String date_time_gmt = aRequest.readValueParam("@i_exchange_rate_date_time_gmt");
+		String final_billing_value = aRequest.readValueParam("@i_exchange_rate_final_billing_value");
 		
 		
 		if (values_3 != null && !values_3.isEmpty() && !isNumeric(values_3)) {
@@ -377,7 +380,18 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		if (pinpad == null || pinpad.trim().isEmpty()) {
 			pinpad = "E";
 		}
+
+		if (dest_asset_code == null || dest_asset_code.trim().isEmpty()) {
+			dest_asset_code = "E";
+		}
+
+		if (date_time_gmt == null || date_time_gmt.trim().isEmpty()) {
+			date_time_gmt = "E";
+		}
 		
+		if (final_billing_value == null || final_billing_value.trim().isEmpty()) {
+			final_billing_value = "E";
+		}
 		
 		request.setSpName("cob_atm..sp_bv_valida_dock_reversal_api");
 
@@ -411,7 +425,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_values_billing_value", ICTSTypes.SQLMONEY, values_4);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
+		// request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
 		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
 		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
 		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
@@ -428,6 +442,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_client-id"));
 		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
 		request.addInputParam("@i_x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_x-apigw-api-id"));
+		request.addInputParam("@i_exchange_rate_dest_asset_code", ICTSTypes.SQLVARCHAR, dest_asset_code);
+		request.addInputParam("@i_exchange_rate_date_time_gmt", ICTSTypes.SQLVARCHAR, date_time_gmt);
+		request.addInputParam("@i_exchange_rate_final_billing_value", ICTSTypes.SQLVARCHAR, final_billing_value);
 		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
