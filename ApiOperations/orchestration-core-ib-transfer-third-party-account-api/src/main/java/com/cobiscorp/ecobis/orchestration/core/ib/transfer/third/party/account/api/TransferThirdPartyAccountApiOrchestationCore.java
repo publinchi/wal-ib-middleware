@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
@@ -42,6 +44,9 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.transfers.EncryptData;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
+import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 
 /**
  * Register Account
@@ -70,6 +75,17 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
 	protected static final String CHANNEL_REQUEST = "8";
+	
+	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
+	private IAdminTokenUser tokenService;
+
+	public void setTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = tokenService;
+	}
+
+	public void unsetTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = null;
+	}
 
 	/**
 	 * Read configuration of parent component
@@ -722,6 +738,8 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		String xChannel = aRequest.readValueParam("@x_channel");
 		String account = aRequest.readValueParam("@i_cta");
 		String destinyAccount = aRequest.readValueParam("@i_cta_des");
+		String otpCode = aRequest.readValueParam("@i_otp_code");
+		String otpReturnCode = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -746,6 +764,31 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		if (destinyAccount.equals("null") || destinyAccount.trim().isEmpty()) {
 			destinyAccount = "E";
 		}
+		
+		if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
+			
+			String login = null;
+			
+			getLoginById(aRequest, aBagSPJavaOrchestration);
+			
+			login = aBagSPJavaOrchestration.get("o_login").toString();
+			
+			logger.logDebug("User login: "+login);
+			
+			if (!login.equals("X")) {
+			
+				DataTokenResponse  wResponseOtp = validateOTPCode(aRequest, aBagSPJavaOrchestration);
+					
+				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
+				
+				if(!wResponseOtp.getSuccess()) {
+					
+					otpReturnCode = wResponseOtp.getMessage().getCode();
+					
+					logger.logDebug("ValidateOTP return code: "+otpReturnCode);
+				}
+			}
+		}
 
 		request.setSpName("cob_bvirtual..sp_get_data_account_api");
 
@@ -765,6 +808,7 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		request.addInputParam("@i_val", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
 		request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_concepto"));
 		request.addInputParam("@i_detalle", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_detalle"));
+		request.addInputParam("@i_otp_return_code", ICTSTypes.SQLVARCHAR, otpReturnCode);
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_comision"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
@@ -815,14 +859,74 @@ private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq
 		aBagSPJavaOrchestration.put("o_seq_limite_in", wProductsQueryResp.readValueParam("@o_seq_limite_in"));
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking getDataAccountReq DCO : " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking  DCO : " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getDataAccountReq");
 		}
 
 		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getLoginById...");
+		}
+		
+		request.setSpName("cob_bvirtual..sp_bv_get_login_data");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_external_customer_id", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+
+		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("login es: " +  wProductsQueryResp.readValueParam("@o_login"));
+		}
+		
+		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getLoginById: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getLoginById...");
+		}
+		
+		return wProductsQueryResp;
+	}
+	
+	private DataTokenResponse validateOTPCode(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) { 
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en validateOTPCode...");
+		}
+		
+		DataTokenRequest tokenRequest = new DataTokenRequest();
+		
+		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
+		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
+		tokenRequest.setChannel(8);
+		
+		DataTokenResponse tokenResponse = this.tokenService.validateTokenUser(tokenRequest);
+		
+		logger.logDebug("Token response: "+tokenResponse.getSuccess());
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de validateOTPCode...");
+		}
+		
+		return tokenResponse;
 	}
 
 	@Override
