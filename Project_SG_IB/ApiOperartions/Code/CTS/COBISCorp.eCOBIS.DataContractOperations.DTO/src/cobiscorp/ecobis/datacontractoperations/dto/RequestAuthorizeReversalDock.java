@@ -65,6 +65,7 @@ public class RequestAuthorizeReversalDock implements Serializable {
   private Reversal_funds_transfer funds_transfer;
   private Reversal_transaction_indicators transaction_indicators;
   private Reversal_original_transaction_data original_transaction_data;
+  private String additional_information;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -340,5 +341,11 @@ public class RequestAuthorizeReversalDock implements Serializable {
   }
   public void setOriginal_transaction_data(Reversal_original_transaction_data original_transaction_data ){
     this.original_transaction_data=original_transaction_data;
+  }
+  public String getAdditional_information(){
+    return this.additional_information;
+  }
+  public void setAdditional_information(String additional_information ){
+    this.additional_information=additional_information;
   }
 }

@@ -453,5 +453,53 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	
+	<!-- 18500155 ORQUESTACION TRANSACTION LIMIT API-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetTransactionLimit">
+		<conditions>
+		  <condition param="trn">
+			<value>18500155</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetTransactionLimitOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+
+	<!-- 18500085 DISPACHER-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo para orquestador sincrono transaccion 18500085">
+		<conditions>
+			<condition param="trn">
+				<value>18500085</value>
+			</condition>
+		</conditions>
+		<indicators>	
+			<indicator name="externalProvider" value="1" />
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=DispacherSpeiOrchestrationCore)"/>
+		</indicators>		
+		<mappings keepMode="1">
+		</mappings>
+	</config>
+	
+	<!-- 18500162 ORQUESTACION BENEFICIARIES OPERATIONS-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo BeneficiariesOperations">
+		<conditions>
+		  <condition param="trn">
+			<value>18500162</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=BeneficiariesOperationsOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 
 </csp-config>

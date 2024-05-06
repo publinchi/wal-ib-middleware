@@ -7,16 +7,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.ParseException;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
+import com.cobiscorp.cobis.csp.domains.ICSP;
+import com.cobiscorp.cobis.csp.services.IProvider;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
@@ -71,10 +80,10 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		anProcedureResponse = updaterCardStatus(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		if(anProcedureResponse.getReturnCode()==0){
+		//if(anProcedureResponse.getReturnCode()==0){
 			
-			anProcedureResponse = processResponseApi(anProcedureResponse,aBagSPJavaOrchestration);
-		}
+		anProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
+		//}
 		
 		return anProcedureResponse;
 		//return processResponseCardAppl(anProcedureResponse);
@@ -86,15 +95,87 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en updaterCardStatus: " );
 		}
+		
 		aBagSPJavaOrchestration.put("ente_mis", aRequest.readValueParam("@i_ente"));
-		aBagSPJavaOrchestration.put("account_number", aRequest.readValueParam("@i_account_number"));
 		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+		
 		String flag = "S";
+		
 		wAccountsResp = getDataCardDock(aRequest, aBagSPJavaOrchestration);
 
 		if(wAccountsResp.getResultSets().size()>1 && !wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			return wAccountsResp;
+		}
+		
+	 	String accreditation = aBagSPJavaOrchestration.get("o_accreditation").toString();
+	 	
+	 	if (logger.isDebugEnabled()) {
+			 logger.logDebug("accreditation_1: " + accreditation);
+			 logger.logDebug("o_type_card: " + aBagSPJavaOrchestration.get("o_type_card").toString());
+			 logger.logDebug("mode: " + aBagSPJavaOrchestration.get("mode").toString());
+			 logger.logDebug("o_incomm_card: " + aBagSPJavaOrchestration.get("o_incomm_card").toString());
+	 	}
+		
+		//REASIGNACIÓN Y CANCELACIÓN DE TARJETAS
+		if(aBagSPJavaOrchestration.get("o_type_card").toString().equals("PHYSICAL") && aBagSPJavaOrchestration.get("mode").toString().equals("N")) {
+			
+			//FLUJO INCOMM
+			if (aBagSPJavaOrchestration.get("o_incomm_card").toString().equals("Y")) {
+				
+				IProcedureResponse wAccountsRespIncomm = new ProcedureResponseAS();
+				
+				wAccountsRespIncomm = executeIncommConector(aRequest, aBagSPJavaOrchestration);
+			
+				if (logger.isDebugEnabled()) {
+					 logger.logDebug("Response Corebanking executeIncommConnector: " + wAccountsRespIncomm.getProcedureResponseAsString());
+					 logger.logDebug("wAccountsRespIncomm.toString(): " + wAccountsRespIncomm.toString());
+					 logger.logDebug("wAccountsRespIncomm.getResultSets(): " + wAccountsRespIncomm.getResultSets().toString());					 
+					 logger.logDebug("wAccountsRespIncomm.getReturnCode(): " + wAccountsRespIncomm.getReturnCode());
+					 
+					 logger.logDebug("aRequest.getProcedureRequestAsString(): " + aRequest.getProcedureRequestAsString());
+					 logger.logDebug("aRequest.toString(): " + aRequest.toString());
+					 
+					 logger.logDebug("aBagSPJavaOrchestration.toString(): " + aBagSPJavaOrchestration.toString());
+				}
+
+				registerLogIncommBd(aRequest, wAccountsRespIncomm, aBagSPJavaOrchestration);
+				 
+				switch (wAccountsRespIncomm.getReturnCode()) {				 
+					case 0:
+						if (logger.isDebugEnabled()) {
+							 logger.logDebug("Entrando en switch case = 0");
+					 	}
+						if (!validateActivationDate(aBagSPJavaOrchestration))	
+							accreditation = "N";						 
+						break;	
+					default:
+						if (logger.isDebugEnabled()) {
+							 logger.logDebug("Entrando en switch case != 0");
+					 	}
+						return wAccountsRespIncomm;
+				}
+			}
+			
+			if (logger.isDebugEnabled()) 
+				 logger.logDebug("accreditation_2: " + accreditation);
+			
+			if(aBagSPJavaOrchestration.get("o_assigned").toString().equals("Y")) {
+				
+				if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+					
+					cancelCardAtm(aRequest, aBagSPJavaOrchestration);
+					
+					notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
+					
+					IProcedureResponse wAccountsRespDock = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
+					
+					registerLogBd(wAccountsRespDock, aBagSPJavaOrchestration);
+				} 
+			}
+			
+			//REALIZAR SOLICITUD TEMPORAL
+			registerAtm(aRequest, aBagSPJavaOrchestration);
 		}
 		
 		//ACTIVAR TARJETA COBIS
@@ -135,7 +216,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 						}
 				}
 			}
-		}		
+		}
 		
 		logger.logInfo(
 				CLASS_NAME + " code resp card dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -164,6 +245,12 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 					return wAccountsRespInsert;
 				}
 		}
+		
+		if (logger.isDebugEnabled()) 
+			 logger.logDebug("accreditation_3: " + accreditation);
+		
+		if (accreditation.trim().equals("Y")) 
+			accountAccreditation(aRequest,  aBagSPJavaOrchestration);
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
@@ -173,20 +260,551 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wAccountsResp;
 	}
 	
+	public boolean validateActivationDate(Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en validateActivationDate");
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("@o_responseGetStatus: " + aBagSPJavaOrchestration.get("o_response_get_status").toString());
+		}
+				
+		try {
+			
+            // Parsear el JSON
+            JSONObject jsonObject = new JSONObject(aBagSPJavaOrchestration.get("o_response_get_status").toString());
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("jsonObject: " + jsonObject.toString());
+    		}
+
+            // Obtener el objeto "metaFields"
+            JSONObject productResp = jsonObject.getJSONObject("RetailTransactionTVResponse").getJSONObject("productResp");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("productResp: " + productResp.toString());
+    		}
+            
+            JSONObject metaFields = productResp.getJSONObject("inventoryRespInfo").getJSONObject("metaFields");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("metaFields: " + metaFields.toString());
+    		}
+
+            // Obtener el array "metafield"
+            JSONArray metafieldArray = metaFields.getJSONArray("metafield");
+            
+            if (logger.isDebugEnabled()) {
+    			logger.logDebug("metafieldArray: " + metafieldArray.toString());
+    		}
+            
+            String value = null;
+            
+            // Iterar sobre los elementos del array para encontrar el objeto deseado
+            for (int i = 0; i < metafieldArray.length(); i++) {            	
+                JSONObject metafield = metafieldArray.getJSONObject(i);
+                if (logger.isDebugEnabled()) {
+        			logger.logDebug("metafield: " + metafield.toString());
+        		}
+                
+                String name = metafield.getString("name");
+                
+                if (name.equals("ActivationDateTime")) {
+                	value = metafield.getString("value"); 
+                	break;
+                }
+            }
+            
+            if (logger.isDebugEnabled()) 
+            	logger.logDebug("value: " + value.toString());
+            
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            
+            Date activationDate = format.parse(value);
+            
+            if (logger.isDebugEnabled()) 
+            	logger.logDebug("activationDate: " + activationDate.toString());
+            
+            Calendar cal = Calendar.getInstance();
+            
+            cal.setTime(activationDate);
+            
+            int diasHabiles = 0;
+            
+            while (diasHabiles < 30) {
+            	cal.add(Calendar.DAY_OF_MONTH, 1);
+            	
+            	int diaSemana = cal.get(Calendar.DAY_OF_WEEK);
+                
+                if (!(diaSemana == Calendar.SATURDAY || diaSemana == Calendar.SUNDAY)) {
+                    diasHabiles++;
+                }
+            }
+            
+            Date fechaLimite = cal.getTime();
+            Date fechaActual = new Date();
+            
+            if (logger.isDebugEnabled()) {
+            	logger.logDebug("fechaLimite: " + fechaLimite.toString());
+            	logger.logDebug("fechaActual: " + fechaActual.toString());
+    		}
+
+            if (fechaLimite.after(fechaActual)) {
+            	
+                return true;
+             }
+           
+        } catch (JSONException  e) {
+        	if (logger.isDebugEnabled()) 
+            	logger.logDebug("JSONException: " + e.getMessage());        	
+            e.printStackTrace();
+            
+        } catch (ParseException e) {
+        	if (logger.isDebugEnabled()) 
+            	logger.logDebug("ParseException: " + e.getMessage());        	
+			e.printStackTrace();
+		}
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de validateActivationDate");
+		}
+		
+		return false;
+	}
+	
+	private void accountAccreditation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en accountAccreditation");
+		}
+
+		request.setSpName("cobis..sp_account_credit_operation_central_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
+		
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLINT2, "1");
+		
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
+		request.addInputParam("@i_amount", ICTSTypes.SQLMONEY, "50");
+	
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking accountAccreditation: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de accountAccreditation");
+		}
+	}
+	
+	private Integer registerAtm(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		Integer appNumber = 0;
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en registerAtm");
+		}
+		
+		getDataClient(aRequest, aBagSPJavaOrchestration);
+		
+		getAvailableCards(aRequest, aBagSPJavaOrchestration);
+
+		getQueryAgreementById(aRequest, aBagSPJavaOrchestration, 1, "MCC");
+		
+		appNumber = createHeader(aRequest, aBagSPJavaOrchestration);
+		
+		if (appNumber != 0) {
+			
+			assignDetail(aRequest, aBagSPJavaOrchestration, appNumber, "MCC", 1);
+
+			assignAccount(aRequest, aBagSPJavaOrchestration, appNumber, 1);
+		} 
+		
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de registerAtm");
+		}
+		
+		return appNumber;
+	}
+	
+	private IProcedureResponse getDataClient(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getDataClient");
+		}
+
+		request.setSpName("cobis..sp_get_data_client_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
+		
+		request.addOutputParam("@o_curp", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_full_name", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_birth_date", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_cod_document", ICTSTypes.SQLINT4, "0");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		aBagSPJavaOrchestration.put("o_curp", wProductsQueryResp.readValueParam("@o_curp"));
+		aBagSPJavaOrchestration.put("o_full_name", wProductsQueryResp.readValueParam("@o_full_name"));
+		aBagSPJavaOrchestration.put("o_birth_date", wProductsQueryResp.readValueParam("@o_birth_date"));
+		aBagSPJavaOrchestration.put("o_cod_document", wProductsQueryResp.readValueParam("@o_cod_document"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getDataClient");
+		}
+
+		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse getAvailableCards(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getAvailableCards");
+		}
+
+		request.setSpName("cob_atm..sp_atm_tipo_tarjeta");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_banco", ICTSTypes.SQLINT4, "1");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "H");
+		request.addInputParam("@i_tipo_tarjeta", ICTSTypes.SQLVARCHAR, "MCC");
+		request.addInputParam("@i_soporta_tj", ICTSTypes.SQLINT4, "2");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLCHAR, "V");
+		
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16006");
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getAvailableCards");
+		}
+		
+		if(!wProductsQueryResp.getResultSetRowColumnData(1, 1, 40).isNull())
+		{	
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 41) daily_transfer" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 41).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 42) month_transfer" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 42).getValue());
+			
+			aBagSPJavaOrchestration.put("daily_transfer", wProductsQueryResp.getResultSetRowColumnData(1, 1, 41).getValue());
+			aBagSPJavaOrchestration.put("month_transfer", wProductsQueryResp.getResultSetRowColumnData(1, 1, 42).getValue());
+		}
+		
+		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse getQueryAgreementById(IProcedureRequest aRequest,
+			Map<String, Object> aBagSPJavaOrchestration, int agreementId, String cardType) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getQueryAgreementById");
+		}
+
+		request.setSpName("cob_atm..sp_atm_convenio_servicio");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_tipo_tarjeta", ICTSTypes.SQLVARCHAR, "MCC");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@i_convenio", ICTSTypes.SQLINT4, "1");
+		
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16050");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLINT4, "1");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getQueryAgreementById");
+		}
+
+		if (!wProductsQueryResp.getResultSetRowColumnData(1, 1, 1).isNull()) {
+			
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 1) period" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 1).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 7) quota_type" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 7).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 3) atm_limit: " + wProductsQueryResp.getResultSetRowColumnData(1, 1, 3).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 5) post_limit: " + wProductsQueryResp.getResultSetRowColumnData(1, 1, 5).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 4) atm_int_limit" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 4).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 6) post_int_limit" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 6).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 2) transfer_limit" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 2).getValue());
+			
+			aBagSPJavaOrchestration.put("period", wProductsQueryResp.getResultSetRowColumnData(1, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("quota_type", wProductsQueryResp.getResultSetRowColumnData(1, 1, 7).getValue());
+			aBagSPJavaOrchestration.put("atm_limit", wProductsQueryResp.getResultSetRowColumnData(1, 1, 3).getValue());
+			aBagSPJavaOrchestration.put("post_limit", wProductsQueryResp.getResultSetRowColumnData(1, 1, 5).getValue());
+			aBagSPJavaOrchestration.put("atm_int_limit", wProductsQueryResp.getResultSetRowColumnData(1, 1, 4).getValue());
+			aBagSPJavaOrchestration.put("post_int_limit", wProductsQueryResp.getResultSetRowColumnData(1, 1, 6).getValue());
+			aBagSPJavaOrchestration.put("transfer_limit", wProductsQueryResp.getResultSetRowColumnData(1, 1, 2).getValue());
+		}
+
+		return wProductsQueryResp;
+	}
+	
+	private Integer createHeader(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		int resApplication;
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en createHeader");
+		}
+
+		request.setSpName("cob_atm..sp_atm_graba_sol_tmp");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_tipo_solicitud", ICTSTypes.SQLVARCHAR, "ETI");
+		request.addInputParam("@i_tarjeta_prn", ICTSTypes.SQLINT4, "0");
+		request.addInputParam("@i_cliente", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("ente_mis").toString());
+		request.addInputParam("@i_ofi_org", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@i_comentario", ICTSTypes.SQLVARCHAR, "CREADO DESDE API");
+		request.addInputParam("@i_periodo", ICTSTypes.SQLVARCHAR, "D");
+		request.addInputParam("@i_persona_retira", ICTSTypes.SQLVARCHAR, "PROPIETARIO");
+		request.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "C");
+		
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16558");
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		//request.addInputParam("@i_convenio", ICTSTypes.SQLVARCHAR, "0");
+		//request.addInputParam("@i_direccion_ent", ICTSTypes.SQLVARCHAR, "D");
+		
+		request.addOutputParam("@o_numero", ICTSTypes.SQLINT4, "0");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		aBagSPJavaOrchestration.put("o_numero_ap", wProductsQueryResp.readValueParam("@o_numero"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de createHeader");
+		}
+
+		resApplication = wProductsQueryResp.readValueParam("@o_numero")!=null ? Integer.valueOf(wProductsQueryResp.readValueParam("@o_numero")):0;
+		
+		return resApplication;
+	}
+	
+	private IProcedureResponse assignDetail(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, int appNumber, String cardType, int convenio) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en assignDetail");
+		}
+
+		request.setSpName("cob_atm..sp_atm_agrega_det");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_convenio", ICTSTypes.SQLINT4, String.valueOf(convenio));
+		request.addInputParam("@i_cupo_atm_i", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("atm_int_limit").toString());
+		request.addInputParam("@i_cupo_atm_n", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("atm_limit").toString());
+		request.addInputParam("@i_banco", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@i_tarjeta", ICTSTypes.SQLINT4, "0");
+		request.addInputParam("@i_nombre_tarjeta", ICTSTypes.SQLVARCHAR, "INNOMINADA"); //Personalizada??
+		request.addInputParam("@i_tipo_tarjeta", ICTSTypes.SQLVARCHAR, cardType);
+		request.addInputParam("@i_ced_ruc", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_curp").toString());
+		request.addInputParam("@i_tipo_costo", ICTSTypes.SQLVARCHAR, "CONC");
+		request.addInputParam("@i_trans_diarias", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("daily_transfer").toString());
+		request.addInputParam("@i_det_solicitud", ICTSTypes.SQLINT4, "1");
+		request.addInputParam("@i_seguro", ICTSTypes.SQLCHAR, "N");
+		request.addInputParam("@i_principal", ICTSTypes.SQLVARCHAR, "S");
+		request.addInputParam("@i_trans_mensuales", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("month_transfer").toString());
+		request.addInputParam("@i_nombre_cliente", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_full_name").toString());
+		request.addInputParam("@i_numero", ICTSTypes.SQLINT4, String.valueOf(appNumber));
+		request.addInputParam("@i_propietario", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("ente_mis").toString());
+		request.addInputParam("@i_cupo_periodo", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("period").toString());
+		request.addInputParam("@i_cupo_pos_i", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("post_int_limit").toString());
+		request.addInputParam("@i_cupo_pos_n", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("post_limit").toString());
+		request.addInputParam("@i_motivo", ICTSTypes.SQLVARCHAR, "ETI");
+		request.addInputParam("@i_nombre_corto", ICTSTypes.SQLVARCHAR, "WALMART"); //SALUDOBM
+		request.addInputParam("@i_cupo_trans", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("transfer_limit").toString());
+		request.addInputParam("@i_tipo_cliente", ICTSTypes.SQLCHAR, "P");
+		request.addInputParam("@i_tipo_cupo", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("quota_type").toString());
+
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16559");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de assignDetail");
+		}
+
+		return wProductsQueryResp;
+	}
+	
+	private IProcedureResponse assignAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, int appNumber, int convenio) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en assignAccount");
+		}
+
+		request.setSpName("cob_atm..sp_atm_agrega_cuenta");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
+		request.addInputParam("@i_det_solicitud", ICTSTypes.SQLINT4, "1");
+		request.addInputParam("@i_prod_banc", ICTSTypes.SQLINT4, "3");
+		request.addInputParam("@i_categoria", ICTSTypes.SQLCHAR, "C");
+		request.addInputParam("@i_prod_cobis", ICTSTypes.SQLINT4, "4");
+		request.addInputParam("@i_principal", ICTSTypes.SQLCHAR, "P");
+		request.addInputParam("@i_moneda", ICTSTypes.SQLINT2, "0");
+		request.addInputParam("@i_solicitud", ICTSTypes.SQLINT4, String.valueOf(appNumber));
+		request.addInputParam("@i_cupo_offline", ICTSTypes.SQLMONEY, getQueryExtractionLimit(aBagSPJavaOrchestration.get("period").toString(), Integer.parseInt(aBagSPJavaOrchestration.get("post_limit").toString()), "POS", "N").toString());
+		request.addInputParam("@i_cupo_online", ICTSTypes.SQLMONEY, getQueryExtractionLimit(aBagSPJavaOrchestration.get("period").toString(), Integer.parseInt(aBagSPJavaOrchestration.get("atm_limit").toString()), "ATM", "N").toString());
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "I");
+		request.addInputParam("@i_orden", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@i_periodo", ICTSTypes.SQLCHAR, aBagSPJavaOrchestration.get("period").toString());
+		request.addInputParam("@i_producto", ICTSTypes.SQLINT2, "4");
+		request.addInputParam("@i_cupo_transferencia", ICTSTypes.SQLMONEY, getQueryExtractionLimit(aBagSPJavaOrchestration.get("period").toString(), Integer.parseInt(aBagSPJavaOrchestration.get("transfer_limit").toString()), "TRN", "N").toString());
+
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16560");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de assignAccount");
+		}
+		
+		return wProductsQueryResp;
+	}
+	
+	private Double getQueryExtractionLimit(String period, int limiteId, String quotaType, String type) {
+
+		Double monto = null;
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getQueryExtractionLimit");
+		}
+
+		request.setSpName("cob_atm..sp_atm_limite_extraccion");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_codigo", ICTSTypes.SQLINT4, String.valueOf(limiteId));
+		request.addInputParam("@i_modo", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@i_oficina", ICTSTypes.SQLINT2, "1");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		request.addInputParam("@i_periodo", ICTSTypes.SQLVARCHAR, period);
+		request.addInputParam("@i_tipo_cupo", ICTSTypes.SQLVARCHAR, quotaType);
+		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, type);
+	
+		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
+		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0.0.0.0");
+		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, "");
+		request.addInputParam("@s_ofi", ICTSTypes.SQLINT2, "1");
+
+		request.addInputParam("@t_trn", ICTSTypes.SQLINT4, "16040");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getQueryExtractionLimit");
+		}
+		
+		if(!wProductsQueryResp.getResultSetRowColumnData(1, 1, 1).isNull())
+		{	
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 1) id" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 1).getValue());
+			logger.logInfo(CLASS_NAME + " Data(1, 1, 3) monto" + wProductsQueryResp.getResultSetRowColumnData(1, 1, 3).getValue());
+			monto = Double.parseDouble(wProductsQueryResp.getResultSetRowColumnData(1, 1, 3).getValue());
+		}
+		
+		return monto;
+	}
+	
 	private IProcedureResponse executeUpdateCard(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
+		
 		IProcedureResponse connectorCardResponse = null;
 		String idCardDock = null, status = null, reasonStatus = null, acccountNumber = null;
 		
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 		
-		idCardDock = aBagSPJavaOrchestration.containsKey("o_id_card_dock")? aBagSPJavaOrchestration.get("o_id_card_dock").toString():null;
-		status = aBagSPJavaOrchestration.containsKey("o_detail_status")? aBagSPJavaOrchestration.get("o_detail_status").toString():null;
-		reasonStatus = aBagSPJavaOrchestration.containsKey("o_det_reason_stat")? aBagSPJavaOrchestration.get("o_det_reason_stat").toString():"X";
+		if(aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+			
+			idCardDock = aBagSPJavaOrchestration.containsKey("o_assigned_card")? aBagSPJavaOrchestration.get("o_assigned_card").toString():null;
+			status = "CANCELED";
+			reasonStatus = "OWNER_REQUEST";
+			
+		} else {
+			
+			idCardDock = aBagSPJavaOrchestration.containsKey("o_id_card_dock")? aBagSPJavaOrchestration.get("o_id_card_dock").toString():null;
+			status = aBagSPJavaOrchestration.containsKey("o_detail_status")? aBagSPJavaOrchestration.get("o_detail_status").toString():null;
+			reasonStatus = aBagSPJavaOrchestration.containsKey("o_det_reason_stat")? aBagSPJavaOrchestration.get("o_det_reason_stat").toString():"X";
+		}
 		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeUpdateCard " + acccountNumber);
 		}
+		
 		try {
 			// PARAMETROS DE ENTRADA
 			anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("ente_mis").toString());
@@ -380,7 +998,132 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return connectorCardResponse;
 
 	}
+	
+	private IProcedureResponse executeIncommConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
+		
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		
+		IProcedureResponse connectorIncommCardResponse = new ProcedureResponseAS();
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en executeIncommConector");
+		}
+		
+		try {
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorIncomm)");
+			
+			anOriginalRequest.setSpName("cob_procesador..sp_con_incomm");
+			
+			anOriginalRequest.addFieldInHeader(IProvider.EXTERNAL_PROVIDER, ICOBISTS.HEADER_STRING_TYPE, "1");
+			anOriginalRequest.addFieldInHeader("channel", ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.ID_CHANNEL_SERVICE_INTEGRATION);
+			anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_STRING_TYPE, "18500160");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500160");
+			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CISConnectorIncomm)");
+			anOriginalRequest.addFieldInHeader("csp.skip.transformation", ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
+			anOriginalRequest.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
+			
+			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "transformAndSend");
+			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");			
+			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingTransformationProvider");
+			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500160");
+			
+			//PARÁMETROS DE ENTRADA
+			anOriginalRequest.addInputParam("@i_van", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_incomm_card_id").toString());	
+			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500160");
+			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500160");
 
+			logger.logDebug("incommCard--> request executeIncommConector app: " + anOriginalRequest.toString());
+			
+			// SE EJECUTA CONECTOR
+			connectorIncommCardResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Incomm--> connectorIncommResponse: " + connectorIncommCardResponse);
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_responseIncomm") != null) {
+				
+				aBagSPJavaOrchestration.put("o_response_incomm", connectorIncommCardResponse.readValueParam("@o_responseIncomm"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_response_incomm", "null");
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_requestGetStatus") != null) {
+				
+				aBagSPJavaOrchestration.put("o_request_get_status", connectorIncommCardResponse.readValueParam("@o_requestGetStatus"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_request_get_status", "null");
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_responseGetStatus") != null) {
+				
+				aBagSPJavaOrchestration.put("o_response_get_status", connectorIncommCardResponse.readValueParam("@o_responseGetStatus"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_response_get_status", "null");
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_requestRedeem") != null) {
+				
+				aBagSPJavaOrchestration.put("o_request_redeem", connectorIncommCardResponse.readValueParam("@o_requestRedeem"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_request_redeem", "null");
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_responseRedeem") != null) {
+				
+				aBagSPJavaOrchestration.put("o_response_redeem", connectorIncommCardResponse.readValueParam("@o_responseRedeem"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_response_redeem", "null");
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_requestCancel") != null) {
+				
+				aBagSPJavaOrchestration.put("o_request_cancel", connectorIncommCardResponse.readValueParam("@o_requestCancel"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_request_cancel", "null");
+			}
+			
+			if (connectorIncommCardResponse.readValueParam("@o_responseCancel") != null) {
+				
+				aBagSPJavaOrchestration.put("o_response_cancel", connectorIncommCardResponse.readValueParam("@o_responseCancel"));
+				
+			} else {
+				
+				aBagSPJavaOrchestration.put("o_response_cancel", "null");
+			}
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+			logger.logInfo(CLASS_NAME +" Error Catastrófico de executeIncommConector: "+e.getMessage());
+			
+			connectorIncommCardResponse.setReturnCode(500);
+			connectorIncommCardResponse.setText(e.getMessage());
+			
+		} finally {
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + "--> Saliendo de executeIncommConector");
+			}
+		}
+
+		return connectorIncommCardResponse;
+
+	}
+	
 	private IProcedureResponse getDataCardDock(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -409,6 +1152,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
 		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+		
+		request.addInputParam("@x_val", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_val")!=null?aRequest.readValueParam("@x_val"):null);
 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
@@ -428,6 +1173,13 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		request.addOutputParam("@o_id_person_dock", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_id_account_dock", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_id_card_atm", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_assigned_card", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_assigned_card_id", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_incomm_card_id", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_cancel", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_assigned", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_incomm_card", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_accreditation", ICTSTypes.SQLVARCHAR, "X");
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -441,6 +1193,14 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put("o_id_person_dock", wProductsQueryResp.readValueParam("@o_id_person_dock"));
 		aBagSPJavaOrchestration.put("o_id_account_dock", wProductsQueryResp.readValueParam("@o_id_account_dock"));
 		aBagSPJavaOrchestration.put("o_id_card_atm", wProductsQueryResp.readValueParam("@o_id_card_atm"));
+		aBagSPJavaOrchestration.put("account_number", wProductsQueryResp.readValueParam("@o_account"));
+		aBagSPJavaOrchestration.put("o_assigned_card", wProductsQueryResp.readValueParam("@o_assigned_card"));
+		aBagSPJavaOrchestration.put("o_assigned_card_id", wProductsQueryResp.readValueParam("@o_assigned_card_id"));
+		aBagSPJavaOrchestration.put("o_incomm_card_id", wProductsQueryResp.readValueParam("@o_incomm_card_id"));
+		aBagSPJavaOrchestration.put("o_cancel", wProductsQueryResp.readValueParam("@o_cancel"));
+		aBagSPJavaOrchestration.put("o_assigned", wProductsQueryResp.readValueParam("@o_assigned"));
+		aBagSPJavaOrchestration.put("o_incomm_card", wProductsQueryResp.readValueParam("@o_incomm_card"));
+		aBagSPJavaOrchestration.put("o_accreditation", wProductsQueryResp.readValueParam("@o_accreditation"));
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking getDataCardDock: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -515,11 +1275,22 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 	private IProcedureResponse cancelCardAtm(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
+		
 		Integer trn = 16507;
 		String reason = "SCL";
-
+		String card = null;
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en cancelCardAtm");
+		}
+		
+		if(aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+			
+			card = aBagSPJavaOrchestration.get("o_assigned_card_id").toString();
+			
+		} else {
+			
+			card = aBagSPJavaOrchestration.get("o_id_card_atm").toString();
 		}
 		
 		request.setSpName("cob_atm..sp_atm_elimina_tarj");
@@ -530,7 +1301,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 
 		request.addInputParam("@i_tipo_sol_org", ICTSTypes.SQLVARCHAR, "");
 		request.addInputParam("@i_banco", ICTSTypes.SQLINT4, "1");
-		request.addInputParam("@i_tarjeta", ICTSTypes.SQLINT4,aBagSPJavaOrchestration.get("o_id_card_atm").toString());
+		request.addInputParam("@i_tarjeta", ICTSTypes.SQLINT4, card);
 		request.addInputParam("@i_motivo", ICTSTypes.SQLVARCHAR, reason);
 		request.addInputParam("@i_observaciones", ICTSTypes.SQLVARCHAR, "Eliminacion Tarjeta API");
 		request.addInputParam("@i_proceso_val", ICTSTypes.SQLVARCHAR, "CAN");
@@ -557,6 +1328,49 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wProductsQueryResp;
 	}
 	
+	private void registerLogIncommBd(IProcedureRequest aRequest, IProcedureResponse reponseIncommCard, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en registerLogIncommBd");
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("aRequest: " + aRequest.toString());
+			logger.logDebug("aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
+		}
+
+		request.setSpName("cob_atm..sp_insert_data_dock_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_van", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_incomm_card_id").toString());
+		request.addInputParam("@i_res_incomm", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_response_incomm").toString());
+		request.addInputParam("@i_req_status", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_request_get_status").toString());
+		request.addInputParam("@i_res_status", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_response_get_status").toString());
+		request.addInputParam("@i_req_redeem", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_request_redeem").toString());
+		request.addInputParam("@i_res_redeem", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_response_redeem").toString());
+		request.addInputParam("@i_req_cancel", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_request_cancel").toString());
+		request.addInputParam("@i_res_cancel", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_response_cancel").toString());
+		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "ICL");
+		
+		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de registerLogIncommBd");
+		}
+	}
+	
 	private void registerLogBd(IProcedureResponse reponseCard, Map<String, Object> aBagSPJavaOrchestration) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -575,25 +1389,36 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String fechaACtual = fechaHoraActual.format(formato);
         String cardId = null;
+        
+        if(aBagSPJavaOrchestration.containsKey("o_type_card") ) {
+			if(!aBagSPJavaOrchestration.get("mode").toString().equals("X") ) {
+				if(aBagSPJavaOrchestration.get("o_type_card").toString().equals("VIRTUAL")) {
+					
+					cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
+					
+				} else {
+					
+					cardId = aBagSPJavaOrchestration.get("o_card_available").toString();
+					
+					if(aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+						
+						cardId = aBagSPJavaOrchestration.get("o_assigned_card").toString();
+						
+						aBagSPJavaOrchestration.put("o_cancel", "N");
+					}
+				}
+				
+			} else {
+				
+				cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
+			}
+		} 
 		 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaACtual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaACtual);
 		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "UCS");
-		
-		if(aBagSPJavaOrchestration.containsKey("o_type_card") ){
-			if(!aBagSPJavaOrchestration.get("mode").toString().equals("X") )
-			{
-				if(aBagSPJavaOrchestration.get("o_type_card").toString().equals("VIRTUAL"))
-					cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
-				else
-					cardId = aBagSPJavaOrchestration.get("o_card_available").toString();
-			}
-			else
-				cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
-		} 
-		
 		request.addInputParam("@i_tarjeta_id", ICTSTypes.SQLVARCHAR, cardId);
 		request.addInputParam("@i_request_td", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_requestUpdateCard"));
 		request.addInputParam("@i_estado_tarjeta", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_card_status"));
@@ -705,7 +1530,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		return wProcedureResponse;		
 	}
 	
-	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse processResponseApi(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logInfo("processResponseApi [INI] --->" );
 		
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
@@ -750,6 +1575,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
+				
+				notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
 				
 				IResultSetRow row = new ResultSetRow();
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
@@ -821,6 +1648,100 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		return wProcedureResponse;		
 	}
+	
+	private void notifyCardStatusUpdate(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en notifyCardStatusUpdate...");
+        }
+        
+        String tittle = null;
+        String cardId = anOriginalRequest.readValueParam("@i_card_id");
+        
+        if (anOriginalRequest.readValueParam("@i_mode").equals("N")) {
+        	
+        	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
+        		
+        		cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
+        		tittle = "Activación de tarjeta virtual realizada exitosamente";
+        		
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
+        		
+        		tittle = "Activación de tarjeta física realizada exitosamente";
+        		
+        		if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+        			
+        			tittle = "Cancelación de tarjeta física realizada exitosamente";
+        			cardId = aBagSPJavaOrchestration.get("o_assigned_card").toString();
+        		}
+        	}
+        	
+        } else {
+        	
+        	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
+        		
+        		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
+        			
+        			tittle = "Desbloqueo de tarjeta virtual realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
+        			
+        			tittle = "Bloqueo de tarjeta virtual realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
+        			
+        			tittle = "Cancelación de tarjeta virtual realizada exitosamente";
+        		}
+        		
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
+        		
+        		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
+        			
+        			tittle = "Desbloqueo de tarjeta física realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
+        			
+        			tittle = "Bloqueo de tarjeta física realizado exitosamente";
+        			
+        		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
+        			
+        			tittle = "Cancelación de tarjeta física realizada exitosamente";
+        		}
+        	}
+        } 
+        
+        request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_LOCAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+        
+        request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+        
+        request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, tittle);
+        request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N85");
+        request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+        request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
+        request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+        request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+        request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+        request.addInputParam("@i_aux2", ICTSTypes.SQLVARCHAR, cardId);
+        request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente_mis").toString());
+        request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
+        
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+        
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Saliendo de notifyCardStatusUpdate...");
+        }
+    }
 	
 	private IProcedureResponse registerAtmCobis(Map<String, Object> aBagSPJavaOrchestration) {
 

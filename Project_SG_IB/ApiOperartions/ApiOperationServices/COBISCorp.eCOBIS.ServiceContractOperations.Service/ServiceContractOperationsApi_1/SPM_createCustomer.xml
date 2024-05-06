@@ -8,7 +8,7 @@
   <field type="String" name="procedureName" value="cobis..sp_api_create_customer" />
   <collection type="List" length="0" id="3" name="queries">
   </collection>
-  <collection type="List" length="64" id="4" name="parameters">
+  <collection type="List" length="67" id="4" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="5" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="6" name="parameter">
         <field type="String" name="name" value="@i_activity_code" />
@@ -816,12 +816,51 @@
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="128" index="64">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="129" name="parameter">
+        <field type="String" name="name" value="@i_deviceFingerprint" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
+      <field type="String" name="dTOPropertyName" value="deviceFingerprint" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="true" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="130" index="65">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="131" name="parameter">
+        <field type="String" name="name" value="@i_otpValidatedDate" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
+      <field type="String" name="dTOPropertyName" value="otpValidatedDate" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="true" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="132" index="66">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="133" name="parameter">
+        <field type="String" name="name" value="@i_otpValidated" />
+        <field type="String" name="dataType" value="bit" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inCreateCustomerRequest" />
+      <field type="String" name="dTOPropertyName" value="otpValidated" />
+      <field type="String" name="cTSDataType" value="SQLBIT" />
+      <field type="boolean" name="allowNull" value="true" />
+    </class>
   </collection>
-  <collection type="List" length="0" id="128" name="parametersOpenApi">
+  <collection type="List" length="0" id="134" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="18500094" />
-  <collection type="List" length="3" id="129" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="130" index="0">
+  <collection type="List" length="3" id="135" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="136" index="0">
       <field type="String" name="dTOName" value="CreateCustomerRequest" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -831,7 +870,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="131" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="137" index="1">
       <field type="String" name="dTOName" value="CreateCustomerResponse" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -841,7 +880,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="132" index="2">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="138" index="2">
       <field type="String" name="dTOName" value="CreateCustomerResponse" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -852,7 +891,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="2" id="133" name="mappingProperties">
+  <collection type="Map" length="2" id="139" name="mappingProperties">
     <entry>
       <key type="String" value="Path" />
       <value type="String" value="apiOperations/customer/createCustomer" />

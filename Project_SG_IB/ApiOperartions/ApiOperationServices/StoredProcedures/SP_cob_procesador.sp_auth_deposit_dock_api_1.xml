@@ -69,12 +69,14 @@
     <parameter name="@i_is_international" dataType="bit" direction="in" />
     <parameter name="@i_card_id" dataType="varchar" direction="in" />
     <parameter name="@i_product_id" dataType="varchar" direction="in" />
-    <parameter name="@i_affiliation_number" dataType="decimal" direction="in" />
-    <parameter name="@i_store_number" dataType="decimal" direction="in" />
-    <parameter name="@i_pos_id" dataType="varchar" direction="in" />
-    <parameter name="@i_cashier" dataType="varchar" direction="in" />
-    <parameter name="@i_transaction" dataType="varchar" direction="in" />
-    <parameter name="@i_pinpad" dataType="varchar" direction="in" />
+    <parameter name="@i_additional_information" dataType="varchar" direction="in" />
+    <parameter name="@i_creation_date" dataType="varchar" direction="in" />
+    <parameter name="@i_origin_asset_code" dataType="varchar" direction="in" />
+    <parameter name="@i_dest_asset_code" dataType="varchar" direction="in" />
+    <parameter name="@i_date_time_gmt" dataType="varchar" direction="in" />
+    <parameter name="@i_rate" dataType="varchar" direction="in" />
+    <parameter name="@i_spread_percent" dataType="varchar" direction="in" />
+    <parameter name="@i_final_billing_value" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

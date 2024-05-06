@@ -39,6 +39,7 @@ import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 import com.cobiscorp.mobile.model.Message;
 import com.cobiscorp.mobile.model.TransactionFactorResponse;
+import com.cobiscorp.cobisv.commons.exceptions.BusinessException;
 
 import Utils.ConstantsMessageResponse;
 
@@ -101,7 +102,6 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-
 		TransactionFactorResponse responseOtp = new TransactionFactorResponse();
 		Map<String, String> login = new HashMap<String, String>();
 		Message message = new Message();
@@ -120,14 +120,23 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 				responseOtp.setSuccess(false);
 				return processResponseOtp(responseOtp);
 			}
-
+			
 			DataTokenRequest tokenRequest = new DataTokenRequest();
 			tokenRequest.setLogin(login.get("o_login"));
 			tokenRequest.setClientId(Integer.parseInt(login.get("o_ente")));
-			tokenRequest.setChannel(CHANNEL_REQUEST);
-
-			responseOtp = generateTransactionFactor(tokenRequest);
-
+			tokenRequest.setChannel(8);
+			
+			String codigoOtp = anOriginalRequest.readValueParam("@i_otp");
+			logger.logInfo("LLEGA OTP" + codigoOtp);
+			if(codigoOtp != null && !codigoOtp.trim().isEmpty()){
+				logger.logInfo("ENTRA POR ENVIO OTP");
+				tokenRequest.setToken(anOriginalRequest.readValueParam("@i_otp"));
+				notifyTokenUser(tokenRequest);
+			}else{
+				logger.logInfo("ENTRA POR GENERAR Y ENVIO OTP");
+				generateTransactionFactor(tokenRequest);
+			}			
+		
 			message.setCode(String.valueOf(ConstantsMessageResponse.MSG000.getIdMessage()));
 			message.setMessage(ConstantsMessageResponse.MSG000.getDescriptionMessage());
 			responseOtp.setSuccess(true);
@@ -135,7 +144,6 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 
 			return processResponseOtp(responseOtp);
 		} else {
-
 			message.setCode(String.valueOf(ConstantsMessageResponse.MSG40020.getIdMessage()));
 			message.setMessage(ConstantsMessageResponse.MSG40020.getDescriptionMessage());
 			responseOtp.setMessage(message);
@@ -162,7 +170,12 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
 		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		if(aRequest.readValueParam("@i_card_id") != null){
+			request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		}
+		if(aRequest.readValueParam("@i_external_customer_id") != null){
+			request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		}
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
 		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_mail_ente", ICTSTypes.SQLVARCHAR, "X");
@@ -214,7 +227,7 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 			logger.logDebug("API generateTransactionFactor INICIA: ");
 		}
 
-		tokenRequest.setChannel(8);
+		//tokenRequest.setChannel(8);
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Ejecucion de generateTokenUser INICIA: ");
 		}
@@ -261,4 +274,42 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 
 		return wProcedureResponse;
 	}
+
+	private void notifyTokenUser(DataTokenRequest dataIn) {
+		try{
+		
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Empieza notifyTokenUser Method");
+			}
+
+			IProcedureRequest wProcedureRequest = new ProcedureRequestAS();
+			
+			wProcedureRequest.setSpName("cob_bvirtual..sp_se_generar_notif");
+			wProcedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
+
+			wProcedureRequest.addInputParam("@i_banco", ICTSTypes.SQLVARCHAR, dataIn.getBankName());
+			wProcedureRequest.addInputParam("@t_trn", ICTSTypes.SQLINT4, "1875901");
+			wProcedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "N"); //puede ser Q consulta, N notifica
+			wProcedureRequest.addInputParam("@i_canal", ICTSTypes.SQLINT4, "8");
+			wProcedureRequest.addInputParam("@i_correo_orig", ICTSTypes.SQLVARCHAR, dataIn.getOriginMail());
+			wProcedureRequest.addInputParam("@i_correo_dest", ICTSTypes.SQLVARCHAR, dataIn.getDestinationMail());
+			wProcedureRequest.addInputParam("@i_token", ICTSTypes.SQLVARCHAR, dataIn.getToken());
+			wProcedureRequest.addInputParam("@i_cliente", ICTSTypes.SQLINT4, (null != dataIn.getClientId() && !"".equals(dataIn.getClientId().toString()) ? dataIn.getClientId().toString() : "0"));
+			wProcedureRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, dataIn.getLogin());
+			wProcedureRequest.addInputParam("@i_bandera_sms", ICTSTypes.SQLVARCHAR, dataIn.getSmsFlag());
+			wProcedureRequest.addInputParam("@i_num_telf", ICTSTypes.SQLVARCHAR, dataIn.getClientPhoneNumber());
+
+			IProcedureResponse wProcedureResponseCentral = executeCoreBanking(wProcedureRequest);
+
+			logger.logDebug("<<<<<<<<<< IProcedureResponse notifyTokenUser >>>>>>>>>> " + wProcedureResponseCentral);
+
+		} catch (Exception e) {
+			logger.logError("notifyTokenUser.002:" + e.getMessage());
+			
+			throw new BusinessException(1887674, "An error occurred sending token");
+		} finally {
+			logger.logDebug("notifyTokenUser.002" + "notifyTokenUser");
+		}
+	}
+
 }

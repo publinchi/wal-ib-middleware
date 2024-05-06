@@ -1107,11 +1107,11 @@
 			<artifactId>orchestration-core-ib-accountcreditoperation</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-dispacher-spei</artifactId>
 			<version>4.6.1.0</version>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-transfer-third-party-account-api</artifactId>
@@ -1205,6 +1205,21 @@
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-batch-compensation</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-get-transaction-limit-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+	    	<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+	    	<artifactId>orchestration-core-api-template</artifactId>
+	    	<version>4.6.1.0</version>
+   		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-beneficiaries-operations-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
 	</dependencies>
@@ -1453,7 +1468,8 @@
 											orchestration-core-ib-authorization-template,
 											orchestration-core-ib-activate-card,
 											orchestration-ib-expenses-accounts-template,
-											orchestration-ib-expenses-accounts
+											orchestration-ib-expenses-accounts,
+											orchestration-core-ib-dispacher-spei
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
@@ -1591,7 +1607,11 @@
 							orchestration-core-ib-authorize-deposit-dock-api,
 							orchestration-core-ib-transfer-spei-api,
 							orchestration-core-ib-query-get-movements-detail,
-							orchestration-core-batch-compensation
+							orchestration-core-batch-compensation,
+							orchestration-core-ib-get-statement-list-api,
+							orchestration-core-ib-get-transaction-limit-api,
+							orchestration-core-api-template,
+							orchestration-core-ib-beneficiaries-operations-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
