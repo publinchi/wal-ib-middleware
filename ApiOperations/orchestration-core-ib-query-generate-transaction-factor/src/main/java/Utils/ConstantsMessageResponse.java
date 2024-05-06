@@ -5,6 +5,9 @@ public enum ConstantsMessageResponse {
 	MSG000("Success",0), 
 	MSG40020("Non-existent client ID",40020),
 	MSG40021("The client does not have main means of contact",40021),
+	MSG40022("You can only send one of the following fields at a time: externalCustomerId or cardId",40022),
+	MSG40023("Cobis OTP must be 4 digits long",40023),
+	MSG40024("You must send the field externalCustomerId or cardId",40024),
 	MSG204("The request has been completed successfully but your response has no content",204); 
 	
 	private String descriptionMessage;
