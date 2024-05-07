@@ -54,7 +54,6 @@ public class RequestAuthorizeReversalDock implements Serializable {
   private String terminal_code;
   private String establishment_code;
   private String retrieval_reference_number;
-  private String brand_response_code;
   private String advice_reason;
   private String advice_reason_code;
   private String pos_postal_code;
@@ -66,6 +65,8 @@ public class RequestAuthorizeReversalDock implements Serializable {
   private Reversal_transaction_indicators transaction_indicators;
   private Reversal_original_transaction_data original_transaction_data;
   private String additional_information;
+  private Reversal_exchange_rate exchange_rate;
+  private Reversal_installment_data installment_data;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -240,12 +241,6 @@ public class RequestAuthorizeReversalDock implements Serializable {
   public void setRetrieval_reference_number(String retrieval_reference_number ){
     this.retrieval_reference_number=retrieval_reference_number;
   }
-  public String getBrand_response_code(){
-    return this.brand_response_code;
-  }
-  public void setBrand_response_code(String brand_response_code ){
-    this.brand_response_code=brand_response_code;
-  }
   public String getAdvice_reason(){
     return this.advice_reason;
   }
@@ -347,5 +342,29 @@ public class RequestAuthorizeReversalDock implements Serializable {
   }
   public void setAdditional_information(String additional_information ){
     this.additional_information=additional_information;
+  }
+  public Reversal_exchange_rate exchange_rateInstance(){
+	if(this.exchange_rate==null){
+	this.exchange_rate=new Reversal_exchange_rate();
+	}
+	return this.exchange_rate;
+  }
+  public Reversal_exchange_rate getExchange_rate(){
+    return this.exchange_rate;
+  }
+  public void setExchange_rate(Reversal_exchange_rate exchange_rate ){
+    this.exchange_rate=exchange_rate;
+  }
+  public Reversal_installment_data installment_dataInstance(){
+	if(this.installment_data==null){
+	this.installment_data=new Reversal_installment_data();
+	}
+	return this.installment_data;
+  }
+  public Reversal_installment_data getInstallment_data(){
+    return this.installment_data;
+  }
+  public void setInstallment_data(Reversal_installment_data installment_data ){
+    this.installment_data=installment_data;
   }
 }

@@ -51,6 +51,7 @@ import com.cobiscorp.cobis.cts.rest.client.util.ICTSTypes;
 
 import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 import cobiscorp.ecobis.datacontractoperations.dto.*;
+import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 
 @Component
 @Service({ IServiceContractOperationsApiService.class })
@@ -7065,6 +7066,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversalDock.getValues().getCash_back_value());
 			procedureRequestAS.addInputParam("@i_values_credit__line_usage_fee", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getValues().getCredit_line_usage_fee());
+			procedureRequestAS.addInputParam("@i_values_replacement_amounts_billing_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getReplacement_amounts_billing_value());
+			procedureRequestAS.addInputParam("@i_values_replacement_amounts_source_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getReplacement_amounts_source_value());
+			procedureRequestAS.addInputParam("@i_values_replacement_amounts_settlement_value", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getValues().getReplacement_amounts_settlement_value());
 			procedureRequestAS.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getEstablishment());
 			procedureRequestAS.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR,
@@ -7073,8 +7080,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversalDock.getEstablishment_code());
 			procedureRequestAS.addInputParam("@i_retrieval_reference_number", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getRetrieval_reference_number());
-			procedureRequestAS.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getBrand_response_code());
 			procedureRequestAS.addInputParam("@i_advice_reason", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAdvice_reason());
 			procedureRequestAS.addInputParam("@i_advice_reason_code", ICTSTypes.SQLVARCHAR,
@@ -7154,6 +7159,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_transaction_indicators_is_automated_fuel_dispenser", ICTSTypes.SQLBIT,
 					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators()
 							.isIs_automated_fuel_dispenser()));
+			procedureRequestAS.addInputParam("@i_transaction_indicators_is_ecommerce", ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.getTransaction_indicators().isIs_ecommerce()));
 			procedureRequestAS.addInputParam("@i_original_transaction_data_transaction_uuid", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid());
 			procedureRequestAS.addInputParam("@i_original_transaction_data_nsu", ICTSTypes.SQLVARCHAR,
@@ -7178,6 +7185,26 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAdditional_information());
+			procedureRequestAS.addInputParam("@i_exchange_rate_origin_asset_code",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getOrigin_asset_code());
+			procedureRequestAS.addInputParam("@i_exchange_rate_dest_asset_code",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getDest_asset_code());
+			procedureRequestAS.addInputParam("@i_exchange_rate_date_time_gmt",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getDate_time_gmt());
+			procedureRequestAS.addInputParam("@i_exchange_rate_rate",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getRate());
+			procedureRequestAS.addInputParam("@i_exchange_rate_spread_percent",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getSpread_percent());
+			procedureRequestAS.addInputParam("@i_exchange_rate_final_billing_value",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getFinal_billing_value());
+			procedureRequestAS.addInputParam("@i_exchange_rate_replacement_amounts_final_billing_value",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getExchange_rate().getReplacement_amounts_final_billing_value());
+			procedureRequestAS.addInputParam("@i_installment_data_type_installments",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getInstallment_data().getType_installments());
+			procedureRequestAS.addInputParam("@i_installment_data_number_of_installments",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getInstallment_data().getNumber_of_installments());
+			procedureRequestAS.addInputParam("@i_installment_data_grace_period",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getInstallment_data().getGrace_period());
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);
 			procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReq);
@@ -7277,8 +7304,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_tercero_bv_api");
     
     procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500154");
-    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");    
-    procedureRequestAS.addInputParam("@i_codigo",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getRegisterAccountId()));
+    procedureRequestAS.addInputParam("@i_operacion",ICTSTypes.SQLCHAR,"D");
+    procedureRequestAS.addInputParam("@i_cuenta",ICTSTypes.SQLVARCHAR,inRequestDeleteContact.getAccountNumber());
+    procedureRequestAS.addInputParam("@i_cliente_mis",ICTSTypes.SQLINT4,String.valueOf(inRequestDeleteContact.getExternalCustomerId()));
 
     //execute procedure
     ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(),null ,procedureRequestAS);

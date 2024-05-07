@@ -48,6 +48,7 @@ public class Reversal_transaction_indicators implements Serializable {
   private Boolean is_international;
   private Boolean is_funds_transfer;
   private Boolean is_automated_fuel_dispenser;
+  private Boolean is_ecommerce;
   public Boolean isCard_present(){
     return this.card_present;
   }
@@ -167,5 +168,11 @@ public class Reversal_transaction_indicators implements Serializable {
   }
   public void setIs_automated_fuel_dispenser(Boolean is_automated_fuel_dispenser ){
     this.is_automated_fuel_dispenser=is_automated_fuel_dispenser;
+  }
+  public Boolean isIs_ecommerce(){
+    return this.is_ecommerce;
+  }
+  public void setIs_ecommerce(Boolean is_ecommerce ){
+    this.is_ecommerce=is_ecommerce;
   }
 }
