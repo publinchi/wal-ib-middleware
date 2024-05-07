@@ -38,6 +38,9 @@ public class Reversal_values implements Serializable {
   private String billing_conversion_rate;
   private String cash_back_value;
   private String credit_line_usage_fee;
+  private String replacement_amounts_billing_value;
+  private String replacement_amounts_source_value;
+  private String replacement_amounts_settlement_value;
   public String getUpdated_transaction_value(){
     return this.updated_transaction_value;
   }
@@ -97,5 +100,23 @@ public class Reversal_values implements Serializable {
   }
   public void setCredit_line_usage_fee(String credit_line_usage_fee ){
     this.credit_line_usage_fee=credit_line_usage_fee;
+  }
+  public String getReplacement_amounts_billing_value(){
+    return this.replacement_amounts_billing_value;
+  }
+  public void setReplacement_amounts_billing_value(String replacement_amounts_billing_value ){
+    this.replacement_amounts_billing_value=replacement_amounts_billing_value;
+  }
+  public String getReplacement_amounts_source_value(){
+    return this.replacement_amounts_source_value;
+  }
+  public void setReplacement_amounts_source_value(String replacement_amounts_source_value ){
+    this.replacement_amounts_source_value=replacement_amounts_source_value;
+  }
+  public String getReplacement_amounts_settlement_value(){
+    return this.replacement_amounts_settlement_value;
+  }
+  public void setReplacement_amounts_settlement_value(String replacement_amounts_settlement_value ){
+    this.replacement_amounts_settlement_value=replacement_amounts_settlement_value;
   }
 }
