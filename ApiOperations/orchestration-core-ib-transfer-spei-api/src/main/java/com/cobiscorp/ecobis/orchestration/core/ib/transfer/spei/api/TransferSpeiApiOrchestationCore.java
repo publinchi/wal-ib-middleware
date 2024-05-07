@@ -329,7 +329,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             referenceNumber = "L";
         }
         
-        if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
+        if (otpCode!=null && !otpCode.equals("null") && !otpCode.trim().isEmpty()) {
 			
 			String login = null;
 			
