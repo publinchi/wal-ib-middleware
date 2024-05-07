@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="38" id="2" name="properties">
+  <collection type="List" length="39" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="account_id" />
       <field type="String" name="type" value="string" />
@@ -277,16 +277,6 @@
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="32" index="26">
-      <field type="String" name="name" value="brand_response_code" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="true" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="33" index="27">
       <field type="String" name="name" value="advice_reason" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -296,7 +286,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="34" index="28">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="33" index="27">
       <field type="String" name="name" value="advice_reason_code" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -306,7 +296,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="35" index="29">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="34" index="28">
       <field type="String" name="name" value="pos_postal_code" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -316,7 +306,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="36" index="30">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="35" index="29">
       <field type="String" name="name" value="acquirer_country_code" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -326,10 +316,10 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="37" index="31">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="36" index="30">
       <field type="String" name="name" value="preauthorization" />
       <field type="String" name="type" value="Reversal_preauthorization" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="38" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="37" name="dtoType">
         <field type="String" name="name" value="Reversal_preauthorization" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -341,10 +331,10 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="39" index="32">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="38" index="31">
       <field type="String" name="name" value="tokens_62" />
       <field type="String" name="type" value="Tokens_62" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="40" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="39" name="dtoType">
         <field type="String" name="name" value="Tokens_62" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -356,10 +346,10 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="41" index="33">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="40" index="32">
       <field type="String" name="name" value="token_data" />
       <field type="String" name="type" value="Reversal_token_data" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="42" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="41" name="dtoType">
         <field type="String" name="name" value="Reversal_token_data" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -371,10 +361,10 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="43" index="34">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="42" index="33">
       <field type="String" name="name" value="funds_transfer" />
       <field type="String" name="type" value="Reversal_funds_transfer" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="44" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="43" name="dtoType">
         <field type="String" name="name" value="Reversal_funds_transfer" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -386,10 +376,10 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="45" index="35">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="44" index="34">
       <field type="String" name="name" value="transaction_indicators" />
       <field type="String" name="type" value="Reversal_transaction_indicators" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="46" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="45" name="dtoType">
         <field type="String" name="name" value="Reversal_transaction_indicators" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -401,10 +391,10 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="47" index="36">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="46" index="35">
       <field type="String" name="name" value="original_transaction_data" />
       <field type="String" name="type" value="Reversal_original_transaction_data" />
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="48" name="dtoType">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="47" name="dtoType">
         <field type="String" name="name" value="Reversal_original_transaction_data" />
         <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
         <field type="String" name="version" value="1" />
@@ -416,7 +406,7 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="49" index="37">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="48" index="36">
       <field type="String" name="name" value="additional_information" />
       <field type="String" name="type" value="string" />
       <field type="boolean" name="isCollection" value="false" />
@@ -426,9 +416,39 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="49" index="37">
+      <field type="String" name="name" value="exchange_rate" />
+      <field type="String" name="type" value="Reversal_exchange_rate" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="50" name="dtoType">
+        <field type="String" name="name" value="Reversal_exchange_rate" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="51" index="38">
+      <field type="String" name="name" value="installment_data" />
+      <field type="String" name="type" value="Reversal_installment_data" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="52" name="dtoType">
+        <field type="String" name="name" value="Reversal_installment_data" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="RequestAuthorizeReversalDock" />
-  <collection type="Map" length="0" id="50" name="templatesProperties">
+  <collection type="Map" length="0" id="53" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />

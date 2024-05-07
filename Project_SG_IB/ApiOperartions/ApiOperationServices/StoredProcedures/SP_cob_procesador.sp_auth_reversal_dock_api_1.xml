@@ -45,7 +45,6 @@
     <parameter name="@i_terminal_code" dataType="varchar" direction="in" />
     <parameter name="@i_establishment_code" dataType="varchar" direction="in" />
     <parameter name="@i_retrieval_reference_number" dataType="varchar" direction="in" />
-    <parameter name="@i_brand_response_code" dataType="varchar" direction="in" />
     <parameter name="@i_advice_reason" dataType="varchar" direction="in" />
     <parameter name="@i_advice_reason_code" dataType="varchar" direction="in" />
     <parameter name="@i_pos_postal_code" dataType="varchar" direction="in" />
@@ -91,6 +90,20 @@
     <parameter name="@i_uuid" dataType="varchar" direction="in" />
     <parameter name="@i_x-apigw-api-id" dataType="varchar" direction="in" />
     <parameter name="@i_additional_information" dataType="varchar" direction="in" />
+    <parameter name="@i_values_replacement_amounts_billing_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_replacement_amounts_source_value" dataType="varchar" direction="in" />
+    <parameter name="@i_values_replacement_amounts_settlement_value" dataType="varchar" direction="in" />
+    <parameter name="@i_transaction_indicators_is_ecommerce" dataType="bit" direction="in" />
+    <parameter name="@i_exchange_rate_origin_asset_code" dataType="varchar" direction="in" />
+    <parameter name="@i_exchange_rate_dest_asset_code" dataType="varchar" direction="in" />
+    <parameter name="@i_exchange_rate_date_time_gmt" dataType="varchar" direction="in" />
+    <parameter name="@i_exchange_rate_rate" dataType="varchar" direction="in" />
+    <parameter name="@i_exchange_rate_spread_percent" dataType="varchar" direction="in" />
+    <parameter name="@i_exchange_rate_final_billing_value" dataType="varchar" direction="in" />
+    <parameter name="@i_exchange_rate_replacement_amounts_final_billing_value" dataType="varchar" direction="in" />
+    <parameter name="@i_installment_data_type_installments" dataType="varchar" direction="in" />
+    <parameter name="@i_installment_data_number_of_installments" dataType="varchar" direction="in" />
+    <parameter name="@i_installment_data_grace_period" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
