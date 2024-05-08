@@ -472,6 +472,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("@o_ente_bv", wProductsQueryResp.readValueParam("@o_ente_bv"));
 		aBagSPJavaOrchestration.put("@o_mon", wProductsQueryResp.readValueParam("@o_mon"));
 		aBagSPJavaOrchestration.put("@o_prod", wProductsQueryResp.readValueParam("@o_prod"));
+		aBagSPJavaOrchestration.put("monto", aRequest.readValueParam("@i_values_source_value"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -686,7 +687,11 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("response", ICTSTypes.SQLVARCHAR, 1500));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("available_limit", ICTSTypes.SQLMONEY4, 25));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("approved_value", ICTSTypes.SQLMONEY4, 50));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("settlement_value", ICTSTypes.SQLMONEY4, 50));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("cardholder_billing_value", ICTSTypes.SQLVARCHAR, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("seq", ICTSTypes.SQLVARCHAR, 20));
 		
 		IResultSetHeader metaData2 = new ResultSetHeader();
@@ -709,8 +714,12 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 	
 				row.addRowData(1, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
 				row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
-				row.addRowData(3, new ResultSetRowColumnData(false, null));
+				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(4, new ResultSetRowColumnData(false, null));
+				row.addRowData(5, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(7, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(8, new ResultSetRowColumnData(false, null));
 				
 				data.addRow(row);
 				
@@ -728,10 +737,15 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "APPROVED"));
-				row.addRowData(2, new ResultSetRowColumnData(false, "0")); //aBagSPJavaOrchestration.get("@o_ssn_host")
-				row.addRowData(3, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
+				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
+				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("monto")));
+				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row.addRowData(7, new ResultSetRowColumnData(false, "0"));
 				if(aBagSPJavaOrchestration.containsKey("@o_seq_tran"))
-					row.addRowData(4, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
+					row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
+		
 				
 				data.addRow(row);	
 			}
