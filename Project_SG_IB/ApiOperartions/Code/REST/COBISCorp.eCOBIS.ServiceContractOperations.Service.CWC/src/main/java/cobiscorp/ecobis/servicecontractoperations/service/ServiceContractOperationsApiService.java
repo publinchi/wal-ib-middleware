@@ -7242,8 +7242,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 										Arrays.asList(resultSetMapper.getString(1).split(",")));
 								dto.setResponse((ArrayList) arrayList);
 								dto.setReason(resultSetMapper.getString(2));
-								dto.setAuthorization_code(resultSetMapper.getInteger(3));
-								dto.setSeq(resultSetMapper.getString(4));
+								dto.setAvailable_limit(resultSetMapper.getString(3));
+								dto.setAuthorization_code(resultSetMapper.getString(4));
+								dto.setApproved_value(resultSetMapper.getString(5));
+								dto.setSettlement_value(resultSetMapper.getString(6));
+								dto.setCardholder_billing_value(resultSetMapper.getString(7));
+
 								return dto;
 							}
 						}, false);

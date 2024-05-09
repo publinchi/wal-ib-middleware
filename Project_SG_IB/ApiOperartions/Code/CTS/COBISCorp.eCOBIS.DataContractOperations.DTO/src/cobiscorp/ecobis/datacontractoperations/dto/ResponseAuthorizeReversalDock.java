@@ -28,15 +28,19 @@ import java.util.HashMap;
 
 
 public class ResponseAuthorizeReversalDock implements Serializable {
-  private ArrayList response;
+  private String available_limit;
   private String reason;
-  private Integer authorization_code;
+  private String authorization_code;
+  private String approved_value;
+  private String settlement_value;
+  private String cardholder_billing_value;
+  private ArrayList response;
   private String seq;
-  public ArrayList getResponse(){
-    return this.response;
+  public String getAvailable_limit(){
+    return this.available_limit;
   }
-  public void setResponse(ArrayList response ){
-    this.response=response;
+  public void setAvailable_limit(String available_limit ){
+    this.available_limit=available_limit;
   }
   public String getReason(){
     return this.reason;
@@ -44,11 +48,35 @@ public class ResponseAuthorizeReversalDock implements Serializable {
   public void setReason(String reason ){
     this.reason=reason;
   }
-  public Integer getAuthorization_code(){
+  public String getAuthorization_code(){
     return this.authorization_code;
   }
-  public void setAuthorization_code(Integer authorization_code ){
+  public void setAuthorization_code(String authorization_code ){
     this.authorization_code=authorization_code;
+  }
+  public String getApproved_value(){
+    return this.approved_value;
+  }
+  public void setApproved_value(String approved_value ){
+    this.approved_value=approved_value;
+  }
+  public String getSettlement_value(){
+    return this.settlement_value;
+  }
+  public void setSettlement_value(String settlement_value ){
+    this.settlement_value=settlement_value;
+  }
+  public String getCardholder_billing_value(){
+    return this.cardholder_billing_value;
+  }
+  public void setCardholder_billing_value(String cardholder_billing_value ){
+    this.cardholder_billing_value=cardholder_billing_value;
+  }
+  public ArrayList getResponse(){
+    return this.response;
+  }
+  public void setResponse(ArrayList response ){
+    this.response=response;
   }
   public String getSeq(){
     return this.seq;
