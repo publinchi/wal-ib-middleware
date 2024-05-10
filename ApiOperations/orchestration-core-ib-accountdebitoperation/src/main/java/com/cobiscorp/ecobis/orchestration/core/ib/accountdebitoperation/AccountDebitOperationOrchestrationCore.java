@@ -263,7 +263,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
 		//reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_commission"));	 
 	    //eqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_debditConcept"));
-	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_originCode"));
+	    // reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_originCode"));
 	    
 	    reqTMPCentral.addOutputParam("@o_ente_bv", ICTSTypes.SQLINT4, "0");
 	    reqTMPCentral.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
@@ -411,6 +411,12 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
 		String debitReason = wQueryRequest.readValueParam("@i_debitReason");
 		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
+		int originCode = 0;
+		String originCodeStr = wQueryRequest.readValueParam("@i_originCode");
+
+		if (originCodeStr != null && !originCodeStr.isEmpty() && !originCodeStr.equals("null")) {
+			originCode = Integer.parseInt(originCodeStr);
+		}
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
@@ -445,6 +451,11 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			aBagSPJavaOrchestration.put("40124", "debit reason not found");
 			return;
 		}
+
+		if(!originCodeStr.equals("null") && originCode <= 0 || originCode > 3){
+			aBagSPJavaOrchestration.put("40125", "origin code not found");
+			return;
+		}
 			
 		logger.logDebug("Begin flow, queryAccountDebitOperation with id: " + idCustomer);
 		
@@ -465,7 +476,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_amount"));
 		//reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
 	    //reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
-	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
+	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, originCodeStr);
 		reqTMPCentral.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR, debitReason);
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
@@ -494,7 +505,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 				//reqTMPLocal.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, wQueryRequest.readValueParam("@i_longitude"));
 				reqTMPLocal.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_referenceNumber"));
 				//reqTMPLocal.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
-				reqTMPLocal.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
+				// reqTMPLocal.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 				
 				wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
 				if (logger.isInfoEnabled()) {

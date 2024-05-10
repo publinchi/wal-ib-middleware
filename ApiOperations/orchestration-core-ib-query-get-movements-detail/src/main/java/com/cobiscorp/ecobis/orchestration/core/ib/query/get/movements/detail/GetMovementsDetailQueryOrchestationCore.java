@@ -906,9 +906,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String reason_commission = columns[44].getValue();
 				if(reason_commission != null){
 					if(reason_commission.trim().equals("8110")){
-						reason_commission = "Card delivery fee";
+						reason_commission = "CARD_DELIVERY";
 					}else if(reason_commission.trim().equals("3101")){
-						reason_commission = "False chargeback claim";
+						reason_commission = "FALSE_CHARGEBACK";
 					}else{
 						reason_commission = "";
 					}
