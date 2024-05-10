@@ -41,6 +41,7 @@ import org.apache.felix.scr.annotations.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -2395,7 +2396,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addOutputParam("@o_customer", ICTSTypes.SQLINT4, "0");
 			procedureRequestAS.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
 		    procedureRequestAS.addInputParam("@i_deviceFingerprint",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getDeviceFingerprint());
-		    procedureRequestAS.addInputParam("@i_otpValidatedDate",ICTSTypes.SQLVARCHAR,inCreateCustomerRequest.getOtpValidatedDate().toString());
+		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		    String fechaHoraFormateada = sdf.format(inCreateCustomerRequest.getOtpValidatedDate().getTime());
+		    procedureRequestAS.addInputParam("@i_otpValidatedDate",ICTSTypes.SQLDATETIME,fechaHoraFormateada);
 		    procedureRequestAS.addInputParam("@i_otpValidated",ICTSTypes.SQLBIT,inCreateCustomerRequest.isOtpValidated().toString());		
 
 			// execute procedure
