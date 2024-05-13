@@ -545,7 +545,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		}
 	}
 	
-	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
+	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus, String code) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -564,6 +564,10 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_ssn_host"));
 		
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, code);
+		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
+		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -571,7 +575,13 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking updateTransferStatus: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-
+		
+		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
+		{
+			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de updateTransferStatus");
 		}
@@ -618,7 +628,17 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		IResultSetData data5 = new ResultSetData();
 		
 		metaData5.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SQLINT4, 10));
-
+		
+		IResultSetHeader metaData6 = new ResultSetHeader();
+		IResultSetData data6 = new ResultSetData();
+		
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("approved_value", ICTSTypes.SQLMONEY4, 50));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("settlement_value", ICTSTypes.SQLMONEY4, 50));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("cardholder_billing_value", ICTSTypes.SQLVARCHAR, 50));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("response_value", ICTSTypes.SQLVARCHAR, 1500));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLBIT, 100));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("available_limit", ICTSTypes.SQLMONEY4, 25));
+		metaData6.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLINT4, 6));
 		
 		if (codeReturn == 0) {
 			
@@ -639,7 +659,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				
 				executionStatus = "CORRECT";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, "0");
 				
 				notifyDeposit(aRequest, aBagSPJavaOrchestration);
 				
@@ -671,6 +691,18 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				row5.addRowData(1, new ResultSetRowColumnData(false, movementId));
 				data5.addRow(row5);
 				
+				IResultSetRow row6 = new ResultSetRow();
+				
+				row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
+				row6.addRowData(5, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
+				
+				data6.addRow(row6);
+				
 			} else {
 				
 				logger.logDebug("Ending flow, processResponse error");
@@ -681,7 +713,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				
 				executionStatus = "ERROR";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, code);
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -693,6 +725,33 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
+				
+				IResultSetRow row3 = new ResultSetRow();
+				
+				row3.addRowData(1, new ResultSetRowColumnData(false, null));
+				data3.addRow(row3);
+				
+				IResultSetRow row4 = new ResultSetRow();
+				
+				row4.addRowData(1, new ResultSetRowColumnData(false, null));
+				data4.addRow(row4);
+				
+				IResultSetRow row5 = new ResultSetRow();
+				
+				row5.addRowData(1, new ResultSetRowColumnData(false, null));
+				data5.addRow(row5);
+				
+				IResultSetRow row6 = new ResultSetRow();
+				
+				row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
+				row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
+				row6.addRowData(7, new ResultSetRowColumnData(false, null));
+				
+				data6.addRow(row6);
 			}
 			
 		} else {
@@ -701,7 +760,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 			
 			executionStatus = "ERROR";
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, codeReturn.toString());
 			
 			IResultSetRow row = new ResultSetRow();
 			
@@ -713,6 +772,33 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 			row2.addRowData(1, new ResultSetRowColumnData(false, codeReturn.toString()));
 			row2.addRowData(2, new ResultSetRowColumnData(false, anOriginalProcedureRes.getMessage(1).getMessageText()));
 			data2.addRow(row2);
+			
+			IResultSetRow row3 = new ResultSetRow();
+			
+			row3.addRowData(1, new ResultSetRowColumnData(false, null));
+			data3.addRow(row3);
+			
+			IResultSetRow row4 = new ResultSetRow();
+			
+			row4.addRowData(1, new ResultSetRowColumnData(false, null));
+			data4.addRow(row4);
+			
+			IResultSetRow row5 = new ResultSetRow();
+			
+			row5.addRowData(1, new ResultSetRowColumnData(false, null));
+			data5.addRow(row5);
+			
+			IResultSetRow row6 = new ResultSetRow();
+			
+			row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
+			row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
+			row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
+			row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
+			row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+			row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
+			row6.addRowData(7, new ResultSetRowColumnData(false, null));
+			
+			data6.addRow(row6);
 		}
 
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
@@ -720,12 +806,14 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 		IResultSetBlock resultsetBlock4 = new ResultSetBlock(metaData4, data4);
 		IResultSetBlock resultsetBlock5 = new ResultSetBlock(metaData5, data5);
+		IResultSetBlock resultsetBlock6 = new ResultSetBlock(metaData6, data6);
 
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		wProcedureResponse.addResponseBlock(resultsetBlock3);
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
 		wProcedureResponse.addResponseBlock(resultsetBlock5);
+		wProcedureResponse.addResponseBlock(resultsetBlock6);
 		
 		return wProcedureResponse;		
 	}

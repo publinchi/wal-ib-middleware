@@ -57,7 +57,7 @@
         <column name="code" />
         <column name="message" />
       </columns>
-      <queryText>SELECT "code"=0,"message"="success"</queryText>
+      <queryText></queryText>
     </query>
     <query>
       <columns>
@@ -68,6 +68,18 @@
     <query>
       <columns>
         <column name="movementId" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="aproved_value" />
+        <column name=" settlement_value" />
+        <column name=" cardholder_billing_value" />
+        <column name=" response_value" />
+        <column name=" reason" />
+        <column name=" available_imit" />
+        <column name=" authorization_code" />
       </columns>
       <queryText></queryText>
     </query>
