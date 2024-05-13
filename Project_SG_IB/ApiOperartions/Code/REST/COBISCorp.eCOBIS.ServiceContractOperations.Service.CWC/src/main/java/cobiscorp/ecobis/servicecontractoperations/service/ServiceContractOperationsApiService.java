@@ -459,123 +459,149 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			LOGGER.logDebug("Procedure ok");
 			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
+		      int mapTotal=0;
+		      int mapBlank=0;
+		      
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizePurchase>() { 
+		                    @Override
+		                    public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    
+		                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizePurchase>() {
-							@Override
-							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    outResponseAuthorizePurchase.setSuccess(returnResponseAuthorizePurchase.isSuccess());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
+		            }
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseAuthorizePurchase>() { 
+		                    @Override
+		                    public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		                    return dto;
+		                    }
+		                    },false);
 
-				outResponseAuthorizePurchase.setSuccess(returnResponseAuthorizePurchase.isSuccess());
-				// break;
+		                    outResponseAuthorizePurchase.setResponse(returnResponseAuthorizePurchase.getResponse());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			} else {
-				mapBlank++;
+		            }
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizePurchase>() { 
+		                    @Override
+		                    public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    
+		                          dto.setAuthorizationCode(resultSetMapper.getInteger(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			}
+		                    outResponseAuthorizePurchase.setAuthorizationCode(returnResponseAuthorizePurchase.getAuthorizationCode());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseAuthorizePurchase>() {
-							@Override
-							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		            }
+		            
+		            mapTotal++;
+					if (response.getResultSets() != null && response.getResultSets().size() > 3
+							&& response.getResultSets().get(3).getData().getRows().size() > 0) {
+						// ---------NO Array
+						ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
+								.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizePurchase>() {
+									@Override
+									public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+										ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
 
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
+										dto.setSeq(resultSetMapper.getString(1));
+										return dto;
+									}
+								}, false);
 
-				outResponseAuthorizePurchase.setResponse(returnResponseAuthorizePurchase.getResponse());
-				// break;
+						outResponseAuthorizePurchase.setSeq(returnResponseAuthorizePurchase.getSeq());
+						// break;
 
-			} else {
-				mapBlank++;
+					} else {
+						mapBlank++;
 
-			}
+					}
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(4).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizePurchase>() { 
+		                    @Override
+		                    public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    
+		                          dto.setMovementId(resultSetMapper.getInteger(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 2
-					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizePurchase>() {
-							@Override
-							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    outResponseAuthorizePurchase.setMovementId(returnResponseAuthorizePurchase.getMovementId());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
-								return dto;
-							}
-						}, false);
+		            }					
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(5).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(5), new RowMapper<ResponseAuthorizePurchase>() { 
+		                    @Override
+		                    public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
+		                    
+		                          dto.setApproved_value(resultSetMapper.getString(1));
+		                          dto.setSettlement_value(resultSetMapper.getString(2));
+		                          dto.setCardholder_billing_value(resultSetMapper.getString(3));
+		                          dto.setResponse_value(resultSetMapper.getString(4));
+		                          dto.setReason(resultSetMapper.getString(5));
+		                          dto.setAvailable_limit(resultSetMapper.getString(6));
+		                          dto.setAuthorization_code(resultSetMapper.getInteger(7));
+		                    return dto;
+		                    }
+		                    },false);
 
-				outResponseAuthorizePurchase
-						.setAuthorizationCode(returnResponseAuthorizePurchase.getAuthorizationCode());
-				// break;
+		                    outResponseAuthorizePurchase.setApproved_value(returnResponseAuthorizePurchase.getApproved_value());
+		                    outResponseAuthorizePurchase.setSettlement_value(returnResponseAuthorizePurchase.getSettlement_value());
+		                    outResponseAuthorizePurchase.setCardholder_billing_value(returnResponseAuthorizePurchase.getCardholder_billing_value());
+		                    outResponseAuthorizePurchase.setResponse_value(returnResponseAuthorizePurchase.getResponse_value());
+		                    outResponseAuthorizePurchase.setReason(returnResponseAuthorizePurchase.getReason());
+		                    outResponseAuthorizePurchase.setAvailable_limit(returnResponseAuthorizePurchase.getAvailable_limit());
+		                    outResponseAuthorizePurchase.setAuthorization_code(returnResponseAuthorizePurchase.getAuthorization_code());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 3
-					&& response.getResultSets().get(3).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(3), new RowMapper<ResponseAuthorizePurchase>() {
-							@Override
-							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
-
-								dto.setSeq(resultSetMapper.getString(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseAuthorizePurchase.setSeq(returnResponseAuthorizePurchase.getSeq());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 4
-					&& response.getResultSets().get(4).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizePurchase returnResponseAuthorizePurchase = MapperResultUtil
-						.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizePurchase>() {
-							@Override
-							public ResponseAuthorizePurchase mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizePurchase dto = new ResponseAuthorizePurchase();
-
-								dto.setMovementId(resultSetMapper.getInteger(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseAuthorizePurchase.setMovementId(returnResponseAuthorizePurchase.getMovementId());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
+		            }
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -969,123 +995,149 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			}
 			LOGGER.logDebug("Procedure ok");
 			// Init map returns
-			int mapTotal = 0;
-			int mapBlank = 0;
+		      int mapTotal=0;
+		      int mapBlank=0;
+		      
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseAuthorizeWithdrawal>() { 
+		                    @Override
+		                    public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    
+		                          dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(0), new RowMapper<ResponseAuthorizeWithdrawal>() {
-							@Override
-							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    outResponseAuthorizeWithdrawal.setSuccess(returnResponseAuthorizeWithdrawal.isSuccess());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-								return dto;
-							}
-						}, false);
+		            }
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseAuthorizeWithdrawal>() { 
+		                    @Override
+		                    public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    
+									dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+									dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		                    return dto;
+		                    }
+		                    },false);
 
-				outResponseAuthorizeWithdrawal.setSuccess(returnResponseAuthorizeWithdrawal.isSuccess());
-				// break;
+		                    outResponseAuthorizeWithdrawal.setResponse(returnResponseAuthorizeWithdrawal.getResponse());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			} else {
-				mapBlank++;
+		            }
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeWithdrawal>() { 
+		                    @Override
+		                    public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    
+		                          dto.setAuthorizationCode(resultSetMapper.getInteger(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			}
+		                    outResponseAuthorizeWithdrawal.setAuthorizationCode(returnResponseAuthorizeWithdrawal.getAuthorizationCode());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(1), new RowMapper<ResponseAuthorizeWithdrawal>() {
-							@Override
-							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		            }
+		            
+		            mapTotal++;
+					if (response.getResultSets() != null && response.getResultSets().size() > 3
+							&& response.getResultSets().get(3).getData().getRows().size() > 0) {
+						// ---------NO Array
+						ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(
+								response.getResultSets().get(3), new RowMapper<ResponseAuthorizeWithdrawal>() {
+									@Override
+									public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+										ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
 
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-								return dto;
-							}
-						}, false);
+										dto.setSeq(resultSetMapper.getString(1));
+										return dto;
+									}
+								}, false);
 
-				outResponseAuthorizeWithdrawal.setResponse(returnResponseAuthorizeWithdrawal.getResponse());
-				// break;
+						outResponseAuthorizeWithdrawal.setSeq(returnResponseAuthorizeWithdrawal.getSeq());
+						// break;
 
-			} else {
-				mapBlank++;
+					} else {
+						mapBlank++;
 
-			}
+					}
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(4).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizeWithdrawal>() { 
+		                    @Override
+		                    public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    
+		                          dto.setMovementId(resultSetMapper.getInteger(1));
+		                    return dto;
+		                    }
+		                    },false);
 
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 2
-					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(2), new RowMapper<ResponseAuthorizeWithdrawal>() {
-							@Override
-							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    outResponseAuthorizeWithdrawal.setMovementId(returnResponseAuthorizeWithdrawal.getMovementId());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
-								return dto;
-							}
-						}, false);
+		            }
+		          
+		            mapTotal++;
+		            if (response.getResultSets()!=null&&response.getResultSets().get(5).getData().getRows().size()>0) {	
+										//---------NO Array
+										ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(5), new RowMapper<ResponseAuthorizeWithdrawal>() { 
+		                    @Override
+		                    public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
+		                    ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
+		                    
+		                          dto.setApproved_value(resultSetMapper.getString(1));
+		                          dto.setSettlement_value(resultSetMapper.getString(2));
+		                          dto.setCardholder_billing_value(resultSetMapper.getString(3));
+		                          dto.setResponse_value(resultSetMapper.getString(4));
+		                          dto.setReason(resultSetMapper.getString(5));
+		                          dto.setAvailable_limit(resultSetMapper.getString(6));
+		                          dto.setAuthorization_code(resultSetMapper.getInteger(7));
+		                    return dto;
+		                    }
+		                    },false);
 
-				outResponseAuthorizeWithdrawal
-						.setAuthorizationCode(returnResponseAuthorizeWithdrawal.getAuthorizationCode());
-				// break;
+		                    outResponseAuthorizeWithdrawal.setApproved_value(returnResponseAuthorizeWithdrawal.getApproved_value());
+		                    outResponseAuthorizeWithdrawal.setSettlement_value(returnResponseAuthorizeWithdrawal.getSettlement_value());
+		                    outResponseAuthorizeWithdrawal.setCardholder_billing_value(returnResponseAuthorizeWithdrawal.getCardholder_billing_value());
+		                    outResponseAuthorizeWithdrawal.setResponse_value(returnResponseAuthorizeWithdrawal.getResponse_value());
+		                    outResponseAuthorizeWithdrawal.setReason(returnResponseAuthorizeWithdrawal.getReason());
+		    				outResponseAuthorizeWithdrawal.setAvailable_limit(returnResponseAuthorizeWithdrawal.getAvailable_limit());
+		    				outResponseAuthorizeWithdrawal.setAuthorization_code(returnResponseAuthorizeWithdrawal.getAuthorization_code());
+		                        // break;
+		                      
+		            }else {
+		            mapBlank++;
 
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 3
-					&& response.getResultSets().get(3).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(3), new RowMapper<ResponseAuthorizeWithdrawal>() {
-							@Override
-							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
-
-								dto.setSeq(resultSetMapper.getString(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseAuthorizeWithdrawal.setSeq(returnResponseAuthorizeWithdrawal.getSeq());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
-
-			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 4
-					&& response.getResultSets().get(4).getData().getRows().size() > 0) {
-				// ---------NO Array
-				ResponseAuthorizeWithdrawal returnResponseAuthorizeWithdrawal = MapperResultUtil.mapOneRowToObject(
-						response.getResultSets().get(4), new RowMapper<ResponseAuthorizeWithdrawal>() {
-							@Override
-							public ResponseAuthorizeWithdrawal mapRow(ResultSetMapper resultSetMapper, int index) {
-								ResponseAuthorizeWithdrawal dto = new ResponseAuthorizeWithdrawal();
-
-								dto.setMovementId(resultSetMapper.getInteger(1));
-								return dto;
-							}
-						}, false);
-
-				outResponseAuthorizeWithdrawal.setMovementId(returnResponseAuthorizeWithdrawal.getMovementId());
-				// break;
-
-			} else {
-				mapBlank++;
-
-			}
+		            }	
 
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
@@ -1481,7 +1533,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -1490,20 +1542,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
-
+	
 								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeDeposit.setSuccess(returnResponseAuthorizeDeposit.isSuccess());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -1512,44 +1564,43 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
-
+	
 								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
 								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeDeposit.setResponse(returnResponseAuthorizeDeposit.getResponse());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 2
-					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
+			if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
 				// ---------NO Array
 				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseAuthorizeDeposit>() {
 							@Override
 							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
-
+	
 								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeDeposit.setAuthorizationCode(returnResponseAuthorizeDeposit.getAuthorizationCode());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().size() > 3
 					&& response.getResultSets().get(3).getData().getRows().size() > 0) {
@@ -1559,43 +1610,76 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
-
+	
 								dto.setSeq(resultSetMapper.getString(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeDeposit.setSeq(returnResponseAuthorizeDeposit.getSeq());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
-			if (response.getResultSets() != null && response.getResultSets().size() > 4
-					&& response.getResultSets().get(4).getData().getRows().size() > 0) {
+			if (response.getResultSets() != null && response.getResultSets().get(4).getData().getRows().size() > 0) {
 				// ---------NO Array
 				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
 						.mapOneRowToObject(response.getResultSets().get(4), new RowMapper<ResponseAuthorizeDeposit>() {
 							@Override
 							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
-
+	
 								dto.setMovementId(resultSetMapper.getInteger(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeDeposit.setMovementId(returnResponseAuthorizeDeposit.getMovementId());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(5).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizeDeposit returnResponseAuthorizeDeposit = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(5), new RowMapper<ResponseAuthorizeDeposit>() {
+							@Override
+							public ResponseAuthorizeDeposit mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeDeposit dto = new ResponseAuthorizeDeposit();
+	
+								dto.setApproved_value(resultSetMapper.getString(1));
+								dto.setSettlement_value(resultSetMapper.getString(2));
+								dto.setCardholder_billing_value(resultSetMapper.getString(3));
+								dto.setResponse_value(resultSetMapper.getString(4));
+								dto.setReason(resultSetMapper.getString(5));
+								dto.setAvailable_limit(resultSetMapper.getString(6));
+								dto.setAuthorization_code(resultSetMapper.getInteger(7));
+								return dto;
+							}
+						}, false);
+	
+				outResponseAuthorizeDeposit.setApproved_value(returnResponseAuthorizeDeposit.getApproved_value());
+				outResponseAuthorizeDeposit.setSettlement_value(returnResponseAuthorizeDeposit.getSettlement_value());
+				outResponseAuthorizeDeposit.setCardholder_billing_value(returnResponseAuthorizeDeposit.getCardholder_billing_value());
+				outResponseAuthorizeDeposit.setResponse_value(returnResponseAuthorizeDeposit.getResponse_value());
+				outResponseAuthorizeDeposit.setReason(returnResponseAuthorizeDeposit.getReason());
+				outResponseAuthorizeDeposit.setAvailable_limit(returnResponseAuthorizeDeposit.getAvailable_limit());
+				outResponseAuthorizeDeposit.setAuthorization_code(returnResponseAuthorizeDeposit.getAuthorization_code());
+				// break;
+	
+			} else {
+				mapBlank++;
+	
+			}
+	
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
@@ -2000,7 +2084,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			// Init map returns
 			int mapTotal = 0;
 			int mapBlank = 0;
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -2009,20 +2093,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
-
+	
 								dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeReversal.setSuccess(returnResponseAuthorizeReversal.isSuccess());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
 				// ---------NO Array
@@ -2031,21 +2115,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
-
+	
 								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
 								dto.responseInstance().setMessage(resultSetMapper.getString(2));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeReversal.setResponse(returnResponseAuthorizeReversal.getResponse());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().size() > 2
 					&& response.getResultSets().get(2).getData().getRows().size() > 0) {
@@ -2055,21 +2139,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
-
+	
 								dto.setAuthorizationCode(resultSetMapper.getInteger(1));
 								return dto;
 							}
 						}, false);
-
-				outResponseAuthorizeReversal
-						.setAuthorizationCode(returnResponseAuthorizeReversal.getAuthorizationCode());
+	
+				outResponseAuthorizeReversal.setAuthorizationCode(returnResponseAuthorizeReversal.getAuthorizationCode());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().size() > 3
 					&& response.getResultSets().get(3).getData().getRows().size() > 0) {
@@ -2079,20 +2162,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
-
+	
 								dto.setSeq(resultSetMapper.getString(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeReversal.setSeq(returnResponseAuthorizeReversal.getSeq());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
-
+	
 			mapTotal++;
 			if (response.getResultSets() != null && response.getResultSets().size() > 4
 					&& response.getResultSets().get(4).getData().getRows().size() > 0) {
@@ -2102,20 +2185,54 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 							@Override
 							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
 								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
-
+	
 								dto.setMovementId(resultSetMapper.getInteger(1));
 								return dto;
 							}
 						}, false);
-
+	
 				outResponseAuthorizeReversal.setMovementId(returnResponseAuthorizeReversal.getMovementId());
 				// break;
-
+	
 			} else {
 				mapBlank++;
-
+	
 			}
 
+			mapTotal++;
+			if (response.getResultSets() != null && response.getResultSets().get(5).getData().getRows().size() > 0) {
+				// ---------NO Array
+				ResponseAuthorizeReversal retunrResponseAuthorizeReversal = MapperResultUtil
+						.mapOneRowToObject(response.getResultSets().get(5), new RowMapper<ResponseAuthorizeReversal>() {
+							@Override
+							public ResponseAuthorizeReversal mapRow(ResultSetMapper resultSetMapper, int index) {
+								ResponseAuthorizeReversal dto = new ResponseAuthorizeReversal();
+	
+								dto.setApproved_value(resultSetMapper.getString(1));
+								dto.setSettlement_value(resultSetMapper.getString(2));
+								dto.setCardholder_billing_value(resultSetMapper.getString(3));
+								dto.setResponse_value(resultSetMapper.getString(4));
+								dto.setReason(resultSetMapper.getString(5));
+								dto.setAvailable_limit(resultSetMapper.getString(6));
+								dto.setAuthorization_code(resultSetMapper.getInteger(7));
+								return dto;
+							}
+						}, false);
+	
+				outResponseAuthorizeReversal.setApproved_value(retunrResponseAuthorizeReversal.getApproved_value());
+				outResponseAuthorizeReversal.setSettlement_value(retunrResponseAuthorizeReversal.getSettlement_value());
+				outResponseAuthorizeReversal.setCardholder_billing_value(retunrResponseAuthorizeReversal.getCardholder_billing_value());
+				outResponseAuthorizeReversal.setResponse_value(retunrResponseAuthorizeReversal.getResponse_value());
+				outResponseAuthorizeReversal.setReason(retunrResponseAuthorizeReversal.getReason());
+				outResponseAuthorizeReversal.setAvailable_limit(retunrResponseAuthorizeReversal.getAvailable_limit());
+				outResponseAuthorizeReversal.setAuthorization_code(retunrResponseAuthorizeReversal.getAuthorization_code());
+				// break;
+	
+			} else {
+				mapBlank++;
+	
+			}
+			
 			// End map returns
 			if (mapBlank != 0 && mapBlank == mapTotal) {
 				LOGGER.logDebug("No data found");
