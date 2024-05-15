@@ -858,7 +858,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if (movementType.equals("PURCHASE_AT_STORE") || movementType.equals("PURCHASE_WITH_CASHBACK")) {
 						 
 						establisment_name_store = name_location_atm;
-						transaction_id_store = location_id_atm;
+						transaction_id_store = transaction_id_atm;
 						
 						name_location_atm = null;
 						location_id_atm = null;
