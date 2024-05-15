@@ -483,6 +483,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		Boolean flag = aBagSPJavaOrchestration.containsKey("success");
 		String accountStatus = aBagSPJavaOrchestration.get("accountStatus").toString();
+		String blockingValue = anOriginalRequest.readValueParam("@i_blockingValue");
+		
 		Boolean flagSubBloqueo = accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM");
 		
 		// Valida que no hayan errores bloqueando las tarjetas en caso de ser un cambio de estado BM1
@@ -530,7 +532,20 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 					data3.addRow(row3);
 				}
 				
-				sendMail(anOriginalRequest, aBagSPJavaOrchestration);			
+				if (!accountStatus.equals("C")) {
+			           
+		            if (accountStatus.equals("BM") || accountStatus.equals("EBM")) {
+		               
+		                if (blockingValue != null && !blockingValue.equals("1")) {
+		                   
+		                	sendMail(anOriginalRequest, aBagSPJavaOrchestration);
+		                }
+		                
+		            } else {
+		                
+		            	sendMail(anOriginalRequest, aBagSPJavaOrchestration);
+		            }
+		        }			
 				
 			} else { // Error de VALIDACION en el procedure
 				logger.logDebug("Ending flow, processResponse error");
