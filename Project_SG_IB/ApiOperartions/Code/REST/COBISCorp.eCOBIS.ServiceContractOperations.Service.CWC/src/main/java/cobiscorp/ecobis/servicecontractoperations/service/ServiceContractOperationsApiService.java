@@ -7338,7 +7338,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
 								List<String> arrayList = new ArrayList<>(
 										Arrays.asList(resultSetMapper.getString(1).split(",")));
-								dto.setResponse((ArrayList) arrayList);
+								dto.setResponse(arrayList.get(0));
 								dto.setReason(resultSetMapper.getString(2));
 								dto.setAvailable_limit(resultSetMapper.getString(3));
 								dto.setAuthorization_code(resultSetMapper.getString(4));
