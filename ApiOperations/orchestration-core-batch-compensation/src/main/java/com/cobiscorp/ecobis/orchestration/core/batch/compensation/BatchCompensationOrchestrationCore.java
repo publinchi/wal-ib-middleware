@@ -195,38 +195,74 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
                                                     Double amountAbs = Math.abs(result);
                                                     aBagSPJavaOrchestration.put("amount", amountAbs);
                                                     
-                                                    if(result < 0){
-                                                    	valCardDock(anOriginalProcedureRes, aBagSPJavaOrchestration);
-                                                    	responseTransactionBag = queryAccountDebitOperation(aBagSPJavaOrchestration);
-                                                    }else if(result > 0){
-                                                    	valCardDock(anOriginalProcedureRes, aBagSPJavaOrchestration);
-                                                    	responseTransactionBag = queryAccountCreditOperation(aBagSPJavaOrchestration);
-                                                    }else{
-                                                    	aBagSPJavaOrchestration.put("ente", 0);
-                                                		aBagSPJavaOrchestration.put("account", 0);
-                                                		aBagSPJavaOrchestration.put("codeErrorApi", "-1");
-                                                		aBagSPJavaOrchestration.put("messageError", "No genera transaccion");
-                                                		aBagSPJavaOrchestration.put("referenceCode","0");
-                                                		aBagSPJavaOrchestration.put("transactionType","NO APLICA");
-                                                		responseTransactionBag.put("-1", "No genera transaccion");
+                                                    String operationType = getStringOrNull(transactionObject, "OPERATION_TYPE");
+                                                    aBagSPJavaOrchestration.put("operationType", operationType);
+                                                    logger.logInfo(CLASS_NAME + " operationType:: " + operationType);
+                                                    if(operationType.equals("20"))
+                                                    {
+                                                    	if (transactionObject.has("CARDHOLDER_BILLING_DATA")){
+                                                    		//JsonElement cardHolderBillingData = transactionObject.get("CARDHOLDER_BILLING_DATA");
+                                                    		JsonObject cardHolderBillingData = transactionObject.getAsJsonObject("CARDHOLDER_BILLING_DATA");
+                                                    		Double billingValue = getDoubleOrDefault(cardHolderBillingData, "BILLING_VALUE", 0.0);
+                                                            aBagSPJavaOrchestration.put("billingValue", billingValue);
+                                                            logger.logInfo(CLASS_NAME + " billingValue:: " + billingValue);
+                                                            String authorizationCode = getStringOrNull(transactionObject, "AUTHORIZATION");
+                                                            aBagSPJavaOrchestration.put("authorizationCode", authorizationCode);
+                                                            
+                                                            if (contentObject.has("CLEARING")) {
+                                                                JsonObject clearingObject = contentObject.getAsJsonObject("CLEARING");
+                                                                
+	                                                            String isInternational = getStringOrNull(clearingObject, "IS_INTERNATIONAL");
+	                                                            aBagSPJavaOrchestration.put("isInternational", isInternational);
+	                                                            logger.logInfo(CLASS_NAME + " isInternational:: " + isInternational);
+                                                            }
+                                                            
+                                                            valCardDock(anOriginalProcedureRes, aBagSPJavaOrchestration);
+	                                                    	responseTransactionBag = queryAccountCreditOperation(aBagSPJavaOrchestration);
+                                                    	}
+                                                    	else{
+	                                                    	aBagSPJavaOrchestration.put("ente", 0);
+	                                                		aBagSPJavaOrchestration.put("account", 0);
+	                                                		aBagSPJavaOrchestration.put("codeErrorApi", "-1");
+	                                                		aBagSPJavaOrchestration.put("messageError", "No genera transaccion");
+	                                                		aBagSPJavaOrchestration.put("referenceCode","0");
+	                                                		aBagSPJavaOrchestration.put("transactionType","NO APLICA");
+	                                                		responseTransactionBag.put("-1", "No genera transaccion");
+	                                                    }
                                                     }
-                                                    
+                                                    else{
+	                                                    if(result < 0){
+	                                                    	valCardDock(anOriginalProcedureRes, aBagSPJavaOrchestration);
+	                                                    	responseTransactionBag = queryAccountDebitOperation(aBagSPJavaOrchestration);
+	                                                    }else if(result > 0){
+	                                                    	valCardDock(anOriginalProcedureRes, aBagSPJavaOrchestration);
+	                                                    	responseTransactionBag = queryAccountCreditOperation(aBagSPJavaOrchestration);
+	                                                    }else{
+	                                                    	aBagSPJavaOrchestration.put("ente", 0);
+	                                                		aBagSPJavaOrchestration.put("account", 0);
+	                                                		aBagSPJavaOrchestration.put("codeErrorApi", "-1");
+	                                                		aBagSPJavaOrchestration.put("messageError", "No genera transaccion");
+	                                                		aBagSPJavaOrchestration.put("referenceCode","0");
+	                                                		aBagSPJavaOrchestration.put("transactionType","NO APLICA");
+	                                                		responseTransactionBag.put("-1", "No genera transaccion");
+	                                                    }
+                                                    }
                                                     // Hacer algo con los valores obtenidos
                                                     logger.logInfo("FILE_ID: " + fileId);
                                                     logger.logInfo("Content ID: " + contentId);
                                                     logger.logInfo("AMOUNT : " + result);
-                                                     logger.logInfo("Transaction - CARD_ID: " + cardId);
-                                                     logger.logInfo("Transaction - GMT_DATE: " + gmtDate);
-                                                     logger.logInfo("Transaction - AUTHORIZATION: " + authorization);
-                                                     logger.logInfo("Transaction - SOURCE_CURRENCY: " + sourceCurrency);
-                                                     logger.logInfo("Transaction - SOURCE_VALUE: " + sourceValue);
-                                                     logger.logInfo("Transaction - DEST_CURRENCY: " + destCurrency);
-                                                     logger.logInfo("Transaction - DEST_VALUE: " + destValue);
-                                                     logger.logInfo("Transaction - RECORDS_TOTAL: " + recordsTotal);
+                                                    logger.logInfo("Transaction - CARD_ID: " + cardId);
+                                                    logger.logInfo("Transaction - GMT_DATE: " + gmtDate);
+                                                    logger.logInfo("Transaction - AUTHORIZATION: " + authorization);
+                                                    logger.logInfo("Transaction - SOURCE_CURRENCY: " + sourceCurrency);
+                                                    logger.logInfo("Transaction - SOURCE_VALUE: " + sourceValue);
+                                                    logger.logInfo("Transaction - DEST_CURRENCY: " + destCurrency);
+                                                    logger.logInfo("Transaction - DEST_VALUE: " + destValue);
+                                                    logger.logInfo("Transaction - RECORDS_TOTAL: " + recordsTotal);
                                                      
-                                                     logger.logInfo("responseTransactionBag: " + responseTransactionBag);
+                                                    logger.logInfo("responseTransactionBag: " + responseTransactionBag);
                                                      
-                                                     registerTransactionLogBd(aBagSPJavaOrchestration, responseTransactionBag);
+                                                    registerTransactionLogBd(aBagSPJavaOrchestration, responseTransactionBag);
                                                 }
                                             }
                                         }
@@ -352,11 +388,13 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 		
 		request.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");		
 		request.addOutputParam("@o_cta", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_type_card", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
 		aBagSPJavaOrchestration.put("ente", wProductsQueryResp.readValueParam("@o_ente"));
 		aBagSPJavaOrchestration.put("account", wProductsQueryResp.readValueParam("@o_cta"));
+		aBagSPJavaOrchestration.put("typeCard", wProductsQueryResp.readValueParam("@o_type_card"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("codeErrorApi", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -388,6 +426,10 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 		String amount = aBagSPJavaOrchestration.get("amount").toString();//String.valueOf(content.getTRANSACTION().getDEST_VALUE());
 		String commission = "0";
 		
+		if(aBagSPJavaOrchestration.get("operationType").equals("20")){
+			amount = aBagSPJavaOrchestration.get("billingValue").toString();
+		}
+		
 		Map<String, Object> responseBag = new HashMap<String, Object>();
 				
 		logger.logDebug("Begin flow, queryAccountCreditOperation with id: " + idCustomer);
@@ -402,6 +444,8 @@ public class BatchCompensationOrchestrationCore extends SPJavaOrchestrationBase 
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, commission);	 
 	    reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, creditConcept);
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, referenceNumber);
+	    reqTMPCentral.addInputParam("@i_type_card", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("typeCard").toString());
+	    reqTMPCentral.addInputParam("@i_is_inter", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.containsKey("isInternational")?(String)aBagSPJavaOrchestration.get("isInternational"):null);
 		    
 	    reqTMPCentral.addInputParam("@s_ofi",ICTSTypes.SQLINT4, "1");
 	    reqTMPCentral.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
