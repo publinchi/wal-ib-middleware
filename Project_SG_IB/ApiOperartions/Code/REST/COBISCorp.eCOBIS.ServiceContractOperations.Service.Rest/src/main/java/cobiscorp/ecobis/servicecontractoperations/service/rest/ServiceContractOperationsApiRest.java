@@ -954,10 +954,10 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: generateTransactionFactor");
 		ResponseOtp outSingleResponseOtp = new ResponseOtp();
 		
-		if (!validateMandatory(new Data("otp", inRequestOtp.getOtp()))) {
+		/*if (!validateMandatory(new Data("otp", inRequestOtp.getOtp()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("The request message is not properly formatted").build();
-		}
+		}*/
 
 		try {
 			outSingleResponseOtp = iServiceContractOperationsApiService.generateTransactionFactor(inRequestOtp);
