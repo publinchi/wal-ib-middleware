@@ -3,13 +3,8 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.register.card.pan.api;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
+
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -22,18 +17,13 @@ import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
-import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
-import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
-import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
@@ -41,6 +31,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.RSAKeyLoader;
 
 /**
  * @author Sochoa
@@ -61,6 +52,8 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 	
 
 	private ILogger logger = (ILogger) this.getLogger();
+	private RSAKeyLoader cripRsa;
+	private java.util.Properties properties;
 	/**
 	 * Procedure response para representar el sub-flujo de respuestas del bloqueo de tarjetas
 	 * (SOLO cuando el cambio de estado de cuenta es BM1)
@@ -68,23 +61,42 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
+		properties = aConfigurationReader.getProperties("//property");
+		String ctsPath = System.getProperty(COBIS_HOME);
+		String pathPublicKey = ctsPath + properties.get("publicKey").toString();
+		String pathPrivateKey = ctsPath + properties.get("privateKey").toString();
+		
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug("pathPublicKey:"+pathPublicKey);
+			logger.logDebug("pathPrivateKey:"+pathPrivateKey);
+		}
+		
+		cripRsa = new RSAKeyLoader(pathPublicKey, pathPrivateKey);
 	}
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
-		logger.logDebug("Begin flow, RegisterCardPanOrchestrationCore starts executeJavaOrchestration...");		
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug(CLASS_NAME+" Begin flow, RegisterCardPanOrchestrationCore starts executeJavaOrchestration...");
+		}
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
-		registerCardPan(aBagSPJavaOrchestration);
+		registerCardPan(aBagSPJavaOrchestration, anOriginalRequest);
 		
 		return processResponseApi(aBagSPJavaOrchestration);
 	}
 	
-	private void registerCardPan(Map<String, Object> aBagSPJavaOrchestration) {
+	private void registerCardPan(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
 		
-		
+		String panCrypt = cripRsa.encryptData(anOriginalRequest.readValueParam("@i_card_number"));
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug("registerCardPan cript card"+panCrypt );
+		}
 		
 	}
 
@@ -94,8 +106,10 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 	}
 	
 	public IProcedureResponse processResponseApi(Map<String, Object> aBagSPJavaOrchestration) {
-		
-		logger.logInfo("processResponseApi [INI] --->" );
+		if(logger.isInfoEnabled())
+		{
+			logger.logInfo("processResponseApi [INI] --->" );
+		}
 		
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
