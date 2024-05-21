@@ -2,6 +2,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.query.generate.transaction.fa
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -137,10 +138,20 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 			
 			return processResponseOtp(responseOtp);
 			
-		} else if (codigoOtp.length() != 4 && cardId.equals("null")) {
+		} else if (!ente.equals("null") && !codigoOtp.equals("null")) {
 			
 			message.setCode(String.valueOf(ConstantsMessageResponse.MSG40023.getIdMessage()));
 			message.setMessage(ConstantsMessageResponse.MSG40023.getDescriptionMessage());
+			
+			responseOtp.setSuccess(false);
+			responseOtp.setMessage(message);
+			
+			return processResponseOtp(responseOtp);
+			
+		} else if (!cardId.equals("null") && codigoOtp.equals("null")) {
+			
+			message.setCode(String.valueOf(ConstantsMessageResponse.MSG40026.getIdMessage()));
+			message.setMessage(ConstantsMessageResponse.MSG40026.getDescriptionMessage());
 			
 			responseOtp.setSuccess(false);
 			responseOtp.setMessage(message);
@@ -151,7 +162,7 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 		// Obtener el login del ente
 		login = getLoginById(anOriginalRequest);
 		
-		logger.logInfo("Código OTP: "+codigoOtp);
+		logger.logInfo("Request OTP es: "+codigoOtp);
 		
 		if (login.containsKey("o_login")) {
 
@@ -166,6 +177,11 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 				return processResponseOtp(responseOtp);
 			}
 			
+			if (codigoOtp.equals("null")) {
+				
+				codigoOtp = randomOtp();
+			}
+			
 			DataTokenRequest tokenRequest = new DataTokenRequest();
 			
 			tokenRequest.setLogin(login.get("o_login"));
@@ -177,7 +193,22 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 				
 				logger.logInfo("GENERA OTP...");
 				
-				generateTransactionFactor(tokenRequest);
+				TransactionFactorResponse responseGenerateOtp = new TransactionFactorResponse();
+				
+				responseGenerateOtp = generateTransactionFactor(tokenRequest);
+				
+				if(!responseGenerateOtp.getSuccess()) {
+					
+					logger.logDebug("GenerateOTP failed with return code: "+responseGenerateOtp.getMessage().getCode());
+					
+					message.setCode(String.valueOf(ConstantsMessageResponse.MSG40025.getIdMessage()));
+					message.setMessage(ConstantsMessageResponse.MSG40025.getDescriptionMessage());
+					
+					responseOtp.setSuccess(false);
+					responseOtp.setMessage(message);
+					
+					return processResponseOtp(responseOtp);
+				}
 				
 			} else {
 			
@@ -232,8 +263,7 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 		
 			request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		}
-		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
 		
@@ -276,6 +306,19 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 		}
 		
 		return responseLogin;
+	}
+	
+	public String randomOtp() {
+		
+		logger.logInfo("Entrando en randomOtp...");
+		
+		Random random = new Random();
+		
+		int otp = random.nextInt(9000)+1000;
+		
+		logger.logInfo("Random OTP es: "+otp);
+		
+		return String.valueOf(otp);
 	}
 
 	@Override
