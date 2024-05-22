@@ -350,6 +350,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					otpReturnCode = wResponseOtp.getMessage().getCode();
 					
 					logger.logDebug("ValidateOTP return code: "+otpReturnCode);
+					
+				} else {
+					
+					otpReturnCode = "0";
+					
+					logger.logDebug("ValidateOTP successful code: "+otpReturnCode);
 				}
 			}
 		}
