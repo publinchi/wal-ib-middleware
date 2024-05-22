@@ -2461,7 +2461,7 @@ public class ServiceContractOperationsApiRest {
 	  LOGGER.logDebug("Start service execution REST: deleteContact");
      ResponseDeleteContact outResponseDeleteContact  = new ResponseDeleteContact();
          
-     if(!validateMandatory(new Data("accountNumber", inRequestDeleteContact.getAccountNumber()), new Data("externalCustomerId", inRequestDeleteContact.getExternalCustomerId()))) {
+     if(!validateMandatory(new Data("uniqueId", inRequestDeleteContact.getRegisterAccountId()))) {
        LOGGER.logDebug("400 is returned - Required fields are missing");
        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
      }
