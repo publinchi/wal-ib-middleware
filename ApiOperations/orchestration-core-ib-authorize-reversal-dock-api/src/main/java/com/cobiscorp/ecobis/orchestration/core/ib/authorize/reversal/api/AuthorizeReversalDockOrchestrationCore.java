@@ -305,6 +305,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 	    String dest_asset_code = aRequest.readValueParam("@i_exchange_rate_dest_asset_code");
 		String date_time_gmt = aRequest.readValueParam("@i_exchange_rate_date_time_gmt");
 		String final_billing_value = aRequest.readValueParam("@i_exchange_rate_final_billing_value");
+		String transaction_type_indicator = aRequest.readValueParam("@i_transaction_type_indicator");
+		logger.logInfo("transactionType::: " + transaction_type_indicator);
+		
 		
 		
 		if (values_3 != null && !values_3.isEmpty() && !isNumeric(values_3)) {

@@ -67,6 +67,9 @@ public class RequestAuthorizeReversalDock implements Serializable {
   private String additional_information;
   private Reversal_exchange_rate exchange_rate;
   private Reversal_installment_data installment_data;
+  private String transaction_type_indicator;
+  private Boolean isValidPartialReversal;
+  private String date_time;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -366,5 +369,23 @@ public class RequestAuthorizeReversalDock implements Serializable {
   }
   public void setInstallment_data(Reversal_installment_data installment_data ){
     this.installment_data=installment_data;
+  }
+  public String getTransaction_type_indicator(){
+    return this.transaction_type_indicator;
+  }
+  public void setTransaction_type_indicator(String transaction_type_indicator ){
+    this.transaction_type_indicator=transaction_type_indicator;
+  }
+  public Boolean isIsValidPartialReversal(){
+    return this.isValidPartialReversal;
+  }
+  public void setIsValidPartialReversal(Boolean isValidPartialReversal ){
+    this.isValidPartialReversal=isValidPartialReversal;
+  }
+  public String getDate_time(){
+    return this.date_time;
+  }
+  public void setDate_time(String date_time ){
+    this.date_time=date_time;
   }
 }

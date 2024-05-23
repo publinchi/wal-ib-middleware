@@ -7302,6 +7302,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getNumber_of_installments(): null);
 			procedureRequestAS.addInputParam("@i_installment_data_grace_period",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getGrace_period(): null);
+			procedureRequestAS.addInputParam("@i_transaction_type_indicator",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getTransaction_type_indicator());
+			procedureRequestAS.addInputParam("@i_is_valid_partial_reversal",ICTSTypes.SQLBIT,
+					String.valueOf(inRequestAuthorizeReversalDock.isIsValidPartialReversal()));
+			procedureRequestAS.addInputParam("@i_date_time",ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getDate_time());
 			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);
