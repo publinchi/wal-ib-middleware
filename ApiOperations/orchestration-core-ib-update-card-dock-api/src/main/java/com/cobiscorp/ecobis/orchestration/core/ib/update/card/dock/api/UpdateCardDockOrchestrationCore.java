@@ -1665,7 +1665,7 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
         		
         		cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
-        		tittle = "Activación de tarjeta virtual realizada exitosamente";
+        		tittle = "Activación de tarjeta digital realizada exitosamente";
         		
         	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
         		
@@ -1684,15 +1684,15 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         		
         		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
         			
-        			tittle = "Desbloqueo de tarjeta virtual realizado exitosamente";
+        			tittle = "Desbloqueo de tarjeta digital realizado exitosamente";
         			
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
         			
-        			tittle = "Bloqueo de tarjeta virtual realizado exitosamente";
+        			tittle = "Bloqueo de tarjeta digital realizado exitosamente";
         			
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
         			
-        			tittle = "Cancelación de tarjeta virtual realizada exitosamente";
+        			tittle = "Cancelación de tarjeta digital realizada exitosamente";
         		}
         		
         	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
