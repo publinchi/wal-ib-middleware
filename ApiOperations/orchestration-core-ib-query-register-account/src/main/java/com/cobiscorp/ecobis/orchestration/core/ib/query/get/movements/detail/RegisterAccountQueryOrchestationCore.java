@@ -151,7 +151,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wqueryCard = null;
 		boolean validateDestination = true;
-		
+		//clabe
 		if("40".equals(typeThird))
 		{
 			wAccountsResp = validateSpeiAccount(aRequest);
@@ -159,16 +159,22 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 			{
 				return wAccountsResp;
 			}
-		}else
+		}else//tarjeta por id cobis
 			if("3".equals(typeThird)) 
 			{
-				aBagSPJavaOrchestration.put("ctades", aRequest.readValueParam("@i_cta_des"));
+				aBagSPJavaOrchestration.put("ctades", aRequest.readValueParam("@i_cta_des"));	
 				wqueryCard = queryCardAccount(aRequest, aBagSPJavaOrchestration);
-				aRequest.setValueParam("@i_cta_des", wqueryCard.readValueParam("@o_cuenta") );
+				
 				//tarjeta no tiene cuenta cashi
-				if(aRequest.readValueParam("@i_cta_des")=="X" || aRequest.readValueParam("@i_cta_des")==null)
+				if("X".equals(wqueryCard.readValueParam("@o_cuenta")) || wqueryCard.readValueParam("@o_cuenta") == null)
 				{
 					validateDestination = false;
+					//se vuelve a setar la cuenta destino
+					aRequest.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("ctades").toString());
+					
+				}else
+				{
+					aRequest.setValueParam("@i_cta_des", wqueryCard.readValueParam("@o_cuenta") );
 				}
 			}
 		String type = aRequest.readValueParam("@i_banco");
@@ -180,11 +186,11 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 			type = "O";
 		
 		if(!validateDestination)
+		{
 			type = "O";
-		
+		}
 		wAccountsResp = getCurpByAccount(aRequest, aBagSPJavaOrchestration, type);
 		
-		aRequest.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("ctades").toString());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
 			wAccountsRespInsert = insertAccount(aRequest, aBagSPJavaOrchestration, type);
@@ -377,7 +383,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 	{
 		if (logger.isDebugEnabled()) 
 		{
-			logger.logDebug("Begin validateAccountType");
+			logger.logDebug("Begin Query card PAN");
 		}
 		
 		IProcedureRequest procedureRequest = (initProcedureRequest(anOriginalRequest));		
@@ -397,7 +403,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		
 	    if (logger.isDebugEnabled()) 
 		{
-			logger.logDebug("Ending flow, registerPANcard " + wProcedureResponseLocal.getProcedureResponseAsString());
+			logger.logDebug("Query card PAN :" + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
 	    return wProcedureResponseLocal;
 	}
