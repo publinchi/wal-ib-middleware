@@ -501,5 +501,20 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<!-- 18700105 ORQUESTACION REGISTER CARD PAN-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo Register Card Pan">
+		<conditions>
+		  <condition param="trn">
+			<value>1870010</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=RegisterCardPanOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 
 </csp-config>

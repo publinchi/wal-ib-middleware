@@ -28,7 +28,6 @@ import com.cobiscorp.cobis.cts.rest.client.dto.MessageBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
-import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
@@ -41,7 +40,6 @@ import org.apache.felix.scr.annotations.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -50,9 +48,7 @@ import java.util.Arrays;
 import com.cobiscorp.cobis.cts.rest.client.util.ConverterUtil;
 import com.cobiscorp.cobis.cts.rest.client.util.ICTSTypes;
 
-import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 import cobiscorp.ecobis.datacontractoperations.dto.*;
-import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 
 @Component
 @Service({ IServiceContractOperationsApiService.class })
@@ -7514,6 +7510,150 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       return outResponseDeleteContact;
     }
    	 
-    
+    /**
+	 * Register Card Pan
+	 */
+	@Override
+	// Have DTO
+	public ResponseRegisterCardPan registerCardPan(String xrequestid, String xenduserrequestdatetime, String xenduserip,
+			String xchannel, String auth_token, String session_id, RequestRegisterCardPan inRequestRegisterCardPan)
+			throws CTSRestException {
+		LOGGER.logDebug("Start service execution: registerCardPan");
+		ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
+
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_registerCardPan_api");
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
+		procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterCardPan.getCard_number());
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+		procedureRequestAS.addInputParam("@x_auth_token", ICTSTypes.SQLVARCHAR, auth_token);
+		procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterCardPan>() {
+						@Override
+						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
+
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterCardPan.setSuccess(returnResponseRegisterCardPan.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterCardPan>() {
+						@Override
+						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
+
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterCardPan.setResponse(returnResponseRegisterCardPan.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterCardPan>() {
+						@Override
+						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
+
+							dto.setUnique_id(resultSetMapper.getString(1));
+							dto.setCard_id(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterCardPan.setUnique_id(returnResponseRegisterCardPan.getUnique_id());
+			outResponseRegisterCardPan.setCard_id(returnResponseRegisterCardPan.getCard_id());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		String trn = "Register Card Pan";
+
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestRegisterCardPan);
+
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseRegisterCardPan);
+
+		Header header = new Header();
+
+		header.setAccept("application/json");
+		header.setX_request_id(xrequestid);
+		header.setX_end_user_request_date_time(xenduserrequestdatetime);
+		header.setX_end_user_ip(xenduserip);
+		header.setX_channel(xchannel);
+		header.setContent_type("application/json");
+
+		Gson gson3 = new Gson();
+		String jsonHead = gson3.toJson(header);
+
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: registerCardPan");
+		// returns data
+		return outResponseRegisterCardPan;
+	}
     
 }

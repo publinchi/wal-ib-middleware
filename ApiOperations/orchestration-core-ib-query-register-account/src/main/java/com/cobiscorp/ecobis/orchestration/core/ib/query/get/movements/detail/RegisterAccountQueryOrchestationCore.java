@@ -149,6 +149,9 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		}
 		String typeThird = aRequest.readValueParam("@i_tipo_tercero").toString(); 
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+		IProcedureResponse wqueryCard = null;
+		boolean validateDestination = true;
+		
 		if("40".equals(typeThird))
 		{
 			wAccountsResp = validateSpeiAccount(aRequest);
@@ -156,17 +159,32 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 			{
 				return wAccountsResp;
 			}
-		}
+		}else
+			if("3".equals(typeThird)) 
+			{
+				aBagSPJavaOrchestration.put("ctades", aRequest.readValueParam("@i_cta_des"));
+				wqueryCard = queryCardAccount(aRequest, aBagSPJavaOrchestration);
+				aRequest.setValueParam("@i_cta_des", wqueryCard.readValueParam("@o_cuenta") );
+				//tarjeta no tiene cuenta cashi
+				if(aRequest.readValueParam("@i_cta_des")=="X" || aRequest.readValueParam("@i_cta_des")==null)
+				{
+					validateDestination = false;
+				}
+			}
 		String type = aRequest.readValueParam("@i_banco");
 		logger.logInfo(CLASS_NAME + " xdx" + aRequest.readValueParam("@i_banco"));
+		
 		if (type.equals("0") || type == null)
 			type = "B";
 		else
 			type = "O";
 		
-				
+		if(!validateDestination)
+			type = "O";
+		
 		wAccountsResp = getCurpByAccount(aRequest, aBagSPJavaOrchestration, type);
 		
+		aRequest.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("ctades").toString());
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
 			wAccountsRespInsert = insertAccount(aRequest, aBagSPJavaOrchestration, type);
@@ -355,5 +373,32 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 
 		return null;
 	}
-
+	private IProcedureResponse queryCardAccount(IProcedureRequest anOriginalRequest,  Map<String, Object> aBagSPJavaOrchestration) 
+	{
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Begin validateAccountType");
+		}
+		
+		IProcedureRequest procedureRequest = (initProcedureRequest(anOriginalRequest));		
+		procedureRequest.setSpName("cob_bvirtual..sp_card_pan");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500165");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500165");
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
+		
+		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
+		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
+		procedureRequest.addOutputParam("@o_cuenta", ICTSTypes.SQLVARCHAR, "X");
+	    
+		IProcedureResponse wProcedureResponseLocal = executeCoreBanking(procedureRequest);
+		
+	    if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Ending flow, registerPANcard " + wProcedureResponseLocal.getProcedureResponseAsString());
+		}
+	    return wProcedureResponseLocal;
+	}
 }
