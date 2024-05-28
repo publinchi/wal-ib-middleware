@@ -80,8 +80,8 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 		properties = aConfigurationReader.getProperties("//property");
 		jks = new JKeyStore();
-		String jkey;
-		cryptaes = new AESCrypt(properties.get("privateKey").toString());
+		String jkey = "";
+		
 		String ctsPath = System.getProperty(COBIS_HOME);
 		if (properties != null && properties.get("jksalgncon") != null) {
 			Map<String, String> wSecret = getAlgnCredentials(ctsPath+(String)properties.get("jksalgncon"));
@@ -92,16 +92,16 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 				
 				jkey = jks.getSecretKeyStringFromKeyStore(ctsPath+(String)properties.get("jks"), wSecret.get("pass"), wSecret.get("user"));
 				
-				properties.put("private", jkey);
 				if(logger.isDebugEnabled())
 				{
-					logger.logDebug("jks private:"+properties.get("private").toString());
+					logger.logDebug("jks private:"+jkey);
 				}
+				cryptaes = new AESCrypt(jkey);
 			}
 		}
 		if(logger.isDebugEnabled())
 		{
-			logger.logDebug("pathprivateKey:"+properties.get("privateKey").toString());
+			logger.logDebug("pathprivateKey:"+jkey);
 		}
 	}
 	private Map<String, String> getAlgnCredentials(String algnPath) {
@@ -161,6 +161,10 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 			logger.logDebug("registerCardPan cript card:"+panCrypt );
 		}
 		IProcedureResponse responseValidateCustomer = validateCustomer(anOriginalRequest, aBagSPJavaOrchestration);
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug("responseValidateCustomer card return code:"+responseValidateCustomer.getReturnCode() );
+		}
 		if(responseValidateCustomer.getReturnCode() == 0)
 		{
 			
