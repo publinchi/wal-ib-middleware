@@ -420,4 +420,11 @@ public interface IServiceContractOperationsApiService {
 	//Have DTO
 	public ResponseDeleteContact deleteContact(RequestDeleteContact inRequestDeleteContact  )throws CTSRestException;
 
+	/**
+	* Register Card Pan
+    */
+        
+	//Have DTO
+	public ResponseRegisterCardPan registerCardPan(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,String auth_token,String session_id,RequestRegisterCardPan inRequestRegisterCardPan  )throws CTSRestException;
+
 }
