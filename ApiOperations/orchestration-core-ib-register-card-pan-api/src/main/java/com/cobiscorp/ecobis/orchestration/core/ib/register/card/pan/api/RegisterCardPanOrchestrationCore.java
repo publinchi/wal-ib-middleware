@@ -1,10 +1,9 @@
-/**
- * 
- */
 package com.cobiscorp.ecobis.orchestration.core.ib.register.card.pan.api;
 
 import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -15,6 +14,7 @@ import org.apache.felix.scr.annotations.Service;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
+import com.cobiscorp.cobis.commons.crypt.ReadAlgn;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.csp.services.inproc.IOrchestrator;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
@@ -35,7 +35,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.AESCrypt;
-import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.RSAKeyLoader;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.JKeyStore;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.transfers.EncryptData;
 
 /**
@@ -65,29 +65,71 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 	//@o return
 	private static final String O_UNIQUE_ID = "@o_unique_id";
 	private static final String O_CARD_ID = "@o_card_id";
+	private static final String O_DESCRIPTION = "@o_description";
+	private static final String O_ACCESS_AUTH = "@o_access_auth";
+	
+	
 
 	private ILogger logger = (ILogger) this.getLogger();
+	
 	private java.util.Properties properties;
 	private AESCrypt cryptaes;
-	/**
-	 * Procedure response para representar el sub-flujo de respuestas del bloqueo de tarjetas
-	 * (SOLO cuando el cambio de estado de cuenta es BM1)
-	 */
+	private JKeyStore jks;
 	
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 		properties = aConfigurationReader.getProperties("//property");
-		String ctsPath = System.getProperty(COBIS_HOME);
-		String pathPublicKey = ctsPath + properties.get("publicKey").toString();
-		String pathPrivateKey = ctsPath + properties.get("privateKey").toString();
+		jks = new JKeyStore();
+		String jkey;
 		cryptaes = new AESCrypt(properties.get("privateKey").toString());
+		String ctsPath = System.getProperty(COBIS_HOME);
+		if (properties != null && properties.get("jksalgncon") != null) {
+			Map<String, String> wSecret = getAlgnCredentials(ctsPath+(String)properties.get("jksalgncon"));
+			if (wSecret != null) 
+			{
+				properties.put("user", wSecret.get("user"));
+				properties.put("pss", wSecret.get("pass"));
+				
+				jkey = jks.getSecretKeyStringFromKeyStore(ctsPath+(String)properties.get("jks"), wSecret.get("pass"), wSecret.get("user"));
+				
+				properties.put("private", jkey);
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("jks private:"+properties.get("private").toString());
+				}
+			}
+		}
 		if(logger.isDebugEnabled())
 		{
-			logger.logDebug("pathPublicKey:"+pathPublicKey);
-			logger.logDebug("pathPrivateKey:"+pathPrivateKey);
+			logger.logDebug("pathprivateKey:"+properties.get("privateKey").toString());
 		}
-		
-		cripRsa = new RSAKeyLoader(pathPublicKey, pathPrivateKey);
+	}
+	private Map<String, String> getAlgnCredentials(String algnPath) {
+
+		if(logger.isInfoEnabled())
+			logger.logInfo("algn path: " + algnPath);
+		if (algnPath == null || "".equals(algnPath)) {
+			if(logger.isWarningEnabled())
+				logger.logWarning("No secret param in configuration file. Default secret will be used");
+			return null;
+		}
+
+		String wAlgnPath = algnPath;
+		if (!new File(wAlgnPath).exists()) {
+			if(logger.isErrorEnabled())
+		 		logger.logError("The algn file specified does not exist. Default secret will be used:" + wAlgnPath);
+			return null;
+		}
+
+		ReadAlgn algn = new ReadAlgn(wAlgnPath);
+		if(logger.isInfoEnabled())
+			logger.logInfo("Reading algn properties...");
+		java.util.Properties propertiesAlgn = algn.leerParametros();
+		Map<String, String> secret = new HashMap<String, String>();
+		secret.put("user", propertiesAlgn.getProperty("l"));
+		secret.put("pass", propertiesAlgn.getProperty("p"));
+		secret.put("serv",propertiesAlgn.getProperty("s"));
+		return secret;
 	}
 	
 	@Override
@@ -99,34 +141,38 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		}
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-		
+	
 		registerCardPan(aBagSPJavaOrchestration, anOriginalRequest);
 		
 		return processResponseApi(aBagSPJavaOrchestration);
 	}
 	
 	private void registerCardPan(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
-		
+	
 		String panCrypt = cryptaes.encryptData(anOriginalRequest.readValueParam("@i_card_number"));
 		String message = "Success";
 		int returnCode = 0;
 		boolean success = true;
-		
+		aBagSPJavaOrchestration.put(PANCRYPT, panCrypt);
+		aBagSPJavaOrchestration.put(CARD_ID, "");
+		aBagSPJavaOrchestration.put(UNIQUE_ID, "");
 		if(logger.isDebugEnabled())
 		{
 			logger.logDebug("registerCardPan cript card:"+panCrypt );
 		}
-		if(logger.isDebugEnabled())
+		IProcedureResponse responseValidateCustomer = validateCustomer(anOriginalRequest, aBagSPJavaOrchestration);
+		if(responseValidateCustomer.getReturnCode() == 0)
 		{
-			String decrypt = cryptaes.decryptData(panCrypt);
-			logger.logDebug("decript card:"+decrypt );
-		}
-		aBagSPJavaOrchestration.put(PANCRYPT, panCrypt);
-		aBagSPJavaOrchestration.put(CARD_ID, "");
-		aBagSPJavaOrchestration.put(UNIQUE_ID, "");
-		IProcedureResponse wProcedureResponseDock = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
-		if(wProcedureResponseDock.getReturnCode() == 0)
-		{
+			
+			if(logger.isDebugEnabled())
+			{
+				String decrypt = cryptaes.decryptData(panCrypt);
+				logger.logDebug("decript card:"+decrypt );
+			}
+						
+			//valida si la tarjeta esta en dock // no se recupera el response ya que puede ser un tercero
+			validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+			
 			IProcedureResponse wProcedureResponseLocal = registerPANcard(anOriginalRequest, aBagSPJavaOrchestration);
 			if (wProcedureResponseLocal.getReturnCode() != 0) 
 			{
@@ -147,18 +193,26 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 				aBagSPJavaOrchestration.put(UNIQUE_ID, wProcedureResponseLocal.readValueParam(O_UNIQUE_ID));
 				aBagSPJavaOrchestration.put(CARD_ID, wProcedureResponseLocal.readValueParam(O_CARD_ID));
 			}
-		}else
+		}
+		else
 		{
-			returnCode = wProcedureResponseDock.getReturnCode();
-			success = false;
-			if(wProcedureResponseDock.getMessageListSize() >= 0)
-				message = wProcedureResponseDock.getMessage(1).getMessageText();
+			returnCode = responseValidateCustomer.getReturnCode();
+			success =  Boolean.parseBoolean(responseValidateCustomer.readValueParam(O_ACCESS_AUTH));
+			if(responseValidateCustomer.readValueParam(O_DESCRIPTION) != null)
+				message = responseValidateCustomer.readValueParam(O_DESCRIPTION);
 			else
-				message = "Card registration error.";
+				message = "Error validating client.";
+		}
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug(SUCCESS +":" + success);
+			logger.logDebug(CODE +":" + returnCode);
+			logger.logDebug(MESSAJE +":"  + message);
 		}
 		aBagSPJavaOrchestration.put(SUCCESS, success);
 		aBagSPJavaOrchestration.put(CODE, returnCode);
 		aBagSPJavaOrchestration.put(MESSAJE, message);
+			
 	}
 
 	@Override
@@ -393,39 +447,69 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 
 	private IProcedureResponse findCardId(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
 	
-	IProcedureRequest request = new ProcedureRequestAS();
-
-	if (logger.isInfoEnabled()) {
-		logger.logInfo(CLASS_NAME + " Entrando en findCardId");
+		IProcedureRequest request = new ProcedureRequestAS();
+	
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en findCardId");
+		}
+	
+		request.setSpName("cob_bvirtual..sp_val_data_tarjeta");
+	
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_id_dock", ICTSTypes.SQLVARCHAR, aResponse.readValueParam("@o_id_card"));
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "C");
+		
+		request.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_type_card", ICTSTypes.SQLVARCHAR, "X");
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("o_account es " +  wProductsQueryResp.readValueParam("@o_account"));
+		}
+		
+		aBagSPJavaOrchestration.put(ACCOUNT, wProductsQueryResp.readValueParam("@o_account"));
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking findCardId DCO : " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de findCardId");
+		}
+		return wProductsQueryResp;
 	}
+	
+	private IProcedureResponse validateCustomer(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
+	
+		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalReq);
+		
+		procedureRequest.setSpName("cob_procesador..sp_customer_validate");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700116");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700116");
+		anOriginalReq.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700116");
+		anOriginalReq.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
+		anOriginalReq.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
+		anOriginalReq.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
+		anOriginalReq.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+				"(service.identifier=CustomerValidateOrchestrationCore)");
+		anOriginalReq.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+		procedureRequest.addInputParam("@i_wm_token", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_auth_token"));
+		procedureRequest.addInputParam("@i_wm_session", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_session_id"));
+		procedureRequest.addOutputParam(O_ACCESS_AUTH, ICTSTypes.SQLBIT, "");
+		procedureRequest.addOutputParam(O_DESCRIPTION, ICTSTypes.SQLVARCHAR, "");
 
-	request.setSpName("cob_bvirtual..sp_val_data_tarjeta");
-
-	request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-			IMultiBackEndResolverService.TARGET_LOCAL);
-	request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-	
-	request.addInputParam("@i_id_dock", ICTSTypes.SQLVARCHAR, aResponse.readValueParam("@o_id_card"));
-	request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "C");
-	
-	request.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "X");
-	request.addOutputParam("@o_type_card", ICTSTypes.SQLVARCHAR, "X");
-	
-	IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-	
-	if (logger.isDebugEnabled()) {
-		logger.logDebug("o_account es " +  wProductsQueryResp.readValueParam("@o_account"));
+		IProcedureResponse procedureResponse = executeCoreBanking(procedureRequest);
+		
+		if(logger.isDebugEnabled())
+			logger.logInfo("Response validateCustomer: "+procedureResponse.getProcedureResponseAsString());
+		
+		return procedureResponse;
 	}
 	
-	aBagSPJavaOrchestration.put(ACCOUNT, wProductsQueryResp.readValueParam("@o_account"));
-	
-	if (logger.isDebugEnabled()) {
-		logger.logDebug("Response Corebanking findCardId DCO : " + wProductsQueryResp.getProcedureResponseAsString());
-	}
 
-	if (logger.isInfoEnabled()) {
-		logger.logInfo(CLASS_NAME + " Saliendo de findCardId");
-	}
-	return wProductsQueryResp;
-}
+
 }
