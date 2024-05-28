@@ -28,7 +28,6 @@ import com.cobiscorp.cobis.cts.rest.client.dto.MessageBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
-import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
@@ -41,21 +40,15 @@ import org.apache.felix.scr.annotations.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import javax.xml.ws.Response;
-
 import java.util.Arrays;
 
 import com.cobiscorp.cobis.cts.rest.client.util.ConverterUtil;
 import com.cobiscorp.cobis.cts.rest.client.util.ICTSTypes;
 
-import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 import cobiscorp.ecobis.datacontractoperations.dto.*;
-import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 
 @Component
 @Service({ IServiceContractOperationsApiService.class })
