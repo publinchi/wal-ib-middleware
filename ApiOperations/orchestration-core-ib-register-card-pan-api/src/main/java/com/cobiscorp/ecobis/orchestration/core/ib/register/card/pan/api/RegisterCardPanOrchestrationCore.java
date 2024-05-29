@@ -503,6 +503,7 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		anOriginalReq.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 		procedureRequest.addInputParam("@i_wm_token", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_auth_token"));
 		procedureRequest.addInputParam("@i_wm_session", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_session_id"));
+		procedureRequest.addInputParam("@i_wm_customer_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_customer_id"));
 		procedureRequest.addOutputParam(O_ACCESS_AUTH, ICTSTypes.SQLBIT, "");
 		procedureRequest.addOutputParam(O_DESCRIPTION, ICTSTypes.SQLVARCHAR, "");
 
