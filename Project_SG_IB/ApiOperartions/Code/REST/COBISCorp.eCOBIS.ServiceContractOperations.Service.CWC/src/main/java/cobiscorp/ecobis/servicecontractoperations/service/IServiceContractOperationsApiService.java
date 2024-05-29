@@ -425,6 +425,6 @@ public interface IServiceContractOperationsApiService {
     */
         
 	//Have DTO
-	public ResponseRegisterCardPan registerCardPan(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,String auth_token,String session_id,RequestRegisterCardPan inRequestRegisterCardPan  )throws CTSRestException;
+	public ResponseRegisterCardPan registerCardPan(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,String auth_token,String session_id,String customer_id,RequestRegisterCardPan inRequestRegisterCardPan  )throws CTSRestException;
 
 }
