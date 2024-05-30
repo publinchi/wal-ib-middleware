@@ -1,5 +1,8 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api;
 
+import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -25,6 +28,7 @@ import com.cobis.trfspeiservice.bsl.serv.ISpeiServiceOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
+import com.cobiscorp.cobis.commons.crypt.ReadAlgn;
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.csp.domains.ICSP;
@@ -55,6 +59,8 @@ import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.AESCrypt;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.JKeyStore;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Client;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Notification;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.NotificationDetail;
@@ -196,11 +202,65 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         speiOrchestration = null;
     }
     
-    @Override
-    public void loadConfiguration(IConfigurationReader arg) {
-        if (logger.isInfoEnabled())
-            logger.logInfo("LOAD CONFIGUATION");
-    }
+	private java.util.Properties properties;
+	private AESCrypt cryptaes;
+	private JKeyStore jks;
+	
+	@Override
+	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
+		properties = aConfigurationReader.getProperties("//property");
+		jks = new JKeyStore();
+		String jkey = "";
+		
+		String ctsPath = System.getProperty(COBIS_HOME);
+		if (properties != null && properties.get("jksalgncon") != null) {
+			Map<String, String> wSecret = getAlgnCredentials(ctsPath+(String)properties.get("jksalgncon"));
+			if (wSecret != null) 
+			{
+				properties.put("user", wSecret.get("user"));
+				properties.put("pss", wSecret.get("pass"));
+				
+				jkey = jks.getSecretKeyStringFromKeyStore(ctsPath+(String)properties.get("jks"), wSecret.get("pass"), wSecret.get("user"));
+				
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("jks private:"+jkey);
+				}
+				cryptaes = new AESCrypt(jkey);
+			}
+		}
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug("pathprivateKey:"+jkey);
+		}
+	}
+	private Map<String, String> getAlgnCredentials(String algnPath) {
+
+		if(logger.isInfoEnabled())
+			logger.logInfo("algn path: " + algnPath);
+		if (algnPath == null || "".equals(algnPath)) {
+			if(logger.isWarningEnabled())
+				logger.logWarning("No secret param in configuration file. Default secret will be used");
+			return null;
+		}
+
+		String wAlgnPath = algnPath;
+		if (!new File(wAlgnPath).exists()) {
+			if(logger.isErrorEnabled())
+		 		logger.logError("The algn file specified does not exist. Default secret will be used:" + wAlgnPath);
+			return null;
+		}
+
+		ReadAlgn algn = new ReadAlgn(wAlgnPath);
+		if(logger.isInfoEnabled())
+			logger.logInfo("Reading algn properties...");
+		java.util.Properties propertiesAlgn = algn.leerParametros();
+		Map<String, String> secret = new HashMap<String, String>();
+		secret.put("user", propertiesAlgn.getProperty("l"));
+		secret.put("pass", propertiesAlgn.getProperty("p"));
+		secret.put("serv",propertiesAlgn.getProperty("s"));
+		return secret;
+	}
 
     /**
      * /** Execute transfer first step of service
@@ -223,7 +283,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-
+        
+        String decrypt = cryptaes.decryptData("aqui var tarjeta encriptada");
+        
         anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
         if(anProcedureResponse.getReturnCode()==0)
         {
@@ -2541,4 +2603,34 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	    Pattern patron = Pattern.compile("^\\d+$");
 	    return patron.matcher(cadena).matches();
     }
+	
+	private IProcedureResponse queryCardAccount(IProcedureRequest anOriginalRequest,  Map<String, Object> aBagSPJavaOrchestration) 
+	{
+		if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Begin Query card PAN");
+		}
+		
+		IProcedureRequest procedureRequest = (initProcedureRequest(anOriginalRequest));		
+		procedureRequest.setSpName("cob_bvirtual..sp_card_pan");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500165");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500165");
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
+		
+		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
+		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
+		procedureRequest.addOutputParam("@o_card_crypt", ICTSTypes.SQLVARCHAR, "X");
+	    
+		IProcedureResponse wProcedureResponseLocal = executeCoreBanking(procedureRequest);
+		
+	    if (logger.isDebugEnabled()) 
+		{
+			logger.logDebug("Query card PAN :" + wProcedureResponseLocal.getProcedureResponseAsString());
+		}
+	    return wProcedureResponseLocal;
+	}
+
 }
