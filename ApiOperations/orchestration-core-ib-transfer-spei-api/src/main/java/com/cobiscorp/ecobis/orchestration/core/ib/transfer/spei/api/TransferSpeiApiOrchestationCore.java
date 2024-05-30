@@ -284,7 +284,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
         
-        String decrypt = cryptaes.decryptData("aqui var tarjeta encriptada");
+      //  String decrypt = cryptaes.decryptData("aqui var tarjeta encriptada");
         
         anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
         if(anProcedureResponse.getReturnCode()==0)
@@ -300,6 +300,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Entrando en transferSpei");
         }
+        //String destAccoutNumber = request.readValueParam("@i_destination_account_number");
+
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 
@@ -307,14 +309,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 
         if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-        	int prod_des =  Integer.parseInt((String) aBagSPJavaOrchestration.get("o_prod"));
+
         	
-        	if (prod_des == 3) {
-        		
-        	}
+
 
             IProcedureResponse wTransferResponse = new ProcedureResponseAS();
-            logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod")
+            logger.logInfo(CLASS_NAME + " JCOS " + aBagSPJavaOrchestration.get("o_prod")
                     + aBagSPJavaOrchestration.get("o_mon") + aBagSPJavaOrchestration.get("o_prod_des")
                     + aBagSPJavaOrchestration.get("o_mon_des") + aBagSPJavaOrchestration.get("o_prod_alias")
                     + aBagSPJavaOrchestration.get("o_nom_beneficiary") + aBagSPJavaOrchestration.get("o_login")
@@ -589,7 +589,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         // aRequest.readValueParam("@i_concept"));
         String detail = "WAL_VAL_DEF_X";
         if (!aRequest.readValueParam("@i_detail").equals("null") && !aRequest.readValueParam("@i_detail").trim().isEmpty()) {
-            detail = aRequest.readValueParam("@i_detail");
+            detail = aRequest.readValueParam("@i_det=ail");
         }
         request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, detail);// poner en el CWC
         request.addInputParam("@i_banco_ben", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_id"));
@@ -1624,11 +1624,27 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             IProcedureResponse responseTransfer, IProcedureRequest anOriginalRequest) {
         String wInfo = "[SPITransferOrchestrationCore][transformBagToSpeiRequest] ";
         logger.logInfo(wInfo + Constants.INIT_TASK);
+        
+        String clearCard="";
+        
+        logger.logInfo("jc logger spei");
+      //  logger.logInfo(aBagSPJavaOrchestration.get("o_prod_des").toString());
+      //  logger.logInfo(aBagSPJavaOrchestration.get("clear_card").toString());
+        
+    	int prod_des =  Integer.parseInt((String) aBagSPJavaOrchestration.get("o_prod_des"));    	
+    	if (prod_des == 3 && aBagSPJavaOrchestration.get("clear_card")!=null) {
+    		 clearCard=aBagSPJavaOrchestration.get("clear_card").toString();
+    	}
 
         SpeiMappingRequest request = new SpeiMappingRequest();
         request.setConceptoPago(anOriginalRequest.readValueParam(Constants.I_CONCEPTO));
         request.setCuentaOrdenante(anOriginalRequest.readValueParam(Constants.I_CUENTA));
+        logger.logInfo(request);
+        if (prod_des == 3) {
+        	request.setCuentaClabeBeneficiario(clearCard);
+        }else {
         request.setCuentaClabeBeneficiario(anOriginalRequest.readValueParam(Constants.I_CUENTA_DESTINO));
+        }
         request.setNombreBeneficiario(anOriginalRequest.readValueParam(Constants.I_NOMBRE_BENEFICIARIO));
         request.setInstitucionContraparte(anOriginalRequest.readValueParam(Constants.I_BANCO_BENEFICIARIO));
         request.setBancoDestino(aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO) != null
@@ -2506,15 +2522,36 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	    	result = "false";
 		}else
 		{ 
-			if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTarDeb")))
+			logger.logDebug(" JC VALIDANDO SI ES TARJETA");
+			
+			logger.logDebug("tarjeta prueba 1 "+opTcClaveBen);
+			
+			if(opTcClaveBen.equals("03"))
 			{
-				if( !digitValidateNum(destAccoutNumber))
+				
+				logger.logDebug("tarjeta prueba 1 "+opTcClaveBen);
+
+				
+				IProcedureResponse respomse3=queryCardAccount(request,aBagSPJavaOrchestration);
+				
+				String tarjeta= respomse3.readValueParam("@o_card_crypt");
+				
+				logger.logDebug("tarjeta prueba 2 "+tarjeta);
+				
+	         	String tarjetaClaro = cryptaes.decryptData(tarjeta);   
+	         	
+	         	aBagSPJavaOrchestration.put("clear_card", tarjetaClaro);
+	         	aBagSPJavaOrchestration.put("card_destination", "3");
+				
+				logger.logDebug("tarjeta prueba 3 "+tarjeta);
+	         	
+				if( !digitValidateNum(tarjetaClaro))
 				{
 					code = 34;
 			    	message = "La cuenta del beneficiario solo puede ser numérica";
 			    	result = "false";
 				}else
-					if(!(destAccoutNumber.length()==16))
+					if(!(tarjetaClaro.length()==16))
 					{
 						code = 38;
 				    	message = "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.";
@@ -2618,7 +2655,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500165");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500165");
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
-		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
+		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_destination_account_number")) ;
 		
 		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
