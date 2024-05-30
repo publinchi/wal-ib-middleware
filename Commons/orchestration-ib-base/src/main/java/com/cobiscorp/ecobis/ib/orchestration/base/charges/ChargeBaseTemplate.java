@@ -403,10 +403,10 @@ public abstract class ChargeBaseTemplate extends SPJavaOrchestrationBase {
         }
 
         // SI PRODUCTO Y TRANSACCION ESTAN AUTORIZADOS
-        if (validatePreConditions(aBagSPJavaOrchestration)) {
+      /*  if (validatePreConditions(aBagSPJavaOrchestration)) {
 
             // VALIDA FIRMAS FISICAS SOLO EN LINEA
-            IProcedureResponse responseSigner = new ProcedureResponseAS();
+           IProcedureResponse responseSigner = new ProcedureResponseAS();
             if (responseServer.getOnLine()) {
                 responseSigner = AccountCoreSignersValidation.validateCoreSigners(getCoreService(), aBagSPJavaOrchestration);
                 if (Utils.flowError("querySigners", responseSigner)) {
@@ -416,7 +416,7 @@ public abstract class ChargeBaseTemplate extends SPJavaOrchestrationBase {
             } else {
                 responseSigner.setReturnCode(0);
             }
-            aBagSPJavaOrchestration.put(RESPONSE_QUERY_SIGNER, responseSigner);
+            aBagSPJavaOrchestration.put(RESPONSE_QUERY_SIGNER, responseSigner);*/
 
             // VALIDACIONES LOCALES
             IProcedureResponse responseLocalValidation = validateLocalExecution(aBagSPJavaOrchestration);
@@ -497,7 +497,7 @@ public abstract class ChargeBaseTemplate extends SPJavaOrchestrationBase {
                 return responseNotification;
             }
 
-        }
+   //     }
 
         if (logger.isInfoEnabled())
             logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta mÃ©todo executeStepsTransactionsBase: " + aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
