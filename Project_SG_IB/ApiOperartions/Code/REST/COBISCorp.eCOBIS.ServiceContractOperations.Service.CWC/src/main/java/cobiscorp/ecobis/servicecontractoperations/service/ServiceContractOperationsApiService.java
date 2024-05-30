@@ -7494,7 +7494,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	@Override
 	// Have DTO
 	public ResponseRegisterCardPan registerCardPan(String xrequestid, String xenduserrequestdatetime, String xenduserip,
-			String xchannel, String auth_token, String session_id, RequestRegisterCardPan inRequestRegisterCardPan)
+			String xchannel, String auth_token, String session_id,String customer_id, RequestRegisterCardPan inRequestRegisterCardPan)
 			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: registerCardPan");
 		ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
@@ -7511,7 +7511,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
 		procedureRequestAS.addInputParam("@x_auth_token", ICTSTypes.SQLVARCHAR, auth_token);
 		procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
-
+		procedureRequestAS.addInputParam("@x_customer_id",ICTSTypes.SQLVARCHAR,customer_id);
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
 				procedureRequestAS);
