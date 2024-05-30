@@ -320,9 +320,9 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		if ("6".equals(servicio) || "7".equals(servicio)) {
 			request.addInputParam("@i_prod", ICTSTypes.SYBINT2, "0");
 		}
-		if (!Utils.isNull(responseSigners.readParam("@o_condiciones_firmantes"))) {
+		/*if (!Utils.isNull(responseSigners.readParam("@o_condiciones_firmantes"))) {
 			request.addInputParam("@i_cond_firmas", responseSigners.readParam("@o_condiciones_firmantes").getDataType(), responseSigners.readValueParam("@o_condiciones_firmantes"));
-		}
+		}*/
 		if (!Utils.isNull(originalRequest.readParam("@i_val"))) {
 			request.addInputParam("@i_val", originalRequest.readParam("@i_val").getDataType(), originalRequest.readValueParam("@i_val"));
 		}
@@ -450,7 +450,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		}
 
 		// Si producto y transaccion estan autorizados
-		if (validatePreConditions(aBagSPJavaOrchestration)) {
+		/*if (validatePreConditions(aBagSPJavaOrchestration)) {
 
 			// Valida firmas fisicas solo en lÃ­nea
 			IProcedureResponse responseSigner = new ProcedureResponseAS();
@@ -462,8 +462,8 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 				}
 			} else {
 				responseSigner.setReturnCode(0);
-			}
-			aBagSPJavaOrchestration.put(RESPONSE_QUERY_SIGNER, responseSigner);
+			}*/
+		//	aBagSPJavaOrchestration.put(RESPONSE_QUERY_SIGNER, responseSigner);
 
 			// Validaciones locales
 			IProcedureResponse responseLocalValidation = validateLocalExecution(aBagSPJavaOrchestration);
@@ -540,7 +540,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 				return responseNotification;
 			}
 
-		}
+		
 
 		if (logger.isInfoEnabled())
 			logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta mÃ©todo executeStepsTransactionsBase: " + aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
