@@ -657,8 +657,6 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				
 				notifyWithdrawal(aRequest, aBagSPJavaOrchestration);
 				
-				notifyWithdrawal(aRequest, aBagSPJavaOrchestration);
-				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));

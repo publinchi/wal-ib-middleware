@@ -663,8 +663,6 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				
 				notifyDeposit(aRequest, aBagSPJavaOrchestration);
 				
-				notifyDeposit(aRequest, aBagSPJavaOrchestration);
-				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));

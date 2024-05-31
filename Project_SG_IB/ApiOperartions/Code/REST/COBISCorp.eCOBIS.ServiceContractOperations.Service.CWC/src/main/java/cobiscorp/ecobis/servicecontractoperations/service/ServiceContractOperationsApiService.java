@@ -1379,19 +1379,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 										dto.setResponse(resultSetMapper.getString(4));
 										dto.setReason(resultSetMapper.getString(5));
 										dto.setAvailable_limit(resultSetMapper.getString(6));
-										if(resultSetMapper.getString(7) != null) {
-										    String numeroCadena = resultSetMapper.getString(7); // Recuperar como cadena para preservar los ceros a la izquierda
-										    if (numeroCadena.length() > 6) {
-										        numeroCadena = numeroCadena.substring(0, 6); // Tomar solo los primeros 6 caracteres
-										    } else if (numeroCadena.length() < 6) {
-										        // Agregar ceros a la derecha para alcanzar la longitud deseada
-										        StringBuilder ceros = new StringBuilder(numeroCadena);
-										        for (int i = numeroCadena.length(); i < 6; i++) {
-										            ceros.append("0");
-										        }
-										        numeroCadena = ceros.toString();
-										    }
-										    dto.setAuthorization_code(Integer.parseInt(numeroCadena));
+										if(resultSetMapper.getString(7)!=null) {
+										int auto = resultSetMapper.getInteger(7);	
+										String numeroCadena = String.valueOf(auto);											
+										if(auto>0 && numeroCadena!=null) {						
+								         int inicio = Math.max(numeroCadena.length() - 6, 0);
+								         String numeroCortado = numeroCadena.substring(inicio);	
+										 dto.setAuthorization_code(Integer.parseInt(numeroCortado));
+										}
 										}
 										dto.setSeq(resultSetMapper.getString(8));
 										
@@ -1924,24 +1919,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setResponse(resultSetMapper.getString(4));
 								dto.setReason(resultSetMapper.getString(5));
 								dto.setAvailable_limit(resultSetMapper.getString(6));
-								//dto.setAuthorization_code(resultSetMapper.getInteger(7));
-
-								if(resultSetMapper.getString(7) != null) {
-								    String numeroCadena = resultSetMapper.getString(7); // Recuperar como cadena para preservar los ceros a la izquierda
-								    if (numeroCadena.length() > 6) {
-								        numeroCadena = numeroCadena.substring(0, 6); // Tomar solo los primeros 6 caracteres
-								    } else if (numeroCadena.length() < 6) {
-								        // Agregar ceros a la derecha para alcanzar la longitud deseada
-								        StringBuilder ceros = new StringBuilder(numeroCadena);
-								        for (int i = numeroCadena.length(); i < 6; i++) {
-								            ceros.append("0");
-								        }
-								        numeroCadena = ceros.toString();
-								    }
-								    dto.setAuthorization_code(Integer.parseInt(numeroCadena));
-								}
-								
-								
+								dto.setAuthorization_code(resultSetMapper.getInteger(7));
 								dto.setSeq(resultSetMapper.getString(8));
 
 								return dto;

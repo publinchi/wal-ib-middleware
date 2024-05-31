@@ -1016,7 +1016,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 		return anOriginalProcedureResponse;
 	}
-	
 
 	public static boolean isDate(String date) {
 		try {
