@@ -2512,11 +2512,11 @@ public class ServiceContractOperationsApiRest {
           * Register Card Pan
           */
         @POST
-      @Path("/apiOperations/accounts/registerCardPan")
+      @Path("/apiOperations/accounts/getUniqueId")
       @Consumes({"application/json"})
       @Produces({"application/json"})
-        public Response  registerCardPan(@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,@NotNull(message = "auth_token may not be null") @HeaderParam("auth_token") String auth_token,@NotNull(message = "session_id may not be null") @HeaderParam("session_id") String session_id,@NotNull(message = "customer_id may not be null") @HeaderParam("customer_id") String customer_id,RequestRegisterCardPan inRequestRegisterCardPan ){
-	  LOGGER.logDebug("Start service execution REST: registerCardPan");
+        public Response  getUniqueId(@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,@NotNull(message = "auth_token may not be null") @HeaderParam("auth_token") String auth_token,@NotNull(message = "session_id may not be null") @HeaderParam("session_id") String session_id,@NotNull(message = "customer_id may not be null") @HeaderParam("customer_id") String customer_id,RequestRegisterCardPan inRequestRegisterCardPan ){
+	  LOGGER.logDebug("Start service execution REST: getUniqueId");
       ResponseRegisterCardPan outResponseRegisterCardPan  = new ResponseRegisterCardPan();
           
       if(!validateMandatory(new Data("card_number", inRequestRegisterCardPan.getCard_number()))) {
@@ -2525,7 +2525,7 @@ public class ServiceContractOperationsApiRest {
       }
 	    
       try {
-      outResponseRegisterCardPan=iServiceContractOperationsApiService.registerCardPan(xrequestid,xenduserrequestdatetime,xenduserip,xchannel,auth_token,session_id,customer_id, inRequestRegisterCardPan );
+      outResponseRegisterCardPan=iServiceContractOperationsApiService.getUniqueId(xrequestid,xenduserrequestdatetime,xenduserip,xchannel,auth_token,session_id,customer_id, inRequestRegisterCardPan );
       } catch (CTSRestException e) {
       LOGGER.logError("CTSRestException",e);
       if ("404".equals(e.getMessage())) {
