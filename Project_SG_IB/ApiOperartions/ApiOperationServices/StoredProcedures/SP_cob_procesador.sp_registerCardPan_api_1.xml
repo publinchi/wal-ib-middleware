@@ -31,7 +31,7 @@
     <query>
       <columns>
         <column name="unique_id" />
-        <column name="card_id" />
+        <column name="dock_card_id" />
       </columns>
       <queryText></queryText>
     </query>

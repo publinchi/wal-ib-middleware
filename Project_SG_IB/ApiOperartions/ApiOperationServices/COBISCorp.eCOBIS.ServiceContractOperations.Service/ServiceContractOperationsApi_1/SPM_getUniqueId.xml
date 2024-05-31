@@ -53,13 +53,12 @@
           <field type="String" name="dTOAlias" value="returnResponseRegisterCardPan" />
           <field type="String" name="dTOPropertyName" value="unique_id" />
           <field type="String" name="dataType" value="string" />
-          <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="14" index="1">
           <field type="int" name="position" value="1" />
-          <field type="String" name="columnName" value="card_id" />
+          <field type="String" name="columnName" value="dock_card_id" />
           <field type="String" name="dTOAlias" value="returnResponseRegisterCardPan" />
-          <field type="String" name="dTOPropertyName" value="card_id" />
+          <field type="String" name="dTOPropertyName" value="dock_card_id" />
           <field type="String" name="dataType" value="string" />
           <field type="String" name="format" value="" />
         </class>
@@ -288,7 +287,7 @@
   <collection type="Map" length="2" id="49" name="mappingProperties">
     <entry>
       <key type="String" value="Path" />
-      <value type="String" value="apiOperations/accounts/registerCardPan" />
+      <value type="String" value="apiOperations/accounts/getUniqueId" />
     </entry>
     <entry>
       <key type="String" value="HTTPMethod" />

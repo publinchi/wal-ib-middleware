@@ -7453,10 +7453,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	 */
 	@Override
 	// Have DTO
-	public ResponseRegisterCardPan registerCardPan(String xrequestid, String xenduserrequestdatetime, String xenduserip,
+	public ResponseRegisterCardPan getUniqueId(String xrequestid, String xenduserrequestdatetime, String xenduserip,
 			String xchannel, String auth_token, String session_id,String customer_id, RequestRegisterCardPan inRequestRegisterCardPan)
 			throws CTSRestException {
-		LOGGER.logDebug("Start service execution: registerCardPan");
+		LOGGER.logDebug("Start service execution: getUniqueId");
 		ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
 
 		// create procedure
