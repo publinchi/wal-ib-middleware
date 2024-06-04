@@ -151,6 +151,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wqueryCard = null;
 		boolean validateDestination = true;
+		aBagSPJavaOrchestration.put("ctades", aRequest.readValueParam("@i_cta_des"));	
 		//clabe
 		if("40".equals(typeThird))
 		{
@@ -162,7 +163,6 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		}else//tarjeta por id cobis
 			if("3".equals(typeThird)) 
 			{
-				aBagSPJavaOrchestration.put("ctades", aRequest.readValueParam("@i_cta_des"));	
 				wqueryCard = queryCardAccount(aRequest, aBagSPJavaOrchestration);
 				
 				//tarjeta no tiene cuenta cashi
@@ -193,6 +193,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
+			aRequest.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("ctades").toString());
 			wAccountsRespInsert = insertAccount(aRequest, aBagSPJavaOrchestration, type);
 			return wAccountsRespInsert; 
 		}
@@ -393,9 +394,9 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500165");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500165");
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
+		procedureRequest.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
 		
-		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
+		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLVARCHAR, "0");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_cuenta", ICTSTypes.SQLVARCHAR, "X");
 	    

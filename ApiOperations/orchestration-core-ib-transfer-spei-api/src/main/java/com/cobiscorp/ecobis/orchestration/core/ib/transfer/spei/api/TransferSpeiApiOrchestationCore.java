@@ -2655,9 +2655,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500165");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500165");
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
-		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_destination_account_number")) ;
+		procedureRequest.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_destination_account_number")) ;
 		
-		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
+		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_card_crypt", ICTSTypes.SQLVARCHAR, "X");
 	    
