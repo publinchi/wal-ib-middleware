@@ -1379,15 +1379,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 										dto.setResponse(resultSetMapper.getString(4));
 										dto.setReason(resultSetMapper.getString(5));
 										dto.setAvailable_limit(resultSetMapper.getString(6));
-										if(resultSetMapper.getString(7)!=null) {
-										int auto = resultSetMapper.getInteger(7);	
-										String numeroCadena = String.valueOf(auto);											
-										if(auto>0 && numeroCadena!=null) {						
-								         int inicio = Math.max(numeroCadena.length() - 6, 0);
-								         String numeroCortado = numeroCadena.substring(inicio);	
-										 dto.setAuthorization_code(Integer.parseInt(numeroCortado));
-										}
-										}
+										dto.setAuthorization_code(resultSetMapper.getInteger(7));
 										dto.setSeq(resultSetMapper.getString(8));
 										
 										
