@@ -2376,37 +2376,18 @@ public class ServiceContractOperationsApiRest {
 				inRequestAuthorizeReversalDock.getTokens_62().setTransaction(adtInf.get(4));
 				inRequestAuthorizeReversalDock.getTokens_62().setPinpad(adtInf.get(5));
 			}
-			if (!validateMandatory(new Data("card_id", inRequestAuthorizeReversalDock.getCard_id()),
+			if (!validateMandatory(
 					new Data("mti", inRequestAuthorizeReversalDock.getMti()),
-					new Data("processing.type", inRequestAuthorizeReversalDock.getProcessing().getType()),
-					new Data("processing.origin_account_type",
-							inRequestAuthorizeReversalDock.getProcessing().getOrigin_account_type()),
-					new Data("processing.destiny_account_type",
-							inRequestAuthorizeReversalDock.getProcessing().getDestiny_account_type()),
-					new Data("processing.code", inRequestAuthorizeReversalDock.getProcessing().getCode()),
 					new Data("nsu", inRequestAuthorizeReversalDock.getNsu()),
-					//new Data("authorization_code", inRequestAuthorizeReversalDock.getAuthorization_code()),
-					new Data("transaction_origin", inRequestAuthorizeReversalDock.getTransaction_origin()),
-					new Data("installments", inRequestAuthorizeReversalDock.getInstallments()),
-					new Data("card_entry.code", inRequestAuthorizeReversalDock.getCard_entry().getCode()),
-					new Data("card_entry.pin", inRequestAuthorizeReversalDock.getCard_entry().getPin()),
-					new Data("card_entry.mode", inRequestAuthorizeReversalDock.getCard_entry().getMode()),
-					new Data("merchant_category_code", inRequestAuthorizeReversalDock.getMerchant_category_code()),
+					new Data("card_entry", inRequestAuthorizeReversalDock.getCard_entry()),
+					// values
 					new Data("values.source_currency_code",
 							inRequestAuthorizeReversalDock.getValues().getSource_currency_code()),
 					new Data("values.billing_currency_code",
 							inRequestAuthorizeReversalDock.getValues().getBilling_currency_code()),
 					new Data("values.source_value", inRequestAuthorizeReversalDock.getValues().getSource_value()),
 					new Data("values.billing_value", inRequestAuthorizeReversalDock.getValues().getBilling_value()),
-					new Data("terminal_code", inRequestAuthorizeReversalDock.getTerminal_code()),
-					new Data("establishment_code", inRequestAuthorizeReversalDock.getEstablishment_code()),
-					//new Data("brand_response_code", inRequestAuthorizeReversalDock.getBrand_response_code()),
-					//new Data("tokens_62.affiliation_number", inRequestAuthorizeReversalDock.getTokens_62().getAffiliation_number()),
-					//new Data("tokens_62.store_number", inRequestAuthorizeReversalDock.getTokens_62().getStore_number()),
-					//new Data("tokens_62.pos_id", inRequestAuthorizeReversalDock.getTokens_62().getPos_id()),
-					//new Data("tokens_62.cashier", inRequestAuthorizeReversalDock.getTokens_62().getCashier()),
-					//new Data("tokens_62.transaction", inRequestAuthorizeReversalDock.getTokens_62().getTransaction()),
-					//new Data("tokens_62.pinpad", inRequestAuthorizeReversalDock.getTokens_62().getPinpad()),
+					// original_transaction_data
 					new Data("original_transaction_data.transaction_uuid",
 							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getTransaction_uuid()),
 					new Data("original_transaction_data.nsu",
@@ -2415,14 +2396,11 @@ public class ServiceContractOperationsApiRest {
 							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getMti()),
 					new Data("original_transaction_data.institution_code",
 							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_code()),
-					new Data("original_transaction_data.institution_name",
-							inRequestAuthorizeReversalDock.getOriginal_transaction_data().getInstitution_name()),
 					new Data("original_transaction_data.retrieval_reference_number", inRequestAuthorizeReversalDock
 							.getOriginal_transaction_data().getRetrieval_reference_number()),
-					new Data("additional_information", inRequestAuthorizeReversalDock.getAdditional_information()),
-					new Data("exchange_rate.dest_asset_code", inRequestAuthorizeReversalDock.getExchange_rate().getDest_asset_code()),
-					new Data("exchange_rate.date_time_gmt", inRequestAuthorizeReversalDock.getExchange_rate().getDate_time_gmt()),
-					new Data("exchange_rate.final_billing_value", inRequestAuthorizeReversalDock.getExchange_rate().getFinal_billing_value()))) {
+					new Data("retrieval_reference_number", inRequestAuthorizeReversalDock.getRetrieval_reference_number()),
+					new Data("processing", inRequestAuthorizeReversalDock.getProcessing())
+					)) {
 				LOGGER.logDebug("400 is returned - Required fields are missing");
 				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 						.build();
@@ -2450,7 +2428,7 @@ public class ServiceContractOperationsApiRest {
 			return Response.ok(outSingleResponseAuthorizeReversalDock).build();
 
 		}
-        /**
+		/**
          * Delete Contact
          */
      @POST

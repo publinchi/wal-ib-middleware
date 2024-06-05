@@ -7174,18 +7174,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversalDock.getPos_postal_code());
 			procedureRequestAS.addInputParam("@i_acquirer_country_code", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAcquirer_country_code());
-			procedureRequestAS.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeReversalDock.getTokens_62().getAffiliation_number()));
-			procedureRequestAS.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL,
-					String.valueOf(inRequestAuthorizeReversalDock.getTokens_62().getStore_number()));
-			procedureRequestAS.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getTokens_62().getPos_id());
-			procedureRequestAS.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getTokens_62().getCashier());
-			procedureRequestAS.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getTokens_62().getTransaction());
-			procedureRequestAS.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getTokens_62().getPinpad());
 			procedureRequestAS.addInputParam("@i_preauthorization_type", ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getPreauthorization() != null ?  inRequestAuthorizeReversalDock.getPreauthorization().getType(): null);
 			procedureRequestAS.addInputParam("@i_preauthorization_initial_transaction_uuid", ICTSTypes.SQLVARCHAR,
@@ -7270,32 +7258,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_x-apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 			procedureRequestAS.addInputParam("@i_additional_information",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getAdditional_information());
-			procedureRequestAS.addInputParam("@i_exchange_rate_origin_asset_code",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getOrigin_asset_code());
-			procedureRequestAS.addInputParam("@i_exchange_rate_dest_asset_code",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getDest_asset_code());
-			procedureRequestAS.addInputParam("@i_exchange_rate_date_time_gmt",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getDate_time_gmt());
-			procedureRequestAS.addInputParam("@i_exchange_rate_rate",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getRate());
-			procedureRequestAS.addInputParam("@i_exchange_rate_spread_percent",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getSpread_percent());
-			procedureRequestAS.addInputParam("@i_exchange_rate_final_billing_value",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getFinal_billing_value());
-			procedureRequestAS.addInputParam("@i_exchange_rate_replacement_amounts_final_billing_value",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getExchange_rate().getReplacement_amounts_final_billing_value());
 			procedureRequestAS.addInputParam("@i_installment_data_type_installments",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getType_installments(): null);
 			procedureRequestAS.addInputParam("@i_installment_data_number_of_installments",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getNumber_of_installments(): null);
 			procedureRequestAS.addInputParam("@i_installment_data_grace_period",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getGrace_period(): null);
-			procedureRequestAS.addInputParam("@i_transaction_type_indicator",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getTransaction_type_indicator());
-			procedureRequestAS.addInputParam("@i_is_valid_partial_reversal",ICTSTypes.SQLBIT,
-					String.valueOf(inRequestAuthorizeReversalDock.isIsValidPartialReversal()));
-			procedureRequestAS.addInputParam("@i_date_time",ICTSTypes.SQLVARCHAR,
-					inRequestAuthorizeReversalDock.getDate_time());
 			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);

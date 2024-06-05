@@ -293,18 +293,6 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		String values_2 = aRequest.readValueParam("@i_values_billing_currency_code");
 		String values_3 = aRequest.readValueParam("@i_values_source_value");
 		String values_4 = aRequest.readValueParam("@i_values_billing_value");
-		String gtm_date_time = aRequest.readValueParam("@i_transmission_date_time");
-		String date = aRequest.readValueParam("@i_terminal_date");
-		String time = aRequest.readValueParam("@i_terminal_time");
-		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
-		String original_gtm_date_time = aRequest.readValueParam("@i_original_transaction_data_transmission_date_time_gmt");
-		String pos_id = aRequest.readValueParam("@i_pos_id");
-		String cashier = aRequest.readValueParam("@i_cashier");
-		String transaction = aRequest.readValueParam("@i_transaction");
-		String pinpad = aRequest.readValueParam("@i_pinpad");
-	    String dest_asset_code = aRequest.readValueParam("@i_exchange_rate_dest_asset_code");
-		String date_time_gmt = aRequest.readValueParam("@i_exchange_rate_date_time_gmt");
-		String final_billing_value = aRequest.readValueParam("@i_exchange_rate_final_billing_value");	
 		
 		if (values_3 != null && !values_3.isEmpty() && !isNumeric(values_3)) {
 			values_3 = "";
@@ -314,138 +302,32 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 			values_4 = "";
 		}
 		
-		if(gtm_date_time.equals("null")){
-
-            gtm_date_time  = "";
-
-        } else if (gtm_date_time != null && !gtm_date_time.isEmpty() && !isGtmDateTime(gtm_date_time)) {
-
-            gtm_date_time = "I";
-
-        }
-		
-		if(date.equals("null")){
-
-			date  = "";
-
-        } else if (date != null && !date.isEmpty() && !isDate(date)) {
-
-        	date = "I";
-
-        }
-		
-		if(time.equals("null")){
-
-			time  = "";
-
-        } else if (time != null && !time.isEmpty() && !isTime(time)) {
-
-        	time = "I";
-
-        }
-		
-		if(exp_date.equals("null")){
-
-			exp_date  = "";
-
-        } else if (exp_date != null && !exp_date.isEmpty() && !isExpDate(exp_date)) {
-
-        	exp_date = "I";
-
-        }
-		
-		if(original_gtm_date_time.equals("null")){
-
-			original_gtm_date_time  = "";
-
-        } else if (original_gtm_date_time != null && !original_gtm_date_time.isEmpty() && !isGtmDateTime(original_gtm_date_time)) {
-
-        	original_gtm_date_time = "I";
-
-        }
-		
-		if (pos_id == null || pos_id.trim().isEmpty()) {
-			pos_id = "E";
-		}
-		
-		if (cashier == null || cashier.trim().isEmpty()) {
-			cashier = "E";
-		}
-		
-		if (transaction == null || transaction.trim().isEmpty()) {
-			transaction = "E";
-		}
-		
-		if (pinpad == null || pinpad.trim().isEmpty()) {
-			pinpad = "E";
-		}
-
-		if (dest_asset_code == null || dest_asset_code.trim().isEmpty()) {
-			dest_asset_code = "E";
-		}
-
-		if (date_time_gmt == null || date_time_gmt.trim().isEmpty()) {
-			date_time_gmt = "E";
-		}
-		
-		if (final_billing_value == null || final_billing_value.trim().isEmpty()) {
-			final_billing_value = "E";
-		}
-		
 		request.setSpName("cob_atm..sp_bv_valida_dock_reversal_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@i_transmission_date_time", ICTSTypes.SQLVARCHAR, gtm_date_time);
-		request.addInputParam("@i_terminal_date", ICTSTypes.SQLVARCHAR, date);
-		request.addInputParam("@i_terminal_time", ICTSTypes.SQLVARCHAR, time);
-		request.addInputParam("@i_card_expiration_date", ICTSTypes.SQLVARCHAR, exp_date);
-		request.addInputParam("@i_original_transaction_data_transmission_date_time_gmt", ICTSTypes.SQLVARCHAR, original_gtm_date_time);
-		request.addInputParam("@i_person_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_person_id"));
-		request.addInputParam("@i_account_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
-		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mti"));
-		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_type"));
 		request.addInputParam("@i_processing_origin_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_origin_account_type"));
 		request.addInputParam("@i_processing_destiny_account_type", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_destiny_account_type"));
-		request.addInputParam("@i_processing_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_processing_code"));
 		request.addInputParam("@i_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nsu"));
 		request.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authorization_code"));
-		request.addInputParam("@i_transaction_origin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transaction_origin"));
-		request.addInputParam("@i_card_entry_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_code"));
-		request.addInputParam("@i_card_entry_pin", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_pin"));
-		request.addInputParam("@i_card_entry_mode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_entry_mode"));
-		request.addInputParam("@i_merchant_category_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_mechant_category_code"));
 		request.addInputParam("@i_values_source_currency_code", ICTSTypes.SQLMONEY, values_1);
 		request.addInputParam("@i_values_billing_currency_code", ICTSTypes.SQLMONEY, values_2);
 		request.addInputParam("@i_values_source_value", ICTSTypes.SQLMONEY, values_3);
 		request.addInputParam("@i_values_billing_value", ICTSTypes.SQLMONEY, values_4);
-		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
-		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-		// request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
-		request.addInputParam("@i_affiliation_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_affiliation_number"));
-		request.addInputParam("@i_store_number", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_store_number"));
-		request.addInputParam("@i_pos_id", ICTSTypes.SQLVARCHAR, pos_id);
-		request.addInputParam("@i_cashier", ICTSTypes.SQLVARCHAR, cashier);
-		request.addInputParam("@i_transaction", ICTSTypes.SQLVARCHAR, transaction);
-		request.addInputParam("@i_pinpad", ICTSTypes.SQLVARCHAR, pinpad);
 		request.addInputParam("@i_original_transaction_data_transaction_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
 		request.addInputParam("@i_original_transaction_data_nsu", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_nsu"));
 		request.addInputParam("@i_original_transaction_data_mti", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_mti"));
 		request.addInputParam("@i_original_transaction_data_institution_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institution_code"));
-		request.addInputParam("@i_original_transaction_data_institution_name", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_institutiion_name"));
 		request.addInputParam("@i_original_transaction_data_retrieval_reference_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_original_transaction_data_retrieval_reference_number"));
-		request.addInputParam("@i_legacy_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_legacy-id"));
-		request.addInputParam("@i_client_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_client-id"));
 		request.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_uuid"));
 		request.addInputParam("@i_x_apigw_api_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_x-apigw-api-id"));
-		request.addInputParam("@i_exchange_rate_dest_asset_code", ICTSTypes.SQLVARCHAR, dest_asset_code);
-		request.addInputParam("@i_exchange_rate_date_time_gmt", ICTSTypes.SQLVARCHAR, date_time_gmt);
-		request.addInputParam("@i_exchange_rate_final_billing_value", ICTSTypes.SQLVARCHAR, final_billing_value);
-		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
+		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_account_number"));
+
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
 		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
