@@ -740,7 +740,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_comision"));
 		request.addInputParam("@i_latitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_latitud"));
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
-		request.addInputParam("@i_unique_id_card", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("unique_id_card").toString());
+		request.addInputParam("@i_unique_id_card", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("unique_id_card").toString());
 		request.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("tipo_cta_des").toString());
 		
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
@@ -1159,9 +1159,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500165");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500165");
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-		procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
+		procedureRequest.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta_des")) ;
 		
-		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
+		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLVARCHAR, "0");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_cuenta", ICTSTypes.SQLVARCHAR, "X");
 	    

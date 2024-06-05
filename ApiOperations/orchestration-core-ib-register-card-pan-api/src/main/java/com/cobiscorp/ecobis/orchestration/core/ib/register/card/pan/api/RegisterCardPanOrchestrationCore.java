@@ -5,6 +5,7 @@ import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -182,7 +183,7 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 			{
 				returnCode = wProcedureResponseLocal.getReturnCode();
 				success = false;
-				if(wProcedureResponseLocal.getMessageListSize() >= 0)
+				if(wProcedureResponseLocal.getMessageListSize() > 0)
 					message = wProcedureResponseLocal.getMessage(1).getMessageText();
 				else
 					message = "Card registration error.";
@@ -283,7 +284,9 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		{
 			logger.logDebug("Begin validateAccountType");
 		}
-		
+		UUID uniqueUUID = UUID.randomUUID();
+		String maskCard =  maskNumber(anOriginalRequest.readValueParam("@i_card_number"));
+				
 		IProcedureRequest procedureRequest = (initProcedureRequest(anOriginalRequest));		
 		procedureRequest.setSpName("cob_bvirtual..sp_card_pan");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
@@ -293,8 +296,10 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 		procedureRequest.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(CARD_ID)!=null?aBagSPJavaOrchestration.get(CARD_ID).toString():"") ;
 		procedureRequest.addInputParam("@i_card_pan", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(PANCRYPT) != null?aBagSPJavaOrchestration.get(PANCRYPT).toString():null);
+		procedureRequest.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, uniqueUUID!=null?uniqueUUID.toString():"");
+		procedureRequest.addInputParam("@i_card_mask", ICTSTypes.SQLVARCHAR, maskCard);
 		
-		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLINT4, "0");
+		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
 	    
 		IProcedureResponse wProcedureResponseLocal = executeCoreBanking(procedureRequest);
@@ -515,6 +520,18 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		return procedureResponse;
 	}
 	
+	public String maskNumber(String number) 
+	{
+  	  int length = number.length();
+  	  int start = length / 4;
+  	  int end = length - start;
+  	  StringBuilder maskedNumber = new StringBuilder(number);
 
+  	  // Reemplazar los caracteres en el rango determinado por 'X'
+  	  for (int i = start; i < end; i++) {
+  		  maskedNumber.setCharAt(i, 'X');
+  	  }
+  	  return maskedNumber.toString();
+	}
 
 }
