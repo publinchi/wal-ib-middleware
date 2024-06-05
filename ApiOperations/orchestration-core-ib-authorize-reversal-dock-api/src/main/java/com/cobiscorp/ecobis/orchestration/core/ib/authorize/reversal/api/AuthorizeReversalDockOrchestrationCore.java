@@ -551,7 +551,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
-		aBagSPJavaOrchestration.put("authorizationCode",wProductsQueryResp.readValueParam("@o_ssn_branch"));
+		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
