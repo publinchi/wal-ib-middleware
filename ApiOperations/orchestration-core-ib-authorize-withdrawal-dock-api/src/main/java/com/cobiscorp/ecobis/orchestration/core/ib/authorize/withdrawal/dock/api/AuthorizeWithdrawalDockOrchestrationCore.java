@@ -413,8 +413,8 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
 		
-		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
-		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.readValueParam("@o_ssn_branch"));
+		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));		
+		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
@@ -669,7 +669,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				row.addRowData(4, new ResultSetRowColumnData(false, "APPROVED"));
 				row.addRowData(5, new ResultSetRowColumnData(false, "0"));  // aBagSPJavaOrchestration.get("@o_ssn_host").toString())
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_ssn_host").toString().substring(0,6))); 
+				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
 				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
 				data.addRow(row);	
