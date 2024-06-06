@@ -36,6 +36,7 @@ public class Reversal_original_transaction_data implements Serializable {
   private String institution_name;
   private String accounting_date;
   private String retrieval_reference_number;
+  private String date_time;
   public String getTransaction_uuid(){
     return this.transaction_uuid;
   }
@@ -83,5 +84,11 @@ public class Reversal_original_transaction_data implements Serializable {
   }
   public void setRetrieval_reference_number(String retrieval_reference_number ){
     this.retrieval_reference_number=retrieval_reference_number;
+  }
+  public String getDate_time(){
+    return this.date_time;
+  }
+  public void setDate_time(String date_time ){
+    this.date_time=date_time;
   }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="42" id="2" name="properties">
+  <collection type="List" length="45" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="account_id" />
       <field type="String" name="type" value="string" />
@@ -476,9 +476,39 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="56" index="42">
+      <field type="String" name="name" value="external_account_id" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="57" index="43">
+      <field type="String" name="name" value="card_status" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="58" index="44">
+      <field type="String" name="name" value="account_status" />
+      <field type="String" name="type" value="string" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="RequestAuthorizeReversalDock" />
-  <collection type="Map" length="0" id="56" name="templatesProperties">
+  <collection type="Map" length="0" id="59" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />
