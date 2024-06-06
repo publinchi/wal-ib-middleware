@@ -7252,6 +7252,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			procedureRequestAS.addInputParam("@i_original_transaction_data_retrieval_reference_number",
 					ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getRetrieval_reference_number());
+			procedureRequestAS.addInputParam("@i_original_transaction_data_date_time", ICTSTypes.SQLVARCHAR,
+					inRequestAuthorizeReversalDock.getOriginal_transaction_data().getDate_time());
 			procedureRequestAS.addInputParam("@i_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
 			procedureRequestAS.addInputParam("@i_client-id", ICTSTypes.SQLVARCHAR, clientid);
 			procedureRequestAS.addInputParam("@i_uuid", ICTSTypes.SQLVARCHAR, uuid);
@@ -7264,6 +7266,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getNumber_of_installments(): null);
 			procedureRequestAS.addInputParam("@i_installment_data_grace_period",ICTSTypes.SQLVARCHAR,
 					inRequestAuthorizeReversalDock.getInstallment_data() != null ? inRequestAuthorizeReversalDock.getInstallment_data().getGrace_period(): null);
+			
+			procedureRequestAS.addInputParam("@i_card_status", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversalDock.getCard_status());
+			procedureRequestAS.addInputParam("@i_external_account_id", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversalDock.getExternal_account_id());
+			procedureRequestAS.addInputParam("@i_account_status", ICTSTypes.SQLVARCHAR, inRequestAuthorizeReversalDock.getAccount_status());
 			
 			Gson gson = new Gson();
 			String jsonReq = gson.toJson(inRequestAuthorizeReversalDock);

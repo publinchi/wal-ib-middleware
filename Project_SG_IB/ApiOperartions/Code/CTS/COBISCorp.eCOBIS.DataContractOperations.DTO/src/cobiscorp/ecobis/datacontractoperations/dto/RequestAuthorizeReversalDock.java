@@ -70,6 +70,9 @@ public class RequestAuthorizeReversalDock implements Serializable {
   private String transaction_type_indicator;
   private Boolean isValidPartialReversal;
   private String date_time;
+  private String external_account_id;
+  private String card_status;
+  private String account_status;
   public String getAccount_id(){
     return this.account_id;
   }
@@ -387,5 +390,23 @@ public class RequestAuthorizeReversalDock implements Serializable {
   }
   public void setDate_time(String date_time ){
     this.date_time=date_time;
+  }
+  public String getExternal_account_id(){
+    return this.external_account_id;
+  }
+  public void setExternal_account_id(String external_account_id ){
+    this.external_account_id=external_account_id;
+  }
+  public String getCard_status(){
+    return this.card_status;
+  }
+  public void setCard_status(String card_status ){
+    this.card_status=card_status;
+  }
+  public String getAccount_status(){
+    return this.account_status;
+  }
+  public void setAccount_status(String account_status ){
+    this.account_status=account_status;
   }
 }
