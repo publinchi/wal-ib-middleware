@@ -42,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.Arrays;
 
@@ -7454,165 +7455,186 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       return outResponseDeleteContact;
     }
    	 
-    /**
-	 * Register Card Pan
-	 */
-	@Override
-	// Have DTO
-	public ResponseRegisterCardPan getUniqueId(String xrequestid, String xenduserrequestdatetime, String xenduserip,
-			String xchannel, String auth_token, String session_id,String customer_id, RequestRegisterCardPan inRequestRegisterCardPan)
-			throws CTSRestException {
-		LOGGER.logDebug("Start service execution: getUniqueId");
-		ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
+       /**
+   	 * Register Card Pan
+   	 */
+   	@Override
+   	// Have DTO
+   	public ResponseRegisterCardPan getUniqueId( String xrequestid,String xenduserrequestdatetime,String xenduserip, String xchannel, String auth_token, Map<String, String> headersIntegracion, RequestRegisterCardPan inRequestRegisterCardPan )
+   			throws CTSRestException {
+   		LOGGER.logDebug("Start service execution: getUniqueId");
+   		ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
 
-		// create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_registerCardPan_api");
+   		// create procedure
+   		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_registerCardPan_api");
 
-		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
-		procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
-				inRequestRegisterCardPan.getCard_number());
-		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
-		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
-		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
-		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
-		procedureRequestAS.addInputParam("@x_auth_token", ICTSTypes.SQLVARCHAR, auth_token);
-		procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
-		procedureRequestAS.addInputParam("@x_customer_id",ICTSTypes.SQLVARCHAR,customer_id);
-		// execute procedure
-		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-				procedureRequestAS);
+   		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
+   		procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
+   				inRequestRegisterCardPan.getCard_number());
+   		
+   		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+   		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+   		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+   		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+   		procedureRequestAS.addInputParam("@x_auth_token", ICTSTypes.SQLVARCHAR, auth_token);
+   		
+//   		procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
+//   		procedureRequestAS.addInputParam("@x_customer_id",ICTSTypes.SQLVARCHAR,customer_id);
+   		
+   		//Headers Integracion
+   		procedureRequestAS.addInputParam("@x_wm_qos.correlation_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_QOS.CORRELATION_ID"));
+   		procedureRequestAS.addInputParam("@x_wm_svc.name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.NAME"));
+   		procedureRequestAS.addInputParam("@x_wm_svc.env", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.ENV"));
+   		procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CORRELATION_ID"));
+   		procedureRequestAS.addInputParam("@x_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.AUTH_SIGNATURE"));
+   		procedureRequestAS.addInputParam("@x_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_CONSUMER.INTIMESTAMP"));
+   		procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
+   		procedureRequestAS.addInputParam("@x_device_platform", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_PLATFORM"));
+   		procedureRequestAS.addInputParam("@x_device_app_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_APP_VERSION"));
+   		procedureRequestAS.addInputParam("@x_device_fingerprint", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_FINGERPRINT"));
+   		procedureRequestAS.addInputParam("@x_device_environment_healthy", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_ENVIRONMENT_HEALTHY"));
+   		procedureRequestAS.addInputParam("@x_device_os_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_OS_VERSION"));
+   		procedureRequestAS.addInputParam("@x_device_manufacturer", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_MANUFACTURER"));
+   		procedureRequestAS.addInputParam("@x_login_session_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("LOGIN_SESSION_ID"));
+   		procedureRequestAS.addInputParam("@x_customer_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CUSTOMER_ID"));
+   		procedureRequestAS.addInputParam("@x_flow_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("FLOW_NAME"));
+   		
+   		// execute procedure
+   		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+   				procedureRequestAS);
 
-		List<MessageBlock> errors = ErrorUtil.getErrors(response);
-		// throw error
-		if (errors != null && errors.size() > 0) {
-			LOGGER.logDebug("Procedure execution returns error");
-			if (LOGGER.isDebugEnabled()) {
-				for (int i = 0; i < errors.size(); i++) {
-					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
-				}
-			}
-			throw new CTSRestException("Procedure Response has errors", null, errors);
-		}
-		LOGGER.logDebug("Procedure ok");
-		// Init map returns
-		int mapTotal = 0;
-		int mapBlank = 0;
+   		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+   		// throw error
+   		if (errors != null && errors.size() > 0) {
+   			LOGGER.logDebug("Procedure execution returns error");
+   			if (LOGGER.isDebugEnabled()) {
+   				for (int i = 0; i < errors.size(); i++) {
+   					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+   				}
+   			}
+   			throw new CTSRestException("Procedure Response has errors", null, errors);
+   		}
+   		LOGGER.logDebug("Procedure ok");
+   		// Init map returns
+   		int mapTotal = 0;
+   		int mapBlank = 0;
 
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
-			// ---------NO Array
-			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterCardPan>() {
-						@Override
-						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
+   		mapTotal++;
+   		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+   			// ---------NO Array
+   			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
+   					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterCardPan>() {
+   						@Override
+   						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
+   							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
 
-							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-							return dto;
-						}
-					}, false);
+   							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+   							return dto;
+   						}
+   					}, false);
 
-			outResponseRegisterCardPan.setSuccess(returnResponseRegisterCardPan.isSuccess());
-			// break;
+   			outResponseRegisterCardPan.setSuccess(returnResponseRegisterCardPan.isSuccess());
+   			// break;
 
-		} else {
-			mapBlank++;
+   		} else {
+   			mapBlank++;
 
-		}
+   		}
 
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
-			// ---------NO Array
-			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterCardPan>() {
-						@Override
-						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
+   		mapTotal++;
+   		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+   			// ---------NO Array
+   			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
+   					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterCardPan>() {
+   						@Override
+   						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
+   							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
 
-							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-							dto.responseInstance().setMessage(resultSetMapper.getString(2));
-							return dto;
-						}
-					}, false);
+   							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+   							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+   							return dto;
+   						}
+   					}, false);
 
-			outResponseRegisterCardPan.setResponse(returnResponseRegisterCardPan.getResponse());
-			// break;
+   			outResponseRegisterCardPan.setResponse(returnResponseRegisterCardPan.getResponse());
+   			// break;
 
-		} else {
-			mapBlank++;
+   		} else {
+   			mapBlank++;
 
-		}
+   		}
 
-		mapTotal++;
-		if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
-			// ---------NO Array
-			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
-					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterCardPan>() {
-						@Override
-						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
-							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
+   		mapTotal++;
+   		if (response.getResultSets() != null && response.getResultSets().get(2).getData().getRows().size() > 0) {
+   			// ---------NO Array
+   			ResponseRegisterCardPan returnResponseRegisterCardPan = MapperResultUtil
+   					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterCardPan>() {
+   						@Override
+   						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
+   							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
 
-							dto.setUnique_id(resultSetMapper.getString(1));
-							dto.setCard_id(resultSetMapper.getString(2));
-							return dto;
-						}
-					}, false);
+   							dto.setUnique_id(resultSetMapper.getString(1));
+   							dto.setCard_id(resultSetMapper.getString(2));
+   							return dto;
+   						}
+   					}, false);
 
-			outResponseRegisterCardPan.setUnique_id(returnResponseRegisterCardPan.getUnique_id());
-			outResponseRegisterCardPan.setCard_id(returnResponseRegisterCardPan.getCard_id());
-			// break;
+   			outResponseRegisterCardPan.setUnique_id(returnResponseRegisterCardPan.getUnique_id());
+   			outResponseRegisterCardPan.setCard_id(returnResponseRegisterCardPan.getCard_id());
+   			// break;
 
-		} else {
-			mapBlank++;
+   		} else {
+   			mapBlank++;
 
-		}
+   		}
 
-		// End map returns
-		if (mapBlank != 0 && mapBlank == mapTotal) {
-			LOGGER.logDebug("No data found");
-			throw new CTSRestException("404", null);
-		}
+   		// End map returns
+   		if (mapBlank != 0 && mapBlank == mapTotal) {
+   			LOGGER.logDebug("No data found");
+   			throw new CTSRestException("404", null);
+   		}
 
-		String trn = "Get unique id";
+   		String trn = "Get unique id";
 
-		Gson gson = new Gson();
-		inRequestRegisterCardPan.setCard_number(maskNumber(inRequestRegisterCardPan.getCard_number()));
-		String jsonReq = gson.toJson(inRequestRegisterCardPan);
-		
-		Gson gson2 = new Gson();
-		String jsonRes = gson2.toJson(outResponseRegisterCardPan);
+   		Gson gson = new Gson();
+   		inRequestRegisterCardPan.setCard_number(maskNumber(inRequestRegisterCardPan.getCard_number()));
+   		String jsonReq = gson.toJson(inRequestRegisterCardPan);
+   		
+   		Gson gson2 = new Gson();
+   		String jsonRes = gson2.toJson(outResponseRegisterCardPan);
 
-		Header header = new Header();
+   		Header header = new Header();
 
-		header.setAccept("application/json");
-		header.setX_request_id(xrequestid);
-		header.setX_end_user_request_date_time(xenduserrequestdatetime);
-		header.setX_end_user_ip(xenduserip);
-		header.setX_channel(xchannel);
-		header.setContent_type("application/json");
-		
-		Gson gson3 = new Gson();
-		String jsonHead = gson3.toJson(header);
+   		header.setAccept("application/json");
+   		header.setX_request_id(xrequestid);
+   		header.setX_end_user_request_date_time(xenduserrequestdatetime);
+   		header.setX_end_user_ip(xenduserip);
+   		header.setX_channel(xchannel);
+   		
+   		header.setContent_type("application/json");
+   		
+   		Gson gson3 = new Gson();
+   		String jsonHead = gson3.toJson(header);
 
-		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+   		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
-		LOGGER.logDebug("Ends service execution: registerCardPan");
-		// returns data
-		return outResponseRegisterCardPan;
-	}
-	
-	public String maskNumber(String number) 
-	{
-  	  int length = number.length();
-  	  int start = length / 4;
-  	  int end = length - start;
-  	  StringBuilder maskedNumber = new StringBuilder(number);
+   		LOGGER.logDebug("Ends service execution: registerCardPan");
+   		// returns data
+   		return outResponseRegisterCardPan;
+   	}
+   	
+   	public String maskNumber(String number) 
+   	{
+     	  int length = number.length();
+     	  int start = length / 4;
+     	  int end = length - start;
+     	  StringBuilder maskedNumber = new StringBuilder(number);
 
-  	  // Reemplazar los caracteres en el rango determinado por 'X'
-  	  for (int i = start; i < end; i++) {
-  		  maskedNumber.setCharAt(i, 'X');
-  	  }
-  	  return maskedNumber.toString();
-	}
+     	  // Reemplazar los caracteres en el rango determinado por 'X'
+     	  for (int i = start; i < end; i++) {
+     		  maskedNumber.setCharAt(i, 'X');
+     	  }
+     	  return maskedNumber.toString();
+   	}
     
 }
