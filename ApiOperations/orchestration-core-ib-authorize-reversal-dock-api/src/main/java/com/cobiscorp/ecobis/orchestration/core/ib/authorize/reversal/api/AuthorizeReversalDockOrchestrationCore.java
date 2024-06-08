@@ -40,6 +40,10 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author Sochoa
@@ -56,6 +60,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private static final String CLASS_NAME = "AuthorizeReversalDockOrchestrationCore";
+	private String jsonComplete ;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -66,7 +71,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		logger.logDebug("Begin flow, AuthorizeReversal starts...");		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		Boolean serverStatus = null;		
+		this.jsonComplete=anOriginalRequest.readValueParam("@i_json_req");
+		logger.logDebug("JCOS REQUEST JSON "+this.jsonComplete);	
 
 		try {
 			serverStatus = getServerStatus();
@@ -327,6 +334,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "REVERSAL");
 		request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 		request.addInputParam("@i_bank_account_number", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_account_number"));
+        request.addInputParam("@i_json", ICTSTypes.SQLVARCHAR, this.jsonComplete);
 
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
@@ -421,6 +429,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
 		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "D");
+		request.addInputParam("@i_request_trn", ICTSTypes.SQLVARCHAR, jsonComplete);
+		
 
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
@@ -672,10 +682,10 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 	public static boolean isGtmDateTime(String gtmDateTime) {
         try {
         	
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-            
-            dateTimeFormat.setLenient(false);
-            dateTimeFormat.parse(gtmDateTime);
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            isoFormat.setLenient(false); 
+            isoFormat.parse(gtmDateTime);
             
         } catch (ParseException e) {
             return false;
