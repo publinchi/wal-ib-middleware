@@ -7485,10 +7485,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    		procedureRequestAS.addInputParam("@x_wm_qos.correlation_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_QOS.CORRELATION_ID"));
    		procedureRequestAS.addInputParam("@x_wm_svc.name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.NAME"));
    		procedureRequestAS.addInputParam("@x_wm_svc.env", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.ENV"));
-   		procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CORRELATION_ID"));
-   		procedureRequestAS.addInputParam("@x_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.AUTH_SIGNATURE"));
-   		procedureRequestAS.addInputParam("@x_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_CONSUMER.INTIMESTAMP"));
-   		procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
+   		//procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CORRELATION_ID"));
+   		//procedureRequestAS.addInputParam("@x_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.AUTH_SIGNATURE"));
+   		//procedureRequestAS.addInputParam("@x_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_CONSUMER.INTIMESTAMP"));
+   		//procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
    		procedureRequestAS.addInputParam("@x_device_platform", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_PLATFORM"));
    		procedureRequestAS.addInputParam("@x_device_app_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_APP_VERSION"));
    		procedureRequestAS.addInputParam("@x_device_fingerprint", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_FINGERPRINT"));
@@ -7497,7 +7497,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    		procedureRequestAS.addInputParam("@x_device_manufacturer", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_MANUFACTURER"));
    		procedureRequestAS.addInputParam("@x_login_session_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("LOGIN_SESSION_ID"));
    		procedureRequestAS.addInputParam("@x_customer_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CUSTOMER_ID"));
-   		procedureRequestAS.addInputParam("@x_flow_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("FLOW_NAME"));
+   		//procedureRequestAS.addInputParam("@x_flow_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("FLOW_NAME"));
    		
    		// execute procedure
    		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
