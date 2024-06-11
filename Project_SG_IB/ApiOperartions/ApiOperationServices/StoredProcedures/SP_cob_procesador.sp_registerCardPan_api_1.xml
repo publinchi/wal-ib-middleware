@@ -14,13 +14,8 @@
     <parameter name="@x_device_manufacturer" dataType="varchar" direction="in" />
     <parameter name="@x_device_os_version" dataType="varchar" direction="in" />
     <parameter name="@x_device_platform" dataType="varchar" direction="in" />
-    <parameter name="@x_flow_name" dataType="varchar" direction="in" />
     <parameter name="@x_login_session_id" dataType="varchar" direction="in" />
-    <parameter name="@x_wm_consumer.id" dataType="varchar" direction="in" />
-    <parameter name="@x_wm_consumer.intimestamp" dataType="varchar" direction="in" />
     <parameter name="@x_wm_qos.correlation_id" dataType="varchar" direction="in" />
-    <parameter name="@x_wm_sec.auth_signature" dataType="varchar" direction="in" />
-    <parameter name="@x_wm_sec.key_version" dataType="varchar" direction="in" />
     <parameter name="@x_wm_svc.env" dataType="varchar" direction="in" />
     <parameter name="@x_wm_svc.name" dataType="varchar" direction="in" />
     <parameter name="@x_channel" dataType="varchar" direction="in" />
