@@ -2515,14 +2515,14 @@ public class ServiceContractOperationsApiRest {
     		@HeaderParam("x_wm_svc.name") String wmsvc_name,
     		@NotNull(message = "x_wm_svc.env may not be null") 
     		@HeaderParam("x_wm_svc.env") String wmsvc_env,
-    		@NotNull(message = "x_wm_consumer.id may not be null") 
-    		@HeaderParam("x_wm_consumer.id") String wmconsumer_id,
-    		@NotNull(message = "x_wm_sec.auth_signature may not be null") 
-    		@HeaderParam("x_wm_sec.auth_signature") String wmsec_authsignature,
-    		@NotNull(message = "x_wm_consumer.intimestamp may not be null") 
-    		@HeaderParam("x_wm_consumer.intimestamp") String wmconsumer_intimestamp,
-    		@NotNull(message = "x_wm_sec.key_version may not be null") 
-    		@HeaderParam("x_wm_sec.key_version") String wmsec_keyversion,
+    		//@NotNull(message = "x_wm_consumer.id may not be null") 
+    		//@HeaderParam("x_wm_consumer.id") String wmconsumer_id,
+    		//@NotNull(message = "x_wm_sec.auth_signature may not be null") 
+    		//@HeaderParam("x_wm_sec.auth_signature") String wmsec_authsignature,
+    		//@NotNull(message = "x_wm_consumer.intimestamp may not be null") 
+    		//@HeaderParam("x_wm_consumer.intimestamp") String wmconsumer_intimestamp,
+    		//@NotNull(message = "x_wm_sec.key_version may not be null") 
+    		//@HeaderParam("x_wm_sec.key_version") String wmsec_keyversion,
     		@NotNull(message = "x_device_platform may not be null") 
     		@HeaderParam("x_device_platform") String device_platform,
     		@NotNull(message = "x_device_app_version may not be null") 
@@ -2537,8 +2537,8 @@ public class ServiceContractOperationsApiRest {
     		@HeaderParam("x_device_manufacturer") String device_manufacturer,
     		@NotNull(message = "x_login_session_id may not be null") 
     		@HeaderParam("x_login_session_id") String loginsession_id,
-    		@NotNull(message = "x_flow_name may not be null") 
-    		@HeaderParam("x_flow_name ") String flow_name,      		     		
+    		//@NotNull(message = "x_flow_name may not be null") 
+    		//@HeaderParam("x_flow_name ") String flow_name,      		     		
     		        		
     		RequestRegisterCardPan inRequestRegisterCardPan ){
   LOGGER.logDebug("Start service execution REST: getUniqueId");
@@ -2553,10 +2553,10 @@ public class ServiceContractOperationsApiRest {
   headersIntegracion.put("WM_QOS.CORRELATION_ID", wmqos_correlationId);
   headersIntegracion.put("WM_SVC.NAME", wmsvc_name);
   headersIntegracion.put("WM_SVC.ENV", wmsvc_env);
-  headersIntegracion.put("WM_CONSUMER.ID", wmconsumer_id);
-  headersIntegracion.put("WM_SEC.AUTH_SIGNATURE", wmsec_authsignature);
-  headersIntegracion.put("WM_CONSUMER.INTIMESTAMP", wmconsumer_intimestamp);
-  headersIntegracion.put("WM_SEC.KEY_VERSION", wmsec_keyversion);
+  //headersIntegracion.put("WM_CONSUMER.ID", wmconsumer_id);
+  //headersIntegracion.put("WM_SEC.AUTH_SIGNATURE", wmsec_authsignature);
+  //headersIntegracion.put("WM_CONSUMER.INTIMESTAMP", wmconsumer_intimestamp);
+  //headersIntegracion.put("WM_SEC.KEY_VERSION", wmsec_keyversion);
   headersIntegracion.put("DEVICE_PLATFORM", device_platform);
   headersIntegracion.put("DEVICE_APP_VERSION", deviceapp_version);
   headersIntegracion.put("DEVICE_FINGERPRINT", device_fingerprint);
@@ -2565,7 +2565,7 @@ public class ServiceContractOperationsApiRest {
   headersIntegracion.put("DEVICE_MANUFACTURER", device_manufacturer);
   headersIntegracion.put("LOGIN_SESSION_ID", loginsession_id);
   headersIntegracion.put("CUSTOMER_ID", customer_id);
-  headersIntegracion.put("FLOW_NAME", flow_name);
+  //headersIntegracion.put("FLOW_NAME", flow_name);
   
   try {
   outResponseRegisterCardPan=iServiceContractOperationsApiService.getUniqueId(xrequestid, xenduserrequestdatetime, xenduserip, xchannel, auth_token, headersIntegracion, inRequestRegisterCardPan );

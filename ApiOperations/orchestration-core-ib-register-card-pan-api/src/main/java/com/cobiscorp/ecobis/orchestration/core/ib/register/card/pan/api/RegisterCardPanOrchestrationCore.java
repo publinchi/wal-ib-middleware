@@ -513,10 +513,10 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		procedureRequest.addInputParam("@i_wm_qos.correlation_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_qos.correlation_id"));
 		procedureRequest.addInputParam("@i_wm_svc.name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc.name"));
 		procedureRequest.addInputParam("@i_wm_svc.env", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc.env"));
-		procedureRequest.addInputParam("@i_wm_consumer.id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.id"));
-		procedureRequest.addInputParam("@i_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.auth_signature"));
-		procedureRequest.addInputParam("@i_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.intimestamp"));
-		procedureRequest.addInputParam("@i_wm_sec.key_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.key_version"));
+		//procedureRequest.addInputParam("@i_wm_consumer.id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.id"));
+		//procedureRequest.addInputParam("@i_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.auth_signature"));
+		//procedureRequest.addInputParam("@i_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.intimestamp"));
+		//procedureRequest.addInputParam("@i_wm_sec.key_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.key_version"));
 		procedureRequest.addInputParam("@i_device_platform", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_platform"));
 		procedureRequest.addInputParam("@i_device_app_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_app_version"));
 		procedureRequest.addInputParam("@i_device_fingerprint", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_fingerprint"));
@@ -526,7 +526,7 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		procedureRequest.addInputParam("@i_login_session_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_login_session_id"));
 		procedureRequest.addInputParam("@i_wm_svc.env", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc.env"));
 		procedureRequest.addInputParam("@i_wm_customer_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_customer_id"));
-		procedureRequest.addInputParam("@i_flow_name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_flow_name"));
+		//procedureRequest.addInputParam("@i_flow_name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_flow_name"));
 		
 		
 		procedureRequest.addOutputParam(O_ACCESS_AUTH, ICTSTypes.SQLBIT, "");
