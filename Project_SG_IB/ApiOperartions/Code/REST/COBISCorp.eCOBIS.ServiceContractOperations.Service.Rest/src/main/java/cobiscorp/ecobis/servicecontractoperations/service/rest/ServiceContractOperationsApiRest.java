@@ -2545,9 +2545,21 @@ public class ServiceContractOperationsApiRest {
   ResponseRegisterCardPan outResponseRegisterCardPan  = new ResponseRegisterCardPan();
       
   if(!validateMandatory(new Data("card_number", inRequestRegisterCardPan.getCard_number()))) {
-    LOGGER.logDebug("400 is returned - Required fields are missing");
-    return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-  }
+	    LOGGER.logDebug("400 is returned - Required fields are missing");
+	    //return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+	    
+	    ResponseError outResponseError = new ResponseError();
+	    outResponseError.setMessage("Error occurred while processing the request");
+	    
+	    ErrorDescription[] errors = new ErrorDescription[1];
+	    ErrorDescription error = new ErrorDescription();
+	    error.setCode("BCS-BA-9001");
+	    error.setDescription("Unauthorised User");
+	    
+	    outResponseError.setErrors(errors);
+	    
+	    return Response.status(400).entity(outResponseError).build();
+	  }
   
   Map<String,String> headersIntegracion = new HashMap<String, String>();
   headersIntegracion.put("WM_QOS.CORRELATION_ID", wmqos_correlationId);
