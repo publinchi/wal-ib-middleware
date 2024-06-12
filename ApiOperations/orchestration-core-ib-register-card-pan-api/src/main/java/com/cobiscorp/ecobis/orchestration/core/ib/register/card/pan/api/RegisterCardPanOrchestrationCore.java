@@ -496,6 +496,10 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 	
 		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalReq);
 		
+		if(logger.isDebugEnabled())
+			logger.logDebug("anOriginalReq validateCustomer: "+ anOriginalReq.getProcedureRequestAsString());
+		
+		
 		procedureRequest.setSpName("cob_procesador..sp_customer_validate");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700116");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700116");
@@ -509,23 +513,26 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		
 		procedureRequest.addInputParam("@i_wm_token", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_auth_token"));
 		//procedureRequest.addInputParam("@i_wm_session", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_session_id"));
-				
-		procedureRequest.addInputParam("@i_wm_qos.correlation_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_qos.correlation_id"));
-		procedureRequest.addInputParam("@i_wm_svc.name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc.name"));
-		procedureRequest.addInputParam("@i_wm_svc.env", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc.env"));
+		
+		procedureRequest.addInputParam("@i_login_session_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_login_session_id"));
+		procedureRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_customer_id"));
+		
+		procedureRequest.addInputParam("@i_wm_qos_correlation_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_qos_correlation_id"));
+		procedureRequest.addInputParam("@i_wm_svc_name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc_name"));
+		procedureRequest.addInputParam("@i_wm_svc_env", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc_env"));
+		
 		//procedureRequest.addInputParam("@i_wm_consumer.id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.id"));
 		//procedureRequest.addInputParam("@i_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.auth_signature"));
 		//procedureRequest.addInputParam("@i_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.intimestamp"));
 		//procedureRequest.addInputParam("@i_wm_sec.key_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.key_version"));
+		
 		procedureRequest.addInputParam("@i_device_platform", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_platform"));
 		procedureRequest.addInputParam("@i_device_app_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_app_version"));
 		procedureRequest.addInputParam("@i_device_fingerprint", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_fingerprint"));
 		procedureRequest.addInputParam("@i_device_environment_healthy", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_environment_healthy"));
 		procedureRequest.addInputParam("@i_device_os_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_os_version"));
 		procedureRequest.addInputParam("@i_device_manufacturer", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_manufacturer"));
-		procedureRequest.addInputParam("@i_login_session_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_login_session_id"));
-		procedureRequest.addInputParam("@i_wm_svc.env", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc.env"));
-		procedureRequest.addInputParam("@i_wm_customer_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_customer_id"));
+				
 		//procedureRequest.addInputParam("@i_flow_name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_flow_name"));
 		
 		
@@ -535,7 +542,7 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		IProcedureResponse procedureResponse = executeCoreBanking(procedureRequest);
 		
 		if(logger.isDebugEnabled())
-			logger.logInfo("Response validateCustomer: "+procedureResponse.getProcedureResponseAsString());
+			logger.logInfo("Response validateCustomer: "+ procedureResponse.getProcedureResponseAsString());
 		
 		return procedureResponse;
 	}
