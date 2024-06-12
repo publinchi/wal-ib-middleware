@@ -7456,52 +7456,60 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     }
    	 
        /**
-   	 * Register Card Pan
-   	 */
-   	@Override
-   	// Have DTO
-   	public ResponseRegisterCardPan getUniqueId( String xrequestid,String xenduserrequestdatetime,String xenduserip, String xchannel, String auth_token, Map<String, String> headersIntegracion, RequestRegisterCardPan inRequestRegisterCardPan )
-   			throws CTSRestException {
-   		LOGGER.logDebug("Start service execution: getUniqueId");
-   		ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
+        * Register Card Pan
+        */
+       @Override
+       // Have DTO
+       public ResponseRegisterCardPan getUniqueId( String xrequestid,String xenduserrequestdatetime,String xenduserip, String xchannel, String auth_token, Map<String, String> headersIntegracion, RequestRegisterCardPan inRequestRegisterCardPan )
+    		   throws CTSRestException {
+    	   LOGGER.logDebug("Start service execution: getUniqueId");
+    	   ResponseRegisterCardPan outResponseRegisterCardPan = new ResponseRegisterCardPan();
 
-   		// create procedure
-   		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_registerCardPan_api");
+    	   // create procedure
+    	   ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_registerCardPan_api");
 
-   		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
-   		procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
-   				inRequestRegisterCardPan.getCard_number());
-   		
-   		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
-   		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
-   		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
-   		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
-   		procedureRequestAS.addInputParam("@x_auth_token", ICTSTypes.SQLVARCHAR, auth_token);
-   		
-//   		procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
-//   		procedureRequestAS.addInputParam("@x_customer_id",ICTSTypes.SQLVARCHAR,customer_id);
-   		
-   		//Headers Integracion
-   		procedureRequestAS.addInputParam("@x_wm_qos.correlation_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_QOS.CORRELATION_ID"));
-   		procedureRequestAS.addInputParam("@x_wm_svc.name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.NAME"));
-   		procedureRequestAS.addInputParam("@x_wm_svc.env", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.ENV"));
-   		//procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CORRELATION_ID"));
-   		//procedureRequestAS.addInputParam("@x_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.AUTH_SIGNATURE"));
-   		//procedureRequestAS.addInputParam("@x_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_CONSUMER.INTIMESTAMP"));
-   		//procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
-   		procedureRequestAS.addInputParam("@x_device_platform", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_PLATFORM"));
-   		procedureRequestAS.addInputParam("@x_device_app_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_APP_VERSION"));
-   		procedureRequestAS.addInputParam("@x_device_fingerprint", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_FINGERPRINT"));
-   		procedureRequestAS.addInputParam("@x_device_environment_healthy", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_ENVIRONMENT_HEALTHY"));
-   		procedureRequestAS.addInputParam("@x_device_os_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_OS_VERSION"));
-   		procedureRequestAS.addInputParam("@x_device_manufacturer", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_MANUFACTURER"));
-   		procedureRequestAS.addInputParam("@x_login_session_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("LOGIN_SESSION_ID"));
-   		procedureRequestAS.addInputParam("@x_customer_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CUSTOMER_ID"));
-   		//procedureRequestAS.addInputParam("@x_flow_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("FLOW_NAME"));
-   		
-   		// execute procedure
-   		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
-   				procedureRequestAS);
+    	   procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
+    	   procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
+    			   inRequestRegisterCardPan.getCard_number());
+
+    	   procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+    	   procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+    	   procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+    	   procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+    	   procedureRequestAS.addInputParam("@x_auth_token", ICTSTypes.SQLVARCHAR, auth_token);
+
+    	   //procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
+    	   //procedureRequestAS.addInputParam("@x_customer_id",ICTSTypes.SQLVARCHAR, customer_id);
+    	   if (LOGGER.isDebugEnabled()) {
+    		   LOGGER.logDebug("Valores recibidos en " +  this.getClass().getName());
+    		   headersIntegracion.forEach((key, value) -> 
+    		   LOGGER.logDebug(String.format("Header: %s = %s", key, value)));
+    	   } 
+
+    	   //Headers Integracion
+    	   
+    	   procedureRequestAS.addInputParam("@x_login_session_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("LOGIN_SESSION_ID"));
+    	   procedureRequestAS.addInputParam("@x_customer_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CUSTOMER_ID"));
+    	   
+    	   procedureRequestAS.addInputParam("@x_wm_qos_correlation_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_QOS.CORRELATION_ID"));
+    	   procedureRequestAS.addInputParam("@x_wm_svc_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.NAME"));
+    	   procedureRequestAS.addInputParam("@x_wm_svc_env", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.ENV"));
+    	   //procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CORRELATION_ID"));
+    	   //procedureRequestAS.addInputParam("@x_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.AUTH_SIGNATURE"));
+    	   //procedureRequestAS.addInputParam("@x_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_CONSUMER.INTIMESTAMP"));
+    	   //procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
+    	   procedureRequestAS.addInputParam("@x_device_platform", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_PLATFORM"));
+    	   procedureRequestAS.addInputParam("@x_device_app_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_APP_VERSION"));
+    	   procedureRequestAS.addInputParam("@x_device_fingerprint", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_FINGERPRINT"));
+    	   procedureRequestAS.addInputParam("@x_device_environment_healthy", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_ENVIRONMENT_HEALTHY"));
+    	   procedureRequestAS.addInputParam("@x_device_os_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_OS_VERSION"));
+    	   procedureRequestAS.addInputParam("@x_device_manufacturer", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_MANUFACTURER"));
+    	  
+    	   //procedureRequestAS.addInputParam("@x_flow_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("FLOW_NAME"));
+
+    	   // execute procedure
+    	   ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+    			   procedureRequestAS);
 
    		List<MessageBlock> errors = ErrorUtil.getErrors(response);
    		// throw error
