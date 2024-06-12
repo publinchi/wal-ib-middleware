@@ -7481,11 +7481,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     	   //procedureRequestAS.addInputParam("@x_session_id", ICTSTypes.SQLVARCHAR, session_id);
     	   //procedureRequestAS.addInputParam("@x_customer_id",ICTSTypes.SQLVARCHAR, customer_id);
     	   if (LOGGER.isDebugEnabled()) {
-    		   LOGGER.logDebug("Valores recibidos en " +  this.getClass().getName());
-    		   headersIntegracion.forEach((key, value) -> 
-    		   LOGGER.logDebug(String.format("Header: %s = %s", key, value)));
-    	   } 
-
+  			 LOGGER.logDebug("Valores recibidos en " + this.getClass().getName());
+  			 for (Map.Entry<String, String> entry : headersIntegracion.entrySet()) {
+  				 String key = entry.getKey();
+  				 String value = entry.getValue();
+  				 LOGGER.logDebug(String.format("Header: %s = %s", key, value));
+  			 }
+  		 }
     	   //Headers Integracion
     	   
     	   procedureRequestAS.addInputParam("@x_login_session_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("LOGIN_SESSION_ID"));
