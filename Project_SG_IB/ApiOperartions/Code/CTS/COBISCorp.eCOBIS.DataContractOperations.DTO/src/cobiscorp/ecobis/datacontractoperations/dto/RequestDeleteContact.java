@@ -28,18 +28,11 @@ import java.util.HashMap;
 
 
 public class RequestDeleteContact implements Serializable {
-  private Integer externalCustomerId;
-  private String accountNumber;
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+  private Integer registerAccountId;
+  public Integer getRegisterAccountId(){
+    return this.registerAccountId;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
-  }
-  public String getAccountNumber(){
-    return this.accountNumber;
-  }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public void setRegisterAccountId(Integer registerAccountId ){
+    this.registerAccountId=registerAccountId;
   }
 }

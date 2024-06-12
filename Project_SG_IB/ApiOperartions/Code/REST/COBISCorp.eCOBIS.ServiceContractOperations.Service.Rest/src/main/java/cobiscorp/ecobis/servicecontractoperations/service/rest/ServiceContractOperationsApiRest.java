@@ -2598,14 +2598,14 @@ public class ServiceContractOperationsApiRest {
 
 		 //headersIntegracion.put("FLOW_NAME", flow_name);
 
-		 if (LOGGER.isDebugEnabled()) {
+		 /*if (LOGGER.isDebugEnabled()) {
 			 LOGGER.logDebug("Valores recibidos en " + this.getClass().getName());
 			 for (Map.Entry<String, String> entry : headersIntegracion.entrySet()) {
 				 String key = entry.getKey();
 				 String value = entry.getValue();
 				 LOGGER.logDebug(String.format("Header: %s = %s", key, value));
 			 }
-		 }
+		 }*/
 
 		 try {
 			 outResponseRegisterCardPan=iServiceContractOperationsApiService.getUniqueId(xrequestid, xenduserrequestdatetime, xenduserip, xchannel, auth_token, headersIntegracion, inRequestRegisterCardPan );
