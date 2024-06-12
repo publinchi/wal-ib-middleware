@@ -7582,13 +7582,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
 
    							dto.setUnique_id(resultSetMapper.getString(1));
-   							dto.setCard_id(resultSetMapper.getString(2));
+   							dto.setDock_card_id(resultSetMapper.getString(2));
    							return dto;
    						}
    					}, false);
 
    			outResponseRegisterCardPan.setUnique_id(returnResponseRegisterCardPan.getUnique_id());
-   			outResponseRegisterCardPan.setCard_id(returnResponseRegisterCardPan.getCard_id());
+   			outResponseRegisterCardPan.setDock_card_id(returnResponseRegisterCardPan.getDock_card_id());
    			// break;
 
    		} else {
