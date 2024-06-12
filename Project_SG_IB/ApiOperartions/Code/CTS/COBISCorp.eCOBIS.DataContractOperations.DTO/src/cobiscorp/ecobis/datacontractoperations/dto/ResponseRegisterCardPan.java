@@ -31,7 +31,7 @@ public class ResponseRegisterCardPan implements Serializable {
   private Boolean success;
   private Response response;
   private String unique_id;
-  private String card_id;
+  private String dock_card_id;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -56,10 +56,10 @@ public class ResponseRegisterCardPan implements Serializable {
   public void setUnique_id(String unique_id ){
     this.unique_id=unique_id;
   }
-  public String getCard_id(){
-    return this.card_id;
+  public String getDock_card_id(){
+    return this.dock_card_id;
   }
-  public void setCard_id(String card_id ){
-    this.card_id=card_id;
+  public void setDock_card_id(String dock_card_id ){
+    this.dock_card_id=dock_card_id;
   }
 }
