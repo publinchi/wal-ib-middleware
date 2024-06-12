@@ -2508,37 +2508,51 @@ public class ServiceContractOperationsApiRest {
 			 @NotNull(message = "auth_token may not be null") 
 			 @HeaderParam("auth_token") String auth_token,
 
-			 @NotNull(message = "x_customer_id may not be null") 
-			 @HeaderParam("x_customer_id") String customer_id,
-			 @NotNull(message = "x_login_session_id may not be null") 
-			 @HeaderParam("x_login_session_id") String loginsession_id,
+			 @NotNull(message = "CUSTOMER_ID may not be null") 
+			 @HeaderParam("CUSTOMER_ID") String customer_id,
+			 
+			 @NotNull(message = "LOGIN_SESSION_ID may not be null") 
+			 @HeaderParam("LOGIN_SESSION_ID") String loginsession_id,
 
-			 @NotNull(message = "x_wm_qos.correlation_id may not be null") 
-			 @HeaderParam("x_wm_qos.correlation_id") String wmqos_correlationId,
-			 @NotNull(message = "x_wm_svc.name  may not be null") 
-			 @HeaderParam("x_wm_svc.name") String wmsvc_name,
-			 @NotNull(message = "x_wm_svc.env may not be null") 
-			 @HeaderParam("x_wm_svc.env") String wmsvc_env,
+			 @NotNull(message = "WM_QOS.CORRELATION_ID may not be null") 
+			 @HeaderParam("WM_QOS.CORRELATION_ID") String wmqos_correlationId,
+			 
+			 @NotNull(message = "WM_SVC.NAME may not be null") 
+			 @HeaderParam("WM_SVC.NAME") String wmsvc_name,
+			 
+			 @NotNull(message = "WM_SVC.ENV may not be null") 
+			 @HeaderParam("WM_SVC.ENV") String wmsvc_env,
+			 
 			 //@NotNull(message = "x_wm_consumer.id may not be null") 
 			 //@HeaderParam("x_wm_consumer.id") String wmconsumer_id,
+			 
 			 //@NotNull(message = "x_wm_sec.auth_signature may not be null") 
 			 //@HeaderParam("x_wm_sec.auth_signature") String wmsec_authsignature,
+			 
 			 //@NotNull(message = "x_wm_consumer.intimestamp may not be null") 
 			 //@HeaderParam("x_wm_consumer.intimestamp") String wmconsumer_intimestamp,
+			 
 			 //@NotNull(message = "x_wm_sec.key_version may not be null") 
 			 //@HeaderParam("x_wm_sec.key_version") String wmsec_keyversion,
-			 @NotNull(message = "x_device_platform may not be null") 
-			 @HeaderParam("x_device_platform") String device_platform,
-			 @NotNull(message = "x_device_app_version may not be null") 
-			 @HeaderParam("x_device_app_version") String deviceapp_version,
-			 @NotNull(message = "x_device_fingerprint may not be null") 
-			 @HeaderParam("x_device_fingerprint") String device_fingerprint,
-			 @NotNull(message = "x_device_environment_healthy may not be null") 
-			 @HeaderParam("x_device_environment_healthy") String device_environmenthealthy,
-			 @NotNull(message = "x_device_os_version may not be null") 
-			 @HeaderParam("x_device_os_version") String deviceos_version,
-			 @NotNull(message = "x_device_manufacturer may not be null") 
-			 @HeaderParam("x_device_manufacturer") String device_manufacturer,
+			 
+			 @NotNull(message = "DEVICE_PLATFORM may not be null") 
+			 @HeaderParam("DEVICE_PLATFORM") String device_platform,
+			 
+			 @NotNull(message = "DEVICE_APP_VERSION may not be null") 
+			 @HeaderParam("DEVICE_APP_VERSION") String deviceapp_version,
+			 
+			 @NotNull(message = "DEVICE_FINGERPRINT may not be null") 
+			 @HeaderParam("DEVICE_FINGERPRINT") String device_fingerprint,
+			 
+			 @NotNull(message = "DEVICE_ENVIRONMENT_HEALTHY may not be null") 
+			 @HeaderParam("DEVICE_ENVIRONMENT_HEALTHY") String device_environmenthealthy,
+			 
+			 @NotNull(message = "DEVICE_OS_VERSION may not be null") 
+			 @HeaderParam("DEVICE_OS_VERSION") String deviceos_version,
+			 
+			 @NotNull(message = "DEVICE_MANUFACTURER may not be null") 
+			 @HeaderParam("DEVICE_MANUFACTURER") String device_manufacturer,
+			 
 			 //@NotNull(message = "x_flow_name may not be null") 
 			 //@HeaderParam("x_flow_name ") String flow_name,      		     		
 
