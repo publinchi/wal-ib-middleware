@@ -34,6 +34,8 @@ import javax.validation.constraints.Null;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.math.BigDecimal;
 
 @Path("/cobis/api/Walmart/ServiceContractOperations")
@@ -2487,41 +2489,147 @@ public class ServiceContractOperationsApiRest {
 	 }
 
 	 /**
-          * Register Card Pan
-          */
-        @POST
-      @Path("/apiOperations/accounts/getUniqueId")
-      @Consumes({"application/json"})
-      @Produces({"application/json"})
-        public Response  getUniqueId(@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,@NotNull(message = "auth_token may not be null") @HeaderParam("auth_token") String auth_token,@NotNull(message = "session_id may not be null") @HeaderParam("session_id") String session_id,@NotNull(message = "customer_id may not be null") @HeaderParam("customer_id") String customer_id,RequestRegisterCardPan inRequestRegisterCardPan ){
-	  LOGGER.logDebug("Start service execution REST: getUniqueId");
-      ResponseRegisterCardPan outResponseRegisterCardPan  = new ResponseRegisterCardPan();
-          
-      if(!validateMandatory(new Data("card_number", inRequestRegisterCardPan.getCard_number()))) {
-        LOGGER.logDebug("400 is returned - Required fields are missing");
-        return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
-      }
-	    
-      try {
-      outResponseRegisterCardPan=iServiceContractOperationsApiService.getUniqueId(xrequestid,xenduserrequestdatetime,xenduserip,xchannel,auth_token,session_id,customer_id, inRequestRegisterCardPan );
-      } catch (CTSRestException e) {
-      LOGGER.logError("CTSRestException",e);
-      if ("404".equals(e.getMessage())) {
-      LOGGER.logDebug("404 is returned - No data found");
-      return Response.status(404).entity("No data found").build();
-      }
+	  * Register Card Pan
+	  */
+	 @POST
+	 @Path("/apiOperations/accounts/getUniqueId")
+	 @Consumes({"application/json"})
+	 @Produces({"application/json"})
+	 public Response  getUniqueId(
+			 //@NotNull(message = "x-request-id may not be null") 
+			 @HeaderParam("x-request-id") String xrequestid,
+			 //@NotNull(message = "x-end-user-request-date-time may not be null") 
+			 @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,
+			 //@NotNull(message = "x-end-user-ip may not be null") 
+			 @HeaderParam("x-end-user-ip") String xenduserip,
+			 //@NotNull(message = "x-channel may not be null") 
+			 @HeaderParam("x-channel") String xchannel,
 
-      LOGGER.logDebug("409 is returned - The stored procedure raise an error");
-      return Response.status(409).entity(e.getMessageBlockList()).build();
-      } catch (Exception e){
-      LOGGER.logDebug("500 is returned - Code exception");
-      LOGGER.logError("Exception",e);
-      return Response.status(500).entity(e.getMessage()).build();
-      }
-      
-          LOGGER.logDebug("Ends service execution REST: registerCardPan");
-          return Response.ok(outResponseRegisterCardPan).build();
-        
-      }
+			 @NotNull(message = "auth_token may not be null") 
+			 @HeaderParam("auth_token") String auth_token,
 
-	}
+			 @NotNull(message = "CUSTOMER_ID may not be null") 
+			 @HeaderParam("CUSTOMER_ID") String customer_id,
+			 
+			 @NotNull(message = "LOGIN_SESSION_ID may not be null") 
+			 @HeaderParam("LOGIN_SESSION_ID") String loginsession_id,
+
+			 @NotNull(message = "WM_QOS.CORRELATION_ID may not be null") 
+			 @HeaderParam("WM_QOS.CORRELATION_ID") String wmqos_correlationId,
+			 
+			 @NotNull(message = "WM_SVC.NAME may not be null") 
+			 @HeaderParam("WM_SVC.NAME") String wmsvc_name,
+			 
+			 @NotNull(message = "WM_SVC.ENV may not be null") 
+			 @HeaderParam("WM_SVC.ENV") String wmsvc_env,
+			 
+			 //@NotNull(message = "x_wm_consumer.id may not be null") 
+			 //@HeaderParam("x_wm_consumer.id") String wmconsumer_id,
+			 
+			 //@NotNull(message = "x_wm_sec.auth_signature may not be null") 
+			 //@HeaderParam("x_wm_sec.auth_signature") String wmsec_authsignature,
+			 
+			 //@NotNull(message = "x_wm_consumer.intimestamp may not be null") 
+			 //@HeaderParam("x_wm_consumer.intimestamp") String wmconsumer_intimestamp,
+			 
+			 //@NotNull(message = "x_wm_sec.key_version may not be null") 
+			 //@HeaderParam("x_wm_sec.key_version") String wmsec_keyversion,
+			 
+			 @NotNull(message = "DEVICE_PLATFORM may not be null") 
+			 @HeaderParam("DEVICE_PLATFORM") String device_platform,
+			 
+			 @NotNull(message = "DEVICE_APP_VERSION may not be null") 
+			 @HeaderParam("DEVICE_APP_VERSION") String deviceapp_version,
+			 
+			 @NotNull(message = "DEVICE_FINGERPRINT may not be null") 
+			 @HeaderParam("DEVICE_FINGERPRINT") String device_fingerprint,
+			 
+			 @NotNull(message = "DEVICE_ENVIRONMENT_HEALTHY may not be null") 
+			 @HeaderParam("DEVICE_ENVIRONMENT_HEALTHY") String device_environmenthealthy,
+			 
+			 @NotNull(message = "DEVICE_OS_VERSION may not be null") 
+			 @HeaderParam("DEVICE_OS_VERSION") String deviceos_version,
+			 
+			 @NotNull(message = "DEVICE_MANUFACTURER may not be null") 
+			 @HeaderParam("DEVICE_MANUFACTURER") String device_manufacturer,
+			 
+			 //@NotNull(message = "x_flow_name may not be null") 
+			 //@HeaderParam("x_flow_name ") String flow_name,      		     		
+
+			 RequestRegisterCardPan inRequestRegisterCardPan ){
+		 LOGGER.logDebug("Start service execution REST: getUniqueId");
+		 ResponseRegisterCardPan outResponseRegisterCardPan  = new ResponseRegisterCardPan();
+
+		 if(!validateMandatory(new Data("card_number", inRequestRegisterCardPan.getCard_number()))) {
+			 LOGGER.logDebug("400 is returned - Required fields are missing");
+			 //return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+
+			 ResponseError outResponseError = new ResponseError();
+			 outResponseError.setMessage("Error occurred while processing the request");
+
+			 ErrorDescription[] errors = new ErrorDescription[1];
+			 ErrorDescription error = new ErrorDescription();
+			 error.setCode("BCS-BA-9001");
+			 error.setDescription("Unauthorised User");
+			 errors[0] = error;
+			 
+			 outResponseError.setErrors(errors);
+
+			 return Response.status(400).entity(outResponseError).build();
+		 }
+
+		 Map<String,String> headersIntegracion = new HashMap<String, String>();
+		 headersIntegracion.put("LOGIN_SESSION_ID", loginsession_id);
+		 headersIntegracion.put("CUSTOMER_ID", customer_id);
+		 
+		 headersIntegracion.put("WM_QOS.CORRELATION_ID", wmqos_correlationId);
+		 headersIntegracion.put("WM_SVC.NAME", wmsvc_name);
+		 headersIntegracion.put("WM_SVC.ENV", wmsvc_env);
+		 //headersIntegracion.put("WM_CONSUMER.ID", wmconsumer_id);
+		 //headersIntegracion.put("WM_SEC.AUTH_SIGNATURE", wmsec_authsignature);
+		 //headersIntegracion.put("WM_CONSUMER.INTIMESTAMP", wmconsumer_intimestamp);
+		 //headersIntegracion.put("WM_SEC.KEY_VERSION", wmsec_keyversion);
+		 headersIntegracion.put("DEVICE_PLATFORM", device_platform);
+		 headersIntegracion.put("DEVICE_APP_VERSION", deviceapp_version);
+		 headersIntegracion.put("DEVICE_FINGERPRINT", device_fingerprint);
+		 headersIntegracion.put("DEVICE_ENVIRONMENT_HEALTHY", device_environmenthealthy);
+		 headersIntegracion.put("DEVICE_OS_VERSION", deviceos_version);
+		 headersIntegracion.put("DEVICE_MANUFACTURER", device_manufacturer);
+
+		 //headersIntegracion.put("FLOW_NAME", flow_name);
+
+		 /*if (LOGGER.isDebugEnabled()) {
+			 LOGGER.logDebug("Valores recibidos en " + this.getClass().getName());
+			 for (Map.Entry<String, String> entry : headersIntegracion.entrySet()) {
+				 String key = entry.getKey();
+				 String value = entry.getValue();
+				 LOGGER.logDebug(String.format("Header: %s = %s", key, value));
+			 }
+		 }*/
+
+		 try {
+			 outResponseRegisterCardPan=iServiceContractOperationsApiService.getUniqueId(xrequestid, xenduserrequestdatetime, xenduserip, xchannel, auth_token, headersIntegracion, inRequestRegisterCardPan );
+		 } catch (CTSRestException e) {
+			 LOGGER.logError("CTSRestException",e);
+			 if ("404".equals(e.getMessage())) {
+				 LOGGER.logDebug("404 is returned - No data found");
+				 return Response.status(404).entity("No data found").build();
+			 }
+
+			 LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			 return Response.status(409).entity(e.getMessageBlockList()).build();
+		 } catch (Exception e){
+			 LOGGER.logDebug("500 is returned - Code exception");
+			 LOGGER.logError("Exception",e);
+			 return Response.status(500).entity(e.getMessage()).build();
+		 }
+
+		 LOGGER.logDebug("Ends service execution REST: registerCardPan");
+		 LOGGER.logDebug("Ends service execution REST: outResponseRegisterCardPan: " + 
+		 "Response: " + String.valueOf(outResponseRegisterCardPan.getResponse()) +
+		 "UniqueID: " + String.valueOf(outResponseRegisterCardPan.getUnique_id()));
+		 return Response.ok(outResponseRegisterCardPan).build();
+
+	 }
+
+}
