@@ -26,6 +26,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.Error;
 
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 import java.util.List;
+import java.util.Map;
 
 public interface IServiceContractOperationsApiService {
 
@@ -425,6 +426,6 @@ public interface IServiceContractOperationsApiService {
     */
         
 	//Have DTO
-	public ResponseRegisterCardPan getUniqueId(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,String auth_token,String session_id,String customer_id,RequestRegisterCardPan inRequestRegisterCardPan  )throws CTSRestException;
+	public ResponseRegisterCardPan getUniqueId( String xrequestid,String xenduserrequestdatetime,String xenduserip, String xchannel, String auth_token, Map<String, String> headersIntegracion, RequestRegisterCardPan inRequestRegisterCardPan)throws CTSRestException;
 
 }

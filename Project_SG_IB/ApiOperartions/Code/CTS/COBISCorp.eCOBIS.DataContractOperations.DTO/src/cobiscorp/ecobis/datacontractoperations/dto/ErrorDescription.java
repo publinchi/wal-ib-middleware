@@ -27,39 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class ResponseRegisterCardPan implements Serializable {
-  private Boolean success;
-  private Response response;
-  private String unique_id;
-  private String dock_card_id;
-  public Boolean isSuccess(){
-    return this.success;
+public class ErrorDescription implements Serializable {
+  private String code;
+  private String description;
+  public String getCode(){
+    return this.code;
   }
-  public void setSuccess(Boolean success ){
-    this.success=success;
+  public void setCode(String code ){
+    this.code=code;
   }
-  public Response responseInstance(){
-	if(this.response==null){
-	this.response=new Response();
-	}
-	return this.response;
+  public String getDescription(){
+    return this.description;
   }
-  public Response getResponse(){
-    return this.response;
-  }
-  public void setResponse(Response response ){
-    this.response=response;
-  }
-  public String getUnique_id(){
-    return this.unique_id;
-  }
-  public void setUnique_id(String unique_id ){
-    this.unique_id=unique_id;
-  }
-  public String getDock_card_id(){
-    return this.dock_card_id;
-  }
-  public void setDock_card_id(String dock_card_id ){
-    this.dock_card_id=dock_card_id;
+  public void setDescription(String description ){
+    this.description=description;
   }
 }
