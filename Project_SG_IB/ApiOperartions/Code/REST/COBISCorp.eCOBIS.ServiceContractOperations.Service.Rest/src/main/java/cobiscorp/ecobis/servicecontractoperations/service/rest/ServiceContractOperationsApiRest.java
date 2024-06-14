@@ -2508,23 +2508,23 @@ public class ServiceContractOperationsApiRest {
 			 @NotNull(message = "auth_token may not be null") 
 			 @HeaderParam("auth_token") String auth_token,
 
-			 @NotNull(message = "CUSTOMER_ID may not be null") 
-			 @HeaderParam("CUSTOMER_ID") String customer_id,
+			 @NotNull(message = "WM_CONSUMER_ID may not be null") 
+			 @HeaderParam("WM_CONSUMER_ID") String consumer_id,
 			 
 			 @NotNull(message = "LOGIN_SESSION_ID may not be null") 
 			 @HeaderParam("LOGIN_SESSION_ID") String loginsession_id,
 
-			 @NotNull(message = "WM_QOS.CORRELATION_ID may not be null") 
-			 @HeaderParam("WM_QOS.CORRELATION_ID") String wmqos_correlationId,
+			 @NotNull(message = "WM_QOS_CORRELATION_ID may not be null") 
+			 @HeaderParam("WM_QOS_CORRELATION_ID") String wmqos_correlationId,
 			 
-			 @NotNull(message = "WM_SVC.NAME may not be null") 
-			 @HeaderParam("WM_SVC.NAME") String wmsvc_name,
+			 @NotNull(message = "WM_SVC_NAME may not be null") 
+			 @HeaderParam("WM_SVC_NAME") String wmsvc_name,
 			 
 			 @NotNull(message = "WM_SVC.ENV may not be null") 
-			 @HeaderParam("WM_SVC.ENV") String wmsvc_env,
+			 @HeaderParam("WM_SVC_ENV") String wmsvc_env,
 			 
-			 //@NotNull(message = "x_wm_consumer.id may not be null") 
-			 //@HeaderParam("x_wm_consumer.id") String wmconsumer_id,
+			 @NotNull(message = "WM_CONSUMER_ID may not be null") 
+			 @HeaderParam("CUSTOMER_ID") String customer_id,
 			 
 			 //@NotNull(message = "x_wm_sec.auth_signature may not be null") 
 			 //@HeaderParam("x_wm_sec.auth_signature") String wmsec_authsignature,
@@ -2532,8 +2532,8 @@ public class ServiceContractOperationsApiRest {
 			 //@NotNull(message = "x_wm_consumer.intimestamp may not be null") 
 			 //@HeaderParam("x_wm_consumer.intimestamp") String wmconsumer_intimestamp,
 			 
-			 //@NotNull(message = "x_wm_sec.key_version may not be null") 
-			 //@HeaderParam("x_wm_sec.key_version") String wmsec_keyversion,
+			/* @NotNull(message = "WM_SEC.KEY_VERSION may not be null") 
+			 @HeaderParam("WM_SEC.KEY_VERSION") String wmsec_keyversion,*/
 			 
 			 @NotNull(message = "DEVICE_PLATFORM may not be null") 
 			 @HeaderParam("DEVICE_PLATFORM") String device_platform,
@@ -2580,12 +2580,11 @@ public class ServiceContractOperationsApiRest {
 
 		 Map<String,String> headersIntegracion = new HashMap<String, String>();
 		 headersIntegracion.put("LOGIN_SESSION_ID", loginsession_id);
-		 headersIntegracion.put("CUSTOMER_ID", customer_id);
-		 
-		 headersIntegracion.put("WM_QOS.CORRELATION_ID", wmqos_correlationId);
-		 headersIntegracion.put("WM_SVC.NAME", wmsvc_name);
-		 headersIntegracion.put("WM_SVC.ENV", wmsvc_env);
-		 //headersIntegracion.put("WM_CONSUMER.ID", wmconsumer_id);
+		 headersIntegracion.put("CUSTOMER_ID", customer_id);		 
+		 headersIntegracion.put("correlation", wmqos_correlationId);
+		 headersIntegracion.put("svc_name", wmsvc_name);
+		 headersIntegracion.put("envi_svc", wmsvc_env);
+		 headersIntegracion.put("consumer_id", consumer_id);
 		 //headersIntegracion.put("WM_SEC.AUTH_SIGNATURE", wmsec_authsignature);
 		 //headersIntegracion.put("WM_CONSUMER.INTIMESTAMP", wmconsumer_intimestamp);
 		 //headersIntegracion.put("WM_SEC.KEY_VERSION", wmsec_keyversion);
@@ -2595,7 +2594,8 @@ public class ServiceContractOperationsApiRest {
 		 headersIntegracion.put("DEVICE_ENVIRONMENT_HEALTHY", device_environmenthealthy);
 		 headersIntegracion.put("DEVICE_OS_VERSION", deviceos_version);
 		 headersIntegracion.put("DEVICE_MANUFACTURER", device_manufacturer);
-
+		 LOGGER.logDebug("JCOS XDX");
+		 LOGGER.logDebug(wmqos_correlationId);
 		 //headersIntegracion.put("FLOW_NAME", flow_name);
 
 		 /*if (LOGGER.isDebugEnabled()) {
@@ -2623,6 +2623,32 @@ public class ServiceContractOperationsApiRest {
 			 LOGGER.logError("Exception",e);
 			 return Response.status(500).entity(e.getMessage()).build();
 		 }
+		 
+		 
+		 /*SALIDA DE ERROR*/
+		 
+		 if(outResponseRegisterCardPan==null || outResponseRegisterCardPan.getResponse().getCode()>0) {
+		 
+		 LOGGER.logDebug("400 is returned - Required fields are missing");
+		 //return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+
+		 ResponseError outResponseError = new ResponseError();
+		 outResponseError.setMessage("Error occurred while processing the request");
+
+		 ErrorDescription[] errors = new ErrorDescription[1];
+		 ErrorDescription error = new ErrorDescription();
+		 error.setCode("BCS-BA-9001");
+		 error.setDescription("Unauthorised User");
+		 errors[0] = error;
+		 
+		 outResponseError.setErrors(errors);
+
+		 return Response.status(400).entity(outResponseError).build();
+		 }
+		 
+		 /*FIN SALIDA DE ERROR*/
+		 
+		 
 
 		 LOGGER.logDebug("Ends service execution REST: registerCardPan");
 		 LOGGER.logDebug("Ends service execution REST: outResponseRegisterCardPan: " + 

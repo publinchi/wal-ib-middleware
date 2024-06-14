@@ -512,7 +512,7 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		anOriginalReq.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 		
 		procedureRequest.addInputParam("@i_wm_token", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_auth_token"));
-		//procedureRequest.addInputParam("@i_wm_session", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_session_id"));
+		procedureRequest.addInputParam("@i_wm_session", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_session_id"));
 		
 		procedureRequest.addInputParam("@i_login_session_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_login_session_id"));
 		procedureRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_customer_id"));
@@ -521,10 +521,10 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		procedureRequest.addInputParam("@i_wm_svc_name", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc_name"));
 		procedureRequest.addInputParam("@i_wm_svc_env", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_svc_env"));
 		
-		//procedureRequest.addInputParam("@i_wm_consumer.id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.id"));
+		procedureRequest.addInputParam("@i_wm_consumer.id", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.id"));
 		//procedureRequest.addInputParam("@i_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.auth_signature"));
 		//procedureRequest.addInputParam("@i_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_consumer.intimestamp"));
-		//procedureRequest.addInputParam("@i_wm_sec.key_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.key_version"));
+		procedureRequest.addInputParam("@i_wm_sec.key_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_wm_sec.key_version"));
 		
 		procedureRequest.addInputParam("@i_device_platform", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_platform"));
 		procedureRequest.addInputParam("@i_device_app_version", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@x_device_app_version"));

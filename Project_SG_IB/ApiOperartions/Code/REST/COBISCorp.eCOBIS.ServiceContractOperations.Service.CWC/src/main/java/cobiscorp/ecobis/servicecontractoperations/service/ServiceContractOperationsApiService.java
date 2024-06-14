@@ -7489,22 +7489,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     	   //Headers Integracion
     	   
     	   procedureRequestAS.addInputParam("@x_login_session_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("LOGIN_SESSION_ID"));
-    	   procedureRequestAS.addInputParam("@x_customer_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CUSTOMER_ID"));
-    	   
-    	   procedureRequestAS.addInputParam("@x_wm_qos_correlation_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_QOS.CORRELATION_ID"));
-    	   procedureRequestAS.addInputParam("@x_wm_svc_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.NAME"));
-    	   procedureRequestAS.addInputParam("@x_wm_svc_env", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SVC.ENV"));
-    	   //procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CORRELATION_ID"));
+    	   procedureRequestAS.addInputParam("@x_customer_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("CUSTOMER_ID"));    	   
+    	   procedureRequestAS.addInputParam("@x_wm_qos_correlation_id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("correlation"));
+    	   procedureRequestAS.addInputParam("@x_wm_svc_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("svc_name"));
+    	   procedureRequestAS.addInputParam("@x_wm_svc_env", ICTSTypes.SQLVARCHAR, headersIntegracion.get("envi_svc"));
+    	   procedureRequestAS.addInputParam("@x_wm_consumer.id", ICTSTypes.SQLVARCHAR, headersIntegracion.get("consumer_id"));
     	   //procedureRequestAS.addInputParam("@x_wm_sec.auth_signature", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.AUTH_SIGNATURE"));
     	   //procedureRequestAS.addInputParam("@x_wm_consumer.intimestamp", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_CONSUMER.INTIMESTAMP"));
-    	   //procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
+    	   // procedureRequestAS.addInputParam("@x_wm_sec.key_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("WM_SEC.KEY_VERSION"));
     	   procedureRequestAS.addInputParam("@x_device_platform", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_PLATFORM"));
     	   procedureRequestAS.addInputParam("@x_device_app_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_APP_VERSION"));
     	   procedureRequestAS.addInputParam("@x_device_fingerprint", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_FINGERPRINT"));
     	   procedureRequestAS.addInputParam("@x_device_environment_healthy", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_ENVIRONMENT_HEALTHY"));
     	   procedureRequestAS.addInputParam("@x_device_os_version", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_OS_VERSION"));
-    	   procedureRequestAS.addInputParam("@x_device_manufacturer", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_MANUFACTURER"));
-    	  
+    	   procedureRequestAS.addInputParam("@x_device_manufacturer", ICTSTypes.SQLVARCHAR, headersIntegracion.get("DEVICE_MANUFACTURER"));    	  
     	   //procedureRequestAS.addInputParam("@x_flow_name", ICTSTypes.SQLVARCHAR, headersIntegracion.get("FLOW_NAME"));
 
     	   // execute procedure
