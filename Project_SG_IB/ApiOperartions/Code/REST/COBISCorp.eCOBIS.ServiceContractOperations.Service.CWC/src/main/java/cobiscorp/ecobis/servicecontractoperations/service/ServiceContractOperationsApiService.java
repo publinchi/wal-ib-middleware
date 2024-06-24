@@ -7601,12 +7601,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    			throw new CTSRestException("404", null);
    		}
 
-   		String trn = "Get unique id";
+		String trn = "Get unique id";
 
    		Gson gson = new Gson();
-   		inRequestRegisterCardPan.setCard_number(maskNumber(inRequestRegisterCardPan.getCard_number()));
+		inRequestRegisterCardPan.setCard_number(maskNumber(inRequestRegisterCardPan.getCard_number()));
    		String jsonReq = gson.toJson(inRequestRegisterCardPan);
-   		
+		
    		Gson gson2 = new Gson();
    		String jsonRes = gson2.toJson(outResponseRegisterCardPan);
 
@@ -7619,7 +7619,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    		header.setX_channel(xchannel);
    		
    		header.setContent_type("application/json");
-   		
+		
    		Gson gson3 = new Gson();
    		String jsonHead = gson3.toJson(header);
 
@@ -7629,19 +7629,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    		// returns data
    		return outResponseRegisterCardPan;
    	}
-   	
-   	public String maskNumber(String number) 
-   	{
-     	  int length = number.length();
-     	  int start = length / 4;
-     	  int end = length - start;
-     	  StringBuilder maskedNumber = new StringBuilder(number);
+	
+	public String maskNumber(String number) 
+	{
+  	  int length = number.length();
+  	  int start = length / 4;
+  	  int end = length - start;
+  	  StringBuilder maskedNumber = new StringBuilder(number);
 
-     	  // Reemplazar los caracteres en el rango determinado por 'X'
-     	  for (int i = start; i < end; i++) {
-     		  maskedNumber.setCharAt(i, 'X');
-     	  }
-     	  return maskedNumber.toString();
-   	}
+  	  // Reemplazar los caracteres en el rango determinado por 'X'
+  	  for (int i = start; i < end; i++) {
+  		  maskedNumber.setCharAt(i, 'X');
+  	  }
+  	  return maskedNumber.toString();
+	}
     
 }
