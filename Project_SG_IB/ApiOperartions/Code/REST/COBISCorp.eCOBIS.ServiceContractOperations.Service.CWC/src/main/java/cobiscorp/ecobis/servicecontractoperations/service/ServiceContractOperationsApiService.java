@@ -7314,6 +7314,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setApproved_value(resultSetMapper.getString(5));
 								dto.setSettlement_value(resultSetMapper.getString(6));
 								dto.setCardholder_billing_value(resultSetMapper.getString(7));
+								dto.setSeq(resultSetMapper.getString(8));
 
 								return dto;
 							}
@@ -7354,7 +7355,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			String jsonHead = gson3.toJson(header_dock);
 			
 			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
+			
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
