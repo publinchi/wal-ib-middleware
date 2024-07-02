@@ -16,7 +16,7 @@
     <parameter name="@t_show_version" dataType="bit" direction="in" />
     <parameter name="@t_trn" dataType="int" direction="in" />
     <parameter name="@i_operacion" dataType="char" direction="in" />
-    <parameter name="@i_bin" dataType="int" direction="in" />
+    <parameter name="@i_bin" dataType="varchar" direction="in" />
     <parameter name="@o_cobis_bank_code" dataType="int" direction="out" />
   </parameters>
   <queries />
