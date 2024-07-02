@@ -166,7 +166,7 @@ public class RegisterCardPanOrchestrationCore extends SPJavaOrchestrationBase {
 		{
 			logger.logDebug("responseValidateCustomer card return code:"+responseValidateCustomer.getReturnCode() );
 		}
-		if(responseValidateCustomer.getReturnCode() == 0)
+		if(responseValidateCustomer.getReturnCode() == 0 || "1".equals(anOriginalRequest.readValueParam("@x_channel")) )
 		{
 			
 			if(logger.isDebugEnabled())
