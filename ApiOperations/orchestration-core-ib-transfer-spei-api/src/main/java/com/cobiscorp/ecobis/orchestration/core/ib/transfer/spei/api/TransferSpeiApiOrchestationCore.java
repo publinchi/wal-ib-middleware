@@ -1963,6 +1963,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             //idenficador de operacion se deberia
             anOriginalRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");
             
+            anOriginalRequest.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "A");
+            anOriginalRequest.addInputParam("@i_tipo_orden", ICTSTypes.SQLVARCHAR, "E");
+            anOriginalRequest.addInputParam("@i_prioridad", ICTSTypes.SQLVARCHAR, "0");
+            anOriginalRequest.addInputParam("@i_op_topologia", ICTSTypes.SQLVARCHAR, "V");
+            anOriginalRequest.addInputParam("@i_op_me_clave", ICTSTypes.SQLVARCHAR, "9");
+            
             anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getParam(anOriginalRequest, "CBCCDK", "AHO"));
             
             // SE HACE LA LLAMADA AL CONECTOR
