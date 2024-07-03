@@ -117,6 +117,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");
 		
+		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
+		aBagSPJavaOrchestration.put("flowRty", flowRty);
+		
 		String ctaDest = anOriginalRequest.readValueParam("@i_cta_des");
 		String account = null;
 		aBagSPJavaOrchestration.put("tipo_cta_des", "");
@@ -169,8 +172,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
-		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		logger.logDebug("Response Online: " + responseServer.getOnLine());
 		
 		if (responseServer != null && !responseServer.getOnLine()) {
@@ -358,7 +359,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			if (null != referenceCode || reety.equals("S") ) {
 				
 				executionStatus = "CORRECT";
-				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				code = "0";
 				message = "Success";
@@ -380,8 +382,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			} else {
 				
 				executionStatus = "ERROR";
-				updateLimitStatus(aBagSPJavaOrchestration);
-				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				
+				if(aBagSPJavaOrchestration.get("flowRty").equals(false)) {
+					updateLimitStatus(aBagSPJavaOrchestration);
+					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				}
+					
 				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
@@ -393,8 +399,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			executionStatus = "ERROR";
 			referenceCode = null;
 			
-			updateLimitStatus(aBagSPJavaOrchestration);
-			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			
+			if(aBagSPJavaOrchestration.get("flowRty").equals(false)) {
+				updateLimitStatus(aBagSPJavaOrchestration);
+				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			}
 				
 			if (codeReturn == 250046)
 			{

@@ -314,6 +314,9 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
 		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
