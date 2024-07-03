@@ -449,6 +449,15 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
 		msg.setRespuesta(responseXml);
 		
+		if(responseXml.getErrCodigo() != 0)
+		{
+			//llamado a devolucion de un abono no acreditado
+			IProcedureResponse responsePaymentReturn = callPaymentInReturn(request, aBagSPJavaOrchestration, msjIn);
+			if(logger.isDebugEnabled()) {
+				logger.logInfo("responsePaymentReturn: "+responsePaymentReturn.getProcedureResponseAsString());
+			}
+		}
+		
 		response = toStringXmlObject(msg);  
 		aBagSPJavaOrchestration.put("result", response);
 		return response;
@@ -790,8 +799,6 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if (logger.isDebugEnabled())
 				logger.logDebug("getWsEsice response: " + connectorResponse);
 
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			aBagSPJavaOrchestration.put("@o_result", "999");
@@ -806,5 +813,79 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return connectorResponse;
 	}
 	
+	private IProcedureResponse callPaymentInReturn(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, mensaje msjIn) {
+		// SE INICIALIZA VARIABLE
+		if (logger.isInfoEnabled()) 
+		{
+			logger.logInfo("Entrando a callPaymentInReturn");
+		}
+		IProcedureResponse connectorSpeiResponse = null;
+		try 
+		{
+			Integer opInsClave = msjIn.getOrdenpago().getOpInsClave();
+			IProcedureRequest procedureRequest = anOriginalRequest.clone();
+			aBagSPJavaOrchestration.remove("trn_virtual");
+			//SPEI REQUEST DEOVOLUCION KARPAY
+			procedureRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFechaOper());
+			procedureRequest.addInputParam("@i_institucion_contraparte", ICTSTypes.SQLVARCHAR, opInsClave!=null?opInsClave.toString():"");
+			procedureRequest.addInputParam("@i_monto", ICTSTypes.SQLMONEY, String.valueOf(msjIn.getOrdenpago().getOpMonto()));
+			procedureRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLVARCHAR, "0");
+			procedureRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo()) ;
+			
+			procedureRequest.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "L");
+			procedureRequest.addInputParam("@i_tipo_orden", ICTSTypes.SQLVARCHAR,"E");
+			procedureRequest.addInputParam("@i_prioridad", ICTSTypes.SQLVARCHAR,"0");
+			procedureRequest.addInputParam("@i_op_me_clave", ICTSTypes.SQLVARCHAR,"8");
+			procedureRequest.addInputParam("@i_op_topologia", ICTSTypes.SQLVARCHAR,"V");
+			procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getId());
+			procedureRequest.addInputParam("@i_op_firma_dig", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getOpFirmaDig());
+			
+			procedureRequest.addInputParam("@i_op_cd_clave", ICTSTypes.SQLVARCHAR,"1");
+			procedureRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");	
+			procedureRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getParam(anOriginalRequest, "CBCCDK", "AHO"));
+			// SE HACE LA LLAMADA AL CONECTOR
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");		
+
+			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TIMEOUT, ICOBISTS.HEADER_STRING_TYPE, "30000");
+			procedureRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500115");
+			procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500115");
+			
+
+
+			// SE EJECUTA
+			connectorSpeiResponse = executeProvider(procedureRequest, aBagSPJavaOrchestration);
+			// SE VALIDA LA RESPUESTA
+			if (!connectorSpeiResponse.hasError()) 
+			{
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("success CISConnectorSpei: true");
+					logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
+				}
+
+				connectorSpeiResponse.readValueParam("@o_cod_respuesta");
+				connectorSpeiResponse.readValueParam("@o_msj_respuesta");
+				
+				
+			} else {
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Error Catastrifico respuesta de BANPAY");
+					logger.logDebug("Error connectorSpeiResponse Catastrifico: " + connectorSpeiResponse);
+				}
+			}
+		} catch (Exception e) {
+			logger.logError(e);
+			logger.logInfo("Error Catastrofico de banpayExecution");
+			e.printStackTrace();
+			logger.logInfo("Error Catastrofico de banpayExecution");
+
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Saliendo de banpayExecution");
+			}
+		}
+		// SE REGRESA RESPUESTA
+		return connectorSpeiResponse;
+	}
 
 }
