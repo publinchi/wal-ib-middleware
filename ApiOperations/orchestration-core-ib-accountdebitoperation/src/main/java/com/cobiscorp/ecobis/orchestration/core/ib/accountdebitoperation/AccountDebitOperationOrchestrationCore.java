@@ -230,7 +230,14 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = anOriginalRequest.readValueParam("@i_referenceNumber");
+		String debitReason = anOriginalRequest.readValueParam("@i_debitReason");
 		BigDecimal amount = new BigDecimal(anOriginalRequest.readValueParam("@i_amount"));
+		int originCode = 0;
+		String originCodeStr = anOriginalRequest.readValueParam("@i_originCode");
+
+		if (originCodeStr != null && !originCodeStr.isEmpty() && !originCodeStr.equals("null")) {
+			originCode = Integer.parseInt(originCodeStr);
+		}
 		
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("40107", "amount must be greater than 0");
@@ -249,6 +256,25 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		
 		if (referenceNumber.length() != 6) {
 			aBagSPJavaOrchestration.put("40104", "referenceNumber must have 6 digits");
+			return;
+		}
+		
+		if (debitReason.trim().isEmpty()) {
+			aBagSPJavaOrchestration.put("40123", "debitReason must not be empty");
+			return;
+		}
+
+		if(debitReason.trim().equals("Card delivery fee")){
+			debitReason = "8110";
+		}else if(debitReason.trim().equals("False chargeback claim")){
+			debitReason = "3101";
+		}else{
+			aBagSPJavaOrchestration.put("40124", "debit reason not found");
+			return;
+		}
+
+		if(!originCodeStr.equals("null") && originCode <= 0 || originCode > 3){
+			aBagSPJavaOrchestration.put("40125", "origin code not found");
 			return;
 		}
 				
@@ -307,7 +333,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 				anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 				anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 				anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-				anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "4060");
+				anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, debitReason);
 				//anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "4050");
 				anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
 				anOriginalRequest.addInputParam("@s_servicio", ICTSTypes.SYBINT4, "8");
