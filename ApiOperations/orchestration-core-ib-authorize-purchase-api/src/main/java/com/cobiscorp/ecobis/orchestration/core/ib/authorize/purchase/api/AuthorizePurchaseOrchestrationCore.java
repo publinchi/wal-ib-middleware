@@ -306,6 +306,9 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);	
 		
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");

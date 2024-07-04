@@ -321,14 +321,15 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, aRequest.readValueParam("@t_trn"));
 		
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true)){
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
+			request.addInputParam("@i_val_rev", ICTSTypes.SQLVARCHAR, "N");
+		}			
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");
-		}
-		
-		if(aBagSPJavaOrchestration.get("flowRty").equals(true)){
-			request.addInputParam("@i_val_rev", ICTSTypes.SQLVARCHAR, "N");
-		}
+		}		
 		
 		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
