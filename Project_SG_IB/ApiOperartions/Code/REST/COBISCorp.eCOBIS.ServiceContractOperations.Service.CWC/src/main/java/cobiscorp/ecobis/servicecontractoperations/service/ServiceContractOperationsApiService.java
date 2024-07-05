@@ -3374,8 +3374,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setTransactionDate(resultSetMapper.getString(5));
 								dto.setOperationType(resultSetMapper.getString(6));
 								dto.setCommission(resultSetMapper.getString(7));
-								dto.setIva(resultSetMapper.getString(10));
-								dto.setDescription(resultSetMapper.getString(8));
+								dto.setIva(resultSetMapper.getString(8));
+								dto.setDescription(resultSetMapper.getString(10));
 								dto.setMovementId(resultSetMapper.getString(27));
 								dto.setAuthorizationCode(resultSetMapper.getString(28));
 								dto.setClientRequestId(resultSetMapper.getString(32));
