@@ -39,8 +39,11 @@ public class ManejoBytes {
         wFirma = concatByte(wFirma, formateoFrima(Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString())));//opinsclaveben
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCveRastreo()));//clave rastreo
         wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpMonto().doubleValue()));//opmonto
-        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
-        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //CuentaBen
+        if(msj.getOrdenpago().getOpTpClave()==1)
+        {
+        	wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
+        	wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //CuentaBen
+        }
         logDebug(METHOD_NAME,toString(wFirma));        
         return wFirma;
         
