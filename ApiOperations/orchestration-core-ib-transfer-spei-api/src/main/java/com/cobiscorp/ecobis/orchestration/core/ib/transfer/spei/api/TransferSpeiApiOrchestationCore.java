@@ -1226,15 +1226,36 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                         if (logger.isDebugEnabled()) {
                             logger.logDebug(":::: Se aplicara servicio spei por que tiene saldo en local");
                         }
-
+                        
                         SpeiMappingRequest requestSpei = mappingBagToSpeiRequest(aBagSPJavaOrchestration,
                                 responseTransfer, originalRequestClone);
+                        
+                        
+                        String typeConnector = getParam(originalRequest, "COSPEI", "AHO");
+                        
+                        try {
 
-                        SpeiMappingResponse responseSpei = speiOrchestration.sendSpeiOffline(requestSpei);
+                            if (typeConnector != null && typeConnector.equals("KARPAY")) {
+                            	responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
+                            	
 
-                        mappingResponseSpeiToProcedureOffline(responseSpei, responseTransfer, aBagSPJavaOrchestration);
+                                SpeiMappingResponse responseSpei = speiOrchestration.sendSpeiOffline(requestSpei);
 
-                        responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR, 1, TYPE_REENTRY_OFF_SPI);
+                                responseTransfer = mappingResponseSpeiToProcedureOffline(responseSpei, responseTransfer, aBagSPJavaOrchestration);
+
+                                responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR, 1, TYPE_REENTRY_OFF_SPI);
+                                                         	
+                            } 
+                        } catch (Exception e) {
+                        	if (logger.isDebugEnabled()) {
+								logger.logDebug("Fin executeTransfer 3");
+							}
+							
+                        	reverseSpei(requestSpei, aBagSPJavaOrchestration);  															
+							
+							responseTransfer.setReturnCode(1);
+                        }
                     }
                 } else {
 
@@ -1941,12 +1962,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             
             //idenficador de operacion se deberia
             anOriginalRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");
-            
-            anOriginalRequest.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "A");
-            anOriginalRequest.addInputParam("@i_tipo_orden", ICTSTypes.SQLVARCHAR, "E");
-            anOriginalRequest.addInputParam("@i_prioridad", ICTSTypes.SQLVARCHAR, "0");
-            anOriginalRequest.addInputParam("@i_op_topologia", ICTSTypes.SQLVARCHAR, "V");
-            anOriginalRequest.addInputParam("@i_op_me_clave", ICTSTypes.SQLVARCHAR, "9");
             
             anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getParam(anOriginalRequest, "CBCCDK", "AHO"));
             
