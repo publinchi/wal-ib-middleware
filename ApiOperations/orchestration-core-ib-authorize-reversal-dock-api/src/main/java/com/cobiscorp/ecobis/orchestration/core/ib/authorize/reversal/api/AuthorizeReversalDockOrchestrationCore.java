@@ -394,6 +394,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
 		
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, aRequest.readValueParam("@t_trn"));
