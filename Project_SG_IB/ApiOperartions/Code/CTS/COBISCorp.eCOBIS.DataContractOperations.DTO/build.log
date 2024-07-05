@@ -1,18 +1,17 @@
 ---BUILD---
 
 Generating jar File
-JAVA_HOME="C:\Program Files\Java\jdk1.8.0_211"
-java -jar ANTEXECUTOR2.jar -t "C:\Program Files\Java\jdk1.8.0_211"\lib\tools.jar -f "C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build.xml" "sign-archive" 
+JAVA_HOME="C:\Program Files\Java\jdk1.8.0_202"
+java -jar ANTEXECUTOR2.jar -t "C:\Program Files\Java\jdk1.8.0_202"\lib\tools.jar -f "C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build.xml" "sign-archive" 
 INIT Add class
-File jar add->C:/Program Files/Java/jdk1.8.0_211/lib/tools.jar
+File jar add->C:/Program Files/Java/jdk1.8.0_202/lib/tools.jar
 /C:/Program%20Files/COBIS/COBIS%20Services%20Generator%204/Packager/Java/ANT/ANTEXECUTOR2.jar
-/C:/Program%20Files/Java/jdk1.8.0_211/lib/tools.jar
+/C:/Program%20Files/Java/jdk1.8.0_202/lib/tools.jar
 END Add class
 Buildfile: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build.xml
      [echo] Building C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build.xml
      [echo] Version 1.0.0.0
 clean:
-   [delete] Deleting directory C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build
 classpath:
 init:
     [mkdir] Created dir: C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO\build\src
@@ -41,5 +40,5 @@ sign-archive:
   [signjar] The signer's certificate is self-signed.
   [signjar] Enter Passphrase for keystore: Enter key password for cobis: 
 BUILD SUCCESSFUL
-Total time: 20 seconds
+Total time: 8 seconds
 FIN
