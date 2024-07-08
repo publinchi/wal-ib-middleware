@@ -436,7 +436,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					if(msjIn.getOrdenpago().getOpTpClave()==0)
 					{
 						//llamdo a reversa de spei
-						IProcedureResponse procedureResponseReverse = reverseSPEIOut(request, aBagSPJavaOrchestration, msjIn.getOrdenpago().getOpCveRastreo());
+						IProcedureResponse procedureResponseReverse = reverseSPEI(request, aBagSPJavaOrchestration, msjIn.getOrdenpago().getOpCveRastreo());
 						
 						if(!procedureResponseReverse.hasError() && procedureResponseReverse.getReturnCode()==0)
 						{
@@ -473,6 +473,44 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return response;
 	}
 	
+	@Override
+	protected Object cancellations(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
+	{
+		Mensaje msg = new Mensaje();
+		Respuesta responseXml = new Respuesta();
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		String response;
+		if(logger.isDebugEnabled())
+			logger.logInfo("cancellations:"+msjIn.getOrdenpago().getId());
+		if( validateFields(request,aBagSPJavaOrchestration))
+		{
+			IProcedureResponse procedureResponseReverse = reverseSPEI(request, aBagSPJavaOrchestration, msjIn.getOrdenpago().getOpCveRastreo());
+			
+			if(!procedureResponseReverse.hasError() && procedureResponseReverse.getReturnCode()==0)
+			{
+				responseXml.setErrCodigo(Integer.valueOf( procedureResponseReverse.readValueParam("@o_id_resultado")));
+				responseXml.setErrDescripcion(procedureResponseReverse.readValueParam("@o_resultado"));
+			}else
+			{
+				responseXml.setErrCodigo(procedureResponseReverse.getReturnCode());
+				responseXml.setErrDescripcion("Error en el reverso de la operacion");
+			}
+		}else
+		{
+			responseXml.setErrCodigo(Integer.valueOf( String.valueOf( aBagSPJavaOrchestration.get(Constans.VALIDATE_CODE))));
+			responseXml.setErrDescripcion(String.valueOf( aBagSPJavaOrchestration.get(Constans.MESSAJE_CODE)));
+		}
+		responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
+		responseXml.setId(msjIn.getOrdenpago().getId());
+		msg.setCategoria(Constans.ODPS_CANCELADAS_LOCAL_RESPUESTA);
+		msg.setRespuesta(responseXml);
+		
+		response = toStringXmlObject(msg);  
+		aBagSPJavaOrchestration.put("result", response);
+		if(logger.isDebugEnabled())
+			logger.logInfo("cancellations response:"+response);
+		return response;
+	}
 	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
     	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
 		
@@ -561,7 +599,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		Boolean validate = true; 
 		String opTcClaveBen = String.format("%02d", msjIn.getOrdenpago().getOpTcClaveBen());
 		
-		if("ODPS_LIQUIDADAS_CARGOS".equals(msjIn.getCategoria()))
+		if(Constans.ODPS_LIQUIDADAS_CARGOS.equals(msjIn.getCategoria()))
 		{
 			if(msjIn.getOrdenpago().getOpFechaOper()==null)
 			{
@@ -629,7 +667,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				validate = false;	 
 			}
 		}else
-			if("ODPS_LIQUIDADAS_ABONOS".equals(msjIn.getCategoria()))
+			if(Constans.ODPS_LIQUIDADAS_ABONOS.equals(msjIn.getCategoria()))
 			{
 
 				if(msjIn.getOrdenpago().getOpFechaOper()==null)
@@ -729,7 +767,75 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 						
 				}
 
-			}
+			}else
+				if(Constans.ODPS_CANCELADAS_LOCAL.equals(msjIn.getCategoria()))
+				{
+					if(msjIn.getOrdenpago().getOpFechaOper()==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
+						validate = false;
+					}else
+					if(Integer.valueOf(msjIn.getOrdenpago().getOpFolio())==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 445);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Folio CoDi es obligatorio");
+						validate = false;
+					}else
+					if(Integer.valueOf(msjIn.getOrdenpago().getOpInsClave())==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 5);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de institución  ordenante es obligatoria para este Tipo de Pago");
+						validate = false; 
+					}else
+					if(Integer.valueOf(msjIn.getOrdenpago().getOpTpClave())==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 81);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El tipo de operación  es obligatorio para este Tipo de Pago");
+						validate = false;
+					}else
+					if(msjIn.getOrdenpago().getOpCveRastreo()==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 92);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de rastreo es obligatoria");
+						validate = false;
+					}else
+					if(msjIn.getOrdenpago().getOpEstado()==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 98);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Estado del envío  es obligatorio");
+						validate = false;
+					}else
+					if(msjIn.getOrdenpago().getOpTipoOrden()==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 106);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Tipo de orden es requerido.");
+						validate = false; 
+					}else
+					if(Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad())==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 85);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La prioridad de la orden es un dato obligatorio");
+						validate = false;	 
+					}else
+					if(Integer.valueOf(msjIn.getOrdenpago().getOpMeClave())==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
+						validate = false;	 
+					}if(msjIn.getOrdenpago().getOpTopologia()==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 87);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La Topología  de la orden es obligatorio");
+						validate = false;	 
+					}else
+					if(msjIn.getOrdenpago().getOpUsuClave()==null)
+					{
+						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 158);
+						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
+						validate = false;	 
+					}
+				}
 		
 		return validate;
 	}
@@ -898,7 +1004,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return connectorSpeiResponse;
 	}
 	
-	private IProcedureResponse reverseSPEIOut(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String clave)
+	private IProcedureResponse reverseSPEI(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String clave)
 	{
 		if (logger.isInfoEnabled()) 
 		{
@@ -982,5 +1088,4 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		return procedureResponseLocal;
 	}
-
 }
