@@ -161,9 +161,9 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 						{
 							if (logger.isDebugEnabled())
 							{
-								logger.logDebug("ODPS_LIQUIDADAS_ABONOS");
+								logger.logDebug("ODPS_CANCELADAS_LOCAL");
 							}
-							
+							cancellations(anOriginalRequest, aBagSPJavaOrchestration);
 						} else 
 							if (message.getCategoria().equals("ODPS_CANCELADAS_X_BANXICO")) 
 							{
@@ -189,4 +189,6 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 	protected abstract Object paymentIn(IProcedureRequest request,
 			Map<String, Object> aBagSPJavaOrchestration);
 
+	protected abstract Object cancellations(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration);
 }
