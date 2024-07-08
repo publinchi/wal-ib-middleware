@@ -477,6 +477,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SYBCHAR, "N");
 		//anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
 		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
+		anOriginalRequest.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_origin_uuid"));
 
 		anOriginalRequest.addOutputParam("@o_ssn", ICTSTypes.SQLINTN, "0");
 		
