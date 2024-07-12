@@ -5,6 +5,7 @@ import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 import java.io.File;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -36,6 +37,7 @@ import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.Institucion;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
@@ -511,6 +513,62 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logInfo("cancellations response:"+response);
 		return response;
 	}
+	
+	@Override
+	protected Object ensesion(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
+	{
+		Mensaje msg = new Mensaje();
+		Respuesta responseXml = new Respuesta();
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		String response;
+		
+		if(logger.isDebugEnabled())
+			logger.logInfo("BER categoria ensesion:"+msjIn.getCategoria());
+		if(msjIn!=null)
+		{
+			if(logger.isDebugEnabled())
+				logger.logInfo("BER fecha operacion ensesion:"+msjIn.getEnsesion().getFechaOperacionBanxico());
+			
+			//cambio de fecha operacion karpay
+			 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+	         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	         LocalDate fecha = LocalDate.parse(msjIn.getEnsesion().getFechaOperacionBanxico(), inputFormatter);
+	         String fechaOperacion = fecha.format(outputFormatter);
+	         int responseCatalog = 0;
+	         for(Institucion inst : msjIn.getEnsesion().getTnstituciones().getListInstBancarias() )
+	         {
+				if(logger.isDebugEnabled())
+					logger.logInfo("BER fecha operacion ensesion:"+inst.getInsNombre()+":"+inst.getClaveCesif());
+			
+				//actualizar catalogo
+				responseCatalog = insertUpdateCatalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"U");
+				if(responseCatalog!=0)
+				{
+					//inserta catalogo
+					responseCatalog = insertUpdateCatalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I");
+				}
+	         }
+	         //llamado sp
+	         setParamKarpayDate(request,"PRODAK", "AHO", fechaOperacion);
+	         
+		}
+		else
+		{
+			responseXml.setErrCodigo(0);
+			responseXml.setErrDescripcion("Procesamiento Exitoso");
+		}
+		responseXml.setFechaOper(msjIn.getEnsesion().getFechaOperacionBanxico());
+		responseXml.setId("0");
+		msg.setCategoria(Constans.ENSESION_RESPUESTA);
+		msg.setRespuesta(responseXml);
+		
+		response = toStringXmlObject(msg);  
+		aBagSPJavaOrchestration.put("result", response);
+		if(logger.isDebugEnabled())
+			logger.logInfo("cancellations response:"+response);
+		return response;
+	}
+	
 	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
     	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
 		
@@ -1087,5 +1145,59 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		}
 		
 		return procedureResponseLocal;
+	}
+	
+	private String setParamKarpayDate(IProcedureRequest anOriginalRequest, String nemonico, String producto, String fecha) {
+    	logger.logDebug("Begin flow, setParamKarpayDate");
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "U");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	
+		reqTMPCentral.addInputParam("@i_datetime",ICTSTypes.SQLDATETIME, fecha);
+		reqTMPCentral.addInputParam("@i_parametro",ICTSTypes.SQLVARCHAR, "PROCCESS DATE KARPAY");
+		reqTMPCentral.addInputParam("@i_tipo",ICTSTypes.SQLVARCHAR, "D");
+
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, setParamKarpayDate with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (!wProcedureResponseCentral.hasError()) {
+			
+			return fecha;
+		} 
+		
+		return "";
+	}
+	
+	private int insertUpdateCatalog(IProcedureRequest anOriginalRequest, String tabla, String codigo, String valor, String operacion) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, setCatalog");
+		}
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_catalogo");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
+		reqTMPCentral.addInputParam("@i_tabla",ICTSTypes.SQLVARCHAR, tabla);
+		reqTMPCentral.addInputParam("@i_codigo",ICTSTypes.SQLVARCHAR, codigo);	
+		reqTMPCentral.addInputParam("@i_descripcion",ICTSTypes.SQLDATETIME, valor);	
+		
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, setCatalog: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (wProcedureResponseCentral.getReturnCode()!=0) {
+			
+			return wProcedureResponseCentral.getReturnCode();
+		} 
+		
+		return 0;
 	}
 }
