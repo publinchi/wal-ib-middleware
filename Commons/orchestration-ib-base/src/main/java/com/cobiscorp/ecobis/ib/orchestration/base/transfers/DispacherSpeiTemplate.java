@@ -167,8 +167,12 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 						} else 
 							if (message.getCategoria().equals("ODPS_CANCELADAS_X_BANXICO")) 
 							{
-
-							}
+								cancellations(anOriginalRequest, aBagSPJavaOrchestration);
+							}else
+								if(message.getCategoria().equals("ENSESION"))
+								{
+									ensesion(anOriginalRequest, aBagSPJavaOrchestration);
+								}
 
 			}
 		}
@@ -190,5 +194,8 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 			Map<String, Object> aBagSPJavaOrchestration);
 
 	protected abstract Object cancellations(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration);
+	
+	protected abstract Object ensesion(IProcedureRequest request,
 			Map<String, Object> aBagSPJavaOrchestration);
 }
