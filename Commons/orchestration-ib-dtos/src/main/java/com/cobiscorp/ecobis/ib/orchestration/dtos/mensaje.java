@@ -1,10 +1,6 @@
 package com.cobiscorp.ecobis.ib.orchestration.dtos;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,7 +11,7 @@ public class mensaje implements Serializable{
 	 
 	private  ordenpago ordenpago;
 	private String categoria;
-	
+	private Ensesion ensesion; 
 	
 	public mensaje() {}
 
@@ -32,6 +28,15 @@ public class mensaje implements Serializable{
 	public synchronized void setOrdenpago(ordenpago ordenpago) {
 		this.ordenpago = ordenpago;
 	}
+	@XmlElement 
+	public synchronized Ensesion getEnsesion() {
+		return ensesion;
+	}
+
+	public synchronized void setEnsesion(Ensesion ensesion) {
+		this.ensesion = ensesion;
+	}
+	
 	@XmlAttribute  
 	public synchronized String getCategoria() {
 		return categoria;
