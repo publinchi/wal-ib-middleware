@@ -1576,7 +1576,11 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
 				
-				notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);
+				if(!aRequest.readValueParam("@i_type_card").equals("VI") || !aRequest.readValueParam("@i_type_card").equals("PH")
+				   || !aRequest.readValueParam("@i_card_status").equals("N") || !aRequest.readValueParam("@i_card_status").equals("B") ) {
+				   notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);  
+				}
+				
 				
 				IResultSetRow row = new ResultSetRow();
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
