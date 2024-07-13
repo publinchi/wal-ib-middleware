@@ -6,10 +6,16 @@ import java.io.File;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXB;
@@ -343,6 +349,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	protected Object paymentIn(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
 	{
 		// validar firma
+		logHour("1");
 		Mensaje msg = new Mensaje();
 		Respuesta responseXml = new Respuesta();
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
@@ -351,12 +358,14 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		String codTarDeb = getParam(request, "CODTAR", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
+		
 		if(logger.isDebugEnabled())
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
 		
+		
 		DispatcherUtil util = new DispatcherUtil();
 		String sign = util.doSignature(request, aBagSPJavaOrchestration);
-		
+		logHour("2");
 		if( validateFields(request, aBagSPJavaOrchestration))
 		{
 			if(logger.isDebugEnabled())
@@ -370,6 +379,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				responseXml.setErrDescripcion("La firma del mensaje no es correcta");
 			}else
 			{	
+				logHour("3");
 				//spein in tipo de pago 1 tercero a tercero
 				if(msjIn.getOrdenpago().getOpTpClave()==1)
 				{
@@ -414,7 +424,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 					
 					IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
-					
+					logHour("4");
 					if(logger.isDebugEnabled())
 						logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
 					
@@ -463,15 +473,20 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		if(responseXml.getErrCodigo() != 0)
 		{
-			//llamado a devolucion de un abono no acreditado
-			IProcedureResponse responsePaymentReturn = callPaymentInReturn(request, aBagSPJavaOrchestration, msjIn);
-			if(logger.isDebugEnabled()) {
-				logger.logInfo("responsePaymentReturn: "+responsePaymentReturn.getProcedureResponseAsString());
-			}
+			logHour("5");
+			ExecutorService executor = Executors.newSingleThreadExecutor();
+			
+			// Crear una instancia de MyCallableTask con parámetros
+			CallableTask task = new CallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
+			// Enviar la tarea para su ejecución
+			Future<IProcedureResponse> future = executor.submit(task);
+			executor.shutdownNow();
+	        logHour("6");
 		}
 		
 		response = toStringXmlObject(msg);  
 		aBagSPJavaOrchestration.put("result", response);
+		logHour("7");
 		return response;
 	}
 	
@@ -1199,5 +1214,15 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		} 
 		
 		return 0;
+	}
+	public void logHour(String txt)
+	{
+		if(logger.isDebugEnabled())
+		{
+			LocalDateTime fechaHoraActual = LocalDateTime.now();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	        String fechaHoraFormateada = fechaHoraActual.format(formatter);
+	        logger.logDebug("hour "+txt+":"+fechaHoraFormateada); 
+		}
 	}
 }
