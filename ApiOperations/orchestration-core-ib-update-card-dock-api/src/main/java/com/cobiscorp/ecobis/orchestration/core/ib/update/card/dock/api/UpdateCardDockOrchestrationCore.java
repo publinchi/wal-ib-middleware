@@ -1576,10 +1576,22 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 			if(flag == true){
 				logger.logDebug("Ending flow, processResponse success with code: ");
 				
-				if(!aRequest.readValueParam("@i_type_card").equals("VI") || !aRequest.readValueParam("@i_type_card").equals("PH")
-				   || !aRequest.readValueParam("@i_card_status").equals("N") || !aRequest.readValueParam("@i_card_status").equals("B") ) {
-				   notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);  
-				}
+				String cardStatus = aRequest.readValueParam("@i_card_status");
+				String mode = aRequest.readValueParam("@i_mode");
+				String typeCard = aRequest.readValueParam("@i_type_card");
+
+				 if (mode.equals("N")) { 
+					 
+			        	if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
+			        		  notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);	
+			        	}
+			        	
+			     } else {
+			        	
+			        	if ((typeCard.equals("VI") && cardStatus.equals("C")) || typeCard.equals("PH")) {                          
+                              notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);			        				        		
+			        	} 
+			     } 
 				
 				
 				IResultSetRow row = new ResultSetRow();
@@ -1697,8 +1709,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
         			
         			tittle = "Cancelación de tarjeta digital realizada exitosamente";
-        		}
-        		
+        		}       		
+        		        		
         	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
         		
         		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
