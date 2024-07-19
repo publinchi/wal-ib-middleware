@@ -381,7 +381,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			{	
 				logHour("3");
 				//spein in tipo de pago 1 tercero a tercero
-				if(msjIn.getOrdenpago().getOpTpClave()==1)
+				if(msjIn.getOrdenpago().getOpTpClave()==1
+					||	msjIn.getOrdenpago().getOpTpClave()==16//Devolución Extemporánea No Acreditada 
+					||	msjIn.getOrdenpago().getOpTpClave()==17//Devolución Acreditada  
+					||	msjIn.getOrdenpago().getOpTpClave()==18)//Devolución Extemporánea Acreditada
 				{
 					//llamar spei in 
 					IProcedureRequest procedureRequest = initProcedureRequest(request);
