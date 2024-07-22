@@ -7471,7 +7471,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
     	   procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
     	   procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
-    			   inRequestRegisterCardPan.getCard_number());
+    			   inRequestRegisterCardPan.getCardNumber());
 
     	   procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
     	   procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
@@ -7580,14 +7580,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
    							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
 
-   							dto.setUnique_id(resultSetMapper.getString(1));
-   							dto.setDock_card_id(resultSetMapper.getString(2));
+   							dto.setUniqueId(resultSetMapper.getString(1));
+   							dto.setDockCardId(resultSetMapper.getString(2));
    							return dto;
    						}
    					}, false);
 
-   			outResponseRegisterCardPan.setUnique_id(returnResponseRegisterCardPan.getUnique_id());
-   			outResponseRegisterCardPan.setDock_card_id(returnResponseRegisterCardPan.getDock_card_id());
+   			outResponseRegisterCardPan.setUniqueId(returnResponseRegisterCardPan.getUniqueId());
+   			outResponseRegisterCardPan.setDockCardId(returnResponseRegisterCardPan.getDockCardId());
    			// break;
 
    		} else {
@@ -7604,7 +7604,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		String trn = "Get unique id";
 
    		Gson gson = new Gson();
-		inRequestRegisterCardPan.setCard_number(maskNumber(inRequestRegisterCardPan.getCard_number()));
+		inRequestRegisterCardPan.setCardNumber(maskNumber(inRequestRegisterCardPan.getCardNumber()));
    		String jsonReq = gson.toJson(inRequestRegisterCardPan);
 		
    		Gson gson2 = new Gson();
