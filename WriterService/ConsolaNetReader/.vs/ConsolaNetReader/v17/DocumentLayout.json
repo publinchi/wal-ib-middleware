@@ -1,0 +1,91 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\cobis\\ConsolaNetReader\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\cobis\\consolanetreader\\consolanetreader\\procesamientocontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\procesamientocontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\servicesdocuments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\servicesdocuments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|C:\\cobis\\ConsolaNetReader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|C:\\cobis\\ConsolaNetReader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProcesamientoContratos.cs",
+              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ProcesamientoContratos.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\ProcesamientoContratos.cs",
+              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ProcesamientoContratos.cs",
+              "RelativeToolTip": "ConsolaNetReader\\ProcesamientoContratos.cs",
+              "ViewState": "AQIAAJABAAAAAAAAAAA2wJABAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-22T15:21:27.983Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ServicesDocuments.cs",
+              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ServicesDocuments.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\ServicesDocuments.cs",
+              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ServicesDocuments.cs",
+              "RelativeToolTip": "ConsolaNetReader\\ServicesDocuments.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAgwBoAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-10T17:46:48.508Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DocumentServices.cs",
+              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
+              "ToolTip": "C:\\cobis\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeToolTip": "Menu\\DocumentServices.cs",
+              "ViewState": "AQIAACMAAAAAAAAAAAAgwC8AAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-10T17:45:47.963Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DocumentServices.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
+              "ToolTip": "C:\\cobis\\ConsolaNetReader\\Menu\\DocumentServices.cs [Dise\u00F1o]",
+              "RelativeToolTip": "Menu\\DocumentServices.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-10T17:45:43.865Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
