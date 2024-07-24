@@ -2505,8 +2505,8 @@ public class ServiceContractOperationsApiRest {
 			 //@NotNull(message = "x-channel may not be null") 
 			 @HeaderParam("x-channel") String xchannel,
 
-			 @NotNull(message = "WM_SEC.AUTH_TOKEN may not be null") 
-			 @HeaderParam("WM_SEC.AUTH_TOKEN") String auth_token,
+			 @NotNull(message = "WM_SEC_AUTH_TOKEN may not be null") 
+			 @HeaderParam("WM_SEC_AUTH_TOKEN") String auth_token,
 
 			 @NotNull(message = "WM_CONSUMER_ID may not be null") 
 			 @HeaderParam("WM_CONSUMER_ID") String consumer_id,
@@ -2520,7 +2520,7 @@ public class ServiceContractOperationsApiRest {
 			 @NotNull(message = "WM_SVC_NAME may not be null") 
 			 @HeaderParam("WM_SVC_NAME") String wmsvc_name,
 			 
-			 @NotNull(message = "WM_SVC.ENV may not be null") 
+			 @NotNull(message = "WM_SVC_ENV may not be null") 
 			 @HeaderParam("WM_SVC_ENV") String wmsvc_env,
 			 
 			 @NotNull(message = "WM_CONSUMER_ID may not be null") 

@@ -88,7 +88,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_SEC.AUTH_TOKEN" />
+      <field type="String" name="key" value="WM_SEC_AUTH_TOKEN" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
@@ -205,7 +205,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_QOS.CORRELATION_ID" />
+      <field type="String" name="key" value="WM_QOS_CORRELATION_ID" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
@@ -218,7 +218,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_SVC.ENV" />
+      <field type="String" name="key" value="WM_SVC_ENV" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
@@ -231,7 +231,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_SVC.NAME" />
+      <field type="String" name="key" value="WM_SVC_NAME" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
