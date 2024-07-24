@@ -39,8 +39,8 @@
     </query>
     <query>
       <columns>
-        <column name="unique_id" />
-        <column name="dock_card_id" />
+        <column name="uniqueId" />
+        <column name="dockCardId" />
       </columns>
       <queryText></queryText>
     </query>
