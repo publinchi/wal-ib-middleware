@@ -1588,9 +1588,9 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 			        	
 			     } else {
 			        	
-			        	if ((typeCard.equals("VI") && cardStatus.equals("C")) || typeCard.equals("PH")) {                          
-                              notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);			        				        		
-			        	} 
+			    	 if ((typeCard.equals("VI") && cardStatus.equals("C")) || typeCard.equals("PH") && cardStatus.equals("C")) {                          
+                         notifyCardStatusUpdate(aRequest, aBagSPJavaOrchestration);			        				        		
+		        	}  
 			     } 
 				
 				
