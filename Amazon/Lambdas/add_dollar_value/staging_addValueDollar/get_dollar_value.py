@@ -3,12 +3,23 @@ import os
 import logging
 import http.client
 from datetime import datetime
-
+from cobis.cobisdbconnect import execute_database
 
 def get_dollar_value(facade, context):
     logger = facade["LOGGER"]
     url = os.environ['URL']
+    espacio="/"
     
+    consulta="exec cobis..sp_get_date_minus"
+
+    resultado = execute_database(consulta, context)
+    data = json.loads(resultado)
+    dolar_date = data[0]['dolar_date']
+    print(dolar_date)
+    
+    url=url+f"{dolar_date}{espacio}{dolar_date}"
+    
+    print(url)
     
     conn = http.client.HTTPSConnection("www.banxico.org.mx")
     payload = ''
@@ -17,6 +28,7 @@ def get_dollar_value(facade, context):
       'Cookie': 'TS012f422b=01ab44a5a861a72d46049e813b34ff72d5908b5cb68c04b05964836d04113ba6b876758acd32896402b728223dccaa5c7abb93b88d'
     }
     conn.request("GET", url, payload, headers)
+    print("payloads jx")
     print(payload)
     res = conn.getresponse()
     data = res.read()
