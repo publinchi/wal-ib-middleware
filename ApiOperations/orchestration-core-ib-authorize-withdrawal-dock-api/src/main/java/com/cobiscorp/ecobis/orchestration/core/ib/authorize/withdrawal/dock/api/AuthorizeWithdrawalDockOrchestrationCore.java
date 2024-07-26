@@ -406,10 +406,12 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
-		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
-		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "D");
 		request.addInputParam("@i_processing_type", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_type_transaction"));
+
+		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_causal", ICTSTypes.SQLINTN, "0");
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -418,6 +420,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
 		
+		aBagSPJavaOrchestration.put("@o_causal", wProductsQueryResp.readValueParam("@o_causal"));
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));		
 		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
@@ -677,6 +680,12 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				row.addRowData(7, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0"));
 				row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"));
 				
+				registerTransactionSuccess("Authorize Withdrawal Dock", "DOCK", aRequest, 
+										(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
+										(String)aBagSPJavaOrchestration.get("@o_causal"),
+										aBagSPJavaOrchestration.get("ente").toString()
+										);
+
 				data.addRow(row);	
 			}
 			
