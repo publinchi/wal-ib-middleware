@@ -338,9 +338,12 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_causal", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
+		aBagSPJavaOrchestration.put("@o_causal", wProductsQueryResp.readValueParam("@o_causal"));
+
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
@@ -702,6 +705,10 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				registerTransactionSuccess("Authorize Deposit", "IDC", aRequest, 
+										(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
+										(String)aBagSPJavaOrchestration.get("@o_causal"), "");
+
 				data6.addRow(row6);
 				
 			} else {
