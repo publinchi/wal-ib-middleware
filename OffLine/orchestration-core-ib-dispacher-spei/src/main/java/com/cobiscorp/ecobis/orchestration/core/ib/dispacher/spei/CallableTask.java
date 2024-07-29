@@ -64,6 +64,7 @@ public class CallableTask extends SPJavaOrchestrationBase implements Callable<IP
 		try 
 		{
 			Integer opInsClave = msjIn.getOrdenpago().getOpInsClave();
+			Integer opCdClave = msjIn.getOrdenpago().getOpCdClave();
 			IProcedureRequest procedureRequest = anOriginalRequest.clone();
 			aBagSPJavaOrchestration.remove("trn_virtual");
 			//SPEI REQUEST DEOVOLUCION KARPAY
@@ -81,7 +82,7 @@ public class CallableTask extends SPJavaOrchestrationBase implements Callable<IP
 			procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getId());
 			procedureRequest.addInputParam("@i_op_firma_dig", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getOpFirmaDig());
 			
-			procedureRequest.addInputParam("@i_op_cd_clave", ICTSTypes.SQLVARCHAR,"1");
+			procedureRequest.addInputParam("@i_op_cd_clave", ICTSTypes.SQLVARCHAR,opCdClave!=null?opCdClave.toString():"-1");
 			procedureRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");	
 			procedureRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR,codeBank );
 			// SE HACE LA LLAMADA AL CONECTOR
