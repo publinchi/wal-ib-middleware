@@ -321,14 +321,15 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, aRequest.readValueParam("@t_trn"));
 		
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true)){
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
+			request.addInputParam("@i_val_rev", ICTSTypes.SQLVARCHAR, "N");
+		}			
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");
-		}
-		
-		if(aBagSPJavaOrchestration.get("flowRty").equals(true)){
-			request.addInputParam("@i_val_rev", ICTSTypes.SQLVARCHAR, "N");
-		}
+		}		
 		
 		request.addInputParam("@i_cta_deb", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		request.addInputParam("@i_mon_deb", ICTSTypes.SQLINTN, "0");
@@ -409,7 +410,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_srv"));
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_user"));
 		request.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_term"));
-		
+		request.addOutputParam("@o_causal", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		
@@ -468,13 +469,15 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		anOriginalRequest.addInputParam("@s_cliente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("@o_ente_bv"));		
 		anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, (String)aBagSPJavaOrchestration.get("@o_mon"));
 		anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, (String)aBagSPJavaOrchestration.get("@o_prod"));
-		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");		
+		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");
+		anOriginalRequest.addInputParam("@t_corr", ICTSTypes.SYBCHAR, "S");
 		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
 		anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SYBCHAR, "F");
 		anOriginalRequest.addInputParam("@i_graba_notif", ICTSTypes.SYBCHAR, "N");
 		anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SYBCHAR, "N");
 		//anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
 		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
+		anOriginalRequest.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_origin_uuid"));
 
 		anOriginalRequest.addOutputParam("@o_ssn", ICTSTypes.SQLINTN, "0");
 		
@@ -563,7 +566,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		}
 	}
 	
-	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus, String code) {
+	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus, String code, String uuid) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -581,6 +584,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
+		request.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, uuid);
 		
 		request.addInputParam("@i_error", ICTSTypes.SQLINTN, code);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
@@ -676,7 +680,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 				
 				executionStatus = "CORRECT";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, "0");
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, "0", aRequest.readValueParam("@i_origin_uuid"));
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -726,7 +730,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 				
 				executionStatus = "ERROR";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, code);
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, code, aRequest.readValueParam("@i_origin_uuid"));
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -773,7 +777,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 			
 			executionStatus = "ERROR";
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, codeReturn.toString());
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, codeReturn.toString(), aRequest.readValueParam("@i_origin_uuid"));
 			
 			IResultSetRow row = new ResultSetRow();
 			

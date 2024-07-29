@@ -303,6 +303,9 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");
@@ -335,9 +338,12 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_causal", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
+		aBagSPJavaOrchestration.put("@o_causal", wProductsQueryResp.readValueParam("@o_causal"));
+
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 		}
@@ -562,7 +568,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_ssn_host"));
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
 		request.addInputParam("@i_error", ICTSTypes.SQLINTN, code);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
@@ -699,6 +705,10 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				registerTransactionSuccess("Authorize Deposit", "IDC", aRequest, 
+										(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
+										(String)aBagSPJavaOrchestration.get("@o_causal"), "");
+
 				data6.addRow(row6);
 				
 			} else {
@@ -846,7 +856,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
         request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_account_number"));
         request.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_amount"));
         request.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
-        request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_branch").toString());
+        request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("authorizationCode").toString());
         
         IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
         

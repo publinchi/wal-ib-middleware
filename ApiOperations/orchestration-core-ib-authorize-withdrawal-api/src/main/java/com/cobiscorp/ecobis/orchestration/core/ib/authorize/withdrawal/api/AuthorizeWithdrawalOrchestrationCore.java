@@ -297,6 +297,9 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");
@@ -329,6 +332,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");	
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_causal", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -340,6 +344,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
 		
+		aBagSPJavaOrchestration.put("@o_causal", wProductsQueryResp.readValueParam("@o_causal"));
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
 		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
@@ -693,6 +698,10 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				registerTransactionSuccess("Authorize Withdrawal", "IDC", aRequest, 
+										(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
+										(String)aBagSPJavaOrchestration.get("@o_causal"), null);
+
 				data6.addRow(row6);
 				
 	        } else {
@@ -840,7 +849,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
         request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_account_number"));
         request.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_amount"));
         request.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
-        request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_branch").toString());
+        request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("authorizationCode").toString());
         
         IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
         
