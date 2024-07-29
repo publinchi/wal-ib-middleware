@@ -146,6 +146,21 @@ public class ordenpago implements Serializable{
 	@XmlElement
     private String OpConceptoPag2;
     //
+	@XmlElement
+    private String OpCdClave;
+    //
+	/**
+	 * @return the OpCdClave
+	 */
+	public synchronized int getOpCdClave() {
+		return OpInsClave;
+	}
+	/**
+	 * @param opInsClave the opInsClave to set
+	 */
+	public synchronized void setOpCdClave(int opInsClave) {
+		this.OpInsClave = opInsClave;
+	}
 	/**
 	 * @return the opFechaOper
 	 */
