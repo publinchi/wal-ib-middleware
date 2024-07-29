@@ -49,17 +49,17 @@
       <collection type="List" length="2" id="12" name="columns">
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="13" index="0">
           <field type="int" name="position" value="0" />
-          <field type="String" name="columnName" value="unique_id" />
+          <field type="String" name="columnName" value="uniqueId" />
           <field type="String" name="dTOAlias" value="returnResponseRegisterCardPan" />
-          <field type="String" name="dTOPropertyName" value="unique_id" />
+          <field type="String" name="dTOPropertyName" value="uniqueId" />
           <field type="String" name="dataType" value="string" />
           <field type="String" name="format" value="" />
         </class>
         <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="14" index="1">
           <field type="int" name="position" value="1" />
-          <field type="String" name="columnName" value="dock_card_id" />
+          <field type="String" name="columnName" value="dockCardId" />
           <field type="String" name="dTOAlias" value="returnResponseRegisterCardPan" />
-          <field type="String" name="dTOPropertyName" value="dock_card_id" />
+          <field type="String" name="dTOPropertyName" value="dockCardId" />
           <field type="String" name="dataType" value="string" />
           <field type="String" name="format" value="" />
         </class>
@@ -76,7 +76,7 @@
       <field type="String" name="mappingTypeName" value="DTO" />
       <field type="String" name="mappingDirection" value="in" />
       <field type="String" name="dTOAlias" value="inRequestRegisterCardPan" />
-      <field type="String" name="dTOPropertyName" value="card_number" />
+      <field type="String" name="dTOPropertyName" value="cardNumber" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
@@ -88,7 +88,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="auth_token" />
+      <field type="String" name="key" value="WM_SEC_AUTH_TOKEN" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
@@ -205,7 +205,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_QOS.CORRELATION_ID" />
+      <field type="String" name="key" value="WM_QOS_CORRELATION_ID" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
@@ -218,7 +218,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_SVC.ENV" />
+      <field type="String" name="key" value="WM_SVC_ENV" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />
@@ -231,7 +231,7 @@
       </class>
       <field type="String" name="mappingTypeName" value="KEY" />
       <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="key" value="WM_SVC.NAME" />
+      <field type="String" name="key" value="WM_SVC_NAME" />
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
       <field type="String" name="paramType" value="HEADER" />

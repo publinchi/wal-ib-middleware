@@ -306,6 +306,9 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);	
 		
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null){
 			request.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 			request.addInputParam("@i_find_json", ICTSTypes.SQLVARCHAR, "Y");
@@ -339,6 +342,7 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		
 		request.addOutputParam("@o_ssn_host", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_causal", ICTSTypes.SQLINTN, "0");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -347,7 +351,7 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("ssn host es " +  wProductsQueryResp.readValueParam("@o_ssn_host"));
 			logger.logDebug("ssn branch es " +  wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		}
-		
+		aBagSPJavaOrchestration.put("@o_causal", wProductsQueryResp.readValueParam("@o_causal"));
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
 		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
@@ -695,6 +699,10 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				registerTransactionSuccess("Authorize Purchase", "IDC", aRequest, 
+											(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
+											(String)aBagSPJavaOrchestration.get("@o_causal"), null);
+
 				data6.addRow(row6);
 				
 			} else {

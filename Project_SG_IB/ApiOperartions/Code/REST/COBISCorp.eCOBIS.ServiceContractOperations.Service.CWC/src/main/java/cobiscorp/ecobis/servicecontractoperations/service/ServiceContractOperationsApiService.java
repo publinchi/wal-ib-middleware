@@ -7314,6 +7314,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 								dto.setApproved_value(resultSetMapper.getString(5));
 								dto.setSettlement_value(resultSetMapper.getString(6));
 								dto.setCardholder_billing_value(resultSetMapper.getString(7));
+								dto.setSeq(resultSetMapper.getString(8));
 
 								return dto;
 							}
@@ -7354,7 +7355,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 			String jsonHead = gson3.toJson(header_dock);
 			
 			saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
-
+			
 			saveAuthResponse(trn, seqTran, jsonRes, jsonHead);
 
 			LOGGER.logDebug("Ends service execution: authorizeReversalDock");
@@ -7470,7 +7471,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
     	   procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700105");
     	   procedureRequestAS.addInputParam("@i_card_number", ICTSTypes.SQLVARCHAR,
-    			   inRequestRegisterCardPan.getCard_number());
+    			   inRequestRegisterCardPan.getCardNumber());
 
     	   procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
     	   procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
@@ -7579,14 +7580,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    						public ResponseRegisterCardPan mapRow(ResultSetMapper resultSetMapper, int index) {
    							ResponseRegisterCardPan dto = new ResponseRegisterCardPan();
 
-   							dto.setUnique_id(resultSetMapper.getString(1));
-   							dto.setDock_card_id(resultSetMapper.getString(2));
+   							dto.setUniqueId(resultSetMapper.getString(1));
+   							dto.setDockCardId(resultSetMapper.getString(2));
    							return dto;
    						}
    					}, false);
 
-   			outResponseRegisterCardPan.setUnique_id(returnResponseRegisterCardPan.getUnique_id());
-   			outResponseRegisterCardPan.setDock_card_id(returnResponseRegisterCardPan.getDock_card_id());
+   			outResponseRegisterCardPan.setUniqueId(returnResponseRegisterCardPan.getUniqueId());
+   			outResponseRegisterCardPan.setDockCardId(returnResponseRegisterCardPan.getDockCardId());
    			// break;
 
    		} else {
@@ -7600,12 +7601,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    			throw new CTSRestException("404", null);
    		}
 
-   		String trn = "Get unique id";
+		String trn = "Get unique id";
 
    		Gson gson = new Gson();
-   		inRequestRegisterCardPan.setCard_number(maskNumber(inRequestRegisterCardPan.getCard_number()));
+		inRequestRegisterCardPan.setCardNumber(maskNumber(inRequestRegisterCardPan.getCardNumber()));
    		String jsonReq = gson.toJson(inRequestRegisterCardPan);
-   		
+		
    		Gson gson2 = new Gson();
    		String jsonRes = gson2.toJson(outResponseRegisterCardPan);
 
@@ -7618,7 +7619,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    		header.setX_channel(xchannel);
    		
    		header.setContent_type("application/json");
-   		
+		
    		Gson gson3 = new Gson();
    		String jsonHead = gson3.toJson(header);
 
@@ -7628,19 +7629,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
    		// returns data
    		return outResponseRegisterCardPan;
    	}
-   	
-   	public String maskNumber(String number) 
-   	{
-     	  int length = number.length();
-     	  int start = length / 4;
-     	  int end = length - start;
-     	  StringBuilder maskedNumber = new StringBuilder(number);
+	
+	public String maskNumber(String number) 
+	{
+  	  int length = number.length();
+  	  int start = length / 4;
+  	  int end = length - start;
+  	  StringBuilder maskedNumber = new StringBuilder(number);
 
-     	  // Reemplazar los caracteres en el rango determinado por 'X'
-     	  for (int i = start; i < end; i++) {
-     		  maskedNumber.setCharAt(i, 'X');
-     	  }
-     	  return maskedNumber.toString();
-   	}
+  	  // Reemplazar los caracteres en el rango determinado por 'X'
+  	  for (int i = start; i < end; i++) {
+  		  maskedNumber.setCharAt(i, 'X');
+  	  }
+  	  return maskedNumber.toString();
+	}
     
 }

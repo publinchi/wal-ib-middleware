@@ -219,13 +219,17 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		anOriginalRequest.addInputParam("@s_cliente", ICTSTypes.SQLINT4, (String)aBagSPJavaOrchestration.get("@o_ente_bv"));		
 		anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, (String)aBagSPJavaOrchestration.get("@o_mon"));
 		anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, (String)aBagSPJavaOrchestration.get("@o_prod"));
-		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");		
+		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");
+		anOriginalRequest.addInputParam("@t_corr", ICTSTypes.SYBCHAR, "S");
 		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
 		anOriginalRequest.addInputParam("@i_tipo_notif", ICTSTypes.SYBCHAR, "F");
 		anOriginalRequest.addInputParam("@i_graba_notif", ICTSTypes.SYBCHAR, "N");
 		anOriginalRequest.addInputParam("@i_graba_log", ICTSTypes.SYBCHAR, "N");
 		//anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
 		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
+		anOriginalRequest.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
+
+		anOriginalRequest.addOutputParam("@o_ssn", ICTSTypes.SQLINTN, "0");
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
@@ -347,6 +351,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_ente_bv", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_mon", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_prod", ICTSTypes.SQLINTN, "0");
+		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
+		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -362,6 +368,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("@o_mon", wProductsQueryResp.readValueParam("@o_mon"));
 		aBagSPJavaOrchestration.put("@o_prod", wProductsQueryResp.readValueParam("@o_prod"));
 		aBagSPJavaOrchestration.put("monto", aRequest.readValueParam("@i_values_source_value"));
+		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
+		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -394,6 +402,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		if(aBagSPJavaOrchestration.get("flowRty").equals(true))
+			request.addInputParam("@t_rty", ICTSTypes.SQLCHAR, "S");
 		
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, aRequest.readValueParam("@t_trn"));
@@ -515,7 +526,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		}
 	}
 	
-	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
+	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus, String uuid) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -529,10 +540,11 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("@o_seq"));
-		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("@o_reentry"));
+		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("seq"));
+		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
+		request.addInputParam("@i_origin_uuid", ICTSTypes.SQLVARCHAR, uuid);
 		
 		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString():null);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
@@ -599,7 +611,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));
 				
 				executionStatus = "ERROR";
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
 				
 				IResultSetRow row = new ResultSetRow();
 	
@@ -619,10 +632,11 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse successful...");
 				
 				executionStatus = "CORRECT";
-				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
 					registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
+
 				}
 				
 				IResultSetRow row = new ResultSetRow();
@@ -646,7 +660,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("Ending flow, processResponse failed with code: ");
 			
 			executionStatus = "ERROR";
-			updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
+				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, aRequest.readValueParam("@i_original_transaction_data_transaction_uuid"));
 			
 			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
 			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
