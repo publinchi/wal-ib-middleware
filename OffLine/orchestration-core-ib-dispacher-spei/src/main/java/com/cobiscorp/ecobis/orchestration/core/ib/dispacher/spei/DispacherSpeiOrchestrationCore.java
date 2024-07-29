@@ -11,11 +11,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXB;
@@ -358,6 +356,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		String codTarDeb = getParam(request, "CODTAR", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
+		boolean isCoreError = false;
 		
 		if(logger.isDebugEnabled())
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
@@ -365,6 +364,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		DispatcherUtil util = new DispatcherUtil();
 		String sign = util.doSignature(request, aBagSPJavaOrchestration);
+		
 		logHour("2");
 		if( validateFields(request, aBagSPJavaOrchestration))
 		{
@@ -380,71 +380,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			}else
 			{	
 				logHour("3");
-				//spein in tipo de pago 1 tercero a tercero
-				if(msjIn.getOrdenpago().getOpTpClave()==1)
+				
+				//validacion de tipos de pago en el catalogo cobis bv_tipo_pago_spei_in
+				int typePaymentResult = catalog(request, "bv_tipo_pago_spei_in", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E");
+				//spein in tipo de pago 0 devolucion
+				if(typePaymentResult == 0)
 				{
-					//llamar spei in 
-					IProcedureRequest procedureRequest = initProcedureRequest(request);
-		
-					procedureRequest.setSpName("cob_procesador..sp_bv_spei_transaction");
-					procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500069");
-					procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500069");
-					request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500069");
-					request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
-					request.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
-					request.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
-					request.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
-							"(service.identifier=SpeiInTransferOrchestrationCore)");
-					request.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
-					procedureRequest.addInputParam("@i_cuentaBeneficiario", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCuentaBen());
-					procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, msjIn.getOrdenpago().getOpMonto().toString());
-					procedureRequest.addInputParam("@i_fechaOperacion", ICTSTypes.SYBDATETIME, msjIn.getOrdenpago().getOpFechaOper());
-					procedureRequest.addInputParam("@i_cuentaOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
-					procedureRequest.addInputParam("@i_conceptoPago", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
-					procedureRequest.addInputParam("@i_institucionOrdenante", ICTSTypes.SYBINT4, String.valueOf(msjIn.getOrdenpago().getOpInsClave()));
-					procedureRequest.addInputParam("@i_institucionBeneficiaria", ICTSTypes.SYBINT4, paramInsBen);
-					procedureRequest.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getId());
-					procedureRequest.addInputParam("@i_claveRastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-					procedureRequest.addInputParam("@i_nombreOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
-					procedureRequest.addInputParam("@i_rfcCurpOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
-					procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
-					procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
-					procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
-					procedureRequest.addInputParam("@i_tipoCuentaBeneficiario", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen()));
-					procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
-					procedureRequest.addOutputParam("@o_nombre_beneficiario", ICTSTypes.SQLVARCHAR, "");
-					procedureRequest.addOutputParam("@o_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "");
-					procedureRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "");
-					procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
-					procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "-1");
-					procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "Error desconocido");
-					
-					
-					procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
-					procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-					
-					IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
-					logHour("4");
-					if(logger.isDebugEnabled())
-						logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
-					
-					if(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0)
-					{
-						//falta implementar las tablas de auditoria y generacion de secuenciales
-						IProcedureResponse responseCda = getWsEsice(request, aBagSPJavaOrchestration);
-						if(responseCda.getReturnCode()!=0)
-						{
-							if(logger.isDebugEnabled()) {
-								logger.logInfo("CDA mensaje: "+responseCda.readValueParam("@o_msj_respuesta"));
-								logger.logInfo("CDA respuesta: "+responseCda.readValueParam("@o_cod_respuesta"));
-							}
-							
-						}
-					}
-						
-					responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
-					responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
-				}else//spein in tipo de pago 0 devolucion
 					if(msjIn.getOrdenpago().getOpTpClave()==0)
 					{
 						//llamdo a reversa de spei
@@ -459,23 +400,119 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 							responseXml.setErrCodigo(procedureResponseReverse.getReturnCode());
 							responseXml.setErrDescripcion("Error en el reverso de la operacion");
 						}
+					}else
+					{
+						//llamar spei in 
+						IProcedureRequest procedureRequest = initProcedureRequest(request);
+			
+						procedureRequest.setSpName("cob_procesador..sp_bv_spei_transaction");
+						procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500069");
+						procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500069");
+						request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500069");
+						request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
+						request.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
+						request.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
+						request.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+								"(service.identifier=SpeiInTransferOrchestrationCore)");
+						request.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+						procedureRequest.addInputParam("@i_cuentaBeneficiario", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCuentaBen());
+						procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, msjIn.getOrdenpago().getOpMonto().toString());
+						procedureRequest.addInputParam("@i_fechaOperacion", ICTSTypes.SYBDATETIME, msjIn.getOrdenpago().getOpFechaOper());
+						procedureRequest.addInputParam("@i_cuentaOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
+						procedureRequest.addInputParam("@i_conceptoPago", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
+						procedureRequest.addInputParam("@i_institucionOrdenante", ICTSTypes.SYBINT4, String.valueOf(msjIn.getOrdenpago().getOpInsClave()));
+						procedureRequest.addInputParam("@i_institucionBeneficiaria", ICTSTypes.SYBINT4, paramInsBen);
+						procedureRequest.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getId());
+						procedureRequest.addInputParam("@i_claveRastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+						procedureRequest.addInputParam("@i_nombreOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
+						procedureRequest.addInputParam("@i_rfcCurpOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
+						procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
+						procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
+						procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
+						procedureRequest.addInputParam("@i_tipoCuentaBeneficiario", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen()));
+						procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
+						procedureRequest.addOutputParam("@o_nombre_beneficiario", ICTSTypes.SQLVARCHAR, "");
+						procedureRequest.addOutputParam("@o_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "");
+						procedureRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "");
+						procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
+						procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "-1");
+						procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "Error desconocido");
+						
+						
+						procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
+						procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+						
+						IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+						logHour("4");
+						if(logger.isDebugEnabled())
+							logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
+						
+						if(procedureResponseLocal.getReturnCode()==0 && procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0)
+						{
+							//falta implementar las tablas de auditoria y generacion de secuenciales
+							IProcedureResponse responseCda = getWsEsice(request, aBagSPJavaOrchestration);
+							if(responseCda.getReturnCode()!=0)
+							{
+								if(logger.isDebugEnabled()) {
+									logger.logInfo("CDA mensaje: "+responseCda.readValueParam("@o_msj_respuesta"));
+									logger.logInfo("CDA respuesta: "+responseCda.readValueParam("@o_cod_respuesta"));
+								}
+								
+							}
+							responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
+							responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
+				
+						}else
+						{
+							if(logger.isDebugEnabled()) {
+								logger.logInfo("o_id_causa_devolucion: "+procedureResponseLocal.readValueParam("@o_id_causa_devolucion"));
+								logger.logInfo("return code: "+procedureResponseLocal.getReturnCode());
+							}
+							isCoreError = true;
+							//esto implementar en una tabla en la base de datos
+							if("40020".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")) || procedureResponseLocal.getReturnCode()==40020)
+							{
+								responseXml.setErrCodigo(1);
+								responseXml.setErrDescripcion("Cuenta inexistente");
+							}else
+								if("400335".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
+								{
+									responseXml.setErrCodigo(20);
+									responseXml.setErrDescripcion("Excede el límite de saldo autorizado de la cuenta");
+								}else
+								{
+									responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
+									responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
+								}
+						}	
+						
 					}
+				}else
+				{
+					responseXml.setErrCodigo(15);
+					responseXml.setErrDescripcion("Tipo de pago erróneo");
+					isCoreError = true;
+				}
 			}
 		} else {
 			responseXml.setErrCodigo(Integer.valueOf( String.valueOf( aBagSPJavaOrchestration.get(Constans.VALIDATE_CODE))));
 			responseXml.setErrDescripcion(String.valueOf( aBagSPJavaOrchestration.get(Constans.MESSAJE_CODE)));
 		}
 		
+		
 		responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
 		responseXml.setId(msjIn.getOrdenpago().getId());
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
-		msg.setRespuesta(responseXml);
+	
 		
 		if(responseXml.getErrCodigo() != 0)
 		{
 			logHour("5");
+			if(logger.isDebugEnabled()) {
+				logger.logInfo("error future: "+responseXml.getErrCodigo());
+			}
 			ExecutorService executor = Executors.newSingleThreadExecutor();
-			
+			msjIn.getOrdenpago().setOpCdClave(responseXml.getErrCodigo());
 			// Crear una instancia de MyCallableTask con parámetros
 			CallableTask task = new CallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
 			// Enviar la tarea para su ejecución
@@ -483,7 +520,13 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			executor.shutdownNow();
 	        logHour("6");
 		}
-		
+		//se manda el response correcto que se recibio la solicitud spei in
+		if(isCoreError)
+		{
+			responseXml.setErrCodigo(0);
+			responseXml.setErrDescripcion("Solicitud recibida correctamente.");
+		}
+		msg.setRespuesta(responseXml);
 		response = toStringXmlObject(msg);  
 		aBagSPJavaOrchestration.put("result", response);
 		logHour("7");
@@ -556,11 +599,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					logger.logInfo("BER fecha operacion ensesion:"+inst.getInsNombre()+":"+inst.getClaveCesif());
 			
 				//actualizar catalogo
-				responseCatalog = insertUpdateCatalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"U");
+				responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"U");
 				if(responseCatalog!=0)
 				{
 					//inserta catalogo
-					responseCatalog = insertUpdateCatalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I");
+					responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I");
 				}
 	         }
 	         //llamado sp
@@ -1002,81 +1045,6 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return connectorResponse;
 	}
 	
-	private IProcedureResponse callPaymentInReturn(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, mensaje msjIn) {
-		// SE INICIALIZA VARIABLE
-		if (logger.isInfoEnabled()) 
-		{
-			logger.logInfo("Entrando a callPaymentInReturn");
-		}
-		IProcedureResponse connectorSpeiResponse = null;
-		try 
-		{
-			Integer opInsClave = msjIn.getOrdenpago().getOpInsClave();
-			IProcedureRequest procedureRequest = anOriginalRequest.clone();
-			aBagSPJavaOrchestration.remove("trn_virtual");
-			//SPEI REQUEST DEOVOLUCION KARPAY
-			procedureRequest.addInputParam("@i_fecha_operacion", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFechaOper());
-			procedureRequest.addInputParam("@i_institucion_contraparte", ICTSTypes.SQLVARCHAR, opInsClave!=null?opInsClave.toString():"");
-			procedureRequest.addInputParam("@i_monto", ICTSTypes.SQLMONEY, String.valueOf(msjIn.getOrdenpago().getOpMonto()));
-			procedureRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLVARCHAR, "0");
-			procedureRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo()) ;
-			
-			procedureRequest.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "L");
-			procedureRequest.addInputParam("@i_tipo_orden", ICTSTypes.SQLVARCHAR,"E");
-			procedureRequest.addInputParam("@i_prioridad", ICTSTypes.SQLVARCHAR,"0");
-			procedureRequest.addInputParam("@i_op_me_clave", ICTSTypes.SQLVARCHAR,"8");
-			procedureRequest.addInputParam("@i_op_topologia", ICTSTypes.SQLVARCHAR,"V");
-			procedureRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getId());
-			procedureRequest.addInputParam("@i_op_firma_dig", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getOpFirmaDig());
-			
-			procedureRequest.addInputParam("@i_op_cd_clave", ICTSTypes.SQLVARCHAR,"1");
-			procedureRequest.addInputParam("@i_categoria", ICTSTypes.SQLVARCHAR, "CARGAR_ODP");	
-			procedureRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getParam(anOriginalRequest, "CBCCDK", "AHO"));
-			// SE HACE LA LLAMADA AL CONECTOR
-			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");		
-
-			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TIMEOUT, ICOBISTS.HEADER_STRING_TYPE, "30000");
-			procedureRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500115");
-			procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500115");
-			
-
-
-			// SE EJECUTA
-			connectorSpeiResponse = executeProvider(procedureRequest, aBagSPJavaOrchestration);
-			// SE VALIDA LA RESPUESTA
-			if (!connectorSpeiResponse.hasError()) 
-			{
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("success CISConnectorSpei: true");
-					logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
-				}
-
-				connectorSpeiResponse.readValueParam("@o_cod_respuesta");
-				connectorSpeiResponse.readValueParam("@o_msj_respuesta");
-				
-				
-			} else {
-
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("Error Catastrifico respuesta de BANPAY");
-					logger.logDebug("Error connectorSpeiResponse Catastrifico: " + connectorSpeiResponse);
-				}
-			}
-		} catch (Exception e) {
-			logger.logError(e);
-			logger.logInfo("Error Catastrofico de banpayExecution");
-			e.printStackTrace();
-			logger.logInfo("Error Catastrofico de banpayExecution");
-
-		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo("Saliendo de banpayExecution");
-			}
-		}
-		// SE REGRESA RESPUESTA
-		return connectorSpeiResponse;
-	}
-	
 	private IProcedureResponse reverseSPEI(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String clave)
 	{
 		if (logger.isInfoEnabled()) 
@@ -1189,7 +1157,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return "";
 	}
 	
-	private int insertUpdateCatalog(IProcedureRequest anOriginalRequest, String tabla, String codigo, String valor, String operacion) {
+	private int catalog(IProcedureRequest anOriginalRequest, String tabla, String codigo, String valor, String operacion) {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Begin flow, setCatalog");
 		}
@@ -1220,7 +1188,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		if(logger.isDebugEnabled())
 		{
 			LocalDateTime fechaHoraActual = LocalDateTime.now();
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 	        String fechaHoraFormateada = fechaHoraActual.format(formatter);
 	        logger.logDebug("hour "+txt+":"+fechaHoraFormateada); 
 		}
