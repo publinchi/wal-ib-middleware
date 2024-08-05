@@ -36,7 +36,7 @@
         </class>
       </collection>
       <field type="String" name="id" value="ServiceCTS302" />
-      <field type="String" name="outputFolder" value="C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.ServiceContractOperations.Service" />
+      <field type="String" name="outputFolder" value="{SG-OUTPUT-DIR}\Code\CTS\COBISCorp.eCOBIS.ServiceContractOperations.Service" />
       <field type="boolean" name="package" value="true" />
       <enum type="cobiscorp.ecobis.censervicegenerator.dto.commons.TemplateMode" id="11" name="templateMode" value="XSLT" />
       <field type="String" name="packageTypeName" value="Jar" />
@@ -80,7 +80,7 @@
         </class>
       </collection>
       <field type="String" name="id" value="CWCJavaService" />
-      <field type="String" name="outputFolder" value="C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC" />
+      <field type="String" name="outputFolder" value="{SG-OUTPUT-DIR}\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC" />
       <field type="boolean" name="package" value="true" />
       <reference id="11" name="templateMode" />
       <field type="String" name="packageCommands" value="clean install" />
@@ -105,7 +105,7 @@
         </class>
       </collection>
       <field type="String" name="id" value="CWCjavaRestService" />
-      <field type="String" name="outputFolder" value="C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest" />
+      <field type="String" name="outputFolder" value="{SG-OUTPUT-DIR}\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest" />
       <field type="boolean" name="package" value="true" />
       <reference id="11" name="templateMode" />
       <field type="String" name="packageCommands" value="clean install" />
