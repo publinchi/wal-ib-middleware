@@ -21,6 +21,14 @@
     <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
     <parameter name="@x_channel" dataType="varchar" direction="in" />
     <parameter name="@i_otp_code" dataType="varchar" direction="in" />
+    <parameter name="@i_userAgent" dataType="varchar" direction="in" />
+    <parameter name="@i_userSessionId" dataType="varchar" direction="in" />
+    <parameter name="@i_riskEvaluationId" dataType="varchar" direction="in" />
+    <parameter name="@i_authenticationMethod" dataType="varchar" direction="in" />
+    <parameter name="@i_accuracy" dataType="int" direction="in" />
+    <parameter name="@i_capturedTime" dataType="datetime" direction="in" />
+    <parameter name="@i_currency" dataType="varchar" direction="in" />
+    <parameter name="@i_autoActionExecution" dataType="bit" direction="in" />
   </parameters>
   <queries>
     <query>
