@@ -219,7 +219,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 						}
 						
-						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + "Código: " + codigoRiesgo + "Mensaje: " + mensajeRiesgo );
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
 		
 						if (valorRiesgo.equals("true")) {
 							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
@@ -235,16 +235,18 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						logger.logDebug("Respose Exeption: " + resp.toString());
 						return resp;
 					}	
-				}
-				
-				/*if(anProcedureResponse.getReturnCode()==0){
-					anOriginalRequest.removeParam("@o_fecha_tran");
-					anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
-					//anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-				}
-				else
-					return anProcedureResponse;*/
-				
+				}else {
+					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
+					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
+					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+					
+					if(anProcedureResponse.getReturnCode()==0){
+						anOriginalRequest.removeParam("@o_fecha_tran");
+						anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
+					}
+					else
+						return anProcedureResponse;
+				}				
 				//aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
 			}
 			else{
@@ -273,7 +275,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
 				
-					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + "Código: " + codigoRiesgo + "Mensaje: " + mensajeRiesgo );
+					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
 		
 					if (valorRiesgo.equals("true")) {
 						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
