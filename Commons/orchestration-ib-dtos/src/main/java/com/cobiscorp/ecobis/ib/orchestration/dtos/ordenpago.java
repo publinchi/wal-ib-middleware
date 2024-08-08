@@ -146,20 +146,54 @@ public class ordenpago implements Serializable{
 	@XmlElement
     private String OpConceptoPag2;
     //
+	
 	@XmlElement
-    private String OpCdClave;
+    private int OpCdClave;
     //
+	
+	@XmlElement
+    private String opCuentaParticipanteOrd;
+	//
+	
+	@XmlElement
+    private String opCuentaEmisorRemesa;
+	//
+	
 	/**
 	 * @return the OpCdClave
 	 */
 	public synchronized int getOpCdClave() {
-		return OpInsClave;
+		return OpCdClave;
 	}
 	/**
 	 * @param opInsClave the opInsClave to set
 	 */
-	public synchronized void setOpCdClave(int opInsClave) {
-		this.OpInsClave = opInsClave;
+	public synchronized void setOpCdClave(int OpCdClave) {
+		this.OpCdClave = OpCdClave;
+	}
+	/**
+	 * @return the opFechaOper
+	 */
+	public synchronized String getOpCuentaParticipanteOrd() {
+		return opCuentaParticipanteOrd;
+	}
+	/**
+	 * @param opFechaOper the opFechaOper to set
+	 */
+	public synchronized void setOpCuentaParticipanteOrd(String opCuentaParticipanteOrd) {
+		this.opCuentaParticipanteOrd = opCuentaParticipanteOrd;
+	}
+	/**
+	 * @return the opFechaOper
+	 */
+	public synchronized String getOpCuentaEmisorRemesa() {
+		return opCuentaEmisorRemesa;
+	}
+	/**
+	 * @param opFechaOper the opFechaOper to set
+	 */
+	public synchronized void setOpCuentaEmisorRemesa(String opCuentaEmisorRemesa) {
+		this.opCuentaEmisorRemesa = opCuentaEmisorRemesa;
 	}
 	/**
 	 * @return the opFechaOper

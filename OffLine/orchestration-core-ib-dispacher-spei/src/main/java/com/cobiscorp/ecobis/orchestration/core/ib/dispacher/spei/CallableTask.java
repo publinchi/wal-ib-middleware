@@ -74,7 +74,7 @@ public class CallableTask extends SPJavaOrchestrationBase implements Callable<IP
 			procedureRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLVARCHAR, "0");
 			procedureRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo()) ;
 			
-			procedureRequest.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "L");
+			procedureRequest.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "A");
 			procedureRequest.addInputParam("@i_tipo_orden", ICTSTypes.SQLVARCHAR,"E");
 			procedureRequest.addInputParam("@i_prioridad", ICTSTypes.SQLVARCHAR,"0");
 			procedureRequest.addInputParam("@i_op_me_clave", ICTSTypes.SQLVARCHAR,"8");
