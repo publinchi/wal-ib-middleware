@@ -5216,6 +5216,23 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				inRequestTransferSpi.getReferenceNumber());
 		procedureRequestAS.addInputParam("@i_otp_code", ICTSTypes.SQLVARCHAR,
 				inRequestTransferSpi.getOtpCode());
+        
+		procedureRequestAS.addInputParam("@i_userAgent", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getUserAgent());
+		procedureRequestAS.addInputParam("@i_userSessionId", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getUserSessionId());
+		procedureRequestAS.addInputParam("@i_riskEvaluationId", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getRiskEvaluationId());
+		procedureRequestAS.addInputParam("@i_authenticationMethod", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getAuthenticationMethod());
+		procedureRequestAS.addInputParam("@i_accuracy", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestTransferSpi.getAccuracy()));
+		procedureRequestAS.addInputParam("@i_capturedTime", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getCapturedTime());
+		procedureRequestAS.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR,
+				inRequestTransferSpi.getCurrency());
+		procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
+				String.valueOf(inRequestTransferSpi.getAutoActionExecution()));
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
