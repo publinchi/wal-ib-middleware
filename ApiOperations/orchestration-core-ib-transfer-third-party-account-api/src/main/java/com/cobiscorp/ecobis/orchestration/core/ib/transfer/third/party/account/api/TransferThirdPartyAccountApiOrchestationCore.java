@@ -305,7 +305,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 		
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
-
 	}
 	
 	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
