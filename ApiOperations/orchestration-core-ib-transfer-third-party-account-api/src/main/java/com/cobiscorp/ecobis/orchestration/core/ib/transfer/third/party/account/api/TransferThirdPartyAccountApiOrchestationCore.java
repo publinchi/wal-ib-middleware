@@ -129,6 +129,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
+		String estadoRiesgo = "";
 		
 		if(logger.isDebugEnabled())
 			logger.logDebug("length account: "+ lengthCtades);
@@ -219,9 +220,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 						}
 						
-						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
+						if (aBagSPJavaOrchestration.get("status_risk") != null) {	
+							estadoRiesgo = aBagSPJavaOrchestration.get("status_risk").toString();
+						}
+						
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 		
-						if (valorRiesgo.equals("true")) {
+						if (valorRiesgo.equals("true") && estadoRiesgo.equals("LOW")) {
 							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
 							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
 							anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
@@ -274,10 +279,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					if (aBagSPJavaOrchestration.get("responseCode") != null) {	
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
-				
-					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
+
+					if (aBagSPJavaOrchestration.get("status_risk") != null) {	
+						estadoRiesgo = aBagSPJavaOrchestration.get("status_risk").toString();
+					}
+					
+					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 		
-					if (valorRiesgo.equals("true")) {
+					if (valorRiesgo.equals("true") && estadoRiesgo.equals("LOW")) {
 						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
 					} else {
 						IProcedureResponse resp = Utils.returnException(18054, "NO PASO LA EVALUACIÓN DE RIESGO");
@@ -801,10 +810,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (connectorRiskEvaluationResponse.readValueParam("@o_message") != null)
 			aBagSPJavaOrchestration.put("message", connectorRiskEvaluationResponse.readValueParam("@o_message"));
 
-		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null)
+		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
-		else
+			aBagSPJavaOrchestration.put("status_risk", connectorRiskEvaluationResponse.readValueParam("@o_riskStatus"));
+		}
+		else {
 			aBagSPJavaOrchestration.put("success_risk", "false");
+			aBagSPJavaOrchestration.put("status_risk", "");
+		}
 
 		if(logger.isDebugEnabled())
 			logger.logInfo("Response executeRiskEvaluation: "+ connectorRiskEvaluationResponse.getProcedureResponseAsString());
