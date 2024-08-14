@@ -303,7 +303,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
-		String estadoRiesgo = "";
+		Boolean estadoRiesgo = false;
 
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
@@ -324,7 +324,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             //agregar el llamado al orquestador de evaluationrisk
             IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(aRequest, aBagSPJavaOrchestration);
             
-         // Obtengo los valores de la evaluación de riesgo
+            // Obtengo los valores de la evaluación de riesgo
 			if (aBagSPJavaOrchestration.get("success_risk") != null) {
 				valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
 				
@@ -338,18 +338,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
 				
-				if (aBagSPJavaOrchestration.get("status_risk") != null) {	
-					estadoRiesgo = aBagSPJavaOrchestration.get("status_risk").toString();
+				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+					estadoRiesgo = (Boolean) aBagSPJavaOrchestration.get("isOperationAllowed");
 				}
 				
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 
-				if (valorRiesgo.equals("true") && estadoRiesgo.equals("LOW")) {
+				if (valorRiesgo.equals("true") && estadoRiesgo) {
 					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
 					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
 					wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
 				} else {
-					IProcedureResponse resp = Utils.returnException(18054, "NO PASO LA EVALUACIÓN DE RIESGO");
+					IProcedureResponse resp = Utils.returnException(18054, "OPERACION NO PERMITIDA");
 					logger.logDebug("Response Exeption: " + resp.toString());
 					return resp;
 				}
@@ -2789,11 +2789,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
-			aBagSPJavaOrchestration.put("status_risk", connectorRiskEvaluationResponse.readValueParam("@o_riskStatus"));
+			aBagSPJavaOrchestration.put("isOperationAllowed", connectorRiskEvaluationResponse.readValueParam("@o_isOperationAllowed"));
 		}
 		else {
 			aBagSPJavaOrchestration.put("success_risk", "false");
-			aBagSPJavaOrchestration.put("status_risk", "");
+			aBagSPJavaOrchestration.put("isOperationAllowed", "false");
 		}
 
 		if(logger.isDebugEnabled())
