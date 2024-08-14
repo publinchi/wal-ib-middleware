@@ -91,7 +91,10 @@ public class CallableTask extends SPJavaOrchestrationBase implements Callable<IP
 			procedureRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500115");
 			procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500115");
 			
-
+			procedureRequest.addOutputParam("@o_spei_response", ICTSTypes.SQLVARCHAR, "X");
+			procedureRequest.addOutputParam("@o_spei_response", ICTSTypes.SQLVARCHAR, "X");
+			procedureRequest.addOutputParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, "0");
+			procedureRequest.addOutputParam("@o_msj_respuesta", ICTSTypes.SQLVARCHAR, "");
 			// SE EJECUTA
 			connectorSpeiResponse = executeProvider(procedureRequest, aBagSPJavaOrchestration);
 			// SE VALIDA LA RESPUESTA
@@ -101,27 +104,23 @@ public class CallableTask extends SPJavaOrchestrationBase implements Callable<IP
 					logger.logDebug("success CISConnectorSpei: true future");
 					logger.logDebug("connectorSpeiResponse future: " + connectorSpeiResponse.getParams());
 				}
-
-				connectorSpeiResponse.readValueParam("@o_cod_respuesta");
-				connectorSpeiResponse.readValueParam("@o_msj_respuesta");
-				
 				
 			} else {
 
 				if (logger.isDebugEnabled()) {
-					logger.logDebug("Error Catastrifico respuesta de BANPAY");
-					logger.logDebug("Error connectorSpeiResponse Catastrifico: " + connectorSpeiResponse);
+					logger.logDebug("Error Catastrifico respuesta de callPaymentInReturn future");
+					logger.logDebug("Error connectorSpeiResponse Catastrifico callPaymentInReturn future: " + connectorSpeiResponse);
 				}
 			}
 		} catch (Exception e) {
 			logger.logError(e);
-			logger.logInfo("Error Catastrofico de banpayExecution");
+			logger.logInfo("Error Catastrofico de callPaymentInReturn future");
 			e.printStackTrace();
-			logger.logInfo("Error Catastrofico de banpayExecution");
+			logger.logInfo("Error Catastrofico de callPaymentInReturn future");
 
 		} finally {
 			if (logger.isInfoEnabled()) {
-				logger.logInfo("Saliendo de banpayExecution");
+				logger.logInfo("Saliendo de callPaymentInReturn future");
 			}
 		}
 		// SE REGRESA RESPUESTA
