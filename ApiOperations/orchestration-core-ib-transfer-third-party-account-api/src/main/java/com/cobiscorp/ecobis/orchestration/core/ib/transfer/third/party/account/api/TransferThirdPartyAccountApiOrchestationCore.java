@@ -745,7 +745,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
 		
-		String chanel="";
+		String channel="";
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -763,14 +763,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
 		
 		if(aRequest.readValueParam("@x_channel").toString().contains("8")) {
-			chanel = "MOBILE_BROWSER";
+			channel = "MOBILE_BROWSER";
 		} else if (aRequest.readValueParam("@x_channel").toString().contains("1")) {
-			chanel = "DESKTOP_BROWSER";
+			channel = "DESKTOP_BROWSER";
 		} else {
-			chanel = "SYSTEM";
+			channel = "SYSTEM";
 		}
 		
-		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, chanel);//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, channel);//se obtiene con el response del f1
 		
 		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
