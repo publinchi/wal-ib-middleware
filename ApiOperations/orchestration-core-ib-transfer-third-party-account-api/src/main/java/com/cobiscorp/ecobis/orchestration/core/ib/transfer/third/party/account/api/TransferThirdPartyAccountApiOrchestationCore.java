@@ -229,6 +229,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
 							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
+							logger.logInfo("Continua flujo p2p");
 							anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
 						} else {
 							IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
@@ -744,7 +745,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
-
+		
+		String channel="";
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -758,10 +760,19 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				"(service.identifier=RiskEvaluationOrchestrationCore)");
 		procedureRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
-		
 		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
 		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
-		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));//se obtiene con el response del f1
+		
+		if(aRequest.readValueParam("@x_channel").toString().contains("8")) {
+			channel = "MOBILE_BROWSER";
+		} else if (aRequest.readValueParam("@x_channel").toString().contains("1")) {
+			channel = "DESKTOP_BROWSER";
+		} else {
+			channel = "SYSTEM";
+		}
+		
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, channel);//se obtiene con el response del f1
+		
 		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5

@@ -339,7 +339,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
 				
 				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-					estadoRiesgo = (Boolean) aBagSPJavaOrchestration.get("isOperationAllowed");
+					estadoRiesgo = Boolean.parseBoolean((String) aBagSPJavaOrchestration.get("isOperationAllowed"));
 				}
 				
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
@@ -347,6 +347,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				if (valorRiesgo.equals("true") && estadoRiesgo) {
 					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
 					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+					logger.logInfo("Continua flujo spei-out");
 					wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
 				} else {
 					IProcedureResponse resp = Utils.returnException(18054, "OPERACION NO PERMITIDA");
@@ -2726,6 +2727,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
 
+		String channel="";
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -2742,7 +2744,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		
 		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
 		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "SPEI_DEBIT");
-		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));//se obtiene con el response del f1
+		
+		if(aRequest.readValueParam("@x_channel").toString().contains("8")) {
+			channel = "MOBILE_BROWSER";
+		} else if (aRequest.readValueParam("@x_channel").toString().contains("1")) {
+			channel = "DESKTOP_BROWSER";
+		} else {
+			channel = "SYSTEM";
+		}
+		
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, channel);//se obtiene con el response del f1
+		
 		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
