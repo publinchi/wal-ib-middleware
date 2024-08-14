@@ -186,8 +186,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		coreServiceNotification = null;
 	}
 
-
-
 	/**
 	 * /** Execute transfer first step of service
 	 * <p>
