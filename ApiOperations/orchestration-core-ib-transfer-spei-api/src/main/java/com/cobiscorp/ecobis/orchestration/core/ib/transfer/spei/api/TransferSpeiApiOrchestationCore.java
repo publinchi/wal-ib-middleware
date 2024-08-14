@@ -347,6 +347,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				if (valorRiesgo.equals("true") && estadoRiesgo) {
 					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
 					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+					logger.logInfo("Continua flujo spei-out");
 					wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
 				} else {
 					IProcedureResponse resp = Utils.returnException(18054, "OPERACION NO PERMITIDA");
@@ -2763,7 +2764,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_accuracy", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_accuracy"));//no se de donde sale este valor
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));//no se de donde sale este valor
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
-		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("@x_request_id"));//movement id
+		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
 		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
