@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -69,10 +71,34 @@ import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.DispatcherSp
 public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplate {
 
 	private java.util.Properties properties = null;
+	private Map<String, Object> mapDataSigns = null;
 	
 	@Override
 	public void loadConfiguration(IConfigurationReader reader) {
 		 this.properties = reader.getProperties("//property");
+		 this.mapDataSigns = new HashMap<String, Object>();
+		 //archivo credenciales llave jks
+        String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty("jksAlgncon");
+        //archivo path llave jks
+        String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty("jksurl");
+        File jksAlgn = new File(pathAlgnJks);
+        if (jksAlgn.exists()) {
+            ReadAlgn rjksAlgncon = new ReadAlgn(pathAlgnJks);
+            mapDataSigns.put("alias", rjksAlgncon.leerParametros().getProperty("l"));
+            mapDataSigns.put("keyPass", rjksAlgncon.leerParametros().getProperty("p"));
+            mapDataSigns.put("jksurl", pathCertificado);
+        }else
+        {
+        	if (logger.isDebugEnabled())
+    		{
+    			logger.logDebug("No existe archivo jks:"+pathCertificado);
+    		}
+        }
+        if (logger.isDebugEnabled())
+		{
+			logger.logDebug("jksAlgncon:"+pathAlgnJks);
+			logger.logDebug("jksurl:"+pathCertificado);
+		}
 	}
 
 	/**
@@ -212,32 +238,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logDebug("JCOS DispacherSpeiOrchestrationCore: executeJavaOrchestration");
 			logger.logDebug(anOriginalRequest);
 		}
-		 //archivo credenciales llave jks
-        String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty("jksAlgncon");
-        //archivo path llave jks
-        String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty("jksurl");
-        File jksAlgn = new File(pathAlgnJks);
-        if (jksAlgn.exists()) {
-            ReadAlgn rjksAlgncon = new ReadAlgn(pathAlgnJks);
-            aBagSPJavaOrchestration.put("alias", rjksAlgncon.leerParametros().getProperty("l"));
-            aBagSPJavaOrchestration.put("keyPass", rjksAlgncon.leerParametros().getProperty("p"));
-            aBagSPJavaOrchestration.put("jksurl", pathCertificado);
-        }else
-        {
-        	if (logger.isDebugEnabled())
-    		{
-    			logger.logDebug("No existe archivo jks:"+pathCertificado);
-    		}
-        }
-        if (logger.isDebugEnabled())
-		{
-			logger.logDebug("jksAlgncon:"+pathAlgnJks);
-			logger.logDebug("jksurl:"+pathCertificado);
-		}
-        
+		
+		aBagSPJavaOrchestration.putAll( mapDataSigns);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "SPEI DISPACHER");
 		mensaje message = null;
-
+		Integer idLog = 0;
 		try {
 			// METODO GUARDAR XML
 			String xmls = anOriginalRequest.readValueParam("@i_pay_order");
@@ -245,6 +250,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			message = plot.getDataMessage(xmls);
 			if (message != null) {
 				aBagSPJavaOrchestration.put("speiTransaction", message);
+				//llamada a log entrante
+				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null,anOriginalRequest.readValueParam("@i_pay_order"));
 				executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 			}
 			
@@ -256,7 +263,9 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		}catch (Exception xe) {
 			logger.logError(xe);
 		}
-
+		//llamada a log update
+		logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "U", "Dispacher in", null, null, aBagSPJavaOrchestration.get("result").toString(), idLog, null);
+	
 		IProcedureResponse valuesOutput = new ProcedureResponseAS();
 		valuesOutput.addParam("@o_result", 39, 1, aBagSPJavaOrchestration.get("result").toString());
 
@@ -526,13 +535,37 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if(logger.isDebugEnabled()) {
 				logger.logInfo("error future: "+responseXml.getErrCodigo());
 			}
-			ExecutorService executor = Executors.newSingleThreadExecutor();
+			//llamada a log entrante
+			Integer idLog =	logEntryApi(request, aBagSPJavaOrchestration, "I", "Return Payment in", null, null, null, null, null);
+			IProcedureResponse responsePaymentReturn = null;
+			ExecutorService executor = Executors.newScheduledThreadPool(15);//preguntar por e numero de hilos
 			msjIn.getOrdenpago().setOpCdClave(responseXml.getErrCodigo());
 			// Crear una instancia de MyCallableTask con parámetros
 			CallableTask task = new CallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
 			// Enviar la tarea para su ejecución
-			Future<IProcedureResponse> future = executor.submit(task);
+			
+			try
+			{
+				Future<IProcedureResponse> future = executor.submit(task);
+				responsePaymentReturn = future.get();
+				
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			} catch (ExecutionException e)
+			{
+				e.printStackTrace();
+			}
 			executor.shutdownNow();
+	        
+	        if(responsePaymentReturn.getReturnCode()==0)
+			{
+				String  responseConnector = responsePaymentReturn.readValueParam("@o_spei_response");
+				String requestConnector = responsePaymentReturn.readValueParam("@o_spei_request");			
+				//llamada a log update
+				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, null, responseConnector, idLog, requestConnector);
+			
+			}
 	        logHour("6");
 		}
 		//se manda el response correcto que se recibio la solicitud spei in
@@ -1067,7 +1100,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logInfo("Entrando a reverseSPEIOut");
 		}
 		IProcedureRequest procedureRequest = anOriginalRequest.clone();
-		IProcedureResponse procedureResponseReverse = null;
+		IProcedureResponse procedureResponseReverse = null ;
 		
 		IProcedureResponse procedureGetDataSpei = getDataSPEI(anOriginalRequest, aBagSPJavaOrchestration, clave);
 		if(procedureGetDataSpei.getReturnCode() == 0)
@@ -1096,7 +1129,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	 		{
 	 			logger.logInfo("reverseSPEIOut:"+procedureResponseReverse.getProcedureResponseAsString());
 	 		}
-		}
+		}else
+			procedureResponseReverse = procedureGetDataSpei;
 		return procedureResponseReverse;
 	}
 	
@@ -1227,6 +1261,73 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			aBagSPJavaOrchestration.put("tipoFirma", wProcedureResponseLocal.readValueParam("@o_valor"));
 		} 
 		return wProcedureResponseLocal;
+		
+	}
+	private int logEntryApi(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
+			String operacion, String tipoEntrada, String firma, String error, String response, Integer id, String request ) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, singType");
+		}
+		Integer logId = 0;
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
+		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_log_conn_karpay");
+		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		
+		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
+		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
+		requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
+		requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
+		requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
+		
+		if("I".equals(operacion) && 
+			   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria())|| 
+				Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria())||
+				Constans.ODPS_LIQUIDADAS_ABONOS.equals( msjIn.getCategoria())||
+				Constans.ODPS_CANCELADAS_LOCAL.equals( msjIn.getCategoria())))
+		{
+			DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+	        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+	        
+	        // Convierte la fecha de String a LocalDate
+	        LocalDate date = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
+	        
+	        // Formatea la fecha a MM/dd/yyyy
+	        String processDate = date.format(outputFormatter);
+			
+			requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+			requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
+			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
+			requestProcedureLocal.addInputParam("@i_lc_institucion_ordenante",ICTSTypes.SQLVARCHAR, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
+			requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
+			requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
+			requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
+			requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
+			
+		}else
+			if("U".equals(operacion) )
+			{
+				requestProcedureLocal.addInputParam("@i_lc_firma",ICTSTypes.SQLVARCHAR, firma);
+				requestProcedureLocal.addInputParam("@i_lc_error",ICTSTypes.SQLVARCHAR, error);
+				requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
+				requestProcedureLocal.addInputParam("@i_lc_response",ICTSTypes.SQLVARCHAR, response);
+				requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());
+			}
+		
+		requestProcedureLocal.addOutputParam("@o_lc_id", ICTSTypes.SQLINT4, "0");
+	        
+	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
+		}
+		
+		if (wProcedureResponseLocal.getReturnCode()==0) {
+			
+			logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_lc_id"));
+		} 
+		return logId;
 		
 	}
 	public void logHour(String txt)
