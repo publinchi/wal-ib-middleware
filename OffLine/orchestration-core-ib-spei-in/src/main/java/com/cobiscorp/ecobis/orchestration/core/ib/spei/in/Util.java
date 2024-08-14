@@ -60,7 +60,6 @@ public class Util {
 
         logger.logError(new IllegalArgumentException(messageError).getMessage());
         return wProcedureRespFinal;
-
     }
     
     public static String sessionID() {
