@@ -339,7 +339,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
 				
 				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-					estadoRiesgo = (Boolean) aBagSPJavaOrchestration.get("isOperationAllowed");
+					estadoRiesgo = Boolean.parseBoolean((String) aBagSPJavaOrchestration.get("isOperationAllowed"));
 				}
 				
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
