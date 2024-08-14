@@ -216,27 +216,27 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 							codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
 						}
 						
-						if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+						if (aBagSPJavaOrchestration.get("message") != null) {	
 							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 						}
 						
-						if (aBagSPJavaOrchestration.get("status_risk") != null) {	
-							estadoRiesgo = aBagSPJavaOrchestration.get("status_risk").toString();
+						if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+							estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
 						}
 						
 						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 		
-						if (valorRiesgo.equals("true") && estadoRiesgo.equals("LOW")) {
+						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
 							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
 							anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
 						} else {
-							IProcedureResponse resp = Utils.returnException(18054, "NO PASO LA EVALUACIÓN DE RIESGO");
+							IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
 							logger.logDebug("Respose Exeption: " + resp.toString());
 							return resp;
 						}	
 					}else {
-						IProcedureResponse resp = Utils.returnException(18055, "ERROR AL EJECUTAR LA EVALUACIÓN DE RIESGO");
+						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
 						logger.logDebug("Respose Exeption: " + resp.toString());
 						return resp;
 					}	
@@ -276,26 +276,26 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
 					}
 					
-					if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+					if (aBagSPJavaOrchestration.get("message") != null) {	
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
 
-					if (aBagSPJavaOrchestration.get("status_risk") != null) {	
-						estadoRiesgo = aBagSPJavaOrchestration.get("status_risk").toString();
+					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
 					}
 					
 					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 		
-					if (valorRiesgo.equals("true") && estadoRiesgo.equals("LOW")) {
+					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
 					} else {
-						IProcedureResponse resp = Utils.returnException(18054, "NO PASO LA EVALUACIÓN DE RIESGO");
+						IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
 						logger.logDebug("Respose Exeption:: " + resp.toString());
 						return resp;
 					}
 				}
 				else {
-					IProcedureResponse resp = Utils.returnException(18055, "ERROR AL EJECUTAR LA EVALUACIÓN DE RIESGO");
+					IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
 					logger.logDebug("Respose Exeption: " + resp.toString());
 					return resp;
 				}
@@ -795,7 +795,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
 			String identificationType = null;
 			
-			if (lengthCtades == 10 ||lengthCtades == 12) {
+			if (lengthCtades == 12) {
 				identificationType = "PHONE";	
 			} else if (lengthCtades == 18) {
 				identificationType = "CLABE";
@@ -821,11 +821,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 
 		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
-			aBagSPJavaOrchestration.put("status_risk", connectorRiskEvaluationResponse.readValueParam("@o_riskStatus"));
+			aBagSPJavaOrchestration.put("isOperationAllowed", connectorRiskEvaluationResponse.readValueParam("@o_isOperationAllowed"));
 		}
 		else {
 			aBagSPJavaOrchestration.put("success_risk", "false");
-			aBagSPJavaOrchestration.put("status_risk", "");
+			aBagSPJavaOrchestration.put("isOperationAllowed", "false");
 		}
 
 		if(logger.isDebugEnabled())
