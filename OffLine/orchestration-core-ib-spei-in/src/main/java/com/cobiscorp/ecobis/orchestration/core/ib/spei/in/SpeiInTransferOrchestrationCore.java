@@ -75,6 +75,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	 */
 	private static ILogger logger = LogFactory.getLogger(SpeiInTransferOrchestrationCore.class);
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
+	private String validaRiesgo = "";
 
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
@@ -305,6 +306,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String estadoRiesgo = "";
 		Integer code = 0;
         String message = "success";
+		validaRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
         
 		if (logger.isDebugEnabled())
 			logger.logDebug("@i_tipoCuentaBeneficiario: " + anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));		
@@ -331,65 +333,86 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		}
 		
 		// Validar el risk
-		IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-		
-		if (aBagSPJavaOrchestration.get("success_risk") != null) {				
-			valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+		if (validaRiesgo.equals("true")){
+			IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 			
-			if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-				codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-			}
-			
-			if (aBagSPJavaOrchestration.get("message") != null) {	
-				mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-			}
-
-			if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-				estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
-			}
-			
-			logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-
-			if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-				response = this.validaLimite(anOriginalRequest);
+			if (aBagSPJavaOrchestration.get("success_risk") != null) {				
+				valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
 				
-				if(response.getReturnCode() != 0) {
+				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+				}
+				
+				if (aBagSPJavaOrchestration.get("message") != null) {	
+					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+				}
+	
+				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+					estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+				}
+				
+				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+	
+				if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+					response = this.validaLimite(anOriginalRequest);
+					
+					if(response.getReturnCode() != 0) {
+						return response;
+					}
+					
+					IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+	
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
+					}
+	
+					response = executeCoreBanking(requestTransfer);
+	
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+						logger.logDebug(wInfo+ "response de central: " + response);
+					}
+	
+				} else {
+					message = "OPERACIÓN NO PERMITIDA";
+					code = 13; // 18054;
+					
+					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
+					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
+					
 					return response;
 				}
-				
-				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
-
-				if (logger.isDebugEnabled()) {
-					logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-				}
-
-				response = executeCoreBanking(requestTransfer);
-
-				if (logger.isDebugEnabled()) {
-					logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
-					logger.logDebug(wInfo+ "response de central: " + response);
-				}
-
-			} else {
+			}
+			else {
 				message = "OPERACIÓN NO PERMITIDA";
-				code = 13; // 18054;
-				
+				code = 13; //18055;
+							
 				response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 				response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
 				
 				return response;
+			}			
+		}else {
+			response = this.validaLimite(anOriginalRequest);
+			
+			if(response.getReturnCode() != 0) {
+				return response;
+			}
+			
+			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
+			}
+
+			response = executeCoreBanking(requestTransfer);
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+				logger.logDebug(wInfo+ "response de central: " + response);
 			}
 		}
-		else {
-			message = "OPERACIÓN NO PERMITIDA";
-			code = 13; //18055;
-						
-			response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
-			response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
-			
-			return response;
-		}			
-				
+		
 		logger.logInfo(wInfo+END_TASK);
 
 		return response;
@@ -453,7 +476,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_debitorAccount_identification", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_cuentaOrdenante"));
 		procedureRequest.addInputParam("@i_debitorAccount_identificationType", ICTSTypes.SQLVARCHAR,  "ACCOUNT_NUMBER");
 
-		procedureRequest.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR, "true" ); 
+		procedureRequest.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR, validaRiesgo ); 
 
 		IProcedureResponse connectorRiskEvaluationResponse = executeCoreBanking(procedureRequest);
 		
