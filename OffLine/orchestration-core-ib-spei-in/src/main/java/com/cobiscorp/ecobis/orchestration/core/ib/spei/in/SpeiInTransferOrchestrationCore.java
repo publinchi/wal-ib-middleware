@@ -375,7 +375,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	
 				} else {
 					message = "OPERACIÓN NO PERMITIDA";
-					code = 13; // 18054;
+					code = 13; 
 					
 					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
