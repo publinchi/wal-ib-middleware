@@ -31,6 +31,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -131,6 +132,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String mensajeRiesgo = "";
 		String estadoRiesgo = "";
 		
+		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
+		
 		if(logger.isDebugEnabled())
 			logger.logDebug("length account: "+ lengthCtades);
 		
@@ -205,7 +208,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					return wAccountsResp;
 				}
 				
-				if (evaluaRiesgo.equals("true")){
+				if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
 					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 				
 					// Obtengo los valores de la evaluación de riesgo
@@ -267,7 +270,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			aBagSPJavaOrchestration.put("IsReentry", "N");
 			logger.logDebug("Res IsReentry:: " + "N");
 			
-			if (evaluaRiesgo.equals("true")){
+			if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
 				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 				
 				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
@@ -1361,6 +1364,38 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logDebug("Query card PAN :" + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
 	    return wProcedureResponseLocal;
+	}
+	
+	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
+    	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
+	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (!wProcedureResponseCentral.hasError()) {
+			
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+				
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					return columns[2].getValue();
+				} 
+			} 			
+		} 
+		
+		return "";
 	}
 
 }

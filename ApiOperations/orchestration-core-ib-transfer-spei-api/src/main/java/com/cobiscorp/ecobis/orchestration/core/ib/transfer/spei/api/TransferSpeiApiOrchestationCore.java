@@ -304,6 +304,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
 		Boolean estadoRiesgo = false;
+		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution").toString();
+		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
 
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
@@ -320,50 +322,51 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                     + aBagSPJavaOrchestration.get("o_nom_beneficiary") + aBagSPJavaOrchestration.get("o_login")
                     + aBagSPJavaOrchestration.get("o_ente_bv"));
 
-            
-            //agregar el llamado al orquestador de evaluationrisk
-            IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(aRequest, aBagSPJavaOrchestration);
-            
-            // Obtengo los valores de la evaluación de riesgo
-			if (aBagSPJavaOrchestration.get("success_risk") != null) {
-				valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
-				
-				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-				}
-				
-				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-				}
-				
-				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
-				
-				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-					estadoRiesgo = Boolean.parseBoolean((String) aBagSPJavaOrchestration.get("isOperationAllowed"));
-				}
-				
-				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+            if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+            	//agregar el llamado al orquestador de evaluationrisk
+                IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(aRequest, aBagSPJavaOrchestration);
+                
+                // Obtengo los valores de la evaluación de riesgo
+    			if (aBagSPJavaOrchestration.get("success_risk") != null) {
+    				valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+    				
+    				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+    					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+    				}
+    				
+    				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+    					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+    				}
+    				
+    				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
+    				
+    				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+    					estadoRiesgo = Boolean.parseBoolean((String) aBagSPJavaOrchestration.get("isOperationAllowed"));
+    				}
+    				
+    				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 
-				if (valorRiesgo.equals("true") && estadoRiesgo) {
-					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
-					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
-					logger.logInfo("Continua flujo spei-out");
-					wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
-				} else {
-					IProcedureResponse resp = Utils.returnException(18054, "OPERACION NO PERMITIDA");
-					logger.logDebug("Response Exeption: " + resp.toString());
-					return resp;
-				}
+    				if (valorRiesgo.equals("true") && estadoRiesgo) {
+    					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
+    					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+    					logger.logInfo("Continua flujo spei-out");
+    					wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
+    				} else {
+    					IProcedureResponse resp = Utils.returnException(18054, "OPERACION NO PERMITIDA");
+    					logger.logDebug("Response Exeption: " + resp.toString());
+    					return resp;
+    				}
+                } else {
+    				IProcedureResponse resp = Utils.returnException(18055, "ERROR AL EJECUTAR LA EVALUACIÓN DE RIESGO");
+    				logger.logDebug("Response Exeption: " + resp.toString());
+    				return resp;
+    			}
+                
+                return wTransferResponse;
             } else {
-				IProcedureResponse resp = Utils.returnException(18055, "ERROR AL EJECUTAR LA EVALUACIÓN DE RIESGO");
-				logger.logDebug("Response Exeption: " + resp.toString());
-				return resp;
-			}
-            
-            
-            return wTransferResponse;
+            	wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
+            }
         }
-
         return wAccountsResp;
     }
 
@@ -2767,7 +2770,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
 		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
-		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
+		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_amount"));
 		
 		if (aBagSPJavaOrchestration.get("card_id_dock") != null) {
 			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("card_id_dock"));
