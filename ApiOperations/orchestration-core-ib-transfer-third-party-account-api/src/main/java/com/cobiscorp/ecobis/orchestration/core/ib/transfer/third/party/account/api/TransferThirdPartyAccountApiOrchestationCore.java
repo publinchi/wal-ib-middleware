@@ -31,6 +31,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -74,7 +75,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
 	protected static final String CHANNEL_REQUEST = "8";
-	
+
 	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
 	private IAdminTokenUser tokenService;
 
@@ -125,10 +126,19 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		aBagSPJavaOrchestration.put("tipo_cta_des", "");
 		aBagSPJavaOrchestration.put("unique_id_card", "");
 		int lengthCtades = ctaDest.length();
+		String evaluaRiesgo = anOriginalRequest.readValueParam("@i_autoActionExecution").toString();
+		String valorRiesgo = "";
+		String codigoRiesgo = "";
+		String mensajeRiesgo = "";
+		String estadoRiesgo = "";
+		
+		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
+		
 		if(logger.isDebugEnabled())
 			logger.logDebug("length account: "+ lengthCtades);
+		
 		//inicio valida tarjeta debito por unique id 	
-		if(lengthCtades!=10 ||lengthCtades!=12 || lengthCtades!=18 || lengthCtades!=11)
+		if(lengthCtades == 36)
 		{
 			//buscamos la cuenta asociadaa la tarjeta
 			IProcedureResponse anProcedureResPan =  queryCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
@@ -140,19 +150,20 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				
 				if ("X".equals(account) || account == null ){
 					anProcedureResPan.setReturnCode(50201);
-					processResponseTransfer(anOriginalRequest, anProcedureResPan, aBagSPJavaOrchestration);
+					return processResponseTransfer(anOriginalRequest, anProcedureResPan, aBagSPJavaOrchestration);
 				}else
 				{//se asigna la cuenta de ahorros al destination
 					anOriginalRequest.setValueParam("@i_cta_des", account);
 					aBagSPJavaOrchestration.put("tipo_cta_des", "3");
 					aBagSPJavaOrchestration.put("unique_id_card", ctaDest);
+					aBagSPJavaOrchestration.put("card_id_dock",  anProcedureResPan.readValueParam("@o_card_id")); 
 				}
 				
 			}else
 			{
 				anProcedureResPan = new ProcedureResponseAS();
 				anProcedureResPan.setReturnCode(50201);
-				processResponseTransfer(anOriginalRequest, anProcedureResPan,aBagSPJavaOrchestration);
+				return processResponseTransfer(anOriginalRequest, anProcedureResPan,aBagSPJavaOrchestration);
 			}
 		}
 		//fin valida tarjeta por unique id
@@ -196,15 +207,55 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				{
 					return wAccountsResp;
 				}
-				anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
-				/*if(anProcedureResponse.getReturnCode()==0){
-					anOriginalRequest.removeParam("@o_fecha_tran");
-					anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
-					//anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-				}
-				else
-					return anProcedureResponse;*/
 				
+				if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+				
+					// Obtengo los valores de la evaluación de riesgo
+					if (aBagSPJavaOrchestration.get("success_risk") != null) {				
+						valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+						
+						if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+							codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+						}
+						
+						if (aBagSPJavaOrchestration.get("message") != null) {	
+							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+						}
+						
+						if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+							estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+						}
+						
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+		
+						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
+							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
+							logger.logInfo("Continua flujo p2p");
+							anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+						} else {
+							IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
+							logger.logDebug("Respose Exeption: " + resp.toString());
+							return resp;
+						}	
+					}else {
+						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
+						logger.logDebug("Respose Exeption: " + resp.toString());
+						return resp;
+					}	
+				}else {
+					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
+					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
+					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+					
+					if(anProcedureResponse.getReturnCode()==0){
+						anOriginalRequest.removeParam("@o_fecha_tran");
+						anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
+					}
+					else
+						return anProcedureResponse;
+				}				
 				//aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
 			}
 			else{
@@ -218,11 +269,46 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		} else {
 			aBagSPJavaOrchestration.put("IsReentry", "N");
 			logger.logDebug("Res IsReentry:: " + "N");
-			anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+			
+			if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+				
+				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
+					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+					
+					if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+						codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+					}
+					
+					if (aBagSPJavaOrchestration.get("message") != null) {	
+						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+					}
+
+					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+					}
+					
+					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+		
+					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+					} else {
+						IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
+						logger.logDebug("Respose Exeption:: " + resp.toString());
+						return resp;
+					}
+				}
+				else {
+					IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
+					logger.logDebug("Respose Exeption: " + resp.toString());
+					return resp;
+				}
+			}else {
+				anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+			}
 		}
 		
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
-
 	}
 	
 	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
@@ -360,7 +446,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				
 				executionStatus = "CORRECT";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				code = "0";
 				message = "Success";
@@ -384,8 +470,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				executionStatus = "ERROR";
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)) {
-					updateLimitStatus(aBagSPJavaOrchestration);
-					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+				updateLimitStatus(aBagSPJavaOrchestration);
+				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				}
 					
 				
@@ -401,8 +487,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			
 			
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false)) {
-				updateLimitStatus(aBagSPJavaOrchestration);
-				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			updateLimitStatus(aBagSPJavaOrchestration);
+			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			}
 				
 			if (codeReturn == 250046)
@@ -630,8 +716,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 		
 		if (wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+			
 			IProcedureResponse wTransferResponse = new ProcedureResponseAS();
 			
+			logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
+			logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
 			logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
 			aBagSPJavaOrchestration.get("o_mon") +
 			aBagSPJavaOrchestration.get("o_prod_des") +
@@ -653,6 +742,100 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 
 		return wAccountsRespVal;
+	}
+	
+	private IProcedureResponse executeRiskEvaluation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
+		}
+		
+		String channel="";
+		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
+		
+		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700119");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700119");
+		procedureRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700119");
+		procedureRequest.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
+		procedureRequest.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
+		procedureRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+				"(service.identifier=RiskEvaluationOrchestrationCore)");
+		procedureRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
+		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
+		
+		if(aRequest.readValueParam("@x_channel").toString().contains("8")) {
+			channel = "MOBILE_BROWSER";
+		} else if (aRequest.readValueParam("@x_channel").toString().contains("1")) {
+			channel = "DESKTOP_BROWSER";
+		} else {
+			channel = "SYSTEM";
+		}
+		
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, channel);//se obtiene con el response del f1
+		
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_latitude", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_latitud"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_longitude", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_longitud"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_accuracy", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_accuracy"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
+		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
+		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
+		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
+		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
+		
+		
+		if (aBagSPJavaOrchestration.get("card_id_dock") != null) {
+			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("card_id_dock"));
+			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, "CARD_ID");
+		} else {
+			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+			int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
+			String identificationType = null;
+			
+			if (lengthCtades == 12) {
+				identificationType = "PHONE";	
+			} else if (lengthCtades == 18) {
+				identificationType = "CLABE";
+			} else {
+				identificationType = "ACCOUNT_NUMBER";
+			}
+
+			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, identificationType);
+		}
+
+		procedureRequest.addInputParam("@i_debitorAccount_identification", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_cta"));
+		procedureRequest.addInputParam("@i_debitorAccount_identificationType", ICTSTypes.SQLVARCHAR,  "ACCOUNT_NUMBER");
+
+		procedureRequest.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_autoActionExecution") ); 
+
+		IProcedureResponse connectorRiskEvaluationResponse = executeCoreBanking(procedureRequest);
+		
+		if (connectorRiskEvaluationResponse.readValueParam("@o_responseCode") != null)
+			aBagSPJavaOrchestration.put("responseCode", connectorRiskEvaluationResponse.readValueParam("@o_responseCode"));
+
+		if (connectorRiskEvaluationResponse.readValueParam("@o_message") != null)
+			aBagSPJavaOrchestration.put("message", connectorRiskEvaluationResponse.readValueParam("@o_message"));
+
+		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
+			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
+			aBagSPJavaOrchestration.put("isOperationAllowed", connectorRiskEvaluationResponse.readValueParam("@o_isOperationAllowed"));
+		}
+		else {
+			aBagSPJavaOrchestration.put("success_risk", "false");
+			aBagSPJavaOrchestration.put("isOperationAllowed", "false");
+		}
+
+		if(logger.isDebugEnabled())
+			logger.logInfo("Response executeRiskEvaluation: "+ connectorRiskEvaluationResponse.getProcedureResponseAsString());
+		
+		return connectorRiskEvaluationResponse;
 	}
 
 	private IProcedureResponse getDataAccountReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -695,7 +878,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (destinyAccount.equals("null") || destinyAccount.trim().isEmpty()) {
 			destinyAccount = "E";
 		}
-		
+
 		if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
 			
 			String login = null;
@@ -801,14 +984,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking  DCO : " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-		
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getDataAccountReq");
 		}
 
 		return wProductsQueryResp;
 	}
-	
+
 	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
@@ -926,7 +1109,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
 		anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
-
+		
 		if(aBagSPJavaOrchestration.get("REENTRY_SSN")!=null)
 			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_SSN, (String)aBagSPJavaOrchestration.get("REENTRY_SSN"));
 		
@@ -969,7 +1152,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (request.readValueParam("@i_dest_fondos") != null)
 			anOriginalRequest.addInputParam("@i_dest_fondos", ICTSTypes.SQLVARCHAR,
 					request.readValueParam("@i_dest_fondos"));
-		
+
 		anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon").toString());
 		
 		anOriginalRequest.addInputParam("@i_prod_org", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
@@ -1053,7 +1236,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalRequest.addInputParam("@i_prod", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
 		anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon_des").toString());
 		anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod_des").toString());
-
+		
 		anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");
 		
 		anOriginalRequest.addInputParam("@i_genera_clave", ICTSTypes.SYBCHAR, "N");
@@ -1067,7 +1250,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
 		anOriginalRequest.addInputParam("@i_beneficiary", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_nom_beneficiary"));
 		
-
+		
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
 		anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
@@ -1181,6 +1364,38 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logDebug("Query card PAN :" + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
 	    return wProcedureResponseLocal;
+	}
+	
+	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
+    	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
+	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+		
+		if (!wProcedureResponseCentral.hasError()) {
+			
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+				
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					return columns[2].getValue();
+				} 
+			} 			
+		} 
+		
+		return "";
 	}
 
 }
