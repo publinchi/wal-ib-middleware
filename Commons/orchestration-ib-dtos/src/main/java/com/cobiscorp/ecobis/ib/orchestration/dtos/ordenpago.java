@@ -159,6 +159,141 @@ public class ordenpago implements Serializable{
     private String opCuentaEmisorRemesa;
 	//
 	
+	@XmlElement
+    private String opNomParticipanteOrd;
+	
+	@XmlElement
+    private String opRfcParticipanteOrd;
+	
+	@XmlElement
+    private String opIdRemesa;
+	
+	@XmlElement
+    private String opPais;
+	
+	@XmlElement
+    private String opDivisa;
+	
+	@XmlElement
+    private String opNomEmisorRemesa;
+	
+	@XmlElement
+    private String opNomBenRemesa;
+	
+	@XmlElement
+    private String opNomProvRemesaNacional;
+    
+	@XmlElement
+    private String opNomProvRemesaExtranjera;
+	
+	/**
+	 * @return the opNomProvRemesaNacional
+	 */
+	public synchronized String getopNomProvRemesaExtranjera() {
+		return opNomProvRemesaExtranjera;
+	}
+	/**
+	 * @param opNomProvRemesaExtranjera the opNomProvRemesaExtranjera to set
+	 */
+	public synchronized void setOpNomProvRemesaExtranjera(String opNomProvRemesaExtranjera) {
+		this.opNomProvRemesaExtranjera = opNomProvRemesaExtranjera;
+	}
+	/**
+	 * @return the opNomProvRemesaNacional
+	 */
+	public synchronized String getOpNomProvRemesaNacional() {
+		return opNomProvRemesaNacional;
+	}
+	/**
+	 * @param opNomProvRemesaNacional the opNomProvRemesaNacional to set
+	 */
+	public synchronized void setOpNomProvRemesaNacional(String opNomProvRemesaNacional) {
+		this.opNomProvRemesaNacional = opNomProvRemesaNacional;
+	}
+	/**
+	 * @return the opNomBenRemesa
+	 */
+	public synchronized String getOpNomBenRemesa() {
+		return opNomEmisorRemesa;
+	}
+	/**
+	 * @param opNomBenRemesa the opNomBenRemesa to set
+	 */
+	public synchronized void setOpNomBenRemesa(String opNomBenRemesa) {
+		this.opNomBenRemesa = opNomBenRemesa;
+	}
+	/**
+	 * @return the opNomEmisorRemesa
+	 */
+	public synchronized String getOpNomEmisorRemesa() {
+		return opNomEmisorRemesa;
+	}
+	/**
+	 * @param opNomEmisorRemesa the opNomEmisorRemesa to set
+	 */
+	public synchronized void setOpNomEmisorRemesa(String opNomEmisorRemesa) {
+		this.opNomEmisorRemesa = opNomEmisorRemesa;
+	}
+	/**
+	 * @return the opPais
+	 */
+	public synchronized String getOpDivisa() {
+		return opDivisa;
+	}
+	/**
+	 * @param opRfcParticipanteOrd the opRfcParticipanteOrd to set
+	 */
+	public synchronized void setOpDivisa(String opDivisa) {
+		this.opDivisa = opDivisa;
+	}
+	/**
+	 * @return the opPais
+	 */
+	public synchronized String getOpPais() {
+		return opPais;
+	}
+	/**
+	 * @param opRfcParticipanteOrd the opRfcParticipanteOrd to set
+	 */
+	public synchronized void setOpPais(String opPais) {
+		this.opPais = opPais;
+	}
+	/**
+	 * @return the opIdRemesa
+	 */
+	public synchronized String getOpIdRemesa() {
+		return opIdRemesa;
+	}
+	/**
+	 * @param opRfcParticipanteOrd the opRfcParticipanteOrd to set
+	 */
+	public synchronized void setOpIdRemesa(String opIdRemesa) {
+		this.opIdRemesa = opIdRemesa;
+	}
+	/**
+	 * @return the opRfcParticipanteOrd
+	 */
+	public synchronized String getOpRfcParticipanteOrd() {
+		return opRfcParticipanteOrd;
+	}
+	/**
+	 * @param opRfcParticipanteOrd the opRfcParticipanteOrd to set
+	 */
+	public synchronized void setOpRfcParticipanteOrd(String opRfcParticipanteOrd) {
+		this.opRfcParticipanteOrd = opRfcParticipanteOrd;
+	}
+	/**
+	 * @return the opNomParticipanteOrd
+	 */
+	public synchronized String getOpNomParticipanteOrd() {
+		return opNomParticipanteOrd;
+	}
+	/**
+	 * @param opNomParticipanteOrd the opNomParticipanteOrd to set
+	 */
+	public synchronized void setOpNomParticipanteOrd(String opNomParticipanteOrd) {
+		this.opNomParticipanteOrd = opNomParticipanteOrd;
+	}
 	/**
 	 * @return the OpCdClave
 	 */

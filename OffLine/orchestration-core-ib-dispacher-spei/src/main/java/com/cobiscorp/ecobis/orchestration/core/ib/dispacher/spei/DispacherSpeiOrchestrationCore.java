@@ -466,9 +466,17 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 							if(logger.isDebugEnabled())
 								logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
 							
-							if(procedureResponseLocal.getReturnCode()==0 && procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0)
+							if(procedureResponseLocal.getReturnCode()==0 && procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0
+									&& msjIn.getOrdenpago().getOpTpClave() != 7
+									&& msjIn.getOrdenpago().getOpTpClave() != 16
+									&& msjIn.getOrdenpago().getOpTpClave() != 17
+									&& msjIn.getOrdenpago().getOpTpClave() != 18
+									&& msjIn.getOrdenpago().getOpTpClave() != 24)
 							{
 								//falta implementar las tablas de auditoria y generacion de secuenciales
+								//llamada a log entrante
+								Integer idLog =	logEntryApi(request, aBagSPJavaOrchestration, "I", "ESICE", null, null, null, null, null);
+								
 								IProcedureResponse responseCda = getWsEsice(request, aBagSPJavaOrchestration);
 								if(responseCda.getReturnCode()!=0)
 								{
@@ -478,6 +486,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 									}
 									
 								}
+								String returnCodeMsj = responseCda.readValueParam("@o_cod_respuesta")+" - "+responseCda.readValueParam("@o_msj_respuesta");
+								//llamada a log update
+								logEntryApi(request, aBagSPJavaOrchestration, "U", "ESICE", null, returnCodeMsj,  responseCda.readValueParam("@o_response"), idLog, responseCda.readValueParam("@o_request"));
+							
 								responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
 								responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
 					
@@ -528,7 +540,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		responseXml.setId(msjIn.getOrdenpago().getId());
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
 	
-		
+		String returnCodeMsjSpeiIn = "";
 		if(responseXml.getErrCodigo() != 0)
 		{
 			logHour("5");
@@ -561,9 +573,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	        if(responsePaymentReturn.getReturnCode()==0)
 			{
 				String  responseConnector = responsePaymentReturn.readValueParam("@o_spei_response");
-				String requestConnector = responsePaymentReturn.readValueParam("@o_spei_request");			
+				String requestConnector = responsePaymentReturn.readValueParam("@o_spei_request");	
+				String returnCodeMsj = responsePaymentReturn.readValueParam("@o_cod_respuesta")+" - "+responsePaymentReturn.readValueParam("@o_msj_respuesta");
 				//llamada a log update
-				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, null, responseConnector, idLog, requestConnector);
+				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, returnCodeMsj, responseConnector, idLog, requestConnector);
 			
 			}
 	        logHour("6");
@@ -577,6 +590,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		msg.setRespuesta(responseXml);
 		response = toStringXmlObject(msg);  
 		aBagSPJavaOrchestration.put("result", response);
+		aBagSPJavaOrchestration.put("error", returnCodeMsjSpeiIn);
 		logHour("7");
 		return response;
 	}
@@ -1065,7 +1079,26 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			anOriginalRequest.addInputParam("@i_op_hora00", ICTSTypes.SQLVARCHAR, horaHHmmssSSS);
 			anOriginalRequest.addInputParam("@i_op_fecha_abono", ICTSTypes.SQLVARCHAR, opFechaOper);
 			
+			// anOriginalRequest.addInputParam("@i_op_nom_ben2", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomBen2());
+         	// anOriginalRequest.addInputParam("@i_op_rfc_curp_ben2", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfc);
+         	// anOriginalRequest.addInputParam("@i_op_tp_cta_ben2", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen2()));
+         	// anOriginalRequest.addInputParam("@i_op_cuenta_ben2", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaBen2());
+         	//anOriginalRequest.addInputParam("@i_op_folio_codi", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFolio());//
+         	//anOriginalRequest.addInputParam("@i_op_comision_trans", ICTSTypes.SQLVARCHAR, opFechaOper);
+         	//anOriginalRequest.addInputParam("@i_op_monto_comision", ICTSTypes.SQLVARCHAR, opFechaOper);
 			// SE HACE LA LLAMADA AL CONECTOR
+			//tipo pago  31 7 
+			anOriginalRequest.addInputParam("@i_op_nom_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomParticipanteOrd());//30
+         	anOriginalRequest.addInputParam("@i_op_cta_part_indirecto_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaParticipanteOrd());//31
+         	anOriginalRequest.addInputParam("@i_op_rfc_curp_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcParticipanteOrd());//32
+			
+         	//tipo pago 36
+         	anOriginalRequest.addInputParam("@i_op_id_remesa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpIdRemesa());//33
+         	anOriginalRequest.addInputParam("@i_op_pais", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpPais());//34
+         	anOriginalRequest.addInputParam("@i_op_divisa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpDivisa());//35
+         	anOriginalRequest.addInputParam("@i_op_nom_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomEmisorRemesa());//36
+         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_ext", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getopNomProvRemesaExtranjera());//37
+         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_nac", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomProvRemesaNacional());//38
 			
 			anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TIMEOUT, ICOBISTS.HEADER_STRING_TYPE, "4000");
 			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500164");
