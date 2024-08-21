@@ -8,12 +8,19 @@ import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import java.nio.charset.Charset;
+import java.security.NoSuchAlgorithmException;
+import java.security.MessageDigest;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Util {
     private Util(){
 
     }
-
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+    public static final UUID NAMESPACE_URL = UUID.fromString("143ef603-a5d4-4b27-8031-cf51b265f010");
+    
     private static final ILogger logger = LogFactory.getLogger(Util.class);
 
     public static IProcedureResponse returnCorrectResponse(IProcedureResponse responseData) {
@@ -53,6 +60,61 @@ public class Util {
 
         logger.logError(new IllegalArgumentException(messageError).getMessage());
         return wProcedureRespFinal;
+    }
+    
+    public static String sessionID() {
+    	String sesion = "";
+    	String name = NAMESPACE_URL.toString();
+    	UUID namespace = UUID.randomUUID();
+    	
+    	UUID uuid = nameUUIDFromNamespaceAndString(namespace, name);    	
+    	sesion = uuid.toString();
+    	
+    	return sesion;
+    }
+    
+    public static UUID nameUUIDFromNamespaceAndString(UUID namespace, String name) {
+        return nameUUIDFromNamespaceAndBytes(namespace, Objects.requireNonNull(name, "name == null").getBytes(UTF8));
+    }
 
+    public static UUID nameUUIDFromNamespaceAndBytes(UUID namespace, byte[] name) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new InternalError("SHA-256 not supported");
+        }
+        md.update(toBytes(Objects.requireNonNull(namespace, "namespace is null")));
+        md.update(Objects.requireNonNull(name, "name is null"));
+        byte[] shaBytes = md.digest();
+        shaBytes[6] &= 0x0f;  /* clear version        */
+        shaBytes[6] |= 0x50;  /* set to version 5     */
+        shaBytes[8] &= 0x3f;  /* clear variant        */
+        shaBytes[8] |= 0x80;  /* set to IETF variant  */
+        return fromBytes(shaBytes);
+    }
+    
+    private static UUID fromBytes(byte[] data) {
+        // Based on the private UUID(bytes[]) constructor
+        long msb = 0;
+        long lsb = 0;
+        assert data.length >= 16;
+        for (int i = 0; i < 8; i++)
+            msb = (msb << 8) | (data[i] & 0xff);
+        for (int i = 8; i < 16; i++)
+            lsb = (lsb << 8) | (data[i] & 0xff);
+        return new UUID(msb, lsb);
+    }
+    
+    private static byte[] toBytes(UUID uuid) {
+        // inverted logic of fromBytes()
+        byte[] out = new byte[16];
+        long msb = uuid.getMostSignificantBits();
+        long lsb = uuid.getLeastSignificantBits();
+        for (int i = 0; i < 8; i++)
+            out[i] = (byte) ((msb >> ((7 - i) * 8)) & 0xff);
+        for (int i = 8; i < 16; i++)
+            out[i] = (byte) ((lsb >> ((15 - i) * 8)) & 0xff);
+        return out;
     }
 }
