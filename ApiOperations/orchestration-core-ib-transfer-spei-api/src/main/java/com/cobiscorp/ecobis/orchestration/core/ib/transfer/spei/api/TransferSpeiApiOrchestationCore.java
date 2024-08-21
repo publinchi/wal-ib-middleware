@@ -301,12 +301,23 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         //String destAccoutNumber = request.readValueParam("@i_destination_account_number");
         
 		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
+        String evaluarRiesgoMobile = getParam(aRequest, "AERIMB", "BVI");
+        String evaluarRiesgoSystem = getParam(aRequest, "AERISY", "BVI");
         String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
 		Boolean estadoRiesgo = false;
 		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution") != null ? aRequest.readValueParam("@i_autoActionExecution").toString() : "false";
 
+        String channel = "";
+
+        if(aRequest.readValueParam("@x_channel").toString().contains("8")) {
+            channel = "MOBILE_BROWSER";
+        } else if (aRequest.readValueParam("@x_channel").toString().contains("1")) {
+            channel = "DESKTOP_BROWSER";
+        } else {
+            channel = "SYSTEM";
+        }
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 
@@ -322,7 +333,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                     + aBagSPJavaOrchestration.get("o_nom_beneficiary") + aBagSPJavaOrchestration.get("o_login")
                     + aBagSPJavaOrchestration.get("o_ente_bv"));
 
-            if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+
+            if ( evaluaRiesgo.equals("true") && (
+                        ( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+                        (evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+                        (evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
+                    )
+            ) {
             	//agregar el llamado al orquestador de evaluationrisk
                 IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(aRequest, aBagSPJavaOrchestration);
                 
