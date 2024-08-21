@@ -133,6 +133,18 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String estadoRiesgo = "";
 		
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
+		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
+		String evaluarRiesgoSystem = getParam(anOriginalRequest, "AERISY", "BVI");
+
+		String channel = "";
+
+		if(anOriginalRequest.readValueParam("@x_channel").toString().contains("8")) {
+			channel = "MOBILE_BROWSER";
+		} else if (anOriginalRequest.readValueParam("@x_channel").toString().contains("1")) {
+			channel = "DESKTOP_BROWSER";
+		} else {
+			channel = "SYSTEM";
+		}
 		
 		if(logger.isDebugEnabled())
 			logger.logDebug("length account: "+ lengthCtades);
@@ -208,7 +220,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					return wAccountsResp;
 				}
 				
-				if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+				if ( evaluaRiesgo.equals("true") && (
+					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
+					)
+				) {
 					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 				
 					// Obtengo los valores de la evaluación de riesgo
@@ -270,7 +287,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			aBagSPJavaOrchestration.put("IsReentry", "N");
 			logger.logDebug("Res IsReentry:: " + "N");
 			
-			if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+			if ( evaluaRiesgo.equals("true") && (
+					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
+					)
+			) {
 				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 				
 				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
