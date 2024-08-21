@@ -126,7 +126,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		aBagSPJavaOrchestration.put("tipo_cta_des", "");
 		aBagSPJavaOrchestration.put("unique_id_card", "");
 		int lengthCtades = ctaDest.length();
-		String evaluaRiesgo = anOriginalRequest.readValueParam("@i_autoActionExecution").toString();
+		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution") != null ? aRequest.readValueParam("@i_autoActionExecution").toString() : "false";
 		String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
