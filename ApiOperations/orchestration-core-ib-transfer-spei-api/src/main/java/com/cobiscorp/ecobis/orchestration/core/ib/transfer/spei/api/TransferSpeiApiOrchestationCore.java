@@ -300,12 +300,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
         //String destAccoutNumber = request.readValueParam("@i_destination_account_number");
         
+		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
         String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
 		Boolean estadoRiesgo = false;
-		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution").toString();
-		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
+		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution") != null ? aRequest.readValueParam("@i_autoActionExecution").toString() : "false";
 
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
