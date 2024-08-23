@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXB;
@@ -316,17 +317,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		if( validateFields(request,aBagSPJavaOrchestration))
 		{
 			//llamar sp cambio de estado transfer spei 
-			IProcedureRequest procedureRequest = initProcedureRequest(request);
-
-			procedureRequest.setSpName("cob_bvirtual..sp_act_transfer_spei");
-			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
-					IMultiBackEndResolverService.TARGET_LOCAL);
-			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500161");
-			procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
-			procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
-			procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-			
-			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+						
+			IProcedureResponse procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A");
 			
 			if(procedureResponseLocal.getReturnCode()!=0)
 			{
@@ -547,38 +539,14 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if(logger.isDebugEnabled()) {
 				logger.logInfo("error future: "+responseXml.getErrCodigo());
 			}
-			//llamada a log entrante
-			Integer idLog =	logEntryApi(request, aBagSPJavaOrchestration, "I", "Return Payment in", null, null, null, null, null);
-			IProcedureResponse responsePaymentReturn = null;
+			
 			ExecutorService executor = Executors.newScheduledThreadPool(15);//preguntar por e numero de hilos
 			msjIn.getOrdenpago().setOpCdClave(responseXml.getErrCodigo());
 			// Crear una instancia de MyCallableTask con parámetros
 			CallableTask task = new CallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
 			// Enviar la tarea para su ejecución
-			
-			try
-			{
-				Future<IProcedureResponse> future = executor.submit(task);
-				responsePaymentReturn = future.get();
-				
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			} catch (ExecutionException e)
-			{
-				e.printStackTrace();
-			}
-			executor.shutdownNow();
-	        
-	        if(responsePaymentReturn.getReturnCode()==0)
-			{
-				String  responseConnector = responsePaymentReturn.readValueParam("@o_spei_response");
-				String requestConnector = responsePaymentReturn.readValueParam("@o_spei_request");	
-				String returnCodeMsj = responsePaymentReturn.readValueParam("@o_cod_respuesta")+" - "+responsePaymentReturn.readValueParam("@o_msj_respuesta");
-				//llamada a log update
-				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, returnCodeMsj, responseConnector, idLog, requestConnector);
-			
-			}
+			Future<IProcedureResponse> future = executor.submit(task);
+			executor.shutdown();
 	        logHour("6");
 		}
 		//se manda el response correcto que se recibio la solicitud spei in
@@ -1162,6 +1130,15 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	 		{
 	 			logger.logInfo("reverseSPEIOut:"+procedureResponseReverse.getProcedureResponseAsString());
 	 		}
+	        
+	        if(procedureResponseReverse.getReturnCode()==0)
+	        {
+	        	IProcedureResponse procedureResponseLocal = updateStatusOperation(anOriginalRequest, aBagSPJavaOrchestration, "F");
+				if(procedureResponseLocal.getReturnCode()!=0)
+				{
+				 	procedureResponseReverse = procedureResponseLocal;
+				}
+	        }
 		}else
 			procedureResponseReverse = procedureGetDataSpei;
 		return procedureResponseReverse;
@@ -1362,6 +1339,29 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		} 
 		return logId;
 		
+	}
+	
+	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state)
+	{
+		if(logger.isDebugEnabled())
+			logger.logInfo("init updateStatus");
+		IProcedureRequest procedureRequest = initProcedureRequest(request);
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		
+		procedureRequest.setSpName("cob_bvirtual..sp_act_transfer_spei");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500161");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
+		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+		procedureRequest.addInputParam("@i_estado", ICTSTypes.SYBVARCHAR, state);
+		
+		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+		if(logger.isDebugEnabled())
+			logger.logInfo("response updateStatus :"+procedureResponseLocal.getCTSMessageAsString() );
+		
+		return procedureResponseLocal;
 	}
 	public void logHour(String txt)
 	{
