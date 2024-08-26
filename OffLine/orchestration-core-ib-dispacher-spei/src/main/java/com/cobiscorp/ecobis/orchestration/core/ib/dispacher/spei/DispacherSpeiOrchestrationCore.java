@@ -1100,7 +1100,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		{
 			logger.logInfo("Entrando a reverseSPEIOut");
 		}
-		IProcedureRequest procedureRequest = anOriginalRequest.clone();
+		IProcedureRequest procedureRequest =  initProcedureRequest(anOriginalRequest);
 		IProcedureResponse procedureResponseReverse = null ;
 		
 		IProcedureResponse procedureGetDataSpei = getDataSPEI(anOriginalRequest, aBagSPJavaOrchestration, clave);
