@@ -2,7 +2,7 @@ import json
 import os
 import logging
 import http.client
-import boto3
+import boto3  
 import io
 import gzip
 import copy
@@ -22,6 +22,15 @@ def call_available_expedients(facade, context):
         ef_inea = event_expedient_file['ef_inea']
         ef_iner = event_expedient_file['ef_iner']
         ef_dom1 = event_expedient_file['ef_dom1']
+        ef_dom2 = event_expedient_file['ef_dom2']
+        ef_retry = event_expedient_file['ef_retry']
+        
+        consulta = os.getenv('QUERY_UPDATE_EVENT_EXPEDIENT_FILES_RETRY')
+                    
+        consulta = consulta % (customer_id, ef_retry)
+                    
+        resultado = execute_database(consulta, context)
+        logger.info(f"Database updated for customer_id {customer_id} with QUERY_UPDATE_EVENT_EXPEDIENT_FILES_RETRY")
         
         get_key(facade)
         
@@ -99,6 +108,9 @@ def call_available_expedients(facade, context):
                     if name == 'ADDRESS_PROOF_VIA_INE_MULTI' and ef_dom1 == 0:
                         callRequestFile = True
                         
+                    if name == 'ADDRESS_PROOF_MULTI' and ef_dom2 == 0:
+                        callRequestFile = True
+                        
                     if callRequestFile: 
                         # Log the full URL and headers being used
                         logger.info(f"Making request to: {parsed_url.path}?route=enabled&sv={response_headers['sv']}&sr={response_headers['sr']}&st={response_headers['st']}&se={response_headers['se']}&sp={response_headers['sp']}&sig={response_headers['sig']}&xyz={response_headers['xyz']}")
@@ -141,11 +153,11 @@ def call_available_expedients(facade, context):
                 
                 # Check if the response contains the 'errors' key and the specific error code
                 if 'errors' in response_json and response_json['errors'][0]['code'] == 'BCS-BA-2004':
-                    consulta = os.getenv('QUERY_UPDATE_EVENT_EXPEDIENT_FILES_FAILED')
+                    consulta2 = os.getenv('QUERY_UPDATE_EVENT_EXPEDIENT_FILES_FAILED')
                     
-                    consulta = consulta % (customer_id)
+                    consulta2 = consulta2 % (customer_id)
                     
-                    resultado = execute_database(consulta, context)
+                    resultado = execute_database(consulta2, context)
                     logger.info(f"Database updated for customer_id {customer_id} with QUERY_UPDATE_EVENT_EXPEDIENT_FILES_FAILED")
         
         except Exception as e:
@@ -180,6 +192,9 @@ def upload_to_s3(facade, context, customer_id, file_name, binary_data):
         
     if name == 'ADDRESS_PROOF_VIA_INE_MULTI':
         name = 'COMPROBANTE_DOMICILIO'
+        
+    if name == 'ADDRESS_PROOF_MULTI':
+        name = 'COMPROBANTE_DOMICILIO_DOM'
         
     file_name = f"{name}{extension}"
 
