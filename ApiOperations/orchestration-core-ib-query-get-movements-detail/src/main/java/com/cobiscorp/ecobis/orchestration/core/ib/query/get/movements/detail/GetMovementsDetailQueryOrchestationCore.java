@@ -891,8 +891,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String amount = columns[5].getValue();
 				String iva_val = columns[33].getValue();
 				String purchaseVal = null, withdrawalVal = null;
-				
-				if (type_movement.equals("ISO") && movementType.equals("PURCHASE WITH CASHBACK")) {
+				logger.logDebug("ADC type_movement--->:" +type_movement);
+				logger.logDebug("ADC movementType--->:" +movementType);
+				if (movementType.equals("PURCHASE_WITH_CASHBACK")) {
 					BigDecimal bigDecimalAmount = new BigDecimal(amount);
 					BigDecimal bigDecimalIva = new BigDecimal(iva_val);
 					
