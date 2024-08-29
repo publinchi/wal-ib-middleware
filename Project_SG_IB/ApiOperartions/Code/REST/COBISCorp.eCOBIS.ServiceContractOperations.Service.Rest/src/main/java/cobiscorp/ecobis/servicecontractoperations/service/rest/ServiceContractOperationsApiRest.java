@@ -1628,17 +1628,7 @@ public class ServiceContractOperationsApiRest {
 				new Data("externalCustomerId", inRequestTransferThirdPartyAccount.getExternalCustomerId()),
 				new Data("originAccountNumber", inRequestTransferThirdPartyAccount.getOriginAccountNumber()),
 				new Data("destinationNumber", inRequestTransferThirdPartyAccount.getDestinationNumber()),
-				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()),
-				new Data("userAgent", inRequestTransferThirdPartyAccount.getUserAgent()),
-				new Data("userSessionId", inRequestTransferThirdPartyAccount.getUserSessionId()),
-				new Data("riskEvaluationId", inRequestTransferThirdPartyAccount.getRiskEvaluationId()),
-				new Data("authenticationMethod", inRequestTransferThirdPartyAccount.getAuthenticationMethod()),
-				new Data("latitude", inRequestTransferThirdPartyAccount.getLatitude()),
-				new Data("longitude", inRequestTransferThirdPartyAccount.getLongitude()),
-				new Data("accuracy", inRequestTransferThirdPartyAccount.getAccuracy()),
-				new Data("capturedTime", inRequestTransferThirdPartyAccount.getCapturedTime()),
-				new Data("currency", inRequestTransferThirdPartyAccount.getCurrency()),
-				new Data("autoActionExecution", inRequestTransferThirdPartyAccount.getAutoActionExecution()))) {
+				new Data("amount", inRequestTransferThirdPartyAccount.getAmount()))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
 			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
 					.build();

@@ -3,6 +3,8 @@ package com.cobiscorp.ecobis.orchestration.core.ib.transfer.third.party.account.
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.Date;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -133,6 +135,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String estadoRiesgo = "";
 		
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
+		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
+		String evaluarRiesgoSystem = getParam(anOriginalRequest, "AERISY", "BVI");
+		
+		String channel = anOriginalRequest.readValueParam("@i_channel") != null ? anOriginalRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 		
 		if(logger.isDebugEnabled())
 			logger.logDebug("length account: "+ lengthCtades);
@@ -208,7 +214,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					return wAccountsResp;
 				}
 				
-				if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+				if ( evaluaRiesgo.equals("true") && (
+					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
+					)
+				) {
 					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 				
 					// Obtengo los valores de la evaluación de riesgo
@@ -270,7 +281,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			aBagSPJavaOrchestration.put("IsReentry", "N");
 			logger.logDebug("Res IsReentry:: " + "N");
 			
-			if (evaluaRiesgo.equals("true") && evaluarRiesgo.equals("true")){
+			if ( evaluaRiesgo.equals("true") && (
+					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
+					)
+			) {
 				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 				
 				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
@@ -749,7 +765,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
 		
-		String channel="";
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -766,17 +781,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
 		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
 		
-		if(aRequest.readValueParam("@x_channel").toString().contains("8")) {
-			channel = "MOBILE_BROWSER";
-		} else if (aRequest.readValueParam("@x_channel").toString().contains("1")) {
-			channel = "DESKTOP_BROWSER";
-		} else {
-			channel = "SYSTEM";
-		}
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel").toString());//se obtiene con el response del f1
 		
-		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, channel);//se obtiene con el response del f1
-		
-		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent").toString());//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));
@@ -786,7 +793,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
-		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
+		String transactionDate = unifyDateFormat(aRequest.readValueParam("@x_end_user_request_date"));
+		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
 		
@@ -1397,5 +1405,40 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		return "";
 	}
+
+	private String unifyDateFormat(String dateString) {
+        String[] formats = {
+            "yyyy-MM-dd HH:mm:ssZ",
+			"yyyy/MM/dd HH:mm:ssZ",
+			"yyyy-MM-dd HH:mm:ss.SSSZ", 
+			"yyyy/MM/dd HH:mm:ss.SSSZ",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
+			"yyyy/MM/dd'T'HH:mm:ss.SSS'Z'", 
+            "yyyy-MM-dd HH:mm:ssZ",
+            "yyyy/MM/dd HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss",
+			"yyyy/MM/dd HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss.SSSXXX",
+			"yyyy/MM/dd HH:mm:ss.SSSXXX",
+            "yyyy-MM-dd HH:mm:ssXXX",
+			"yyyy/MM/dd HH:mm:ssXXX"
+        };
+
+        Date date = null;
+
+        for (String format : formats) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(format);
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Establecer zona horaria si es necesario
+                date = sdf.parse(dateString);
+                break; // Si se analiza correctamente, salir del bucle
+            } catch (ParseException ignored) {
+                // Ignorar y continuar con el siguiente formato
+            }
+        }
+
+        SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        return unifiedFormat.format(date);
+    }
 
 }

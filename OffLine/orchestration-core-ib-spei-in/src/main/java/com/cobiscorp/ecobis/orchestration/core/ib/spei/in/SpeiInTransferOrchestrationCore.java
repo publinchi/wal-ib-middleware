@@ -306,7 +306,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String estadoRiesgo = "";
 		Integer code = 0;
         String message = "success";
-		validaRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
+		validaRiesgo = getParam(anOriginalRequest, "AERISY", "BVI");
         
 		if (logger.isDebugEnabled())
 			logger.logDebug("@i_tipoCuentaBeneficiario: " + anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));		
