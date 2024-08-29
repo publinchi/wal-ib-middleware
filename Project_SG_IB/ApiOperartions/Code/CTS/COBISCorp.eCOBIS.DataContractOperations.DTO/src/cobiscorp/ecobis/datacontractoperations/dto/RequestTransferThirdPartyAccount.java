@@ -38,6 +38,15 @@ public class RequestTransferThirdPartyAccount implements Serializable {
   private java.math.BigDecimal latitude;
   private java.math.BigDecimal longitude;
   private String otpCode;
+  private String userAgent;
+  private String userSessionId;
+  private String riskEvaluationId;
+  private String authenticationMethod;
+  private int accuracy;
+  private String capturedTime;
+  private String currency;
+  private String autoActionExecution;
+  private String channel;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -97,5 +106,59 @@ public class RequestTransferThirdPartyAccount implements Serializable {
   }
   public void setOtpCode(String otpCode ){
     this.otpCode=otpCode;
+  }
+  public String getUserAgent(){
+    return this.userAgent;
+  }
+  public void setUserAgent(String userAgent ){
+    this.userAgent=userAgent;
+  }
+  public String getUserSessionId(){
+    return this.userSessionId;
+  }
+  public void setUserSessionId(String userSessionId ){
+    this.userSessionId=userSessionId;
+  }
+  public String getRiskEvaluationId(){
+    return this.riskEvaluationId;
+  }
+  public void setRiskEvaluationId(String riskEvaluationId ){
+    this.riskEvaluationId=riskEvaluationId;
+  }
+  public String getAuthenticationMethod(){
+    return this.authenticationMethod;
+  }
+  public void setAuthenticationMethod(String authenticationMethod ){
+    this.authenticationMethod=authenticationMethod;
+  }
+  public int getAccuracy(){
+    return this.accuracy;
+  }
+  public void setAccuracy(int accuracy ){
+    this.accuracy=accuracy;
+  }
+  public String getCapturedTime(){
+    return this.capturedTime;
+  }
+  public void setCapturedTime(String capturedTime ){
+    this.capturedTime=capturedTime;
+  }
+  public String getCurrency(){
+    return this.currency;
+  }
+  public void setCurrency(String currency ){
+    this.currency=currency;
+  }
+  public String getAutoActionExecution(){
+    return this.autoActionExecution;
+  }
+  public void setAutoActionExecution(String autoActionExecution ){
+    this.autoActionExecution=autoActionExecution;
+  }
+  public String getChannel(){
+    return this.channel;
+  }
+  public void setChannel(String channel ){
+    this.channel=channel;
   }
 }

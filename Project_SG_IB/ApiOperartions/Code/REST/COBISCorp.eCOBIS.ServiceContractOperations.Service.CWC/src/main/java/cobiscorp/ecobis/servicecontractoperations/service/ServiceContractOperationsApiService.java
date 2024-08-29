@@ -5233,6 +5233,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				inRequestTransferSpi.getCurrency());
 		procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
 				String.valueOf(inRequestTransferSpi.getAutoActionExecution()));
+		
+		procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getChannel());
 
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -5436,6 +5438,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 				inRequestTransferThirdPartyAccount.getCurrency());
 		procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
 				String.valueOf(inRequestTransferThirdPartyAccount.getAutoActionExecution()));
+		procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferThirdPartyAccount.getChannel());
 		
 		// execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
