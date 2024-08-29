@@ -12,11 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXB;
@@ -386,7 +384,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					logHour("3");
 					
 					//validacion de tipos de pago en el catalogo cobis bv_tipo_pago_spei_in
-					int typePaymentResult = catalog(request, "bv_tipo_pago_spei_in", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E");
+					int typePaymentResult = catalog(request, "bv_tipo_pago_spei_in", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E","");
 					//spein in tipo de pago 0 devolucion
 					if(typePaymentResult == 0)
 					{
@@ -407,7 +405,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 						}else
 						{
 							//busqueda tipo de pago extemporaneo
-							int typePayExtResult = catalog(request, "bv_tipo_pago_extemporeano", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E");
+							int typePayExtResult = catalog(request, "bv_tipo_pago_extemporeano", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E","");
 							
 							if(typePayExtResult == 0)
 							{
@@ -533,7 +531,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
 	
 		String returnCodeMsjSpeiIn = "";
-		if(responseXml.getErrCodigo() != 0)
+		if(responseXml.getErrCodigo() != 0 && isCoreError)
 		{
 			logHour("5");
 			if(logger.isDebugEnabled()) {
@@ -629,11 +627,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					logger.logInfo("BER fecha operacion ensesion:"+inst.getInsNombre()+":"+inst.getClaveCesif());
 			
 				//actualizar catalogo
-				responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"U");
+				responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"U", "V");
 				if(responseCatalog!=0)
 				{
 					//inserta catalogo
-					responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I");
+					responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I", "V");
 				}
 	         }
 	         //llamado sp
@@ -1024,6 +1022,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			anOriginalRequest.addInputParam("@i_id_mensaje", ICTSTypes.SQLINT4, msjIn.getOrdenpago().getId());
 			//Atributos	
 			anOriginalRequest.addInputParam("@i_op_fecha_oper", ICTSTypes.SQLINT4, opFechaOper);
+			anOriginalRequest.addInputParam("@i_op_fecha_abono", ICTSTypes.SQLVARCHAR, opFechaOper);
 			anOriginalRequest.addInputParam("@i_op_hora_abono", ICTSTypes.SQLVARCHAR, horaHHmmss);
 			anOriginalRequest.addInputParam("@i_op_cve_rastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 			anOriginalRequest.addInputParam("@i_op_folio_orig_odp", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getOpFolio()));
@@ -1043,37 +1042,41 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			anOriginalRequest.addInputParam("@i_op_concepto_pag", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
 			anOriginalRequest.addInputParam("@i_op_tipo_pag", ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
 			anOriginalRequest.addInputParam("@i_op_iva", ICTSTypes.SQLMONEY, "0");
-			anOriginalRequest.addInputParam("@i_op_monto", ICTSTypes.SQLMONEY, String.valueOf( msjIn.getOrdenpago().getOpMonto()));
-			anOriginalRequest.addInputParam("@i_op_hora00", ICTSTypes.SQLVARCHAR, horaHHmmssSSS);
-			anOriginalRequest.addInputParam("@i_op_fecha_abono", ICTSTypes.SQLVARCHAR, opFechaOper);
+			anOriginalRequest.addInputParam("@i_op_monto", ICTSTypes.SQLMONEY, String.valueOf( msjIn.getOrdenpago().getOpMonto()));		
 			
-			// anOriginalRequest.addInputParam("@i_op_nom_ben2", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomBen2());
-         	// anOriginalRequest.addInputParam("@i_op_rfc_curp_ben2", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfc);
-         	// anOriginalRequest.addInputParam("@i_op_tp_cta_ben2", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen2()));
-         	// anOriginalRequest.addInputParam("@i_op_cuenta_ben2", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaBen2());
-         	//anOriginalRequest.addInputParam("@i_op_folio_codi", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFolio());//
-         	//anOriginalRequest.addInputParam("@i_op_comision_trans", ICTSTypes.SQLVARCHAR, opFechaOper);
-         	//anOriginalRequest.addInputParam("@i_op_monto_comision", ICTSTypes.SQLVARCHAR, opFechaOper);
-			// SE HACE LA LLAMADA AL CONECTOR
-			//tipo pago  31 7 
-			anOriginalRequest.addInputParam("@i_op_nom_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomParticipanteOrd());//30
-         	anOriginalRequest.addInputParam("@i_op_cta_part_indirecto_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaParticipanteOrd());//31
-         	anOriginalRequest.addInputParam("@i_op_rfc_curp_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcParticipanteOrd());//32
 			
+			//tipo pago  30 7 
+			if(msjIn.getOrdenpago().getOpTpClave()==30)
+			{
+				anOriginalRequest.addInputParam("@i_op_nom_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomParticipanteOrd());
+	         	anOriginalRequest.addInputParam("@i_op_cta_part_indirecto_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaParticipanteOrd());
+	         	anOriginalRequest.addInputParam("@i_op_rfc_curp_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcParticipanteOrd());
+	         	anOriginalRequest.addInputParam("@i_op_nom_part_indirecto_ben", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomBen());
+	         	anOriginalRequest.addInputParam("@i_op_cta_part_indirecto_ben", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
+	         	anOriginalRequest.addInputParam("@i_op_rfc_curp_part_indirecto_ben", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getOpRfcCurpOrd());
+			}
          	//tipo pago 36
-         	anOriginalRequest.addInputParam("@i_op_id_remesa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpIdRemesa());//33
-         	anOriginalRequest.addInputParam("@i_op_pais", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpPais());//34
-         	anOriginalRequest.addInputParam("@i_op_divisa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpDivisa());//35
-         	anOriginalRequest.addInputParam("@i_op_nom_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomEmisorRemesa());//36
-         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_ext", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getopNomProvRemesaExtranjera());//37
-         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_nac", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomProvRemesaNacional());//38
-			
+			if(msjIn.getOrdenpago().getOpTpClave()==36)
+			{
+	         	anOriginalRequest.addInputParam("@i_op_id_remesa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpIdRemesa());
+	         	anOriginalRequest.addInputParam("@i_op_pais", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpPais());
+	         	anOriginalRequest.addInputParam("@i_op_divisa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpDivisa());
+	         	anOriginalRequest.addInputParam("@i_op_nom_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomEmisorRemesa());
+	         	anOriginalRequest.addInputParam("@i_op_cta_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaEmisorRemesa());
+	         	anOriginalRequest.addInputParam("@i_op_rfc_curp_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcCurpEmisorRemesa());
+	         	anOriginalRequest.addInputParam("@i_op_nom_ben_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomBenRemesa());
+	         	anOriginalRequest.addInputParam("@i_op_cta_ben_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
+	           	anOriginalRequest.addInputParam("@i_op_rfc_curp_ben_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcCurpOrd());    	
+	         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_ext", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomProvRemesaExtranjera());
+	         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_nac", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomProvRemesaNacional());
+			}
+			anOriginalRequest.addInputParam("@i_op_hora00", ICTSTypes.SQLVARCHAR, horaHHmmssSSS);
 			anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TIMEOUT, ICOBISTS.HEADER_STRING_TYPE, "4000");
 			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500164");
 			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500164");// 1890018
 			
 			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorESICE)");	
-	    
+			// SE HACE LA LLAMADA AL CONECTOR
 			// SE EJECUTA CONECTOR
 			connectorResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
 
@@ -1218,7 +1221,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return "";
 	}
 	
-	private int catalog(IProcedureRequest anOriginalRequest, String tabla, String codigo, String valor, String operacion) {
+	private int catalog(IProcedureRequest anOriginalRequest, String tabla, String codigo, String valor, String operacion, String estado) {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Begin flow, setCatalog");
 		}
@@ -1230,7 +1233,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		reqTMPCentral.addInputParam("@i_tabla",ICTSTypes.SQLVARCHAR, tabla);
 		reqTMPCentral.addInputParam("@i_codigo",ICTSTypes.SQLVARCHAR, codigo);	
 		reqTMPCentral.addInputParam("@i_descripcion",ICTSTypes.SQLDATETIME, valor);	
-		
+		reqTMPCentral.addInputParam("@i_estado",ICTSTypes.SQLDATETIME, valor);	
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isDebugEnabled()) {
