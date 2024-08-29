@@ -178,6 +178,9 @@ public class ordenpago implements Serializable{
     private String opNomEmisorRemesa;
 	
 	@XmlElement
+    private String opRfcCurpEmisorRemesa;
+	
+	@XmlElement
     private String opNomBenRemesa;
 	
 	@XmlElement
@@ -189,7 +192,19 @@ public class ordenpago implements Serializable{
 	/**
 	 * @return the opNomProvRemesaNacional
 	 */
-	public synchronized String getopNomProvRemesaExtranjera() {
+	public synchronized String getOpRfcCurpEmisorRemesa() {
+		return opRfcCurpEmisorRemesa;
+	}
+	/**
+	 * @param opNomProvRemesaExtranjera the opNomProvRemesaExtranjera to set
+	 */
+	public synchronized void setOpRfcCurpEmisorRemesa(String opRfcCurpEmisorRemesa) {
+		this.opRfcCurpEmisorRemesa = opRfcCurpEmisorRemesa;
+	}
+	/**
+	 * @return the opNomProvRemesaNacional
+	 */
+	public synchronized String getOpNomProvRemesaExtranjera() {
 		return opNomProvRemesaExtranjera;
 	}
 	/**

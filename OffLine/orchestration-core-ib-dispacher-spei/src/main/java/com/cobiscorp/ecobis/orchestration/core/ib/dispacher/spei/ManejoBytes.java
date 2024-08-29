@@ -24,6 +24,7 @@ public class ManejoBytes {
         //CveRastreo + Monto + CuentaOrd + CuentaBen
         if(logger.isDebugEnabled())
         {
+        	logger.logDebug("tipoFirma:"+tipoFirma);
         	logger.logDebug("OpFechaOper:"+getDate(msj.getOrdenpago().getOpFechaOper()));
         	logger.logDebug("opinsclave:"+msj.getOrdenpago().getOpInsClave());
         	logger.logDebug("opinsclaveben:"+Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString()));
@@ -38,56 +39,62 @@ public class ManejoBytes {
         wFirma = ByteBuffer.allocate(0).array();
         
         //todos los tipos de pagos tienen estos datos incluida la firma 1
-        wFirma = concatByte(wFirma, formateoFrima(getDate(msj.getOrdenpago().getOpFechaOper()))); //OpFechaOper
-        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpInsClave()));//opinsclave
-        wFirma = concatByte(wFirma, formateoFrima(Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString())));//opinsclaveben
-        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCveRastreo()));//clave rastreo
-        wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpMonto().doubleValue()));//opmonto
+        wFirma = concatByte(wFirma, formateoFirma(getDate(msj.getOrdenpago().getOpFechaOper()))); //OpFechaOper
+        wFirma = concatByte(wFirma, formateoFirma(msj.getOrdenpago().getOpInsClave()));//opinsclave
+        wFirma = concatByte(wFirma, formateoFirma(Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString())));//opinsclaveben
+        wFirma = concatByte(wFirma, formateoFirma(msj.getOrdenpago().getOpCveRastreo()));//clave rastreo
+        wFirma = concatByte(wFirma, formateoFirma(msj.getOrdenpago().getOpMonto().doubleValue()));//opmonto
+        
+        String opCuentaOrd = msj.getOrdenpago().getOpCuentaOrd()!=null?msj.getOrdenpago().getOpCuentaOrd():"";
+        String opCuentaBen = msj.getOrdenpago().getOpCuentaBen()!=null?msj.getOrdenpago().getOpCuentaBen():"";
+        String opCuentaBen2 = msj.getOrdenpago().getOpCuentaBen2()!=null?msj.getOrdenpago().getOpCuentaBen2():"";
+        String opCuentaParticipanteOrd = msj.getOrdenpago().getOpCuentaParticipanteOrd()!=null?msj.getOrdenpago().getOpCuentaParticipanteOrd():"";
+        String opCuentaEmisorRemesa = msj.getOrdenpago().getOpCuentaEmisorRemesa()!=null?msj.getOrdenpago().getOpCuentaEmisorRemesa():"";
         
         //firma bv_tipo_firma catalogo
         if("2".equals(tipoFirma ))
         {
-        	wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //OpCuentaOrd
+        	wFirma = concatByte(wFirma, formateoFirma(opCuentaOrd)); //OpCuentaOrd
         }else
     	if("3".equals(tipoFirma))
     	{
-    		wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //OpCuentaBen
+    		wFirma = concatByte(wFirma, formateoFirma(opCuentaBen)); //OpCuentaBen
     	}else
 		if("4".equals(tipoFirma))
 		{
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //OpCuentaOrd
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //OpCuentaBen
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaOrd)); //OpCuentaOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen)); //OpCuentaBen
 		}else
 		if("5".equals(tipoFirma))
 		{
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //OpCuentaBen
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen2())); //OpCuentaBen2
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen)); //OpCuentaBen
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen2)); //OpCuentaBen2
 		}else
         if("6".equals(tipoFirma))
 		{
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //OpCuentaBen
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen2())); //OpCuentaBen2
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaOrd)); //CuentaOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen)); //OpCuentaBen
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen2)); //OpCuentaBen2
 		}else
 		if("7".equals(tipoFirma))
 		{
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaOrd)); //CuentaOrd
 			//CuentaPartOrd falta este campo
 		}else
 		if("8".equals(tipoFirma))
 		{
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //OpCuentaBen
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaParticipanteOrd()));//CuentaPartOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaOrd)); //CuentaOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen)); //OpCuentaBen
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaParticipanteOrd));//CuentaPartOrd
 			
 		}
 		else
 		if("9".equals(tipoFirma))
 		{
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaOrd())); //CuentaOrd
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaBen())); //OpCuentaBen
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaParticipanteOrd()));//OpCuentaParticipanteOrd
-			wFirma = concatByte(wFirma, formateoFrima(msj.getOrdenpago().getOpCuentaEmisorRemesa()));//OpCuentaEmisorRemesa
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaOrd)); //CuentaOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaBen)); //OpCuentaBen
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaParticipanteOrd));//OpCuentaParticipanteOrd
+			wFirma = concatByte(wFirma, formateoFirma(opCuentaEmisorRemesa));//OpCuentaEmisorRemesa
 		}
         logDebug(METHOD_NAME,toString(wFirma));        
         return wFirma;
@@ -109,21 +116,21 @@ public class ManejoBytes {
         byteBuffer.put(aSegundo);
         return byteBuffer.array();
     }
-    private static byte[] formateoFrima(Object aObjeto) {
+    private static byte[] formateoFirma(Object aObjeto) {
         if (aObjeto instanceof String)
-            return formateoFrima(aObjeto, "S");
+            return formateoFirma(aObjeto, "S");
         if (aObjeto instanceof Integer)
-            return formateoFrima(aObjeto, "I");
+            return formateoFirma(aObjeto, "I");
         if (aObjeto instanceof Long)
-            return formateoFrima(aObjeto, "L");
+            return formateoFirma(aObjeto, "L");
         if (aObjeto instanceof Double)
-            return formateoFrima(aObjeto, "M");
+            return formateoFirma(aObjeto, "M");
         if (aObjeto instanceof Date)
-            return formateoFrima(aObjeto, "D");
+            return formateoFirma(aObjeto, "D");
 
         return ByteBuffer.allocate(0).array();
     }
-    private static byte[] formateoFrima(Object aObjeto, String aType) {
+    private static byte[] formateoFirma(Object aObjeto, String aType) {
         if ("D".equals(aType)) {
             return formatearDate(aObjeto);
         } else if ("L".equals(aType)) {
