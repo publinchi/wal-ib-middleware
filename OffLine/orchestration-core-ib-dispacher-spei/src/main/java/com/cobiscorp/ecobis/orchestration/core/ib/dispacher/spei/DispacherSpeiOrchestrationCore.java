@@ -388,10 +388,15 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					//spein in tipo de pago 0 devolucion
 					if(typePaymentResult == 0)
 					{
-						if(msjIn.getOrdenpago().getOpTpClave()==0)
+						if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17)
 						{
+							String clave = "";
+							if( msjIn.getOrdenpago().getOpTpClave()==17)
+								clave = msjIn.getOrdenpago().getOpRastreoOri();
+							else
+								clave =  msjIn.getOrdenpago().getOpCveRastreo();
 							//llamdo a reversa de spei
-							IProcedureResponse procedureResponseReverse = reverseSPEI(request, aBagSPJavaOrchestration, msjIn.getOrdenpago().getOpCveRastreo());
+							IProcedureResponse procedureResponseReverse = reverseSPEI(request, aBagSPJavaOrchestration, clave);
 							
 							if(!procedureResponseReverse.hasError() && procedureResponseReverse.getReturnCode()==0)
 							{
@@ -455,13 +460,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 							logHour("4");
 							if(logger.isDebugEnabled())
 								logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
-							
+							//implementar catalogo para los que si aplican esice
 							if(procedureResponseLocal.getReturnCode()==0 && procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0
-									&& msjIn.getOrdenpago().getOpTpClave() != 7
-									&& msjIn.getOrdenpago().getOpTpClave() != 16
-									&& msjIn.getOrdenpago().getOpTpClave() != 17
-									&& msjIn.getOrdenpago().getOpTpClave() != 18
-									&& msjIn.getOrdenpago().getOpTpClave() != 24)
+									&& msjIn.getOrdenpago().getOpTpClave() == 1
+									&& msjIn.getOrdenpago().getOpTpClave() == 12
+									&& msjIn.getOrdenpago().getOpTpClave() == 30
+									&& msjIn.getOrdenpago().getOpTpClave() == 36)
 							{
 								//falta implementar las tablas de auditoria y generacion de secuenciales
 								//llamada a log entrante

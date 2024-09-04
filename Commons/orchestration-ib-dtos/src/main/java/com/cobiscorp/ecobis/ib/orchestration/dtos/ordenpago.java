@@ -118,6 +118,9 @@ public class ordenpago implements Serializable{
 	private int OpTcClaveBen;
 	
 	@XmlElement
+	private String opRastreoOri;
+	
+	@XmlElement
 	private String OpCuentaBen;
 	
 	@XmlElement
@@ -189,6 +192,18 @@ public class ordenpago implements Serializable{
 	@XmlElement
     private String opNomProvRemesaExtranjera;
 	
+	/**
+	 * @return the opRastreoOri
+	 */
+	public synchronized String getOpRastreoOri() {
+		return opRastreoOri;
+	}
+	/**
+	 * @param opNomProvRemesaExtranjera the opNomProvRemesaExtranjera to set
+	 */
+	public synchronized void setOpRastreoOri(String opRastreoOri) {
+		this.opRastreoOri = opRastreoOri;
+	}
 	/**
 	 * @return the opNomProvRemesaNacional
 	 */
