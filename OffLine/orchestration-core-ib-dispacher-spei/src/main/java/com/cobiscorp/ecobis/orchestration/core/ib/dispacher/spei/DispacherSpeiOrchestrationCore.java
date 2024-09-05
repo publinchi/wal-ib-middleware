@@ -1362,7 +1362,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500161");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
-		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, clave);
 		procedureRequest.addInputParam("@i_estado", ICTSTypes.SYBVARCHAR, state);
 		
 		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
