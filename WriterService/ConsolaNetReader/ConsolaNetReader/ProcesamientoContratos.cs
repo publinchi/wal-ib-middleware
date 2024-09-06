@@ -36,6 +36,7 @@ using log4net.Config;
 using System.Globalization;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Diagnostics.Contracts;
+using System.Diagnostics;
 
 
 
@@ -52,6 +53,7 @@ namespace ConsolaNetReader
         // private const string directoryPath = "c:/cobis/contratos/";
         // private const string fileName = "plantilla.docx";
         private string deposito;
+        private string temporales;
         private string plantillas;
         private string generated;
         private string token;
@@ -60,8 +62,11 @@ namespace ConsolaNetReader
         private string commonFileName;
         private string fileNameDoc;
         private string fileNamePdf;
+        private string temporalFile;
+        private string temporalFileGeneral;
         private string guid;
         public string mail;
+        public string dates;
         public int customerId;
         private string client;
         private string secret;
@@ -73,7 +78,7 @@ namespace ConsolaNetReader
 
 
 
-        public ProcesamientoContratos() {
+        public ProcesamientoContratos(string token) {
 
             XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
 
@@ -88,7 +93,7 @@ namespace ConsolaNetReader
                 this.confirmationApi = ConfigurationManager.AppSettings["confirmationApi"];
                 this.plantillaGeneral = ConfigurationManager.AppSettings["plantillaGeneral"];
 
-                string token = string.Empty;
+                this.token = token;
 
                 this.setFileName();
 
@@ -100,6 +105,7 @@ namespace ConsolaNetReader
                 this.plantillas = ConfigurationManager.AppSettings["templates"];
                 this.generated = ConfigurationManager.AppSettings["generated"];
                 this.plantilla = ConfigurationManager.AppSettings["plantilla"];
+                this.temporales = ConfigurationManager.AppSettings["temporales"];
 
                 log.Info("deposito " + deposito);
                 log.Info("plantillas " + plantillas);
@@ -107,7 +113,8 @@ namespace ConsolaNetReader
                 log.Info("plantilla " + plantilla);
 
 
-                 log.Info("Generando Token");
+              /*   log.Info("Generando Token");
+
 
                 var client = new RestClient(authUrl); 
                   var request = new RestRequest(authUrl, Method.Post);
@@ -121,7 +128,7 @@ namespace ConsolaNetReader
                 var tokenData = JObject.Parse(response.Content);
                 this.token = tokenData["access_token"].ToString();
 
-                log.Info("Token generado.....");
+                log.Info("Token generado.....");*/
             }
             catch (Exception xe) {
 
@@ -131,12 +138,16 @@ namespace ConsolaNetReader
         }
 
         public void setFileName() {
-
             this.guid = Guid.NewGuid().ToString();
-            this.fileNameDoc = string.Concat(guid, doc);
-            this.fileNamePdf = string.Concat(guid, pdf);
+ 
+            this.fileNameDoc = string.Concat(Guid.NewGuid().ToString(), doc);
+            this.fileNamePdf = string.Concat(Guid.NewGuid().ToString(), pdf);
+            this.temporalFile= string.Concat(Guid.NewGuid().ToString(), doc);
+            this.temporalFileGeneral = string.Concat(Guid.NewGuid().ToString(), doc);
 
         }
+
+
 
         public static byte[] Documento
         {
@@ -159,7 +170,9 @@ namespace ConsolaNetReader
                 try
                 {
                     String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
-                    plantilla = wordApp.Documents.Open(rutaOriginal);
+                    File.Copy(rutaOriginal, System.IO.Path.Combine(temporales,this.temporalFile), overwrite: true);
+                    plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
+                        
                     aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
                     convertToPDF();
                     uploadFile("CONTRATO");
@@ -179,8 +192,10 @@ namespace ConsolaNetReader
 
                 try
                 {
+                    
                     string rutaGeneral = System.IO.Path.Combine(plantillas, this.plantillaGeneral);
-                    plantillaGeneral = wordApp2.Documents.Open(rutaGeneral);
+                    File.Copy(rutaGeneral, System.IO.Path.Combine(temporales, this.temporalFileGeneral), overwrite: true);
+                    plantillaGeneral = wordApp2.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
                     aplicaCambiosContrato(contratos, plantillaGeneral, "DATOS CLIENTE");
                     convertToPDF();
                     uploadFile("DATOS CLIENTE");
@@ -330,12 +345,50 @@ namespace ConsolaNetReader
             return formato4;
         }
 
+
+
+
+
+        public bool validarDatosContratros(Contrato contratos) {
+
+            bool validacion = false;
+
+            try
+            {
+                foreach (Valores valor in contratos.Valores)
+                {
+                   string values = valor.Valor;
+
+                    if (values.IsValueNullOrEmpty())
+                    {
+                        values = "";
+                    }
+                }
+
+            }
+            catch (Exception xe)
+            {
+
+                throw;
+            }
+
+            return validacion;
+
+
+        }
+
+
+
+
+
         private void aplicaCambiosContrato(Contrato contratos, Microsoft.Office.Interop.Word.Document plantilla,string type)
         {
 
             string values = "";
 
             Application wordApp = null;
+
+            Requeridos.cliente = this.customerId;
 
             try {
 
@@ -360,11 +413,18 @@ namespace ConsolaNetReader
                         values = "";
                     }
 
+                  
+
+                  if(!Requeridos.validarValor(valor.Llave, values, type)) {
+                        throw new Exception("CAMPO REQUERIDO 789DX");          
+                    }
+
+
                         foreach (Range seleccion in plantilla.StoryRanges)
                         {
 
                             seleccion.Find.Execute(FindText: valor.Llave, ReplaceWith: values, MatchWildcards: false, Forward: true, Format: false, Wrap: WdFindWrap.wdFindContinue, Replace: WdReplace.wdReplaceAll,
-                              MatchCase: false, MatchWholeWord: false, MatchSoundsLike: false, MatchAllWordForms: false, MatchKashida: false, MatchDiacritics: false, MatchAlefHamza: false,
+                              MatchCase: true, MatchWholeWord: false, MatchSoundsLike: false, MatchAllWordForms: false, MatchKashida: false, MatchDiacritics: false, MatchAlefHamza: false,
                                MatchControl: false);
                         }
                 }
@@ -384,7 +444,14 @@ namespace ConsolaNetReader
             }
             catch (Exception ex) {
 
+
+                
                 log.Error(ex);
+
+                if (ex.Message.Contains("789DX"))
+                {
+                    throw ex;
+                }
 
             }
             finally {
@@ -392,10 +459,29 @@ namespace ConsolaNetReader
                 plantilla.Close();
                 wordApp.Quit();
 
-
-
             }
       
+        }
+
+        public string CapitalizeWords(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            // Divide la cadena en palabras
+            var words = input.Split(' ');
+
+            // Capitaliza cada palabra
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].Length > 0)
+                {
+                    words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1).ToLower();
+                }
+            }
+
+            // Une las palabras de nuevo en una sola cadena
+            return string.Join(" ", words);
         }
 
         public void addBeneficiariesDocument(Microsoft.Office.Interop.Word.Document documento, Contrato contrato)
@@ -404,9 +490,7 @@ namespace ConsolaNetReader
             int i = 1;
 
             try
-            {
-  
-              
+            {              
 
                         foreach (Microsoft.Office.Interop.Word.Table tabla in documento.Tables)
                         {
@@ -430,9 +514,7 @@ namespace ConsolaNetReader
                                     row.Cells[3].Range.Text = fechaFormateada;
                                 }
                                 row.Cells[4].Range.Text = beneficiario.porcentaje;
-                            }
-
-                       
+                            }                       
 
                         }
                         else {
@@ -465,85 +547,6 @@ namespace ConsolaNetReader
         }
 
 
-        public List<Contrato> validarContratos(JObject jsons)
-        {
-
-            List<Valores> listValores = new List<Valores>();
-            List<Contrato> contra = new List<Contrato>();
-
-            try
-            {
-
-                if (jsons != null)
-                {
-
-                    JArray datosPlantilla = (JArray)jsons["sp_bv_event_contract"];
-                    JArray valoresPlantilla = (JArray)jsons["dato_plantilla_contract"];
-    
-
-                    log.Info(datosPlantilla);
-                    log.Info(valoresPlantilla);
-
-
-                    foreach (JObject dato in datosPlantilla)
-                    {                       
-
-                        Contrato contratos = new Contrato();
-
-                        listValores = new List<Valores>();       
-
-                        foreach (JObject maq in valoresPlantilla)
-                        {
-
-                            log.Info($"{maq.ToString()}");      
-
-                            Valores val = new Valores();
-
-                            val.Llave = maq["db_sustitucion"].ToString();
-                            val.Valor = validadarValor(dato[maq["dp_relacion"].ToString()]);   
-
-                            listValores.Add(val);
-                        }
-
-                        var beneficiarios=dato["beneficiarios"];
-
-                        List<Beneficiario> listBeneficiarios = new List<Beneficiario>() ;
-
-
-                        if (beneficiarios != null)
-                        {
-                            foreach (var beneficiario in beneficiarios)
-                            {
-                                if (beneficiario["Nombres"] != null)
-                                {
-                                    Beneficiario ben = new Beneficiario();
-                                    ben.nombre = beneficiario["Nombres"].ToString();
-                                    ben.paterno = beneficiario["paterno"].ToString();
-                                    ben.materno = beneficiario["materno"].ToString();
-                                    ben.domicilio = beneficiario["domicilio"].ToString();
-                                    ben.fechaNacimiento = beneficiario["nacimiento"].ToString();
-                                    ben.porcentaje = beneficiario["porcentaje"].ToString();
-                                    listBeneficiarios.Add(ben);
-                                }
-
-                            }
-                        }
-
-                        contratos.Valores = listValores;
-                        contratos.Beneficiarios=listBeneficiarios;
-                        contra.Add(contratos);
-                    }
-
-
-                }
-            }
-            catch (Exception xe) { 
-            
-               log.Error(xe);       
-            }
-
-            return contra;
-        }
 
 
         private  string validadarValor(object cadena)

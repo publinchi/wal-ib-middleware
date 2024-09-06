@@ -54,6 +54,18 @@ namespace DocumentServices
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            String hola=this.ProductName;
+
+            using (Mutex mutex = new Mutex(false, hola, out bool isCreatedNew))
+ 
+            {
+                if (!isCreatedNew)
+                {
+                    Environment.Exit(0);
+                }
+            
+            }
+
 
             foreach (var process in Process.GetProcessesByName("WINWORD"))
             {
@@ -76,16 +88,37 @@ namespace DocumentServices
             Directory.CreateDirectory(generated);
             string templates = ConfigurationManager.AppSettings["templates"];
             Directory.CreateDirectory(templates);
+            string temporales = ConfigurationManager.AppSettings["temporales"];
+            Directory.CreateDirectory(temporales);
 
- 
+            DeleteFiles(temporales, "*.*");
+            DeleteFiles(generated, "*.*");
+            DeleteFiles(deposito, "*.*");
+
+
             ServicesDocuments doc = new ServicesDocuments();
             doc.documentsGenerator();
+
+
 
             
             timer = new System.Timers.Timer();
             timer.Interval = int.Parse(espera); 
             timer.Elapsed += Timer_Elapsed;
             timer.Start();
+        }
+
+        static void DeleteFiles(string directoryPath, string searchPattern)
+        {
+            // Obtener todos los archivos en el directorio que coincidan con el patrón
+            string[] files = Directory.GetFiles(directoryPath, searchPattern);
+
+            // Eliminar cada archivo encontrado
+            foreach (string file in files)
+            {
+                File.Delete(file);
+                Console.WriteLine($"Archivo eliminado: {file}");
+            }
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)

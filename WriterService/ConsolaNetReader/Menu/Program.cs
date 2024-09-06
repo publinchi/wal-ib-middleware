@@ -17,13 +17,7 @@ namespace DocumentServices
         [STAThread]
         static void Main()
         {
-            using (Mutex mutex = new Mutex(false, "Menu", out bool isCreatedNew))
-            {
-                if (!isCreatedNew)
-                {
-                    Environment.Exit(0);
-                }
-            }
+
 
             log.Info("INICIA WRITE DOCUMENTS SERVICE");
             log4net.Config.XmlConfigurator.Configure();
