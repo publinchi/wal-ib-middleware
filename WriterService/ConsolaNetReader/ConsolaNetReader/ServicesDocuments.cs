@@ -3,9 +3,12 @@ using log4net.Config;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace ConsolaNetReader
 {
@@ -13,7 +16,11 @@ namespace ConsolaNetReader
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ServicesDocuments));
 
-        public void  documentsGenerator() {
+
+        private static int liberacione;
+        List<BackgroundWorker> workers = new List<BackgroundWorker>();
+
+        public void documentsGenerator() {
 
             XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
 
@@ -21,47 +28,96 @@ namespace ConsolaNetReader
             {
                 log.Info("JC::::::::::::Comienza documentsGenerator :::::::::::::JC");
 
-                log.Info("INICIAR VERSION 7.0 Document Services 7.0");
+                log.Info("INICIAR VERSION 10.0 Document Services 10.0");
 
                 List<Contrato> listaContratos;
-                ProcesamientoContratos cc = new ProcesamientoContratos();
 
-                JObject serviceContract = cc.recuperarDatosContratos();
+                DescargaContratos download = new DescargaContratos();    
+
+                JObject serviceContract = download.recuperarDatosContratos();
 
 
-                listaContratos = cc.validarContratos(serviceContract);
+                listaContratos = download.validarContratos(serviceContract);
 
                 log.Info("Comenzando a generar documentos");
 
                 if (listaContratos != null && listaContratos.Count > 0)
                 {
 
+
                     foreach (Contrato contrato in listaContratos)
                     {
-                        try
+
+                        
+                            
+                         while (liberacione >= 5) {
+
+                          Thread.Sleep(3000);    
+
+                        }
+
+               
+
+                        BackgroundWorker worker = new BackgroundWorker();
+                        ProcesamientoContratos cc = new ProcesamientoContratos(download.GetToken());
+                        worker.DoWork += (senderWorker, eWorker) =>
                         {
-                            cc.customerId = int.Parse(contrato.Valores.Where(x => x.Llave == "$$id_ente$$").Select(y => y.Valor).FirstOrDefault().ToString());
-                            cc.mail = contrato.Valores.Where(x => x.Llave == "$$correo$$").Select(y => y.Valor).FirstOrDefault().ToString();
 
-                            log.Info(":::Comienza generación cliente:::  " + cc.customerId.ToString());
 
-                            cc.defineDocumento(contrato);
-                        }catch {
+                            try
+                            {
+                                cc.customerId = int.Parse(contrato.Valores.Where(x => x.Llave == "$$id_ente$$").Select(y => y.Valor).FirstOrDefault().ToString());
+                                cc.mail = contrato.Valores.Where(x => x.Llave == "$$correo$$").Select(y => y.Valor).FirstOrDefault().ToString();
+                                cc.dates = contrato.Valores.Where(x => x.Llave == "$$dates$$").Select(y => y.Valor).FirstOrDefault().ToString();
 
-                            log.Error("Error, información de cliente corrupta");
-                        }  
+                                log.Info(":::Comienza generación cliente:::  " + cc.customerId.ToString());
+
+
+                                cc.defineDocumento(contrato);
+                            }
+                            catch
+                            {
+
+                                log.Error("Error, información de cliente corrupta");
+                            }
+                            finally
+                            {
+
+                                --liberacione;
+
+                            }
+                        };
+
+                        worker.RunWorkerCompleted += (senderWorker, eWorker) =>
+                        {
+                            --liberacione;
+                 
+                        };
+
+
+
+
+                        workers.Add(worker);
+                        worker.RunWorkerAsync();
+                        liberacione++;
 
                     }
                 }
                 else {
                     log.Info(":::::::::No existen contratos que procesar!!!!::::::::");
                 }
-            }catch (Exception ex) {
+            } catch (Exception ex) {
 
-                log.Error(ex);  
+                log.Error(ex);
             }
 
         }
+
+
+
+
+
+
 
     }
 }
