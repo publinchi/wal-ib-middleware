@@ -17,10 +17,10 @@ import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Constans;
 
-public class CallableTask extends SPJavaOrchestrationBase implements Callable<IProcedureResponse> {
+public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implements Callable<IProcedureResponse> {
     private IProcedureRequest request;
     private Map<String, Object> aBagSPJavaOrchestration;
-	private static ILogger logger = LogFactory.getLogger(CallableTask.class);
+	private static ILogger logger = LogFactory.getLogger(ReturnPaymentCallableTask.class);
 	private mensaje msjIn;
 	String codeBank;
 	@Override
@@ -42,7 +42,7 @@ public class CallableTask extends SPJavaOrchestrationBase implements Callable<IP
 	}
 	
     // Constructor que acepta parámetros
-    public CallableTask(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, mensaje msjIn,  String codeBank) {
+    public ReturnPaymentCallableTask(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, mensaje msjIn,  String codeBank) {
         this.request = request;
         this.aBagSPJavaOrchestration = aBagSPJavaOrchestration;
         this.msjIn = msjIn;
