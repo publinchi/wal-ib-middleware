@@ -316,7 +316,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		{
 			//llamar sp cambio de estado transfer spei 
 						
-			IProcedureResponse procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A");
+			IProcedureResponse procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo());
 			
 			if(procedureResponseLocal.getReturnCode()!=0)
 			{
@@ -637,6 +637,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					//inserta catalogo
 					responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I", "V");
 				}
+				insertUpdateInstitutions(request, inst.getClaveCesif(), inst.getInsNombre(), "B", inst.getEstadoInstitucion(), "C");
 	         }
 	         //llamado sp
 	         setParamKarpayDate(request,"PRODAK", "AHO", fechaOperacion);
@@ -1140,7 +1141,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	        
 	        if(procedureResponseReverse.getReturnCode()==0)
 	        {
-	        	IProcedureResponse procedureResponseLocal = updateStatusOperation(anOriginalRequest, aBagSPJavaOrchestration, "F");
+	        	IProcedureResponse procedureResponseLocal = updateStatusOperation(anOriginalRequest, aBagSPJavaOrchestration, "F", clave);
 				if(procedureResponseLocal.getReturnCode()!=0)
 				{
 				 	procedureResponseReverse = procedureResponseLocal;
@@ -1237,7 +1238,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		reqTMPCentral.addInputParam("@i_tabla",ICTSTypes.SQLVARCHAR, tabla);
 		reqTMPCentral.addInputParam("@i_codigo",ICTSTypes.SQLVARCHAR, codigo);	
 		reqTMPCentral.addInputParam("@i_descripcion",ICTSTypes.SQLDATETIME, valor);	
-		reqTMPCentral.addInputParam("@i_estado",ICTSTypes.SQLDATETIME, valor);	
+		reqTMPCentral.addInputParam("@i_estado",ICTSTypes.SQLDATETIME, estado);	
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isDebugEnabled()) {
@@ -1348,7 +1349,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 	}
 	
-	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state)
+	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state, String clave)
 	{
 		if(logger.isDebugEnabled())
 			logger.logInfo("init updateStatus");
@@ -1361,8 +1362,35 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500161");
 		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
-		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, clave);
 		procedureRequest.addInputParam("@i_estado", ICTSTypes.SYBVARCHAR, state);
+		
+		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+		if(logger.isDebugEnabled())
+			logger.logInfo("response updateStatus :"+procedureResponseLocal.getCTSMessageAsString() );
+		
+		return procedureResponseLocal;
+	}
+	
+	private IProcedureResponse insertUpdateInstitutions(IProcedureRequest request,
+			String code, String bankName, String typeInstitution, String state, String stadoPgd)
+	{
+		if(logger.isDebugEnabled())
+			logger.logInfo("init updateStatus");
+		IProcedureRequest procedureRequest = initProcedureRequest(request);
+			
+		procedureRequest.setSpName("cob_bvirtual..sp_mant_ifis");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "1870009");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SQLINT4, "1870009");
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "A");			
+		procedureRequest.addInputParam("@i_cod_ban", ICTSTypes.SQLINT4, code);
+		procedureRequest.addInputParam("@i_nom_banco", ICTSTypes.SQLVARCHAR, bankName);
+		procedureRequest.addInputParam("@i_tip_inst", ICTSTypes.SQLVARCHAR, typeInstitution);
+		procedureRequest.addInputParam("@i_estado_spi", ICTSTypes.SQLVARCHAR, state);
+		procedureRequest.addInputParam("@i_estado_pgd", ICTSTypes.SQLVARCHAR, stadoPgd);
+		
 		
 		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 		if(logger.isDebugEnabled())
