@@ -4,18 +4,15 @@ import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.concurrent.*;
 
 import javax.xml.bind.JAXB;
 
@@ -72,14 +69,34 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	private java.util.Properties properties = null;
 	private Map<String, Object> mapDataSigns = null;
 	
+	
+	private static final String PROPERTY = "//property";
+	private static final String JKSAlGNCON = "jksAlgncon";
+	private static final String JKSURL = "jksurl";
+	
+	//executor service lineamiento PES
+	private ExecutorService executorService;
+	private static final String DIRECT_PROPERTY = "direct";
+	private boolean isDirect = false;
+	private static final String POLICY_PROPERTY = "policy";
+	private int policy = 3;
+	private static final String CORE_POOL_SIZE_PROPERTY = "corePoolSize";
+	private int corePoolSize = 5;
+	private static final String MAXIMUM_POOL_SIZE_PROPERTY = "maximumPoolSize";
+	private int maximumPoolSize = 8;
+	private static final String KEEP_ALIVE_TIME_PROPERTY = "keepAliveTime";
+	private int keepAliveTime = 30;
+	private static final String CAPACITY_PROPERTY = "capacity";
+	private int capacity = 30;
+	
 	@Override
 	public void loadConfiguration(IConfigurationReader reader) {
-		 this.properties = reader.getProperties("//property");
+		 this.properties = reader.getProperties(PROPERTY);
 		 this.mapDataSigns = new HashMap<String, Object>();
 		 //archivo credenciales llave jks
-        String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty("jksAlgncon");
+        String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty(JKSAlGNCON);
         //archivo path llave jks
-        String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty("jksurl");
+        String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty(JKSURL);
         File jksAlgn = new File(pathAlgnJks);
         if (jksAlgn.exists()) {
             ReadAlgn rjksAlgncon = new ReadAlgn(pathAlgnJks);
@@ -98,6 +115,47 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logDebug("jksAlgncon:"+pathAlgnJks);
 			logger.logDebug("jksurl:"+pathCertificado);
 		}
+        //implementacion executor PES
+        isDirect = tryParseToBoolean(reader.getProperty(DIRECT_PROPERTY), isDirect);
+		policy = tryParseToInteger(reader.getProperty(POLICY_PROPERTY), policy);
+        corePoolSize = tryParseToInteger(reader.getProperty(CORE_POOL_SIZE_PROPERTY), corePoolSize);
+		maximumPoolSize = tryParseToInteger(reader.getProperty(MAXIMUM_POOL_SIZE_PROPERTY), maximumPoolSize);
+		keepAliveTime = tryParseToInteger(reader.getProperty(KEEP_ALIVE_TIME_PROPERTY), keepAliveTime);
+		capacity = tryParseToInteger(reader.getProperty(CAPACITY_PROPERTY), capacity);
+		
+		// Verfico la conexion con el gestor de colas
+		RejectedExecutionHandler rejectionHandler=null;
+
+		switch (policy) {
+			case 1:
+				rejectionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+				break;
+			case 2:
+				rejectionHandler = new ThreadPoolExecutor.DiscardOldestPolicy();
+				break;
+			case 3:
+				rejectionHandler = new ThreadPoolExecutor.DiscardPolicy();
+				break;
+			case 4:
+				rejectionHandler = new ThreadPoolExecutor.AbortPolicy();
+				break;
+			default:
+				throw new IllegalArgumentException("Política de rechazo no válida: " + policy);
+		}
+	
+		if (executorService != null && !executorService.isShutdown()) {
+			executorService.shutdown();
+		}
+		
+    	executorService = new ThreadPoolExecutor(
+				corePoolSize,
+				maximumPoolSize,
+				keepAliveTime,
+				TimeUnit.SECONDS,
+				new LinkedBlockingQueue<Runnable>(capacity),
+				new CustomThreadFactory(),
+				rejectionHandler
+		);
 	}
 
 	/**
@@ -462,28 +520,16 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 								logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
 							//implementar catalogo para los que si aplican esice
 							if(procedureResponseLocal.getReturnCode()==0 && procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0
-									&& msjIn.getOrdenpago().getOpTpClave() == 1
-									&& msjIn.getOrdenpago().getOpTpClave() == 12
-									&& msjIn.getOrdenpago().getOpTpClave() == 30
-									&& msjIn.getOrdenpago().getOpTpClave() == 36)
+									&& (msjIn.getOrdenpago().getOpTpClave() == 1
+									|| msjIn.getOrdenpago().getOpTpClave() == 12
+									|| msjIn.getOrdenpago().getOpTpClave() == 30
+									|| msjIn.getOrdenpago().getOpTpClave() == 36))
 							{
 								//falta implementar las tablas de auditoria y generacion de secuenciales
 								//llamada a log entrante
-								Integer idLog =	logEntryApi(request, aBagSPJavaOrchestration, "I", "ESICE", null, null, null, null, null);
 								
-								IProcedureResponse responseCda = getWsEsice(request, aBagSPJavaOrchestration);
-								if(responseCda.getReturnCode()!=0)
-								{
-									if(logger.isDebugEnabled()) {
-										logger.logInfo("CDA mensaje: "+responseCda.readValueParam("@o_msj_respuesta"));
-										logger.logInfo("CDA respuesta: "+responseCda.readValueParam("@o_cod_respuesta"));
-									}
-									
-								}
-								String returnCodeMsj = responseCda.readValueParam("@o_cod_respuesta")+" - "+responseCda.readValueParam("@o_msj_respuesta");
-								//llamada a log update
-								logEntryApi(request, aBagSPJavaOrchestration, "U", "ESICE", null, returnCodeMsj,  responseCda.readValueParam("@o_response"), idLog, responseCda.readValueParam("@o_request"));
-							
+								EsiceCallableTask esiceTask = new EsiceCallableTask(procedureRequest, aBagSPJavaOrchestration);
+								executorService.submit(esiceTask);
 								responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
 								responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
 					
@@ -542,13 +588,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				logger.logInfo("error future: "+responseXml.getErrCodigo());
 			}
 			
-			ExecutorService executor = Executors.newScheduledThreadPool(15);//preguntar por e numero de hilos
 			msjIn.getOrdenpago().setOpCdClave(responseXml.getErrCodigo());
 			// Crear una instancia de MyCallableTask con parámetros
-			CallableTask task = new CallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
+			ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
 			// Enviar la tarea para su ejecución
-			Future<IProcedureResponse> future = executor.submit(task);
-			executor.shutdown();
+			executorService.submit(task);
+	
 	        logHour("6");
 		}
 		//se manda el response correcto que se recibio la solicitud spei in
@@ -994,113 +1039,6 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	    return patron.matcher(cadena).matches();
     }
 	
-	private IProcedureResponse getWsEsice(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
-		
-		IProcedureResponse connectorResponse = null;
-
-		IProcedureRequest anOriginalRequest = anOriginalReq.clone();
-		aBagSPJavaOrchestration.remove("trn_virtual");
-		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getWsEsice");
-		}
-		 LocalTime horaActual = LocalTime.now();
-        // Formatear la hora en formato hhmmss
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmmss");
-        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HHmmssSSS");
-        String horaHHmmss = horaActual.format(formatter);
-        String horaHHmmssSSS = horaActual.format(formatter2);
-        
-        SimpleDateFormat sdfEntrada = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat sdfSalida = new SimpleDateFormat("ddMMyyyy");
-        Date opFechaOperAux;
-        String opFechaOper ="";       
-        
-		try {
-
-			opFechaOperAux = sdfEntrada.parse(msjIn.getOrdenpago().getOpFechaOper());
-			opFechaOper = sdfSalida.format(opFechaOperAux);
-			
-			anOriginalRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "CDA");
-			// etiquetas se maneja dentro de nuestra base de datos OJO cambiar		
-			anOriginalRequest.addInputParam("@i_id_cda", ICTSTypes.SQLINT4, msjIn.getOrdenpago().getId());
-			anOriginalRequest.addInputParam("@i_id_mensaje", ICTSTypes.SQLINT4, msjIn.getOrdenpago().getId());
-			//Atributos	
-			anOriginalRequest.addInputParam("@i_op_fecha_oper", ICTSTypes.SQLINT4, opFechaOper);
-			anOriginalRequest.addInputParam("@i_op_fecha_abono", ICTSTypes.SQLVARCHAR, opFechaOper);
-			anOriginalRequest.addInputParam("@i_op_hora_abono", ICTSTypes.SQLVARCHAR, horaHHmmss);
-			anOriginalRequest.addInputParam("@i_op_cve_rastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-			anOriginalRequest.addInputParam("@i_op_folio_orig_odp", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getOpFolio()));
-			anOriginalRequest.addInputParam("@i_op_folio_orig_paq", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getPaqFolioOri()));
-			anOriginalRequest.addInputParam("@i_op_clave_emisor", ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
-			anOriginalRequest.addInputParam("@i_op_nombre_emisor", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
-			
-			anOriginalRequest.addInputParam("@i_op_nom_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
-			anOriginalRequest.addInputParam("@i_op_tp_cta_ord", ICTSTypes.SQLINT4, String.valueOf(msjIn.getOrdenpago().getOpTcClaveOrd()));
-			anOriginalRequest.addInputParam("@i_op_cuenta_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
-			anOriginalRequest.addInputParam("@i_op_rfc_curp_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
-			anOriginalRequest.addInputParam("@i_op_nombre_receptor", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomBen());
-			anOriginalRequest.addInputParam("@i_op_nom_ben", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomBen());
-			anOriginalRequest.addInputParam("@i_op_tp_cta_ben", ICTSTypes.SQLINT4,String.valueOf( msjIn.getOrdenpago().getOpTcClaveBen()));
-			anOriginalRequest.addInputParam("@i_op_cuenta_ben", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaBen());
-			anOriginalRequest.addInputParam("@i_op_rfc_curp_ben", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
-			anOriginalRequest.addInputParam("@i_op_concepto_pag", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
-			anOriginalRequest.addInputParam("@i_op_tipo_pag", ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			anOriginalRequest.addInputParam("@i_op_iva", ICTSTypes.SQLMONEY, "0");
-			anOriginalRequest.addInputParam("@i_op_monto", ICTSTypes.SQLMONEY, String.valueOf( msjIn.getOrdenpago().getOpMonto()));		
-			
-			
-			//tipo pago  30 7 
-			if(msjIn.getOrdenpago().getOpTpClave()==30)
-			{
-				anOriginalRequest.addInputParam("@i_op_nom_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomParticipanteOrd());
-	         	anOriginalRequest.addInputParam("@i_op_cta_part_indirecto_ord", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaParticipanteOrd());
-	         	anOriginalRequest.addInputParam("@i_op_rfc_curp_part_indirecto_ord", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcParticipanteOrd());
-	         	anOriginalRequest.addInputParam("@i_op_nom_part_indirecto_ben", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomBen());
-	         	anOriginalRequest.addInputParam("@i_op_cta_part_indirecto_ben", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
-	         	anOriginalRequest.addInputParam("@i_op_rfc_curp_part_indirecto_ben", ICTSTypes.SQLVARCHAR,msjIn.getOrdenpago().getOpRfcCurpOrd());
-			}
-         	//tipo pago 36
-			if(msjIn.getOrdenpago().getOpTpClave()==36)
-			{
-	         	anOriginalRequest.addInputParam("@i_op_id_remesa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpIdRemesa());
-	         	anOriginalRequest.addInputParam("@i_op_pais", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpPais());
-	         	anOriginalRequest.addInputParam("@i_op_divisa", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpDivisa());
-	         	anOriginalRequest.addInputParam("@i_op_nom_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomEmisorRemesa());
-	         	anOriginalRequest.addInputParam("@i_op_cta_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaEmisorRemesa());
-	         	anOriginalRequest.addInputParam("@i_op_rfc_curp_emisor_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcCurpEmisorRemesa());
-	         	anOriginalRequest.addInputParam("@i_op_nom_ben_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomBenRemesa());
-	         	anOriginalRequest.addInputParam("@i_op_cta_ben_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
-	           	anOriginalRequest.addInputParam("@i_op_rfc_curp_ben_rem", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpRfcCurpOrd());    	
-	         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_ext", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomProvRemesaExtranjera());
-	         	anOriginalRequest.addInputParam("@i_op_nom_prov_rem_nac", ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpNomProvRemesaNacional());
-			}
-			anOriginalRequest.addInputParam("@i_op_hora00", ICTSTypes.SQLVARCHAR, horaHHmmssSSS);
-			anOriginalRequest.addFieldInHeader(ICOBISTS.HEADER_TIMEOUT, ICOBISTS.HEADER_STRING_TYPE, "4000");
-			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18500164");
-			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500164");// 1890018
-			
-			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorESICE)");	
-			// SE HACE LA LLAMADA AL CONECTOR
-			// SE EJECUTA CONECTOR
-			connectorResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
-
-			if (logger.isDebugEnabled())
-				logger.logDebug("getWsEsice response: " + connectorResponse);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			aBagSPJavaOrchestration.put("@o_result", "999");
-			connectorResponse = null;
-			logger.logInfo(CLASS_NAME +" Error Catastrofico de getWsEsice");
-
-		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + "--> getWsEsice");
-			}
-		}
-		return connectorResponse;
-	}
 	
 	private IProcedureResponse reverseSPEI(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String clave)
 	{
@@ -1354,8 +1292,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		if(logger.isDebugEnabled())
 			logger.logInfo("init updateStatus");
 		IProcedureRequest procedureRequest = initProcedureRequest(request);
-		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
-		
+				
 		procedureRequest.setSpName("cob_bvirtual..sp_act_transfer_spei");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
@@ -1406,6 +1343,22 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 	        String fechaHoraFormateada = fechaHoraActual.format(formatter);
 	        logger.logDebug("hour "+txt+":"+fechaHoraFormateada); 
+		}
+	}
+	
+	private int tryParseToInteger(String stringValue, int defaultValue) {
+		try {
+			return Integer.parseInt(stringValue);
+		} catch(Exception ex) {
+			return defaultValue;
+		}
+	}
+
+	private boolean tryParseToBoolean(String stringValue, boolean defaultValue) {
+		try {
+			return Boolean.parseBoolean(stringValue);
+		} catch(Exception ex) {
+			return defaultValue;
 		}
 	}
 }
