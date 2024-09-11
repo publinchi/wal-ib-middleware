@@ -862,6 +862,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String destinyAccount = aRequest.readValueParam("@i_cta_des");
 		String otpCode = aRequest.readValueParam("@i_otp_code");
 		String otpReturnCode = null;
+		String otpReturnCodeNew = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -901,20 +902,45 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			
 				DataTokenResponse  wResponseOtp = validateOTPCode(aRequest, aBagSPJavaOrchestration);
 					
+				if (logger.isDebugEnabled()) {	
 				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
-				
+				}
 				if(!wResponseOtp.getSuccess()) {
 					
 					otpReturnCode = wResponseOtp.getMessage().getCode();
 					
-					logger.logDebug("ValidateOTP return code: "+otpReturnCode);
+					if (logger.isDebugEnabled()) {
+					logger.logDebug("ValidateOTP return code: "+otpReturnCode);}
 					
 				} else {
-					
 					otpReturnCode = "0";
 					
-					logger.logDebug("ValidateOTP successful code: "+otpReturnCode);
+					if (logger.isDebugEnabled()) {
+					logger.logDebug("ValidateOTP successful code: "+otpReturnCode);}
 				}
+			}
+		}
+					
+					
+		// Validamos si el error fue de otp invalido
+		if ( otpReturnCode.equals("1890000")) {
+			// Ejecutamos el servicio de generación de token
+			DataTokenResponse  wResponseGOtp = generareOTPCode(aRequest, aBagSPJavaOrchestration);
+			
+			if (logger.isDebugEnabled()) {	
+				logger.logDebug("ValidateOTP response: "+wResponseGOtp.getSuccess());
+				}
+			if(!wResponseGOtp.getSuccess()) {				
+				otpReturnCodeNew = wResponseGOtp.getMessage().getCode();
+				
+				if (logger.isDebugEnabled()) {
+				logger.logDebug("ValidateOTP return code: "+otpReturnCodeNew);}
+				
+				// Ingresar en el log la generación inconrrecta de la nueva OTP dinámica
+				
+			} else {					
+				if (logger.isDebugEnabled()) {
+				logger.logDebug("Generación de OTP exitosa: "+otpReturnCodeNew);}
 			}
 		}
 
@@ -1060,6 +1086,29 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return tokenResponse;
 	}
 
+	private DataTokenResponse generareOTPCode(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) { 
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en generarOTPCode...");
+		}
+		
+		DataTokenRequest tokenRequest = new DataTokenRequest();
+		
+		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
+		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
+		tokenRequest.setChannel(8);
+		
+		DataTokenResponse tokenResponseG = this.tokenService.generateTokenUser(tokenRequest);
+		
+		logger.logDebug("Token response: "+tokenResponseG.getSuccess());
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de generarOTPCode...");
+		}
+		
+		return tokenResponseG;
+	}
+	
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 			Map<String, Object> aBagSPJavaOrchestration) {
