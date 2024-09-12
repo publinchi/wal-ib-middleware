@@ -446,10 +446,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					//spein in tipo de pago 0 devolucion
 					if(typePaymentResult == 0)
 					{
-						if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17)
+						if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17 || msjIn.getOrdenpago().getOpTpClave()==23)
 						{
 							String clave = "";
-							if( msjIn.getOrdenpago().getOpTpClave()==17)
+							if( msjIn.getOrdenpago().getOpTpClave()==17||msjIn.getOrdenpago().getOpTpClave()==23)
 								clave = msjIn.getOrdenpago().getOpRastreoOri();
 							else
 								clave =  msjIn.getOrdenpago().getOpCveRastreo();
@@ -546,15 +546,20 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 									responseXml.setErrCodigo(1);
 									responseXml.setErrDescripcion("Cuenta inexistente");
 								}else
-									if("400335".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
-									{
-										responseXml.setErrCodigo(20);
-										responseXml.setErrDescripcion("Excede el límite de saldo autorizado de la cuenta");
-									}else
-									{
-										responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
-										responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
-									}
+								if("400335".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
+								{
+									responseXml.setErrCodigo(20);
+									responseXml.setErrDescripcion("Excede el límite de saldo autorizado de la cuenta");
+								}else
+								if("400337".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
+								{
+									responseXml.setErrCodigo(21);
+									responseXml.setErrDescripcion("Excede el límite de abonos permitidos en el mes en la cuenta");
+								}else
+								{
+									responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
+									responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
+								}
 							}	
 							
 						}
