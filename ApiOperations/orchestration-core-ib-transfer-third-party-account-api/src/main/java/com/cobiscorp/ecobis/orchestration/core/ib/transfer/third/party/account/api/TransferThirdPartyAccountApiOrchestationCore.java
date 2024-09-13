@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Date;
 
+import com.google.gson.JsonObject;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -863,6 +864,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String otpCode = aRequest.readValueParam("@i_otp_code");
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
+		String otpReturnMessage = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -901,6 +903,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			if (!login.equals("X")) {
 			
 				DataTokenResponse  wResponseOtp = validateOTPCode(aRequest, aBagSPJavaOrchestration);
+				otpReturnMessage = wResponseOtp.getMessage().getDescription();
 					
 				if (logger.isDebugEnabled()) {	
 				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
@@ -942,6 +945,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				if (logger.isDebugEnabled()) {
 				logger.logDebug("Generación de OTP exitosa: "+otpReturnCodeNew);}
 			}
+		}
+
+		//Validacion para llamar al conector blockOperation
+		if(otpReturnCode.equals("1890005")){
+			IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
 		}
 
 		request.setSpName("cob_bvirtual..sp_get_data_account_api");
@@ -1453,6 +1461,117 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		} 
 		
 		return "";
+	}
+
+	private IProcedureResponse executeBlockOperation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String otpReturnMessage) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
+		}
+
+		Integer phone = null;
+		Integer phoneCode = 52;
+		String channel = null;
+
+		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
+
+		logger.logDebug("aRequest execute blockOperation: " + aRequest);
+
+		procedureRequest.setSpName("cob_procesador..sp_conne_block_operation");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700122");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700122");
+		procedureRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
+		procedureRequest.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
+		procedureRequest.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
+		procedureRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
+				"(service.identifier=BlockOperationOrchestrationCore)");
+		procedureRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+
+		procedureRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
+
+		if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
+			channel = "web";
+		}
+		procedureRequest.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, channel);
+
+		//Construccion del body para el conector
+		JsonObject jsonRequest = new JsonObject();
+
+		//Validacion del numero de telefono
+		jsonRequest.addProperty("phone", phoneCode + phone);
+		procedureRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phone.toString());
+
+		//Validacion del blockCode
+		jsonRequest.addProperty("blockCode", "21");
+
+		//Validacion de blockResason
+		jsonRequest.addProperty("blockReason", otpReturnMessage);
+
+		procedureRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
+
+		//Se llama al conector de blockOperation
+		IProcedureResponse connectorBlockOperationResponse = executeCoreBanking(procedureRequest);
+
+		if (connectorBlockOperationResponse.readValueParam("@o_responseCode") != null)
+			aBagSPJavaOrchestration.put("responseCode", connectorBlockOperationResponse.readValueParam("@o_responseCode"));
+
+		if (connectorBlockOperationResponse.readValueParam("@o_message") != null)
+			aBagSPJavaOrchestration.put("message", connectorBlockOperationResponse.readValueParam("@o_message"));
+
+		if (connectorBlockOperationResponse.readValueParam("@o_success") != null) {
+			aBagSPJavaOrchestration.put("success_block_operation", connectorBlockOperationResponse.readValueParam("@o_success"));
+		}
+		else {
+			aBagSPJavaOrchestration.put("success_block_operation", "false");
+		}
+
+		if(logger.isDebugEnabled())
+			logger.logInfo("Response executeBlockOperation: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
+
+		registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_ente"));
+		return connectorBlockOperationResponse;
+	}
+
+	private void registerRequestBlockOperation(IProcedureResponse wProcedureResponse, String requestSend, String customerId){
+		IProcedureRequest request = new ProcedureRequestAS();
+		final String METHOD_NAME = "[registerRequestBlockOperationError]";
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo( " Entrando en registerRequestBlockOperationError");
+		}
+
+		String bodyResponse = wProcedureResponse.readValueParam("@o_body_response");
+
+		String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"false":wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
+
+		String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
+		String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
+
+		logger.logInfo("code:: " + code);
+		logger.logInfo("message:: " + message);
+		logger.logInfo("bodyResponse:: " + bodyResponse);
+
+		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+		request.addInputParam("@i_request_block_operation", ICTSTypes.SQLVARCHAR, requestSend);
+		request.addInputParam("@i_response_block_operation", ICTSTypes.SQLVARCHAR, bodyResponse);
+		request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, code);
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, customerId.toString());
+		request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, message);
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+
 	}
 
 	private String unifyDateFormat(String dateString) {
