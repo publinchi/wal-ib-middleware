@@ -865,6 +865,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
 		String otpReturnMessage = null;
+		String phoneNumber = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -1526,7 +1527,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
 
-		Integer phone = null;
+		String phoneNumber = null;
 		Integer phoneCode = 52;
 		String channel = null;
 
@@ -1557,8 +1558,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		JsonObject jsonRequest = new JsonObject();
 
 		//Validacion del numero de telefono
-		jsonRequest.addProperty("phone", phoneCode + phone);
-		procedureRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phone.toString());
+		if(aBagSPJavaOrchestration.get("o_phone") != null) {
+			phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
+		}
+		jsonRequest.addProperty("phone", phoneCode + phoneNumber);
+		procedureRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
 		//Validacion del blockCode
 		jsonRequest.addProperty("blockCode", "21");
