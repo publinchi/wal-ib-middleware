@@ -928,7 +928,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					
 		// Validamos si el error fue de otp invalido
 		if (otpReturnCode != null) {
-			if ( otpReturnCode.equals("1890000") || otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005") ) {
+			if ( otpReturnCode.equals("1890000") ) {
 				try {
 					// Ejecutamos el servicio de generación de token
 					DataTokenResponse  wResponseGOtp = generareOTPCode(aRequest, aBagSPJavaOrchestration);
@@ -945,14 +945,20 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						if (logger.isDebugEnabled()) {
 						logger.logDebug("GeneracionOTP dinámica exitosa: "+otpReturnCodeNew);}
 					}
+					//Ingresamos el log de OTP ingresadas fallidas por sistema
+					registrosFallidos(aRequest, aBagSPJavaOrchestration);
+					
 				}catch(Exception ex) {
 					aBagSPJavaOrchestration.put("o_codErrorOTP", "1890010");
 					logger.logError(ex.toString());
+					//Ingresamos el log de OTP ingresadas fallidas por sistema
+					registrosFallidos(aRequest, aBagSPJavaOrchestration);
+				}				
+			}else {
+				if ( otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005")) {
+					//Ingresamos el log de OTP ingresadas fallidas por el usuario en bloqueo y asistencia requerida
+					registrosFallidos(aRequest, aBagSPJavaOrchestration);
 				}
-				
-				
-				//Ingresamos el log de OTP ingresadas fallidas por el usuario
-				registrosFallidos(aRequest, aBagSPJavaOrchestration);
 			}
 		}
 
