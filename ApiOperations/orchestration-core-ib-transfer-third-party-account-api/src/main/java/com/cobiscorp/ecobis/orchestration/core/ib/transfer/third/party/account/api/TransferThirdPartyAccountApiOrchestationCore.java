@@ -865,7 +865,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
 		String otpReturnMessage = null;
-		String phoneNumber = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
