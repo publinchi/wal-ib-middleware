@@ -598,7 +598,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getLoginById..."); }
+			logger.logInfo(CLASS_NAME + " Entrando en getLoginById..."); 
+			}
 		
 		request.setSpName("cob_bvirtual..sp_cons_ente_med_envio");
 
