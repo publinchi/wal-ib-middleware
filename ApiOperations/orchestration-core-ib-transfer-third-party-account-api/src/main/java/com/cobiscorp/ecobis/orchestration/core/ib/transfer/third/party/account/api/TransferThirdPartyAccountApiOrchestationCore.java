@@ -865,7 +865,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
 		String otpReturnMessage = null;
-		String phoneNumber = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -948,29 +947,26 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					} else {					
 						if (logger.isDebugEnabled()) {
 						logger.logDebug("GeneracionOTP dinámica exitosa: "+otpReturnCodeNew);}
-					}
-					//Ingresamos el log de OTP ingresadas fallidas por sistema
-					registrosFallidos(aRequest, aBagSPJavaOrchestration);
-					
+					}					
 				}catch(Exception ex) {
-					aBagSPJavaOrchestration.put("o_codErrorOTP", "1890010");
+					aBagSPJavaOrchestration.replace("o_codErrorOTP", "1890010");
 					logger.logError(ex.toString());
-					//Ingresamos el log de OTP ingresadas fallidas por sistema
-					registrosFallidos(aRequest, aBagSPJavaOrchestration);
-				}				
+				}		
+				//Ingresamos el log de OTP ingresadas fallidas por sistema
+				registrosFallidos(aBagSPJavaOrchestration);		
 			}else {
 				if ( otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005")) {
 					//Ingresamos el log de OTP ingresadas fallidas por el usuario en bloqueo y asistencia requerida
-					registrosFallidos(aRequest, aBagSPJavaOrchestration);
+					registrosFallidos(aBagSPJavaOrchestration);
 				}
 			}
+			
+			//Validacion para llamar al conector blockOperation
+			/*if(otpReturnCode.equals("1890005")){
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
+			}*/
 		}
-
-		//Validacion para llamar al conector blockOperation
-		if(otpReturnCode.equals("1890005")){
-			IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
-		}
-
+		
 		request.setSpName("cob_bvirtual..sp_get_data_account_api");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -1053,8 +1049,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return wProductsQueryResp;
 	}
 
-	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		
+	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {		
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
@@ -1103,7 +1098,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return wProductsQueryResp;
 	}
 	
-	private IProcedureResponse registrosFallidos(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse registrosFallidos(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -1538,8 +1533,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String channel = null;
 
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
-
-		logger.logDebug("aRequest execute blockOperation: " + aRequest);
+		
+		if(logger.isDebugEnabled())
+			logger.logDebug("aRequest execute blockOperation: " + aRequest);
 
 		procedureRequest.setSpName("cob_procesador..sp_conne_block_operation");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700122");
@@ -1595,7 +1591,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		}
 
 		if(logger.isDebugEnabled())
-			logger.logInfo("Response executeBlockOperation: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
+			logger.logDebug("Response executeBlockOperation: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
 
 		registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_ente"));
 		return connectorBlockOperationResponse;
