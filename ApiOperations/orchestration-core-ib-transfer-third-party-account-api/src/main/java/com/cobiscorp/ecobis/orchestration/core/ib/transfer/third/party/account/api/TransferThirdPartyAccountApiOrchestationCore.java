@@ -962,9 +962,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			}
 			
 			//Validacion para llamar al conector blockOperation
-			/*if(otpReturnCode.equals("1890005")){
+			if(otpReturnCode.equals("1890005")){
 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
-			}*/
+			}
 		}
 		
 		request.setSpName("cob_bvirtual..sp_get_data_account_api");

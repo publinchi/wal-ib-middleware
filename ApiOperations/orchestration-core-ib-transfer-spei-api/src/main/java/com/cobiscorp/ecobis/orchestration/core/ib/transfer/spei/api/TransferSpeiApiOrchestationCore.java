@@ -517,9 +517,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			}
  			
  			//Validacion para llamar al conector blockOperation
- 			/*if(otpReturnCode.equals("1890005")){
+ 			if(otpReturnCode.equals("1890005")){
  				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
- 			}*/
+ 			}
  		}
         
         request.setSpName("cob_bvirtual..sp_get_data_transf_spei_api");
