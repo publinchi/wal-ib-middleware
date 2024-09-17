@@ -372,9 +372,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
 		if( validateFields(request,aBagSPJavaOrchestration))
 		{
+			IProcedureResponse procedureResponseLocal=null;
 			//llamar sp cambio de estado transfer spei 
-						
-			IProcedureResponse procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo());
+			if(msjIn.getOrdenpago().getOpTpClave()==0)
+				procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo());
+			else
+				procedureResponseLocal = updateDevolution(request, aBagSPJavaOrchestration,"U",null, null);
 			
 			if(procedureResponseLocal.getReturnCode()!=0)
 			{
@@ -421,13 +424,13 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		if(responSingTyp.getReturnCode()==0)
 		{
-			DispatcherUtil util = new DispatcherUtil();
-			
-			String sign = util.doSignature(request, aBagSPJavaOrchestration);
 			
 			logHour("2");
 			if( validateFields(request, aBagSPJavaOrchestration))
 			{
+				
+				DispatcherUtil util = new DispatcherUtil();
+				String sign = util.doSignature(request, aBagSPJavaOrchestration);
 				if(logger.isDebugEnabled())
 				{
 					logger.logDebug("firma armada:"+sign);
@@ -1340,6 +1343,35 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		return procedureResponseLocal;
 	}
+	private IProcedureResponse updateDevolution(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
+			 String operacion, Integer error, String errorDes ) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, registerDevolution");
+		}
+		
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		
+		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
+		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_devoluciones");
+		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		
+		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
+		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
+		requestProcedureLocal.addInputParam("@i_de_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+				
+		requestProcedureLocal.addOutputParam("@o_de_id", ICTSTypes.SQLINT4, "0");
+	        
+	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, registerDevolution: " + wProcedureResponseLocal.getProcedureResponseAsString());
+		}
+		
+		return wProcedureResponseLocal;
+		
+	}
+	
 	public void logHour(String txt)
 	{
 		if(logger.isDebugEnabled())
