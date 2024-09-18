@@ -405,7 +405,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String otpCode = aRequest.readValueParam("@i_otp_code");
         String otpReturnCode = null;
 		String otpReturnCodeNew = null;
-		String otpReturnMessage = null;
         
         if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
             xRequestId = "E";
@@ -518,7 +517,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
- 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
+ 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration);
  			}
  		}
         
@@ -2244,7 +2243,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return "";
 	}
 
-    private IProcedureResponse executeBlockOperation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String otpReturnMessage) {
+    private IProcedureResponse executeBlockOperation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
@@ -2291,7 +2290,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		jsonRequest.addProperty("blockCode", "21");
 
 		//Validacion de blockResason
-		jsonRequest.addProperty("blockReason", otpReturnMessage);
+        jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
 
 		procedureRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 

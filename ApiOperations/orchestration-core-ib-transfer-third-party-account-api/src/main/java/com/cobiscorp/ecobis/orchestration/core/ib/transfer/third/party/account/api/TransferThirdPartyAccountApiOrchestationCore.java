@@ -864,7 +864,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String otpCode = aRequest.readValueParam("@i_otp_code");
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
-		String otpReturnMessage = null;
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -903,7 +902,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			if (!login.equals("X")) {
 			
 				DataTokenResponse  wResponseOtp = validateOTPCode(aRequest, aBagSPJavaOrchestration);
-				otpReturnMessage = wResponseOtp.getMessage().getDescription();
 					
 				if (logger.isDebugEnabled()) {	
 				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
@@ -963,7 +961,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration, otpReturnMessage);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration);
 			}
 		}
 		
@@ -1522,7 +1520,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return "";
 	}
 
-	private IProcedureResponse executeBlockOperation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String otpReturnMessage) {
+	private IProcedureResponse executeBlockOperation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
@@ -1569,7 +1567,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		jsonRequest.addProperty("blockCode", "21");
 
 		//Validacion de blockResason
-		jsonRequest.addProperty("blockReason", otpReturnMessage);
+		jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
 
 		procedureRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
