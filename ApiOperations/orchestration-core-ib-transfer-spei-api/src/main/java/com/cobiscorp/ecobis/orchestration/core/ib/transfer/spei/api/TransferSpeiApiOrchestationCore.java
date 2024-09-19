@@ -517,7 +517,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
- 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperation(aRequest, aBagSPJavaOrchestration);
+ 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
  			}
  		}
         
@@ -2243,81 +2243,101 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return "";
 	}
 
-    private IProcedureResponse executeBlockOperation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
-		}
+    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
+        }
+        String phoneNumber = null;
+        Integer phoneCode = 52;
+        String channel = null;
 
-		String phoneNumber = null;
-		Integer phoneCode = 52;
-		String channel = null;
+        IProcedureResponse connectorBlockOperationResponse = null;
 
-		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
-		
-		if(logger.isDebugEnabled())
-			logger.logDebug("aRequest execute blockOperation: " + aRequest);
+        IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+        aBagSPJavaOrchestration.remove("trn_virtual");
 
-		procedureRequest.setSpName("cob_procesador..sp_conne_block_operation");
-		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700122");
-		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700122");
-		procedureRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
-		procedureRequest.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
-		procedureRequest.addFieldInHeader("target", ICOBISTS.HEADER_STRING_TYPE, "SPExecutor");
-		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_MESSAGE_TYPE, ICOBISTS.HEADER_STRING_TYPE, "ProcedureRequest");
-		procedureRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator", ICOBISTS.HEADER_STRING_TYPE,
-				"(service.identifier=BlockOperationOrchestrationCore)");
-		procedureRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
-		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+        if(logger.isDebugEnabled())
+            logger.logDebug("aRequest execute blockOperation: " + aRequest);
 
-		procedureRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
+        try {
+            //Parametros de entrada
+            anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE,
+                    "(service.identifier=CISConnectorBlockOperation)");
+            anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+            anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+            anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+            anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+            anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
 
-		if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
-			channel = "web";
-		}
-		procedureRequest.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, channel);
+            anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700122");
+            anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700122");
 
-		//Construccion del body para el conector
-		JsonObject jsonRequest = new JsonObject();
+            anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
 
-		//Validacion del numero de telefono
-		if(aBagSPJavaOrchestration.get("o_phone") != null) {
-			phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
-		}
-		jsonRequest.addProperty("phone", phoneCode + phoneNumber);
-		procedureRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
+            anOriginalRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
 
-		//Validacion del blockCode
-		jsonRequest.addProperty("blockCode", "21");
+            if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
+                channel = "web";
+            }
+            anOriginalRequest.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, channel);
 
-		//Validacion de blockResason
-        jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+            //Construccion del body para el conector
+            JsonObject jsonRequest = new JsonObject();
 
-		procedureRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
+            //Validacion del numero de telefono
+            if(aBagSPJavaOrchestration.get("o_phone") != null) {
+                phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
+            }
+            jsonRequest.addProperty("phoneNumber", phoneCode + phoneNumber);
+            anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
-		//Se llama al conector de blockOperation
-		IProcedureResponse connectorBlockOperationResponse = executeCoreBanking(procedureRequest);
+            //Validacion del blockCode
+            jsonRequest.addProperty("blockCode", "21");
 
-		if (connectorBlockOperationResponse.readValueParam("@o_responseCode") != null)
-			aBagSPJavaOrchestration.put("responseCode", connectorBlockOperationResponse.readValueParam("@o_responseCode"));
+            //Validacion de blockResason
+            jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
 
-		if (connectorBlockOperationResponse.readValueParam("@o_message") != null)
-			aBagSPJavaOrchestration.put("message", connectorBlockOperationResponse.readValueParam("@o_message"));
+            anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
-		if (connectorBlockOperationResponse.readValueParam("@o_success") != null) {
-			aBagSPJavaOrchestration.put("success_block_operation", connectorBlockOperationResponse.readValueParam("@o_success"));
-		}
-		else {
-			aBagSPJavaOrchestration.put("success_block_operation", "false");
-		}
+            //Se llama al conector de blockOperation
+            aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorBlockOperation)");
+            anOriginalRequest.setSpName("cob_procesador..sp_conne_block_operation");
 
-		if(logger.isDebugEnabled())
-			logger.logDebug("Response executeBlockOperation: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
+            // SE EJECUTA CONECTOR
+            connectorBlockOperationResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
 
-		registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_external_customer_id"));
-		return connectorBlockOperationResponse;
-	}
+            if (connectorBlockOperationResponse.readValueParam("@o_responseCode") != null)
+                aBagSPJavaOrchestration.put("responseCode", connectorBlockOperationResponse.readValueParam("@o_responseCode"));
 
-	private void registerRequestBlockOperation(IProcedureResponse wProcedureResponse, String requestSend, String customerId){
+            if (connectorBlockOperationResponse.readValueParam("@o_message") != null)
+                aBagSPJavaOrchestration.put("message", connectorBlockOperationResponse.readValueParam("@o_message"));
+
+            if (connectorBlockOperationResponse.readValueParam("@o_success") != null) {
+                aBagSPJavaOrchestration.put("success_block_operation", connectorBlockOperationResponse.readValueParam("@o_success"));
+            }
+            else {
+                aBagSPJavaOrchestration.put("success_block_operation", "false");
+            }
+
+            if(logger.isDebugEnabled())
+                logger.logDebug("Response executeBlockOperationConnector: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
+
+            registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_ente"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            connectorBlockOperationResponse = null;
+            logger.logInfo(CLASS_NAME +" Error Catastrofico de executeBlockOperationConnector");
+
+        } finally {
+            if (logger.isInfoEnabled()) {
+                logger.logInfo(CLASS_NAME + "--> executeBlockOperationConnector");
+            }
+        }
+
+        return connectorBlockOperationResponse;
+    }
+
+    private void registerRequestBlockOperation(IProcedureResponse wProcedureResponse, String requestSend, String customerId){
 		IProcedureRequest request = new ProcedureRequestAS();
 		final String METHOD_NAME = "[registerRequestBlockOperationError]";
 
