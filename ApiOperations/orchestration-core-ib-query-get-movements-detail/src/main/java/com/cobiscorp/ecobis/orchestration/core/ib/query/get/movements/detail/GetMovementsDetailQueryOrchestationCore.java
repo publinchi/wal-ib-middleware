@@ -747,6 +747,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String name_location_atm = columns[45].getValue();
 				String transaction_id_atm = columns[28].getValue();
 				String bank_branch_code = columns[39].getValue();
+				String establisment_name_merchant = columns[29].getValue();
+				String transaction_id_merchant = columns[30].getValue();
 				String establisment_name_store = columns[31].getValue();
 				String transaction_id_store = columns[32].getValue();
 
@@ -801,14 +803,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					}
 
 					if (type_auth.equals("WITHDRAWAL")) {
-
-						if (is_dock_idc.equals("DOCK")) {
+						movementType = "DEBIT_AT_STORE";
+						/*if (is_dock_idc.equals("DOCK")) {
 							movementType = "ATM_DEBIT";
 						}
 
 						if (is_dock_idc.equals("IDC")) {
 							movementType = "DEBIT_AT_STORE";
-						}
+						}*/
 					}
 
 					if (type_auth.equals("PURCHASE")) {
@@ -940,14 +942,52 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(19, new ResultSetRowColumnData(false, columns[23].getValue()));
 
 				rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
-				rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
-				rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
+				//rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+				//rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
 
-				rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
-				rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
+				//rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
+				//rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
 
-				rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
-				rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+				//rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+				//rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+
+				if (type_auth == null) {
+					rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+					rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
+					rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
+					rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
+					rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+					rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+					
+					}else{
+						if (type_auth.equals("WITHDRAWAL")) {
+							if (is_dock_idc == null) {
+								rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+								rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
+								rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
+								rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
+								rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+								rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+							
+							} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
+								rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+								rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+								rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+								rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+								rowDat.addRowData(25, new ResultSetRowColumnData(false, is_dock_idc.equals("DOCK") ? establisment_name_merchant : establisment_name_store)); //NUEVO STORE DE
+								rowDat.addRowData(26, new ResultSetRowColumnData(false, is_dock_idc.equals("DOCK") ? transaction_id_merchant : transaction_id_store)); //NUEVO STORE DE
+							}					
+							
+						} else {
+							rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
+							rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+							rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
+							rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
+							rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
+							rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+						}
+					}
 
 				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
 				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
