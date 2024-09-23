@@ -2274,7 +2274,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
             anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
 
-            anOriginalRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
+            anOriginalRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
 
             if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
                 channel = "web";
@@ -2322,7 +2322,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             if(logger.isDebugEnabled())
                 logger.logDebug("Response executeBlockOperationConnector: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
 
-            registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_ente"));
+            registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_external_customer_id"));
         } catch (Exception e) {
             e.printStackTrace();
             connectorBlockOperationResponse = null;
@@ -2338,46 +2338,44 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     }
 
     private void registerRequestBlockOperation(IProcedureResponse wProcedureResponse, String requestSend, String customerId){
-		IProcedureRequest request = new ProcedureRequestAS();
-		final String METHOD_NAME = "[registerRequestBlockOperationError]";
+        IProcedureRequest request = new ProcedureRequestAS();
+        final String METHOD_NAME = "[registerRequestBlockOperationError]";
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo( " Entrando en registerRequestBlockOperationError");
-		}
+        if (logger.isInfoEnabled()) {
+            logger.logInfo( " Entrando en registerRequestBlockOperationError");
+        }
 
-		String bodyResponse = wProcedureResponse.readValueParam("@o_body_response");
+        String bodyResponse = wProcedureResponse.readValueParam("@o_body_response");
 
-		String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"false":wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
+        String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"false":wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
 
-		String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
-		String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
+        String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
+        String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
 
-		logger.logInfo("code:: " + code);
-		logger.logInfo("message:: " + message);
-		logger.logInfo("bodyResponse:: " + bodyResponse);
+        logger.logInfo("code:: " + code);
+        logger.logInfo("message:: " + message);
+        logger.logInfo("bodyResponse:: " + bodyResponse);
 
-		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
+        request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
 
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_LOCAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
-		request.addInputParam("@i_request_block_operation", ICTSTypes.SQLVARCHAR, requestSend);
-		request.addInputParam("@i_response_block_operation", ICTSTypes.SQLVARCHAR, bodyResponse);
-		request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, code);
-		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, customerId.toString());
-		request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, message);
+        request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+        request.addInputParam("@i_request_block_operation", ICTSTypes.SQLVARCHAR, requestSend);
+        request.addInputParam("@i_response_block_operation", ICTSTypes.SQLVARCHAR, bodyResponse);
+        request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, code);
+        request.addInputParam("@i_ente", ICTSTypes.SQLINTN, customerId);
+        request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, message);
 
-		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
-		}
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+    }
 
-
-	}
-	
 	private AccendoConnectionData retrieveAccendoConnectionData(){
         String wInfo = "[RegisterAccountsJobImpl][retrieveSpeiConnectionData] ";
 
