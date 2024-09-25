@@ -111,13 +111,14 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 					logger.logDebug("success CISConnectorSpei: true future");
 					logger.logDebug("connectorSpeiResponse future: " + connectorSpeiResponse.getParams());
 				}
-				String  responseConnector = connectorSpeiResponse.readValueParam("@o_spei_response");
+				String responseConnector = connectorSpeiResponse.readValueParam("@o_spei_response");
 				String requestConnector = connectorSpeiResponse.readValueParam("@o_spei_request");	
 				String returnCodeMsj = connectorSpeiResponse.readValueParam("@o_cod_respuesta")+" - "+connectorSpeiResponse.readValueParam("@o_msj_respuesta");
 				//llamada a log update
 				String returnCode = connectorSpeiResponse.readValueParam("@o_cod_respuesta");
-				registerDevolution(request, aBagSPJavaOrchestration, "I", returnCode!=null?Integer.valueOf(returnCode):-1, connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
 				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, returnCodeMsj, responseConnector, idLog, requestConnector);
+				registerDevolution(request, aBagSPJavaOrchestration, "I", returnCode!=null?Integer.valueOf(returnCode):-1, connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
+				
 			} else {
 
 				if (logger.isDebugEnabled()) {
