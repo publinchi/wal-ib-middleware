@@ -320,6 +320,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 						mappingResponseSpeiToProcedureOffline(responseSpei, responseTransfer, aBagSPJavaOrchestration);
 
 						responseTransfer.addParam("@i_type_reentry", ICTSTypes.SQLVARCHAR, 1, TYPE_REENTRY_OFF_SPI);
+						logger.logInfo("i_register_off_mov APLICADO");
+						responseTransfer.addParam("@i_register_off_mov",ICTSTypes.SQLVARCHAR,1,"S");
 					}
 				} else {
 
