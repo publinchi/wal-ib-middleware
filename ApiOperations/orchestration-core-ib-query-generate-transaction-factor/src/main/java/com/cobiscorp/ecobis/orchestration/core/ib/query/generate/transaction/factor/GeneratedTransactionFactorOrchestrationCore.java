@@ -454,6 +454,7 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 	    request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 	            IMultiBackEndResolverService.TARGET_LOCAL);
 	    request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+	    request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 	    request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, login);
 	    request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_requestType"));
 	    IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
