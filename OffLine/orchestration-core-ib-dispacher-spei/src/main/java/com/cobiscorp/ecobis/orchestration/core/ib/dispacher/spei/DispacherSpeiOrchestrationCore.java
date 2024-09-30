@@ -372,9 +372,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
 		if( validateFields(request,aBagSPJavaOrchestration))
 		{
+			IProcedureResponse procedureResponseLocal=null;
 			//llamar sp cambio de estado transfer spei 
-						
-			IProcedureResponse procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo());
+			if(msjIn.getOrdenpago().getOpTpClave()==0)
+				procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo());
+			else
+				procedureResponseLocal = updateDevolution(request, aBagSPJavaOrchestration,"U",null, null);
 			
 			if(procedureResponseLocal.getReturnCode()!=0)
 			{
@@ -404,6 +407,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	protected Object paymentIn(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
 	{
 		// validar firma
+		long start = System.currentTimeMillis();
 		logHour("1");
 		Mensaje msg = new Mensaje();
 		Respuesta responseXml = new Respuesta();
@@ -421,13 +425,13 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		if(responSingTyp.getReturnCode()==0)
 		{
-			DispatcherUtil util = new DispatcherUtil();
-			
-			String sign = util.doSignature(request, aBagSPJavaOrchestration);
 			
 			logHour("2");
 			if( validateFields(request, aBagSPJavaOrchestration))
 			{
+				
+				DispatcherUtil util = new DispatcherUtil();
+				String sign = util.doSignature(request, aBagSPJavaOrchestration);
 				if(logger.isDebugEnabled())
 				{
 					logger.logDebug("firma armada:"+sign);
@@ -446,7 +450,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					//spein in tipo de pago 0 devolucion
 					if(typePaymentResult == 0)
 					{
-						if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17)
+						if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17 )
 						{
 							String clave = "";
 							if( msjIn.getOrdenpago().getOpTpClave()==17)
@@ -474,6 +478,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 							{
 								msjIn.getOrdenpago().setOpCuentaBen(msjIn.getOrdenpago().getOpCuentaOrd());
 								msjIn.getOrdenpago().setOpTcClaveBen(msjIn.getOrdenpago().getOpTcClaveOrd());
+							}
+							//consulta datos para hacer un retorno parcial de una devolucion
+							if(msjIn.getOrdenpago().getOpTpClave()==23)
+							{
+								searchOriginAccountDestination(request,aBagSPJavaOrchestration,msjIn.getOrdenpago().getOpRastreoOri(),msjIn);
 							}
 							IProcedureRequest procedureRequest = initProcedureRequest(request);
 				
@@ -546,15 +555,20 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 									responseXml.setErrCodigo(1);
 									responseXml.setErrDescripcion("Cuenta inexistente");
 								}else
-									if("400335".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
-									{
-										responseXml.setErrCodigo(20);
-										responseXml.setErrDescripcion("Excede el límite de saldo autorizado de la cuenta");
-									}else
-									{
-										responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
-										responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
-									}
+								if("400335".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
+								{
+									responseXml.setErrCodigo(20);
+									responseXml.setErrDescripcion("Excede el límite de saldo autorizado de la cuenta");
+								}else
+								if("400337".equals(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")))
+								{
+									responseXml.setErrCodigo(21);
+									responseXml.setErrDescripcion("Excede el límite de abonos permitidos en el mes en la cuenta");
+								}else
+								{
+									responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
+									responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
+								}
 							}	
 							
 						}
@@ -607,6 +621,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		aBagSPJavaOrchestration.put("result", response);
 		aBagSPJavaOrchestration.put("error", returnCodeMsjSpeiIn);
 		logHour("7");
+		long end = System.currentTimeMillis();
+		if(logger.isDebugEnabled()) {
+			logger.logInfo("tiempo proceso spei in: "+(end-start));
+		}
 		return response;
 	}
 	
@@ -652,6 +670,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	@Override
 	protected Object ensesion(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
 	{
+		long start = System.currentTimeMillis();
 		Mensaje msg = new Mensaje();
 		Respuesta responseXml = new Respuesta();
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
@@ -702,6 +721,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		aBagSPJavaOrchestration.put("result", response);
 		if(logger.isDebugEnabled())
 			logger.logInfo("cancellations response:"+response);
+		long end = System.currentTimeMillis();
+		if(logger.isDebugEnabled()) {
+			logger.logInfo("tiempo proceso spei in: "+(end-start));
+		}
 		return response;
 	}
 	
@@ -1115,6 +1138,9 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addOutputParam("@o_id_transaccion_core", ICTSTypes.SQLINTN, "");
 		procedureRequest.addOutputParam("@o_comision", ICTSTypes.SYBMONEY, "");
 		procedureRequest.addOutputParam("@o_proceso_origen", ICTSTypes.SQLINTN, "");
+		procedureRequest.addOutputParam("@o_clabe", ICTSTypes.SYBVARCHAR, "");
+		procedureRequest.addOutputParam("@o_nombre", ICTSTypes.SYBVARCHAR, "");
+		procedureRequest.addOutputParam("@o_ced_ruc", ICTSTypes.SYBVARCHAR, "");
 		 
 		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 		if (logger.isInfoEnabled()) 
@@ -1130,6 +1156,9 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			aBagSPJavaOrchestration.put("o_id_transaccion_core",procedureResponseLocal.readValueParam("@o_id_transaccion_core"));
 			aBagSPJavaOrchestration.put("o_comision",procedureResponseLocal.readValueParam("@o_comision"));
 			aBagSPJavaOrchestration.put("o_proceso_origen",procedureResponseLocal.readValueParam("@o_proceso_origen"));
+			aBagSPJavaOrchestration.put("o_clabe",procedureResponseLocal.readValueParam("@o_clabe"));
+			aBagSPJavaOrchestration.put("o_nombre",procedureResponseLocal.readValueParam("@o_nombre"));
+			aBagSPJavaOrchestration.put("o_ced_ruc",procedureResponseLocal.readValueParam("@o_ced_ruc"));
 		}
 		
 		return procedureResponseLocal;
@@ -1301,6 +1330,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
 		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, clave);
 		procedureRequest.addInputParam("@i_estado", ICTSTypes.SYBVARCHAR, state);
+		//poner fecha de operacion karpay
 		
 		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 		if(logger.isDebugEnabled())
@@ -1334,6 +1364,44 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logInfo("response updateStatus :"+procedureResponseLocal.getCTSMessageAsString() );
 		
 		return procedureResponseLocal;
+	}
+	private IProcedureResponse updateDevolution(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
+			 String operacion, Integer error, String errorDes ) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, registerDevolution");
+		}
+		
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		
+		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
+		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_devoluciones");
+		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		
+		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
+		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
+		requestProcedureLocal.addInputParam("@i_de_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+				
+		requestProcedureLocal.addOutputParam("@o_de_id", ICTSTypes.SQLINT4, "0");
+	        
+	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, registerDevolution: " + wProcedureResponseLocal.getProcedureResponseAsString());
+		}
+		
+		return wProcedureResponseLocal;
+		
+	}
+	private void searchOriginAccountDestination(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String clave, mensaje msj)
+	{
+		IProcedureResponse procedureGetDataSpei = getDataSPEI(request, aBagSPJavaOrchestration, clave);
+		if(procedureGetDataSpei.getReturnCode() == 0)
+		{
+			msj.getOrdenpago().setOpConceptoPag2(aBagSPJavaOrchestration.get("o_concepto").toString());
+			msj.getOrdenpago().setOpTcClaveBen(40);
+			msj.getOrdenpago().setOpCuentaBen(aBagSPJavaOrchestration.get("o_clabe").toString());
+	    }
 	}
 	public void logHour(String txt)
 	{

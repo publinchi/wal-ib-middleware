@@ -111,11 +111,14 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 					logger.logDebug("success CISConnectorSpei: true future");
 					logger.logDebug("connectorSpeiResponse future: " + connectorSpeiResponse.getParams());
 				}
-				String  responseConnector = connectorSpeiResponse.readValueParam("@o_spei_response");
+				String responseConnector = connectorSpeiResponse.readValueParam("@o_spei_response");
 				String requestConnector = connectorSpeiResponse.readValueParam("@o_spei_request");	
 				String returnCodeMsj = connectorSpeiResponse.readValueParam("@o_cod_respuesta")+" - "+connectorSpeiResponse.readValueParam("@o_msj_respuesta");
 				//llamada a log update
+				String returnCode = connectorSpeiResponse.readValueParam("@o_cod_respuesta");
 				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, returnCodeMsj, responseConnector, idLog, requestConnector);
+				registerDevolution(request, aBagSPJavaOrchestration, "I", returnCode!=null?Integer.valueOf(returnCode):-1, connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
+				
 			} else {
 
 				if (logger.isDebugEnabled()) {
@@ -196,6 +199,57 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Ending flow, logEntryApi callable: " + wProcedureResponseLocal.getProcedureResponseAsString());
+		}
+		
+		if (wProcedureResponseLocal.getReturnCode()==0) {
+			
+			logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_lc_id"));
+		} 
+		return logId;
+		
+	}
+	private int registerDevolution(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
+			 String operacion, Integer error, String errorDes ) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, registerDevolution callable");
+		}
+		Integer logId = 0;
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		
+		Integer opToClave= msjIn.getOrdenpago().getOpToClave();
+		Integer opInsClave = msjIn.getOrdenpago().getOpInsClave();
+		Integer opCdClave = msjIn.getOrdenpago().getOpCdClave();
+		
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDate date = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
+        String processDate = date.format(outputFormatter);
+		
+		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
+		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_devoluciones");
+		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		
+		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
+		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
+		requestProcedureLocal.addInputParam("@i_de_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+		requestProcedureLocal.addInputParam("@i_de_tipo_pago",ICTSTypes.SQLINT4, opToClave!=null?opToClave.toString():"");
+		requestProcedureLocal.addInputParam("@i_de_causa",ICTSTypes.SQLINT4, opCdClave!=null?opCdClave.toString():"");
+		requestProcedureLocal.addInputParam("@i_de_estado",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpEstado());
+		requestProcedureLocal.addInputParam("@i_de_inst_benef",ICTSTypes.SQLINT4, opInsClave!=null?opInsClave.toString():"");
+		requestProcedureLocal.addInputParam("@i_de_monto",ICTSTypes.SQLMONEY, String.valueOf(msjIn.getOrdenpago().getOpMonto()));
+		requestProcedureLocal.addInputParam("@i_de_error",ICTSTypes.SQLINT4, error!=null?error.toString():"-1");
+		requestProcedureLocal.addInputParam("@i_de_error_descripcion",ICTSTypes.SQLVARCHAR, errorDes);
+		requestProcedureLocal.addInputParam("@i_de_usuario",ICTSTypes.SQLVARCHAR, "");
+		requestProcedureLocal.addInputParam("@i_de_fecha_operacion",ICTSTypes.SQLDATETIME, processDate);
+		
+		
+		requestProcedureLocal.addOutputParam("@o_de_id", ICTSTypes.SQLINT4, "0");
+	        
+	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, registerDevolution callable: " + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
 		
 		if (wProcedureResponseLocal.getReturnCode()==0) {
