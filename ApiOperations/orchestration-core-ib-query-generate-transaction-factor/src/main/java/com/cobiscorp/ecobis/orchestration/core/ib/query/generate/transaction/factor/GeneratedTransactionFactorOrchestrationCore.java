@@ -110,6 +110,7 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 		String ente = anOriginalRequest.readValueParam("@i_external_customer_id");
 		String cardId = anOriginalRequest.readValueParam("@i_card_id");
 		String codigoOtp = anOriginalRequest.readValueParam("@i_otp");
+		String requestType = anOriginalRequest.readValueParam("@i_requestType");
 
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("ente", ente);
@@ -224,6 +225,16 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 			responseOtp.setSuccess(true);
 			responseOtp.setMessage(message);
 
+			if (requestType != null){
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Registro del tipo de solicitud de OTP: "+ requestType); }
+				
+				registerRequestType(anOriginalRequest, login.get("o_login"));
+		    }else {
+		    	if (logger.isDebugEnabled()) {
+		    		logger.logDebug("Registro del tipo de solicitud de OTP nula"); }
+		    }
+			
 			return processResponseOtp(responseOtp);
 			
 		} else {
@@ -430,6 +441,26 @@ public class GeneratedTransactionFactorOrchestrationCore extends SPJavaOrchestra
 			
 			logger.logDebug("notifyTokenUser.002" + "notifyTokenUser");
 		}
+	}
+	
+	private void registerRequestType(IProcedureRequest aRequest, String login) {
+	    IProcedureRequest request = new ProcedureRequestAS();
+	    
+	    if (logger.isInfoEnabled()) {
+	        logger.logInfo( " Entrando en registerRequestType");
+	    }	    
+	    
+	    request.setSpName("cob_bvirtual..sp_solicitud_OTP");
+	    request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+	            IMultiBackEndResolverService.TARGET_LOCAL);
+	    request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+	    request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, login);
+	    request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_requestType"));
+	    IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+	    
+	    if (logger.isDebugEnabled()) {
+	        logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+	    }
 	}
 
 }
