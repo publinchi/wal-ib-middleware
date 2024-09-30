@@ -405,6 +405,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String otpCode = aRequest.readValueParam("@i_otp_code");
         String otpReturnCode = null;
 		String otpReturnCodeNew = null;
+        String login = null;
         
         if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
             xRequestId = "E";
@@ -449,9 +450,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
         
         if (otpCode!=null && !otpCode.equals("null") && !otpCode.trim().isEmpty()) {
-			
-			String login = null;
-			
+
 			getLoginById(aRequest, aBagSPJavaOrchestration);
 			
 			login = aBagSPJavaOrchestration.get("o_login").toString();
@@ -493,12 +492,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  						logger.logDebug("GeneracionOTP dinámica response: "+wResponseGOtp.getSuccess());
  						}
  					
- 					if(!wResponseGOtp.getSuccess()) {				
- 						otpReturnCodeNew = wResponseGOtp.getMessage().getCode();
- 						
+ 					if(!wResponseGOtp.getSuccess()) {
+                         otpReturnCodeNew = wResponseGOtp.getMessage().getCode();
  						if (logger.isDebugEnabled()) {
  						logger.logDebug("GeneracionOTP dinámica no exitosa: "+ otpReturnCodeNew);}				
- 					} else {					
+ 					} else {
+                        registerRequestType(login);
  						if (logger.isDebugEnabled()) {
  						logger.logDebug("GeneracionOTP dinámica exitosa: "+otpReturnCodeNew);}
  					}					
@@ -3074,6 +3073,29 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		
 		return connectorRiskEvaluationResponse;
 	}
+
+    private void registerRequestType(String login) {
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo( " Entrando en registerRequestType");
+        }
+
+        request.setSpName("cob_bvirtual..sp_solicitud_OTP");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_LOCAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+        request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, login);
+        request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "S");
+
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+    }
 
     private String unifyDateFormat(String dateString) {
         String[] formats = {
