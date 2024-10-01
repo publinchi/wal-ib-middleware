@@ -368,6 +368,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		Respuesta responseXml = new Respuesta();
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		String response;
+		 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+         LocalDate fechaOperacion = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
+         String fechaLiq = fechaOperacion.format(outputFormatter);
 		if(logger.isDebugEnabled())
 			logger.logInfo("BER Id:"+msjIn.getOrdenpago().getId());
 		if( validateFields(request,aBagSPJavaOrchestration))
@@ -375,9 +379,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			IProcedureResponse procedureResponseLocal=null;
 			//llamar sp cambio de estado transfer spei 
 			if(msjIn.getOrdenpago().getOpTpClave()==0)
-				procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo());
+				procedureResponseLocal = updateDevolution(request, aBagSPJavaOrchestration,"U",null, null, fechaLiq);
 			else
-				procedureResponseLocal = updateDevolution(request, aBagSPJavaOrchestration,"U",null, null);
+				procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo(), fechaLiq);
+			
+			
 			
 			if(procedureResponseLocal.getReturnCode()!=0)
 			{
@@ -485,7 +491,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 								searchOriginAccountDestination(request,aBagSPJavaOrchestration,msjIn.getOrdenpago().getOpRastreoOri(),msjIn);
 							}
 							IProcedureRequest procedureRequest = initProcedureRequest(request);
-				
+							long startSpeiin = System.currentTimeMillis();
 							procedureRequest.setSpName("cob_procesador..sp_bv_spei_transaction");
 							procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500069");
 							procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500069");
@@ -517,13 +523,15 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 							procedureRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "");
 							procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
 							procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "-1");
-							procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "Error desconocido");
-							
+							procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "Error desconocido");					
 							
 							procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
 							procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 							
 							IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+							long endSpeiin = System.currentTimeMillis();
+							if(logger.isDebugEnabled())
+								logger.logInfo("Spei in time: "+(endSpeiin-startSpeiin));
 							logHour("4");
 							if(logger.isDebugEnabled())
 								logger.logInfo("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
@@ -1102,7 +1110,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	        
 	        if(procedureResponseReverse.getReturnCode()==0)
 	        {
-	        	IProcedureResponse procedureResponseLocal = updateStatusOperation(anOriginalRequest, aBagSPJavaOrchestration, "F", clave);
+	        	IProcedureResponse procedureResponseLocal = updateStatusOperation(anOriginalRequest, aBagSPJavaOrchestration, "F", clave,"");
 				if(procedureResponseLocal.getReturnCode()!=0)
 				{
 				 	procedureResponseReverse = procedureResponseLocal;
@@ -1316,7 +1324,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 	}
 	
-	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state, String clave)
+	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state, String clave, String fechaLiq)
 	{
 		if(logger.isDebugEnabled())
 			logger.logInfo("init updateStatus");
@@ -1330,6 +1338,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");			
 		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, clave);
 		procedureRequest.addInputParam("@i_estado", ICTSTypes.SYBVARCHAR, state);
+		procedureRequest.addInputParam("@i_fecha_liq", ICTSTypes.SQLDATETIME, fechaLiq);
 		//poner fecha de operacion karpay
 		
 		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
@@ -1366,7 +1375,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return procedureResponseLocal;
 	}
 	private IProcedureResponse updateDevolution(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
-			 String operacion, Integer error, String errorDes ) {
+			 String operacion, Integer error, String errorDes, String fechaLiq ) {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Begin flow, registerDevolution");
 		}
@@ -1381,7 +1390,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
 		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
 		requestProcedureLocal.addInputParam("@i_de_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-				
+		requestProcedureLocal.addInputParam("@i_de_fecha_liquidacion", ICTSTypes.SQLDATETIME, fechaLiq);
 		requestProcedureLocal.addOutputParam("@o_de_id", ICTSTypes.SQLINT4, "0");
 	        
 	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
