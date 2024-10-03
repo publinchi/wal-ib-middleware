@@ -336,7 +336,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
         String message= "success";
         //validacion cuanta clave con bankid
         
-        if(bankid!=null && bankid.length()>=3 )// Obteniendo los últimos tres dígitos de bankid
+        if(bankid!=null &&bankid.length()>=3 )// Obteniendo los últimos tres dígitos de bankid
         {
         	bankidLastThreeDigits = bankid.substring(bankid.length() - 3);
         }
@@ -347,7 +347,7 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
         }
 
         // Validando si coinciden
-        if (!bankidLastThreeDigits.equals(clabeFirstThreeDigits)) {
+        if (!bankidLastThreeDigits.equals(clabeFirstThreeDigits)&& !"0".equals(bankid)) {
         	code = 400599;
         	message = "The account does not belong to the banking institution.";
         	
