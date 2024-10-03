@@ -8,6 +8,7 @@
     <parameter name="@i_card_id" dataType="varchar" direction="in" />
     <parameter name="@i_otp" dataType="int" direction="in" />
     <parameter name="@i_external_customer_id" dataType="int" direction="in" />
+    <parameter name="@i_requestType" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
