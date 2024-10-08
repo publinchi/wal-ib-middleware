@@ -378,6 +378,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 return wTransferResponse;
             } else {
             	wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
+            	return wTransferResponse;
             }
         }
         return wAccountsResp;
