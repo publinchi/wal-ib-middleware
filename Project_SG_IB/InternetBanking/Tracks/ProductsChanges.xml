@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<collection type="List" length="29" id="1">
+<collection type="List" length="28" id="1">
   <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="2" index="0">
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Publicity.Service.Service" />
     <field type="String" name="state" value="Change" />
@@ -89,7 +89,6 @@
     <field type="String" name="state" value="Error" />
   </class>
   <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="24" index="22">
-
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.ProgrammedSavings.Service.Service" />
     <field type="String" name="state" value="Error" />
   </class>
@@ -106,19 +105,8 @@
     <field type="String" name="state" value="Error" />
   </class>
   <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="28" index="26">
-    <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Utils.Service" />
-    <field type="String" name="state" value="Error" />
-
-    <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SpeiIn.Service.Service" />
-    <field type="String" name="state" value="Error" />
-
-  </class>
-  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="29" index="27">
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SpeiIn.Service.Service" />
     <field type="String" name="state" value="Error" />
   </class>
-  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="30" index="28">
-    <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" />
-    <field type="String" name="state" value="Change" />
-  </class>
+  <reference id="28" index="27" />
 </collection>
