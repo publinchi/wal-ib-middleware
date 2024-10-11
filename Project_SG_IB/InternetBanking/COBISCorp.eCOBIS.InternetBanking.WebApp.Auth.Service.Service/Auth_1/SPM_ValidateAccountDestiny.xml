@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMapping" id="1">
+  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureBase" id="2" name="storedProcedure">
+    <field type="String" name="database" value="cob_ahorros" />
+    <field type="String" name="name" value="sp_validate_destiny_account" />
+    <field type="String" name="version" value="1" />
+  </class>
+  <field type="String" name="procedureName" value="cob_ahorros..sp_validate_destiny_account" />
+  <collection type="List" length="1" id="3" name="queries">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQuery" id="4" index="0">
+      <field type="int" name="order" value="1" />
+      <field type="boolean" name="mapReturn" value="true" />
+      <collection type="List" length="2" id="5" name="columns">
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="6" index="0">
+          <field type="int" name="position" value="0" />
+          <field type="String" name="columnName" value="account" />
+          <field type="String" name="dTOAlias" value="returnValidateAccountResponse" />
+          <field type="String" name="dTOPropertyName" value="cuenta" />
+          <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
+        </class>
+        <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingQueryColumn" id="7" index="1">
+          <field type="int" name="position" value="1" />
+          <field type="String" name="columnName" value="externalCustomerId" />
+          <field type="String" name="dTOAlias" value="returnValidateAccountResponse" />
+          <field type="String" name="dTOPropertyName" value="enEnte" />
+          <field type="String" name="dataType" value="int" />
+          <field type="String" name="format" value="" />
+        </class>
+      </collection>
+    </class>
+  </collection>
+  <collection type="List" length="2" id="8" name="parameters">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="9" index="0">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="10" name="parameter">
+        <field type="String" name="name" value="@i_operacion" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inValidateAccountRequest" />
+      <field type="String" name="dTOPropertyName" value="operacion" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="11" index="1">
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="12" name="parameter">
+        <field type="String" name="name" value="@i_account" />
+        <field type="String" name="dataType" value="varchar" />
+        <field type="String" name="direction" value="in" />
+      </class>
+      <field type="String" name="mappingTypeName" value="DTO" />
+      <field type="String" name="mappingDirection" value="in" />
+      <field type="String" name="dTOAlias" value="inValidateAccountRequest" />
+      <field type="String" name="dTOPropertyName" value="cuenta" />
+      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
+      <field type="boolean" name="allowNull" value="false" />
+    </class>
+  </collection>
+  <collection type="List" length="0" id="13" name="parametersOpenApi">
+  </collection>
+  <field type="String" name="trnCode" value="18700124" />
+  <collection type="List" length="2" id="14" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="15" index="0">
+      <field type="String" name="dTOName" value="ValidateAccountRequest" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="inValidateAccountRequest" />
+      <field type="String" name="direction" value="in" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="16" index="1">
+      <field type="String" name="dTOName" value="ValidateAccountResponse" />
+      <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
+      <field type="String" name="dTOVersion" value="1" />
+      <field type="int" name="repetition" value="0" />
+      <field type="String" name="alias" value="returnValidateAccountResponse" />
+      <field type="String" name="direction" value="return" />
+      <field type="boolean" name="required" value="true" />
+      <field type="String" name="stateDTO" value="" />
+    </class>
+  </collection>
+  <collection type="Map" length="1" id="17" name="mappingProperties">
+    <entry>
+      <key type="String" value="dbms" />
+      <value type="String" value="SQLCTS" />
+    </entry>
+  </collection>
+  <field type="String" name="stateParams" value="" />
+</class>
