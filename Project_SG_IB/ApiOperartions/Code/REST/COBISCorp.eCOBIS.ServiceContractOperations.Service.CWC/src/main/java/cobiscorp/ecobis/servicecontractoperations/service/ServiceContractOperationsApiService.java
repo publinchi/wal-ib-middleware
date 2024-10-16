@@ -7696,7 +7696,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, ente);
 		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operation);
 
-		ctsRestIntegrationService.execute(SessionManager.getSessionId(), null, procedureRequestAS);
+		//execute procedure
+		ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local",procedureRequestAS);
 
 		LOGGER.logDebug("End service execution: updateFieldsByNewChanged");
 
