@@ -4519,6 +4519,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					}, false);
 
 			outUpdateCustomerAddressResponse.setSuccess(returnUpdateCustomerAddressResponse.isSuccess());
+			
+			//Actualización de Datos del Cliente
+			updateFieldsByNewChanged("D", String.valueOf(inUpdateCustomerAddressRequest.getExternalCustomerId()));
+			 
 			// break;
 
 		} else {
@@ -5636,6 +5640,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					}, false);
 
 			outUpdateBeneficiaryResponse.setSuccess(returnUpdateBeneficiaryResponse.isSuccess());
+			
+			//Actualización de Contrato del cliente
+			updateFieldsByNewChanged("B", String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
+
 			// break;
 
 		} else {
@@ -5659,9 +5667,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					}, false);
 
 			outUpdateBeneficiaryResponse.setResponse(returnUpdateBeneficiaryResponse.getResponse());
-			//Agregar nuevo metodo
-			updateFieldsByNewChanged("U", String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
-
 			// break;
 
 		} else {
@@ -7693,11 +7698,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
 				"cob_bvirtual..sp_act_expediente");
 
-		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, ente);
 		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operation);
-
+		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4, ente);
+		
 		//execute procedure
-		ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local",procedureRequestAS);
+		ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local", procedureRequestAS);
 
 		LOGGER.logDebug("End service execution: updateFieldsByNewChanged");
 
