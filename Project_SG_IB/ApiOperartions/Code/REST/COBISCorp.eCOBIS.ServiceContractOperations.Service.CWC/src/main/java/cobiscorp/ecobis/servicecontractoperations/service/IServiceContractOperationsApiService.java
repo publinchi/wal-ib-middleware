@@ -428,4 +428,8 @@ public interface IServiceContractOperationsApiService {
 	//Have DTO
 	public ResponseRegisterCardPan getUniqueId( String xrequestid,String xenduserrequestdatetime,String xenduserip, String xchannel, String auth_token, Map<String, String> headersIntegracion, RequestRegisterCardPan inRequestRegisterCardPan)throws CTSRestException;
 
+	/**
+	 *Update fields by new changed
+	 */
+	public void updateFieldsByNewChanged(String operation, String ente)throws CTSRestException;
 }
