@@ -7703,7 +7703,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4, ente);
 
         //execute procedure
-        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local", procedureRequestAS);
+        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "SQLCANALES", procedureRequestAS);
 
         LOGGER.logDebug("End service execution: updateFieldsByNewChanged");
 
