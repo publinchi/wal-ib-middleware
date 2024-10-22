@@ -71,12 +71,12 @@ C:\cobis\ConsolaNetReader\Menu\bin\Debug\de\MigraDoc.RtfRendering-gdi.resources.
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\de\PdfSharp-gdi.resources.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\de\PdfSharp.Charting-gdi.resources.dll
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\MenuDocumentServices.csproj.AssemblyReference.cache
+C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.DocumentServices.resources
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.Properties.Resources.resources
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\MenuDocumentServices.csproj.GenerateResource.cache
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\MenuDocumentServices.csproj.CoreCompileInputs.cache
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\MenuDocu.1AD45A26.Up2Date
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.exe
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.pdb
-C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.DocumentServices.resources
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.dll.config

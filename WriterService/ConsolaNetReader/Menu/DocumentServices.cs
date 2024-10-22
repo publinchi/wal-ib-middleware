@@ -98,9 +98,6 @@ namespace DocumentServices
 
             ServicesDocuments doc = new ServicesDocuments();
             doc.documentsGenerator();
-
-
-
             
             timer = new System.Timers.Timer();
             timer.Interval = int.Parse(espera); 
