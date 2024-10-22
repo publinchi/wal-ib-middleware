@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://api1.calixtaondemand.com" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://api1.calixtaondemand.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://api1.calixtaondemand.com">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+      <xsd:complexType name="Mensaje">
+        <xsd:all>
+          <xsd:element name="telefono" type="xsd:string" />
+          <xsd:element name="mensaje" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="Mensajes">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute wsdl:arrayType="tns:Mensaje[]" ref="SOAP-ENC:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="Parametro">
+        <xsd:all>
+          <xsd:element name="nombre" type="xsd:string" />
+          <xsd:element name="valor" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="Parametros">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute wsdl:arrayType="tns:Parametro[]" ref="SOAP-ENC:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="RespEnvio">
+        <xsd:all>
+          <xsd:element name="id" type="xsd:int" />
+          <xsd:element name="fInicio" type="xsd:double" />
+          <xsd:element name="campos" type="xsd:string" />
+          <xsd:element name="descripcion" type="xsd:string" />
+          <xsd:element name="lista" type="xsd:string" />
+          <xsd:element name="por" type="xsd:double" />
+          <xsd:element name="tipo" type="xsd:int" />
+          <xsd:element name="idUsuario" type="xsd:int" />
+          <xsd:element name="especie" type="xsd:int" />
+          <xsd:element name="estado" type="xsd:int" />
+          <xsd:element name="costo" type="xsd:double" />
+          <xsd:element name="mensaje" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="EdoMensajes">
+        <xsd:all>
+          <xsd:element name="tipo" type="xsd:string" />
+          <xsd:element name="telefono" type="xsd:string" />
+          <xsd:element name="costo" type="xsd:double" />
+          <xsd:element name="fechaHora" type="xsd:string" />
+          <xsd:element name="estado" type="xsd:string" />
+          <xsd:element name="lista" type="xsd:string" />
+          <xsd:element name="idEnvio" type="xsd:int" />
+          <xsd:element name="idEstado" type="xsd:int" />
+          <xsd:element name="mensaje" type="xsd:string" />
+          <xsd:element name="destino" type="xsd:string" />
+          <xsd:element name="campoAux" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="RespEstadoMensajes">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute wsdl:arrayType="tns:EdoMensajes[]" ref="SOAP-ENC:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="Transaccion">
+        <xsd:all>
+          <xsd:element name="idCliente" type="xsd:int" />
+          <xsd:element name="email" type="xsd:string" />
+          <xsd:element name="password" type="xsd:string" />
+          <xsd:element name="tipo" type="xsd:string" />
+          <xsd:element name="fechaHora" type="xsd:string" />
+          <xsd:element name="mensajes" type="tns:Mensajes" />
+          <xsd:element name="idivr" type="xsd:int" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="TransaccionCSV">
+        <xsd:all>
+          <xsd:element name="idCliente" type="xsd:int" />
+          <xsd:element name="email" type="xsd:string" />
+          <xsd:element name="password" type="xsd:string" />
+          <xsd:element name="tipo" type="xsd:string" />
+          <xsd:element name="fechaHora" type="xsd:string" />
+          <xsd:element name="csv" type="xsd:string" />
+          <xsd:element name="mensaje" type="xsd:string" />
+          <xsd:element name="idivr" type="xsd:int" />
+          <xsd:element name="nombreEnvio" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="TransaccionEnvios">
+        <xsd:all>
+          <xsd:element name="idCliente" type="xsd:int" />
+          <xsd:element name="email" type="xsd:string" />
+          <xsd:element name="password" type="xsd:string" />
+          <xsd:element name="idEnvio" type="xsd:int" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="Eventos">
+        <xsd:all>
+          <xsd:element name="fecha" type="xsd:string" />
+          <xsd:element name="tipo" type="xsd:string" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="RespEventos">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute wsdl:arrayType="tns:Eventos[]" ref="SOAP-ENC:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="Saldos">
+        <xsd:all>
+          <xsd:element name="id" type="xsd:int" />
+          <xsd:element name="servicio" type="xsd:string" />
+          <xsd:element name="disponible" type="xsd:double" />
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="RespConsultaSaldo">
+        <xsd:complexContent mixed="false">
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute wsdl:arrayType="tns:Saldos[]" ref="SOAP-ENC:arrayType" />
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="EnviaMensajes">
+    <wsdl:part name="mensajes" type="tns:Transaccion" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajesResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EstadoEnvioEmail">
+    <wsdl:part name="cte" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="id" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EstadoEnvioEmailResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EventosEnvioEmail">
+    <wsdl:part name="cte" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="id" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EventosEnvioEmailResponse">
+    <wsdl:part name="code" type="xsd:int" />
+    <wsdl:part name="eventos" type="tns:RespEventos" />
+  </wsdl:message>
+  <wsdl:message name="EnviaEmail">
+    <wsdl:part name="cte" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="nombreCamp" type="xsd:string" />
+    <wsdl:part name="to" type="xsd:string" />
+    <wsdl:part name="from" type="xsd:string" />
+    <wsdl:part name="fromName" type="xsd:string" />
+    <wsdl:part name="replyTo" type="xsd:string" />
+    <wsdl:part name="subject" type="xsd:string" />
+    <wsdl:part name="incrustarImagen" type="xsd:int" />
+    <wsdl:part name="textEmail" type="xsd:string" />
+    <wsdl:part name="htmlEmail" type="xsd:string" />
+    <wsdl:part name="seleccionaAdjuntos" type="xsd:int" />
+    <wsdl:part name="fileBase64" type="xsd:base64Binary" />
+    <wsdl:part name="fileNameBase64" type="xsd:string" />
+    <wsdl:part name="nombreArchivoPersonalizado" type="xsd:string" />
+    <wsdl:part name="envioSinArchivo" type="xsd:int" />
+    <wsdl:part name="fechaInicio" type="xsd:string" />
+    <wsdl:part name="horaInicio" type="xsd:int" />
+    <wsdl:part name="minutoInicio" type="xsd:int" />
+    <wsdl:part name="listasNegras" type="xsd:string" />
+    <wsdl:part name="referencia" type="xsd:string" />
+    <wsdl:part name="campoAuxiliar" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EnviaEmailResponse">
+    <wsdl:part name="return" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajesCSV">
+    <wsdl:part name="mensajes" type="tns:TransaccionCSV" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajesCSVResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensaje">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="tipo" type="xsd:string" />
+    <wsdl:part name="fechaHora" type="xsd:string" />
+    <wsdl:part name="telefono" type="xsd:string" />
+    <wsdl:part name="mensaje" type="xsd:string" />
+    <wsdl:part name="idivr" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajeResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EstadoEnvio">
+    <wsdl:part name="idEnvio" type="tns:TransaccionEnvios" />
+  </wsdl:message>
+  <wsdl:message name="EstadoEnvioResponse">
+    <wsdl:part name="return" type="tns:RespEnvio" />
+  </wsdl:message>
+  <wsdl:message name="EstadoMensajes">
+    <wsdl:part name="idEnvio" type="tns:TransaccionEnvios" />
+  </wsdl:message>
+  <wsdl:message name="EstadoMensajesResponse">
+    <wsdl:part name="return" type="tns:RespEstadoMensajes" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajeOL">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="tipo" type="xsd:string" />
+    <wsdl:part name="telefono" type="xsd:string" />
+    <wsdl:part name="mensaje" type="xsd:string" />
+    <wsdl:part name="idivr" type="xsd:int" />
+    <wsdl:part name="fechaInicio" type="xsd:string" />
+    <wsdl:part name="campoAux" type="xsd:string" />
+    <wsdl:part name="asunto" type="xsd:string" />
+    <wsdl:part name="url" type="xsd:string" />
+    <wsdl:part name="idApp" type="xsd:string" />
+    <wsdl:part name="token" type="xsd:string" />
+    <wsdl:part name="parametros" type="tns:Parametros" />
+    <wsdl:part name="idOrigen" type="xsd:string" />
+    <wsdl:part name="mismoOrigen" type="xsd:int" />
+    <wsdl:part name="minutosReintento" type="xsd:int" />
+    <wsdl:part name="cantidadIntentos" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajeOLResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajeOLRef">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="tipo" type="xsd:string" />
+    <wsdl:part name="telefono" type="xsd:string" />
+    <wsdl:part name="mensaje" type="xsd:string" />
+    <wsdl:part name="idivr" type="xsd:int" />
+    <wsdl:part name="fechaInicio" type="xsd:string" />
+    <wsdl:part name="campoAux" type="xsd:string" />
+    <wsdl:part name="asunto" type="xsd:string" />
+    <wsdl:part name="url" type="xsd:string" />
+    <wsdl:part name="idApp" type="xsd:string" />
+    <wsdl:part name="token" type="xsd:string" />
+    <wsdl:part name="parametros" type="tns:Parametros" />
+    <wsdl:part name="idOrigen" type="xsd:string" />
+    <wsdl:part name="mismoOrigen" type="xsd:int" />
+    <wsdl:part name="minutosReintento" type="xsd:int" />
+    <wsdl:part name="cantidadIntentos" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EnviaMensajeOLRefResponse">
+    <wsdl:part name="resultado" type="xsd:int" />
+    <wsdl:part name="referencia" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EstadoMensajeOLRef">
+    <wsdl:part name="referencia" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EstadoMensajeOLRefResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EstadoMensajeOLAux">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="campoAux" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EstadoMensajeOLAuxResponse">
+    <wsdl:part name="resultado" type="xsd:int" />
+    <wsdl:part name="referencia" type="xsd:string" />
+    <wsdl:part name="id" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="AgregaALista">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="idLista" type="xsd:int" />
+    <wsdl:part name="telefono" type="xsd:string" />
+    <wsdl:part name="nombre" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="AgregaAListaResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="ExisteEnLista">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="idLista" type="xsd:int" />
+    <wsdl:part name="telefono" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="ExisteEnListaResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="EliminaDeLista">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="idLista" type="xsd:int" />
+    <wsdl:part name="telefono" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="EliminaDeListaResponse">
+    <wsdl:part name="return" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="GeneraLigaCorta">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="url" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="GeneraLigaCortaResponse">
+    <wsdl:part name="resultado" type="xsd:int" />
+    <wsdl:part name="ligaCorta" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="CreaEnvioEmailS3">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="CreaEnvioEmailS3Response">
+    <wsdl:part name="resultado" type="xsd:int" />
+    <wsdl:part name="idEnvio" type="xsd:int" />
+    <wsdl:part name="sessionToken" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="AgregaArchivoAEmailS3">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="idEnvio" type="xsd:int" />
+    <wsdl:part name="tipo" type="xsd:string" />
+    <wsdl:part name="base64FileContent" type="xsd:string" />
+    <wsdl:part name="fileName" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="AgregaArchivoAEmailS3Response">
+    <wsdl:part name="resultado" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmaEnvioEmailS3">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="idEnvio" type="xsd:int" />
+    <wsdl:part name="nombreEnvio" type="xsd:string" />
+    <wsdl:part name="csvBase64" type="xsd:string" />
+    <wsdl:part name="from" type="xsd:string" />
+    <wsdl:part name="fromName" type="xsd:string" />
+    <wsdl:part name="replyTo" type="xsd:string" />
+    <wsdl:part name="asunto" type="xsd:string" />
+    <wsdl:part name="incrustaImagenes" type="xsd:string" />
+    <wsdl:part name="cuerpoTextoBase64" type="xsd:string" />
+    <wsdl:part name="cuerpoHTMLBase64" type="xsd:string" />
+    <wsdl:part name="nombreAdjuntosIndividuales" type="xsd:string" />
+    <wsdl:part name="enviarSiFaltanAdjuntos" type="xsd:int" />
+    <wsdl:part name="fechaInicio" type="xsd:string" />
+    <wsdl:part name="fechaFin" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmaEnvioEmailS3Response">
+    <wsdl:part name="resultado" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCarrier">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+    <wsdl:part name="telefono" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCarrierResponse">
+    <wsdl:part name="carrier" type="xsd:int" />
+    <wsdl:part name="resultado" type="xsd:int" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaSaldo">
+    <wsdl:part name="idCliente" type="xsd:int" />
+    <wsdl:part name="email" type="xsd:string" />
+    <wsdl:part name="password" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaSaldoResponse">
+    <wsdl:part name="return" type="tns:RespConsultaSaldo" />
+  </wsdl:message>
+  <wsdl:portType name="GatewayPortType">
+    <wsdl:operation name="EnviaMensajes">
+      <documentation>Envia mensajes a traves del Gateway</documentation>
+      <wsdl:input message="tns:EnviaMensajes" />
+      <wsdl:output message="tns:EnviaMensajesResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EstadoEnvioEmail">
+      <documentation>Obtiene el estado de un mensaje de envio permanente</documentation>
+      <wsdl:input message="tns:EstadoEnvioEmail" />
+      <wsdl:output message="tns:EstadoEnvioEmailResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EventosEnvioEmail">
+      <documentation>Obtiene los eventos de un mensaje de envio permanente</documentation>
+      <wsdl:input message="tns:EventosEnvioEmail" />
+      <wsdl:output message="tns:EventosEnvioEmailResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EnviaEmail">
+      <documentation>Envia emails a traves del Gateway</documentation>
+      <wsdl:input message="tns:EnviaEmail" />
+      <wsdl:output message="tns:EnviaEmailResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensajesCSV">
+      <documentation>Envia mensajes a traves del Gateway con un campo CSV</documentation>
+      <wsdl:input message="tns:EnviaMensajesCSV" />
+      <wsdl:output message="tns:EnviaMensajesCSVResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensaje">
+      <documentation>Envia un mensaje a traves del Gateway</documentation>
+      <wsdl:input message="tns:EnviaMensaje" />
+      <wsdl:output message="tns:EnviaMensajeResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EstadoEnvio">
+      <documentation>Obtiene el estado del envio</documentation>
+      <wsdl:input message="tns:EstadoEnvio" />
+      <wsdl:output message="tns:EstadoEnvioResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EstadoMensajes">
+      <documentation>Obtiene el estado del Mensaje</documentation>
+      <wsdl:input message="tns:EstadoMensajes" />
+      <wsdl:output message="tns:EstadoMensajesResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensajeOL">
+      <documentation>Envia un solo mensaje sincronamente.</documentation>
+      <wsdl:input message="tns:EnviaMensajeOL" />
+      <wsdl:output message="tns:EnviaMensajeOLResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensajeOLRef">
+      <documentation>Envia un solo mensaje sincronamente y devuelve una referencia.</documentation>
+      <wsdl:input message="tns:EnviaMensajeOLRef" />
+      <wsdl:output message="tns:EnviaMensajeOLRefResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EstadoMensajeOLRef">
+      <documentation>Obtiene el estado del mensaje basado en la referencia devuelta.</documentation>
+      <wsdl:input message="tns:EstadoMensajeOLRef" />
+      <wsdl:output message="tns:EstadoMensajeOLRefResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EstadoMensajeOLAux">
+      <documentation>Obtiene el estado del ï¿½ltimo mensaje basado en el campo auxiliar enviado.</documentation>
+      <wsdl:input message="tns:EstadoMensajeOLAux" />
+      <wsdl:output message="tns:EstadoMensajeOLAuxResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="AgregaALista">
+      <documentation>Agrega un telefono a una lista. / Add a phone number to a list.</documentation>
+      <wsdl:input message="tns:AgregaALista" />
+      <wsdl:output message="tns:AgregaAListaResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="ExisteEnLista">
+      <documentation>Verifica la existencia de un telï¿½fono en una lista. / Verify if a phone number exists in a list.</documentation>
+      <wsdl:input message="tns:ExisteEnLista" />
+      <wsdl:output message="tns:ExisteEnListaResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="EliminaDeLista">
+      <documentation>Elimina un telefono de una lista. / Removes a phone number from a list.</documentation>
+      <wsdl:input message="tns:EliminaDeLista" />
+      <wsdl:output message="tns:EliminaDeListaResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="GeneraLigaCorta">
+      <documentation>Genera una liga corta para la URL enviada.</documentation>
+      <wsdl:input message="tns:GeneraLigaCorta" />
+      <wsdl:output message="tns:GeneraLigaCortaResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="CreaEnvioEmailS3">
+      <documentation>Crea un id de envï¿½o para carga de archivos para una campaï¿½a de email masiva.</documentation>
+      <wsdl:input message="tns:CreaEnvioEmailS3" />
+      <wsdl:output message="tns:CreaEnvioEmailS3Response" />
+    </wsdl:operation>
+    <wsdl:operation name="AgregaArchivoAEmailS3">
+      <documentation>Crea un id de envï¿½o para carga de archivos para una campaï¿½a de email masiva.</documentation>
+      <wsdl:input message="tns:AgregaArchivoAEmailS3" />
+      <wsdl:output message="tns:AgregaArchivoAEmailS3Response" />
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmaEnvioEmailS3">
+      <documentation>Crea un id de envï¿½o para carga de archivos para una campaï¿½a de email masiva.</documentation>
+      <wsdl:input message="tns:ConfirmaEnvioEmailS3" />
+      <wsdl:output message="tns:ConfirmaEnvioEmailS3Response" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCarrier">
+      <documentation>Consulta el carrier (operador telefï¿½nico) de un nï¿½mero telefï¿½nico.</documentation>
+      <wsdl:input message="tns:ConsultaCarrier" />
+      <wsdl:output message="tns:ConsultaCarrierResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaSaldo">
+      <documentation>Consulta el saldo del cliente.</documentation>
+      <wsdl:input message="tns:ConsultaSaldo" />
+      <wsdl:output message="tns:ConsultaSaldoResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GatewayBinding" type="tns:GatewayPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="EnviaMensajes">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EnviaMensajes" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EstadoEnvioEmail">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EstadoEnvioEmail" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EventosEnvioEmail">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EventosEnvioEmail" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnviaEmail">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EnviaEmail" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensajesCSV">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EnviaMensajesCSV" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensaje">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EnviaMensaje" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EstadoEnvio">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EstadoEnvio" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EstadoMensajes">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EstadoMensajes" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensajeOL">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EnviaMensajeOL" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnviaMensajeOLRef">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EnviaMensajeOLRef" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EstadoMensajeOLRef">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EstadoMensajeOLRef" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EstadoMensajeOLAux">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EstadoMensajeOLRefAux" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AgregaALista">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#AgregaALista" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExisteEnLista">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#ExisteEnLista" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EliminaDeLista">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#EliminaDeLista" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GeneraLigaCorta">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#GeneraLigaCorta" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreaEnvioEmailS3">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#CreaEnvioEmailS3" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AgregaArchivoAEmailS3">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#AgregaArchivoAEmailS3" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmaEnvioEmailS3">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#ConfirmaEnvioEmailS3" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCarrier">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#ConsultaCarrier" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaSaldo">
+      <soap:operation soapAction="http://api1.calixtaondemand.com#ConsultaSaldo" style="rpc" />
+      <wsdl:input>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" namespace="http://api1.calixtaondemand.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Gateway">
+    <wsdl:port name="GatewayPort" binding="tns:GatewayBinding">
+      <soap:address location="http://api1.calixtaondemand.com/ws/webServiceV10.php" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
