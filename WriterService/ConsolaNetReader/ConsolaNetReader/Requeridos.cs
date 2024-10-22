@@ -1,6 +1,8 @@
 ﻿using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,19 @@ namespace ConsolaNetReader
     public static class Requeridos
     {
         public static int cliente;
+        public static string rutaPlantillaMail= ConfigurationManager.AppSettings["mailPlantilla"];
+        public static string plantillaMail;
+
+        public static string getPlantillaMail() {
+
+            if (plantillaMail.IsValueNullOrEmpty()) {
+
+                plantillaMail=File.ReadAllText(rutaPlantillaMail);  
+            }
+            return plantillaMail;
+
+        }
+
 
 
         static List<string> valoresContrato = new List<string>
@@ -34,7 +49,7 @@ namespace ConsolaNetReader
             "$$ocupacion$$",
             "$$correoelectronico$$",
            // "$$rfc$$",
-            "$$geolocalizacion$$",
+           // "$$geolocalizacion$$",
             "$$domiciliocompleto$$"
         };
 
@@ -55,7 +70,7 @@ namespace ConsolaNetReader
                     {
                         if (value.IsValueNullOrEmpty())
                         {
-                            validacion = false;
+                           // validacion = false;
                         }
                     }
                 }

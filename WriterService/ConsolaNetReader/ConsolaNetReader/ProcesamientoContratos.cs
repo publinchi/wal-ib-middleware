@@ -159,6 +159,11 @@ namespace ConsolaNetReader
 
         public void defineDocumento(Contrato contratos) {
 
+            string contractToMail=null;
+
+            bool flagContrato=false;
+            bool flagDatosGenerales=false;
+
             try
             {
                 log.Info("Comienza defineDocumento");
@@ -169,21 +174,23 @@ namespace ConsolaNetReader
 
                 try
                 {
+                    
                     String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
                     File.Copy(rutaOriginal, System.IO.Path.Combine(temporales,this.temporalFile), overwrite: true);
                     plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
                         
                     aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
-                    convertToPDF();
+                    contractToMail = convertToPDF();
                     uploadFile("CONTRATO");
-
+                    flagContrato = true;    
 
                 } catch (Exception e) {
                     log.Error(e);
                 } finally
                 {
-
                     wordApp.Quit();
+                    
+                    File.Delete(System.IO.Path.Combine(temporales, this.temporalFile));
                 }
 
                 Application wordApp2 = new Application();
@@ -199,6 +206,7 @@ namespace ConsolaNetReader
                     aplicaCambiosContrato(contratos, plantillaGeneral, "DATOS CLIENTE");
                     convertToPDF();
                     uploadFile("DATOS CLIENTE");
+                    flagDatosGenerales = true;
                 }
                 catch (Exception xe)
                 {
@@ -206,7 +214,24 @@ namespace ConsolaNetReader
                 }
                 finally {
                     wordApp2.Quit();
+
+                    File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
                 }
+
+
+                try
+                {
+                    if (flagContrato && flagDatosGenerales)
+                    {
+                        ContractSend mail = new ContractSend(contratos, contractToMail);
+                        mail.EnviaContrato();
+                    }
+
+                }
+                catch (Exception xe) {
+                    log.Error(xe);
+                }
+
             }
             catch (Exception xe) {
                 log.Error(xe);
@@ -307,10 +332,12 @@ namespace ConsolaNetReader
             }
         }
 
-        private void convertToPDF() {
+        private string convertToPDF() {
 
             Microsoft.Office.Interop.Word.Document wordDocument = null;
             Microsoft.Office.Interop.Word.Application appWord = null;
+
+            string contract=null;
 
             try
             {
@@ -323,6 +350,8 @@ namespace ConsolaNetReader
 
                 wordDocument.ExportAsFixedFormat(generated + fileNamePdf, WdExportFormat.wdExportFormatPDF);
 
+                contract = generated + fileNamePdf;
+
                 log.Info(" Finaliza convertToPDF ");
             }
             catch (Exception xe)
@@ -332,9 +361,13 @@ namespace ConsolaNetReader
             finally {
                 wordDocument.Close();
                 appWord.Quit();
+                File.Delete(deposito + fileNameDoc);
+
 
 
             }
+
+            return contract;
         }
 
         private string recuperaFecha() {
@@ -411,9 +444,7 @@ namespace ConsolaNetReader
                     if (values.IsValueNullOrEmpty())
                     {
                         values = "";
-                    }
-
-                  
+                    }                  
 
                   if(!Requeridos.validarValor(valor.Llave, values, type)) {
                         throw new Exception("CAMPO REQUERIDO 789DX");          
