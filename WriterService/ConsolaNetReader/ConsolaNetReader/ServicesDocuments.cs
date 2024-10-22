@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -28,7 +29,7 @@ namespace ConsolaNetReader
             {
                 log.Info("JC::::::::::::Comienza documentsGenerator :::::::::::::JC");
 
-                log.Info("INICIAR VERSION 10.0 Document Services 10.0");
+                log.Info("INICIAR VERSION 14.0 Document Services 14.0");
 
                 List<Contrato> listaContratos;
 
@@ -41,29 +42,29 @@ namespace ConsolaNetReader
 
                 log.Info("Comenzando a generar documentos");
 
+                int thread = Convert.ToInt32(ConfigurationManager.AppSettings["thread"]);
+
+
+                log.Info("Hilos=== "+ ConfigurationManager.AppSettings["thread"]);
+
+                if (thread==0)
+                    thread=1;
+
                 if (listaContratos != null && listaContratos.Count > 0)
                 {
 
-
                     foreach (Contrato contrato in listaContratos)
-                    {
-
-                        
+                    {                       
                             
-                         while (liberacione >= 5) {
-
+                         while (liberacione >= 1) {
                           Thread.Sleep(3000);    
 
-                        }
-
-               
+                        }              
 
                         BackgroundWorker worker = new BackgroundWorker();
                         ProcesamientoContratos cc = new ProcesamientoContratos(download.GetToken());
                         worker.DoWork += (senderWorker, eWorker) =>
                         {
-
-
                             try
                             {
                                 cc.customerId = int.Parse(contrato.Valores.Where(x => x.Llave == "$$id_ente$$").Select(y => y.Valor).FirstOrDefault().ToString());
@@ -72,8 +73,8 @@ namespace ConsolaNetReader
 
                                 log.Info(":::Comienza generación cliente:::  " + cc.customerId.ToString());
 
-
                                 cc.defineDocumento(contrato);
+                                
                             }
                             catch
                             {
@@ -93,9 +94,6 @@ namespace ConsolaNetReader
                             --liberacione;
                  
                         };
-
-
-
 
                         workers.Add(worker);
                         worker.RunWorkerAsync();
