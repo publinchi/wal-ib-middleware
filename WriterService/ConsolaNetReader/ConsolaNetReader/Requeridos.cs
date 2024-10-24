@@ -49,7 +49,7 @@ namespace ConsolaNetReader
             "$$ocupacion$$",
             "$$correoelectronico$$",
            // "$$rfc$$",
-           // "$$geolocalizacion$$",
+            "$$geolocalizacion$$",
             "$$domiciliocompleto$$",
             "$$latitud$$",
             "$$longitud$$"
