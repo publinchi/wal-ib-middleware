@@ -50,7 +50,9 @@ namespace ConsolaNetReader
             "$$correoelectronico$$",
            // "$$rfc$$",
            // "$$geolocalizacion$$",
-            "$$domiciliocompleto$$"
+            "$$domiciliocompleto$$",
+            "$$latitud$$",
+            "$$longitud$$"
         };
 
 

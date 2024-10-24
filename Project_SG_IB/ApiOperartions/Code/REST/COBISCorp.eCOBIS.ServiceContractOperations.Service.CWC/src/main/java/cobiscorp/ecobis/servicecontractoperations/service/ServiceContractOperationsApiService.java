@@ -72,7 +72,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_seq_tran",ICTSTypes.SQLVARCHAR, seqTran);
 		procedureRequestAS.addInputParam("@i_response_trn",ICTSTypes.SQLVARCHAR, jsonRes);
 		procedureRequestAS.addInputParam("@i_header_trn",ICTSTypes.SQLVARCHAR, jsonHead);
-		
+
 		//execute procedure
 	    ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 		
@@ -5659,6 +5659,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 					}, false);
 
 			outUpdateBeneficiaryResponse.setResponse(returnUpdateBeneficiaryResponse.getResponse());
+			//Agregar nuevo metodo
+			updateFieldsByNewChanged("U", String.valueOf(inUpdateBeneficiaryRequest.getExternalCustomerId()));
+
 			// break;
 
 		} else {
@@ -7682,5 +7685,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
   	  }
   	  return maskedNumber.toString();
 	}
+
+	public void updateFieldsByNewChanged(String operation, String ente) throws CTSRestException {
+		LOGGER.logDebug("Start service execution: updateFieldsByNewChanged");
+
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(
+				"cob_bvirtual..sp_act_expediente");
+
+		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, ente);
+		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operation);
+
+		ctsRestIntegrationService.execute(SessionManager.getSessionId(), null, procedureRequestAS);
+
+		LOGGER.logDebug("End service execution: updateFieldsByNewChanged");
+
+    }
     
 }
