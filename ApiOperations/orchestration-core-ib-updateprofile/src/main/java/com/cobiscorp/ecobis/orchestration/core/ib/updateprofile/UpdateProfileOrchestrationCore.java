@@ -157,6 +157,10 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 					
 					if (columns[1].getValue().equals("0")) {
 						aBagSPJavaOrchestration.put("0", "Success");
+
+						//Actualización de Datos del Cliente
+						updateFieldsByNewChanged("P", idCustomer);
+						
 						return;
 						
 					} else if (columns[1].getValue().equals("18053")) {
@@ -178,8 +182,7 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
 				
 				aBagSPJavaOrchestration.put("40040", "The phone number was already registered with another customer");
 				return;
-			}
-			 
+			}			
 			
 		} else {
 			aBagSPJavaOrchestration.put("50004", "Error updating information about the customer");
@@ -234,4 +237,29 @@ public class UpdateProfileOrchestrationCore extends SPJavaOrchestrationBase {// 
             return false;
         return pat.matcher(email).matches();
     }
+	
+	private void updateFieldsByNewChanged(String operation, String ente){
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo( "Start service execution: updateFieldsByNewChanged");
+		}
+
+		request.setSpName("cob_bvirtual..sp_act_expediente");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700127");
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operation);
+		request.addInputParam("@i_ente", ICTSTypes.SQLINT4, ente);
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("End service execution: updateFieldsByNewChanged");
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
 }

@@ -5,7 +5,6 @@ import boto3
 import zipfile
 import io
 from datetime import datetime
-from cobis.cobisdbconnect import execute_database
 
 def generate_expedient_link(facade, context):
     logger = facade["LOGGER"]
@@ -33,12 +32,8 @@ def generate_expedient_link(facade, context):
                 valid_customer_ids.append(customer_id)
             else:
                 logger.info(f"Folder does not exist for customer ID: {customer_id}")
-        
-        #if not valid_customer_ids:
-            #facade['BODY'] = {"status": 'false'}
-            #return
-        
-        logger.info(f"Valid Folders: {valid_customer_ids}")
+               
+        logger.info(f"Valid Folders - valid_customer_ids: {valid_customer_ids}")
         
         # Create a zip file in memory
         zip_buffer = io.BytesIO()
@@ -46,11 +41,60 @@ def generate_expedient_link(facade, context):
             for customer_id in valid_customer_ids:
                 prefix = f"files/{customer_id}/"
                 response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+                #logger.info(f"Ruta completa - response: {response}")
+                
                 for obj in response.get('Contents', []):
-                    file_key = obj['Key']
-                    file_obj = s3_client.get_object(Bucket=bucket_name, Key=file_key)
-                    file_data = file_obj['Body'].read()
-                    zip_file.writestr(file_key, file_data)
+                    file_key = obj['Key']                    
+
+                    # Saltar si el objeto es una carpeta (tamaño 0 o termina con '/')
+                    if obj['Size'] == 0 or file_key.endswith('/'):
+                        continue
+                       
+                    logger.info(f"Ruta completa archivo - file_key: {file_key}")
+                       
+                    # Primero, guarda el archivo original
+                    try:
+                        file_obj = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+                        file_data = file_obj['Body'].read()
+                        
+                        # Obtener extensión y nombre del archivo
+                        name_file = os.path.splitext(os.path.basename(file_key))[0]
+                        ext_file = os.path.splitext(os.path.basename(file_key))[1]
+                       
+                        # Escribir en el archivo zip con la estructura de carpetas deseada
+                        zip_file.writestr(f"files/{customer_id}/{name_file}{ext_file}", file_data)
+
+                        # Ahora guarda las versiones, omitiendo la versión original
+                        versions = s3_client.list_object_versions(Bucket=bucket_name, Prefix=file_key)
+                                              
+                       for vrs in versions.get('Versions', []):
+                            # Verifica si la versión actual es la más reciente
+                            if vrs['IsLatest']:
+                                continue  # Omitir la versión original
+                            
+                            # Obtener la fecha de la versión
+                            last_modified = vrs['LastModified']
+                            # Formatear la fecha
+                            date_str = last_modified.strftime("%d%m%Y%H%M%S")
+                           
+                            # Crear el nombre del archivo usando la fecha
+                            version_file_key = f"files/{customer_id}/{name_file}_{date_str}{ext_file}"
+                           
+                            try:
+                                version_obj = s3_client.get_object(Bucket=bucket_name, Key=file_key, VersionId=vrs['VersionId'])
+                                version_data = version_obj['Body'].read()
+                           
+                                # Escribir en el archivo zip con la fecha
+                                zip_file.writestr(version_file_key, version_data)
+                            except s3_client.exceptions.NoSuchVersion as e:
+                                logger.error(f"Version {vrs['VersionId']} not found for file {file_key}: {str(e)}")
+                            except Exception as e:
+                                logger.error(f"Error fetching version {vrs['VersionId']} of object {file_key}: {str(e)}")
+                           
+                    except s3_client.exceptions.NoSuchKey as e:
+                        logger.error(f"File not found: {file_key}: {str(e)}")
+                    except Exception as e:
+                        logger.error(f"Error fetching object {file_key}: {str(e)}")
         
         zip_buffer.seek(0)
         
@@ -68,13 +112,8 @@ def generate_expedient_link(facade, context):
             ExpiresIn=604800  # 1 week in seconds
         ) 
         
-        #consulta = f"update cobis..cl_expediente set ex_url_descarga = '{url}', ex_estado = 'V' where ex_id={id}"
-    
-        #resultado = execute_database(consulta, context)
-        
         facade['BODY'] = {"status": 'success', "url": url}
     
     except Exception as e:
         logger.error(f"Error generating expedient link: {str(e)}")
         facade['BODY'] = {"status": 'false'}
-
