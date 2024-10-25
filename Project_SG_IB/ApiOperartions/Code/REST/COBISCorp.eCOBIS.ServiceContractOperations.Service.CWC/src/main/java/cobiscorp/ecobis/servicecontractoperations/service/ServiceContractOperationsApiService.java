@@ -6234,7 +6234,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 inRequestDeviceActivation.getAliasDevice());
 
         // execute procedure
-        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "SQLCANALES",
+        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
 
         List<MessageBlock> errors = ErrorUtil.getErrors(response);
@@ -7703,7 +7703,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4, ente);
 
         //execute procedure
-        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), "SQLCANALES", procedureRequestAS);
+        ctsRestIntegrationService.execute(SessionManager.getSessionId(), "local", procedureRequestAS);
 
         LOGGER.logDebug("End service execution: updateFieldsByNewChanged");
 
