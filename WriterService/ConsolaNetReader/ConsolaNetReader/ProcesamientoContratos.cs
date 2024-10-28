@@ -537,14 +537,14 @@ namespace ConsolaNetReader
                                 Microsoft.Office.Interop.Word.Row row = tabla.Rows.Add();
 
                                 row.Cells[1].Range.Text = beneficiario.nombre + " " + beneficiario.paterno + beneficiario.materno;
-                                row.Cells[2].Range.Text = beneficiario.domicilio;
+                                //row.Cells[2].Range.Text = beneficiario.domicilio;
                                 DateTime fecha;
                                 if (DateTime.TryParseExact(beneficiario.fechaNacimiento, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out fecha))
                                 {
                                     string fechaFormateada = fecha.ToString("dd/MM/yyyy");
-                                    row.Cells[3].Range.Text = fechaFormateada;
+                                    row.Cells[2].Range.Text = fechaFormateada;
                                 }
-                                row.Cells[4].Range.Text = beneficiario.porcentaje;
+                                row.Cells[3].Range.Text = beneficiario.porcentaje;
                             }                       
 
                         }
@@ -554,9 +554,9 @@ namespace ConsolaNetReader
                             {
                                 Microsoft.Office.Interop.Word.Row row = tabla.Rows.Add();
                                 row.Cells[1].Range.Text = "No Designados";
+                                //row.Cells[2].Range.Text = "No Designados";
                                 row.Cells[2].Range.Text = "No Designados";
                                 row.Cells[3].Range.Text = "No Designados";
-                                row.Cells[4].Range.Text = "No Designados";
                             }
 
                         }
