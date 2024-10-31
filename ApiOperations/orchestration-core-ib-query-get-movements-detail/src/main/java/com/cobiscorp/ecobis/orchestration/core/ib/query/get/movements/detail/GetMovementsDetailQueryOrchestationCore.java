@@ -895,7 +895,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String purchaseVal = null, withdrawalVal = null;
 				logger.logDebug("ADC type_movement--->:" +type_movement);
 				logger.logDebug("ADC movementType--->:" +movementType);
-				if (movementType.equals("PURCHASE_WITH_CASHBACK")) {
+				if (movementType!=null && movementType.equals("PURCHASE_WITH_CASHBACK")) {
 					BigDecimal bigDecimalAmount = new BigDecimal(amount);
 					BigDecimal bigDecimalIva = new BigDecimal(iva_val);
 					
@@ -919,7 +919,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
-				rowDat.addRowData(3, new ResultSetRowColumnData(false, movementType));//2?
+				rowDat.addRowData(3, new ResultSetRowColumnData(false, movementType==null?"":movementType));//2?
 				rowDat.addRowData(4, new ResultSetRowColumnData(false, amount));
 				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
