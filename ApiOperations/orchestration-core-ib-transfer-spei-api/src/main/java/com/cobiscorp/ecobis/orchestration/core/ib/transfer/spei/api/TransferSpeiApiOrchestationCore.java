@@ -923,11 +923,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo("movementId: " + anOriginalProcedureRes.readValueParam("@o_referencia"));
             logger.logInfo("ssn_branch: " + anOriginalRequest.readValueParam("@s_ssn_branch"));
             logger.logInfo("referenceCode: " + (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC));
-            logger.logInfo("trackingKey: " + (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO));
+            logger.logInfo("trackingKey: " + (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO));           
             
         }
+       
         
         movementId = anOriginalProcedureRes.readValueParam("@o_referencia");
+        if (codeReturn == 50000) {
+			movementId = aRequest.readValueParam("@s_ssn");
+			aBagSPJavaOrchestration.put("ssn_branch_offline", movementId);
+		}
+        
+        
 
 		logger.logInfo("xdcxv2 --->" + movementId);
 		if (codeReturn == 0 || codeReturn == 50000 || codeReturn == 1) {
@@ -946,9 +953,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
 					
-					if (codeReturn == 50000) {
-						movementId = anOriginalRequest.readValueParam("@s_ssn_branch");
-					}
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
@@ -1145,7 +1149,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_referencia"));
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, Integer.parseInt(aResponse.readValueParam("@o_referencia")) == 0  ? (String) aBagSPJavaOrchestration.get("ssn_branch_offline") : (String) aResponse.readValueParam("@o_referencia") );
+		
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
