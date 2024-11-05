@@ -1149,7 +1149,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, Integer.parseInt(aResponse.readValueParam("@o_referencia")) == 0  ? (String) aBagSPJavaOrchestration.get("ssn_branch_offline") : (String) aResponse.readValueParam("@o_referencia") );
+		if  (aResponse.readValueParam("@o_referencia") != null) {
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, Integer.parseInt(aResponse.readValueParam("@o_referencia")) == 0  ? (String) aBagSPJavaOrchestration.get("ssn_branch_offline") : (String) aResponse.readValueParam("@o_referencia"));
+		} else {
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_referencia"));
+		}
 		
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
