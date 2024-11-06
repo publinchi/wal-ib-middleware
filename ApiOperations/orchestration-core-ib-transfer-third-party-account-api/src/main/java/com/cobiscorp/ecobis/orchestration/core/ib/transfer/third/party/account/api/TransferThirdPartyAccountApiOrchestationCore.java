@@ -7,6 +7,7 @@ import java.util.TimeZone;
 import java.util.Date;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -134,6 +135,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
 		String estadoRiesgo = "";
+		String responseBody = "";
 		
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
@@ -289,7 +291,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		} else {
 			aBagSPJavaOrchestration.put("IsReentry", "N");
 			logger.logDebug("Res IsReentry:: " + "N");
-			
+
+			logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);
 			if ( evaluaRiesgo.equals("true") && (
 					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
 					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
@@ -307,6 +310,34 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					
 					if (aBagSPJavaOrchestration.get("message") != null) {	
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+					}
+					logger.logDebug("Antes del if responseBody");
+
+					if(aBagSPJavaOrchestration.get("responseBody") != null) {
+						logger.logDebug("Objeto de responseBody riskEvaluation:: " + aBagSPJavaOrchestration.get("responseBody").toString());
+						responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
+						logger.logDebug("Objeto de respuesta message riskEvaluation:: " + responseBody);
+						/*JsonObject messageObject = JsonParser.parseString(mensajeRiesgo).getAsJsonObject();
+						logger.logDebug("Objeto de respuesta de riskEvaluation:: " + messageObject);
+
+						if (messageObject.has("riskDetails")) {
+							JsonObject riskDetails = messageObject.getAsJsonObject("riskDetails");
+							if (riskDetails.has("riskStatus")) {
+								String riskStatus = riskDetails.get("riskStatus").getAsString();
+								logger.logDebug("Estado riskEvaluation:: " + riskStatus);
+								if(riskStatus.contains("HIGH")) {
+									//llamar al sp de update status
+
+									//llamar al api blockOperation api
+								}
+							} else {
+								logger.logError("No se encontró riskStatus en el objeto");
+							}
+						} else {
+							logger.logError("No se encontró riskDetails en el objeto");
+						}*/
+
+
 					}
 
 					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
@@ -792,7 +823,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel").toString());//se obtiene con el response del f1
 		
-		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent").toString());//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, "channel:Chrome,userAgent:Windows,10,Windows,x86,rv:3.48.0");//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));
@@ -839,6 +870,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 
 		if (connectorRiskEvaluationResponse.readValueParam("@o_message") != null)
 			aBagSPJavaOrchestration.put("message", connectorRiskEvaluationResponse.readValueParam("@o_message"));
+
+		if (connectorRiskEvaluationResponse.readValueParam("@o_responseBody") != null)
+			aBagSPJavaOrchestration.put("responseBody", connectorRiskEvaluationResponse.readValueParam("@o_responseBody"));
 
 		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
