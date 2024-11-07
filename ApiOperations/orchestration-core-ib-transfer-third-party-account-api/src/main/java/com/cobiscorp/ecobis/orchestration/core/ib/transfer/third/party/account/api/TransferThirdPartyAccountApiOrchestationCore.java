@@ -311,17 +311,18 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					if (aBagSPJavaOrchestration.get("message") != null) {	
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
-					logger.logDebug("Antes del if responseBody");
 
+					logger.logDebug("Antes del if responseBody");
 					if(aBagSPJavaOrchestration.get("responseBody") != null) {
 						logger.logDebug("Objeto de responseBody riskEvaluation:: " + aBagSPJavaOrchestration.get("responseBody").toString());
 						responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
-						logger.logDebug("Objeto de respuesta message riskEvaluation:: " + responseBody);
-						/*JsonObject messageObject = JsonParser.parseString(mensajeRiesgo).getAsJsonObject();
-						logger.logDebug("Objeto de respuesta de riskEvaluation:: " + messageObject);
+						JsonParser jsonParser = new JsonParser();
+						logger.logDebug("Response body riskEvaluation:: " + responseBody);
+						JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
+						logger.logDebug("Objeto de respuesta de riskEvaluation:: " + riskDetailsObject);
 
-						if (messageObject.has("riskDetails")) {
-							JsonObject riskDetails = messageObject.getAsJsonObject("riskDetails");
+						if (riskDetailsObject.has("riskDetails")) {
+							JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
 							if (riskDetails.has("riskStatus")) {
 								String riskStatus = riskDetails.get("riskStatus").getAsString();
 								logger.logDebug("Estado riskEvaluation:: " + riskStatus);
@@ -335,7 +336,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 							}
 						} else {
 							logger.logError("No se encontró riskDetails en el objeto");
-						}*/
+						}
 
 
 					}
