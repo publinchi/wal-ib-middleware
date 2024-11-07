@@ -128,5 +128,10 @@
           <scope>compile</scope>
       </dependency>
 
+      <dependency>
+      	<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+      	<artifactId>orchestration-core-api-template</artifactId>
+      	<version>4.6.1.0</version>
+      </dependency>
   </dependencies>
 </project>
