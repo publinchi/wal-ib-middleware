@@ -45,6 +45,7 @@ import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
  * @author cecheverria
@@ -58,7 +59,7 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 		@Property(name = "service.identifier", value = "AccountDebitOperationOrchestrationCore"),
 		@Property(name = "service.spName", value = "cob_procesador..sp_debit_operation_api")
 })
-public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
+public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {// SPJavaOrchestrationBase
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
@@ -133,7 +134,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		else
 			return false;
 	}
-	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
 		IProcedureRequest request = wQueryRequest.clone();
 		ComponentLocator componentLocator = null;
@@ -606,6 +607,10 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			data.addRow(row);
 		}
 		
+		registerTransactionSuccess("AccountDebitOperationOrchestrationCore", null, anOriginalRequest, 
+				(String)aBagSPJavaOrchestration.get("@o_ssn_branch"), 
+				null, null);
+		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
 		wProcedureResponse.addResponseBlock(resultBlock);			
 		return wProcedureResponse;		
@@ -652,6 +657,12 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
         }
 
         return response;
+	}
+
+	@Override
+	protected void loadDataCustomer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

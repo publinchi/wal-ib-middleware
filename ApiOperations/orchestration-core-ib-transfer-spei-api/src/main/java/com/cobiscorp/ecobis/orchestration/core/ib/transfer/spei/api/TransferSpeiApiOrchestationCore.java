@@ -2037,6 +2037,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
             return Utils.returnException(1, ERROR_SPEI);
         }
+        
+        registerTransactionSuccess("TransferSpeiApiOrchestationCore", null, aBagSPJavaOrchestration, 
+				(String)aBagSPJavaOrchestration.get("@o_ssn_branch"), 
+				null, null);
+        
         return responseTransfer;
     }
     
