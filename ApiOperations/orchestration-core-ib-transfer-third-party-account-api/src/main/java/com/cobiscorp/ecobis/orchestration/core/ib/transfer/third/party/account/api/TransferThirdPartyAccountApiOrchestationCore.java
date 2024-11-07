@@ -312,14 +312,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
 
-					logger.logDebug("Antes del if responseBody");
 					if(aBagSPJavaOrchestration.get("responseBody") != null) {
-						logger.logDebug("Objeto de responseBody riskEvaluation:: " + aBagSPJavaOrchestration.get("responseBody").toString());
 						responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
 						JsonParser jsonParser = new JsonParser();
-						logger.logDebug("Response body riskEvaluation:: " + responseBody);
 						JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
-						logger.logDebug("Objeto de respuesta de riskEvaluation:: " + riskDetailsObject);
+						logger.logDebug("Objeto responseBody de riskEvaluation:: " + riskDetailsObject);
 
 						if (riskDetailsObject.has("riskDetails")) {
 							JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
