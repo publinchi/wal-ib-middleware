@@ -406,7 +406,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 									anProcedureResponse.addResponseBlock(resultsetBlock1);
 									anProcedureResponse.addResponseBlock(resultsetBlock2);
 									anProcedureResponse.addResponseBlock(resultsetBlock3);
-
 									
 									return anProcedureResponse;
 								}
