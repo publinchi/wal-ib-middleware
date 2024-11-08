@@ -208,7 +208,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 					if(logger.isDebugEnabled())
 					{
-						logger.logInfo("BER cta:"+wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+						logger.logDebug("BER cta:"+wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
 					}
 					anOriginalRequest.removeParam("@i_cta_des");
 					anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
@@ -248,8 +248,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 							estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
 						}
 						
-						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-		
+						if(logger.isDebugEnabled()){
+							logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+						}
+						
 						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
 							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
@@ -292,7 +294,30 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			aBagSPJavaOrchestration.put("IsReentry", "N");
 			logger.logDebug("Res IsReentry:: " + "N");
 
-			logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);}
+			
+			IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+			IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+			
+			wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
+			logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			
+			if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+				anOriginalRequest.removeParam("@i_cta_des");
+				anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+				wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+				
+				if(logger.isDebugEnabled()){
+					logger.logDebug(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());}
+				
+				if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+			      return wAccountsRespVal;
+			   }
+			}
+			else{
+				return wAccountsResp; }
+			
 			if ( evaluaRiesgo.equals("true") && (
 					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
 					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
@@ -312,24 +337,78 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
 
-					logger.logDebug("Antes del if responseBody");
 					if(aBagSPJavaOrchestration.get("responseBody") != null) {
-						logger.logDebug("Objeto de responseBody riskEvaluation:: " + aBagSPJavaOrchestration.get("responseBody").toString());
 						responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
 						JsonParser jsonParser = new JsonParser();
-						logger.logDebug("Response body riskEvaluation:: " + responseBody);
 						JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
-						logger.logDebug("Objeto de respuesta de riskEvaluation:: " + riskDetailsObject);
-
+						
+						if(logger.isDebugEnabled()){
+							logger.logDebug("Response body riskEvaluation: " + responseBody);
+							logger.logDebug("Objeto de respuesta de riskEvaluation: " + riskDetailsObject);
+						}
+						
 						if (riskDetailsObject.has("riskDetails")) {
 							JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
 							if (riskDetails.has("riskStatus")) {
 								String riskStatus = riskDetails.get("riskStatus").getAsString();
-								logger.logDebug("Estado riskEvaluation:: " + riskStatus);
+								
+								if(logger.isDebugEnabled()){
+									logger.logDebug("Estado riskEvaluation: " + riskStatus);}
+								
+								String ente = "";
+								if (anOriginalRequest.readValueParam("@i_ente")!=null) {
+									ente = anOriginalRequest.readValueParam("@i_ente");
+								}
+								
+								if(logger.isDebugEnabled()){
+									logger.logDebug("Ente: " + ente);}
+								
 								if(riskStatus.contains("HIGH")) {
-									//llamar al sp de update status
+									//Generamos un bloqueo de la cuenta contra débitos
+									generaBloqueoCuenta(anOriginalRequest);
+									
+									//Realizamos el bloqueo del usuario
+									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, "29");
+									
+									//Seteamos los valores para el retorno
+									// Agregar Header y data 1
+									IResultSetHeader metaData1 = new ResultSetHeader();
+									IResultSetData data1 = new ResultSetData();
+									metaData1.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
 
-									//llamar al api blockOperation api
+									// Agregar info 1
+									IResultSetRow row1 = new ResultSetRow();
+									row1.addRowData(1, new ResultSetRowColumnData(false, "false"));
+									data1.addRow(row1);
+
+									IResultSetBlock resultsetBlock1 = new ResultSetBlock(metaData1, data1);
+
+									// Agregar Header y data 2
+									IResultSetHeader metaData2 = new ResultSetHeader();
+									IResultSetData data2 = new ResultSetData();
+									metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+									metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+									// Agregar info 2
+									IResultSetRow row2 = new ResultSetRow();
+									row2.addRowData(1, new ResultSetRowColumnData(false, "400383"));
+									row2.addRowData(2, new ResultSetRowColumnData(false, "Usuario Bloqueado"));
+									data2.addRow(row2);
+
+									IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+
+									// Agregar Header y data 3
+									IResultSetHeader metaData3 = new ResultSetHeader();
+									IResultSetData data3 = new ResultSetData();
+									IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+
+
+									anProcedureResponse.addResponseBlock(resultsetBlock1);
+									anProcedureResponse.addResponseBlock(resultsetBlock2);
+									anProcedureResponse.addResponseBlock(resultsetBlock3);
+
+									
+									return anProcedureResponse;
 								}
 							} else {
 								logger.logError("No se encontró riskStatus en el objeto");
@@ -337,15 +416,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						} else {
 							logger.logError("No se encontró riskDetails en el objeto");
 						}
-
-
 					}
 
 					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
 						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
 					}
 					
-					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+					if(logger.isDebugEnabled()){
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+					}
 		
 					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
@@ -754,51 +833,27 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en transferThirdAccount");
 		}
-			
-		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+						
+		IProcedureResponse wTransferResponse = new ProcedureResponseAS();
 		
-		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);		
-		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+		logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
+		logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+		logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
+		aBagSPJavaOrchestration.get("o_mon") +
+		aBagSPJavaOrchestration.get("o_prod_des") +
+		aBagSPJavaOrchestration.get("o_mon_des") +
+		aBagSPJavaOrchestration.get("o_prod_alias") +
+		aBagSPJavaOrchestration.get("o_nom_beneficiary") +
+		aBagSPJavaOrchestration.get("o_login") +
+		aBagSPJavaOrchestration.get("o_ente_bv"));
 		
-		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-			aRequest.removeParam("@i_cta_des");
-			aRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
-			wAccountsRespVal = getValAccountReq(aRequest, aBagSPJavaOrchestration);		
-			logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
-		}
-		else
-		{
-			return wAccountsResp;
-		}
+		wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
 		
-		if (wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			
-			IProcedureResponse wTransferResponse = new ProcedureResponseAS();
-			
-			logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
-			logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
-			logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
-			aBagSPJavaOrchestration.get("o_mon") +
-			aBagSPJavaOrchestration.get("o_prod_des") +
-			aBagSPJavaOrchestration.get("o_mon_des") +
-			aBagSPJavaOrchestration.get("o_prod_alias") +
-			aBagSPJavaOrchestration.get("o_nom_beneficiary") +
-			aBagSPJavaOrchestration.get("o_login") +
-			aBagSPJavaOrchestration.get("o_ente_bv"));
-			
-			wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
-			
-			//wTransferResponse = executeTransfer(aRequest, aBagSPJavaOrchestration);
-			return wTransferResponse; 
-		}
-
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de transferThirdAccount");
 		}
 
-		return wAccountsRespVal;
+		return wTransferResponse; 
 	}
 	
 	private IProcedureResponse executeRiskEvaluation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -933,13 +988,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			destinyAccount = "E";
 		}
 
+		getLoginById(aRequest, aBagSPJavaOrchestration);
+		
 		if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
-
-			getLoginById(aRequest, aBagSPJavaOrchestration);
 			
 			login = aBagSPJavaOrchestration.get("o_login").toString();
 			
-			logger.logDebug("User login: "+login);
+			if (logger.isDebugEnabled()) {	
+				logger.logDebug("User login: "+login);
+			}
 			
 			if (!login.equals("X")) {
 			
@@ -1003,7 +1060,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, "21");
 			}
 		}
 		
@@ -1562,7 +1619,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		return "";
 	}
 
-	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
@@ -1611,11 +1668,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
 			//Validacion del blockCode
-			jsonRequest.addProperty("blockCode", "21");
+			jsonRequest.addProperty("blockCode", codBlock);
 
 			//Validacion de blockResason
-			jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
-
+			if (codBlock == "29"){
+					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
+			}else {
+				jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+			}
+			
 			anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
 			//Se llama al conector de blockOperation
@@ -1716,6 +1777,40 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
+	}
+	
+	private void generaBloqueoCuenta(IProcedureRequest aRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en generaBloqueoCuenta");
+		}
+
+		String tipoBloqueo = getParam(aRequest, "BCD", "AHO");
+		
+		request.setSpName("cob_ahorros..sp_val_acc_status_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR,"BM");
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, tipoBloqueo);
+		
+		//Add output params
+		request.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de generaBloqueoCuenta");
+		}
+
 	}
 
 	private String unifyDateFormat(String dateString) {
