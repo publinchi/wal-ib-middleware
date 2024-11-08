@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import java.util.TimeZone;
 import com.google.gson.JsonObject;
 
+import com.google.gson.JsonParser;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -312,6 +313,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String mensajeRiesgo = "";
 		Boolean estadoRiesgo = false;
 		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution") != null ? aRequest.readValueParam("@i_autoActionExecution").toString() : "false";
+        String responseBody = "";
 
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
@@ -347,9 +349,33 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
     				}
     				
-    				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+    				if (aBagSPJavaOrchestration.get("message") != null) {
     					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
     				}
+
+                    if(aBagSPJavaOrchestration.get("responseBody") != null) {
+                        responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
+                        logger.logDebug("Objeto responseBody de riskEvaluation:: " + riskDetailsObject);
+
+                        if (riskDetailsObject.has("riskDetails")) {
+                            JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+                            if (riskDetails.has("riskStatus")) {
+                                String riskStatus = riskDetails.get("riskStatus").getAsString();
+                                logger.logDebug("Estado riskEvaluation:: " + riskStatus);
+                                if(riskStatus.contains("HIGH")) {
+                                    //llamar al sp de update status
+
+                                    //llamar al api blockOperation api
+                                }
+                            } else {
+                                logger.logError("No se encontró riskStatus en el objeto");
+                            }
+                        } else {
+                            logger.logError("No se encontró riskDetails en el objeto");
+                        }
+                    }
     				
     				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
     				
@@ -3068,6 +3094,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 		if (connectorRiskEvaluationResponse.readValueParam("@o_message") != null)
 			aBagSPJavaOrchestration.put("message", connectorRiskEvaluationResponse.readValueParam("@o_message"));
+
+        if (connectorRiskEvaluationResponse.readValueParam("@o_responseBody") != null)
+            aBagSPJavaOrchestration.put("responseBody", connectorRiskEvaluationResponse.readValueParam("@o_responseBody"));
 
 		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));

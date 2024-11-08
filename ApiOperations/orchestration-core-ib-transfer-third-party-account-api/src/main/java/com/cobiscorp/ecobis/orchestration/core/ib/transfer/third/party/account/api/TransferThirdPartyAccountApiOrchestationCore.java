@@ -346,7 +346,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 							logger.logDebug("Response body riskEvaluation: " + responseBody);
 							logger.logDebug("Objeto de respuesta de riskEvaluation: " + riskDetailsObject);
 						}
-						
+
 						if (riskDetailsObject.has("riskDetails")) {
 							JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
 							if (riskDetails.has("riskStatus")) {
