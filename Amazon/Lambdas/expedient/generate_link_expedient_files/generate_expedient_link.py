@@ -67,7 +67,7 @@ def generate_expedient_link(facade, context):
                         # Ahora guarda las versiones, omitiendo la versión original
                         versions = s3_client.list_object_versions(Bucket=bucket_name, Prefix=file_key)
                                               
-                        for vrs in versions.get('Versions', []):
+                       for vrs in versions.get('Versions', []):
                             # Verifica si la versión actual es la más reciente
                             if vrs['IsLatest']:
                                 continue  # Omitir la versión original
