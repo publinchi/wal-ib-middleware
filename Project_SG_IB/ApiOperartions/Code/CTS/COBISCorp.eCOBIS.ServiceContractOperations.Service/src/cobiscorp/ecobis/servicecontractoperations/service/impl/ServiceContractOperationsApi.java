@@ -1654,6 +1654,39 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
+		name = "cob_procesador..sp_get_limits_client",   
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestGetClientLimits",
+				input = {
+				
+					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transactionType", param = "@i_transType", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "transactionSubType", param = "@i_transSubType", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "limitType", param = "@i_limitType", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "operation", param = "@i_operation", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "limit.amount", param = "@i_ammount", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "limit.currency", param = "@i_currency", dataType = ICTSTypes.SQLVARCHAR)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18700132")
+		}
+	)
+	
+  /**
+  * {@inheritDoc}
+  */
+      public ServiceResponseTO getClientLimits(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
+    
+	@CTSProcedure(
 		name = "cobis..sp_get_colony_by_mun_api_api", dbms = "SQLCTS",  
 		objectRequest = {
 		
