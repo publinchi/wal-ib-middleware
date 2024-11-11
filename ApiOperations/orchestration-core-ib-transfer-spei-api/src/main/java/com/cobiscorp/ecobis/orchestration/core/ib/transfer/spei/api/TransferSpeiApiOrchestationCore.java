@@ -3122,6 +3122,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         };
 
         Date date = null;
+        String newDate = dateString;
 
         for (String format : formats) {
             try {
@@ -3135,7 +3136,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        return unifiedFormat.format(date);
+
+        if (date != null) {
+        	newDate = unifiedFormat.format(date);
+        }
+        
+        return newDate;
     }
 
 }
