@@ -1,7 +1,11 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.spei.in;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferInOfflineTemplate;
@@ -451,7 +455,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, "SYSTEM");
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, userSessionId);
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
-		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_fechaOperacion"));
+		String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_fechaOperacion"));
+		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, "MXN");
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_monto"));
 		
@@ -1011,4 +1016,46 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		}
 		return anProcedureResponse;
 	}
+	
+	private String unifyDateFormat(String dateString) {
+        String[] formats = {
+            "yyyy-MM-dd HH:mm:ssZ",
+			"yyyy/MM/dd HH:mm:ssZ",
+			"yyyy-MM-dd HH:mm:ss.SSSZ", 
+			"yyyy/MM/dd HH:mm:ss.SSSZ",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
+			"yyyy/MM/dd'T'HH:mm:ss.SSS'Z'", 
+            "yyyy-MM-dd HH:mm:ssZ",
+            "yyyy/MM/dd HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss",
+			"yyyy/MM/dd HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss.SSSXXX",
+			"yyyy/MM/dd HH:mm:ss.SSSXXX",
+            "yyyy-MM-dd HH:mm:ssXXX",
+			"yyyy/MM/dd HH:mm:ssXXX"
+        };
+
+        Date date = null;
+        String newDate = dateString;
+
+        for (String format : formats) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(format);
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Establecer zona horaria si es necesario
+                date = sdf.parse(dateString);
+                break; // Si se analiza correctamente, salir del bucle
+            } catch (ParseException ignored) {
+                // Ignorar y continuar con el siguiente formato
+            }
+        }
+
+        SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+        if (date != null) {
+        	newDate = unifiedFormat.format(date);
+        }
+        
+        return newDate;
+    }
+
 }
