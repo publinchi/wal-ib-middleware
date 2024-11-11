@@ -3381,17 +3381,29 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                   confLim.setAmount(new BigDecimal(row.getRowData(3, false).getValue()));
                   subLimite.setConfiguredLimit(confLim);
 
-                  BalanceAmount bala = new BalanceAmount();
-                  bala.setCurrency(row.getRowData(6, false).getValue());
-                  bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
-                  subLimite.setBalanceAmount(bala);
-
                   UserConfiguredLimit userConfLim = new UserConfiguredLimit();
+
+                    if(!(row.getRowData(2, false).getValue().contains("TXN"))) {
+                        BalanceAmount bala = new BalanceAmount();
+                        bala.setCurrency(row.getRowData(6, false).getValue());
+                        bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                        subLimite.setBalanceAmount(bala);
+
+                        userConfLim.setCurrency(row.getRowData(8, false).getValue());
+                        userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
+                        subLimite.setUserConfiguredLimit(userConfLim);
+                    }else{
+                        userConfLim.setCurrency(row.getRowData(6, false).getValue());
+                        userConfLim.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                        subLimite.setUserConfiguredLimit(userConfLim);
+                    }
+
+                    /*
                   if(!(row.getRowData(2, false).getValue().equals("MIN_TXN_LIMIT"))) {
-                      userConfLim.setCurrency(row.getRowData(8, false).getValue());
-                      userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
-                      subLimite.setUserConfiguredLimit(userConfLim);
+
                   }
+                  */
+
                   /*
                   if(!(row.getRowData(2, false).getValue().contains("TXN"))){
                         BalanceAmount bal = new BalanceAmount();

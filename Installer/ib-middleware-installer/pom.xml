@@ -1227,6 +1227,11 @@
 			<artifactId>orchestration-core-ib-register-card-pan-api</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-get-client-limit-api</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1617,7 +1622,8 @@
 							orchestration-core-ib-get-transaction-limit-api,
 							orchestration-core-api-template,
 							orchestration-core-ib-beneficiaries-operations-api,
-							orchestration-core-ib-register-card-pan-api
+							orchestration-core-ib-register-card-pan-api,
+							orchestration-core-ib-get-client-limit-api
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
