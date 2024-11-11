@@ -1702,6 +1702,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         };
 
         Date date = null;
+        String newDate = dateString;
 
         for (String format : formats) {
             try {
@@ -1715,7 +1716,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         }
 
         SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        return unifiedFormat.format(date);
+
+        if (date != null) {
+        	newDate = unifiedFormat.format(date);
+        }
+        
+        return newDate;
     }
 
 }
