@@ -238,7 +238,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 	}
 
 	private JsonObject createRequestBody(Map<String, Object> aBagSPJavaOrchestration) {
-		IProcedureRequest originalProcedureRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("originalProcedureRequest");
+		IProcedureRequest originalProcedureRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		//String accion =  originalProcedureRequest.readValueParam("@i_accion");
 
 		JsonObject jsonRequest = new JsonObject();
@@ -331,8 +331,8 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 
 		anOriginalProcedureResponse.setReturnCode(200);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		logger.logInfo("no se rompe");
 		return anOriginalProcedureResponse;
 	}
@@ -397,7 +397,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("configuredLimit", ICTSTypes.SQLVARCHAR, 100));
 
 			String externalCustomerId = jsonObject.get("externalCustomerId").getAsString();
-			String 	accountNumber = jsonObject.get("accountNumber").getAsString();
+			String 	accountNumber = jsonObject.has("accountNumber") ? jsonObject.get("accountNumber").getAsString() : "0";
 			String 	transactionType = jsonObject.get("transactionType").getAsString();
 			logger.logInfo("externalCustomerId::: " + externalCustomerId);
 			logger.logInfo("accountNumber::: " + accountNumber);
@@ -420,12 +420,12 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 
 			int contador = 0;
 			for (JsonElement limitElement : transactionLimits) {
-
+				String tranSubType = limitElement.getAsJsonObject().get("transactionSubType").getAsString();
 				JsonArray subTypeLimits = limitElement.getAsJsonObject().getAsJsonArray("transactionSubTypeLimits");
 				IResultSetRow[] limitRows = new IResultSetRow[subTypeLimits.size()];
 				for (JsonElement subTypeElement : subTypeLimits) {
 					IResultSetRow limitRow = new ResultSetRow();
-					limitRow.addRowData(1, new ResultSetRowColumnData(false, "MISMO"));
+					limitRow.addRowData(1, new ResultSetRowColumnData(false, tranSubType));
 					// logger.logInfo("CONTADOR: " + contador);
 					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
 					limitRow.addRowData(2, new ResultSetRowColumnData(false, limitType));
@@ -435,10 +435,18 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 
 					limitRow.addRowData(3, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("amount").getAsString())); // configure LIMIT
 					limitRow.addRowData(4, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("currency").getAsString())); // configure LIMIT
-					limitRow.addRowData(5, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("amount").getAsString())); // balance ammount
-					limitRow.addRowData(6, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("currency").getAsString())); // balance ammount
 
-					if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+					if(subTypeElement.getAsJsonObject().has("userConfiguredLimit") &&  limitType.contains("TXN")){
+						limitRow.addRowData(5, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("amount").getAsString())); // user configured limit amount
+						limitRow.addRowData(6, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("currency").getAsString())); // user configured limit currency
+					}
+
+					if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
+						limitRow.addRowData(5, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("amount").getAsString())); // balance ammount
+						limitRow.addRowData(6, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("currency").getAsString())); // balance ammount
+					}
+
+					if (subTypeElement.getAsJsonObject().has("userConfiguredLimit") &&  !limitType.contains("TXN") ) {
 						limitRow.addRowData(7, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("amount").getAsString())); // user configured limit amount
 						limitRow.addRowData(8, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("currency").getAsString())); // user configured limit currency
 					}
