@@ -45,6 +45,21 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<!-- 18700132 ORQUESTACION GetClientLimits-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion Get Client Limits">
+		<conditions>
+		  <condition param="trn">
+			<value>18700132</value>      
+		  </condition>
+		</conditions>
+		<indicators>
+		  <indicator name="externalProvider" value="0"/>
+		  <indicator name="serviceMethodName" value="executeTransaction"/>
+		  <indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=GetTransactionClientLimitOrchestrationCore)"/>
+		  <indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 	<!-- 18500092 ORQUESTACION GETCUSTOMER-->
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo GetCustomer">
 		<conditions>
