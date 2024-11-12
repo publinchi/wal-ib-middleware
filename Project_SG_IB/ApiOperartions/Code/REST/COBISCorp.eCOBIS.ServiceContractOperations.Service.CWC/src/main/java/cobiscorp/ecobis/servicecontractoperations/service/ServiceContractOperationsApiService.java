@@ -3246,7 +3246,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
 	//Have DTO
-      public ResponseGetClientLimits getClientLimits(RequestGetClientLimits inRequestGetClientLimits  )throws CTSRestException{
+      public ResponseGetClientLimits getClientLimits(RequestGetClientLimits inRequestGetClientLimits )throws CTSRestException{
 	  LOGGER.logDebug("Start service execution: getClientLimits");
       ResponseGetClientLimits outResponseGetClientLimits  = new ResponseGetClientLimits();
           
@@ -3263,7 +3263,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       procedureRequestAS.addInputParam("@i_operation",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getOperation());
       procedureRequestAS.addInputParam("@i_ammount",ICTSTypes.SQLVARCHAR, inRequestGetClientLimits.getLimit() != null ? String.valueOf(inRequestGetClientLimits.getLimit().getAmount()) : null );
       procedureRequestAS.addInputParam("@i_currency",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getLimit() != null ? inRequestGetClientLimits.getLimit().getCurrency() : null);
-
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -3383,35 +3382,27 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
                   UserConfiguredLimit userConfLim = new UserConfiguredLimit();
 
-                    if(!(row.getRowData(2, false).getValue().contains("TXN"))) {
-                        BalanceAmount bala = new BalanceAmount();
-                        bala.setCurrency(row.getRowData(6, false).getValue());
-                        bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
-                        subLimite.setBalanceAmount(bala);
+                  if(!(row.getRowData(2, false).getValue().contains("TXN"))) {
+                      BalanceAmount bala = new BalanceAmount();
+                      if(row.getRowData(5, false) != null) {
+                          bala.setCurrency(row.getRowData(6, false).getValue());
+                          bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                          subLimite.setBalanceAmount(bala);
+                      }
 
-                        userConfLim.setCurrency(row.getRowData(8, false).getValue());
-                        userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
-                        subLimite.setUserConfiguredLimit(userConfLim);
-                    }else{
-                        userConfLim.setCurrency(row.getRowData(6, false).getValue());
-                        userConfLim.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
-                        subLimite.setUserConfiguredLimit(userConfLim);
-                    }
-
-                    /*
-                  if(!(row.getRowData(2, false).getValue().equals("MIN_TXN_LIMIT"))) {
-
+                      if(row.getRowData(7, false) != null) {
+                          userConfLim.setCurrency(row.getRowData(8, false).getValue());
+                          userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
+                          subLimite.setUserConfiguredLimit(userConfLim);
+                      }
+                  }else{
+                      if(row.getRowData(5, false) != null) {
+                          userConfLim.setCurrency(row.getRowData(6, false).getValue());
+                          userConfLim.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                          subLimite.setUserConfiguredLimit(userConfLim);
+                      }
                   }
-                  */
 
-                  /*
-                  if(!(row.getRowData(2, false).getValue().contains("TXN"))){
-                        BalanceAmount bal = new BalanceAmount();
-                        bal.setCurrency(row.getRowData(6, false).getValue());
-                        bal.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
-                        subLimite.setBalanceAmount(bal);
-                  }
-                  */
                   listSubtipos.add(subLimite);
                 }
 
@@ -3432,6 +3423,29 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
             LOGGER.logDebug("No data found");
             throw new CTSRestException("404",null);
       }
+
+    String trn = "Get Client Limits";
+
+    Gson gson = new Gson();
+    String jsonReq = gson.toJson(inRequestGetClientLimits);
+
+    Gson gson2 = new Gson();
+    String jsonRes = gson2.toJson(outResponseGetClientLimits);
+
+    Header header = new Header();
+
+    header.setAccept("application/json");
+    //header.setX_request_id(xRequestId);
+    //header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+    //header.setX_end_user_ip(xEndUserIp);
+    //header.setX_channel(xChannel);
+    header.setContent_type("application/json");
+
+    Gson gson3 = new Gson();
+    String jsonHead = gson3.toJson(header);
+
+    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
         LOGGER.logDebug("Ends service execution: getClientLimits");
         //returns data
         return outResponseGetClientLimits;
@@ -5653,11 +5667,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inRequestTransferThirdPartyAccount.getAutoActionExecution()));
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferThirdPartyAccount.getChannel());
-
-		Gson gsonTrans = new Gson();
-        String jsonReqTrans = gsonTrans.toJson(inRequestTransferThirdPartyAccount);
-        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
-		
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
