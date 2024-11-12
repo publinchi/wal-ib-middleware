@@ -247,12 +247,12 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		jsonRequest.addProperty("accountNumber", originalProcedureRequest.readValueParam("@i_accountNumber"));
 		jsonRequest.addProperty("limitType", originalProcedureRequest.readValueParam("@i_limitType"));
 
-		String amount = originalProcedureRequest.readValueParam("@i_amount");
+		String amount = originalProcedureRequest.readValueParam("@i_ammount");
 		String currency = originalProcedureRequest.readValueParam("@i_currency");
 
-		if ( (amount != null && !amount.isEmpty()) && (currency != null && !currency.isEmpty()) ) {
+		if ( (amount != null && !amount.isEmpty() && !amount.equals("null")) && (currency != null && !currency.isEmpty()) && !currency.equals("null")) {
 			JsonObject limit = new JsonObject();
-			limit.addProperty("amount", Double.parseDouble(originalProcedureRequest.readValueParam("@i_amount")));
+			limit.addProperty("amount", Double.parseDouble(originalProcedureRequest.readValueParam("@i_ammount")));
 			limit.addProperty("currency", originalProcedureRequest.readValueParam("@i_currency"));
 			jsonRequest.add("limit", limit);
 		}
