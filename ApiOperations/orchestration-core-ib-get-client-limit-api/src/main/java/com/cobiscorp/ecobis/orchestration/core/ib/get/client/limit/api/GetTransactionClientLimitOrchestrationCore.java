@@ -73,27 +73,20 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		if(operation.equals("C")){
 			anProcedureResponse = callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
-				logger.logInfo("se va por el error");
 				return processResponseError(anProcedureResponse);
 			}
 			anProcedureResponse = processTransforResponse(anProcedureResponse, aBagSPJavaOrchestration);
-			logger.logInfo("pasoooo");
 		} else if (operation.equals("S")) {
 			JsonObject requestBody = createRequestBody(aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put("requestBody", requestBody);
 			anProcedureResponse = callSaveLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
-				logger.logInfo("se va por el error");
 				return processResponseError(anProcedureResponse);
 			}
 			anProcedureResponse = processTransforResponse(anProcedureResponse, aBagSPJavaOrchestration);
-			// hacer llamado Conector to do
 		}
 
-		//anProcedureResponse = getTransactionLimit(anOriginalRequest, aBagSPJavaOrchestration);
-		logger.logInfo("retorna claro que si");
-		//return processResponseError(anProcedureResponse);
-		return  anProcedureResponse; //processResponseApi(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
+		return  anProcedureResponse;
 	}
 
 	private IProcedureResponse callSaveLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
@@ -239,7 +232,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 
 	private JsonObject createRequestBody(Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureRequest originalProcedureRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
-		//String accion =  originalProcedureRequest.readValueParam("@i_accion");
 
 		JsonObject jsonRequest = new JsonObject();
 
@@ -275,12 +267,10 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 		if(aBagSPJavaOrchestration.get("operation").equals("C")) {
 			request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "fetchTransactionLimit");
-			//request.addInputParam("@i_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
 			request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("queryString").toString());
 			request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodyGetLimits").toString());
 		} else if (aBagSPJavaOrchestration.get("operation").equals("S")) {
 			request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "saveTransactionLimit");
-			//request.addInputParam("@i_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
 			request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("requestBody").toString());
 			request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodySaveLimits").toString());
 		}
@@ -333,7 +323,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		logger.logInfo("no se rompe");
 		return anOriginalProcedureResponse;
 	}
 
@@ -341,8 +330,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processTransforResponse getClientLimits--->");
 		}
-
-
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 
@@ -376,21 +363,11 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			JsonParser jsonParser = new JsonParser();
 
 			String jsonRequestStringClean = requestBody.replace("&quot;", "\"");
-			logger.logInfo("jsonRequestStringClean:: " + jsonRequestStringClean );
 			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
-			logger.logInfo("jsonObject:: " + jsonObject );
-
-
-			//metaData3 = new ResultSetHeader();
-			//data3 = new ResultSetData();
 
 			metaData3.addColumnMetaData(new ResultSetHeaderColumn("externalCustomerId", ICTSTypes.SQLINT4, 8));
 			metaData3.addColumnMetaData(new ResultSetHeaderColumn("accountNumber", ICTSTypes.SQLVARCHAR, 100));
 			metaData3.addColumnMetaData(new ResultSetHeaderColumn("transactionType", ICTSTypes.SQLVARCHAR, 100));
-
-
-			//metaData4 = new ResultSetHeader();
-			//data4 = new ResultSetData();
 
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionSubType", ICTSTypes.SQLVARCHAR, 100));
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 100));
@@ -399,18 +376,13 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			String externalCustomerId = jsonObject.get("externalCustomerId").getAsString();
 			String 	accountNumber = jsonObject.has("accountNumber") ? jsonObject.get("accountNumber").getAsString() : "0";
 			String 	transactionType = jsonObject.get("transactionType").getAsString();
-			logger.logInfo("externalCustomerId::: " + externalCustomerId);
-			logger.logInfo("accountNumber::: " + accountNumber);
-			logger.logInfo("transactionType::: " + transactionType);
 
 			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
-			logger.logInfo("LENGTH::" + transactionLimits.size());
 
 			Double dailyLimit = null;
 			Double montlyLimit = null;
 			Double balanceAmountMontly = null;
 			Double maxTxnLimit = null;
-
 
 			IResultSetRow row3 = new ResultSetRow();
 			row3.addRowData(1, new ResultSetRowColumnData(false, externalCustomerId));
@@ -418,7 +390,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			row3.addRowData(3, new ResultSetRowColumnData(false, transactionType));
 			data3.addRow(row3);
 
-			int contador = 0;
 			for (JsonElement limitElement : transactionLimits) {
 				String tranSubType = limitElement.getAsJsonObject().get("transactionSubType").getAsString();
 				JsonArray subTypeLimits = limitElement.getAsJsonObject().getAsJsonArray("transactionSubTypeLimits");
@@ -426,12 +397,8 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 				for (JsonElement subTypeElement : subTypeLimits) {
 					IResultSetRow limitRow = new ResultSetRow();
 					limitRow.addRowData(1, new ResultSetRowColumnData(false, tranSubType));
-					// logger.logInfo("CONTADOR: " + contador);
 					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
 					limitRow.addRowData(2, new ResultSetRowColumnData(false, limitType));
-
-					//subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("amount").getAsDouble();
-					//subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("currency").getAsDouble();
 
 					limitRow.addRowData(3, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("amount").getAsString())); // configure LIMIT
 					limitRow.addRowData(4, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("currency").getAsString())); // configure LIMIT
@@ -452,62 +419,14 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 					}
 
 					data4.addRow(limitRow);
-					/*
-					if ("DAILY".equals(limitType)) {
-
-						dailyLimit = subTypeElement.getAsJsonObject()
-								.getAsJsonObject("userConfiguredLimit")
-								.get("amount").getAsDouble();
-					}else if("MONTHLY".equals(limitType)){
-						montlyLimit = subTypeElement.getAsJsonObject()
-								.getAsJsonObject("userConfiguredLimit")
-								.get("amount").getAsDouble();
-
-						balanceAmountMontly = subTypeElement.getAsJsonObject()
-								.getAsJsonObject("balanceAmount")
-								.get("amount").getAsDouble();
-					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
-						maxTxnLimit = subTypeElement.getAsJsonObject()
-								.getAsJsonObject("userConfiguredLimit")
-								.get("amount").getAsDouble();
-					} else if("MIN_TXN_LIMIT".equals(limitType)){
-
-					}
-					*/
-					contador ++;
 				}
 			}
 
-			/*
-			IResultSetRow[] limitRows = new IResultSetRow[transactionLimits.size()];
-
-			for (int i = 0; i < transactionLimits.size(); i++) {
-				//JsonObject limitElement = transactionLimits.get(i).getAsJsonObject();
-
-				// Crea una nueva fila para cada límite
-				IResultSetRow limitRow = new ResultSetRow();
-
-				// Extrae el subtipo de transacción
-
-				// Llena la fila con los datos relevantes
-				limitRow.addRowData(1, new ResultSetRowColumnData(false, "hola")); // transactionSubType
-				limitRow.addRowData(2, new ResultSetRowColumnData(false, "hola1")); // transactionLimitsType -DAYLY, MONTLY
-				limitRow.addRowData(3, new ResultSetRowColumnData(false, "23")); // configure LIMIT
-				limitRow.addRowData(4, new ResultSetRowColumnData(false, "MXN")); // configure LIMIT
-				limitRow.addRowData(4, new ResultSetRowColumnData(false, "28")); // balance ammount
-				limitRow.addRowData(4, new ResultSetRowColumnData(false, "MXN")); // balance ammount
-
-				// Agrega la fila al conjunto de datos
-				data4.addRow(limitRow);
-			}
-			*/
 		}
-
 
 		String message = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).isNull() ? "Service execution error" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).getValue();
 		String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull() ? "false" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 		String code = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).isNull() ? "400218" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).getValue();
-
 
 		IResultSetRow row = new ResultSetRow();
 		row.addRowData(1, new ResultSetRowColumnData(false, success));
@@ -517,8 +436,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		row2.addRowData(1, new ResultSetRowColumnData(false, code));
 		row2.addRowData(2, new ResultSetRowColumnData(false, message));
 		data2.addRow(row2);
-
-
 
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
