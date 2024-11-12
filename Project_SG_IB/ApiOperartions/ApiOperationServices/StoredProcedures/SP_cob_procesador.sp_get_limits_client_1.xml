@@ -17,11 +17,37 @@
   <queries>
     <query>
       <columns>
-        <column name="externalCustomerId" />
-        <column name="transactionType" />
-        <column name="transactionSubType" />
+        <column name="success" />
       </columns>
       <queryText>SELECT "externalCustomerId"=i_externalCustomerId,"transactionType"=i_transType,"transactionSubType"=i_transSubType</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="externalCustomerId" />
+        <column name="transactionType" />
+        <column name="transactionType" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="transactionSubType" />
+        <column name=" transactionLimitsType" />
+        <column name=" amount" />
+        <column name=" currency" />
+        <column name=" amount" />
+        <column name=" currency" />
+        <column name=" amount" />
+        <column name=" currency" />
+      </columns>
+      <queryText></queryText>
     </query>
   </queries>
 </procedure>
