@@ -813,12 +813,13 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						}*/
 					}
 
-					if (type_auth.equals("PURCHASE")) {
-
+					if (type_auth.equals("PURCHASE ONLINE")) {
 						if (is_dock_idc.equals("DOCK")) {
 							movementType = "PURCHASE_ONLINE";
 						}
+					}
 
+					if (type_auth.equals("PURCHASE PHYSICAL")) {
 						if (is_dock_idc.equals("IDC")) {
 							movementType = "PURCHASE_AT_STORE";
 						}
