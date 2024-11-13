@@ -212,19 +212,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
 					if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN SUPERA LIMITE DIARIO");
+						IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
 						logger.logDebug("Respose Exeption: " + resp.toString());
 						return resp;
 					} 
-					
-					if ((Boolean)aBagSPJavaOrchestration.get("isMontlyLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN SUPERA LIMITE MENSUAL");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					} 
-			
+								
 					if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN SUPERA LIMITE TRANSACCION");
+						IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
 						logger.logDebug("Respose Exeption: " + resp.toString());
 						return resp;
 					} 
@@ -761,19 +755,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			obtainLimits(aRequest, aBagSPJavaOrchestration);
 
 			if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN SUPERA LIMITE DIARIO");
+				IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
 				logger.logDebug("Respose Exeption: " + resp.toString());
 				return resp;
 			} 
-			
-			if ((Boolean)aBagSPJavaOrchestration.get("isMontlyLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN SUPERA LIMITE MENSUAL");
-				logger.logDebug("Respose Exeption: " + resp.toString());
-				return resp;
-			} 
-	
+				
 			if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN SUPERA LIMITE TRANSACCION");
+				IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
 				logger.logDebug("Respose Exeption: " + resp.toString());
 				return resp;
 			} 
