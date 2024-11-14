@@ -120,6 +120,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String OPERATING_INSTITUTION = "90715";
     private boolean successConnector = false;
     private int returnCode = 0;
+    private String codBlockHigh;
 
     private static ILogger logger = LogFactory.getLogger(TransferSpeiApiOrchestationCore.class);
     private static final String CLASS_NAME = "TransferSpeiApiOrchestationCore--->";
@@ -308,6 +309,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
         String evaluarRiesgoMobile = getParam(aRequest, "AERIMB", "BVI");
         String evaluarRiesgoSystem = getParam(aRequest, "AERISY", "BVI");
+        codBlockHigh = getParam(aRequest, "CBP", "BVI");
         String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
@@ -363,11 +365,63 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                             JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
                             if (riskDetails.has("riskStatus")) {
                                 String riskStatus = riskDetails.get("riskStatus").getAsString();
-                                logger.logDebug("Estado riskEvaluation:: " + riskStatus);
-                                if(riskStatus.contains("HIGH")) {
-                                    //llamar al sp de update status
 
-                                    //llamar al api blockOperation api
+                                if(logger.isDebugEnabled()){
+                                logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
+                                
+                                String ente = "";
+								if (aRequest.readValueParam("@i_external_customer_id")!=null) {
+									ente = aRequest.readValueParam("@i_external_customer_id");
+								}
+								
+								if(logger.isDebugEnabled()){
+									logger.logDebug("Ente: " + ente);}
+								
+                                if(riskStatus.contains("HIGH")) {
+                                	//Generamos un bloqueo de la cuenta contra débitos
+									generaBloqueoCuenta(aRequest);
+									
+									//Realizamos el bloqueo del usuario
+									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockHigh);
+									
+									//Seteamos los valores para el retorno
+									// Agregar Header y data 1
+									IResultSetHeader metaData1 = new ResultSetHeader();
+									IResultSetData data1 = new ResultSetData();
+									metaData1.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+									// Agregar info 1
+									IResultSetRow row1 = new ResultSetRow();
+									row1.addRowData(1, new ResultSetRowColumnData(false, "false"));
+									data1.addRow(row1);
+
+									IResultSetBlock resultsetBlock1 = new ResultSetBlock(metaData1, data1);
+
+									// Agregar Header y data 2
+									IResultSetHeader metaData2 = new ResultSetHeader();
+									IResultSetData data2 = new ResultSetData();
+									metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+									metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+									// Agregar info 2
+									IResultSetRow row2 = new ResultSetRow();
+									row2.addRowData(1, new ResultSetRowColumnData(false, "400383"));
+									row2.addRowData(2, new ResultSetRowColumnData(false, "Usuario Bloqueado"));
+									data2.addRow(row2);
+
+									IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+
+									// Agregar Header y data 3
+									IResultSetHeader metaData3 = new ResultSetHeader();
+									IResultSetData data3 = new ResultSetData();
+									IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+
+
+									wTransferResponse.addResponseBlock(resultsetBlock1);
+									wTransferResponse.addResponseBlock(resultsetBlock2);
+									wTransferResponse.addResponseBlock(resultsetBlock3);
+									
+									return wTransferResponse;
                                 }
                             } else {
                                 logger.logError("No se encontró riskStatus en el objeto");
@@ -433,6 +487,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String otpReturnCode = null;
 		String otpReturnCodeNew = null;
         String login = null;
+        String codBlockOTP = getParam(aRequest, "CBT", "BVI");
         
         if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
             xRequestId = "E";
@@ -543,7 +598,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
- 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
+ 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
  			}
  		}
         
@@ -2282,7 +2337,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return "";
 	}
 
-    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
         }
@@ -2331,10 +2386,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
             //Validacion del blockCode
-            jsonRequest.addProperty("blockCode", "21");
+            jsonRequest.addProperty("blockCode", codBlock);
 
             //Validacion de blockResason
+			if (codBlock.equals(codBlockHigh)){
+					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
+			}else {
             jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+			}
 
             anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
@@ -3060,7 +3119,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));//no se de donde sale este valor
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
-        String transactionDate = unifyDateFormat(aRequest.readValueParam("@x_end_user_request_date"));
+        String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_amount"));
@@ -3136,6 +3195,40 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
     }
 
+    private void generaBloqueoCuenta(IProcedureRequest aRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en generaBloqueoCuenta");
+		}
+
+		String tipoBloqueo = getParam(aRequest, "BCD", "AHO");
+		
+		request.setSpName("cob_ahorros..sp_val_acc_status_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR,"BM");
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, tipoBloqueo);
+		
+		//Add output params
+		request.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de generaBloqueoCuenta");
+		}
+
+	}
+    
     private String unifyDateFormat(String dateString) {
         String[] formats = {
             "yyyy-MM-dd HH:mm:ssZ",
@@ -3155,6 +3248,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         };
 
         Date date = null;
+        String newDate = dateString;
 
         for (String format : formats) {
             try {
@@ -3168,7 +3262,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        return unifiedFormat.format(date);
+        
+        if (date != null) {
+        	newDate = unifiedFormat.format(date);
+        }
+        return newDate;
     }
-
+    
 }
