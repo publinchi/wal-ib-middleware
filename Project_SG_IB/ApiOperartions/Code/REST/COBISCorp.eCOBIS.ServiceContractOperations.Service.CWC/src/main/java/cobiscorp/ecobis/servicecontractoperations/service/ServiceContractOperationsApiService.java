@@ -184,6 +184,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
                 String.valueOf(inCreditAccountRequest.getOriginCode()));
 
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+		
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
@@ -235,6 +239,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         String trn = "Account Credit Operation";
 
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans);
+         
         Gson gson = new Gson();
         String jsonReq = gson.toJson(inCreditAccountRequest);
 
@@ -5242,6 +5250,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getChannel());
 
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inRequestTransferSpi);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
@@ -5446,6 +5458,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 String.valueOf(inRequestTransferThirdPartyAccount.getAutoActionExecution()));
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferThirdPartyAccount.getChannel());
 
+		Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inRequestTransferThirdPartyAccount);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+		
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
@@ -6532,6 +6548,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_originCode",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getOriginCode()));
         procedureRequestAS.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitReason());
 
+		Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inDebitAccountRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+		
         //execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 
@@ -6581,6 +6601,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         String trn = "Account Debit Operation";
 
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inDebitAccountRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans);
+		
         Gson gson = new Gson();
         String jsonReq = gson.toJson(inDebitAccountRequest);
 
