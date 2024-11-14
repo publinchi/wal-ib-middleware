@@ -607,9 +607,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 			data.addRow(row);
 		}
 		
-		registerTransactionSuccess("AccountDebitOperationOrchestrationCore", null, anOriginalRequest, 
-				(String)aBagSPJavaOrchestration.get("@o_ssn_branch"), 
-				null, null);
+		 logger.logInfo("Llamo al metodo registrar CMFJ");
+	        registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060",
+	            (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
 		wProcedureResponse.addResponseBlock(resultBlock);			

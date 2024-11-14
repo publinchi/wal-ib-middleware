@@ -11,6 +11,7 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -127,6 +128,64 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 					+ responseTransfer.getProcedureResponseAsString());
 		return responseTransfer;
 	}
+	
+	 public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , String movementId) {	
+			IProcedureRequest request = new ProcedureRequestAS();
+
+				logger.logInfo(" Entrando en registerAllTransactionSuccess");
+			
+			String movementType = "SPEI_OUT";
+			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
+			// request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
+			if(tipoTran.equals("SPEI_OUT")) {
+				request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
+				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aRequest.readValueParam("@x_end_user_request_date"));
+				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
+				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
+				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
+				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
+				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
+				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
+				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , movementId);
+				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
+	            request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+				
+				request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, "CASHI");
+				request.addInputParam("@i_name", ICTSTypes.SQLVARCHAR , "o_nom_beneficiary"); //agregar sp
+				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_creditorAccount_identification"));
+				request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, "0");
+				
+				request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null); //consultar
+				request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,"0");
+				request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, "0");
+				
+				request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, null);
+				request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR, null);
+				
+				request.addInputParam("@i_beginningBalance", ICTSTypes.SQLMONEY, null); // consultar
+				request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
+				request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
+				
+				logger.logInfo("@i_request_trans_success: "+ (String)aRequest.readValueParam("@i_json_req")  +"req:"+ (String)aRequest.readValueParam("@i_json_req"));
+				request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR,(String)aRequest.readValueParam("@i_json_req"));
+				request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+			}
+				IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+					
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Response Corebanking registerAllTransactionSuccess: " + wProductsQueryResp.getProcedureResponseAsString());
+				}
+
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(" Saliendo de registerAllTransactionSuccess");
+				}
+	    }
 
 	private  void movementOffline(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration){
 
