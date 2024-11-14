@@ -82,6 +82,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 
 	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
 	private IAdminTokenUser tokenService;
+	private String codBlockHigh;
 
 	public void setTokenService(IAdminTokenUser tokenService) {
 		this.tokenService = tokenService;
@@ -140,6 +141,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
 		String evaluarRiesgoSystem = getParam(anOriginalRequest, "AERISY", "BVI");
+		codBlockHigh = getParam(anOriginalRequest, "CBP", "BVI");
 		
 		String channel = anOriginalRequest.readValueParam("@i_channel") != null ? anOriginalRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 		
@@ -368,7 +370,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 									generaBloqueoCuenta(anOriginalRequest);
 									
 									//Realizamos el bloqueo del usuario
-									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, "29");
+									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, codBlockHigh);
 									
 									//Seteamos los valores para el retorno
 									// Agregar Header y data 1
@@ -888,7 +890,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
-		String transactionDate = unifyDateFormat(aRequest.readValueParam("@x_end_user_request_date"));
+		String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
@@ -962,6 +964,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
 		String login = null;
+		String codBlockOTP = getParam(aRequest, "CBT", "BVI");
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -1059,7 +1062,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, "21");
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
 			}
 		}
 		
@@ -1670,7 +1673,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			jsonRequest.addProperty("blockCode", codBlock);
 
 			//Validacion de blockResason
-			if (codBlock == "29"){
+			if (codBlock.equals(codBlockHigh)){
 					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
 			}else {
 				jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
@@ -1831,6 +1834,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         };
 
         Date date = null;
+        String newDate = dateString;
 
         for (String format : formats) {
             try {
@@ -1844,7 +1848,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         }
 
         SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        return unifiedFormat.format(date);
+        
+        if (date != null) {
+        	newDate = unifiedFormat.format(date);
+        }
+        return newDate;
     }
 
 }
