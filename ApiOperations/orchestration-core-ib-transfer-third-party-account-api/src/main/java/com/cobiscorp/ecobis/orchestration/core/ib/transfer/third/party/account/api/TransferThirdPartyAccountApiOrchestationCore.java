@@ -1051,11 +1051,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking  DCO : " + wProductsQueryResp.getProcedureResponseAsString());
-		}	
+		}
 		
-		 logger.logInfo("Llamo al metodo registrar CMFJ");
-         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest, 
+		
+		logger.logInfo("Llamo al metodo registrar CMFJ");
+         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
              (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+         
+         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
+                 (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
     
 
 		if (logger.isInfoEnabled()) {
@@ -1371,7 +1375,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "1010");
+		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@o_causal"));
+		logger.logInfo("Causal:"+ (String)aBagSPJavaOrchestration.get("@o_causal"));
 		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "1020");
 		//anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, "185");
 		anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
@@ -1468,6 +1473,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N',"1800195");
 				procedureRequest.addInputParam("@i_producto", ICTSTypes.SQLINT1, "18");
 			}
+			
+			logger.logInfo("causal api2:"+ (String)aBagSPJavaOrchestration.get("@o_causal"));
+			logger.logInfo("causal oirgen2:"+ (String)aBagSPJavaOrchestration.get("@i_causa_org"));
+			
 			
 			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 			
