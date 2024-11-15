@@ -1054,7 +1054,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 		
 		
-		logger.logInfo("Llamo al metodo registrar CMFJ");
+		
          registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
              (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
          
