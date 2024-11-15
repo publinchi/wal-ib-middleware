@@ -7,10 +7,6 @@ import java.util.TimeZone;
 import java.util.Date;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -54,7 +50,6 @@ import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
 import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
-import com.cobiscorp.cobis.csp.domains.ICSP;
 
 /**
  * Register Account
@@ -206,24 +201,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 				
-				callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
-
-				if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-					obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
-
-					if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					} 
-								
-					if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					} 
-				}
-
 				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
 				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
@@ -749,24 +726,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 		
-		callGetLimits(aRequest, aBagSPJavaOrchestration);
-
-		if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-			obtainLimits(aRequest, aBagSPJavaOrchestration);
-
-			if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-				logger.logDebug("Respose Exeption: " + resp.toString());
-				return resp;
-			} 
-				
-			if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-				logger.logDebug("Respose Exeption: " + resp.toString());
-				return resp;
-			} 
-		}
-
 		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);		
 		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 		
@@ -1764,158 +1723,5 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         
         return newDate;
     }
-
-	private void callGetLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
-		if(logger.isDebugEnabled())
-			logger.logDebug("Transfer Third Party callGetLimitsConn [INI]");
-
-		try {
-
-			IProcedureRequest anOriginalRequestLimits = new ProcedureRequestAS();
-
-			anOriginalRequestLimits.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR, "DEBIT");
-			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
-			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
-
-			anOriginalRequestLimits.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
-			anOriginalRequestLimits.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
-			anOriginalRequestLimits.addOutputParam("@o_success", ICTSTypes.SQLVARCHAR, "X");
-			
-			anOriginalRequestLimits.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CISConnectorGetLimits)");
-			anOriginalRequestLimits.addFieldInHeader("csp.skip.transformation", ICOBISTS.HEADER_STRING_TYPE, "Y");
-			anOriginalRequestLimits.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
-
-			anOriginalRequestLimits.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "transformAndSend");
-			anOriginalRequestLimits.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
-			anOriginalRequestLimits.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
-			anOriginalRequestLimits.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
-			anOriginalRequestLimits.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingTransformationProvider");
-
-			// SE HACE LA LLAMADA AL CONECTOR
-			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorGetLimits)");
-			anOriginalRequestLimits.setSpName("cob_procesador..sp_conn_get_limits");
-
-			anOriginalRequestLimits.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700128");
-			anOriginalRequestLimits.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700128");
-			anOriginalRequestLimits.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700128");
-	
-			IProcedureResponse connectorGetLimitsResponse = executeProvider(anOriginalRequestLimits, aBagSPJavaOrchestration);
-
-			if (logger.isDebugEnabled()){
-				logger.logDebug("connectorGetLimitsResponse ->" + connectorGetLimitsResponse.toString());
-			}
-
-			String responseCode = connectorGetLimitsResponse.readValueParam("@o_responseCode") == null ? "0" : connectorGetLimitsResponse.readValueParam("@o_responseCode");
-			String message = connectorGetLimitsResponse.readValueParam("@o_message") == null ? "Error" : connectorGetLimitsResponse.readValueParam("@o_message");
-			String success = connectorGetLimitsResponse.readValueParam("@o_success") == null ? "false" : connectorGetLimitsResponse.readValueParam("@o_success");
-			String responseBody = connectorGetLimitsResponse.readValueParam("@o_responseBody") == null ? "{}" : connectorGetLimitsResponse.readValueParam("@o_responseBody");
-			String queryString = connectorGetLimitsResponse.readValueParam("@o_queryString") == null ? "" : connectorGetLimitsResponse.readValueParam("@o_queryString");
-
-			aBagSPJavaOrchestration.put("responseCodeGetLimits", responseCode);
-			aBagSPJavaOrchestration.put("messageGetLimits", message);
-			aBagSPJavaOrchestration.put("successGetLimits", success);
-			aBagSPJavaOrchestration.put("responseBodyGetLimits", responseBody);
-			aBagSPJavaOrchestration.put("queryString", queryString);
-
-			registerResponse(aRequest, aBagSPJavaOrchestration);
-
-		}catch (Exception e) {
-			logger.logError(" Error en callGetLimitsConn: " + e.getMessage());
-		}
-	}
-
-	private void registerResponse(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		IProcedureRequest request = new ProcedureRequestAS();
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(" Entrando en registerResponse get");
-		}
-
-		request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
-
-		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-		
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
-		request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "fetchTransactionLimit");
-		request.addInputParam("@i_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
-		
-		request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("queryString").toString());
-		request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodyGetLimits").toString());
-		
-		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);		
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response registerResponse get: " + wProductsQueryResp.getProcedureResponseAsString());
-		}
-	}
-
-	private void obtainLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
-		try{
-			JsonParser jsonParser = new JsonParser();
-			String jsonRequestStringClean = aBagSPJavaOrchestration.get("responseBodyGetLimits").toString().replace("&quot;", "\"");
-			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
-
-			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
-
-			double transactionAmount =  Double.parseDouble(aRequest.readValueParam("@i_val"));// Monto de la transacción
-			logger.logInfo("transactionAmount:: " + transactionAmount);
-	
-			// Inicializar variables para límites
-			Double dailyLimit = null;
-			Double montlyLimit = null;
-			Double balanceAmountMontly = null;
-			Double maxTxnLimit = null;
-
-			for (JsonElement limitElement : transactionLimits) {
-				JsonArray subTypeLimits = limitElement.getAsJsonObject().getAsJsonArray("transactionSubTypeLimits");
-				for (JsonElement subTypeElement : subTypeLimits) {
-					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
-					
-					if ("DAILY".equals(limitType)) {
-						dailyLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
-					}else if("MONTHLY".equals(limitType)){
-						montlyLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
-
-						balanceAmountMontly = subTypeElement.getAsJsonObject()
-						.getAsJsonObject("balanceAmount")
-						.get("amount").getAsDouble();
-					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
-						maxTxnLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
-					}
-				}
-			}
-		
-			boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
-			boolean isMontlyLimitExceeded = transactionAmount + balanceAmountMontly > (montlyLimit != null ? montlyLimit : 0);
-			boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
-
-			aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
-			aBagSPJavaOrchestration.put("isMontlyLimitExceeded", isMontlyLimitExceeded);
-			aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
-	
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("dailyLimit:: " + dailyLimit);
-				logger.logDebug("dailyLimit:: " + dailyLimit);
-				logger.logDebug("maxTxnLimit:: " + maxTxnLimit);
-				logger.logDebug("isDailyLimitExceeded:: " + isDailyLimitExceeded);
-				logger.logDebug("isMontlyLimitExceeded:: " + isMontlyLimitExceeded);
-				logger.logDebug("isMaxTxnLimitExceeded:: " + isMaxTxnLimitExceeded);
-			}
-		} catch (JsonSyntaxException e) {
-			logger.logError("Error parsing JSON: Invalid JSON syntax", e);
-		} catch (IllegalStateException e) {
-			logger.logError("Error parsing JSON: Illegal state", e);
-		} catch (Exception e) {
-			logger.logError("Unexpected error while parsing JSON", e);
-		}
-	}
 
 }
