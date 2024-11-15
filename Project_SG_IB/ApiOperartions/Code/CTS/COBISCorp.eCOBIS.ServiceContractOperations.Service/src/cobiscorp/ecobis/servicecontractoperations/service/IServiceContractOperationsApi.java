@@ -146,11 +146,6 @@ public interface IServiceContractOperationsApi{
   ServiceResponseTO getCatalog(ServiceRequestTO requestTO);  
 
   /**
-  * Get Client Limits API
-  */
-  ServiceResponseTO getClientLimits(ServiceRequestTO requestTO);  
-
-  /**
   * Get Colony by Municipality
   */
   ServiceResponseTO getColonyByMunicipality(ServiceRequestTO requestTO);  
