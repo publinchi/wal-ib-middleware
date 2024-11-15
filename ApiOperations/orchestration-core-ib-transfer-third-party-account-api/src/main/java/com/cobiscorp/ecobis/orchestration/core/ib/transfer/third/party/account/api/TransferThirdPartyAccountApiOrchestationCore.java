@@ -45,11 +45,13 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
 import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
+
 
 /**
  * Register Account
@@ -64,7 +66,7 @@ import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 @Properties(value = { @Property(name = "service.description", value = "TransferThirdPartyAccountApiOrchestationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
 		@Property(name = "service.identifier", value = "TransferThirdPartyAccountApiOrchestationCore") })
-public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestrationBase {
+public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemplate {
 
 	private static ILogger logger = LogFactory.getLogger(TransferThirdPartyAccountApiOrchestationCore.class);
 	private static final String CLASS_NAME = "TransferThirdPartyAccountApiOrchestationCore--->";
@@ -347,7 +349,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		else
 			return false;
 	}
-	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
 		IProcedureRequest request = wQueryRequest.clone();
 		ComponentLocator componentLocator = null;
@@ -480,6 +482,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				if(aBagSPJavaOrchestration.get("IsReentry").equals("S")){
 					referenceCode = aBagSPJavaOrchestration.containsKey("rty_ssn")?aBagSPJavaOrchestration.get("rty_ssn").toString():"0";
 					aBagSPJavaOrchestration.put("ssn",referenceCode);
+					
+					
 				}
 				else{
 					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
@@ -757,6 +761,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			
 			wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
 			
+			
 			//wTransferResponse = executeTransfer(aRequest, aBagSPJavaOrchestration);
 			return wTransferResponse; 
 		}
@@ -765,6 +770,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de transferThirdAccount");
 		}
+		
 
 		return wAccountsRespVal;
 	}
@@ -1046,6 +1052,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking  DCO : " + wProductsQueryResp.getProcedureResponseAsString());
 		}
+		
+		
+		
+         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
+             (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+         
+         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
+                 (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+    
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getDataAccountReq");
@@ -1184,7 +1199,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 			Map<String, Object> aBagSPJavaOrchestration) {
-
+		
+		
+		
 		return null;
 	}
 
@@ -1221,6 +1238,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getValAccountReq");
 		}
+		
+		
 	
 		return wProductsQueryResp;
 	}
@@ -1329,7 +1348,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("o_ssn_branch", response.readValueParam("@o_ssn_branch"));
 		
+		logger.logInfo("responseCMFJ: "+response);
 		return response;
+		
 	}
 	
 	private IProcedureResponse executeOfflineThirdAccountTransferCobis(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -1354,7 +1375,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "1010");
+		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@o_causal"));
+		logger.logInfo("Causal:"+ (String)aBagSPJavaOrchestration.get("@o_causal"));
 		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "1020");
 		//anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, "185");
 		anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
@@ -1451,6 +1473,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N',"1800195");
 				procedureRequest.addInputParam("@i_producto", ICTSTypes.SQLINT1, "18");
 			}
+			
+			logger.logInfo("causal api2:"+ (String)aBagSPJavaOrchestration.get("@o_causal"));
+			logger.logInfo("causal oirgen2:"+ (String)aBagSPJavaOrchestration.get("@i_causa_org"));
+			
 			
 			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 			
@@ -1723,5 +1749,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         
         return newDate;
     }
+
+	@Override
+	protected void loadDataCustomer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
