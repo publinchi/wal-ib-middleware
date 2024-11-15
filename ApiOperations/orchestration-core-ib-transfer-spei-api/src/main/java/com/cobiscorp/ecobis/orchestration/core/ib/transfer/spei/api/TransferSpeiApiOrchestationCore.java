@@ -77,6 +77,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api.dto.AccendoC
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api.util.Methods;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOfflineTemplate;
 import com.google.gson.JsonObject;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 
 /**
@@ -381,6 +382,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             	return wTransferResponse;
             }
         }
+        
         return wAccountsResp;
     }
 
@@ -952,6 +954,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+					 
+					logger.logInfo("Llamo al metodo registrar SPEI_OUT");
+				        registerAllTransactionSuccess("SPEI_OUT", anOriginalRequest,"2040",
+				        		anOriginalRequest.readValueParam("@s_ssn_branch"));
+
 					
 					
 					logger.logInfo("bnbn true--->" + movementId);
@@ -1529,7 +1536,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logDebug("Response accountTransfer:" + response.getProcedureResponseAsString());
             logger.logDebug("Fin executeTransferSPI");
         }
-
+        
         return response;
     }
     
@@ -1696,6 +1703,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo("Fin transfer SPI");
         }
+        
         return requestTransfer;
     }
     
@@ -2046,6 +2054,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
             return Utils.returnException(1, ERROR_SPEI);
         }
+        
         return responseTransfer;
     }
     

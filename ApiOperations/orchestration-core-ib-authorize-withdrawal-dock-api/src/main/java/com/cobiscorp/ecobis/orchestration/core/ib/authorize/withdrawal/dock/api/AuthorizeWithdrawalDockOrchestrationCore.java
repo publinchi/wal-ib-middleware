@@ -690,7 +690,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 										(String)aBagSPJavaOrchestration.get("@o_causal"),
 										aBagSPJavaOrchestration.get("ente").toString()
 										);
-
+				
 				data.addRow(row);	
 			}
 			
