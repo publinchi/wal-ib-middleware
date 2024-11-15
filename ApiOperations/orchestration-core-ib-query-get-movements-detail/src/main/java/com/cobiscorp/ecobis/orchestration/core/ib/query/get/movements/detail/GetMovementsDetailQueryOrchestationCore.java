@@ -736,6 +736,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				}
 			
 				String type_movement = columns[35].getValue();
+				String des_type = columns[1].getValue();
 				String is_dock_idc = columns[36].getValue();
 				String type_auth = columns[37].getValue();
 				String operationType = columns[4].getValue();
@@ -813,22 +814,34 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						}*/
 					}
 
-					if (type_auth.equals("PURCHASE ONLINE")) {
-						if (is_dock_idc.equals("DOCK")) {
+					else if (type_auth.toUpperCase().contains("PURCHASE")) {
+						if (type_auth.equals("PURCHASE ONLINE")) {
 							movementType = "PURCHASE_ONLINE";
+						} else {
+							if (type_auth.equals("PURCHASE PHYSICAL") || type_auth.equals("PURCHASE")) {
+								movementType = "PURCHASE_AT_STORE";
+							} else if (type_auth.equals("PURCHASE_WITH_CASHBACK")) {
+								movementType = "PURCHASE_WITH_CASHBACK";
+							}
+							establisment_name_store = (establisment_name_store == null
+									|| establisment_name_store.isEmpty()) ? name_location_atm : establisment_name_store;
+							transaction_id_store = (transaction_id_store == null || transaction_id_store.isEmpty())
+									? transaction_id_atm
+									: transaction_id_store;
+
+							// Reset values
+							name_location_atm = null;
+							location_id_atm = null;
+							transaction_id_atm = null;
+							bank_branch_code = null;
 						}
 					}
 
-					if (type_auth.equals("PURCHASE PHYSICAL")) {
-						if (is_dock_idc.equals("IDC")) {
-							movementType = "PURCHASE_AT_STORE";
-						}
-					}
-
-					if (type_auth.equals("DEPOSIT")) {
+					else if (type_auth.equals("DEPOSIT")) {
 
 						if (is_dock_idc.equals("DOCK")) {
 							movementType = "CREDIT_AT_STORE";
+
 						}
 
 						if (is_dock_idc.equals("IDC")) {
@@ -836,45 +849,110 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						}
 					}
 
-					if (type_auth.equals("REVERSAL")) {
-
-						if (is_dock_idc.equals("DOCK")) {
-							movementType = "REVERSAL";
-						}
-
-						if (is_dock_idc.equals("IDC")) {
+					else if (type_auth.toUpperCase().contains("REVERSAL")) {
+						if (type_auth.equals("REVERSAL ONLINE")) {
+							movementType = "REVERSAL ONLINE";
+						} else if (type_auth.equals("REVERSAL PHYSICAL")) {
+							movementType = "REVERSAL PHYSICAL";
+						} else {
 							movementType = "REVERSAL";
 						}
 					}
+
+					if (movementType == null || movementType.isEmpty()) {
+						if (type_movement.equals("BONUS")) {
+							movementType = "BONUS";
+						} else if (type_movement.equals("COMMISSION")) {
+							movementType = "COMMISSION";
+						} else {
+							movementType = type_auth;
+						}
+					}
+
+					/*
+					 * if (type_auth.equals("REVERSAL")) {
+					 * 
+					 * if (is_dock_idc.equals("DOCK")) {
+					 * movementType = "REVERSAL";
+					 * }
+					 * 
+					 * if (is_dock_idc.equals("IDC")) {
+					 * movementType = "REVERSAL";
+					 * }
+					 * }
+					 */
 
 				} else if (type_movement.equals("ISO")) {
 
 					if (type_auth.equals("WITHDRAWAL")) {
 						movementType = "ATM_DEBIT";
-					
-					} else if (type_auth.equals("PURCHASE")) {
-						movementType = "PURCHASE_AT_STORE";
-					} else {
-						movementType = type_auth;
-					}	
-					
-					if (movementType.equals("PURCHASE_AT_STORE") || movementType.equals("PURCHASE_WITH_CASHBACK")) {
-						 
-						establisment_name_store = name_location_atm;
-						transaction_id_store = transaction_id_atm;
-						
-						name_location_atm = null;
-						location_id_atm = null;
-						transaction_id_atm = null;
-						bank_branch_code = null;
 					}
-					
 
-				} else if(type_movement.equals("BONUS")){
+					else if (type_auth.toUpperCase().contains("PURCHASE")) {
+						if (type_auth.equals("PURCHASE ONLINE")) {
+							movementType = "PURCHASE_ONLINE";
+						} else {
+							if (type_auth.equals("PURCHASE PHYSICAL") || type_auth.equals("PURCHASE")) {
+								movementType = "PURCHASE_AT_STORE";
+							} else if (type_auth.equals("PURCHASE_WITH_CASHBACK")) {
+								movementType = "PURCHASE_WITH_CASHBACK";
+							}
+							establisment_name_store = (establisment_name_store == null
+									|| establisment_name_store.isEmpty()) ? name_location_atm : establisment_name_store;
+							transaction_id_store = (transaction_id_store == null || transaction_id_store.isEmpty())
+									? transaction_id_atm
+									: transaction_id_store;
+
+							// Reset values
+							name_location_atm = null;
+							location_id_atm = null;
+							transaction_id_atm = null;
+							bank_branch_code = null;
+						}
+					}
+
+					else if (type_auth.toUpperCase().contains("REVERSAL")) {
+						if (type_auth.equals("REVERSAL ONLINE")) {
+							movementType = "REVERSAL ONLINE";
+						} else if (type_auth.equals("REVERSAL PHYSICAL")) {
+							movementType = "REVERSAL PHYSICAL";
+						} else if (type_auth.equals("REVERSAL")) {
+							movementType = "REVERSAL";
+						} else {
+							movementType = "REVERSAL_PURCHASE_WITH_CASHBACK";
+						}
+					}
+
+					if (movementType == null || movementType.isEmpty()) {
+						if (type_movement.equals("BONUS")) {
+							movementType = "BONUS";
+						} else if (type_movement.equals("COMMISSION")) {
+							movementType = "COMMISSION";
+						} else {
+							if (des_type.toUpperCase().contains("REVERSAL")) {
+								movementType = "REVERSAL_PURCHASE_WITH_CASHBACK";
+							} else {
+								movementType = type_auth;
+							}
+							// movementType = type_auth;
+						}
+					}
+
+				} /*else if(type_movement.equals("BONUS")){
 					movementType = "BONUS";
 				} else if (type_movement.equals("COMMISSION")){
 					movementType = "COMMISSION";
 
+				}*/
+
+				if (movementType == null || movementType.isEmpty()) {
+					if (type_movement.equals("BONUS")) {
+						movementType = "BONUS";
+					} else if (type_movement.equals("COMMISSION")) {
+						movementType = "COMMISSION";
+					} else {
+						movementType = type_auth;
+					}
 				}
 				
 				  if (operationType.equals("C")) {
@@ -894,9 +972,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String amount = columns[5].getValue();
 				String iva_val = columns[33].getValue();
 				String purchaseVal = null, withdrawalVal = null;
-				logger.logDebug("ADC type_movement--->:" +type_movement);
-				logger.logDebug("ADC movementType--->:" +movementType);
-				if (movementType!=null && movementType.equals("PURCHASE_WITH_CASHBACK")) {
+				
+				if (movementType.equals("PURCHASE_WITH_CASHBACK")) {
 					BigDecimal bigDecimalAmount = new BigDecimal(amount);
 					BigDecimal bigDecimalIva = new BigDecimal(iva_val);
 					
@@ -920,7 +997,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 				rowDat.addRowData(1, new ResultSetRowColumnData(false, columns[6].getValue()));
 				rowDat.addRowData(2, new ResultSetRowColumnData(false, columns[7].getValue()));
-				rowDat.addRowData(3, new ResultSetRowColumnData(false, movementType==null?"":movementType));//2?
+				// rowDat.addRowData(3, new ResultSetRowColumnData(false, movementType));// 2?
+				String tempMovementType = null;
+				if (movementType == null) {
+					tempMovementType = type_auth;
+				} else if (movementType.equals("REVERSAL PHYSICAL") || movementType.equals("REVERSAL ONLINE")) {
+					tempMovementType = "REVERSAL";
+				} else {
+					tempMovementType = movementType;
+				}
+				rowDat.addRowData(3, new ResultSetRowColumnData(false, tempMovementType));
 				rowDat.addRowData(4, new ResultSetRowColumnData(false, amount));
 				rowDat.addRowData(5, new ResultSetRowColumnData(false, columns[0].getValue()));
 				rowDat.addRowData(6, new ResultSetRowColumnData(false, columns[4].getValue()));
@@ -943,14 +1029,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(19, new ResultSetRowColumnData(false, columns[23].getValue()));
 
 				rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
-				//rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
-				//rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
-
-				//rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
-				//rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
-
-				//rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
-				//rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+				// rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+				// rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
+				// rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
+				// rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
+				// rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+				// rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
 
 				if (type_auth == null) {
 					rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
@@ -959,39 +1043,133 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
 					rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
 					rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
-					
-					}else{
-						if (type_auth.equals("WITHDRAWAL")) {
-							if (is_dock_idc == null) {
-								rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
-								rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
-								rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
-								rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
-								rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
-								rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
-							
-							} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
-								rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
-								rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
-								rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
-								rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
-								rowDat.addRowData(25, new ResultSetRowColumnData(false, is_dock_idc.equals("DOCK") ? establisment_name_merchant : establisment_name_store)); //NUEVO STORE DE
-								rowDat.addRowData(26, new ResultSetRowColumnData(false, is_dock_idc.equals("DOCK") ? transaction_id_merchant : transaction_id_store)); //NUEVO STORE DE
-							}					
-							
-						} else {
-							rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
+
+				} else {
+					if (type_auth.equals("WITHDRAWAL")) {
+						if (is_dock_idc == null) {
 							rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
 							rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
 							rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
 							rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
 							rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
 							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
-						}
-					}
 
+						} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
+							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(25, new ResultSetRowColumnData(false,
+									is_dock_idc.equals("DOCK") ? establisment_name_merchant : establisment_name_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false,
+									is_dock_idc.equals("DOCK") ? transaction_id_merchant : transaction_id_store));
+						}
+
+					} else if (type_auth.equals("DEPOSIT")) {
+						bank_branch_code = null;
+						rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(25,
+								new ResultSetRowColumnData(false,
+										establisment_name_merchant != null ? establisment_name_merchant
+												: establisment_name_store));
+						rowDat.addRowData(26, new ResultSetRowColumnData(false,
+								transaction_id_merchant != null ? transaction_id_merchant : transaction_id_store));
+					} else if (movementType.equals("PURCHASE_AT_STORE")
+							|| movementType.equals("PURCHASE_WITH_CASHBACK")) {
+						if (is_dock_idc == null) {
+							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+
+						} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
+							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(25, new ResultSetRowColumnData(false,
+									is_dock_idc.equals("DOCK") ? establisment_name_merchant : establisment_name_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false,
+									is_dock_idc.equals("DOCK") ? transaction_id_merchant : transaction_id_store));
+						}
+
+					} else if (movementType.equals("PURCHASE_ONLINE")) {
+						establisment_name_merchant = (name_location_atm != null) ? name_location_atm
+								: establisment_name_merchant;
+						transaction_id_merchant = (transaction_id_atm != null) ? transaction_id_atm
+								: transaction_id_merchant;
+						name_location_atm = null;
+						location_id_atm = null;
+						transaction_id_atm = null;
+						bank_branch_code = null;
+						rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(23, new ResultSetRowColumnData(false, establisment_name_merchant));
+						rowDat.addRowData(24, new ResultSetRowColumnData(false, transaction_id_merchant));
+						rowDat.addRowData(25, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(26, new ResultSetRowColumnData(false, null));
+					} else if (movementType.equals("REVERSAL PHYSICAL") || movementType.equals("REVERSAL")
+							|| movementType.equals("REVERSAL_PURCHASE_WITH_CASHBACK")) {
+						bank_branch_code = null;
+						if (is_dock_idc == null) {
+							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(25, new ResultSetRowColumnData(false,
+									name_location_atm != null ? name_location_atm : establisment_name_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false,
+									transaction_id_atm != null ? transaction_id_atm : transaction_id_store));
+
+						} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
+							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(23, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(24, new ResultSetRowColumnData(false, null));
+							rowDat.addRowData(25, new ResultSetRowColumnData(false,
+									is_dock_idc.equals("DOCK") ? establisment_name_merchant : establisment_name_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false,
+									is_dock_idc.equals("DOCK") ? transaction_id_merchant : transaction_id_store));
+						}
+
+					} else if (movementType.equals("REVERSAL ONLINE")) {
+						establisment_name_merchant = (name_location_atm != null) ? name_location_atm
+								: establisment_name_merchant;
+						transaction_id_merchant = (transaction_id_atm != null) ? transaction_id_atm
+								: transaction_id_merchant;
+						name_location_atm = null;
+						location_id_atm = null;
+						transaction_id_atm = null;
+						bank_branch_code = null;
+						rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(22, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(23, new ResultSetRowColumnData(false, establisment_name_merchant));
+						rowDat.addRowData(24, new ResultSetRowColumnData(false, transaction_id_merchant));
+						rowDat.addRowData(25, new ResultSetRowColumnData(false, null));
+						rowDat.addRowData(26, new ResultSetRowColumnData(false, null));
+					} else {
+						rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[26].getValue()));
+						rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
+						rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
+						rowDat.addRowData(23, new ResultSetRowColumnData(false, establisment_name_merchant));
+						rowDat.addRowData(24, new ResultSetRowColumnData(false, transaction_id_merchant));
+						rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
+						rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+					}
+				}
 				rowDat.addRowData(27, new ResultSetRowColumnData(false, columns[17].getValue()));
-				rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
+				if (tempMovementType.equals("P2P_DEBIT") || tempMovementType.equals("P2P_CREDIT")
+						|| tempMovementType.equals("SPEI_CREDIT") || tempMovementType.equals("COMMISSION")
+						|| tempMovementType.equals("SPEI_DEBIT") || tempMovementType.equals("SPEI_PENDING")) {
+					rowDat.addRowData(28, new ResultSetRowColumnData(false, null));
+				} else {
+					rowDat.addRowData(28, new ResultSetRowColumnData(false, columns[38].getValue()));
+				}
 
 				rowDat.addRowData(29, new ResultSetRowColumnData(false, bank_branch_code));
 
