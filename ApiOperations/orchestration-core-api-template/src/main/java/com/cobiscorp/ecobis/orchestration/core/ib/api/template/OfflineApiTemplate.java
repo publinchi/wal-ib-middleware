@@ -374,7 +374,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 		
 		if(tipoTran.equals("transferThirdPartyAccount")) {
-			logger.logInfo(" Entro a transferThirdPartyAccount entro en el if CMFJ");
+			
 			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
 			request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
@@ -388,7 +388,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				movementType = "P2P_DEBIT";
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
 			}
-			logger.logInfo("movementType CMFJ:" + (String)aRequest.readValueParam("@i_movementType"));
+			
             request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR,movementType);
             request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 			if(movementType == "P2P_CREDIT" ) {
@@ -416,42 +416,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
 			request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
 		}
-		
-		if(tipoTran.equals("Authorize Withdrawal")) {
-			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
-			request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
-			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aRequest.readValueParam("@x_end_user_request_date"));
-			if(movementType == "ATM_CREDIT" ) {
-				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
-			} else if(movementType == "ATM_DEBIT") {
-				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
-			}
-			request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, "CASHI");
-			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
-			request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
-			request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , "0");
-			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
-			if(movementType == "ATM_CREDIT" ) {
-				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
-			} else if(movementType == "ATM_DEBIT") {
-				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
-			}
-			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
-			request.addInputParam("@i_name", ICTSTypes.SQLVARCHAR , "o_nom_beneficiary"); //agregar sp
-			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_creditorAccount_identificationType"));
-			request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, "@i_cta_org");
 			
-			request.addInputParam("@i_cardId", ICTSTypes.SQLVARCHAR, null);
-			request.addInputParam("@i_maskedCardNumber", ICTSTypes.SQLVARCHAR, null);
-			
-			request.addInputParam("@i_atmBankName", ICTSTypes.SQLVARCHAR, null);
-			request.addInputParam("@i_atmLocationId", ICTSTypes.SQLVARCHAR, null);
-			request.addInputParam("@i_atmTransactionId", ICTSTypes.SQLVARCHAR, null);		
-			request.addInputParam("@i_atmbankBranchCode", ICTSTypes.SQLVARCHAR, null);
-		}
-		
 		if(tipoTran.equals("AccountCreditOperationOrchestrationCore")) {
 			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aRequest.readValueParam("@x_end_user_request_date")); //revisar
