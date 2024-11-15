@@ -3233,6 +3233,216 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         return outResponseCatalog;
     }
 
+   /**
+     * Get client limits
+     */
+    @Override
+	//Have DTO
+      public ResponseGetClientLimits getClientLimits(RequestGetClientLimits inRequestGetClientLimits )throws CTSRestException{
+	  LOGGER.logDebug("Start service execution: getClientLimits");
+      ResponseGetClientLimits outResponseGetClientLimits  = new ResponseGetClientLimits();
+          
+      //create procedure
+      ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_get_limits_client");
+      
+      procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18700132");
+      procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestGetClientLimits.getExternalCustomerId()));
+      procedureRequestAS.addInputParam("@i_transType",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getTransactionType());
+      procedureRequestAS.addInputParam("@i_transSubType",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getTransactionSubType());
+      
+      procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLINT4, String.valueOf(inRequestGetClientLimits.getAccountNumber()));
+      procedureRequestAS.addInputParam("@i_limitType",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getLimitType());
+      procedureRequestAS.addInputParam("@i_operation",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getOperation());
+      procedureRequestAS.addInputParam("@i_ammount",ICTSTypes.SQLVARCHAR, inRequestGetClientLimits.getLimit() != null ? String.valueOf(inRequestGetClientLimits.getLimit().getAmount()) : null );
+      procedureRequestAS.addInputParam("@i_currency",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getLimit() != null ? inRequestGetClientLimits.getLimit().getCurrency() : null);
+      
+      //execute procedure
+      ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+      List<MessageBlock> errors = ErrorUtil.getErrors(response);
+      //throw error
+      if(errors!= null && errors.size()> 0){
+      LOGGER.logDebug("Procedure execution returns error");
+      if ( LOGGER.isDebugEnabled() ) {
+      for (int i = 0; i < errors.size(); i++) {
+      LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+      }
+      }
+      throw new CTSRestException("Procedure Response has errors", null, errors);
+      }
+      LOGGER.logDebug("Procedure ok");
+      //Init map returns
+      int mapTotal=0;
+      int mapBlank=0;
+
+      mapTotal++;
+        if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+            // ---------NO Array
+            ResponseGetClientLimits returnResponseGetClientLimits = MapperResultUtil.mapOneRowToObject(
+                  response.getResultSets().get(0), new RowMapper<ResponseGetClientLimits>() {
+                  @Override
+                  public ResponseGetClientLimits mapRow(ResultSetMapper resultSetMapper, int index) {
+                        ResponseGetClientLimits dto = new ResponseGetClientLimits();
+
+                        dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                        return dto;
+                  }
+                  }, false);
+
+                  outResponseGetClientLimits.setSuccess(returnResponseGetClientLimits.isSuccess());
+            // break;
+
+      } else {
+            mapBlank++;
+      }
+
+      mapTotal++;
+      if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+      // ---------NO Array
+      ResponseGetClientLimits returnResponseGetClientLimits = MapperResultUtil.mapOneRowToObject(
+            response.getResultSets().get(1), new RowMapper<ResponseGetClientLimits>() {
+            @Override
+            public ResponseGetClientLimits mapRow(ResultSetMapper resultSetMapper, int index) {
+                  ResponseGetClientLimits dto = new ResponseGetClientLimits();
+
+                  dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+                  dto.responseInstance().setMessage(resultSetMapper.getString(2));
+                  return dto;
+            }
+            }, false);
+
+            outResponseGetClientLimits.setResponse(returnResponseGetClientLimits.getResponse());
+      // break;
+      } else {
+            mapBlank++;
+      }
+
+      mapTotal++;
+      if (response.getResultSets()!=null && response.getResultSets().size()>2 && response.getResultSets().get(2).getData().getRows().size()>0) {
+            // ---------NO Array
+            ResponseGetClientLimits returnResponseGetClientLimits = MapperResultUtil.mapOneRowToObject(
+                    response.getResultSets().get(2), new RowMapper<ResponseGetClientLimits>() {
+                        @Override
+                        public ResponseGetClientLimits mapRow(ResultSetMapper resultSetMapper, int index) {
+                              ResponseGetClientLimits dto = new ResponseGetClientLimits();
+
+                            dto.setExternalCustomerId(resultSetMapper.getInteger(1));
+                            dto.setAccountNumber(resultSetMapper.getString(2));
+                            dto.setTransactionType(resultSetMapper.getString(3));
+                            return dto;
+                        }
+                    }, false);
+
+            outResponseGetClientLimits.setExternalCustomerId(returnResponseGetClientLimits.getExternalCustomerId());
+            outResponseGetClientLimits.setAccountNumber(returnResponseGetClientLimits.getAccountNumber());
+            outResponseGetClientLimits.setTransactionType(returnResponseGetClientLimits.getTransactionType());
+            // break;
+
+      } else {
+            mapBlank++;
+      }
+
+      mapTotal++;
+
+      if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
+            if (response.getResultSets() != null && response.getResultSets().size() > 3 && response.getResultSets().get(3).getData().getRows().size() > 0) {
+                List<ResultSetRow> datos = response.getResultSets().get(3).getData().getRows();
+                List<TransactionClientLimits> listLimites = new ArrayList<>();
+                TransactionClientLimits limite = null;
+                String subtype = null;
+                List<TransactionSubTypeClienLimits> listSubtipos = new ArrayList<>();
+
+                for (ResultSetRow row : datos) {
+                  if (subtype == null || !subtype.equals(row.getRowData(1, false).getValue().trim())) {
+                        if (listSubtipos.size() > 0 && subtype != null) {
+                            limite.setTransactionSubType(subtype);
+                            limite.setTransactionSubTypeLimits(listSubtipos.toArray(new TransactionSubTypeClienLimits[0]));
+                            listLimites.add(limite);
+                            listSubtipos = new ArrayList<>();
+                        }
+                        subtype = row.getRowData(1, false).getValue();
+                        limite = new TransactionClientLimits();
+                  }
+
+                  TransactionSubTypeClienLimits subLimite = new TransactionSubTypeClienLimits();
+                  subLimite.setTransactionLimitsType(row.getRowData(2, false).getValue());
+
+                  ConfiguredLimit confLim = new ConfiguredLimit();
+                  confLim.setCurrency(row.getRowData(4, false).getValue());
+                  confLim.setAmount(new BigDecimal(row.getRowData(3, false).getValue()));
+                  subLimite.setConfiguredLimit(confLim);
+
+                  UserConfiguredLimit userConfLim = new UserConfiguredLimit();
+
+                  if(!(row.getRowData(2, false).getValue().contains("TXN"))) {
+                      BalanceAmount bala = new BalanceAmount();
+                      if(row.getRowData(5, false) != null) {
+                          bala.setCurrency(row.getRowData(6, false).getValue());
+                          bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                          subLimite.setBalanceAmount(bala);
+                      }
+
+                      if(row.getRowData(7, false) != null) {
+                          userConfLim.setCurrency(row.getRowData(8, false).getValue());
+                          userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
+                          subLimite.setUserConfiguredLimit(userConfLim);
+                      }
+                  }else{
+                      if(row.getRowData(5, false) != null) {
+                          userConfLim.setCurrency(row.getRowData(6, false).getValue());
+                          userConfLim.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                          subLimite.setUserConfiguredLimit(userConfLim);
+                      }
+                  }
+
+                  listSubtipos.add(subLimite);
+                }
+
+                if (limite != null && subtype != null) {
+                    limite.setTransactionSubType(subtype);
+                    limite.setTransactionSubTypeLimits(listSubtipos.toArray(new TransactionSubTypeClienLimits[0]));
+                    listLimites.add(limite);
+                }
+
+                outResponseGetClientLimits.setTransactionLimits(listLimites.toArray(new TransactionClientLimits[0]));
+            }
+      } else {
+            mapBlank++;
+      }
+      
+      //End map returns
+      if(mapBlank!=0&&mapBlank==mapTotal){
+            LOGGER.logDebug("No data found");
+            throw new CTSRestException("404",null);
+      }
+
+    String trn = "Get Client Limits";
+
+    Gson gson = new Gson();
+    String jsonReq = gson.toJson(inRequestGetClientLimits);
+
+    Gson gson2 = new Gson();
+    String jsonRes = gson2.toJson(outResponseGetClientLimits);
+
+    Header header = new Header();
+
+    header.setAccept("application/json");
+    //header.setX_request_id(xRequestId);
+    //header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+    //header.setX_end_user_ip(xEndUserIp);
+    //header.setX_channel(xChannel);
+    header.setContent_type("application/json");
+
+    Gson gson3 = new Gson();
+    String jsonHead = gson3.toJson(header);
+
+    saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+        LOGGER.logDebug("Ends service execution: getClientLimits");
+        //returns data
+        return outResponseGetClientLimits;
+      }
+
     /**
      * Service to obtain the detail of movements of an existing savings account
      */
@@ -5445,6 +5655,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inRequestTransferThirdPartyAccount.getAutoActionExecution()));
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferThirdPartyAccount.getChannel());
+
 
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,

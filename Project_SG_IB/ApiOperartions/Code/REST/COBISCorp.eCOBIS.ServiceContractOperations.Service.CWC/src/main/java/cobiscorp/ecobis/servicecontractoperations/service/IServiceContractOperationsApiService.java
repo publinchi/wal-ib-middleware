@@ -171,6 +171,13 @@ public interface IServiceContractOperationsApiService {
 			String xChannel, RequestCatalog inRequestCatalog) throws CTSRestException;
 
 	/**
+	 * Get Client Limits
+	 */
+
+	// Have DTO
+	public ResponseGetClientLimits getClientLimits(RequestGetClientLimits inRequestGetClientLimits  )throws CTSRestException;		
+
+	/**
 	 * Get Colony by Municipality
 	 */
 
