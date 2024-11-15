@@ -3210,9 +3210,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR,"BM");
-		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
 		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, tipoBloqueo);
 		
 		//Add output params
