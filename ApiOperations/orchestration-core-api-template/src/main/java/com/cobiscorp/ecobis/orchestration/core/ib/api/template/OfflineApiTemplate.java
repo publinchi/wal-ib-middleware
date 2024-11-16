@@ -400,13 +400,13 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 			request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
 			request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN ,movementId );
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN ,"0" );
 			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
 		
 			//cuenta origen
-			request.addInputParam("@i_name", ICTSTypes.SQLVARCHAR , "o_nom_beneficiary"); //agregar sp
+			request.addInputParam("@i_name", ICTSTypes.SQLVARCHAR , null); //agregar sp
 			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-			request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, "@i_cta_org");
+			request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, "0");
 			//cuenta destino
 			request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null); //consultar
 			request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_cta_des"));
