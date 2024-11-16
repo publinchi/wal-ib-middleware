@@ -209,6 +209,7 @@
 		<module>../ApiOperations/orchestration-core-api-template</module>
 		<module>../ApiOperations/orchestration-core-ib-beneficiaries-operations-api</module>
 		<module>../ApiOperations/orchestration-core-ib-register-card-pan-api</module>
+    <module>../ApiOperations/orchestration-core-ib-get-client-limit-api</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>
