@@ -87,8 +87,6 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		String idCustomer = wQueryRequest.readValueParam("@i_external_customer_id");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String clabe="";
-		String clabeSec="";
-		String proveedor="";
 		String categoria="";
 		String clabeStatus="";
 		String clabeError="";
@@ -131,12 +129,10 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 		
 		reqTMPCentral.addOutputParam("@o_clabe", ICTSTypes.SQLVARCHAR, "X");
-		reqTMPCentral.addOutputParam("@o_clabe_sec", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_categoria", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_clabe_status", ICTSTypes.SQLVARCHAR, "X");	
 		reqTMPCentral.addOutputParam("@o_clabe_error", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_tercer_orden", ICTSTypes.SQLVARCHAR, "X");
-		reqTMPCentral.addOutputParam("@o_proveedor", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -144,8 +140,6 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 			logger.logDebug("CLABE: JCOS " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
 			
 			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe"));
-			logger.logDebug("CLABE SEC: " +  wProcedureResponseCentral.readValueParam("@o_clabe_sec"));
-			logger.logDebug("CLABE PROV: " +  wProcedureResponseCentral.readValueParam("@o_proveedor"));
 			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_categoria"));
 			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe_status"));
 			logger.logDebug("CLABE: " +  wProcedureResponseCentral.readValueParam("@o_clabe_error"));
@@ -153,17 +147,11 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		}
 		
 		clabe = wProcedureResponseCentral.readValueParam("@o_clabe");
-		clabeSec = wProcedureResponseCentral.readValueParam("@o_clabe_sec");
-		proveedor = wProcedureResponseCentral.readValueParam("@o_proveedor");
 		categoria= wProcedureResponseCentral.readValueParam("@o_categoria");
 		clabeStatus=wProcedureResponseCentral.readValueParam("@o_clabe_status");
 		clabeError=wProcedureResponseCentral.readValueParam("@o_clabe_error");
 		tercerOden=wProcedureResponseCentral.readValueParam("@o_tercer_orden");		
-		
-		if(proveedor.equals("STP"))
-			this.clabe=clabe;
-		else
-			this.clabe=clabeSec;
+		this.clabe=clabe;
 		
 		
 		if (logger.isInfoEnabled()) {
@@ -203,7 +191,7 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 				reqTMPLocal.addInputParam("@i_password", ICTSTypes.SQLVARCHAR, password);
 				reqTMPLocal.addInputParam("@i_clave", ICTSTypes.SQLVARCHAR, createKey(user, password));
 				reqTMPLocal.addInputParam("@i_medios_envio", ICTSTypes.SQLVARCHAR, getMedia(mail, phone));
-				reqTMPLocal.addInputParam("@i_productos", ICTSTypes.SQLVARCHAR, getProducts(accountNumber,clabe,categoria,tercerOden,clabeStatus,clabeError,clabeSec));
+				reqTMPLocal.addInputParam("@i_productos", ICTSTypes.SQLVARCHAR, getProducts(accountNumber,clabe,categoria,tercerOden,clabeStatus,clabeError));
 				reqTMPLocal.addInputParam("@i_pc_fecha_nac", ICTSTypes.SQLDATETIME, columns[10].getValue());
 				reqTMPLocal.addInputParam("@i_mail", ICTSTypes.SQLVARCHAR, mail);
 				
@@ -366,13 +354,13 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 		return medios;
 	}
 	
-	public String getProducts(String accounNumber,String clabe,String categoria,String ordenante,String statusClabe,String clabeError, String claveSec) {
+	public String getProducts(String accounNumber,String clabe,String categoria,String ordenante,String statusClabe,String clabeError ) {
 
 		String producto = "";
 
 		if (accounNumber != null && accounNumber != "") {
 
-			producto = accounNumber + ",4,0,S,"+clabe+","+categoria+","+ordenante+","+statusClabe+","+clabeError+","+claveSec;
+			producto = accounNumber + ",4,0,S,"+clabe+","+categoria+","+ordenante+","+statusClabe+","+clabeError;
 		}
 		return producto;
 	}
