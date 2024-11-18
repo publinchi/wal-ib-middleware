@@ -140,6 +140,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
 		String evaluarRiesgoSystem = getParam(anOriginalRequest, "AERISY", "BVI");
+		String prefixPhone = getParam(anOriginalRequest, "PNT", "AHO");
 		
 		String channel = anOriginalRequest.readValueParam("@i_channel") != null ? anOriginalRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 		
@@ -230,7 +231,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
 					)
 				) {
-					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration, prefixPhone);
 				
 					// Obtengo los valores de la evaluación de riesgo
 					if (aBagSPJavaOrchestration.get("success_risk") != null) {				
@@ -298,8 +299,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
 					)
 			) {
-				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-				
+				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration, prefixPhone);
+
 				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
 					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
 					
@@ -775,11 +776,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		return wAccountsRespVal;
 	}
 	
-	private IProcedureResponse executeRiskEvaluation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse executeRiskEvaluation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String prefixPhone) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
-		
+
+		Integer phonePrefix = 52;
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -818,18 +820,27 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("card_id_dock"));
 			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, "CARD_ID");
 		} else {
-			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+			String accountDest = aRequest.readValueParam("@i_cta_des");
 			int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
 			String identificationType = null;
-			
-			if (lengthCtades == 12) {
-				identificationType = "PHONE";	
+			if(lengthCtades == 10) {
+				accountDest = phonePrefix + accountDest;
+				identificationType = "PHONE";
+			} else if (lengthCtades == 12) {
+				identificationType = "PHONE";
 			} else if (lengthCtades == 18) {
 				identificationType = "CLABE";
-			} else {
+			} else if (lengthCtades == 11) {
 				identificationType = "ACCOUNT_NUMBER";
-			}
+			} else {
+				//Se retorna el flujo por no obtenerse una cuenta destino valida
+				IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
+				aBagSPJavaOrchestration.put("success_risk", null);
+				logger.logDebug("Response Exception: " + resp.toString());
+				return resp;
 
+			}
+			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, accountDest);
 			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, identificationType);
 		}
 
