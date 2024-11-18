@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="6" id="2" name="properties">
+  <collection type="List" length="7" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="success" />
       <field type="String" name="type" value="boolean?" />
@@ -8,6 +8,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="4" index="1">
@@ -22,6 +23,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="6" index="2">
@@ -31,6 +33,7 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="3">
@@ -40,6 +43,7 @@
       <field type="int" name="maxLength" value="20" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="8" index="4">
@@ -49,6 +53,7 @@
       <field type="int" name="maxLength" value="255" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="9" index="5">
@@ -64,12 +69,29 @@
       <field type="int" name="maxLength" value="0" />
       <field type="boolean" name="required" value="true" />
       <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="11" index="6">
+      <field type="String" name="name" value="contactLimit" />
+      <field type="String" name="type" value="TransactionContactLimits" />
+      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="12" name="dtoType">
+        <field type="String" name="name" value="TransactionContactLimits" />
+        <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+        <field type="String" name="version" value="1" />
+      </class>
+      <field type="boolean" name="isCollection" value="true" />
+      <field type="String" name="collectionType" value="Array" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="true" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
   </collection>
   <field type="String" name="name" value="ResponseGetClientLimits" />
-  <collection type="Map" length="0" id="11" name="templatesProperties">
+  <collection type="Map" length="0" id="13" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
-  <field type="String" name="stateDTO" value="NEW" />
+  <field type="String" name="stateDTO" value="" />
 </class>

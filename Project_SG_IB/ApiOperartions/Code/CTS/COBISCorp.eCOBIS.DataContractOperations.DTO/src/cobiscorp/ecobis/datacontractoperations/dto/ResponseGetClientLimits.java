@@ -34,6 +34,7 @@ public class ResponseGetClientLimits implements Serializable {
   private String accountNumber;
   private String transactionType;
   private TransactionClientLimits[] transactionLimits;
+  private TransactionContactLimits[] contactLimit;
   public Boolean isSuccess(){
     return this.success;
   }
@@ -75,5 +76,11 @@ public class ResponseGetClientLimits implements Serializable {
   }
   public void setTransactionLimits(TransactionClientLimits[] transactionLimits ){
     this.transactionLimits=transactionLimits;
+  }
+  public TransactionContactLimits[] getContactLimit(){
+    return this.contactLimit;
+  }
+  public void setContactLimit(TransactionContactLimits[] contactLimit ){
+    this.contactLimit=contactLimit;
   }
 }

@@ -27,7 +27,7 @@
       <field type="String" name="packageTypeName" value="Jar" />
     </class>
   </collection>
-  <collection type="List" length="184" id="9" name="dTOs">
+  <collection type="List" length="185" id="9" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="10" index="0">
       <field type="String" name="name" value="AccountsArray" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
@@ -854,103 +854,108 @@
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="175" index="165">
-      <field type="String" name="name" value="TransactionIndicators" />
+      <field type="String" name="name" value="TransactionContactLimits" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="176" index="166">
-      <field type="String" name="name" value="TransactionLimits" />
+      <field type="String" name="name" value="TransactionIndicators" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="177" index="167">
-      <field type="String" name="name" value="TransactionSubTypeClienLimits" />
+      <field type="String" name="name" value="TransactionLimits" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="178" index="168">
-      <field type="String" name="name" value="TransactionSubTypeLimits" />
+      <field type="String" name="name" value="TransactionSubTypeClienLimits" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="179" index="169">
-      <field type="String" name="name" value="UpdateBeneficiaryRequest" />
+      <field type="String" name="name" value="TransactionSubTypeLimits" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="180" index="170">
-      <field type="String" name="name" value="UpdateBeneficiaryResponse" />
+      <field type="String" name="name" value="UpdateBeneficiaryRequest" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="181" index="171">
-      <field type="String" name="name" value="UpdateCustomerAddressRequest" />
+      <field type="String" name="name" value="UpdateBeneficiaryResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="182" index="172">
-      <field type="String" name="name" value="UpdateCustomerAddressResponse" />
+      <field type="String" name="name" value="UpdateCustomerAddressRequest" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="183" index="173">
-      <field type="String" name="name" value="UserConfiguredLimit" />
+      <field type="String" name="name" value="UpdateCustomerAddressResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="184" index="174">
-      <field type="String" name="name" value="ValidateTokenRequest" />
+      <field type="String" name="name" value="UserConfiguredLimit" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="185" index="175">
-      <field type="String" name="name" value="ValidateTokenResponse" />
+      <field type="String" name="name" value="ValidateTokenRequest" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="186" index="176">
-      <field type="String" name="name" value="Values" />
+      <field type="String" name="name" value="ValidateTokenResponse" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="187" index="177">
-      <field type="String" name="name" value="VirtualCard" />
+      <field type="String" name="name" value="Values" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="188" index="178">
-      <field type="String" name="name" value="WithdrawalDock_card_entry" />
+      <field type="String" name="name" value="VirtualCard" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="189" index="179">
-      <field type="String" name="name" value="WithdrawalDock_exchange_rate" />
+      <field type="String" name="name" value="WithdrawalDock_card_entry" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="190" index="180">
-      <field type="String" name="name" value="WithdrawalDock_processing" />
+      <field type="String" name="name" value="WithdrawalDock_exchange_rate" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="191" index="181">
-      <field type="String" name="name" value="WithdrawalDock_token_data" />
+      <field type="String" name="name" value="WithdrawalDock_processing" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="192" index="182">
-      <field type="String" name="name" value="WithdrawalDock_transaction_indicators" />
+      <field type="String" name="name" value="WithdrawalDock_token_data" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="193" index="183">
+      <field type="String" name="name" value="WithdrawalDock_transaction_indicators" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="194" index="184">
       <field type="String" name="name" value="WithdrawalDock_values" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="String" name="version" value="1" />
     </class>
   </collection>
-  <collection type="List" length="1" id="194" name="properties">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="195" index="0">
+  <collection type="List" length="1" id="195" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="196" index="0">
       <field type="String" name="name" value="UseNamingConvention" />
       <field type="String" name="value" value="false" />
       <field type="char" name="type" value="\u0000" />
@@ -961,12 +966,12 @@
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="0" id="196" name="references">
+  <collection type="List" length="0" id="197" name="references">
   </collection>
-  <collection type="List" length="0" id="197" name="externalReferences">
+  <collection type="List" length="0" id="198" name="externalReferences">
   </collection>
-  <collection type="List" length="1" id="198" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="199" index="0">
+  <collection type="List" length="1" id="199" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="200" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobis" />
       <field type="String" name="keyPassword" value="cobisadminadmin" />
@@ -978,7 +983,7 @@
       <field type="String" name="jDKPath" value="C:\Program Files\Amazon Corretto\jdk1.8.0_282" />
     </class>
   </collection>
-  <collection type="List" length="0" id="200" name="templateCommands">
+  <collection type="List" length="0" id="201" name="templateCommands">
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />

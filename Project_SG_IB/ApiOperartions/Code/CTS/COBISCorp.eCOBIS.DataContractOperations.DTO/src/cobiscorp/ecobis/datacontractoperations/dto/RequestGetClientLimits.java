@@ -35,6 +35,7 @@ public class RequestGetClientLimits implements Serializable {
   private String limitType;
   private ConfiguredLimit limit;
   private String operation;
+  private String contactId;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -82,5 +83,11 @@ public class RequestGetClientLimits implements Serializable {
   }
   public void setOperation(String operation ){
     this.operation=operation;
+  }
+  public String getContactId(){
+    return this.contactId;
+  }
+  public void setContactId(String contactId ){
+    this.contactId=contactId;
   }
 }

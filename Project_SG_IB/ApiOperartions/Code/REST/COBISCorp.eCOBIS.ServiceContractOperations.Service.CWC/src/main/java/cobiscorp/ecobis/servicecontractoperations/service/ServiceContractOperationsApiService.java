@@ -3263,6 +3263,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       procedureRequestAS.addInputParam("@i_operation",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getOperation());
       procedureRequestAS.addInputParam("@i_ammount",ICTSTypes.SQLVARCHAR, inRequestGetClientLimits.getLimit() != null ? String.valueOf(inRequestGetClientLimits.getLimit().getAmount()) : null );
       procedureRequestAS.addInputParam("@i_currency",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getLimit() != null ? inRequestGetClientLimits.getLimit().getCurrency() : null);
+      procedureRequestAS.addInputParam("@i_contactId",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getContactId());
       
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -3351,6 +3352,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       }
 
       mapTotal++;
+      boolean contact = false;
 
       if (response.getResultSets()!=null && response.getResultSets().size()>3 && response.getResultSets().get(3).getData().getRows().size()>0) {
             if (response.getResultSets() != null && response.getResultSets().size() > 3 && response.getResultSets().get(3).getData().getRows().size() > 0) {
@@ -3359,51 +3361,85 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 TransactionClientLimits limite = null;
                 String subtype = null;
                 List<TransactionSubTypeClienLimits> listSubtipos = new ArrayList<>();
+                List<TransactionContactLimits> listContactLimits = new ArrayList<>();                
 
                 for (ResultSetRow row : datos) {
-                  if (subtype == null || !subtype.equals(row.getRowData(1, false).getValue().trim())) {
-                        if (listSubtipos.size() > 0 && subtype != null) {
-                            limite.setTransactionSubType(subtype);
-                            limite.setTransactionSubTypeLimits(listSubtipos.toArray(new TransactionSubTypeClienLimits[0]));
-                            listLimites.add(limite);
-                            listSubtipos = new ArrayList<>();
+                           
+                  if(row.getRowData(1, false).getValue().equals("consultContact")){
+                    contact = true;
+                   
+                    TransactionContactLimits limitContact = new TransactionContactLimits();
+
+                    if(row.getRowData(2, false) != null) {
+                        BalanceAmount balance = new BalanceAmount();
+                        balance.setCurrency(row.getRowData(3, false).getValue());
+                        balance.setAmount(new BigDecimal(row.getRowData(2, false).getValue()));
+                        limitContact.setBalanceAmount(balance);
+                    }
+
+                    if(row.getRowData(4, false) != null) {
+                        UserConfiguredLimit userConfLim = new UserConfiguredLimit();
+                        userConfLim.setCurrency(row.getRowData(5, false).getValue());
+                        userConfLim.setAmount(new BigDecimal(row.getRowData(4, false).getValue()));
+                        limitContact.setUserConfiguredLimit(userConfLim);
+                    }
+
+                    if(row.getRowData(6, false) != null) {
+                        ConfiguredLimit confLim = new ConfiguredLimit();
+                        confLim.setCurrency(row.getRowData(7, false).getValue());
+                        confLim.setAmount(new BigDecimal(row.getRowData(6, false).getValue()));
+                        limitContact.setConfiguredLimit(confLim);
+                    }
+
+                    listContactLimits.add(limitContact);
+
+                  }else {
+
+                    if (subtype == null || !subtype.equals(row.getRowData(1, false).getValue().trim())) {
+                            if (listSubtipos.size() > 0 && subtype != null) {
+                                limite.setTransactionSubType(subtype);
+                                limite.setTransactionSubTypeLimits(listSubtipos.toArray(new TransactionSubTypeClienLimits[0]));
+                                listLimites.add(limite);
+                                listSubtipos = new ArrayList<>();
+                            }
+                            subtype = row.getRowData(1, false).getValue();
+                        
+                            limite = new TransactionClientLimits();
+                    }
+
+                    TransactionSubTypeClienLimits subLimite = new TransactionSubTypeClienLimits();
+                    subLimite.setTransactionLimitsType(row.getRowData(2, false).getValue());
+
+                    ConfiguredLimit confLim = new ConfiguredLimit();
+                    confLim.setCurrency(row.getRowData(4, false).getValue());
+                    confLim.setAmount(new BigDecimal(row.getRowData(3, false).getValue()));
+                    subLimite.setConfiguredLimit(confLim);
+
+                    UserConfiguredLimit userConfLim = new UserConfiguredLimit();
+
+                    if(!(row.getRowData(2, false).getValue().contains("TXN"))) {
+                        BalanceAmount bala = new BalanceAmount();
+                        if(row.getRowData(5, false) != null) {
+                            bala.setCurrency(row.getRowData(6, false).getValue());
+                            bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                            subLimite.setBalanceAmount(bala);
                         }
-                        subtype = row.getRowData(1, false).getValue();
-                        limite = new TransactionClientLimits();
-                  }
 
-                  TransactionSubTypeClienLimits subLimite = new TransactionSubTypeClienLimits();
-                  subLimite.setTransactionLimitsType(row.getRowData(2, false).getValue());
+                        if(row.getRowData(7, false) != null) {
+                            userConfLim.setCurrency(row.getRowData(8, false).getValue());
+                            userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
+                            subLimite.setUserConfiguredLimit(userConfLim);
+                        }
+                    }else{
+                        if(row.getRowData(5, false) != null) {
+                            userConfLim.setCurrency(row.getRowData(6, false).getValue());
+                            userConfLim.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
+                            subLimite.setUserConfiguredLimit(userConfLim);
+                        }
+                    }
 
-                  ConfiguredLimit confLim = new ConfiguredLimit();
-                  confLim.setCurrency(row.getRowData(4, false).getValue());
-                  confLim.setAmount(new BigDecimal(row.getRowData(3, false).getValue()));
-                  subLimite.setConfiguredLimit(confLim);
-
-                  UserConfiguredLimit userConfLim = new UserConfiguredLimit();
-
-                  if(!(row.getRowData(2, false).getValue().contains("TXN"))) {
-                      BalanceAmount bala = new BalanceAmount();
-                      if(row.getRowData(5, false) != null) {
-                          bala.setCurrency(row.getRowData(6, false).getValue());
-                          bala.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
-                          subLimite.setBalanceAmount(bala);
-                      }
-
-                      if(row.getRowData(7, false) != null) {
-                          userConfLim.setCurrency(row.getRowData(8, false).getValue());
-                          userConfLim.setAmount(new BigDecimal(row.getRowData(7, false).getValue()));
-                          subLimite.setUserConfiguredLimit(userConfLim);
-                      }
-                  }else{
-                      if(row.getRowData(5, false) != null) {
-                          userConfLim.setCurrency(row.getRowData(6, false).getValue());
-                          userConfLim.setAmount(new BigDecimal(row.getRowData(5, false).getValue()));
-                          subLimite.setUserConfiguredLimit(userConfLim);
-                      }
-                  }
-
-                  listSubtipos.add(subLimite);
+                    listSubtipos.add(subLimite);
+                    }
                 }
 
                 if (limite != null && subtype != null) {
@@ -3412,7 +3448,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                     listLimites.add(limite);
                 }
 
-                outResponseGetClientLimits.setTransactionLimits(listLimites.toArray(new TransactionClientLimits[0]));
+                if(contact){
+                    outResponseGetClientLimits.setContactLimit(listContactLimits.toArray(new TransactionContactLimits[0]));
+                }else {
+                    outResponseGetClientLimits.setTransactionLimits(listLimites.toArray(new TransactionClientLimits[0]));
+                }
             }
       } else {
             mapBlank++;
