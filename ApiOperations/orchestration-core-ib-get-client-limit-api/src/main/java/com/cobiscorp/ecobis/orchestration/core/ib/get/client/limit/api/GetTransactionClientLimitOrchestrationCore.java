@@ -75,7 +75,11 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
 				return processResponseError(anProcedureResponse);
 			}
-			anProcedureResponse = processTransforResponse(anProcedureResponse, aBagSPJavaOrchestration);
+			if(anOriginalRequest.readValueParam("@i_contactId") != null && !anOriginalRequest.readValueParam("@i_contactId").equals("null")){
+				anProcedureResponse = processTransforResponseContact(anProcedureResponse, aBagSPJavaOrchestration);
+			}else {
+				anProcedureResponse = processTransforResponse(anProcedureResponse, aBagSPJavaOrchestration);
+			}
 		} else if (operation.equals("S")) {
 			JsonObject requestBody = createRequestBody(aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put("requestBody", requestBody);
@@ -171,7 +175,10 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transSubType"));
 
 			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_externalCustomerId"));
-			//anOriginalRequestLimits.addInputParam("@i_contactId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_contactId"));
+			
+			if(aRequest.readValueParam("@i_contactId") != null && !aRequest.readValueParam("@i_contactId").equals("null")){
+				anOriginalRequestLimits.addInputParam("@i_contactId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_contactId"));
+			}
 
 			anOriginalRequestLimits.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
 			anOriginalRequestLimits.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
@@ -379,11 +386,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 
 			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
 
-			Double dailyLimit = null;
-			Double montlyLimit = null;
-			Double balanceAmountMontly = null;
-			Double maxTxnLimit = null;
-
 			IResultSetRow row3 = new ResultSetRow();
 			row3.addRowData(1, new ResultSetRowColumnData(false, externalCustomerId));
 			row3.addRowData(2, new ResultSetRowColumnData(false, accountNumber));
@@ -421,6 +423,151 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 					data4.addRow(limitRow);
 				}
 			}
+
+		}
+
+		String message = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).isNull() ? "Service execution error" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).getValue();
+		String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull() ? "false" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+		String code = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).isNull() ? "400218" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).getValue();
+
+		IResultSetRow row = new ResultSetRow();
+		row.addRowData(1, new ResultSetRowColumnData(false, success));
+		data.addRow(row);
+
+		IResultSetRow row2 = new ResultSetRow();
+		row2.addRowData(1, new ResultSetRowColumnData(false, code));
+		row2.addRowData(2, new ResultSetRowColumnData(false, message));
+		data2.addRow(row2);
+
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+
+		IResultSetBlock resultsetBlock3 = null;
+		IResultSetBlock resultsetBlock4 = null;
+		if(requestBody != null) {
+			resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+			resultsetBlock4 = new ResultSetBlock(metaData4, data4);
+		}
+
+		anOriginalProcedureResponse.setReturnCode(200);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+		if(requestBody != null) {
+			anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
+			anOriginalProcedureResponse.addResponseBlock(resultsetBlock4);
+		}
+
+		return anOriginalProcedureResponse;
+	}
+
+
+	public IProcedureResponse processTransforResponseContact(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" start processTransforResponseContact getClientLimits--->");
+		}
+
+		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+
+		// Agregar Header 1
+		IResultSetHeader metaData2 = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+		// Agregar Header 2
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+		// Agregar Header 3
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();
+
+		// Agregar Header 4
+		IResultSetHeader metaData4 = new ResultSetHeader();
+		IResultSetData data4 = new ResultSetData();
+
+		String requestBody = null;
+		if(aBagSPJavaOrchestration.get("responseBodyGetLimits") != null  && !aBagSPJavaOrchestration.get("responseBodyGetLimits").toString().equals("{}")){
+			requestBody = aBagSPJavaOrchestration.get("responseBodyGetLimits").toString();
+		}
+
+		if(requestBody != null){
+			JsonParser jsonParser = new JsonParser();
+
+			String jsonRequestStringClean = requestBody.replace("&quot;", "\"");			
+			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
+
+			metaData3.addColumnMetaData(new ResultSetHeaderColumn("externalCustomerId", ICTSTypes.SQLINT4, 8));
+			metaData3.addColumnMetaData(new ResultSetHeaderColumn("accountNumber", ICTSTypes.SQLVARCHAR, 100));
+			metaData3.addColumnMetaData(new ResultSetHeaderColumn("transactionType", ICTSTypes.SQLVARCHAR, 100));
+
+			metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionSubType", ICTSTypes.SQLVARCHAR, 100));
+			metaData4.addColumnMetaData(new ResultSetHeaderColumn("transactionLimitsType", ICTSTypes.SQLVARCHAR, 100));
+			metaData4.addColumnMetaData(new ResultSetHeaderColumn("configuredLimit", ICTSTypes.SQLVARCHAR, 100));
+
+			String externalCustomerId = jsonObject.get("externalCustomerId").getAsString();
+			String 	accountNumber = jsonObject.has("accountNumber") ? jsonObject.get("accountNumber").getAsString() : "0";
+			String 	transactionType = jsonObject.get("transactionType").getAsString();
+
+			
+			IResultSetRow row3 = new ResultSetRow();
+			row3.addRowData(1, new ResultSetRowColumnData(false, externalCustomerId));
+			row3.addRowData(2, new ResultSetRowColumnData(false, accountNumber));
+			row3.addRowData(3, new ResultSetRowColumnData(false, transactionType));
+			data3.addRow(row3);
+			
+			JsonObject contactLimit = jsonObject.getAsJsonObject("contactLimit");
+
+			IResultSetRow limitRow = new ResultSetRow();
+
+			limitRow.addRowData(1, new ResultSetRowColumnData(false, "consultContact" )); // balance ammount					
+			
+			if (contactLimit.has("balanceAmount")) {
+				limitRow.addRowData(2, new ResultSetRowColumnData(false, contactLimit.getAsJsonObject("balanceAmount").get("amount").getAsString())); // balance ammount
+				limitRow.addRowData(3, new ResultSetRowColumnData(false, contactLimit.getAsJsonObject("balanceAmount").get("currency").getAsString())); // balance ammount
+			}
+
+			if(contactLimit.has("userConfiguredLimit")){
+				limitRow.addRowData(4, new ResultSetRowColumnData(false, contactLimit.getAsJsonObject("userConfiguredLimit").get("amount").getAsString())); // user configured limit amount
+				limitRow.addRowData(5, new ResultSetRowColumnData(false, contactLimit.getAsJsonObject("userConfiguredLimit").get("currency").getAsString())); // user configured limit currency
+			}
+
+			if(contactLimit.has("configuredLimit")){
+				limitRow.addRowData(6, new ResultSetRowColumnData(false, contactLimit.getAsJsonObject("configuredLimit").get("amount").getAsString())); // user configured limit amount
+				limitRow.addRowData(7, new ResultSetRowColumnData(false, contactLimit.getAsJsonObject("configuredLimit").get("currency").getAsString())); // user configured limit currency
+			}
+
+			data4.addRow(limitRow);
+
+			/* 
+			for (JsonElement subTypeElement : transactionLimits) {
+
+				IResultSetRow limitRow = new ResultSetRow();
+
+				limitRow.addRowData(1, new ResultSetRowColumnData(false, "consultContact" )); // balance ammount					
+				
+				if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
+					limitRow.addRowData(2, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("amount").getAsString())); // balance ammount
+					limitRow.addRowData(3, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("currency").getAsString())); // balance ammount
+				}
+
+				if(subTypeElement.getAsJsonObject().has("userConfiguredLimit")){
+					limitRow.addRowData(4, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("amount").getAsString())); // user configured limit amount
+					limitRow.addRowData(5, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("currency").getAsString())); // user configured limit currency
+				}
+
+				if(subTypeElement.getAsJsonObject().has("configuredLimit")){
+					limitRow.addRowData(4, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("amount").getAsString())); // user configured limit amount
+					limitRow.addRowData(5, new ResultSetRowColumnData(false, subTypeElement.getAsJsonObject().getAsJsonObject("configuredLimit").get("currency").getAsString())); // user configured limit currency
+				}
+
+				data4.addRow(limitRow);
+
+			}
+			*/
 
 		}
 

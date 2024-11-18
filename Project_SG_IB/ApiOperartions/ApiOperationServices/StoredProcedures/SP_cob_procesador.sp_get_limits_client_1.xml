@@ -5,7 +5,7 @@
   <type>SYBASE</type>
   <version>1</version>
   <parameters>
-    <parameter name="@i_externalCustomerId" dataType="varchar" direction="in" />
+    <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
     <parameter name="@i_transType" dataType="varchar" direction="in" />
     <parameter name="@i_transSubType" dataType="varchar" direction="in" />
     <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
@@ -13,6 +13,7 @@
     <parameter name="@i_operation" dataType="varchar" direction="in" />
     <parameter name="@i_ammount" dataType="varchar" direction="in" />
     <parameter name="@i_currency" dataType="varchar" direction="in" />
+    <parameter name="@i_contactId" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
@@ -31,7 +32,7 @@
     <query>
       <columns>
         <column name="externalCustomerId" />
-        <column name="transactionType" />
+        <column name="accountNumber" />
         <column name="transactionType" />
       </columns>
       <queryText></queryText>
@@ -39,7 +40,7 @@
     <query>
       <columns>
         <column name="transactionSubType" />
-        <column name=" transactionLimitsType" />
+        <column name="transactionLimitsType" />
         <column name=" amount" />
         <column name=" currency" />
         <column name=" amount" />
