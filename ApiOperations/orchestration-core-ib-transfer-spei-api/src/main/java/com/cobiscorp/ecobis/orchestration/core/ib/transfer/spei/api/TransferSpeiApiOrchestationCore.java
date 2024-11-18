@@ -2088,13 +2088,20 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo("Entrando a banpayExecution");
         }
         try {
-
-
+        	 String ctaDestino = "";
+             
+         	
+        	 if(bag.get("card_destination")!=null && bag.get("codTarDeb")!=null &&"03".equals(bag.get("codTarDeb")))
+        	 {
+        		 ctaDestino = bag.get("clear_card").toString();
+        	 }else
+        		 ctaDestino = anOriginalRequest.readValueParam("@i_cta_des");
+             
             // SE SETEAN LOS PARAMETROS DE ENTRADA
             anOriginalRequest.addInputParam("@i_concepto_pago", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_concepto"));
             anOriginalRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR,
-                    anOriginalRequest.readValueParam("@i_cta_des"));
+            		ctaDestino);
             anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_cta"));
 
