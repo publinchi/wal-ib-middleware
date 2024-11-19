@@ -368,15 +368,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
                                 if(logger.isDebugEnabled()){
                                 logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
-                                
-                                String ente = "";
-								if (aRequest.readValueParam("@i_external_customer_id")!=null) {
-									ente = aRequest.readValueParam("@i_external_customer_id");
-								}
-								
-								if(logger.isDebugEnabled()){
-									logger.logDebug("Ente: " + ente);}
-								
+                               								
                                 if(riskStatus.contains("HIGH")) {
                                 	//Generamos un bloqueo de la cuenta contra débitos
 									generaBloqueoCuenta(aRequest);
@@ -3113,8 +3105,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));//preguntar, en la doc dice los posibles valores
-		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_latitude", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_latitud"));
-		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_longitude", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_longitud"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_latitude", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_latitude"));
+		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_longitude", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_longitude"));
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_accuracy", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_accuracy"));//no se de donde sale este valor
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));//no se de donde sale este valor
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1

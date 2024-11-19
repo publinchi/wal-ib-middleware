@@ -83,6 +83,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
 	private IAdminTokenUser tokenService;
 	private String codBlockHigh;
+	private String prefixPhone;
 
 	public void setTokenService(IAdminTokenUser tokenService) {
 		this.tokenService = tokenService;
@@ -356,15 +357,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 								
 								if(logger.isDebugEnabled()){
 									logger.logDebug("Estado riskEvaluation: " + riskStatus);}
-								
-								String ente = "";
-								if (anOriginalRequest.readValueParam("@i_ente")!=null) {
-									ente = anOriginalRequest.readValueParam("@i_ente");
-								}
-								
-								if(logger.isDebugEnabled()){
-									logger.logDebug("Ente: " + ente);}
-								
+																
 								if(riskStatus.contains("HIGH")) {
 									//Generamos un bloqueo de la cuenta contra débitos
 									generaBloqueoCuenta(anOriginalRequest);
@@ -861,7 +854,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
-		
+		prefixPhone = getParam(aRequest, "PNT", "AHO");
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -900,17 +893,26 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("card_id_dock"));
 			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, "CARD_ID");
 		} else {
-			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
+			String accountDest = aRequest.readValueParam("@i_cta_des");
 			int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
 			String identificationType = null;
-			
-			if (lengthCtades == 12) {
-				identificationType = "PHONE";	
+			if(lengthCtades == 10) {
+				accountDest = prefixPhone + accountDest;
+				identificationType = "PHONE";
+			} else if (lengthCtades == 12) {
+				identificationType = "PHONE";
 			} else if (lengthCtades == 18) {
 				identificationType = "CLABE";
-			} else {
+			} else if (lengthCtades == 11) {
 				identificationType = "ACCOUNT_NUMBER";
+			} else {
+				//Se retorna el flujo por no obtenerse una cuenta destino valida
+				IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
+				aBagSPJavaOrchestration.put("success_risk", null);
+				logger.logDebug("Response Exception: " + resp.toString());
+				return resp;
 			}
+			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, accountDest);
 
 			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, identificationType);
 		}
@@ -1626,7 +1628,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
 		String phoneNumber = null;
-		Integer phoneCode = 52;
+		String phoneCode = prefixPhone;
 		String channel = null;
 
 		IProcedureResponse connectorBlockOperationResponse = null;
@@ -1634,8 +1636,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 
-		if(logger.isDebugEnabled())
-			logger.logDebug("aRequest execute blockOperation: " + aRequest);
+		if (phoneCode == null) {
+			phoneCode = "52";
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.logDebug("aRequest execute blockOperation: " + aRequest);}
 
 		try {
 			//Parametros de entrada
