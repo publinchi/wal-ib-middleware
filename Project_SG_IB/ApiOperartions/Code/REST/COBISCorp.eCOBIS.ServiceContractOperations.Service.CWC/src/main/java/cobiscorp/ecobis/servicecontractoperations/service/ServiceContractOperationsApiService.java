@@ -239,9 +239,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         String trn = "Account Credit Operation";
 
-        Gson gsonTrans = new Gson();
-        String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
-        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans);
          
         Gson gson = new Gson();
         String jsonReq = gson.toJson(inCreditAccountRequest);
@@ -6600,10 +6597,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         }
 
         String trn = "Account Debit Operation";
-
-        Gson gsonTrans = new Gson();
-        String jsonReqTrans = gsonTrans.toJson(inDebitAccountRequest);
-        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans);
 		
         Gson gson = new Gson();
         String jsonReq = gson.toJson(inDebitAccountRequest);

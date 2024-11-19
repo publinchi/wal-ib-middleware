@@ -1056,10 +1056,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		
          registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
-             (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+             (String) aBagSPJavaOrchestration.get("o_ssn_branch"));
          
          registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
-                 (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+                 (String) aBagSPJavaOrchestration.get("o_ssn_branch"));
     
 
 		if (logger.isInfoEnabled()) {
