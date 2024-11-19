@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_get_limits_client</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_externalCustomerId" dataType="int" direction="in" />
+    <parameter name="@i_transType" dataType="varchar" direction="in" />
+    <parameter name="@i_transSubType" dataType="varchar" direction="in" />
+    <parameter name="@i_accountNumber" dataType="varchar" direction="in" />
+    <parameter name="@i_limitType" dataType="varchar" direction="in" />
+    <parameter name="@i_operation" dataType="varchar" direction="in" />
+    <parameter name="@i_ammount" dataType="varchar" direction="in" />
+    <parameter name="@i_currency" dataType="varchar" direction="in" />
+    <parameter name="@i_contactId" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="success" />
+      </columns>
+      <queryText>SELECT "externalCustomerId"=i_externalCustomerId,"transactionType"=i_transType,"transactionSubType"=i_transSubType</queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="code" />
+        <column name="message" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="externalCustomerId" />
+        <column name="accountNumber" />
+        <column name="transactionType" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="transactionSubType" />
+        <column name="transactionLimitsType" />
+        <column name=" amount" />
+        <column name=" currency" />
+        <column name=" amount" />
+        <column name=" currency" />
+        <column name=" amount" />
+        <column name=" currency" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>
