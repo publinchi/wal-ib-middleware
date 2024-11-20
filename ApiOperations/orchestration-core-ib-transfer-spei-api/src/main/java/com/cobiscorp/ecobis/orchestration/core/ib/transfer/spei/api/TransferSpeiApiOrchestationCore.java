@@ -2088,13 +2088,24 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo("Entrando a banpayExecution");
         }
         try {
-
-
+        	 String ctaDestino = "";
+             String opTcClaveBen = "40";//en caso de ser nulo 
+             if(bag.get("opTcClaveBen")!=null)
+             {
+            	 opTcClaveBen = bag.get("opTcClaveBen").toString();
+             }
+         	
+        	 if(bag.get("card_destination")!=null && bag.get("codTarDeb")!=null &&"03".equals(bag.get("codTarDeb")))
+        	 {
+        		 ctaDestino = bag.get("clear_card").toString();
+        	 }else
+        		 ctaDestino = anOriginalRequest.readValueParam("@i_cta_des");
+             
             // SE SETEAN LOS PARAMETROS DE ENTRADA
             anOriginalRequest.addInputParam("@i_concepto_pago", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_concepto"));
             anOriginalRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR,
-                    anOriginalRequest.readValueParam("@i_cta_des"));
+            		ctaDestino);
             anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_cta"));
 
@@ -2118,7 +2129,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addInputParam("@i_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "ND"); // OPCIONAL
             anOriginalRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, data.get(2));
             anOriginalRequest.addInputParam("@i_tipo_cuenta_beneficiario", ICTSTypes.SQLINT1,
-                    anOriginalRequest.readValueParam("@i_prod_des"));
+            		opTcClaveBen);
             anOriginalRequest.addInputParam("@i_tipo_cuenta_ordenante", ICTSTypes.SQLINT1, data.get(3));
 
             anOriginalRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLINT1, "1");
@@ -2871,7 +2882,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String destAccoutNumber = request.readValueParam("@i_destination_account_number");
 		String codTarDeb = getParam(request, "CODTAR", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
-		
+		aBagSPJavaOrchestration.put("opTcClaveBen", opTcClaveBen);
 	    Integer code = 0;
         String message = "success";
         String result = "true";
