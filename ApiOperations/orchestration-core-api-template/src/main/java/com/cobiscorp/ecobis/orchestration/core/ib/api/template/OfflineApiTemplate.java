@@ -285,8 +285,9 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			}else if(tipoTran.equals("Authorize Deposit Dock")) {
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , "CREDIT_AT_STORE");
 			}
+			
 			if(tipoTran.equals("Authorize Purchase Dock")) {
-				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_cliend-id"));
+				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_client-id"));
 			}else{
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_client_id"));
 			}
