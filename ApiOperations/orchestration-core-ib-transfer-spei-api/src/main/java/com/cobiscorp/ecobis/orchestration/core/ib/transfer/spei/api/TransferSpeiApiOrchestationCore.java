@@ -323,6 +323,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 
+        /*
         callGetLimits(aRequest, aBagSPJavaOrchestration);
         if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
             obtainLimits(aRequest, aBagSPJavaOrchestration);
@@ -339,6 +340,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 return resp;
             } 
         }
+        */
 
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);
         logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());

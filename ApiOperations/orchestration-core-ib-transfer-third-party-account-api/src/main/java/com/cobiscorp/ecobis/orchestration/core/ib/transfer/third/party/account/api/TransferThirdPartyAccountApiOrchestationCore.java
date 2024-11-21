@@ -207,7 +207,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				
 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-				
+				/* 
 				callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
 				if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
@@ -225,6 +225,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						return resp;
 					} 
 				}
+				*/
 
 				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
 				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -752,7 +753,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-		
+		/* 
 		callGetLimits(aRequest, aBagSPJavaOrchestration);
 
 		if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
@@ -770,6 +771,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				return resp;
 			} 
 		}
+		*/
 
 		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);		
 		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
