@@ -5704,6 +5704,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inRequestTransferThirdPartyAccount.getAutoActionExecution()));
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferThirdPartyAccount.getChannel());
+		
+		Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inRequestTransferThirdPartyAccount);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+		
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
