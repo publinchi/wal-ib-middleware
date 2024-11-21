@@ -207,25 +207,32 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				
 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-				/* 
-				callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
+				 
+				try {
+					callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
-				if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-					obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
+					if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
+						obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
-					if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					} 
-								
-					if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-						IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					} 
+						if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
+							(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+							IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
+							logger.logDebug("Respose Exeption: " + resp.toString());
+							return resp;
+						}
+									
+						if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") && 
+							(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+							IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
+							logger.logDebug("Respose Exeption: " + resp.toString());
+							return resp;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
+					logger.logError(e);
 				}
-				*/
 
 				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
 				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -753,25 +760,32 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-		/* 
-		callGetLimits(aRequest, aBagSPJavaOrchestration);
+		
+		try {
+			callGetLimits(aRequest, aBagSPJavaOrchestration);
 
-		if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-			obtainLimits(aRequest, aBagSPJavaOrchestration);
+			if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
+				obtainLimits(aRequest, aBagSPJavaOrchestration);
 
-			if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-				logger.logDebug("Respose Exeption: " + resp.toString());
-				return resp;
-			} 
-				
-			if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-				IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-				logger.logDebug("Respose Exeption: " + resp.toString());
-				return resp;
-			} 
+				if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
+					(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+					IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
+					logger.logDebug("Respose Exeption: " + resp.toString());
+					return resp;
+				}
+					
+				if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") &&  
+					(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+					IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
+					logger.logDebug("Respose Exeption: " + resp.toString());
+					return resp;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
+			logger.logError(e);
 		}
-		*/
 
 		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);		
 		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -1905,7 +1919,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
 
 			double transactionAmount =  Double.parseDouble(aRequest.readValueParam("@i_val"));// Monto de la transacción
-			logger.logInfo("transactionAmount:: " + transactionAmount);
 	
 			// Inicializar variables para límites
 			Double dailyLimit = null;
@@ -1919,40 +1932,47 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
 					
 					if ("DAILY".equals(limitType)) {
-						dailyLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							dailyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+							
+							boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
+							aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
+						}
 					}else if("MONTHLY".equals(limitType)){
-						montlyLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
-
-						balanceAmountMontly = subTypeElement.getAsJsonObject()
-						.getAsJsonObject("balanceAmount")
-						.get("amount").getAsDouble();
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							montlyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+						}
+						if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
+							balanceAmountMontly = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("balanceAmount")
+								.get("amount").getAsDouble();
+						}
 					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
-						maxTxnLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							maxTxnLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+
+							boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
+							aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
+						}
 					}
 				}
 			}
 		
-			boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
 			boolean isMontlyLimitExceeded = transactionAmount + balanceAmountMontly > (montlyLimit != null ? montlyLimit : 0);
-			boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
-
-			aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
+			
 			aBagSPJavaOrchestration.put("isMontlyLimitExceeded", isMontlyLimitExceeded);
-			aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
-	
+			
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("dailyLimit:: " + dailyLimit);
 				logger.logDebug("dailyLimit:: " + dailyLimit);
 				logger.logDebug("maxTxnLimit:: " + maxTxnLimit);
-				logger.logDebug("isDailyLimitExceeded:: " + isDailyLimitExceeded);
 				logger.logDebug("isMontlyLimitExceeded:: " + isMontlyLimitExceeded);
-				logger.logDebug("isMaxTxnLimitExceeded:: " + isMaxTxnLimitExceeded);
 			}
 		} catch (JsonSyntaxException e) {
 			logger.logError("Error parsing JSON: Invalid JSON syntax", e);
