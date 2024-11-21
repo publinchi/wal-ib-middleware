@@ -322,25 +322,31 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+        
+        try {
+            callGetLimits(aRequest, aBagSPJavaOrchestration);
+            if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
+                obtainLimits(aRequest, aBagSPJavaOrchestration);
 
-        /*
-        callGetLimits(aRequest, aBagSPJavaOrchestration);
-        if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-            obtainLimits(aRequest, aBagSPJavaOrchestration);
-
-            if ((Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-                IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-                logger.logDebug("Respose Exeption: " + resp.toString());
-                return resp;
-            } 
-            
-            if ((Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-                IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-                logger.logDebug("Respose Exeption: " + resp.toString());
-                return resp;
-            } 
-        }
-        */
+                if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
+                    (Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+                    IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
+                    logger.logDebug("Respose Exeption: " + resp.toString());
+                    return resp;
+                } 
+                
+                if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") && 
+                    (Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+                    IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
+                    logger.logDebug("Respose Exeption: " + resp.toString());
+                    return resp;
+                } 
+            }   
+        } catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
+			logger.logError(e);
+		}  
 
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);
         logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -3212,40 +3218,47 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
 					
 					if ("DAILY".equals(limitType)) {
-						dailyLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							dailyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+							
+							boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
+							aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
+						}
 					}else if("MONTHLY".equals(limitType)){
-						montlyLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
-
-						balanceAmountMontly = subTypeElement.getAsJsonObject()
-						.getAsJsonObject("balanceAmount")
-						.get("amount").getAsDouble();
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							montlyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+						}
+						if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
+							balanceAmountMontly = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("balanceAmount")
+								.get("amount").getAsDouble();
+						}
 					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
-						maxTxnLimit = subTypeElement.getAsJsonObject()
-							.getAsJsonObject("userConfiguredLimit")
-							.get("amount").getAsDouble();
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							maxTxnLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+
+							boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
+							aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
+						}
 					}
 				}
 			}
 		
-			boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
 			boolean isMontlyLimitExceeded = transactionAmount + balanceAmountMontly > (montlyLimit != null ? montlyLimit : 0);
-			boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
 
-			aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
 			aBagSPJavaOrchestration.put("isMontlyLimitExceeded", isMontlyLimitExceeded);
-			aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
 	
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("dailyLimit:: " + dailyLimit);
 				logger.logDebug("dailyLimit:: " + dailyLimit);
 				logger.logDebug("maxTxnLimit:: " + maxTxnLimit);
-				logger.logDebug("isDailyLimitExceeded:: " + isDailyLimitExceeded);
 				logger.logDebug("isMontlyLimitExceeded:: " + isMontlyLimitExceeded);
-				logger.logDebug("isMaxTxnLimitExceeded:: " + isMaxTxnLimitExceeded);
 			}
 		} catch (JsonSyntaxException e) {
 			logger.logError("Error parsing JSON: Invalid JSON syntax", e);
