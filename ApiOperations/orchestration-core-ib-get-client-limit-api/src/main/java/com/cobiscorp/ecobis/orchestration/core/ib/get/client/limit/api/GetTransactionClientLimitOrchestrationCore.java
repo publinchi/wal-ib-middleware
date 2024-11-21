@@ -50,7 +50,7 @@ import com.google.gson.JsonSyntaxException;
 @Properties(value = { @Property(name = "service.description", value = "GetTransactionClientLimitOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "GetTransactionClientLimitOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_get_transaction_limit_api")})
+		@Property(name = "service.spName", value = "cob_procesador..sp_get_limits_client")})
 public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	private ILogger logger = (ILogger) this.getLogger();
