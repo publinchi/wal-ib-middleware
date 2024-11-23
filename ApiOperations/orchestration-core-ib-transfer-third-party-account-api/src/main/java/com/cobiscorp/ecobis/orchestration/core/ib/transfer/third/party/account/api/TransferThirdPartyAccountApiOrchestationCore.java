@@ -207,7 +207,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				
 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-				 
+								 
 				try {
 					callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
@@ -233,7 +233,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
 					logger.logError(e);
 				}
-
+				
 				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
 				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
 				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
@@ -330,8 +330,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					)
 			) {
 				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-
-				if (aBagSPJavaOrchestration.get("success_risk") != null) {
+				
+				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
 					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
 					
 					if (aBagSPJavaOrchestration.get("responseCode") != null) {	
@@ -836,7 +836,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
-
+		
 		String prefixPhone = getParam(aRequest, "PNT", "AHO");
 
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
@@ -867,7 +867,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
-		String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_capturedTime"));
+		String transactionDate = unifyDateFormat(aRequest.readValueParam("@x_end_user_request_date"));
 		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
@@ -1122,12 +1122,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 		
 		
-		
          registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
-             (String) aBagSPJavaOrchestration.get("o_ssn_branch"));
+             (String) aBagSPJavaOrchestration.get("ssn"));
          
          registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
-                 (String) aBagSPJavaOrchestration.get("o_ssn_branch"));
+                 (String) aBagSPJavaOrchestration.get("ssn"));
     
 
 		if (logger.isInfoEnabled()) {
@@ -1411,12 +1410,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		logger.logInfo(CLASS_NAME + "Parametro @o_fecha_tran: " + response.readValueParam("@o_fecha_tran"));
 		response.readValueParam("@o_fecha_tran");
 		
-		logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+		
 		if(response.readValueFieldInHeader("ssn")!=null)
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("o_ssn_branch", response.readValueParam("@o_ssn_branch"));
+		logger.logInfo("o_ssn_branch"+response.readValueParam("@o_ssn_branch"));
 		
-		logger.logInfo("responseCMFJ: "+response);
 		return response;
 		
 	}
@@ -1490,6 +1489,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 		if(response.readValueFieldInHeader("ssn")!=null)
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
+		
+		
+		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1010",
+		          (String) aBagSPJavaOrchestration.get("ssn"));
+		         
+		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1020",
+		           (String) aBagSPJavaOrchestration.get("ssn"));
 		
 		return response;
 	}
@@ -1579,6 +1585,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLVARCHAR, "0");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_cuenta", ICTSTypes.SQLVARCHAR, "X");
+		
 	    
 		IProcedureResponse wProcedureResponseLocal = executeCoreBanking(procedureRequest);
 		
@@ -1586,7 +1593,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		{
 			logger.logDebug("Query card PAN :" + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
+	         
 	    return wProcedureResponseLocal;
+	      
 	}
 	
 	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
@@ -1599,6 +1608,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
 		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
 	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+	    
+	   
 
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -1619,6 +1630,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		} 
 		
 		return "";
+	    
 	}
 
 	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -1796,7 +1808,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         };
 
         Date date = null;
-        String newDate = dateString;
+		String newDate = dateString;
 
         for (String format : formats) {
             try {
@@ -1810,7 +1822,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         }
 
         SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
+        
         if (date != null) {
         	newDate = unifiedFormat.format(date);
         }
@@ -1823,7 +1835,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		// TODO Auto-generated method stub
 		
 	}
-
+    
 	private void callGetLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
 		if(logger.isDebugEnabled())
 			logger.logDebug("Transfer Third Party callGetLimitsConn [INI]");

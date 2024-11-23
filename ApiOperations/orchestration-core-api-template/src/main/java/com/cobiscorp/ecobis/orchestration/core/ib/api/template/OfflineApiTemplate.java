@@ -401,7 +401,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 			request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
 			request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN ,"0" );
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN ,movementId );
 			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
 		
 			//cuenta origen
@@ -432,12 +432,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, "BONUS");
 			}
 			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
-			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
+			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("0"));
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR,movementType);
 			request.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR, "@i_referenceNumber"); // crear campo 
 			request.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_latitude")); // crear 
 			request.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_longitude")); // crear 
-			request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , "0");
+			request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , movementId);
 			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 			request.addInputParam("@i_beginningBalance", ICTSTypes.SQLMONEY, null); // consultar
 			request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
@@ -453,7 +453,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, "CARD_DELIVERY_FEE");
 			}
 			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
-			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
+			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@s_cliente"));
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR,movementType);
 			request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, "CASHI");
 			request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
@@ -462,7 +462,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR, "@i_referenceNumber"); // crear campo 
 			request.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_latitude")); // crear 
 			request.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_longitude")); // crear 
-			request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , "0");
+			request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , movementId);
 			
 			request.addInputParam("@i_beginningBalance", ICTSTypes.SQLMONEY, null); // consultar
 			request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
