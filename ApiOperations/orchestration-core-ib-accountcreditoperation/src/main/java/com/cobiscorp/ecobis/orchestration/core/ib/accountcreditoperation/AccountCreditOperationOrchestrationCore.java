@@ -293,6 +293,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
 	    reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
+	    aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -365,6 +366,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
 			return;
 		}
+		
+		 registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050",
+		            (String) aBagSPJavaOrchestration.get("ssn"));
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
@@ -598,9 +602,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			data.addRow(row);
 		}
 		
-		 logger.logInfo("Llamo al metodo registrar CMFJ:AC");
+		
 	        registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050",
-	            (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+	            (String) aBagSPJavaOrchestration.get("ssn"));
 
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
