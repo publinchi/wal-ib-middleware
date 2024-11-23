@@ -505,6 +505,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 	    //reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, originCodeStr);
 		reqTMPCentral.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR, debitReason);
+		aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -575,6 +576,9 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 			aBagSPJavaOrchestration.put("50045", "Error account debit operation");
 			return;
 		}
+		
+		 registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", wQueryRequest,"4060",
+		            (String) aBagSPJavaOrchestration.get("ssn"));
 	}
 
 	@Override
@@ -609,7 +613,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 		
 		 logger.logInfo("Llamo al metodo registrar CMFJ");
 	        registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060",
-	            (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+	            (String) aBagSPJavaOrchestration.get("ssn"));
 
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
