@@ -470,7 +470,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         if (referenceNumber.equals("null") || referenceNumber.trim().isEmpty()) {
             referenceNumber = "E";
-        } else if (referenceNumber.trim().length() != 6) {
+        } else if (!referenceNumber.trim().matches("\\d{1,7}")) {
             referenceNumber = "L";
         }
         
