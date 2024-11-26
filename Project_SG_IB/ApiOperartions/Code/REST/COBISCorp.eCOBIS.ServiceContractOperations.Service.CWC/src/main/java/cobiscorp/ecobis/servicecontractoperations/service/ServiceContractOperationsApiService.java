@@ -4511,6 +4511,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
             outRegisterBeneficiaryResponse.setSuccess(returnRegisterBeneficiaryResponse.isSuccess());
             // break;
 
+            //Actualización de Contrato del cliente
+            updateFieldsByNewChanged("B", String.valueOf(inRegisterBeneficiaryRequest.getExternalCustomerId()));
+
         } else {
             mapBlank++;
 
