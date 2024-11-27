@@ -227,84 +227,44 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 					return wAccountsResp;
 				}
 				
-				if ( evaluaRiesgo.equals("true") && (
-					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
-					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
-					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
-					)
-				) {
-					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-				
-					// Obtengo los valores de la evaluación de riesgo
-					if (aBagSPJavaOrchestration.get("success_risk") != null) {				
-						valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
-						
-						if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-							codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-						}
-						
-						if (aBagSPJavaOrchestration.get("message") != null) {	
-							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-						}
-						
-						if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-							estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
-						}
-						
-						if(logger.isDebugEnabled()){
-							logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-						}
-						
-						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
-							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
-							logger.logInfo("Continua flujo p2p");
-							anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
-						} else {
-							IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
-							logger.logDebug("Respose Exeption: " + resp.toString());
-							return resp;
-						}	
-					}else {
-						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					}	
-				}else {
+				if(logger.isInfoEnabled()){
 					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
-					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
-					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
-					/*
-					if(anProcedureResponse.getReturnCode()==0){
-						anOriginalRequest.removeParam("@o_fecha_tran");
-						anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
-					}
-					else
-						return anProcedureResponse;
-					*/
-				}				
+					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
+					
+				anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+				/*
+				if(anProcedureResponse.getReturnCode()==0){
+					anOriginalRequest.removeParam("@o_fecha_tran");
+					anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
+				}
+				else
+					return anProcedureResponse;
+				*/
+							
 				//aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
 			}
 			else{
-				logger.logDebug("evaluateExecuteReentry FALSE");
+				if(logger.isDebugEnabled()){logger.logDebug("evaluateExecuteReentry FALSE");}
 				IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
-				logger.logDebug("Respose Exeption:: " + resp.toString());
+				if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
 				return resp;
 			}
 			
-			logger.logDebug("Res IsReentry:: " + "S");
+			if(logger.isDebugEnabled()){logger.logDebug("Res IsReentry:: " + "S");}
 		} else {
 			aBagSPJavaOrchestration.put("IsReentry", "N");
-			logger.logDebug("Res IsReentry:: " + "N");
-
+			
 			if(logger.isDebugEnabled()){
+				logger.logDebug("Res IsReentry:: " + "N");
 				logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);}
 			
 			IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 			IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 			
 			wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
-			logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			if(logger.isInfoEnabled()){
+				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			}
 			
 			if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 				anOriginalRequest.removeParam("@i_cta_des");
@@ -357,7 +317,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 								
 								if(logger.isDebugEnabled()){
 									logger.logDebug("Estado riskEvaluation: " + riskStatus);}
-																
+																								
 								if(riskStatus.contains("HIGH")) {
 									//Generamos un bloqueo de la cuenta contra débitos
 									generaBloqueoCuenta(anOriginalRequest);
@@ -366,43 +326,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, codBlockHigh);
 									
 									//Seteamos los valores para el retorno
-									// Agregar Header y data 1
-									IResultSetHeader metaData1 = new ResultSetHeader();
-									IResultSetData data1 = new ResultSetData();
-									metaData1.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
-
-									// Agregar info 1
-									IResultSetRow row1 = new ResultSetRow();
-									row1.addRowData(1, new ResultSetRowColumnData(false, "false"));
-									data1.addRow(row1);
-
-									IResultSetBlock resultsetBlock1 = new ResultSetBlock(metaData1, data1);
-
-									// Agregar Header y data 2
-									IResultSetHeader metaData2 = new ResultSetHeader();
-									IResultSetData data2 = new ResultSetData();
-									metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-									metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-
-									// Agregar info 2
-									IResultSetRow row2 = new ResultSetRow();
-									row2.addRowData(1, new ResultSetRowColumnData(false, "400383"));
-									row2.addRowData(2, new ResultSetRowColumnData(false, "Usuario Bloqueado"));
-									data2.addRow(row2);
-
-									IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-
-									// Agregar Header y data 3
-									IResultSetHeader metaData3 = new ResultSetHeader();
-									IResultSetData data3 = new ResultSetData();
-									IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
-
-
-									anProcedureResponse.addResponseBlock(resultsetBlock1);
-									anProcedureResponse.addResponseBlock(resultsetBlock2);
-									anProcedureResponse.addResponseBlock(resultsetBlock3);
+									anProcedureResponse.setReturnCode(400383);
+									anProcedureResponse.addMessage(1, "Usuario Bloqueado");
 									
-									return anProcedureResponse;
+									return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 								}
 							} else {
 								logger.logError("No se encontró riskStatus en el objeto");
@@ -424,13 +351,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
 					} else {
 						IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
-						logger.logDebug("Respose Exeption:: " + resp.toString());
+						if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
 						return resp;
 					}
 				}
 				else {
 					IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
-					logger.logDebug("Respose Exeption: " + resp.toString());
+					if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption: " + resp.toString());}
 					return resp;
 				}
 			}else {
