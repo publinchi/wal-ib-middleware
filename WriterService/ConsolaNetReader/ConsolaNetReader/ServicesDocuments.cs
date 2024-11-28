@@ -27,6 +27,7 @@ namespace ConsolaNetReader
 
             try
             {
+                
                 log.Info("JC::::::::::::Comienza documentsGenerator :::::::::::::JC");
 
                 log.Info("INICIAR VERSION 14.0 Document Services 14.0");
@@ -56,7 +57,7 @@ namespace ConsolaNetReader
                     foreach (Contrato contrato in listaContratos)
                     {                       
                             
-                         while (liberacione >= 1) {
+                         while (liberacione >= thread) {
                           Thread.Sleep(3000);    
 
                         }              
