@@ -45,6 +45,7 @@ import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
  * @author cecheverria
@@ -58,7 +59,7 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 		@Property(name = "service.identifier", value = "AccountDebitOperationOrchestrationCore"),
 		@Property(name = "service.spName", value = "cob_procesador..sp_debit_operation_api")
 })
-public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
+public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {// SPJavaOrchestrationBase
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
@@ -133,7 +134,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 		else
 			return false;
 	}
-	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
 		IProcedureRequest request = wQueryRequest.clone();
 		ComponentLocator componentLocator = null;
@@ -504,6 +505,7 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 	    //reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_debitConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, originCodeStr);
 		reqTMPCentral.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR, debitReason);
+		aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -574,6 +576,9 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			aBagSPJavaOrchestration.put("50045", "Error account debit operation");
 			return;
 		}
+		
+		 registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", wQueryRequest,"4060",
+		            (String) aBagSPJavaOrchestration.get("ssn"));
 	}
 
 	@Override
@@ -605,6 +610,11 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
 			row.addRowData(4, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
 		}
+		
+		 logger.logInfo("Llamo al metodo registrar CMFJ");
+	        registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060",
+	            (String) aBagSPJavaOrchestration.get("ssn"));
+
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
 		wProcedureResponse.addResponseBlock(resultBlock);			
@@ -652,6 +662,12 @@ public class AccountDebitOperationOrchestrationCore extends SPJavaOrchestrationB
         }
 
         return response;
+	}
+
+	@Override
+	protected void loadDataCustomer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

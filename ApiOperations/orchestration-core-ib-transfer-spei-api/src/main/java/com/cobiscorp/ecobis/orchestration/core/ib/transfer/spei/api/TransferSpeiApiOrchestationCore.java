@@ -15,8 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.TimeZone;
-
-import com.google.gson.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -78,7 +81,9 @@ import com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api.dto.AccendoC
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api.util.Methods;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferOfflineTemplate;
 import com.google.gson.JsonObject;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
+import com.cobiscorp.cobis.csp.domains.ICSP;
 
 /**
  * Register Account
@@ -322,6 +327,31 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+        
+        try {
+            callGetLimits(aRequest, aBagSPJavaOrchestration);
+            if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
+                obtainLimits(aRequest, aBagSPJavaOrchestration);
+
+                if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
+                    (Boolean)aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+                    IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
+                    logger.logDebug("Respose Exeption: " + resp.toString());
+                    return resp;
+                } 
+                
+                if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") && 
+                    (Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+                    IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
+                    logger.logDebug("Respose Exeption: " + resp.toString());
+                    return resp;
+                } 
+            }   
+        } catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
+			logger.logError(e);
+		}  
 
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);
         if (logger.isInfoEnabled()) {
@@ -455,6 +485,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             	return wTransferResponse;
             }
         }
+        
         return wAccountsResp;
     }
 
@@ -521,7 +552,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         if (referenceNumber.equals("null") || referenceNumber.trim().isEmpty()) {
             referenceNumber = "E";
-        } else if (referenceNumber.trim().length() != 6) {
+        } else if (!referenceNumber.trim().matches("\\d{1,7}")) {
             referenceNumber = "L";
         }
         
@@ -1027,6 +1058,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+					 
+					logger.logInfo("Llamo al metodo registrar SPEI_OUT");
+				        registerAllTransactionSuccess("SPEI_OUT", anOriginalRequest,"2040",
+				        		anOriginalRequest.readValueParam("@s_ssn_branch"));
+
 					
 					
 					logger.logInfo("bnbn true--->" + movementId);
@@ -1604,7 +1640,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logDebug("Response accountTransfer:" + response.getProcedureResponseAsString());
             logger.logDebug("Fin executeTransferSPI");
         }
-
+        
         return response;
     }
     
@@ -1771,6 +1807,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo("Fin transfer SPI");
         }
+        
         return requestTransfer;
     }
     
@@ -2121,6 +2158,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
             return Utils.returnException(1, ERROR_SPEI);
         }
+        
         return responseTransfer;
     }
     
@@ -2132,13 +2170,24 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo("Entrando a banpayExecution");
         }
         try {
-
-
+        	 String ctaDestino = "";
+             String opTcClaveBen = "40";//en caso de ser nulo 
+             if(bag.get("opTcClaveBen")!=null)
+             {
+            	 opTcClaveBen = bag.get("opTcClaveBen").toString();
+             }
+         	
+        	 if(bag.get("card_destination")!=null && bag.get("codTarDeb")!=null &&"03".equals(bag.get("codTarDeb")))
+        	 {
+        		 ctaDestino = bag.get("clear_card").toString();
+        	 }else
+        		 ctaDestino = anOriginalRequest.readValueParam("@i_cta_des");
+             
             // SE SETEAN LOS PARAMETROS DE ENTRADA
             anOriginalRequest.addInputParam("@i_concepto_pago", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_concepto"));
             anOriginalRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR,
-                    anOriginalRequest.readValueParam("@i_cta_des"));
+            		ctaDestino);
             anOriginalRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR,
                     anOriginalRequest.readValueParam("@i_cta"));
 
@@ -2162,7 +2211,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addInputParam("@i_rfc_curp_beneficiario", ICTSTypes.SQLVARCHAR, "ND"); // OPCIONAL
             anOriginalRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, data.get(2));
             anOriginalRequest.addInputParam("@i_tipo_cuenta_beneficiario", ICTSTypes.SQLINT1,
-                    anOriginalRequest.readValueParam("@i_prod_des"));
+            		opTcClaveBen);
             anOriginalRequest.addInputParam("@i_tipo_cuenta_ordenante", ICTSTypes.SQLINT1, data.get(3));
 
             anOriginalRequest.addInputParam("@i_tipo_pago", ICTSTypes.SQLINT1, "1");
@@ -2919,7 +2968,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String destAccoutNumber = request.readValueParam("@i_destination_account_number");
 		String codTarDeb = getParam(request, "CODTAR", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
-		
+		aBagSPJavaOrchestration.put("opTcClaveBen", opTcClaveBen);
 	    Integer code = 0;
         String message = "success";
         String result = "true";
@@ -3103,7 +3152,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel").toString());//se obtiene con el response del f1
 		
-		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent").toString());//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));//preguntar, en la doc dice los posibles valores
@@ -3256,12 +3305,182 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         SimpleDateFormat unifiedFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        
+
         if (date != null) {
         	newDate = unifiedFormat.format(date);
         }
+        
         return newDate;
     }
+
+    private void obtainLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
+		try{
+			JsonParser jsonParser = new JsonParser();
+			String jsonRequestStringClean = aBagSPJavaOrchestration.get("responseBodyGetLimits").toString().replace("&quot;", "\"");
+			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
+			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
+			double transactionAmount =  Double.parseDouble(aRequest.readValueParam("@i_amount"));// Monto de la transacción
+	
+			// Inicializar variables para límites
+			Double dailyLimit = null;
+			Double montlyLimit = null;
+			Double balanceAmountMontly = null;
+			Double maxTxnLimit = null;
+
+			for (JsonElement limitElement : transactionLimits) {
+				JsonArray subTypeLimits = limitElement.getAsJsonObject().getAsJsonArray("transactionSubTypeLimits");
+				for (JsonElement subTypeElement : subTypeLimits) {
+					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
+					
+					if ("DAILY".equals(limitType)) {
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							dailyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+							
+							boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
+							aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
+						}
+					}else if("MONTHLY".equals(limitType)){
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							montlyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+						}
+						if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
+							balanceAmountMontly = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("balanceAmount")
+								.get("amount").getAsDouble();
+						}
+					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							maxTxnLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+
+							boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
+							aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
+						}
+					}
+				}
+			}
+		
+			boolean isMontlyLimitExceeded = transactionAmount + balanceAmountMontly > (montlyLimit != null ? montlyLimit : 0);
+
+			aBagSPJavaOrchestration.put("isMontlyLimitExceeded", isMontlyLimitExceeded);
+	
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("dailyLimit:: " + dailyLimit);
+				logger.logDebug("dailyLimit:: " + dailyLimit);
+				logger.logDebug("maxTxnLimit:: " + maxTxnLimit);
+				logger.logDebug("isMontlyLimitExceeded:: " + isMontlyLimitExceeded);
+			}
+		} catch (JsonSyntaxException e) {
+			logger.logError("Error parsing JSON: Invalid JSON syntax", e);
+		} catch (IllegalStateException e) {
+			logger.logError("Error parsing JSON: Illegal state", e);
+		} catch (Exception e) {
+			logger.logError("Unexpected error while parsing JSON", e);
+		}
+	}
+ 
+    
+	private void callGetLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
+		if(logger.isDebugEnabled())
+			logger.logDebug("Spei callGetLimitsConn [INI]");
+
+		try {
+
+			IProcedureRequest anOriginalRequestLimits = new ProcedureRequestAS();
+
+			anOriginalRequestLimits.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR, "DEBIT");
+			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, "SPEI_DEBIT");
+			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
+
+			anOriginalRequestLimits.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequestLimits.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequestLimits.addOutputParam("@o_success", ICTSTypes.SQLVARCHAR, "X");
+			
+			anOriginalRequestLimits.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CISConnectorGetLimits)");
+			anOriginalRequestLimits.addFieldInHeader("csp.skip.transformation", ICOBISTS.HEADER_STRING_TYPE, "Y");
+			anOriginalRequestLimits.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
+
+			anOriginalRequestLimits.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "transformAndSend");
+			anOriginalRequestLimits.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequestLimits.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequestLimits.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequestLimits.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingTransformationProvider");
+
+			// SE HACE LA LLAMADA AL CONECTOR
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorGetLimits)");
+			anOriginalRequestLimits.setSpName("cob_procesador..sp_conn_get_limits");
+
+			anOriginalRequestLimits.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700128");
+			anOriginalRequestLimits.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700128");
+			anOriginalRequestLimits.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700128");
+	
+			IProcedureResponse connectorGetLimitsResponse = executeProvider(anOriginalRequestLimits, aBagSPJavaOrchestration);
+
+			if (logger.isDebugEnabled()){
+				logger.logDebug("connectorGetLimitsResponse ->" + connectorGetLimitsResponse.toString());
+			}
+
+			String responseCode = connectorGetLimitsResponse.readValueParam("@o_responseCode") == null ? "0" : connectorGetLimitsResponse.readValueParam("@o_responseCode");
+			String message = connectorGetLimitsResponse.readValueParam("@o_message") == null ? "Error" : connectorGetLimitsResponse.readValueParam("@o_message");
+			String success = connectorGetLimitsResponse.readValueParam("@o_success") == null ? "false" : connectorGetLimitsResponse.readValueParam("@o_success");
+			String responseBody = connectorGetLimitsResponse.readValueParam("@o_responseBody") == null ? "{}" : connectorGetLimitsResponse.readValueParam("@o_responseBody");
+			String queryString = connectorGetLimitsResponse.readValueParam("@o_queryString") == null ? "" : connectorGetLimitsResponse.readValueParam("@o_queryString");
+
+			aBagSPJavaOrchestration.put("responseCodeGetLimits", responseCode);
+			aBagSPJavaOrchestration.put("messageGetLimits", message);
+			aBagSPJavaOrchestration.put("successGetLimits", success);
+			aBagSPJavaOrchestration.put("responseBodyGetLimits", responseBody);
+			aBagSPJavaOrchestration.put("queryString", queryString);
+
+            if(logger.isDebugEnabled()){
+                logger.logDebug("responseCode:: " + responseCode);
+                logger.logDebug("message:: " + message);
+                logger.logDebug("success:: " + success);
+                logger.logDebug("responseBody:: " + responseBody);
+                logger.logDebug("queryString:: " + queryString);
+            }
+
+			registerResponse(aRequest, aBagSPJavaOrchestration);
+
+		}catch (Exception e) {
+			logger.logError(" Error en callGetLimitsConn: " + e.getMessage());
+		}
+	}
+
+
+    private void registerResponse(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" Entrando en registerResponse get");
+		}
+
+		request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+		request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "fetchTransactionLimit");
+        logger.logInfo("SSNNN:: " + aRequest.readValueParam("@s_ssn"));
+		request.addInputParam("@i_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
+        
+		
+		request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("queryString").toString());
+		request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodyGetLimits").toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);		
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response registerResponse get: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
 
     private IProcedureResponse getCodeBlocking(String description) {
 
@@ -3294,5 +3513,5 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
         return wProductsQueryResp;
     }
-    
+
 }

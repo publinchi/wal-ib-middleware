@@ -45,6 +45,7 @@ import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
  * @author cecheverria
@@ -58,7 +59,7 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 		@Property(name = "service.identifier", value = "AccountCreditOperationOrchestrationCore"),
 		@Property(name = "service.spName", value = "cob_procesador..sp_credit_operation_api")
 })
-public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
+public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate {// SPJavaOrchestrationBase
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
@@ -133,7 +134,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		else
 			return false;
 	}
-	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
 		IProcedureRequest request = wQueryRequest.clone();
 		ComponentLocator componentLocator = null;
@@ -292,6 +293,7 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 		reqTMPCentral.addInputParam("@i_commission",ICTSTypes.SQLMONEY, wQueryRequest.readValueParam("@i_commission"));	 
 	    reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
+	    aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -364,6 +366,9 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
 			return;
 		}
+		
+		 registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050",
+		            (String) aBagSPJavaOrchestration.get("ssn"));
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
@@ -597,6 +602,11 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
 			data.addRow(row);
 		}
 		
+		
+	        registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050",
+	            (String) aBagSPJavaOrchestration.get("ssn"));
+
+		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
 		wProcedureResponse.addResponseBlock(resultBlock);			
 		return wProcedureResponse;		
@@ -643,6 +653,12 @@ public class AccountCreditOperationOrchestrationCore extends SPJavaOrchestration
         }
 
         return response;
+	}
+
+	@Override
+	protected void loadDataCustomer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

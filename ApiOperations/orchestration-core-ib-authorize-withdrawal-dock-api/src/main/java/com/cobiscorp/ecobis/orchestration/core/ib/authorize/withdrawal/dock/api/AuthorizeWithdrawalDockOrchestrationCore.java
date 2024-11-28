@@ -233,6 +233,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		String date = aRequest.readValueParam("@i_terminal_date");
 		String time = aRequest.readValueParam("@i_terminal_time");
 		String exp_date = aRequest.readValueParam("@i_card_expiration_date");
+		String establishment = aRequest.readValueParam("@i_establishment");
 		
 		
 		if (s_amount != null && !s_amount.isEmpty() && !isNumeric(s_amount)) {
@@ -304,6 +305,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_billing_value", ICTSTypes.SQLMONEY, b_amount);
 		request.addInputParam("@i_terminal_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_terminal_code"));
 		request.addInputParam("@i_establishment_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
+		request.addInputParam("@i_establishment", ICTSTypes.SQLVARCHAR, establishment);
 		request.addInputParam("@i_brand_response_code", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_brand_response_code"));
 		request.addInputParam("@i_external_account_id", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_external_account_id"));
 		request.addInputParam("@i_dest_asset_code", ICTSTypes.SQLDECIMAL, aRequest.readValueParam("@i_dest_asset_code"));
@@ -664,6 +666,8 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				
 				
 				executionStatus = "CORRECT";
+
+				notifyWithdrawalDock(aRequest, aBagSPJavaOrchestration);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
 					registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
@@ -686,7 +690,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 										(String)aBagSPJavaOrchestration.get("@o_causal"),
 										aBagSPJavaOrchestration.get("ente").toString()
 										);
-
+				
 				data.addRow(row);	
 			}
 			
@@ -722,6 +726,49 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		return wProcedureResponse;		
+	}
+
+	private void notifyWithdrawalDock(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en notifyWithdrawalDock...");
+		}
+
+		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+
+		request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, "Withdrawal Dock VI Card");
+		request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N42");
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+		request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+		request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+		request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+		request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_establishment"));
+		request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
+		request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("cta").toString());
+		request.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("amount").toString());
+		request.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de notifyWithdrawalDock...");
+		}
 	}
 	
 	public boolean isNumeric(String strNum) {

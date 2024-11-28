@@ -12,14 +12,16 @@ namespace ConsolaNetReader
     public static class Requeridos
     {
         public static int cliente;
-        public static string rutaPlantillaMail= ConfigurationManager.AppSettings["mailPlantilla"];
+        public static string rutaPlantillaMail = ConfigurationManager.AppSettings["mailPlantilla"];
         public static string plantillaMail;
 
-        public static string getPlantillaMail() {
+        public static string getPlantillaMail()
+        {
 
-            if (plantillaMail.IsValueNullOrEmpty()) {
+            if (plantillaMail.IsValueNullOrEmpty())
+            {
 
-                plantillaMail=File.ReadAllText(rutaPlantillaMail);  
+                plantillaMail = File.ReadAllText(rutaPlantillaMail);
             }
             return plantillaMail;
 
@@ -49,18 +51,19 @@ namespace ConsolaNetReader
             "$$ocupacion$$",
             "$$correoelectronico$$",
            // "$$rfc$$",
-           // "$$geolocalizacion$$",
+            "$$geolocalizacion$$",
             "$$domiciliocompleto$$",
             "$$latitud$$",
             "$$longitud$$"
         };
 
 
-    
 
-    public static bool validarValor(string llave,string value ,string type) {
 
-        bool validacion = true;
+        public static bool validarValor(string llave, string value, string type)
+        {
+
+            bool validacion = true;
 
 
             try
@@ -72,7 +75,7 @@ namespace ConsolaNetReader
                     {
                         if (value.IsValueNullOrEmpty())
                         {
-                           // validacion = false;
+                            // validacion = false;
                         }
                     }
                 }
@@ -87,17 +90,18 @@ namespace ConsolaNetReader
 
                     }
                 }
-            }catch(Exception xe)
+            }
+            catch (Exception xe)
             {
 
                 throw xe;
 
             }
 
-        return validacion;
+            return validacion;
 
+
+        }
 
     }
-
-}
 }

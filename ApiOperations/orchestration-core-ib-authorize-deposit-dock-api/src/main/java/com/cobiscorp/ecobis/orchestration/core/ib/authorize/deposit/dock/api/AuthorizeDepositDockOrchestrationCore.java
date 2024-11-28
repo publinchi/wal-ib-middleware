@@ -675,6 +675,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				logger.logDebug("Ending flow, processResponse successful...");
 				
 				executionStatus = "CORRECT";
+
+				notifyDepositDock(aRequest, aBagSPJavaOrchestration);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
 					registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
@@ -733,6 +735,49 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
 		
 		return wProcedureResponse;	
+	}
+
+	private void notifyDepositDock(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en notifyDepositDock...");
+		}
+
+		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_culture"));
+		request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_date"));
+
+		request.addInputParam("@i_titulo", ICTSTypes.SQLVARCHAR, "Deposit Dock VI Card");
+		request.addInputParam("@i_notificacion", ICTSTypes.SQLVARCHAR, "N42");
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+		request.addInputParam("@i_producto", ICTSTypes.SQLINTN, "18");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
+		request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
+		request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
+		request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_establishment"));
+		request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
+		request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
+		request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("cta").toString());
+		request.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("amount").toString());
+		request.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de notifyDepositDock...");
+		}
 	}
 	
 	public boolean isNumeric(String strNum) {

@@ -9,7 +9,10 @@ import java.util.Date;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -48,11 +51,14 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
 import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
+import com.cobiscorp.cobis.csp.domains.ICSP;
+
 
 /**
  * Register Account
@@ -67,7 +73,7 @@ import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 @Properties(value = { @Property(name = "service.description", value = "TransferThirdPartyAccountApiOrchestationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "4.6.1.0"),
 		@Property(name = "service.identifier", value = "TransferThirdPartyAccountApiOrchestationCore") })
-public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestrationBase {
+public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemplate {
 
 	private static ILogger logger = LogFactory.getLogger(TransferThirdPartyAccountApiOrchestationCore.class);
 	private static final String CLASS_NAME = "TransferThirdPartyAccountApiOrchestationCore--->";
@@ -209,6 +215,32 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				
 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+								 
+				try {
+					callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
+
+					if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
+						obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
+
+						if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
+							(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+							IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
+							logger.logDebug("Respose Exeption: " + resp.toString());
+							return resp;
+						}
+									
+						if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") && 
+							(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+							IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
+							logger.logDebug("Respose Exeption: " + resp.toString());
+							return resp;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
+					logger.logError(e);
+				}
 				
 				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
 				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -408,7 +440,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		else
 			return false;
 	}
-	private IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse saveReentry(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		String REENTRY_FILTER = "(service.impl=ReentrySPPersisterServiceImpl)";
 		IProcedureRequest request = wQueryRequest.clone();
 		ComponentLocator componentLocator = null;
@@ -541,6 +573,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				if(aBagSPJavaOrchestration.get("IsReentry").equals("S")){
 					referenceCode = aBagSPJavaOrchestration.containsKey("rty_ssn")?aBagSPJavaOrchestration.get("rty_ssn").toString():"0";
 					aBagSPJavaOrchestration.put("ssn",referenceCode);
+					
+					
 				}
 				else{
 					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
@@ -783,27 +817,79 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en transferThirdAccount");
 		}
-						
-		IProcedureResponse wTransferResponse = new ProcedureResponseAS();
-		
-		logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
-		logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
-		logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
-		aBagSPJavaOrchestration.get("o_mon") +
-		aBagSPJavaOrchestration.get("o_prod_des") +
-		aBagSPJavaOrchestration.get("o_mon_des") +
-		aBagSPJavaOrchestration.get("o_prod_alias") +
-		aBagSPJavaOrchestration.get("o_nom_beneficiary") +
-		aBagSPJavaOrchestration.get("o_login") +
-		aBagSPJavaOrchestration.get("o_ente_bv"));
-		
-		wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
-		
+
+		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+
+		try {
+			callGetLimits(aRequest, aBagSPJavaOrchestration);
+
+			if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
+				obtainLimits(aRequest, aBagSPJavaOrchestration);
+
+				if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") &&
+						(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+					IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
+					logger.logDebug("Respose Exeption: " + resp.toString());
+					return resp;
+				}
+
+				if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") &&
+						(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+					IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
+					logger.logDebug("Respose Exeption: " + resp.toString());
+					return resp;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
+			logger.logError(e);
+		}
+
+		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);
+		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+
+		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+			aRequest.removeParam("@i_cta_des");
+			aRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+			wAccountsRespVal = getValAccountReq(aRequest, aBagSPJavaOrchestration);
+			logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
+		}
+		else
+		{
+			return wAccountsResp;
+		}
+
+		if (wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+
+			IProcedureResponse wTransferResponse = new ProcedureResponseAS();
+
+			logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
+			logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+			logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
+					aBagSPJavaOrchestration.get("o_mon") +
+					aBagSPJavaOrchestration.get("o_prod_des") +
+					aBagSPJavaOrchestration.get("o_mon_des") +
+					aBagSPJavaOrchestration.get("o_prod_alias") +
+					aBagSPJavaOrchestration.get("o_nom_beneficiary") +
+					aBagSPJavaOrchestration.get("o_login") +
+					aBagSPJavaOrchestration.get("o_ente_bv"));
+
+			wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
+
+
+			//wTransferResponse = executeTransfer(aRequest, aBagSPJavaOrchestration);
+			return wTransferResponse;
+		}
+
 		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de transferThirdAccount");
 		}
 
-		return wTransferResponse; 
+
+		return wAccountsRespVal;
 	}
 	
 	private IProcedureResponse executeRiskEvaluation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -867,9 +953,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				aBagSPJavaOrchestration.put("success_risk", null);
 				logger.logDebug("Response Exception: " + resp.toString());
 				return resp;
+
 			}
 			procedureRequest.addInputParam("@i_creditorAccount_identification", ICTSTypes.SQLVARCHAR, accountDest);
-
 			procedureRequest.addInputParam("@i_creditorAccount_identificationType", ICTSTypes.SQLVARCHAR, identificationType);
 		}
 
@@ -1098,6 +1184,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking  DCO : " + wProductsQueryResp.getProcedureResponseAsString());
 		}
+		
+		
+         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
+             (String) aBagSPJavaOrchestration.get("ssn"));
+         
+         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
+                 (String) aBagSPJavaOrchestration.get("ssn"));
+    
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getDataAccountReq");
@@ -1236,7 +1330,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalProcedureReq,
 			Map<String, Object> aBagSPJavaOrchestration) {
-
+		
+		
+		
 		return null;
 	}
 
@@ -1273,6 +1369,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getValAccountReq");
 		}
+		
+		
 	
 		return wProductsQueryResp;
 	}
@@ -1376,12 +1474,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		logger.logInfo(CLASS_NAME + "Parametro @o_fecha_tran: " + response.readValueParam("@o_fecha_tran"));
 		response.readValueParam("@o_fecha_tran");
 		
-		logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+		
 		if(response.readValueFieldInHeader("ssn")!=null)
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("o_ssn_branch", response.readValueParam("@o_ssn_branch"));
+		logger.logInfo("o_ssn_branch"+response.readValueParam("@o_ssn_branch"));
 		
 		return response;
+		
 	}
 	
 	private IProcedureResponse executeOfflineThirdAccountTransferCobis(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -1406,7 +1506,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
-		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, "1010");
+		anOriginalRequest.addInputParam("@i_causa_org", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@o_causal"));
+		logger.logInfo("Causal:"+ (String)aBagSPJavaOrchestration.get("@o_causal"));
 		anOriginalRequest.addInputParam("@i_causa_des", ICTSTypes.SQLVARCHAR, "1020");
 		//anOriginalRequest.addInputParam("@i_causa_comi", ICTSTypes.SQLVARCHAR, "185");
 		anOriginalRequest.addInputParam("@i_servicio_costo", ICTSTypes.SQLVARCHAR, "CTRT");
@@ -1452,6 +1553,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 		if(response.readValueFieldInHeader("ssn")!=null)
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
+		
+		
+		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1010",
+		          (String) aBagSPJavaOrchestration.get("ssn"));
+		         
+		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1020",
+		           (String) aBagSPJavaOrchestration.get("ssn"));
 		
 		return response;
 	}
@@ -1504,6 +1612,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 				procedureRequest.addInputParam("@i_producto", ICTSTypes.SQLINT1, "18");
 			}
 			
+			logger.logInfo("causal api2:"+ (String)aBagSPJavaOrchestration.get("@o_causal"));
+			logger.logInfo("causal oirgen2:"+ (String)aBagSPJavaOrchestration.get("@i_causa_org"));
+			
+			
 			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 			
 			logger.logInfo("Proceso de notificacion API terminado");
@@ -1537,6 +1649,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		procedureRequest.addOutputParam("@o_unique_id", ICTSTypes.SQLVARCHAR, "0");
 		procedureRequest.addOutputParam("@o_card_id", ICTSTypes.SQLVARCHAR, "X");
 		procedureRequest.addOutputParam("@o_cuenta", ICTSTypes.SQLVARCHAR, "X");
+		
 	    
 		IProcedureResponse wProcedureResponseLocal = executeCoreBanking(procedureRequest);
 		
@@ -1544,7 +1657,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		{
 			logger.logDebug("Query card PAN :" + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
+	         
 	    return wProcedureResponseLocal;
+	      
 	}
 	
 	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
@@ -1557,6 +1672,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
 		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
 	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+	    
+	   
 
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -1577,6 +1694,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		} 
 		
 		return "";
+	    
 	}
 
 	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
@@ -1796,7 +1914,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         };
 
         Date date = null;
-        String newDate = dateString;
+		String newDate = dateString;
 
         for (String format : formats) {
             try {
@@ -1814,8 +1932,174 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         if (date != null) {
         	newDate = unifiedFormat.format(date);
         }
+        
         return newDate;
     }
+
+	@Override
+	protected void loadDataCustomer(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+	private void callGetLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
+		if(logger.isDebugEnabled())
+			logger.logDebug("Transfer Third Party callGetLimitsConn [INI]");
+
+		try {
+
+			IProcedureRequest anOriginalRequestLimits = new ProcedureRequestAS();
+
+			anOriginalRequestLimits.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR, "DEBIT");
+			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
+			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
+
+			anOriginalRequestLimits.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequestLimits.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
+			anOriginalRequestLimits.addOutputParam("@o_success", ICTSTypes.SQLVARCHAR, "X");
+			
+			anOriginalRequestLimits.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CISConnectorGetLimits)");
+			anOriginalRequestLimits.addFieldInHeader("csp.skip.transformation", ICOBISTS.HEADER_STRING_TYPE, "Y");
+			anOriginalRequestLimits.addFieldInHeader(ICSP.SERVICE_EXECUTION_RESULT, ICOBISTS.HEADER_STRING_TYPE, ICSP.SUCCESS);
+
+			anOriginalRequestLimits.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "transformAndSend");
+			anOriginalRequestLimits.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequestLimits.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequestLimits.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequestLimits.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingTransformationProvider");
+
+			// SE HACE LA LLAMADA AL CONECTOR
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorGetLimits)");
+			anOriginalRequestLimits.setSpName("cob_procesador..sp_conn_get_limits");
+
+			anOriginalRequestLimits.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700128");
+			anOriginalRequestLimits.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700128");
+			anOriginalRequestLimits.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700128");
+	
+			IProcedureResponse connectorGetLimitsResponse = executeProvider(anOriginalRequestLimits, aBagSPJavaOrchestration);
+
+			if (logger.isDebugEnabled()){
+				logger.logDebug("connectorGetLimitsResponse ->" + connectorGetLimitsResponse.toString());
+			}
+
+			String responseCode = connectorGetLimitsResponse.readValueParam("@o_responseCode") == null ? "0" : connectorGetLimitsResponse.readValueParam("@o_responseCode");
+			String message = connectorGetLimitsResponse.readValueParam("@o_message") == null ? "Error" : connectorGetLimitsResponse.readValueParam("@o_message");
+			String success = connectorGetLimitsResponse.readValueParam("@o_success") == null ? "false" : connectorGetLimitsResponse.readValueParam("@o_success");
+			String responseBody = connectorGetLimitsResponse.readValueParam("@o_responseBody") == null ? "{}" : connectorGetLimitsResponse.readValueParam("@o_responseBody");
+			String queryString = connectorGetLimitsResponse.readValueParam("@o_queryString") == null ? "" : connectorGetLimitsResponse.readValueParam("@o_queryString");
+
+			aBagSPJavaOrchestration.put("responseCodeGetLimits", responseCode);
+			aBagSPJavaOrchestration.put("messageGetLimits", message);
+			aBagSPJavaOrchestration.put("successGetLimits", success);
+			aBagSPJavaOrchestration.put("responseBodyGetLimits", responseBody);
+			aBagSPJavaOrchestration.put("queryString", queryString);
+
+			registerResponse(aRequest, aBagSPJavaOrchestration);
+
+		}catch (Exception e) {
+			logger.logError(" Error en callGetLimitsConn: " + e.getMessage());
+		}
+	}
+
+	private void registerResponse(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" Entrando en registerResponse get");
+		}
+
+		request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+		request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "fetchTransactionLimit");
+		request.addInputParam("@i_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
+		
+		request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("queryString").toString());
+		request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodyGetLimits").toString());
+		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);		
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response registerResponse get: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
+
+	private void obtainLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
+		try{
+			JsonParser jsonParser = new JsonParser();
+			String jsonRequestStringClean = aBagSPJavaOrchestration.get("responseBodyGetLimits").toString().replace("&quot;", "\"");
+			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
+
+			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
+
+			double transactionAmount =  Double.parseDouble(aRequest.readValueParam("@i_val"));// Monto de la transacción
+	
+			// Inicializar variables para límites
+			Double dailyLimit = null;
+			Double montlyLimit = null;
+			Double balanceAmountMontly = null;
+			Double maxTxnLimit = null;
+
+			for (JsonElement limitElement : transactionLimits) {
+				JsonArray subTypeLimits = limitElement.getAsJsonObject().getAsJsonArray("transactionSubTypeLimits");
+				for (JsonElement subTypeElement : subTypeLimits) {
+					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
+					
+					if ("DAILY".equals(limitType)) {
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							dailyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+							
+							boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
+							aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
+						}
+					}else if("MONTHLY".equals(limitType)){
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							montlyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+						}
+						if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
+							balanceAmountMontly = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("balanceAmount")
+								.get("amount").getAsDouble();
+						}
+					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
+						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
+							maxTxnLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("userConfiguredLimit")
+								.get("amount").getAsDouble();
+
+							boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
+							aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
+						}
+					}
+				}
+			}
+		
+			boolean isMontlyLimitExceeded = transactionAmount + balanceAmountMontly > (montlyLimit != null ? montlyLimit : 0);
+			
+			aBagSPJavaOrchestration.put("isMontlyLimitExceeded", isMontlyLimitExceeded);
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("dailyLimit:: " + dailyLimit);
+				logger.logDebug("dailyLimit:: " + dailyLimit);
+				logger.logDebug("maxTxnLimit:: " + maxTxnLimit);
+				logger.logDebug("isMontlyLimitExceeded:: " + isMontlyLimitExceeded);
+			}
+		} catch (JsonSyntaxException e) {
+			logger.logError("Error parsing JSON: Invalid JSON syntax", e);
+		} catch (IllegalStateException e) {
+			logger.logError("Error parsing JSON: Illegal state", e);
+		} catch (Exception e) {
+			logger.logError("Unexpected error while parsing JSON", e);
+		}
+	}
 
 	private IProcedureResponse getCodeBlocking(String description) {
 
