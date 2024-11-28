@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Date;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.felix.scr.annotations.Component;
@@ -138,6 +140,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 		String mensajeRiesgo = "";
 		String estadoRiesgo = "";
 		String responseBody = "";
+		String actionName = "";
+		String blockCode = "";
 		
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
@@ -317,18 +321,43 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
 								
 								if(logger.isDebugEnabled()){
 									logger.logDebug("Estado riskEvaluation: " + riskStatus);}
-																								
+
+
 								if(riskStatus.contains("HIGH")) {
+
+									if (riskDetails.has("actions")) {
+										//Construccion del body para el conector
+										JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+										// Iterar sobre el JsonArray para obtener actionName
+										for (JsonElement actionElement : actionsArray) {
+											JsonObject actionObject = actionElement.getAsJsonObject();
+											actionName =  actionObject.get("actionName").getAsString();
+
+											if(logger.isDebugEnabled()){
+												logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+											IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+											blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+											if (blockCode == "null" || blockCode.isEmpty()) {
+											logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+
+											} else {
+												//Realizamos el bloqueo del usuario
+												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+
+											}
+										}
+									}
+
 									//Generamos un bloqueo de la cuenta contra débitos
 									generaBloqueoCuenta(anOriginalRequest);
-									
-									//Realizamos el bloqueo del usuario
-									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, codBlockHigh);
-									
+
 									//Seteamos los valores para el retorno
 									anProcedureResponse.setReturnCode(400383);
 									anProcedureResponse.addMessage(1, "Usuario Bloqueado");
-									
+
 									return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 								}
 							} else {
@@ -1787,5 +1816,37 @@ public class TransferThirdPartyAccountApiOrchestationCore extends SPJavaOrchestr
         }
         return newDate;
     }
+
+	private IProcedureResponse getCodeBlocking(String description) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getMessageErrors");
+		}
+
+		request.setSpName("cobis..sp_catalogo");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+		request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
+		request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, "bv_cod_bloqueo_idc");
+		request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, description);
+
+		logger.logDebug("Request Corebanking getMessageErrors: " + request.toString());
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getMessageErrors: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getMessageErrors");
+		}
+		return wProductsQueryResp;
+	}
 
 }

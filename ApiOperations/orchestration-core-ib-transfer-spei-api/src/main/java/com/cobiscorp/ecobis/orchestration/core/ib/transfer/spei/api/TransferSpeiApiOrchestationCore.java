@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.TimeZone;
-import com.google.gson.JsonObject;
 
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -316,6 +316,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		Boolean estadoRiesgo = false;
 		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution") != null ? aRequest.readValueParam("@i_autoActionExecution").toString() : "false";
         String responseBody = "";
+        String actionName = "";
+        String blockCode = "";
 
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
@@ -372,19 +374,43 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
                                 if(logger.isDebugEnabled()){
                                 	logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
-                               								
+
                                 if(riskStatus.contains("HIGH")) {
-                                	//Generamos un bloqueo de la cuenta contra débitos
-									generaBloqueoCuenta(aRequest);
-									
-									//Realizamos el bloqueo del usuario
-									IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockHigh);
-									
-									//Seteamos los valores para el retorno
-									wTransferResponse.setReturnCode(400383);
-									wTransferResponse.addMessage(1, "Usuario Bloqueado");
-									
-									return wTransferResponse;
+
+                                    if (riskDetails.has("actions")) {
+                                        //Construccion del body para el conector
+                                        JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+                                        // Iterar sobre el JsonArray para obtener actionName
+                                        for (JsonElement actionElement : actionsArray) {
+                                            JsonObject actionObject = actionElement.getAsJsonObject();
+                                            actionName =  actionObject.get("actionName").getAsString();
+
+                                            if(logger.isDebugEnabled()){
+                                                logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+                                            IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+                                            blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+                                            if (blockCode == "null" || blockCode.isEmpty()) {
+                                                logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+
+                                            } else {
+                                                //Realizamos el bloqueo del usuario
+                                                IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
+
+                                            }
+                                        }
+                                    }
+
+                                    //Generamos un bloqueo de la cuenta contra débitos
+                                    generaBloqueoCuenta(aRequest);
+
+                                    //Seteamos los valores para el retorno
+                                    wAccountsResp.setReturnCode(400383);
+                                    wAccountsResp.addMessage(1, "Usuario Bloqueado");
+
+                                    return processResponseTransfer(aRequest, wAccountsResp,aBagSPJavaOrchestration);
                                 }
                             } else {
                                 logger.logError("No se encontró riskStatus en el objeto");
@@ -3235,6 +3261,38 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         	newDate = unifiedFormat.format(date);
         }
         return newDate;
+    }
+
+    private IProcedureResponse getCodeBlocking(String description) {
+
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en getMessageErrors");
+        }
+
+        request.setSpName("cobis..sp_catalogo");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_CENTRAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+        request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+        request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
+        request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, "bv_cod_bloqueo_idc");
+        request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, description);
+
+        logger.logDebug("Request Corebanking getMessageErrors: " + request.toString());
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking getMessageErrors: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Saliendo de getMessageErrors");
+        }
+        return wProductsQueryResp;
     }
     
 }
