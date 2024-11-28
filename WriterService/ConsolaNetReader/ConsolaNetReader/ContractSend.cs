@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ConsolaNetReader
 {
-    public class ContractSend
+    public class ContractSend:GatewayPortTypeClient
     {
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ContractSend));
@@ -29,7 +29,7 @@ namespace ConsolaNetReader
             this.cuenta = "prueba";
             DateTime fecha = DateTime.Parse("01/01/1990");
             this.horario = String.Format("{0:dd/MM/yy} - Hora: {0:hh:mm tt}", fecha).ToLower();
-            this.mail = "jolmossolis@gmail.com";
+            this.mail = "jolmossolis@hotmail.com";
             this.plantillaResulta = "<html>HOLA MUNDO</html";
 
 
@@ -68,18 +68,20 @@ namespace ConsolaNetReader
             log.Info("Enviando contrato---- "+ this.mail);
 
 
+
             byte[] array = File.ReadAllBytes(fileContract);
 
             CalixtaServices.EventosEnvioEmailRequest requestMail = new CalixtaServices.EventosEnvioEmailRequest();
             requestMail.cte = 49089;
             requestMail.id = "cobis@cuentacashi.com.mx";
+
             requestMail.password = "dbad94ec5c744391077d7fac72ca4737a05ac06e0091bec8ccfb65e7309b1d539da851c2e38171cbb394db20543d67a5";
            CalixtaServices.GatewayPortTypeClient client = new CalixtaServices.GatewayPortTypeClient();
             client.Open();
+
             string salidax = client.EnviaEmail(49089, "cobis@cuentacashi.com.mx", "dbad94ec5c744391077d7fac72ca4737a05ac06e0091bec8ccfb65e7309b1d539da851c2e38171cbb394db20543d67a5", "PRUEBA" +
-                "", this.mail
-                 , "clientes@cuentacashi.com.mx", "¡Tu Cuenta Cashi está lista!", "clientes@cuentacashi." +
-                 "com.mx", "Empieza a pagar con tu tarjeta digital", 0, "", plantillaResulta, 1, array
+                "", this.mail, "clientes@cuentacashi.com.mx", "Cuenta Cashi", "clientes@cuentacashi." +
+                 "com.mx", "¡Tu Cuenta Cashi está lista!", 0, "", plantillaResulta, 1, array
                  , "Contrato.pdf", "Contrato.pdf", 0, "", 0, 0, "", "", "");
 
 
