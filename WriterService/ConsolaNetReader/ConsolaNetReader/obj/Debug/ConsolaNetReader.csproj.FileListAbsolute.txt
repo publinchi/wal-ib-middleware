@@ -67,6 +67,6 @@ C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.csproj.Ass
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.csproj.CoreCompileInputs.cache
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaN.05F4D52F.Up2Date
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.pdb
-C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.exe.config
-C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.exe
-C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.exe
+C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.dll.config
+C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.dll
+C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.dll

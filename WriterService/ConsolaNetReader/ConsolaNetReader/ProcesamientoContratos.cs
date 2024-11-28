@@ -78,7 +78,8 @@ namespace ConsolaNetReader
 
 
 
-        public ProcesamientoContratos(string token) {
+        public ProcesamientoContratos(string token)
+        {
 
             XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
 
@@ -113,36 +114,38 @@ namespace ConsolaNetReader
                 log.Info("plantilla " + plantilla);
 
 
-              /*   log.Info("Generando Token");
+                /*   log.Info("Generando Token");
 
 
-                var client = new RestClient(authUrl); 
-                  var request = new RestRequest(authUrl, Method.Post);
+                  var client = new RestClient(authUrl); 
+                    var request = new RestRequest(authUrl, Method.Post);
 
-                  request.AddParameter("grant_type", "client_credentials");
-                  request.AddParameter("client_id", clientId);
-                  request.AddParameter("client_secret", clientSecret);
+                    request.AddParameter("grant_type", "client_credentials");
+                    request.AddParameter("client_id", clientId);
+                    request.AddParameter("client_secret", clientSecret);
 
 
-                   RestResponse response = client.Execute(request);
-                var tokenData = JObject.Parse(response.Content);
-                this.token = tokenData["access_token"].ToString();
+                     RestResponse response = client.Execute(request);
+                  var tokenData = JObject.Parse(response.Content);
+                  this.token = tokenData["access_token"].ToString();
 
-                log.Info("Token generado.....");*/
+                  log.Info("Token generado.....");*/
             }
-            catch (Exception xe) {
+            catch (Exception xe)
+            {
 
                 log.Error(xe);
             }
 
         }
 
-        public void setFileName() {
+        public void setFileName()
+        {
             this.guid = Guid.NewGuid().ToString();
- 
+
             this.fileNameDoc = string.Concat(Guid.NewGuid().ToString(), doc);
             this.fileNamePdf = string.Concat(Guid.NewGuid().ToString(), pdf);
-            this.temporalFile= string.Concat(Guid.NewGuid().ToString(), doc);
+            this.temporalFile = string.Concat(Guid.NewGuid().ToString(), doc);
             this.temporalFileGeneral = string.Concat(Guid.NewGuid().ToString(), doc);
 
         }
@@ -157,12 +160,13 @@ namespace ConsolaNetReader
 
 
 
-        public void defineDocumento(Contrato contratos) {
+        public void defineDocumento(Contrato contratos)
+        {
 
-            string contractToMail=null;
+            string contractToMail = null;
 
-            bool flagContrato=false;
-            bool flagDatosGenerales=false;
+            bool flagContrato = false;
+            bool flagDatosGenerales = false;
 
             try
             {
@@ -174,22 +178,25 @@ namespace ConsolaNetReader
 
                 try
                 {
-                    
+
                     String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
-                    File.Copy(rutaOriginal, System.IO.Path.Combine(temporales,this.temporalFile), overwrite: true);
+                    File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
                     plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
-                        
+
                     aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
                     contractToMail = convertToPDF();
                     uploadFile("CONTRATO");
-                    flagContrato = true;    
+                    flagContrato = true;
 
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     log.Error(e);
-                } finally
+                }
+                finally
                 {
                     wordApp.Quit();
-                    
+
                     File.Delete(System.IO.Path.Combine(temporales, this.temporalFile));
                 }
 
@@ -199,7 +206,7 @@ namespace ConsolaNetReader
 
                 try
                 {
-                    
+
                     string rutaGeneral = System.IO.Path.Combine(plantillas, this.plantillaGeneral);
                     File.Copy(rutaGeneral, System.IO.Path.Combine(temporales, this.temporalFileGeneral), overwrite: true);
                     plantillaGeneral = wordApp2.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
@@ -212,7 +219,8 @@ namespace ConsolaNetReader
                 {
                     log.Error(xe);
                 }
-                finally {
+                finally
+                {
                     wordApp2.Quit();
 
                     File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
@@ -228,12 +236,14 @@ namespace ConsolaNetReader
                     }
 
                 }
-                catch (Exception xe) {
+                catch (Exception xe)
+                {
                     log.Error(xe);
                 }
 
             }
-            catch (Exception xe) {
+            catch (Exception xe)
+            {
                 log.Error(xe);
             }
 
@@ -242,7 +252,8 @@ namespace ConsolaNetReader
 
 
 
-        private void uploadFile(string typeFile) {
+        private void uploadFile(string typeFile)
+        {
 
             try
             {
@@ -284,7 +295,8 @@ namespace ConsolaNetReader
                     log.Error(response);
                 }
             }
-            catch (Exception xe) {
+            catch (Exception xe)
+            {
 
                 log.Error(xe);
 
@@ -296,7 +308,8 @@ namespace ConsolaNetReader
         }
 
 
-        private void confirmaGeneraciónCarga(string type) {
+        private void confirmaGeneraciónCarga(string type)
+        {
 
             try
             {
@@ -322,22 +335,25 @@ namespace ConsolaNetReader
 
                     log.Info(type + "::: Se confirmo existosamente");
                 }
-                else {
+                else
+                {
                     log.Info(type + "::: Error al confirmar");
                     log.Error(response);
                 }
             }
-            catch (Exception xe) {
+            catch (Exception xe)
+            {
                 log.Error(xe);
             }
         }
 
-        private string convertToPDF() {
+        private string convertToPDF()
+        {
 
             Microsoft.Office.Interop.Word.Document wordDocument = null;
             Microsoft.Office.Interop.Word.Application appWord = null;
 
-            string contract=null;
+            string contract = null;
 
             try
             {
@@ -358,7 +374,8 @@ namespace ConsolaNetReader
             {
                 log.Error(xe);
             }
-            finally {
+            finally
+            {
                 wordDocument.Close();
                 appWord.Quit();
                 File.Delete(deposito + fileNameDoc);
@@ -370,7 +387,8 @@ namespace ConsolaNetReader
             return contract;
         }
 
-        private string recuperaFecha() {
+        private string recuperaFecha()
+        {
 
             DateTime fechaActual = DateTime.Now;
             string formato4 = fechaActual.ToString("dddd, dd MMMM yyyy", new CultureInfo("es-ES"));
@@ -382,7 +400,8 @@ namespace ConsolaNetReader
 
 
 
-        public bool validarDatosContratros(Contrato contratos) {
+        public bool validarDatosContratros(Contrato contratos)
+        {
 
             bool validacion = false;
 
@@ -390,7 +409,7 @@ namespace ConsolaNetReader
             {
                 foreach (Valores valor in contratos.Valores)
                 {
-                   string values = valor.Valor;
+                    string values = valor.Valor;
 
                     if (values.IsValueNullOrEmpty())
                     {
@@ -414,7 +433,7 @@ namespace ConsolaNetReader
 
 
 
-        private void aplicaCambiosContrato(Contrato contratos, Microsoft.Office.Interop.Word.Document plantilla,string type)
+        private void aplicaCambiosContrato(Contrato contratos, Microsoft.Office.Interop.Word.Document plantilla, string type)
         {
 
             string values = "";
@@ -423,44 +442,63 @@ namespace ConsolaNetReader
 
             Requeridos.cliente = this.customerId;
 
-            try {
+            try
+            {
 
-                 wordApp = new Application();
+                wordApp = new Application();
 
                 log.Info(" Comienza aplicaCambiosContrato ");
 
-                Valores fecha=new Valores();
+                Valores fecha = new Valores();
                 fecha.Llave = "$$fechacontrato$$";
                 fecha.Valor = recuperaFecha();
-
                 contratos.Valores.Add(fecha);
 
-                 foreach (Valores valor in contratos.Valores){
+
+
+               foreach (Valores valor in contratos.Valores)
+                {
 
                     values = valor.Valor;
-                    if(!values.IsValueNullOrEmpty()&&values.Length>120)
-                        values= values.Substring(0, 120);
+                    if (!values.IsValueNullOrEmpty() && values.Length > 120)
+                        values = values.Substring(0, 120);
 
                     if (values.IsValueNullOrEmpty())
                     {
                         values = "";
-                    }                  
-
-                  if(!Requeridos.validarValor(valor.Llave, values, type)) {
-                        throw new Exception("CAMPO REQUERIDO 789DX");          
                     }
 
 
-                        foreach (Range seleccion in plantilla.StoryRanges)
-                        {
+                    if (type.Equals("DATOS CLIENTE"))
+                    {
 
-                            seleccion.Find.Execute(FindText: valor.Llave, ReplaceWith: values, MatchWildcards: false, Forward: true, Format: false, Wrap: WdFindWrap.wdFindContinue, Replace: WdReplace.wdReplaceAll,
-                              MatchCase: true, MatchWholeWord: false, MatchSoundsLike: false, MatchAllWordForms: false, MatchKashida: false, MatchDiacritics: false, MatchAlefHamza: false,
-                               MatchControl: false);
+                        if (!valor.Llave.IsValueNullOrEmpty() && valor.Llave.Equals("$$fechanacimiento$$")) {
+
+                            DateTime fechaDatos = DateTime.Parse(valor.Valor);
+                            log.Info("Fecha Nacimiento 1::: " + fechaDatos.ToString());
+                             values = fechaDatos.ToString("yyyy-MM-dd");
+                            log.Info("Fecha Nacimiento 2::: "+ valor.Valor);
+
                         }
+
+                    }
+
+                    if (!Requeridos.validarValor(valor.Llave, values, type))
+                    {
+                        throw new Exception("CAMPO REQUERIDO 789DX");
+                    }
+
+                    foreach (Range seleccion in plantilla.StoryRanges)
+                    {
+
+                        seleccion.Find.Execute(FindText: valor.Llave, ReplaceWith: values, MatchWildcards: false, Forward: true, Format: false, Wrap: WdFindWrap.wdFindContinue, Replace: WdReplace.wdReplaceAll,
+                          MatchCase: true, MatchWholeWord: false, MatchSoundsLike: false, MatchAllWordForms: false, MatchKashida: false, MatchDiacritics: false, MatchAlefHamza: false,
+                           MatchControl: false);
+                    }
                 }
 
-                if (type.Equals("CONTRATO")) {
+                if (type.Equals("CONTRATO"))
+                {
 
                     this.addBeneficiariesDocument(plantilla, contratos);
                 }
@@ -468,15 +506,16 @@ namespace ConsolaNetReader
 
                 log.Info(" Finaliza cambios en plantilla ");
 
-                plantilla.SaveAs2(deposito+ fileNameDoc);
+                plantilla.SaveAs2(deposito + fileNameDoc);
 
                 log.Info(" generación d earchivo exitoso ");
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
 
 
-                
+
                 log.Error(ex);
 
                 if (ex.Message.Contains("789DX"))
@@ -485,13 +524,14 @@ namespace ConsolaNetReader
                 }
 
             }
-            finally {
+            finally
+            {
 
                 plantilla.Close();
                 wordApp.Quit();
 
             }
-      
+
         }
 
         public string CapitalizeWords(string input)
@@ -521,10 +561,10 @@ namespace ConsolaNetReader
             int i = 1;
 
             try
-            {              
+            {
 
-                        foreach (Microsoft.Office.Interop.Word.Table tabla in documento.Tables)
-                        {
+                foreach (Microsoft.Office.Interop.Word.Table tabla in documento.Tables)
+                {
 
                     if (i == 3)
                     {
@@ -545,10 +585,11 @@ namespace ConsolaNetReader
                                     row.Cells[2].Range.Text = fechaFormateada;
                                 }
                                 row.Cells[3].Range.Text = beneficiario.porcentaje;
-                            }                       
+                            }
 
                         }
-                        else {
+                        else
+                        {
 
                             for (int x = 0; x < 2; x++)
                             {
@@ -562,12 +603,12 @@ namespace ConsolaNetReader
                         }
 
                         break;
-                            }
-                            ++i;
-                        }
-                    
+                    }
+                    ++i;
+                }
 
-                
+
+
             }
             catch (Exception xe)
             {
@@ -580,12 +621,13 @@ namespace ConsolaNetReader
 
 
 
-        private  string validadarValor(object cadena)
+        private string validadarValor(object cadena)
         {
 
             string retorno = "";
 
-            if (cadena!=null && !cadena.ToString().IsValueNullOrEmpty()) {
+            if (cadena != null && !cadena.ToString().IsValueNullOrEmpty())
+            {
                 retorno = cadena.ToString();
             }
 
@@ -600,24 +642,25 @@ namespace ConsolaNetReader
         }
 
 
-        public JObject recuperarDatosContratos() {
-        JObject jsons = new JObject();
-        try
+        public JObject recuperarDatosContratos()
         {
+            JObject jsons = new JObject();
+            try
+            {
                 log.Info("Comienza recuperarDatosContratos");
-             
-            string apiUrl = this.getDataApi;
+
+                string apiUrl = this.getDataApi;
                 WebClient client = new WebClient();
                 string bearerToken = this.token;
                 client.Headers.Add(HttpRequestHeader.Authorization, "Bearer " + bearerToken);
                 client.Headers.Add(HttpRequestHeader.ContentType, "text/plain");
                 string response = client.UploadString(apiUrl, "");
 
-                log.Info(response);    
+                log.Info(response);
 
                 jsons = JObject.Parse(response);
 
-             
+
 
             }
             catch (WebException e)
@@ -635,11 +678,9 @@ namespace ConsolaNetReader
 
                     Console.WriteLine("Error al realizar la solicitud HTTP: " + e.Message);
                 }
-            }catch (Exception xe) { 
-            
-                log.Error(xe);  
-            
+                recuperarDatosContratos();
             }
+
 
             return jsons;
 
