@@ -40,7 +40,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse responseToSychronize = null;
 		IProcedureResponse responseTransfer = null;
-
+		IProcedureRequest anOriginalRequestClone = anOriginalRequest.clone();
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Ejecutando método executeTransaction Request: " + anOriginalRequest);
 
@@ -100,7 +100,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 					logger.logInfo("i_register_off_mov APLICADO 22");
 					if(responseTransfer.readValueParam("@i_register_off_mov")!=null &&
 					responseTransfer.readValueParam("@i_register_off_mov").equals("S")) {
-						movementOffline(anOriginalRequest, aBagSPJavaOrchestration);
+						movementOffline(anOriginalRequestClone, aBagSPJavaOrchestration);
 					}
 
 					
