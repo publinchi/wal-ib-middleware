@@ -199,6 +199,7 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             request.addInputParam("@i_banco_origen", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_institucionOrdenante"));
             request.addInputParam("@i_estado_ejec", ICTSTypes.SQLVARCHAR, (String)bag.get("@i_estado_ejec"));
             request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
+            request.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
         }
 
         // Datos de tran monet
