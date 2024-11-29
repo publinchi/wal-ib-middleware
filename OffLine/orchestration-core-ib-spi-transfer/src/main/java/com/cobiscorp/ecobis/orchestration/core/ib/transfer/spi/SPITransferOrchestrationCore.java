@@ -254,8 +254,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				}
 
 				if (logger.isDebugEnabled()) {
-					logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI ");
-				}
+                	logger.logDebug(":::: Se aplicara transaccion reetry o on line SPEI " + originalRequestClone.toString());
+                }
+                logger.logInfo(":::: Contiene parametro " + originalRequestClone.readValueParam("@i_type_reentry"));
+
 				
 				if ((originalRequestClone.readValueParam("@i_type_reentry") == null
 						|| !originalRequestClone.readValueParam("@i_type_reentry").equals(TYPE_REENTRY_OFF))) {// VALIDACION DE REENTRY
@@ -352,7 +354,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 			}
 			responseTransfer.addParam("@o_idTransaccion", ICTSTypes.SQLVARCHAR, idTransaccion.length(), idTransaccion);
 		}
-
+		logger.logDebug("Responde devuelto a TransferOfflineTemplate " + responseTransfer);
 		return responseTransfer;
 	}
 
