@@ -83,18 +83,6 @@ namespace ConsolaNetReader
                 "", this.mail, "clientes@cuentacashi.com.mx", "Cuenta Cashi", "clientes@cuentacashi." +
                  "com.mx", "¡Tu Cuenta Cashi está lista!", 0, "", plantillaResulta, 1, array
                  , "Contrato.pdf", "Contrato.pdf", 0, "", 0, 0, "", "", "");
-
-
-         //   TransaccionEnvios status = new TransaccionEnvios();
-         //   status.idEnvio = int.Parse(salidax);
-
-         //   EdoMensajes[] mensajes = client.EstadoMensajes(status);
-         //   var x= client.EstadoEnvio(status);
-
-
-         //  int values= client.EstadoEnvioEmail(49089, "cobis@cuentacashi.com.mx", "dbad94ec5c744391077d7fac72ca4737a05ac06e0091bec8ccfb65e7309b1d539da851c2e38171cbb394db20543d67a5",int.Parse(salidax));
-
-
             
             
             client.Close();
