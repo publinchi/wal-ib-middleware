@@ -59,6 +59,7 @@ def generate_expedient_link(facade, context):
                         
                         # Obtener extensión y nombre del archivo
                         name_file = os.path.splitext(os.path.basename(file_key))[0]
+                        name_file = name_file.replace('_KARPAY_','_')
                         ext_file = os.path.splitext(os.path.basename(file_key))[1]
                        
                         # Escribir en el archivo zip con la estructura de carpetas deseada
@@ -66,35 +67,12 @@ def generate_expedient_link(facade, context):
 
                         # Ahora guarda las versiones, omitiendo la versión original
                         versions = s3_client.list_object_versions(Bucket=bucket_name, Prefix=file_key)
-                                              
-                       for vrs in versions.get('Versions', []):
-                            # Verifica si la versión actual es la más reciente
-                            if vrs['IsLatest']:
-                                continue  # Omitir la versión original
-                            
-                            # Obtener la fecha de la versión
-                            last_modified = vrs['LastModified']
-                            # Formatear la fecha
-                            date_str = last_modified.strftime("%d%m%Y%H%M%S")
-                           
-                            # Crear el nombre del archivo usando la fecha
-                            version_file_key = f"files/{customer_id}/{name_file}_{date_str}{ext_file}"
-                           
-                            try:
-                                version_obj = s3_client.get_object(Bucket=bucket_name, Key=file_key, VersionId=vrs['VersionId'])
-                                version_data = version_obj['Body'].read()
-                           
-                                # Escribir en el archivo zip con la fecha
-                                zip_file.writestr(version_file_key, version_data)
-                            except s3_client.exceptions.NoSuchVersion as e:
-                                logger.error(f"Version {vrs['VersionId']} not found for file {file_key}: {str(e)}")
-                            except Exception as e:
-                                logger.error(f"Error fetching version {vrs['VersionId']} of object {file_key}: {str(e)}")
-                           
+
                     except s3_client.exceptions.NoSuchKey as e:
                         logger.error(f"File not found: {file_key}: {str(e)}")
                     except Exception as e:
                         logger.error(f"Error fetching object {file_key}: {str(e)}")
+                      
         
         zip_buffer.seek(0)
         

@@ -49,6 +49,7 @@ def get_event_contract(facade, context):
             #if entry.get('ec_clabe') != "" and entry.get('ec_mail') != "" and entry.get('ec_name') != ""
         #]
         
+
         for event_contract in event_contract_results:
             # Prepare and execute general data query
             query_general_data = os.getenv('QUERY_DATOS_GENERALES') % (event_contract['ec_external_customer'])
@@ -61,6 +62,8 @@ def get_event_contract(facade, context):
                 [entry for entry in general_data_results if "records_affected" not in entry]
             )
             
+
+            
             if general_data_results:
                 general_data = general_data_results[0]
                 
@@ -68,6 +71,7 @@ def get_event_contract(facade, context):
                 address_elements = [
                     general_data['di_calle'],
                     str(general_data['di_casa']),
+                    str(general_data['di_edificio']),
                     general_data['pq_descripcion'],
                     str(general_data['cp_codigo']),
                     general_data['ci_descripcion'],
@@ -76,6 +80,11 @@ def get_event_contract(facade, context):
                 
                 full_address = ', '.join(address_elements) 
                 general_data['fullAddress'] = full_address
+                
+                query_beneficiarios = os.getenv('QUERY_BENEFICIARIOS') % (event_contract['ec_external_customer'])
+                results_beneficiarios = execute_database(query_beneficiarios, context)
+                results_beneficiarios= json.loads(results_beneficiarios)
+                general_data['beneficiarios']=results_beneficiarios
                 
                 # Truncate geolocation data if it exists
                 if general_data.get('dg_geolocalizacion'):
@@ -88,6 +97,7 @@ def get_event_contract(facade, context):
                 
                 # Update event contract with general data
                 event_contract.update(general_data)
+                
                 
             query_u_event_contract = os.getenv('QUERY_U_RETRY_CONTRACT') % (event_contract['ec_external_customer'])
             logger.info("Executed query 4: %s", query_u_event_contract)
