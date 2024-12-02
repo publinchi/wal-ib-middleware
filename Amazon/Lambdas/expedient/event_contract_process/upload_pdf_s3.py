@@ -14,6 +14,10 @@ def upload_pdf_s3(facade, context):
     blob_pdf = body["blobPdf"]
     external_customer_id = str(body["externalCustomerId"])  # Ensure it's a string for folder creation
     typeFile = body["typeFile"]
+    provider = body.get('provider')
+
+    if provider == None:
+        provider="KARPAY"
 
     decoded_blob_data = base64.b64decode(blob_pdf)
 
@@ -23,11 +27,18 @@ def upload_pdf_s3(facade, context):
 
         # Create folder path and key for the PDF file
         folder_name = f"files/{external_customer_id}"  # Include parent folder
-        key = f"{folder_name}/{typeFile}.pdf"
+        counter = 1
+        key = f"{folder_name}/{typeFile}_{provider}_{counter}.pdf"
         facade['KEY_S3_PDF'] = key
+        exists = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_name)
+        
+        while s3.list_objects_v2(Bucket=bucket_name, Prefix=key).get('Contents'):
+            counter += 1
+            key = f"{folder_name}/{typeFile}_{provider}_{counter}.pdf"
+
 
         # Check if folder exists (avoiding unnecessary calls)
-        exists = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_name)
+        
         if not exists.get('Contents'):
             # Create the folder if it doesn't exist, including the parent folder ("files")
             s3.put_object(Bucket=bucket_name, Key=f"{folder_name}/", Body=b"")  # Empty object for parent folder
