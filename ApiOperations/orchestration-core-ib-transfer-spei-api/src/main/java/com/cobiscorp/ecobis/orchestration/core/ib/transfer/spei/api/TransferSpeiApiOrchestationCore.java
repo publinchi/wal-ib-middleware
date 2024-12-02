@@ -1254,7 +1254,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     @Override
     protected IProcedureResponse executeTransfer(Map<String, Object> aBagSPJavaOrchestration) {
         if (logger.isDebugEnabled()) {
-            logger.logDebug("Inicia executeTransfer");
+            logger.logDebug("Inicia executeTransfer API");
         }
         IProcedureResponse responseTransfer = null;
         String idTransaccion = "";
@@ -1455,7 +1455,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                         	String typeConnector = getParam(originalRequest, "COSPEI", "AHO");
                             if (typeConnector != null && typeConnector.equals("KARPAY")) {
                             	
-                            	SpeiMappingResponse responseTransferOff = sendSpeiOfflineBanpay(requestSpei, responseTransfer, aBagSPJavaOrchestration, originalRequestClone);
+                            	SpeiMappingResponse responseTransferOff = sendSpeiOfflineBanpay(requestSpei, responseTransfer, aBagSPJavaOrchestration, originalRequest);
                             	responseTransfer = mappingResponseSpeiToProcedureOffline(responseTransferOff, responseTransfer, aBagSPJavaOrchestration);
                             	
                             } else if (typeConnector != null && typeConnector.equals("STP")) {  
