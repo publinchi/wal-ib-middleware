@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ConsolaNetReader.dll" size="25600">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ConsolaNetReader.exe" size="91648">
       <assemblyIdentity name="ConsolaNetReader" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>o7zb6PypjkxQO5mqcHdrw2HmLjP02ge3MgYIEXSEUJM=</dsig:DigestValue>
+        <dsig:DigestValue>ecu6S+vwIYTr+R2NNRhZvO96O0T/1dCiP6X9eIXaZ34=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

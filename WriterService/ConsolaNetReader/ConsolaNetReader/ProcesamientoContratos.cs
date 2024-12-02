@@ -176,55 +176,71 @@ namespace ConsolaNetReader
                 Microsoft.Office.Interop.Word.Document plantilla = null;
 
 
-                try
+               string contract= contratos.Valores.Where(x => x.Llave == "$$contract$$").Select(y => y.Valor).FirstOrDefault().ToString();
+
+                if (!contract.Equals("V"))
                 {
 
-                    String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
-                    File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
-                    plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
+                    try
+                    {
 
-                    aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
-                    contractToMail = convertToPDF();
-                    uploadFile("CONTRATO");
+                        String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
+                        File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
+                        plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
+
+                        aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
+                        contractToMail = convertToPDF();
+                        uploadFile("CONTRATO");
+                        flagContrato = true;
+
+                    }
+                    catch (Exception e)
+                    {
+                        log.Error(e);
+                    }
+                    finally
+                    {
+                        wordApp.Quit();
+
+                        File.Delete(System.IO.Path.Combine(temporales, this.temporalFile));
+                    }
+
+
+                }else
                     flagContrato = true;
 
-                }
-                catch (Exception e)
+
+                string generalData = contratos.Valores.Where(x => x.Llave == "$$generaldata$$").Select(y => y.Valor).FirstOrDefault().ToString();
+
+                if (!generalData.Equals("1"))
                 {
-                    log.Error(e);
-                }
-                finally
-                {
-                    wordApp.Quit();
+                    Application wordApp2 = new Application();
+                    Microsoft.Office.Interop.Word.Document plantillaGeneral = null;
+                    this.setFileName();
 
-                    File.Delete(System.IO.Path.Combine(temporales, this.temporalFile));
-                }
+                    try
+                    {
 
-                Application wordApp2 = new Application();
-                Microsoft.Office.Interop.Word.Document plantillaGeneral = null;
-                this.setFileName();
+                        string rutaGeneral = System.IO.Path.Combine(plantillas, this.plantillaGeneral);
+                        File.Copy(rutaGeneral, System.IO.Path.Combine(temporales, this.temporalFileGeneral), overwrite: true);
+                        plantillaGeneral = wordApp2.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
+                        aplicaCambiosContrato(contratos, plantillaGeneral, "DATOS CLIENTE");
+                        convertToPDF();
+                        uploadFile("DATOS CLIENTE");
+                        flagDatosGenerales = true;
+                    }
+                    catch (Exception xe)
+                    {
+                        log.Error(xe);
+                    }
+                    finally
+                    {
+                        wordApp2.Quit();
 
-                try
-                {
-
-                    string rutaGeneral = System.IO.Path.Combine(plantillas, this.plantillaGeneral);
-                    File.Copy(rutaGeneral, System.IO.Path.Combine(temporales, this.temporalFileGeneral), overwrite: true);
-                    plantillaGeneral = wordApp2.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
-                    aplicaCambiosContrato(contratos, plantillaGeneral, "DATOS CLIENTE");
-                    convertToPDF();
-                    uploadFile("DATOS CLIENTE");
+                        File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
+                    }
+                }else
                     flagDatosGenerales = true;
-                }
-                catch (Exception xe)
-                {
-                    log.Error(xe);
-                }
-                finally
-                {
-                    wordApp2.Quit();
-
-                    File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
-                }
 
 
                 try

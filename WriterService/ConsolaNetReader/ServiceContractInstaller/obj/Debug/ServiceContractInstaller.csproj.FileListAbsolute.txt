@@ -4,7 +4,6 @@ C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ServiceContractInst
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ServiceContractInstaller.exe
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ServiceContractInstaller.pdb
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\BouncyCastle.Crypto.dll
-C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ConsolaNetReader.dll
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\DocumentFormat.OpenXml.dll
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\DocumentFormat.OpenXML.Extensions.dll
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\DocumentFormat.OpenXml.Framework.dll
@@ -40,7 +39,6 @@ C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\System.ValueTuple.d
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\Xceed.Document.NET.dll
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\Xceed.Words.NET.dll
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ConsolaNetReader.pdb
-C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ConsolaNetReader.dll.config
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\DocumentFormat.OpenXml.xml
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\DocumentFormat.OpenXml.Framework.xml
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\itextsharp.xml
@@ -81,3 +79,5 @@ C:\cobis\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInst
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceC.1C347047.Up2Date
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.exe
 C:\cobis\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.pdb
+C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ConsolaNetReader.exe
+C:\cobis\ConsolaNetReader\ServiceContractInstaller\bin\Debug\ConsolaNetReader.exe.config
