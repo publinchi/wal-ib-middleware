@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Date;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonArray;
@@ -88,6 +90,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
 	private IAdminTokenUser tokenService;
+	private String codBlockHigh;
+	private String prefixPhone;
 
 	public void setTokenService(IAdminTokenUser tokenService) {
 		this.tokenService = tokenService;
@@ -141,10 +145,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
 		String estadoRiesgo = "";
+		String responseBody = "";
+		String actionName = "";
+		String blockCode = "";
 		
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
 		String evaluarRiesgoSystem = getParam(anOriginalRequest, "AERISY", "BVI");
+		codBlockHigh = getParam(anOriginalRequest, "CBP", "BVI");
 		
 		String channel = anOriginalRequest.readValueParam("@i_channel") != null ? anOriginalRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 		
@@ -239,7 +247,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 					if(logger.isDebugEnabled())
 					{
-						logger.logInfo("BER cta:"+wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+						logger.logDebug("BER cta:"+wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
 					}
 					anOriginalRequest.removeParam("@i_cta_des");
 					anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
@@ -255,73 +263,59 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					return wAccountsResp;
 				}
 				
-				if ( evaluaRiesgo.equals("true") && (
-					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
-					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
-					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
-					)
-				) {
-					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-				
-					// Obtengo los valores de la evaluación de riesgo
-					if (aBagSPJavaOrchestration.get("success_risk") != null) {				
-						valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
-						
-						if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-							codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-						}
-						
-						if (aBagSPJavaOrchestration.get("message") != null) {	
-							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-						}
-						
-						if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-							estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
-						}
-						
-						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-		
-						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-							logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
-							logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
-							logger.logInfo("Continua flujo p2p");
-							anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
-						} else {
-							IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
-							logger.logDebug("Respose Exeption: " + resp.toString());
-							return resp;
-						}	
-					}else {
-						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
-						logger.logDebug("Respose Exeption: " + resp.toString());
-						return resp;
-					}	
-				}else {
+				if(logger.isInfoEnabled()){
 					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
-					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
-					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
-					/*
-					if(anProcedureResponse.getReturnCode()==0){
-						anOriginalRequest.removeParam("@o_fecha_tran");
-						anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
-					}
-					else
-						return anProcedureResponse;
-					*/
-				}				
+					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
+					
+				anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+				/*
+				if(anProcedureResponse.getReturnCode()==0){
+					anOriginalRequest.removeParam("@o_fecha_tran");
+					anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
+				}
+				else
+					return anProcedureResponse;
+				*/
+							
 				//aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
 			}
 			else{
-				logger.logDebug("evaluateExecuteReentry FALSE");
+				if(logger.isDebugEnabled()){logger.logDebug("evaluateExecuteReentry FALSE");}
 				IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
-				logger.logDebug("Respose Exeption:: " + resp.toString());
+				if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
 				return resp;
 			}
 			
-			logger.logDebug("Res IsReentry:: " + "S");
+			if(logger.isDebugEnabled()){logger.logDebug("Res IsReentry:: " + "S");}
 		} else {
 			aBagSPJavaOrchestration.put("IsReentry", "N");
-			logger.logDebug("Res IsReentry:: " + "N");
+			
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Res IsReentry:: " + "N");
+				logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);}
+			
+			IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+			IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+			
+			wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
+			if(logger.isInfoEnabled()){
+				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			}
+			
+			if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+				anOriginalRequest.removeParam("@i_cta_des");
+				anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+				wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+				
+				if(logger.isDebugEnabled()){
+					logger.logDebug(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());}
+				
+				if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+			      return wAccountsRespVal;
+			   }
+			}
+			else{
+				return wAccountsResp; }
 			
 			if ( evaluaRiesgo.equals("true") && (
 					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
@@ -342,23 +336,89 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
 					}
 
+					if(aBagSPJavaOrchestration.get("responseBody") != null) {
+						responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
+						JsonParser jsonParser = new JsonParser();
+						JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
+						
+						if(logger.isDebugEnabled()){
+							logger.logDebug("Response body riskEvaluation: " + responseBody);
+							logger.logDebug("Objeto de respuesta de riskEvaluation: " + riskDetailsObject);
+						}
+
+						if (riskDetailsObject.has("riskDetails")) {
+							JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+							if (riskDetails.has("riskStatus")) {
+								String riskStatus = riskDetails.get("riskStatus").getAsString();
+								
+								if(logger.isDebugEnabled()){
+									logger.logDebug("Estado riskEvaluation: " + riskStatus);}
+
+
+								if(riskStatus.contains("HIGH")) {
+
+									if (riskDetails.has("actions")) {
+										//Construccion del body para el conector
+										JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+										// Iterar sobre el JsonArray para obtener actionName
+										for (JsonElement actionElement : actionsArray) {
+											JsonObject actionObject = actionElement.getAsJsonObject();
+											actionName =  actionObject.get("actionName").getAsString();
+
+											if(logger.isDebugEnabled()){
+												logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+											IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+											blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+											if (blockCode == "null" || blockCode.isEmpty()) {
+											logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+
+											} else {
+												//Realizamos el bloqueo del usuario
+												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+
+											}
+										}
+									}
+
+									//Generamos un bloqueo de la cuenta contra débitos
+									generaBloqueoCuenta(anOriginalRequest);
+
+									//Seteamos los valores para el retorno
+									anProcedureResponse.setReturnCode(400383);
+									anProcedureResponse.addMessage(1, "Usuario Bloqueado");
+
+									return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+								}
+							} else {
+								logger.logError("No se encontró riskStatus en el objeto");
+							}
+						} else {
+							logger.logError("No se encontró riskDetails en el objeto");
+						}
+					}
+
 					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
 						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
 					}
 					
-					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+					if(logger.isDebugEnabled()){
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+					}
 		
 					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
 					} else {
 						IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
-						logger.logDebug("Respose Exeption:: " + resp.toString());
+						if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
 						return resp;
 					}
 				}
 				else {
 					IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
-					logger.logDebug("Respose Exeption: " + resp.toString());
+					if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption: " + resp.toString());}
 					return resp;
 				}
 			}else {
@@ -757,25 +817,25 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en transferThirdAccount");
 		}
-			
+
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-		
+
 		try {
 			callGetLimits(aRequest, aBagSPJavaOrchestration);
 
 			if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
 				obtainLimits(aRequest, aBagSPJavaOrchestration);
 
-				if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
-					(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+				if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") &&
+						(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
 					IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
 					logger.logDebug("Respose Exeption: " + resp.toString());
 					return resp;
 				}
-					
-				if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") &&  
-					(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+
+				if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") &&
+						(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
 					IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
 					logger.logDebug("Respose Exeption: " + resp.toString());
 					return resp;
@@ -787,47 +847,47 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			logger.logError(e);
 		}
 
-		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);		
+		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);
 		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
-		
+
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 			aRequest.removeParam("@i_cta_des");
 			aRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
-			wAccountsRespVal = getValAccountReq(aRequest, aBagSPJavaOrchestration);		
+			wAccountsRespVal = getValAccountReq(aRequest, aBagSPJavaOrchestration);
 			logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
 		}
 		else
 		{
 			return wAccountsResp;
 		}
-		
+
 		if (wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			
+
 			IProcedureResponse wTransferResponse = new ProcedureResponseAS();
-			
+
 			logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
 			logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
 			logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
-			aBagSPJavaOrchestration.get("o_mon") +
-			aBagSPJavaOrchestration.get("o_prod_des") +
-			aBagSPJavaOrchestration.get("o_mon_des") +
-			aBagSPJavaOrchestration.get("o_prod_alias") +
-			aBagSPJavaOrchestration.get("o_nom_beneficiary") +
-			aBagSPJavaOrchestration.get("o_login") +
-			aBagSPJavaOrchestration.get("o_ente_bv"));
-			
+					aBagSPJavaOrchestration.get("o_mon") +
+					aBagSPJavaOrchestration.get("o_prod_des") +
+					aBagSPJavaOrchestration.get("o_mon_des") +
+					aBagSPJavaOrchestration.get("o_prod_alias") +
+					aBagSPJavaOrchestration.get("o_nom_beneficiary") +
+					aBagSPJavaOrchestration.get("o_login") +
+					aBagSPJavaOrchestration.get("o_ente_bv"));
+
 			wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
-			
-			
+
+
 			//wTransferResponse = executeTransfer(aRequest, aBagSPJavaOrchestration);
-			return wTransferResponse; 
+			return wTransferResponse;
 		}
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de transferThirdAccount");
 		}
-		
+
 
 		return wAccountsRespVal;
 	}
@@ -836,9 +896,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeRiskEvaluation");
 		}
-		
-		String prefixPhone = getParam(aRequest, "PNT", "AHO");
-
+		prefixPhone = getParam(aRequest, "PNT", "AHO");
 		IProcedureRequest procedureRequest = initProcedureRequest(aRequest);
 		
 		procedureRequest.setSpName("cob_procesador..sp_conn_risk_evaluation");		
@@ -857,7 +915,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel").toString());//se obtiene con el response del f1
 		
-		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent").toString());//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));
@@ -867,7 +925,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_location_capturedTime", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_ipAddress", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));//signIp del response del f1
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueFieldInHeader("ssn"));//movement id
-		String transactionDate = unifyDateFormat(aRequest.readValueParam("@x_end_user_request_date"));
+		String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_capturedTime"));
 		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_currency"));
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_val"));
@@ -914,6 +972,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (connectorRiskEvaluationResponse.readValueParam("@o_message") != null)
 			aBagSPJavaOrchestration.put("message", connectorRiskEvaluationResponse.readValueParam("@o_message"));
 
+		if (connectorRiskEvaluationResponse.readValueParam("@o_responseBody") != null)
+			aBagSPJavaOrchestration.put("responseBody", connectorRiskEvaluationResponse.readValueParam("@o_responseBody"));
+
 		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
 			aBagSPJavaOrchestration.put("isOperationAllowed", connectorRiskEvaluationResponse.readValueParam("@o_isOperationAllowed"));
@@ -947,6 +1008,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
 		String login = null;
+		String codBlockOTP = getParam(aRequest, "CBT", "BVI");
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -972,13 +1034,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			destinyAccount = "E";
 		}
 
+		getLoginById(aRequest, aBagSPJavaOrchestration);
+		
 		if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
-
-			getLoginById(aRequest, aBagSPJavaOrchestration);
 			
 			login = aBagSPJavaOrchestration.get("o_login").toString();
 			
-			logger.logDebug("User login: "+login);
+			if (logger.isDebugEnabled()) {	
+				logger.logDebug("User login: "+login);
+			}
 			
 			if (!login.equals("X")) {
 			
@@ -1042,7 +1106,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
 			}
 		}
 		
@@ -1633,12 +1697,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	    
 	}
 
-	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
 		String phoneNumber = null;
-		Integer phoneCode = 52;
+		String phoneCode = prefixPhone;
 		String channel = null;
 
 		IProcedureResponse connectorBlockOperationResponse = null;
@@ -1646,8 +1710,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 
-		if(logger.isDebugEnabled())
-			logger.logDebug("aRequest execute blockOperation: " + aRequest);
+		if (phoneCode == null) {
+			phoneCode = "52";
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.logDebug("aRequest execute blockOperation: " + aRequest);}
 
 		try {
 			//Parametros de entrada
@@ -1682,11 +1750,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
 			//Validacion del blockCode
-			jsonRequest.addProperty("blockCode", "21");
+			jsonRequest.addProperty("blockCode", codBlock);
 
 			//Validacion de blockResason
-			jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
-
+			if (codBlock.equals(codBlockHigh)){
+					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
+			}else {
+				jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+			}
+			
 			anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
 			//Se llama al conector de blockOperation
@@ -1787,6 +1859,40 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
+	}
+	
+	private void generaBloqueoCuenta(IProcedureRequest aRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en generaBloqueoCuenta");
+		}
+
+		String tipoBloqueo = getParam(aRequest, "BCD", "AHO");
+		
+		request.setSpName("cob_ahorros..sp_val_acc_status_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR,"BM");
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, tipoBloqueo);
+		
+		//Add output params
+		request.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de generaBloqueoCuenta");
+		}
+
 	}
 
 	private String unifyDateFormat(String dateString) {
@@ -1993,6 +2099,38 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		} catch (Exception e) {
 			logger.logError("Unexpected error while parsing JSON", e);
 		}
+	}
+
+	private IProcedureResponse getCodeBlocking(String description) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getMessageErrors");
+		}
+
+		request.setSpName("cobis..sp_catalogo");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+		request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
+		request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, "bv_cod_bloqueo_idc");
+		request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, description);
+
+		logger.logDebug("Request Corebanking getMessageErrors: " + request.toString());
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getMessageErrors: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getMessageErrors");
+		}
+		return wProductsQueryResp;
 	}
 
 }
