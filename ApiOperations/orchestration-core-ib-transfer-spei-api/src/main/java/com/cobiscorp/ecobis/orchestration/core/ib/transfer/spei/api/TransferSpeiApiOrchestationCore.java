@@ -127,6 +127,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String OPERATING_INSTITUTION = "90715";
     private boolean successConnector = false;
     private int returnCode = 0;
+    private String codBlockHigh;
 
     private static ILogger logger = LogFactory.getLogger(TransferSpeiApiOrchestationCore.class);
     private static final String CLASS_NAME = "TransferSpeiApiOrchestationCore--->";
@@ -318,11 +319,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
         String evaluarRiesgoMobile = getParam(aRequest, "AERIMB", "BVI");
         String evaluarRiesgoSystem = getParam(aRequest, "AERISY", "BVI");
+        codBlockHigh = getParam(aRequest, "CBP", "BVI");
         String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
 		Boolean estadoRiesgo = false;
 		String evaluaRiesgo = aRequest.readValueParam("@i_autoActionExecution") != null ? aRequest.readValueParam("@i_autoActionExecution").toString() : "false";
+        String responseBody = "";
+        String actionName = "";
+        String blockCode = "";
 
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
@@ -354,23 +359,25 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		}  
 
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);
-        logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+        if (logger.isInfoEnabled()) {
+        	logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+        }
 
         if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 
             IProcedureResponse wTransferResponse = new ProcedureResponseAS();
-            logger.logInfo(CLASS_NAME + " JCOS " + aBagSPJavaOrchestration.get("o_prod")
-                    + aBagSPJavaOrchestration.get("o_mon") + aBagSPJavaOrchestration.get("o_prod_des")
-                    + aBagSPJavaOrchestration.get("o_mon_des") + aBagSPJavaOrchestration.get("o_prod_alias")
-                    + aBagSPJavaOrchestration.get("o_nom_beneficiary") + aBagSPJavaOrchestration.get("o_login")
-                    + aBagSPJavaOrchestration.get("o_ente_bv"));
-
-
+            if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " JCOS " + aBagSPJavaOrchestration.get("o_prod")
+	                    + aBagSPJavaOrchestration.get("o_mon") + aBagSPJavaOrchestration.get("o_prod_des")
+	                    + aBagSPJavaOrchestration.get("o_mon_des") + aBagSPJavaOrchestration.get("o_prod_alias")
+	                    + aBagSPJavaOrchestration.get("o_nom_beneficiary") + aBagSPJavaOrchestration.get("o_login")
+	                    + aBagSPJavaOrchestration.get("o_ente_bv"));
+            }
+            
             if ( evaluaRiesgo.equals("true") && (
-                        ( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
-                        (evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
-                        (evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
-                    )
+               ( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+               ( evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+               ( evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM")))
             ) {
             	//agregar el llamado al orquestador de evaluationrisk
                 IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(aRequest, aBagSPJavaOrchestration);
@@ -383,31 +390,97 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
     				}
     				
-    				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+    				if (aBagSPJavaOrchestration.get("message") != null) {
     					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
     				}
-    				
-    				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Mensaje: " + mensajeRiesgo );
-    				
+
+                    if(aBagSPJavaOrchestration.get("responseBody") != null) {
+                        responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
+                        if(logger.isDebugEnabled()){
+                        	logger.logDebug("Objeto responseBody de riskEvaluation:: " + riskDetailsObject);
+                        }
+
+                        if (riskDetailsObject.has("riskDetails")) {
+                            JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+                            if (riskDetails.has("riskStatus")) {
+                                String riskStatus = riskDetails.get("riskStatus").getAsString();
+
+                                if(logger.isDebugEnabled()){
+                                	logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
+
+                                if(riskStatus.contains("HIGH")) {
+
+                                    if (riskDetails.has("actions")) {
+                                        //Construccion del body para el conector
+                                        JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+                                        // Iterar sobre el JsonArray para obtener actionName
+                                        for (JsonElement actionElement : actionsArray) {
+                                            JsonObject actionObject = actionElement.getAsJsonObject();
+                                            actionName =  actionObject.get("actionName").getAsString();
+
+                                            if(logger.isDebugEnabled()){
+                                                logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+                                            IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+                                            blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+                                            if (blockCode == "null" || blockCode.isEmpty()) {
+                                                logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+
+                                            } else {
+                                                //Realizamos el bloqueo del usuario
+                                                IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
+
+                                            }
+                                        }
+                                    }
+
+                                    //Generamos un bloqueo de la cuenta contra débitos
+                                    generaBloqueoCuenta(aRequest);
+
+                                    //Seteamos los valores para el retorno
+                                    wAccountsResp.setReturnCode(400383);
+                                    wAccountsResp.addMessage(1, "Usuario Bloqueado");
+
+                                    return processResponseTransfer(aRequest, wAccountsResp,aBagSPJavaOrchestration);
+                                }
+                            } else {
+                                logger.logError("No se encontró riskStatus en el objeto");
+                            }
+                        } else {
+                            logger.logError("No se encontró riskDetails en el objeto");
+                        }
+                    }
+    				    				
     				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
     					estadoRiesgo = Boolean.parseBoolean((String) aBagSPJavaOrchestration.get("isOperationAllowed"));
     				}
     				
-    				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+    				if(logger.isDebugEnabled()){
+    					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+    				}
 
     				if (valorRiesgo.equals("true") && estadoRiesgo) {
-    					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
-    					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
-    					logger.logInfo("Continua flujo spei-out");
+    					if (logger.isInfoEnabled()) {
+    						logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
+    						logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+    					}
     					wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
     				} else {
     					IProcedureResponse resp = Utils.returnException(18054, "OPERACION NO PERMITIDA");
-    					logger.logDebug("Response Exeption: " + resp.toString());
+    					if(logger.isDebugEnabled()){
+    						logger.logDebug("Response Exeption: " + resp.toString());
+    					}
     					return resp;
     				}
                 } else {
     				IProcedureResponse resp = Utils.returnException(18055, "ERROR AL EJECUTAR LA EVALUACIÓN DE RIESGO");
-    				logger.logDebug("Response Exeption: " + resp.toString());
+    				if(logger.isDebugEnabled()){
+    					logger.logDebug("Response Exeption: " + resp.toString());
+    				}
     				return resp;
     			}
                 
@@ -444,6 +517,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String otpReturnCode = null;
 		String otpReturnCodeNew = null;
         String login = null;
+        String codBlockOTP = getParam(aRequest, "CBT", "BVI");
         
         if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
             xRequestId = "E";
@@ -554,7 +628,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
- 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
+ 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
  			}
  		}
         
@@ -2453,7 +2527,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return "";
 	}
 
-    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
         }
@@ -2502,10 +2576,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
             //Validacion del blockCode
-            jsonRequest.addProperty("blockCode", "21");
+            jsonRequest.addProperty("blockCode", codBlock);
 
             //Validacion de blockResason
+			if (codBlock.equals(codBlockHigh)){
+					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
+			}else {
             jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+			}
 
             anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
@@ -3266,6 +3344,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		if (connectorRiskEvaluationResponse.readValueParam("@o_message") != null)
 			aBagSPJavaOrchestration.put("message", connectorRiskEvaluationResponse.readValueParam("@o_message"));
 
+        if (connectorRiskEvaluationResponse.readValueParam("@o_responseBody") != null)
+            aBagSPJavaOrchestration.put("responseBody", connectorRiskEvaluationResponse.readValueParam("@o_responseBody"));
+
 		if (connectorRiskEvaluationResponse.readValueParam("@o_success") != null) {
 			aBagSPJavaOrchestration.put("success_risk", connectorRiskEvaluationResponse.readValueParam("@o_success"));
 			aBagSPJavaOrchestration.put("isOperationAllowed", connectorRiskEvaluationResponse.readValueParam("@o_isOperationAllowed"));
@@ -3304,6 +3385,40 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
     }
 
+    private void generaBloqueoCuenta(IProcedureRequest aRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en generaBloqueoCuenta");
+		}
+
+		String tipoBloqueo = getParam(aRequest, "BCD", "AHO");
+		
+		request.setSpName("cob_ahorros..sp_val_acc_status_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		
+		request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		request.addInputParam("@i_accountStatus", ICTSTypes.SQLVARCHAR,"BM");
+		request.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
+		request.addInputParam("@i_blockingValue", ICTSTypes.SQLMONEY, tipoBloqueo);
+		
+		//Add output params
+		request.addOutputParam("@o_changedStateDate", ICTSTypes.SQLVARCHAR, "X");
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de generaBloqueoCuenta");
+		}
+
+	}
+    
     private String unifyDateFormat(String dateString) {
         String[] formats = {
             "yyyy-MM-dd HH:mm:ssZ",
@@ -3513,5 +3628,37 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logDebug("Response registerResponse get: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 	}
+
+    private IProcedureResponse getCodeBlocking(String description) {
+
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Entrando en getMessageErrors");
+        }
+
+        request.setSpName("cobis..sp_catalogo");
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_CENTRAL);
+        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+        request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+        request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
+        request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, "bv_cod_bloqueo_idc");
+        request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, description);
+
+        logger.logDebug("Request Corebanking getMessageErrors: " + request.toString());
+        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response Corebanking getMessageErrors: " + wProductsQueryResp.getProcedureResponseAsString());
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo(CLASS_NAME + " Saliendo de getMessageErrors");
+        }
+        return wProductsQueryResp;
+    }
 
 }
