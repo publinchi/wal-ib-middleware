@@ -668,20 +668,20 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	private void notifySpei (IProcedureRequest anOriginalRequest, java.util.Map map) {
 
 		try {
-			ServerResponse serverResponse = (ServerResponse) map.get(RESPONSE_SERVER);
-
-			//Por definicion funcional no se notifica en modo offline
-			if(Boolean.FALSE.equals(serverResponse.getOnLine())){
+			logger.logInfo(CLASS_NAME + "REENTRY_EXE" + anOriginalRequest.readValueFieldInHeader(REENTRY_EXE));
+			if(Boolean.TRUE.equals("Y".equals(anOriginalRequest.readValueFieldInHeader(REENTRY_EXE)))){
 				return;
 			}
+
+			ServerResponse serverResponse = (ServerResponse) map.get(RESPONSE_SERVER);
 
 			logger.logInfo(CLASS_NAME + "Enviando notificacion spei");
 
 			IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
 
-			String cuentaClave=anOriginalRequest.readValueParam("@i_cuenta_beneficiario");
+			String cuentaClabe = anOriginalRequest.readValueParam("@i_cuentaBeneficiario");
 
-			logger.logInfo(CLASS_NAME + "using clabe account account "+cuentaClave);
+			logger.logInfo(CLASS_NAME + "using clabe account account " + cuentaClabe);
 
 			procedureRequest.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib");
 			procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S',"local");
@@ -697,10 +697,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			procedureRequest.addInputParam("@i_transaccion_id", ICTSTypes.SQLINT1, "0");
 			procedureRequest.addInputParam("@i_canal", ICTSTypes.SQLINT1, "8");
 			procedureRequest.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "spei");
-			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, cuentaClave);
+			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, cuentaClabe);
 			procedureRequest.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
 			procedureRequest.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
-			procedureRequest.addInputParam("@i_c2", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+			procedureRequest.addInputParam("@i_c2", ICTSTypes.SQLVARCHAR, cuentaClabe);
 			procedureRequest.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, String.valueOf(  anOriginalRequest.readValueParam("@i_monto")));
 			procedureRequest.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_conceptoPago"));
 			procedureRequest.addInputParam("@i_aux9", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
