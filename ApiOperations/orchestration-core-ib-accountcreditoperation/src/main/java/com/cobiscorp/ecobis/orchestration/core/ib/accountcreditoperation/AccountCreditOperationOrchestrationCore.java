@@ -367,8 +367,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return;
 		}
 		
-		 registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050",
-		            (String) aBagSPJavaOrchestration.get("ssn"));
+		 /*registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050",
+		            (String) aBagSPJavaOrchestration.get("ssn"));*/
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
@@ -603,8 +603,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		}
 		
 		
-	        registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050",
-	            (String) aBagSPJavaOrchestration.get("ssn"));
+	     /*   registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050",
+	            (String) aBagSPJavaOrchestration.get("ssn"));*/
 
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);

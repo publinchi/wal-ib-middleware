@@ -239,8 +239,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			if(null == idDevolucion || "0".equals(idDevolucion)){
 				notifySpei(anOriginalRequest, aBagSPJavaOrchestration);
 				logger.logInfo("Llamo al metodo registrar SPEI_IN");
-			    registerAllTransactionSuccess("SPEI_IN", anOriginalRequest,"2010",
-			      (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));
+			 /*   registerAllTransactionSuccess("SPEI_IN", anOriginalRequest,"2010",
+			      (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));*/
 			}
 	
 		}
