@@ -67,6 +67,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
+	private String transaccionDate;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -205,6 +206,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
 
 			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				transaccionDate = wServerStatusResp.readValueParam("@o_fecha_proceso");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 				try {
 					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
@@ -577,8 +579,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 			return;
 		}
 		
-		/* registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", wQueryRequest,"4060",
-		            (String) aBagSPJavaOrchestration.get("ssn"));*/
+		//aBagSPJavaOrchestration.put("transaccionDate",transaccionDate); 
+		//registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", wQueryRequest,"4060", aBagSPJavaOrchestration);
 	}
 
 	@Override
@@ -601,7 +603,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
 			row.addRowData(4, new ResultSetRowColumnData(false, this.columnsToReturn[3].getValue()));
 			data.addRow(row);
-
+			aBagSPJavaOrchestration.put("transaccionDate",transaccionDate); 
+	    	registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060", aBagSPJavaOrchestration);
 		} else {
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
@@ -610,11 +613,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 			row.addRowData(4, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
 		}
-		
-		 logger.logInfo("Llamo al metodo registrar CMFJ");
-	       /* registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060",
-	            (String) aBagSPJavaOrchestration.get("ssn"));*/
-
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
 		wProcedureResponse.addResponseBlock(resultBlock);			
