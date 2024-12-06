@@ -577,8 +577,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 			return;
 		}
 		
-		 registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", wQueryRequest,"4060",
-		            (String) aBagSPJavaOrchestration.get("ssn"));
+		/* registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", wQueryRequest,"4060",
+		            (String) aBagSPJavaOrchestration.get("ssn"));*/
 	}
 
 	@Override
@@ -612,8 +612,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		 logger.logInfo("Llamo al metodo registrar CMFJ");
-	        registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060",
-	            (String) aBagSPJavaOrchestration.get("ssn"));
+	       /* registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest,"4060",
+	            (String) aBagSPJavaOrchestration.get("ssn"));*/
 
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
