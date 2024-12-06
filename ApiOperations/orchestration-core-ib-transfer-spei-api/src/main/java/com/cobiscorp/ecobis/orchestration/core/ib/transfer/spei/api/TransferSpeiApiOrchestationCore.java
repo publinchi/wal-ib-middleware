@@ -1065,8 +1065,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
 					 
 					logger.logInfo("Llamo al metodo registrar SPEI_OUT");
-				        registerAllTransactionSuccess("SPEI_OUT", anOriginalRequest,"2040",
-				        		anOriginalRequest.readValueParam("@s_ssn_branch"));
+				    /*    registerAllTransactionSuccess("SPEI_OUT", anOriginalRequest,"2040",
+				        		anOriginalRequest.readValueParam("@s_ssn_branch"));*/
 
 					
 					
