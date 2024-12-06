@@ -1186,11 +1186,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 		
 		
-         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
+         /*registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
              (String) aBagSPJavaOrchestration.get("ssn"));
          
          registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
-                 (String) aBagSPJavaOrchestration.get("ssn"));
+                 (String) aBagSPJavaOrchestration.get("ssn"));*/
     
 
 		if (logger.isInfoEnabled()) {
@@ -1555,11 +1555,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
 		
 		
-		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1010",
+	/*	registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1010",
 		          (String) aBagSPJavaOrchestration.get("ssn"));
 		         
 		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1020",
-		           (String) aBagSPJavaOrchestration.get("ssn"));
+		           (String) aBagSPJavaOrchestration.get("ssn"));*/
 		
 		return response;
 	}
