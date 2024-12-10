@@ -585,6 +585,23 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				// Notificacion credito
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N146");
 
+				
+				int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
+				String identificationType = null;
+
+				if(lengthCtades == 10 || lengthCtades == 12) {
+					identificationType = "phone";
+				} else if (lengthCtades == 18) {
+					identificationType = "clabe";
+				} else if (lengthCtades == 11) {
+					identificationType = "account number";
+				}
+				aBagSPJavaOrchestration.put("destinationAccountType", identificationType);
+		
+        		registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010", aBagSPJavaOrchestration);
+         
+        		registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020", aBagSPJavaOrchestration);
+
 			} else {
 				
 				executionStatus = "ERROR";
@@ -1180,19 +1197,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		aBagSPJavaOrchestration.put("o_ente_bv_des", wProductsQueryResp.readValueParam("@o_ente_bv_des"));
 		aBagSPJavaOrchestration.put("o_seq_limite_out", wProductsQueryResp.readValueParam("@o_seq_limite_out"));
 		aBagSPJavaOrchestration.put("o_seq_limite_in", wProductsQueryResp.readValueParam("@o_seq_limite_in"));
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking  DCO : " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-		
-		
-         /*registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010",
-             (String) aBagSPJavaOrchestration.get("ssn"));
-         
-         registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1020",
-                 (String) aBagSPJavaOrchestration.get("ssn"));*/
-    
-
+		    
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de getDataAccountReq");
 		}
@@ -1478,7 +1487,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if(response.readValueFieldInHeader("ssn")!=null)
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("o_ssn_branch", response.readValueParam("@o_ssn_branch"));
-		logger.logInfo("o_ssn_branch"+response.readValueParam("@o_ssn_branch"));
+		logger.logInfo("o_ssn_branch::: "+response.readValueParam("@o_ssn_branch"));
 		
 		return response;
 		
@@ -1553,13 +1562,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 		if(response.readValueFieldInHeader("ssn")!=null)
 		aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
-		
-		
-	/*	registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1010",
-		          (String) aBagSPJavaOrchestration.get("ssn"));
-		         
-		registerAllTransactionSuccess("transferThirdPartyAccount", anOriginalRequest,"1020",
-		           (String) aBagSPJavaOrchestration.get("ssn"));*/
 		
 		return response;
 	}

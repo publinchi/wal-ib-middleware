@@ -129,20 +129,17 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 		return responseTransfer;
 	}
 	
-	 public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , String movementId) {	
+	public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {	
+		try{
 			IProcedureRequest request = new ProcedureRequestAS();
-
-				logger.logInfo(" Entrando en registerAllTransactionSuccess");
 			
-			String movementType = "SPEI_OUT";
+			String movementType = "SPEI_DEBIT";
 			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
 			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
-			// request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
 			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
 			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
-			if(tipoTran.equals("SPEI_OUT")) {
-				request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
+			if(tipoTran.equals("SPEI_DEBIT")) {
 				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aRequest.readValueParam("@x_end_user_request_date"));
@@ -150,42 +147,44 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
-				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
+				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , aRequest.readValueParam("@i_commission"));
 				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , movementId);
+				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn_branch"));
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
-	            request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 				
 				request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, "CASHI");
-				request.addInputParam("@i_name", ICTSTypes.SQLVARCHAR , "o_nom_beneficiary"); //agregar sp
-				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_creditorAccount_identification"));
-				request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, "0");
 				
-				request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null); //consultar
-				request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,"0");
-				request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, "0");
+				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
+				// cambiar
+				request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
 				
-				request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, null);
-				request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR, null);
+				request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_owner_name")); //consultar
+				request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
+				request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
+				request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
 				
-				request.addInputParam("@i_beginningBalance", ICTSTypes.SQLMONEY, null); // consultar
-				request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
-				request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
+				
+				request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_codigo_acc"));
+				request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_clave_rastreo"));
 				
 				logger.logInfo("@i_request_trans_success: "+ (String)aRequest.readValueParam("@i_json_req")  +"req:"+ (String)aRequest.readValueParam("@i_json_req"));
 				request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR,(String)aRequest.readValueParam("@i_json_req"));
 				request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 			}
-				IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-					
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("Response Corebanking registerAllTransactionSuccess: " + wProductsQueryResp.getProcedureResponseAsString());
-				}
+			IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+				
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response Corebanking registerAllTransactionSuccess: " + wProductsQueryResp.getProcedureResponseAsString());
+			}
 
-				if (logger.isInfoEnabled()) {
-					logger.logInfo(" Saliendo de registerAllTransactionSuccess");
-				}
-	    }
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerAllTransactionSuccess");
+			}
+		}catch(Exception e){
+			logger.logError("Error Catastrofico en registerAllTransactionSuccess SPEI_DEBIT");	
+		}
+	}
 
 	private  void movementOffline(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration){
 

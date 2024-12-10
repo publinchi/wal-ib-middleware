@@ -67,6 +67,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
+	private String transaccionDate = null;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -206,6 +207,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 
 			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				transaccionDate = wServerStatusResp.readValueParam("@o_fecha_proceso");
 				try {
 					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
 				} catch (ParseException e) {
@@ -367,8 +369,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return;
 		}
 		
-		 /*registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050",
-		            (String) aBagSPJavaOrchestration.get("ssn"));*/
+		//aBagSPJavaOrchestration.put("transaccionDate",transaccionDate);
+		//registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050", aBagSPJavaOrchestration);
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
@@ -593,6 +595,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			row.addRowData(4, new ResultSetRowColumnData(false, this.columnsToReturn[3].getValue()));
 			data.addRow(row);
 
+			aBagSPJavaOrchestration.put("transaccionDate",transaccionDate);
+	    	registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050", aBagSPJavaOrchestration);
 		} else {
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
@@ -601,11 +605,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			row.addRowData(4, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
 		}
-		
-		
-	     /*   registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050",
-	            (String) aBagSPJavaOrchestration.get("ssn"));*/
-
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
 		wProcedureResponse.addResponseBlock(resultBlock);			

@@ -157,12 +157,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
     // Return DTO
-    public CreditAccountResponse creditOperation(CreditAccountRequest inCreditAccountRequest) throws CTSRestException {
+    public CreditAccountResponse creditOperation(String xRequestId,CreditAccountRequest inCreditAccountRequest) throws CTSRestException {
         LOGGER.logDebug("Start service execution: accountCreditOperation");
         CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
 
         // create procedure
         ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_credit_operation_api");
+
+        procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
 
         procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
         procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
@@ -6783,12 +6785,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
     // Return DTO
-    public  DebitAccountResponse  debitOperation(DebitAccountRequest inDebitAccountRequest  )throws CTSRestException{
+    public  DebitAccountResponse  debitOperation(String xRequestId, DebitAccountRequest inDebitAccountRequest  )throws CTSRestException{
         LOGGER.logDebug("Start service execution: debitOperation");
         DebitAccountResponse outSingleDebitAccountResponse  = new DebitAccountResponse();
 
         //create procedure
         ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_debit_operation_api");
+
+        procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
 
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
         procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getExternalCustomerId()));
