@@ -584,10 +584,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N11");
 				// Notificacion credito
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N146");
-
 				
 				int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
+				int lengthCtaOrig = aRequest.readValueParam("@i_cta").length();
 				String identificationType = null;
+				String identificationTypeOrig = null;
 
 				if(lengthCtades == 10 || lengthCtades == 12) {
 					identificationType = "phone";
@@ -596,7 +597,17 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				} else if (lengthCtades == 11) {
 					identificationType = "account number";
 				}
+
+				if(lengthCtaOrig == 10 || lengthCtaOrig == 12) {
+					identificationTypeOrig = "phone";
+				} else if (lengthCtaOrig == 18) {
+					identificationTypeOrig = "clabe";
+				} else if (lengthCtaOrig == 11) {
+					identificationTypeOrig = "account number";
+				}
+
 				aBagSPJavaOrchestration.put("destinationAccountType", identificationType);
+				aBagSPJavaOrchestration.put("originAccountType", identificationTypeOrig);
 		
         		registerAllTransactionSuccess("transferThirdPartyAccount", aRequest,"1010", aBagSPJavaOrchestration);
          
