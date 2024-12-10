@@ -64,7 +64,9 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/creditOperation")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response creditOperation(CreditAccountRequest inCreditAccountRequest) {
+	public Response creditOperation(
+		@HeaderParam("x-request-id") String xRequestId,
+		CreditAccountRequest inCreditAccountRequest) {
 		LOGGER.logDebug("Start service execution REST: creditOperation");
 		CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
 
@@ -82,7 +84,7 @@ public class ServiceContractOperationsApiRest {
 
 		try {
 			outSingleCreditAccountResponse = iServiceContractOperationsApiService
-					.creditOperation(inCreditAccountRequest);
+					.creditOperation(xRequestId, inCreditAccountRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
@@ -2145,7 +2147,9 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/debitOperation")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response debitOperation(DebitAccountRequest inDebitAccountRequest) {
+	public Response debitOperation(
+		@HeaderParam("x-request-id") String xRequestId,
+		DebitAccountRequest inDebitAccountRequest) {
 		LOGGER.logDebug("Start service execution REST: debitOperation");
 		DebitAccountResponse outSingleDebitAccountResponse = new DebitAccountResponse();
 
@@ -2160,7 +2164,7 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outSingleDebitAccountResponse = iServiceContractOperationsApiService.debitOperation(inDebitAccountRequest);
+			outSingleDebitAccountResponse = iServiceContractOperationsApiService.debitOperation(xRequestId, inDebitAccountRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {

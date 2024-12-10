@@ -121,7 +121,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return list
-	public CreditAccountResponse creditOperation(CreditAccountRequest inCreditAccountRequest) throws CTSRestException;
+	public CreditAccountResponse creditOperation(String xRequestId, CreditAccountRequest inCreditAccountRequest) throws CTSRestException;
 
 	/**
 	 * Encrypt Data
@@ -396,7 +396,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return DTO
-	public DebitAccountResponse debitOperation(DebitAccountRequest inDebitAccountRequest) throws CTSRestException;
+	public DebitAccountResponse debitOperation(String xRequestId, DebitAccountRequest inDebitAccountRequest) throws CTSRestException;
 
 	/**
 	 * Valdate token transaction factor API

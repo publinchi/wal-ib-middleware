@@ -238,9 +238,56 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			String idDevolucion = response.readValueParam("@o_id_causa_devolucion");
 			if(null == idDevolucion || "0".equals(idDevolucion)){
 				notifySpei(anOriginalRequest, aBagSPJavaOrchestration);
-				logger.logInfo("Llamo al metodo registrar SPEI_IN");
-			 /*   registerAllTransactionSuccess("SPEI_IN", anOriginalRequest,"2010",
-			      (String) aBagSPJavaOrchestration.get("@o_ssn_branch"));*/
+				int lengthCtades = anOriginalRequest.readValueParam("@i_cuentaBeneficiario").length();
+				String identificationType = null;
+				
+				if (lengthCtades == 18) {
+					identificationType = "clabe";
+				} else {
+					identificationType = "account number";
+				}
+				aBagSPJavaOrchestration.put("destinationAccountType", identificationType);
+
+				IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
+				procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500069");
+				procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+						IMultiBackEndResolverService.TARGET_CENTRAL);
+				procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+				procedureRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+				boolean isReentryExecution = "Y".equals(anOriginalRequest.readValueFieldInHeader(REENTRY_EXE));
+
+				procedureRequest.setSpName("cob_ahorros..sp_ah_spei_entrante");
+				procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "253");
+				procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "253");
+				procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+				procedureRequest.addInputParam("@i_mon", ICTSTypes.SYBINT4, "0");
+				procedureRequest.addInputParam("@i_canal", ICTSTypes.SYBINT4, "8");
+
+				procedureRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+				procedureRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
+				procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
+				procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "V");
+				procedureRequest.addInputParam("@i_tipo_cuenta_dest", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
+				procedureRequest.addInputParam("@i_tipo_cuenta_orig", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaOrdenante"));
+
+				procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
+				procedureRequest.addOutputParam("@o_client_code", ICTSTypes.SQLINT4, "");
+				procedureRequest.addOutputParam("@o_cuenta_cobis", ICTSTypes.SQLVARCHAR, "");
+				procedureRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "");
+				procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
+				procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
+				procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
+				procedureRequest.addOutputParam("@o_tipo_cuenta_dest", ICTSTypes.SQLVARCHAR, "");
+				procedureRequest.addOutputParam("@o_tipo_cuenta_orig", ICTSTypes.SQLVARCHAR, "");
+
+				IProcedureResponse ccProcedureResponse =  executeCoreBanking(procedureRequest);
+
+				aBagSPJavaOrchestration.put("destinationAccountType", ccProcedureResponse.readValueParam("@o_tipo_cuenta_dest").toString());
+				aBagSPJavaOrchestration.put("originAccountType", ccProcedureResponse.readValueParam("@o_tipo_cuenta_orig").toString());
+				aBagSPJavaOrchestration.put("externalCustId", ccProcedureResponse.readValueParam("@o_client_code").toString());
+				//aBagSPJavaOrchestration.put("destinationAccountNumber", ccProcedureResponse.readValueParam("@o_cuenta_cobis").toString());
+			
+			    registerAllTransactionSuccess("SPEI_CREDIT", anOriginalRequest,"2010", aBagSPJavaOrchestration);
 			}
 	
 		}
