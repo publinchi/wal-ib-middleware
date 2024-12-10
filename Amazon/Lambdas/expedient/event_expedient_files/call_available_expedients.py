@@ -105,7 +105,7 @@ def call_available_expedients(facade, context):
                     if name == 'INE_BACK' and ef_iner == 0:
                         callRequestFile = True
                         
-                    if name == 'ADDRESS_PROOF_VIA_INE_MULTI' and ef_dom1 == 0:
+                    if name == 'ADDRESS_PROOF_VIA_INE_FRONT' and ef_dom1 == 0:
                         callRequestFile = True
                         
                     if name == 'ADDRESS_PROOF_MULTI' and ef_dom2 == 0:
@@ -190,7 +190,7 @@ def upload_to_s3(facade, context, customer_id, file_name, binary_data):
     if name == 'INE_BACK':
         name = 'INE_2'
         
-    if name == 'ADDRESS_PROOF_VIA_INE_MULTI':
+    if name == 'ADDRESS_PROOF_VIA_INE_FRONT':
         name = 'COMPROBANTE_DOMICILIO'
         
     if name == 'ADDRESS_PROOF_MULTI':
