@@ -1063,12 +1063,27 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
 					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-					 
-					logger.logInfo("Llamo al metodo registrar SPEI_OUT");
-				    /*    registerAllTransactionSuccess("SPEI_OUT", anOriginalRequest,"2040",
-				        		anOriginalRequest.readValueParam("@s_ssn_branch"));*/
-
 					
+                    int lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
+                    int lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
+                    
+                    String identificationTypeOrig, identificationTypeDest = null;
+                    
+                    if (lengthCtaDest == 18) {
+                        identificationTypeDest = "clabe";
+                    } else {
+                        identificationTypeDest = "account number";
+                    }
+
+                    if (lengthCtaOrig == 18) {
+                        identificationTypeOrig = "clabe";
+                    } else {
+                        identificationTypeOrig = "account number";
+                    }
+
+                    aBagSPJavaOrchestration.put("destinationAccountType", identificationTypeDest);
+                    aBagSPJavaOrchestration.put("originAccountType", identificationTypeOrig);
+				    registerAllTransactionSuccess("SPEI_DEBIT", anOriginalRequest, "2040", aBagSPJavaOrchestration);
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
