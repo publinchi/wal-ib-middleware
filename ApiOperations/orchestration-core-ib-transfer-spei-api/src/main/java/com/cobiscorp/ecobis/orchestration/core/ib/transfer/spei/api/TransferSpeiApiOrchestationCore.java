@@ -1066,24 +1066,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					
                     int lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
                     int lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
-                    
-                    String identificationTypeOrig, identificationTypeDest = null;
-                    
-                    if (lengthCtaDest == 18) {
-                        identificationTypeDest = "clabe";
-                    } else {
-                        identificationTypeDest = "account number";
-                    }
 
-                    if (lengthCtaOrig == 18) {
-                        identificationTypeOrig = "clabe";
-                    } else {
-                        identificationTypeOrig = "account number";
-                    }
-
-                    aBagSPJavaOrchestration.put("destinationAccountType", identificationTypeDest);
-                    aBagSPJavaOrchestration.put("originAccountType", identificationTypeOrig);
-				    registerAllTransactionSuccess("SPEI_DEBIT", anOriginalRequest, "2040", aBagSPJavaOrchestration);
+                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, "SPEI_DEBIT", "2040", lengthCtaOrig, lengthCtaDest);
 					
 					logger.logInfo("bnbn true--->" + movementId);
 					
@@ -1215,6 +1199,30 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         return anOriginalProcedureResponse;
     }
+
+    private void registerWebhook(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String tipoTrans, 
+    String causal, int lengthCtaOrig, int lengthCtaDest){
+
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+        
+        String identificationTypeOrig, identificationTypeDest = null;
+        
+        if (lengthCtaDest == 18) {
+            identificationTypeDest = "clabe";
+        } else {
+            identificationTypeDest = "account number";
+        }
+
+        if (lengthCtaOrig == 18) {
+            identificationTypeOrig = "clabe";
+        } else {
+            identificationTypeOrig = "account number";
+        }
+
+        aBagSPJavaOrchestration.put("destinationAccountType", identificationTypeDest);
+        aBagSPJavaOrchestration.put("originAccountType", identificationTypeOrig);
+        registerAllTransactionSuccess(tipoTrans, anOriginalRequest, causal, aBagSPJavaOrchestration);
+    }
     
     private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
         
@@ -1285,7 +1293,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		} else {
 			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_referencia"));
 		}
-		
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
@@ -1493,9 +1500,28 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 	                            if (typeConnector != null && typeConnector.equals("KARPAY")) {
 	                            	responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
-	                            } else if (typeConnector != null && typeConnector.equals("STP")) {                           
+	                            } else if (typeConnector != null && typeConnector.equals("STP")) { 
+                                                         
 	                            	SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
 	                                responseTransfer = mappingResponseSpeiToProcedure(responseSpei, responseTransfer, aBagSPJavaOrchestration);                            	
+
+                                    JsonParser jsonParser = new JsonParser();
+                                    JsonObject jsonObject = (JsonObject) jsonParser.parse(responseSpei.getSpeiResponse());
+
+                                    if (jsonObject.has("resultado")) {
+                                        
+                                        JsonObject resultado = jsonObject.getAsJsonObject("resultado");
+
+                                        if(resultado.has("descripcionError")){
+                                            aBagSPJavaOrchestration.put("@i_clave_rastreo", responseSpei.getClaveRastreo());
+                                            aBagSPJavaOrchestration.put("@i_codigo_acc", responseSpei.getCodigoAcc());
+
+                                            int lengthCtaDest = originalRequest.readValueParam("@i_cta").length();
+                                            int lengthCtaOrig = originalRequest.readValueParam("@i_cta_des").length();
+    
+                                            registerWebhook(originalRequest, aBagSPJavaOrchestration, "SPEI_RETURN", "2010", lengthCtaOrig, lengthCtaDest);
+                                        }
+                                    }
 	                            } 
                             } catch (Exception e) {
                             	if (logger.isDebugEnabled()) {
@@ -1558,6 +1584,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 								logger.logDebug("Fin executeTransfer 3");
 							}
 							
+                            logger.logInfo("Entra por el error a reversa 11");
                         	reverseSpei(requestSpei, aBagSPJavaOrchestration);  															
 							
 							responseTransfer.setReturnCode(1);
