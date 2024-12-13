@@ -5975,6 +5975,131 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         return outUpdateBeneficiaryResponse;
     }
 
+    public ResponseDeleteBeneficiary deleteBeneficiary(String xRequestId, String xEndUserRequestDateTime,
+            String xEndUserIp, String xChannel, RequestDeleteBeneficiary inRequestDeleteBeneficiary)
+	throws CTSRestException {
+		LOGGER.logDebug("Start service execution: deleteBeneficiary");
+		ResponseDeleteBeneficiary outResponseDeleteBeneficiary = new ResponseDeleteBeneficiary();
+		
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_bvirtual..sp_beneficiaries_mant_api");
+		
+		// headers
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+		
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500127");
+		procedureRequestAS.addInputParam("@i_ente", ICTSTypes.SQLINT4,
+		String.valueOf(inRequestDeleteBeneficiary.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_benf_id", ICTSTypes.SQLVARCHAR,
+		inRequestDeleteBeneficiary.getBeneficiaryId().toString());
+		procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "D");
+		
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+		procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+		
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseDeleteBeneficiary returnResponseDeleteBeneficiary = MapperResultUtil
+			.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseDeleteBeneficiary>() {
+				@Override
+				public ResponseDeleteBeneficiary mapRow(ResultSetMapper resultSetMapper, int index) {
+					ResponseDeleteBeneficiary dto = new ResponseDeleteBeneficiary();
+					
+					dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+					return dto;
+				}
+			}, false);
+			
+			outResponseDeleteBeneficiary.setSuccess(returnResponseDeleteBeneficiary.isSuccess());
+			
+			//Actualización de Contrato del cliente
+			updateFieldsByNewChanged("B", String.valueOf(inRequestDeleteBeneficiary.getExternalCustomerId()));
+			
+			// break;
+		
+		} else {
+			mapBlank++;
+		
+		}
+		
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+		// ---------NO Array
+		ResponseDeleteBeneficiary returnResponseDeleteBeneficiary = MapperResultUtil
+		.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseDeleteBeneficiary>() {
+			@Override
+			public ResponseDeleteBeneficiary mapRow(ResultSetMapper resultSetMapper, int index) {
+			ResponseDeleteBeneficiary dto = new ResponseDeleteBeneficiary();
+				
+				dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+				dto.responseInstance().setMessage(resultSetMapper.getString(2));
+				return dto;
+			}
+		}, false);
+		
+		outResponseDeleteBeneficiary.setResponse(returnResponseDeleteBeneficiary.getResponse());
+		// break;
+		
+		} else {
+			mapBlank++;
+		
+		}
+		
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+		
+		String trn = "Delete Beneficiary";
+		
+		Gson gson1 = new Gson();
+		String jsonReq = gson1.toJson(inRequestDeleteBeneficiary);
+		
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseDeleteBeneficiary);
+		
+		Header header = new Header();
+		
+		header.setAccept("application/json");
+		header.setX_request_id(xRequestId);
+		header.setX_end_user_request_date_time(xEndUserRequestDateTime);
+		header.setX_end_user_ip(xEndUserIp);
+		header.setX_channel(xChannel);
+		header.setContent_type("application/json");
+		
+		Gson gson3 = new Gson();
+		String jsonHead = gson3.toJson(header);
+		
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		
+		LOGGER.logDebug("Ends service execution: deleteBebeficiary");
+		// returns data
+		return outResponseDeleteBeneficiary;
+    }
+    
     /**
      * Update Account Status
      */
