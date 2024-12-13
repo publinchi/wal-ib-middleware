@@ -388,11 +388,14 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			if(tipoTran.equals("transferThirdPartyAccount")) {
 				request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
 				movementId = (String)aBagSPJavaOrchestration.get("ssn");
+				
+				/* 
 				String movementId2 = (String)aBagSPJavaOrchestration.get("o_ssn_branch");
 				
 				if(movementId2 == null){
 					movementId2 = movementId;
 				}
+					*/
 
 				if (causal.equals("1010")) {
 					movementType = "P2P_CREDIT";
@@ -416,7 +419,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
 				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, movementId2);
+				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, movementId);
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
 
 				if(movementType.equals("P2P_DEBIT")){

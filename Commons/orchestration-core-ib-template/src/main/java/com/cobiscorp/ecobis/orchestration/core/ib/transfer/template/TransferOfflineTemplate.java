@@ -170,11 +170,9 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 			request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
 			
-			
 			request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_codigo_acc"));
 			request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_clave_rastreo"));
 			
-			logger.logInfo("@i_request_trans_success: "+ (String)aRequest.readValueParam("@i_json_req")  +"req:"+ (String)aRequest.readValueParam("@i_json_req"));
 			request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR,(String)aRequest.readValueParam("@i_json_req"));
 			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 			
