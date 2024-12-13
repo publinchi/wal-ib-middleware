@@ -9,8 +9,6 @@ import java.util.Date;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import org.apache.felix.scr.annotations.Component;
@@ -875,27 +873,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			logger.logError(e);
 		}
 
-		wAccountsResp = getDataAccountReq(aRequest, aBagSPJavaOrchestration);
-		logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+		IProcedureResponse wTransferResponse = new ProcedureResponseAS();
 
-		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-			aRequest.removeParam("@i_cta_des");
-			aRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
-			wAccountsRespVal = getValAccountReq(aRequest, aBagSPJavaOrchestration);
-			logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
-		}
-		else
-		{
-			return wAccountsResp;
-		}
-
-		if (wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-
-			IProcedureResponse wTransferResponse = new ProcedureResponseAS();
-
-			logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
-			logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
-			logger.logInfo(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(CLASS_NAME + "Parametro2 @ssn: " + aRequest.readValueFieldInHeader("ssn"));
+			logger.logDebug(CLASS_NAME + "Parametro3 @ssn: " + aRequest.readValueParam("@s_ssn"));
+			logger.logDebug(CLASS_NAME + " XDCX " + aBagSPJavaOrchestration.get("o_prod") +
 					aBagSPJavaOrchestration.get("o_mon") +
 					aBagSPJavaOrchestration.get("o_prod_des") +
 					aBagSPJavaOrchestration.get("o_mon_des") +
@@ -903,21 +886,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					aBagSPJavaOrchestration.get("o_nom_beneficiary") +
 					aBagSPJavaOrchestration.get("o_login") +
 					aBagSPJavaOrchestration.get("o_ente_bv"));
-
-			wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
-
-
-			//wTransferResponse = executeTransfer(aRequest, aBagSPJavaOrchestration);
-			return wTransferResponse;
 		}
+		
+		wTransferResponse = executeThirdAccountTransferCobis(aRequest, aBagSPJavaOrchestration);
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de transferThirdAccount");
 		}
-
-
-		return wAccountsRespVal;
+		
+		return wTransferResponse;
 	}
 	
 	private IProcedureResponse executeRiskEvaluation(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
