@@ -154,7 +154,8 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 			request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , aRequest.readValueParam("@i_commission"));
 			request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn_branch"));
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aBagSPJavaOrchestration.get("movementId"));
+			
 			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 			
@@ -170,11 +171,9 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 			request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
 			
-			
 			request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_codigo_acc"));
 			request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_clave_rastreo"));
 			
-			logger.logInfo("@i_request_trans_success: "+ (String)aRequest.readValueParam("@i_json_req")  +"req:"+ (String)aRequest.readValueParam("@i_json_req"));
 			request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR,(String)aRequest.readValueParam("@i_json_req"));
 			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 			
