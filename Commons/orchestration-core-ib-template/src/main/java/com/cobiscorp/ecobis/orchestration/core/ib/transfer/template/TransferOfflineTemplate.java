@@ -154,11 +154,8 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 			request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , aRequest.readValueParam("@i_commission"));
 			request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-			if(movementType.equals("SPEI_DEBIT") ) {
-				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aBagSPJavaOrchestration.get("movementId"));
-			}else {
-				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn_branch"));
-			}	
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aBagSPJavaOrchestration.get("movementId"));
+			
 			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 			
