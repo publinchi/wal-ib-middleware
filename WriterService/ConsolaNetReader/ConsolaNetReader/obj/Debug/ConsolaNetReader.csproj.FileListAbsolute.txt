@@ -1,3 +1,5 @@
+C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.dll.config
+C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.dll
 C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.pdb
 C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\BouncyCastle.Crypto.dll
 C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\DocumentFormat.OpenXml.dll
@@ -66,7 +68,5 @@ C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\de\PdfSharp.Charting-gdi.re
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.csproj.AssemblyReference.cache
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.csproj.CoreCompileInputs.cache
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaN.05F4D52F.Up2Date
-C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.pdb
-C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.dll.config
-C:\cobis\ConsolaNetReader\ConsolaNetReader\bin\Debug\ConsolaNetReader.dll
 C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.dll
+C:\cobis\ConsolaNetReader\ConsolaNetReader\obj\Debug\ConsolaNetReader.pdb
