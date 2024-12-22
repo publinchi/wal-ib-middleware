@@ -2,6 +2,7 @@ C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentServices.exe.config
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentServices.exe
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentServices.pdb
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\BouncyCastle.Crypto.dll
+C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentFormat.OpenXml.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentFormat.OpenXML.Extensions.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentFormat.OpenXml.Framework.dll
@@ -38,6 +39,7 @@ C:\cobis\ConsolaNetReader\Menu\bin\Debug\System.ValueTuple.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\Xceed.Document.NET.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\Xceed.Words.NET.dll
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.pdb
+C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.dll.config
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentFormat.OpenXml.xml
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\DocumentFormat.OpenXml.Framework.xml
 C:\cobis\ConsolaNetReader\Menu\bin\Debug\itextsharp.xml
@@ -78,5 +80,3 @@ C:\cobis\ConsolaNetReader\Menu\obj\Debug\MenuDocumentServices.csproj.CoreCompile
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\MenuDocu.1AD45A26.Up2Date
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.exe
 C:\cobis\ConsolaNetReader\Menu\obj\Debug\DocumentServices.pdb
-C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.dll
-C:\cobis\ConsolaNetReader\Menu\bin\Debug\ConsolaNetReader.dll.config

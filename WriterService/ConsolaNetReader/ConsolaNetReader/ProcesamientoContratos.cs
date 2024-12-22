@@ -176,14 +176,13 @@ namespace ConsolaNetReader
                 Microsoft.Office.Interop.Word.Document plantilla = null;
 
 
-               string contract= contratos.Valores.Where(x => x.Llave == "$$contract$$").Select(y => y.Valor).FirstOrDefault().ToString();
+                string contract = contratos.Valores.Where(x => x.Llave == "$$contract$$").Select(y => y.Valor).FirstOrDefault().ToString();
 
                 if (!contract.Equals("V"))
                 {
 
                     try
                     {
-
                         String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
                         File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
                         plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
@@ -206,7 +205,7 @@ namespace ConsolaNetReader
                     }
 
 
-                }else
+                } else
                     flagContrato = true;
 
 
@@ -239,17 +238,21 @@ namespace ConsolaNetReader
 
                         File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
                     }
-                }else
+                } else
                     flagDatosGenerales = true;
 
 
                 try
                 {
-                    if (flagContrato && flagDatosGenerales)
+                    if (flagContrato && flagDatosGenerales && contractToMail != null)
                     {
                         ContractSend mail = new ContractSend(contratos, contractToMail);
                         mail.EnviaContrato();
                     }
+                    else if (contractToMail == null) {
+                        log.Info("Sin contrato generado, no envia mail");
+                    }
+
 
                 }
                 catch (Exception xe)
@@ -378,13 +381,19 @@ namespace ConsolaNetReader
 
                 appWord = new Microsoft.Office.Interop.Word.Application();
 
-                wordDocument = appWord.Documents.Open(deposito + fileNameDoc);
+                if (File.Exists(deposito + fileNameDoc)) {
 
-                wordDocument.ExportAsFixedFormat(generated + fileNamePdf, WdExportFormat.wdExportFormatPDF);
+                    wordDocument = appWord.Documents.Open(deposito + fileNameDoc);
 
-                contract = generated + fileNamePdf;
+                    wordDocument.ExportAsFixedFormat(generated + fileNamePdf, WdExportFormat.wdExportFormatPDF);
 
-                log.Info(" Finaliza convertToPDF ");
+                    contract = generated + fileNamePdf;
+
+                    log.Info(" Finaliza convertToPDF ");
+                }
+                else {
+                    log.Info("No existe ruta imposible geranerar PDF " + deposito + fileNameDoc);
+                }
             }
             catch (Exception xe)
             {
@@ -395,9 +404,6 @@ namespace ConsolaNetReader
                 wordDocument.Close();
                 appWord.Quit();
                 File.Delete(deposito + fileNameDoc);
-
-
-
             }
 
             return contract;
@@ -406,16 +412,29 @@ namespace ConsolaNetReader
         private string recuperaFecha()
         {
 
-            DateTime fechaActual = DateTime.Now;
-            string formato4 = fechaActual.ToString("dddd, dd MMMM yyyy", new CultureInfo("es-ES"));
+            string formato4 = "";
+
+            try
+            {
+
+                DateTime fechaActual = DateTime.Now;
+                formato4 = fechaActual.ToString("dddd, dd MMMM yyyy", new CultureInfo("es-ES"));
+
+
+            }
+            catch (Exception)
+            {
+                log.Error("Error al recuperar fecha");
+
+
+            }
 
             return formato4;
         }
 
 
 
-
-
+    
         public bool validarDatosContratros(Contrato contratos)
         {
 
@@ -490,10 +509,20 @@ namespace ConsolaNetReader
 
                         if (!valor.Llave.IsValueNullOrEmpty() && valor.Llave.Equals("$$fechanacimiento$$")) {
 
-                            DateTime fechaDatos = DateTime.Parse(valor.Valor);
-                            log.Info("Fecha Nacimiento 1::: " + fechaDatos.ToString());
-                             values = fechaDatos.ToString("yyyy-MM-dd");
-                            log.Info("Fecha Nacimiento 2::: "+ valor.Valor);
+                            try
+                            {
+
+                                DateTime fechaDatos = DateTime.Parse(valor.Valor);
+                                log.Info("Fecha Nacimiento 1::: " + fechaDatos.ToString());
+                                values = fechaDatos.ToString("yyyy-MM-dd");
+                                log.Info("Fecha Nacimiento 2::: " + valor.Valor);
+
+                            }
+                            catch
+                            {
+
+                                log.Error("Error parser fecha nacimiento");
+                            }
 
                         }
 
@@ -522,7 +551,7 @@ namespace ConsolaNetReader
 
                 log.Info(" Finaliza cambios en plantilla ");
 
-                plantilla.SaveAs2(deposito + fileNameDoc);
+                plantilla.SaveAs(deposito + fileNameDoc);
 
                 log.Info(" generación d earchivo exitoso ");
 
