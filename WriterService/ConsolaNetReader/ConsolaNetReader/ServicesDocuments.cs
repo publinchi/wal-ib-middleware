@@ -30,7 +30,7 @@ namespace ConsolaNetReader
                 
                 log.Info("JC::::::::::::Comienza documentsGenerator :::::::::::::JC");
 
-                log.Info("INICIAR VERSION 14.0 Document Services 14.0");
+                log.Info("INICIAR VERSION 18.0 Document Services 18.0");
 
                 List<Contrato> listaContratos;
 

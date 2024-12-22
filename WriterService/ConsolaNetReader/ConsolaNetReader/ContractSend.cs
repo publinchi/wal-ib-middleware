@@ -1,5 +1,6 @@
 ﻿using ConsolaNetReader.CalixtaServices;
 using log4net;
+using log4net.Repository.Hierarchy;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,13 +26,22 @@ namespace ConsolaNetReader
 
         public ContractSend()
         {
+
             this.fileContract = "C:\\Pruebas\\prueba.png";
             this.cuenta = "prueba";
             DateTime fecha = DateTime.Parse("01/01/1990");
-            this.horario = String.Format("{0:dd/MM/yy} - Hora: {0:hh:mm tt}", fecha).ToLower();
             this.mail = "jolmossolis@hotmail.com";
             this.plantillaResulta = "<html>HOLA MUNDO</html";
 
+            try
+            {
+
+                this.horario = String.Format("{0:dd/MM/yy} - Hora: {0:hh:mm tt}", fecha).ToLower();
+
+            }
+            catch (Exception xe) {
+                log.Error(xe);
+            }
 
 
         }
@@ -42,8 +52,15 @@ namespace ConsolaNetReader
             this.cuenta=contrato.Valores.Where(x => x.Llave == "$$cuenta$$").Select(y => y.Valor).FirstOrDefault().ToString();
             this.nombre = contrato.Valores.Where(x => x.Llave == "$$nombre$$").Select(y => y.Valor).FirstOrDefault().ToString();
             string fechado = contrato.Valores.Where(x => x.Llave == "$$dates$$").Select(y => y.Valor).FirstOrDefault().ToString();
-            DateTime fecha = DateTime.Parse(fechado);
-            this.horario = String.Format("{0:dd/MM/yy} - Hora: {0:hh:mm tt}", fecha).ToLower();
+            
+            try
+            {
+                DateTime fecha = DateTime.Parse(fechado);
+                this.horario = String.Format("{0:dd/MM/yy} - Hora: {0:hh:mm tt}", fecha).ToLower();
+            }catch (Exception xe) {
+                this.horario = "";
+               log.Error(xe);
+            }
             this.fileContract = fileContract;
             this.mail= contrato.Valores.Where(x => x.Llave == "$$correo$$").Select(y => y.Valor).FirstOrDefault().ToString();
             maquetar();
@@ -79,17 +96,16 @@ namespace ConsolaNetReader
            CalixtaServices.GatewayPortTypeClient client = new CalixtaServices.GatewayPortTypeClient();
             client.Open();
 
-            string salidax = client.EnviaEmail(49089, "cobis@cuentacashi.com.mx", "dbad94ec5c744391077d7fac72ca4737a05ac06e0091bec8ccfb65e7309b1d539da851c2e38171cbb394db20543d67a5", "PRUEBA" +
+            string idCalixta = client.EnviaEmail(49089, "cobis@cuentacashi.com.mx", "dbad94ec5c744391077d7fac72ca4737a05ac06e0091bec8ccfb65e7309b1d539da851c2e38171cbb394db20543d67a5", "PRUEBA" +
                 "", this.mail, "clientes@cuentacashi.com.mx", "Cuenta Cashi", "clientes@cuentacashi." +
                  "com.mx", "¡Tu Cuenta Cashi está lista!", 0, "", plantillaResulta, 1, array
                  , "Contrato.pdf", "Contrato.pdf", 0, "", 0, 0, "", "", "");
             
             
             client.Close();
-            
 
-            Console.WriteLine(salidax);
-            Console.ReadLine();
+            log.Info("Id Evio---- " + idCalixta);
+
 
 
         }
