@@ -1024,7 +1024,12 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/getClientLimits")
 	@Consumes({"application/json"})
 	@Produces({"application/json"})
-	public Response  getClientLimits(RequestGetClientLimits inRequestGetClientLimits ){
+	public Response  getClientLimits(
+		@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,
+				@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,
+				@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,
+				@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,
+		RequestGetClientLimits inRequestGetClientLimits ){
 		LOGGER.logDebug("Start service execution REST: getClientLimits");
 		ResponseGetClientLimits outResponseGetClientLimits  = new ResponseGetClientLimits();
 
@@ -1034,7 +1039,8 @@ public class ServiceContractOperationsApiRest {
 		}
 
 		try {
-			outResponseGetClientLimits=iServiceContractOperationsApiService.getClientLimits( inRequestGetClientLimits );
+			outResponseGetClientLimits=iServiceContractOperationsApiService.getClientLimits(xrequestid,
+			xenduserrequestdatetime, xenduserip, xchannel, inRequestGetClientLimits );
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException",e);
 			if ("404".equals(e.getMessage())) {
