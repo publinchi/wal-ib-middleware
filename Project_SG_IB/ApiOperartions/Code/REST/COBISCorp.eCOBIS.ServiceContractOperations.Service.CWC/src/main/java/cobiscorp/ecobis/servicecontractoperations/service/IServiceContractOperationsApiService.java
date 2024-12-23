@@ -175,7 +175,7 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Have DTO
-	public ResponseGetClientLimits getClientLimits(RequestGetClientLimits inRequestGetClientLimits  )throws CTSRestException;		
+	public ResponseGetClientLimits getClientLimits(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel, RequestGetClientLimits inRequestGetClientLimits  )throws CTSRestException;		
 
 	/**
 	 * Get Colony by Municipality
