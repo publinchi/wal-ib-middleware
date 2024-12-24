@@ -61,7 +61,19 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 	private static final String className = "GetTransactionClientLimitOrchestrationCore";
 	private static final String FALSE = "false";
 	private boolean isEditing = false;
+	
+
+	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
 	private IAdminTokenUser tokenService;
+
+	public void setTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = tokenService;
+	}
+
+	public void unsetTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = null;
+	}
+
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -81,7 +93,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		if(operation.equals("C")){
 			anProcedureResponse = callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
-				return processResponseError(anProcedureResponse);
+				return processResponseError(anProcedureResponse, aBagSPJavaOrchestration);
 			}
 			if(anOriginalRequest.readValueParam("@i_contactId") != null && !anOriginalRequest.readValueParam("@i_contactId").equals("null")){
 				anProcedureResponse = processTransforResponseContact(anProcedureResponse, aBagSPJavaOrchestration);
@@ -93,7 +105,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			aBagSPJavaOrchestration.put("requestBody", requestBody);
 			anProcedureResponse = callSaveLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
-				return processResponseError(anProcedureResponse);
+				return processResponseError(anProcedureResponse, aBagSPJavaOrchestration);
 			}
 			anProcedureResponse = processTransforResponse(anProcedureResponse, aBagSPJavaOrchestration);
 		}
@@ -147,7 +159,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		}
 
 		// Validamos si el error fue de otp invalido
-		if (otpReturnCode != null) {
+		if (!otpReturnCode.equals("0")) {
 			if ( otpReturnCode.equals("1890000") ) {
 				try {
 					// Ejecutamos el servicio de generación de token
@@ -181,8 +193,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){
 
-				// descomentar despues TODO
-				//IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
 				logger.logDebug(className + " OTPReturnCode 1890005 [INI]");
 			}
 
@@ -197,12 +208,8 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		//	return resp;
 		//}
 		if (otpReturnCode != null && !otpReturnCode.isEmpty() && !"0".equals(otpReturnCode)) {
-			IProcedureResponse resp = Utils.returnException(Integer.parseInt(otpReturnCode), "Validacion de token falló con codigo de exception/error " + otpReturnCode);
-			logger.logDebug("Response Exeption2: " + resp.toString());
-			aBagSPJavaOrchestration.put("successSaveContactLimit", FALSE);
-			return resp;
+			return errorOtp(otpReturnCode);
 		}
-
 
 		// TERMINA VALIDACIÓN OTP
 		
@@ -269,6 +276,31 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			logger.logError(" Error en callSaveLimitsConn: " + e.getMessage());
 		}
 		return connectorUpdateLimitsResponse;
+	}
+
+	private IProcedureResponse errorOtp(String otpReturnCode){
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		IResultSetRow row = new ResultSetRow();
+
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
+
+		String message = "Validacion de token falló con codigo de exception/error " + otpReturnCode;
+		IProcedureResponse resp = Utils.returnException(Integer.parseInt(otpReturnCode), message);
+
+		row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+		row.addRowData(2, new ResultSetRowColumnData(false, otpReturnCode));
+		row.addRowData(3, new ResultSetRowColumnData(false, message));
+		data.addRow(row);
+
+		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
+		resp.addResponseBlock(resultBlock);
+
+		logger.logDebug("Response Exeption2: " + resp.toString());
+
+		return resp;
 	}
 
 	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -362,7 +394,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
 		tokenRequest.setChannel(8);
 
-		// da error
 		DataTokenResponse tokenResponse = this.tokenService.validateTokenUser(tokenRequest);
 
 		logger.logDebug("Token response: "+tokenResponse.getSuccess());
@@ -662,6 +693,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 	}
 
 	private JsonObject createRequestBody(Map<String, Object> aBagSPJavaOrchestration) {
+		isEditing = false;
 		IProcedureRequest originalProcedureRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 
 		JsonObject jsonRequest = new JsonObject();
@@ -679,7 +711,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			limit.addProperty("currency", originalProcedureRequest.readValueParam("@i_currency"));
 			jsonRequest.add("limit", limit);
 			isEditing = true;
-			// está guardando o editando
 		}
 		return jsonRequest;
 	}
@@ -715,11 +746,11 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		}
 	}
 
-	private void registerHolis(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private void registerConfigurationWebhook(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(" Entrando en registerHolis get");
+			logger.logInfo(" Entrando en registerConfigurationWebhook get");
 		}
 
 		request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
@@ -732,30 +763,31 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		if (aBagSPJavaOrchestration.get("operation").equals("S")) {
 			request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "saveTransactionLimit");
 			if(isEditing){
-				request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "U"); // update or save
+				request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "updateClientLimit"); // update or save
 			}else{
-				request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "D"); // deleted
+				request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "DeleteClientLimit"); // deleted
 			}
 		
 			request.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_externalCustomerId"));
 			request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
 			
-			request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodySaveLimits").toString());
+			request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("jsonResponse").toString());
 		}
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response registerHolis get: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response registerConfigurationWebhook get: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 	}
 
-	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
+	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processResponseAccounts--->");
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		IProcedureRequest anOriginalRequest = (IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest");
 
 		// Agregar Header 1
 		IResultSetHeader metaData2 = new ResultSetHeader();
@@ -790,6 +822,12 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+
+		if(anOriginalRequest.readValueParam("@i_operation").equals("S")){
+			aBagSPJavaOrchestration.put("jsonResponse", createJsonResponse(code, message, success));
+			registerConfigurationWebhook(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+
 		return anOriginalProcedureResponse;
 	}
 
@@ -799,6 +837,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		IProcedureRequest anOriginalRequest = (IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest");
 
 		// Agregar Header 1
 		IResultSetHeader metaData2 = new ResultSetHeader();
@@ -917,9 +956,25 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			anOriginalProcedureResponse.addResponseBlock(resultsetBlock4);
 		}
 
+		if(anOriginalRequest.readValueParam("@i_operation").equals("S")){
+
+			aBagSPJavaOrchestration.put("jsonResponse", createJsonResponse(code, message, success));
+			registerConfigurationWebhook(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+
 		return anOriginalProcedureResponse;
 	}
 
+	private JsonObject createJsonResponse(String code, String message, String success){
+		JsonObject responseObject = new JsonObject();
+		responseObject.addProperty("code", code);
+		responseObject.addProperty("message", message);
+
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("success", success);
+		jsonObject.add("response", responseObject);
+		return jsonObject;
+	}
 
 	public IProcedureResponse processTransforResponseContact(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {

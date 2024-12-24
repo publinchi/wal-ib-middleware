@@ -82,9 +82,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.cobiscorp.ecobis</groupId>
-      <artifactId>cobis-admintoken</artifactId>
-      <version>1.0.0</version>
+        <groupId>com.cobiscorp.ecobis</groupId>
+        <artifactId>cobis-admintoken</artifactId>
+        <version>1.0.0</version>
     </dependency>
   </dependencies>
 </project>
