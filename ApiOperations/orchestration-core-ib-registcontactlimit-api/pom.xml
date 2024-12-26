@@ -96,11 +96,6 @@
 				COBISCorp.eCOBIS.ServiceContractOperations.Service
 			</artifactId>
 			<version>1.0.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.cobiscorp.wal.dock</groupId>
-			<artifactId>cobis-dock-embossing-job</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 </project>
