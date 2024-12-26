@@ -3245,7 +3245,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
 	//Have DTO
-      public ResponseGetClientLimits getClientLimits(RequestGetClientLimits inRequestGetClientLimits )throws CTSRestException{
+      public ResponseGetClientLimits getClientLimits(String xrequestid, String xenduserrequestdatetime,
+      String xenduserip, String xchannel, RequestGetClientLimits inRequestGetClientLimits )throws CTSRestException{
 	  LOGGER.logDebug("Start service execution: getClientLimits");
       ResponseGetClientLimits outResponseGetClientLimits  = new ResponseGetClientLimits();
           
@@ -3263,7 +3264,18 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       procedureRequestAS.addInputParam("@i_ammount",ICTSTypes.SQLVARCHAR, inRequestGetClientLimits.getLimit() != null ? String.valueOf(inRequestGetClientLimits.getLimit().getAmount()) : null );
       procedureRequestAS.addInputParam("@i_currency",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getLimit() != null ? inRequestGetClientLimits.getLimit().getCurrency() : null);
       procedureRequestAS.addInputParam("@i_contactId",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getContactId());
+      procedureRequestAS.addInputParam("@i_otp_code",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getOtpCode());
+      procedureRequestAS.addInputParam("@i_aditionalData",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getAdditionalData());
       
+      procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+      procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+      procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+      procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+
+      Gson gsonTrans = new Gson();
+      String jsonReqTrans = gsonTrans.toJson(inRequestGetClientLimits);
+      procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+
       //execute procedure
       ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 

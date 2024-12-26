@@ -5,10 +5,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.get.client.limit.api;
 
 import java.util.Map;
 
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.scr.annotations.*;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
@@ -33,6 +30,10 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenRequest;
+import com.cobiscorp.ecobis.admintoken.dto.DataTokenResponse;
+import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.cobis.csp.domains.ICSP;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
@@ -54,6 +55,22 @@ import com.google.gson.JsonSyntaxException;
 public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrationBase {
 	
 	private ILogger logger = (ILogger) this.getLogger();
+	private static final String className = "GetTransactionClientLimitOrchestrationCore";
+	private static final String FALSE = "false";
+	private boolean isEditing = false;
+	
+
+	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
+	private IAdminTokenUser tokenService;
+
+	public void setTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = tokenService;
+	}
+
+	public void unsetTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = null;
+	}
+
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -73,7 +90,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		if(operation.equals("C")){
 			anProcedureResponse = callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
-				return processResponseError(anProcedureResponse);
+				return processResponseError(anProcedureResponse, aBagSPJavaOrchestration);
 			}
 			if(anOriginalRequest.readValueParam("@i_contactId") != null && !anOriginalRequest.readValueParam("@i_contactId").equals("null")){
 				anProcedureResponse = processTransforResponseContact(anProcedureResponse, aBagSPJavaOrchestration);
@@ -85,7 +102,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			aBagSPJavaOrchestration.put("requestBody", requestBody);
 			anProcedureResponse = callSaveLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			if(!anProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue().equals("true")){
-				return processResponseError(anProcedureResponse);
+				return processResponseError(anProcedureResponse, aBagSPJavaOrchestration);
 			}
 			anProcedureResponse = processTransforResponse(anProcedureResponse, aBagSPJavaOrchestration);
 		}
@@ -96,6 +113,91 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 	private IProcedureResponse callSaveLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
 		if(logger.isDebugEnabled())
 			logger.logDebug(" callUpdateLimitsConn [INI]");
+
+		//1. Validar Token OTP
+		String otpCode = aRequest.readValueParam("@i_otp_code");
+		String otpReturnCode = null;
+		String otpReturnCodeNew = null;
+		String login = null;
+
+		if (otpCode!=null && !otpCode.equals("null") && !otpCode.trim().isEmpty()) {
+
+			getLoginById(aRequest, aBagSPJavaOrchestration);
+
+			login = aBagSPJavaOrchestration.get("o_login").toString();
+
+			if (!login.equals("X")) {
+
+				DataTokenResponse  wResponseOtp = validateOTPCode(aRequest, aBagSPJavaOrchestration);
+
+				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
+
+				if(!wResponseOtp.getSuccess()) {
+
+					otpReturnCode = wResponseOtp.getMessage().getCode();
+					aBagSPJavaOrchestration.put("o_codErrorOTP", otpReturnCode);
+
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("ValidateOTP return code: "+otpReturnCode);}
+
+				} else {
+					otpReturnCode = "0";
+
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("ValidateOTP successful code: "+otpReturnCode);}
+				}
+			}else {
+				logger.logDebug("No consulto el login");
+			}
+		}
+
+		// Validamos si el error fue de otp invalido
+		if (!otpReturnCode.equals("0")) {
+			if ( otpReturnCode.equals("1890000") ) {
+				try {
+					// Ejecutamos el servicio de generación de token
+					DataTokenResponse  wResponseGOtp = generareOTPCode(aRequest, aBagSPJavaOrchestration);
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("GeneracionOTP dinámica response: "+wResponseGOtp.getSuccess());
+					}
+
+					if(!wResponseGOtp.getSuccess()) {
+						otpReturnCodeNew = wResponseGOtp.getMessage().getCode();
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("GeneracionOTP dinámica no exitosa: "+ otpReturnCodeNew);}
+					} else {
+						registerRequestType(login);
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("GeneracionOTP dinámica exitosa: "+otpReturnCodeNew);}
+					}
+				}catch(Exception ex) {
+					aBagSPJavaOrchestration.replace("o_codErrorOTP", "1890010");
+					logger.logError(ex.toString());
+				}
+				//Ingresamos el log de OTP ingresadas fallidas por sistema
+				registrosFallidos(aBagSPJavaOrchestration);
+			}else {
+				if ( otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005")) {
+					//Ingresamos el log de OTP ingresadas fallidas por el usuario en bloqueo y asistencia requerida
+					registrosFallidos(aBagSPJavaOrchestration);
+				}
+			}
+
+			//Validacion para llamar al conector blockOperation
+			if(otpReturnCode.equals("1890005")){
+
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration);
+				logger.logDebug(className + " OTPReturnCode 1890005 [INI]");
+			}
+
+			otpReturnCode = processOtpReturnCode(otpReturnCode);
+		}
+
+		if (otpReturnCode != null && !otpReturnCode.isEmpty() && !"0".equals(otpReturnCode)) {
+			return errorOtp(otpReturnCode);
+		}
+
+		// TERMINA VALIDACIÓN OTP
 		
 		IProcedureResponse connectorUpdateLimitsResponse = new ProcedureResponseAS();
 
@@ -134,7 +236,6 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 				logger.logDebug("connectorUpdateLimitsResponse ->" + connectorUpdateLimitsResponse.toString());
 			}
 
-
 			String responseCode = connectorUpdateLimitsResponse.readValueParam("@o_responseCode") == null ? "0" : connectorUpdateLimitsResponse.readValueParam("@o_responseCode");
 			String message = connectorUpdateLimitsResponse.readValueParam("@o_message") == null ? "Error" : connectorUpdateLimitsResponse.readValueParam("@o_message");
 			String success = connectorUpdateLimitsResponse.readValueParam("@o_success") == null ? "false" : connectorUpdateLimitsResponse.readValueParam("@o_success");
@@ -160,6 +261,320 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			logger.logError(" Error en callSaveLimitsConn: " + e.getMessage());
 		}
 		return connectorUpdateLimitsResponse;
+	}
+
+	private IProcedureResponse errorOtp(String otpReturnCode){
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		IResultSetRow row = new ResultSetRow();
+
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
+
+		String message = "Validacion de token falló con codigo de exception/error " + otpReturnCode;
+		IProcedureResponse resp = Utils.returnException(Integer.parseInt(otpReturnCode), message);
+
+		row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+		row.addRowData(2, new ResultSetRowColumnData(false, otpReturnCode));
+		row.addRowData(3, new ResultSetRowColumnData(false, message));
+		data.addRow(row);
+
+		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
+		resp.addResponseBlock(resultBlock);
+
+		return resp;
+	}
+
+	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(className + " Entrando en getLoginById...");
+		}
+
+		request.setSpName("cob_bvirtual..sp_cons_ente_med_envio");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+
+		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_mail_ente", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_num_phone", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_ente", ICTSTypes.SQLVARCHAR, "X");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
+		aBagSPJavaOrchestration.put("o_phone", wProductsQueryResp.readValueParam("@o_num_phone"));
+		aBagSPJavaOrchestration.put("o_entebv", wProductsQueryResp.readValueParam("@o_ente"));
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getLoginById: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug(className + " Saliendo de getLoginById...");
+		}
+
+		return wProductsQueryResp;
+	}
+
+	private String processOtpReturnCode(String otpReturnCode) {
+
+		if (otpReturnCode != null && !otpReturnCode.equals("0")) {
+			if (otpReturnCode.equals("1890000")) { // Token no existe o inválido
+				return "400385";
+
+			} else if (otpReturnCode.equals("1890006")) { // Usuario sin nuevo token validable
+				return "400387";
+
+			} else if (otpReturnCode.equals("1890003")) { // Token validado
+				return "400386";
+
+			} else if (otpReturnCode.equals("1887677")) { // Token expirado
+				return "400381";
+
+			} else if (otpReturnCode.equals("1890004")) { // Token bloqueado
+				return "400382";
+
+			} else if (otpReturnCode.equals("1890005")) { // Token bloqueado, asistencia requerida
+				return "400383";
+
+			} else if (otpReturnCode.equals("1890002")) { // Longitud del token encriptado
+				return "400384";
+
+			} else {
+				return "1";
+			}
+		}
+
+		return "1";
+	}
+
+	private DataTokenResponse validateOTPCode(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(className + " Entrando en validateOTPCode...");
+		}
+
+		DataTokenRequest tokenRequest = new DataTokenRequest();
+
+		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
+		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
+		tokenRequest.setChannel(8);
+
+		DataTokenResponse tokenResponse = this.tokenService.validateTokenUser(tokenRequest);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(className + " Saliendo de validateOTPCode..." + tokenResponse.getSuccess());
+		}
+
+		return tokenResponse;
+	}
+
+	private void registerRequestType(String login) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug( " Entrando en registerRequestType");
+		}
+
+		request.setSpName("cob_bvirtual..sp_solicitud_OTP");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, login);
+		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "S");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
+
+	private DataTokenResponse generareOTPCode (IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(className + " Entrando en generarOTPCode...");
+		}
+
+		DataTokenRequest tokenRequest = new DataTokenRequest();
+
+		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
+		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
+		tokenRequest.setChannel(8);
+
+		DataTokenResponse tokenResponseG = this.tokenService.generateTokenUser(tokenRequest);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Token response: "+tokenResponseG.getSuccess());
+			logger.logDebug(className + " Saliendo de generarOTPCode...");
+		}
+
+		return tokenResponseG;
+	}
+
+	private IProcedureResponse registrosFallidos(Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(className + " Entrando en registrosFallidos...");
+		}
+
+		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_entebv"));
+		request.addInputParam("@i_canal", ICTSTypes.SQLINT1, "8" );
+		request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_codErrorOTP").toString());
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking registrosFallidos: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug(className + " Saliendo de registrosFallidos...");
+		}
+
+		return wProductsQueryResp;
+	}
+
+	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(className + " Entrando en executeBlockOperation");
+		}
+		String phoneNumber = null;
+		Integer phoneCode = 52;
+		String channel = null;
+
+		IProcedureResponse connectorBlockOperationResponse = null;
+
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		aBagSPJavaOrchestration.remove("trn_virtual");
+
+		try {
+			//Parametros de entrada
+			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE,
+					"(service.identifier=CISConnectorBlockOperation)");
+			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+
+			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700122");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700122");
+
+			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
+
+			anOriginalRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
+
+			if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
+				channel = "web";
+			}
+			anOriginalRequest.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, channel);
+
+			//Construccion del body para el conector
+			JsonObject jsonRequest = new JsonObject();
+
+			//Validacion del numero de telefono
+			if(aBagSPJavaOrchestration.get("o_phone") != null) {
+				phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
+			}
+			jsonRequest.addProperty("phoneNumber", phoneCode + phoneNumber);
+			anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
+
+			//Validacion del blockCode
+			jsonRequest.addProperty("blockCode", "21");
+
+			//Validacion de blockResason
+			jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+
+			anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
+
+			//Se llama al conector de blockOperation
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorBlockOperation)");
+			anOriginalRequest.setSpName("cob_procesador..sp_conne_block_operation");
+
+			// SE EJECUTA CONECTOR
+			connectorBlockOperationResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
+
+			if (connectorBlockOperationResponse.readValueParam("@o_responseCode") != null)
+				aBagSPJavaOrchestration.put("responseCode", connectorBlockOperationResponse.readValueParam("@o_responseCode"));
+
+			if (connectorBlockOperationResponse.readValueParam("@o_message") != null)
+				aBagSPJavaOrchestration.put("message", connectorBlockOperationResponse.readValueParam("@o_message"));
+
+			if (connectorBlockOperationResponse.readValueParam("@o_success") != null) {
+				aBagSPJavaOrchestration.put("success_block_operation", connectorBlockOperationResponse.readValueParam("@o_success"));
+			}
+			else {
+				aBagSPJavaOrchestration.put("success_block_operation", "false");
+			}
+
+			if(logger.isDebugEnabled())
+				logger.logDebug("Response executeBlockOperationConnector: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
+
+			registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_external_customer_id"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			connectorBlockOperationResponse = null;
+			logger.logError(className +" Error Catastrofico de executeBlockOperationConnector");
+
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(className + "--> executeBlockOperationConnector");
+			}
+		}
+
+		return connectorBlockOperationResponse;
+	}
+
+	private void registerRequestBlockOperation(IProcedureResponse wProcedureResponse, String requestSend, String customerId){
+		IProcedureRequest request = new ProcedureRequestAS();
+		final String METHOD_NAME = "[registerRequestBlockOperationError]";
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo( " Entrando en registerRequestBlockOperationError");
+		}
+
+		String bodyResponse = wProcedureResponse.readValueParam("@o_body_response");
+
+		String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"false":wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
+
+		String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
+		String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
+
+		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+		request.addInputParam("@i_request_block_operation", ICTSTypes.SQLVARCHAR, requestSend);
+		request.addInputParam("@i_response_block_operation", ICTSTypes.SQLVARCHAR, bodyResponse);
+		request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, code);
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, customerId);
+		request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, message);
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
 	}
 
 	private IProcedureResponse callGetLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
@@ -238,6 +653,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 	}
 
 	private JsonObject createRequestBody(Map<String, Object> aBagSPJavaOrchestration) {
+		isEditing = false;
 		IProcedureRequest originalProcedureRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 
 		JsonObject jsonRequest = new JsonObject();
@@ -254,6 +670,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			limit.addProperty("amount", Double.parseDouble(originalProcedureRequest.readValueParam("@i_ammount")));
 			limit.addProperty("currency", originalProcedureRequest.readValueParam("@i_currency"));
 			jsonRequest.add("limit", limit);
+			isEditing = true;
 		}
 		return jsonRequest;
 	}
@@ -289,13 +706,48 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		}
 	}
 
+	private void registerConfigurationWebhook(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = new ProcedureRequestAS();
 
-	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" Entrando en registerConfigurationWebhook get");
+		}
+
+		request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		if (aBagSPJavaOrchestration.get("operation").equals("S")) {
+			request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "saveTransactionLimit");
+			if(isEditing){
+				request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "updateClientLimit"); // update or save
+			}else{
+				request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "DeleteClientLimit"); // deleted
+			}
+		
+			request.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_externalCustomerId"));
+			request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+			
+			request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("jsonResponse").toString());
+		}
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response registerConfigurationWebhook get: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
+
+	public IProcedureResponse processResponseError(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processResponseAccounts--->");
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		IProcedureRequest anOriginalRequest = (IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest");
 
 		// Agregar Header 1
 		IResultSetHeader metaData2 = new ResultSetHeader();
@@ -330,6 +782,12 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+
+		if(anOriginalRequest.readValueParam("@i_operation").equals("S")){
+			aBagSPJavaOrchestration.put("jsonResponse", createJsonResponse(code, message, success));
+			registerConfigurationWebhook(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+
 		return anOriginalProcedureResponse;
 	}
 
@@ -339,6 +797,7 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 		}
 
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		IProcedureRequest anOriginalRequest = (IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest");
 
 		// Agregar Header 1
 		IResultSetHeader metaData2 = new ResultSetHeader();
@@ -457,9 +916,25 @@ public class GetTransactionClientLimitOrchestrationCore extends SPJavaOrchestrat
 			anOriginalProcedureResponse.addResponseBlock(resultsetBlock4);
 		}
 
+		if(anOriginalRequest.readValueParam("@i_operation").equals("S")){
+
+			aBagSPJavaOrchestration.put("jsonResponse", createJsonResponse(code, message, success));
+			registerConfigurationWebhook(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+
 		return anOriginalProcedureResponse;
 	}
 
+	private JsonObject createJsonResponse(String code, String message, String success){
+		JsonObject responseObject = new JsonObject();
+		responseObject.addProperty("code", code);
+		responseObject.addProperty("message", message);
+
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("success", success);
+		jsonObject.add("response", responseObject);
+		return jsonObject;
+	}
 
 	public IProcedureResponse processTransforResponseContact(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {

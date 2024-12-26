@@ -351,6 +351,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                     logger.logDebug("Respose Exeption: " + resp.toString());
                     return resp;
                 } 
+            }else{
+                logger.logDebug("Error en conexión hacia obtención de limites");
+                IProcedureResponse resp = Utils.returnException(50202, "Error obtención de limites");
+                return resp;
             }   
         } catch (Exception e) {
 			e.printStackTrace();
