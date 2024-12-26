@@ -27,31 +27,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestRegisterAccountSpei implements Serializable {
-  private String accountNumber;
-  private String accountNumberDestination;
-  private Integer typeDestinationId;
+public class RequestRegisterAccount implements Serializable {
+  private String transactionType;
+  private String transactionSubType;
   private Integer externalCustomerId;
-  private int bankId;
-  private String productAlias;
-  private String contactId;
-  public String getAccountNumber(){
-    return this.accountNumber;
+  private String accountNumber;
+  private RequestRegisterAccount_creditorAccount creditorAccount;
+  private String otpCode;
+  private String additionalData;
+  public String getTransactionType(){
+    return this.transactionType;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public void setTransactionType(String transactionType ){
+    this.transactionType=transactionType;
   }
-  public String getAccountNumberDestination(){
-    return this.accountNumberDestination;
+  public String getTransactionSubType(){
+    return this.transactionSubType;
   }
-  public void setAccountNumberDestination(String accountNumberDestination ){
-    this.accountNumberDestination=accountNumberDestination;
-  }
-  public Integer getTypeDestinationId(){
-    return this.typeDestinationId;
-  }
-  public void setTypeDestinationId(Integer typeDestinationId ){
-    this.typeDestinationId=typeDestinationId;
+  public void setTransactionSubType(String transactionSubType ){
+    this.transactionSubType=transactionSubType;
   }
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
@@ -59,22 +53,34 @@ public class RequestRegisterAccountSpei implements Serializable {
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
   }
-  public int getBankId(){
-    return this.bankId;
+  public String getAccountNumber(){
+    return this.accountNumber;
   }
-  public void setBankId(int bankId ){
-    this.bankId=bankId;
+  public void setAccountNumber(String accountNumber ){
+    this.accountNumber=accountNumber;
   }
-  public String getProductAlias(){
-    return this.productAlias;
+  public RequestRegisterAccount_creditorAccount creditorAccountInstance(){
+	if(this.creditorAccount==null){
+	this.creditorAccount=new RequestRegisterAccount_creditorAccount();
+	}
+	return this.creditorAccount;
   }
-  public void setProductAlias(String productAlias ){
-    this.productAlias=productAlias;
+  public RequestRegisterAccount_creditorAccount getCreditorAccount(){
+    return this.creditorAccount;
   }
-  public String getContactId(){
-    return this.contactId;
+  public void setCreditorAccount(RequestRegisterAccount_creditorAccount creditorAccount ){
+    this.creditorAccount=creditorAccount;
   }
-  public void setContactId(String contactId ){
-    this.contactId=contactId;
+  public String getOtpCode(){
+    return this.otpCode;
+  }
+  public void setOtpCode(String otpCode ){
+    this.otpCode=otpCode;
+  }
+  public String getAdditionalData(){
+    return this.additionalData;
+  }
+  public void setAdditionalData(String additionalData ){
+    this.additionalData=additionalData;
   }
 }
