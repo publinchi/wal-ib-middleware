@@ -2411,8 +2411,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addInputParam("@i_id", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@s_ssn"));
 
             //DatosAccendo
-            anOriginalRequest.addInputParam("@i_beneficiario_cc", ICTSTypes.SQLINT1, data.get(4));
-            anOriginalRequest.addInputParam("@i_tercer_ordenante", ICTSTypes.SQLINT1, data.get(5));
+            anOriginalRequest.addInputParam("@i_beneficiario_cc", ICTSTypes.SQLINT4, data.get(4));
+            anOriginalRequest.addInputParam("@i_tercer_ordenante", ICTSTypes.SQLINT4, data.get(5));
 
             anOriginalRequest.addInputParam("@i_cuenta_clabe", ICTSTypes.SQLVARCHAR, data.get(6));
             // VARIABLES DE SALIDA
