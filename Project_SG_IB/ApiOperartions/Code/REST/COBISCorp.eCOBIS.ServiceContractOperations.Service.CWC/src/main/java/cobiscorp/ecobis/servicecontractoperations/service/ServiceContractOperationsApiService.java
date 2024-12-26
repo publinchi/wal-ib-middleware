@@ -3265,7 +3265,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
       procedureRequestAS.addInputParam("@i_currency",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getLimit() != null ? inRequestGetClientLimits.getLimit().getCurrency() : null);
       procedureRequestAS.addInputParam("@i_contactId",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getContactId());
       procedureRequestAS.addInputParam("@i_otp_code",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getOtpCode());
-      procedureRequestAS.addInputParam("@i_aditionalData",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getAditionalData());
+      procedureRequestAS.addInputParam("@i_aditionalData",ICTSTypes.SQLVARCHAR,inRequestGetClientLimits.getAdditionalData());
       
       procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
       procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
