@@ -62,25 +62,25 @@ import com.google.gson.JsonSyntaxException;
 		@Property(name = "service.vendor", value = "COBISCORP"),
 		@Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "RegistContacLimitOrchestrationCore"),
-        @Property(name = "service.spName", value = "cob_procesador..sp_orq_regist_contac_limit")})
+		@Property(name = "service.spName", value = "cob_procesador..sp_orq_regist_contac_limit")})
 public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase {// SPJavaOrchestrationBase
 
 	private ILogger logger = (ILogger) this.getLogger();
 	private java.util.Properties properties;
 	private static final String className = "RegistContacLimitOrchestrationCore";
 	private static final String FALSE = "false";  
-	
-	 @Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
-		private IAdminTokenUser tokenService;
 
-		public void setTokenService(IAdminTokenUser tokenService) {
-			this.tokenService = tokenService;
-		}
+	@Reference(bind = "setTokenService", unbind = "unsetTokenService", cardinality = ReferenceCardinality.OPTIONAL_UNARY)
+	private IAdminTokenUser tokenService;
 
-		public void unsetTokenService(IAdminTokenUser tokenService) {
-			this.tokenService = null;
-		}
-	
+	public void setTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = tokenService;
+	}
+
+	public void unsetTokenService(IAdminTokenUser tokenService) {
+		this.tokenService = null;
+	}
+
 	@Override
 	public void loadConfiguration(IConfigurationReader configurationReader) {
 
@@ -101,6 +101,7 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 
 		IProcedureResponse procedureResponse = new ProcedureResponseAS();
 
+		// Guarda el request original recibido en la orquestacion
 		aBagSPJavaOrchestration.put("originalProcedureRequest", anOriginalRequest);
 
 		String operation = anOriginalRequest.readValueParam("@i_operation");
@@ -119,9 +120,9 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		else if(operation.equals("S")){
 
 			// Valida limites del cliente, antes de guardar limites de un contacto
-			
+
 			// NOTA: Se hará la validación desde Front
-			
+
 			//callCustomerLimits(anOriginalRequest, aBagSPJavaOrchestration);
 			/*if ("true".equals(aBagSPJavaOrchestration.get("successGetCustomerLimits"))) {
 				obtainLimitsValidations(anOriginalRequest, aBagSPJavaOrchestration);
@@ -161,7 +162,7 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 			procedureResponse = callSaveContactLimit(aBagSPJavaOrchestration);
 
 			if (FALSE.equals(aBagSPJavaOrchestration.get("successSaveContactLimit"))) {
-			    return processResponseError(procedureResponse);
+				return processResponseError(procedureResponse);
 			}
 			procedureResponse = processTransfoResponseSaveContactLimit(procedureResponse, aBagSPJavaOrchestration);
 		}
@@ -182,8 +183,8 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		logger.logDebug(METHOD_NAME + " [FIN]");
 		return procedureResponse; 
 	}
-	
-	 /**
+
+	/**
 	 * Llama conector =>  para Guardar un contacto junto con los limites
 	 * @param aBagSPJavaOrchestration
 	 * @return IProcedureResponse del connector llamado
@@ -199,96 +200,89 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		logger.logDebug("otpCodeReceived: "+otpCode);
 		String otpReturnCode = null;
 		String otpReturnCodeNew = null;
-        String login = null;		
-		
+		String login = null;		
+
 		if (otpCode!=null && !otpCode.equals("null") && !otpCode.trim().isEmpty()) {
 
 			getLoginById(originalProcedureRequest, aBagSPJavaOrchestration);
-			
+
 			login = aBagSPJavaOrchestration.get("o_login").toString();
-			
+
 			logger.logDebug("User login: "+login);
-			
+
 			if (!login.equals("X")) {
-			
+
 				DataTokenResponse  wResponseOtp = validateOTPCode(originalProcedureRequest, aBagSPJavaOrchestration);
-					
+
 				logger.logDebug("ValidateOTP response: "+wResponseOtp.getSuccess());
-				
+
 				if(!wResponseOtp.getSuccess()) {
-					
+
 					otpReturnCode = wResponseOtp.getMessage().getCode();
 					aBagSPJavaOrchestration.put("o_codErrorOTP", otpReturnCode);
-					
+
 					if (logger.isDebugEnabled()) {
-					logger.logDebug("ValidateOTP return code: "+otpReturnCode);}
-					
+						logger.logDebug("ValidateOTP return code: "+otpReturnCode);}
+
 				} else {					
 					otpReturnCode = "0";
-					
+
 					if (logger.isDebugEnabled()) {
-					logger.logDebug("ValidateOTP successful code: "+otpReturnCode);}
+						logger.logDebug("ValidateOTP successful code: "+otpReturnCode);}
 				}
 			}else {
 				logger.logDebug("No consulto el login");
 			}
 		}
-        
-        // Validamos si el error fue de otp invalido
- 		if (otpReturnCode != null) {
- 			if ( otpReturnCode.equals("1890000") ) {
- 				try {
- 					// Ejecutamos el servicio de generación de token
- 					DataTokenResponse  wResponseGOtp = generareOTPCode(originalProcedureRequest, aBagSPJavaOrchestration);
- 					if (logger.isDebugEnabled()) {	
- 						logger.logDebug("GeneracionOTP dinámica response: "+wResponseGOtp.getSuccess());
- 						}
- 					
- 					if(!wResponseGOtp.getSuccess()) {
-                         otpReturnCodeNew = wResponseGOtp.getMessage().getCode();
- 						if (logger.isDebugEnabled()) {
- 						logger.logDebug("GeneracionOTP dinámica no exitosa: "+ otpReturnCodeNew);}				
- 					} else {
-                        registerRequestType(login);
- 						if (logger.isDebugEnabled()) {
- 						logger.logDebug("GeneracionOTP dinámica exitosa: "+otpReturnCodeNew);}
- 					}					
- 				}catch(Exception ex) {
- 					aBagSPJavaOrchestration.replace("o_codErrorOTP", "1890010");
- 					logger.logError(ex.toString());
- 				}		
- 				//Ingresamos el log de OTP ingresadas fallidas por sistema
- 				registrosFallidos(aBagSPJavaOrchestration);		
- 			}else {
- 				if ( otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005")) {
- 					//Ingresamos el log de OTP ingresadas fallidas por el usuario en bloqueo y asistencia requerida
- 					registrosFallidos(aBagSPJavaOrchestration);
- 				}
- 			}
- 			
- 			//Validacion para llamar al conector blockOperation
- 			if(otpReturnCode.equals("1890005")){
- 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(originalProcedureRequest, aBagSPJavaOrchestration);
- 				logger.logDebug(className + " OTPReturnCode 1890005 [INI]");
- 			}
- 			
- 			otpReturnCode = processOtpReturnCode(otpReturnCode);
- 		}
+
+		// Validamos si el error fue de otp invalido
+		if (!otpReturnCode.equals("0")) {
+			if ( otpReturnCode.equals("1890000") ) {
+				try {
+					// Ejecutamos el servicio de generación de token
+					DataTokenResponse  wResponseGOtp = generareOTPCode(originalProcedureRequest, aBagSPJavaOrchestration);
+					if (logger.isDebugEnabled()) {	
+						logger.logDebug("GeneracionOTP dinámica response: "+wResponseGOtp.getSuccess());
+					}
+
+					if(!wResponseGOtp.getSuccess()) {
+						otpReturnCodeNew = wResponseGOtp.getMessage().getCode();
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("GeneracionOTP dinámica no exitosa: "+ otpReturnCodeNew);}				
+					} else {
+						registerRequestType(login);
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("GeneracionOTP dinámica exitosa: "+otpReturnCodeNew);}
+					}					
+				}catch(Exception ex) {
+					aBagSPJavaOrchestration.replace("o_codErrorOTP", "1890010");
+					logger.logError(ex.toString());
+				}		
+				//Ingresamos el log de OTP ingresadas fallidas por sistema
+				registrosFallidos(aBagSPJavaOrchestration);		
+			}else {
+				if ( otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005")) {
+					//Ingresamos el log de OTP ingresadas fallidas por el usuario en bloqueo y asistencia requerida
+					registrosFallidos(aBagSPJavaOrchestration);
+				}
+			}
+
+			//Validacion para llamar al conector blockOperation
+			if(otpReturnCode.equals("1890005")){
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(originalProcedureRequest, aBagSPJavaOrchestration);
+				logger.logDebug(className + " OTPReturnCode 1890005 [INI]");
+			}
+
+			otpReturnCode = processOtpReturnCode(otpReturnCode);
+		}
 		
- 		//2. Manejar response con caso de excepcion u otp errada
- 		//if (otpReturnCode == null) {
- 		//	IProcedureResponse resp = Utils.returnException(500, "No se esta recibiendo otp" + otpReturnCode);
- 		//	logger.logDebug("Response Exeption1: " + resp.toString());
- 		//	aBagSPJavaOrchestration.put("successSaveContactLimit", FALSE);
- 		//	return resp;
- 		//}
- 		if (otpReturnCode != null && !otpReturnCode.isEmpty() && !"0".equals(otpReturnCode)) {
+		if (otpReturnCode != null && !otpReturnCode.isEmpty() && !"0".equals(otpReturnCode)) {
 			IProcedureResponse resp = Utils.returnException(Integer.parseInt(otpReturnCode), "Validacion de token falló con codigo de exception/error " + otpReturnCode);
- 			logger.logDebug("Response Exeption2: " + resp.toString());
- 			aBagSPJavaOrchestration.put("successSaveContactLimit", FALSE);
+			logger.logDebug("Response Exeption2: " + resp.toString());
+			aBagSPJavaOrchestration.put("successSaveContactLimit", FALSE);
 			return resp;
 		}
- 		
+
 		// 3. Guardar Contacto
 		IProcedureResponse connectorSaveContacLimitResponse = new ProcedureResponseAS();
 		if (originalProcedureRequest != null) {
@@ -369,9 +363,11 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		}
 
 		logRequestAndResponse(originalProcedureRequest, aBagSPJavaOrchestration);
+		
+		
 		return connectorSaveContacLimitResponse;
 	}
-	
+
 	/**
 	 * Crea el cuerpo/body JSON para una peticion de guardar/registrar un nuevo contacto
 	 * @param originalProcedureRequest
@@ -382,84 +378,84 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 
 		// Agregar propiedades básicas
 		jsonRequest.addProperty("externalCustomerId", originalProcedureRequest.readValueParam("@i_externalCustomerId"));
-				
+
 		String accountNumber = originalProcedureRequest.readValueParam("@i_accountNumber");
 		if (accountNumber != null && !accountNumber.isEmpty()) {
-		    jsonRequest.addProperty("accountNumber", accountNumber);
+			jsonRequest.addProperty("accountNumber", accountNumber);
 		}
 
 		// Crear el objeto creditorAccount
 		JsonObject creditorAccount = new JsonObject();
 		creditorAccount.addProperty("identification", originalProcedureRequest.readValueParam("@i_identification"));
 		creditorAccount.addProperty("bankCode", originalProcedureRequest.readValueParam("@i_bankCode"));
-		
-	     String bankName = originalProcedureRequest.readValueParam("@i_bankName");
-	    if (bankName != null && !bankName.isEmpty()) {
-	        creditorAccount.addProperty("bankName", bankName);
-	    }		
-		
+
+		String bankName = originalProcedureRequest.readValueParam("@i_bankName");
+		if (bankName != null && !bankName.isEmpty()) {
+			creditorAccount.addProperty("bankName", bankName);
+		}		
+
 		creditorAccount.addProperty("name", originalProcedureRequest.readValueParam("@i_name"));
 		creditorAccount.addProperty("type", originalProcedureRequest.readValueParam("@i_type"));
-		
+
 		String alias = originalProcedureRequest.readValueParam("@i_alias");
-	    if (alias != null && !alias.isEmpty()) {
-	        creditorAccount.addProperty("alias", alias);
-	    }
-		
+		if (alias != null && !alias.isEmpty()) {
+			creditorAccount.addProperty("alias", alias);
+		}
+
 		creditorAccount.addProperty("saveAccount",Boolean.parseBoolean(originalProcedureRequest.readValueParam("@i_saveAccount")));
-		
+
 		String maskedCardNumber = originalProcedureRequest.readValueParam("@i_maskedCardNumber");
-	    if (maskedCardNumber != null && !maskedCardNumber.isEmpty()) {
-	        creditorAccount.addProperty("maskedCardNumber", maskedCardNumber);
-	    }
+		if (maskedCardNumber != null && !maskedCardNumber.isEmpty()) {
+			creditorAccount.addProperty("maskedCardNumber", maskedCardNumber);
+		}
 		creditorAccount.addProperty("isFavorite", Boolean.parseBoolean(originalProcedureRequest.readValueParam("@i_isFavorite")));
 
 		// Crear el array transactionLimits
 		JsonArray transactionLimits = new JsonArray();
 
 		// Leer y verificar valores de limitType, amount, y currency
-	    String limitType = originalProcedureRequest.readValueParam("@i_limitType");
-	    String amountStr = originalProcedureRequest.readValueParam("@i_amount");
-	    String currency = originalProcedureRequest.readValueParam("@i_currency");
+		String limitType = originalProcedureRequest.readValueParam("@i_limitType");
+		String amountStr = originalProcedureRequest.readValueParam("@i_amount");
+		String currency = originalProcedureRequest.readValueParam("@i_currency");
+
+		// Solo proceder si al menos uno de los campos tiene un valor válido
+		if ((limitType != null && !limitType.isEmpty()) ||
+				(amountStr != null && !amountStr.isEmpty()) ||
+				(currency != null && !currency.isEmpty())) {
+
+			JsonObject limitObject = new JsonObject();
+
+			if (limitType != null && !limitType.isEmpty()) {
+				limitObject.addProperty("limitType", limitType);
+			}
+
+			// Solo crear el objeto limit si amount o currency tienen valores
+			if ((amountStr != null && !amountStr.isEmpty()) || (currency != null && !currency.isEmpty())) {
+				JsonObject limit = new JsonObject();
+				if (amountStr != null && !amountStr.isEmpty()) {
+					limit.addProperty("amount", new BigDecimal(amountStr));
+				}
+				if (currency != null && !currency.isEmpty()) {
+					limit.addProperty("currency", currency);
+				}
+				limitObject.add("limit", limit);
+			}
+
+			// Añadir limitObject al array si contiene datos válidos
+			if (!limitObject.entrySet().isEmpty()) {
+				transactionLimits.add(limitObject);
+			}
+		}
+
+		// Añadir transactionLimits al creditorAccount si no está vacío
+		if (transactionLimits.size() > 0) {
+			creditorAccount.add("transactionLimits", transactionLimits);
+		}
+
+		// Añadir creditorAccount al jsonRequest
+		jsonRequest.add("creditorAccount", creditorAccount);
 		
-		 // Solo proceder si al menos uno de los campos tiene un valor válido
-	    if ((limitType != null && !limitType.isEmpty()) ||
-	        (amountStr != null && !amountStr.isEmpty()) ||
-	        (currency != null && !currency.isEmpty())) {
-
-	        JsonObject limitObject = new JsonObject();
-
-	        if (limitType != null && !limitType.isEmpty()) {
-	            limitObject.addProperty("limitType", limitType);
-	        }
-
-	        // Solo crear el objeto limit si amount o currency tienen valores
-	        if ((amountStr != null && !amountStr.isEmpty()) || (currency != null && !currency.isEmpty())) {
-	            JsonObject limit = new JsonObject();
-	            if (amountStr != null && !amountStr.isEmpty()) {
-	                limit.addProperty("amount", new BigDecimal(amountStr));
-	            }
-	            if (currency != null && !currency.isEmpty()) {
-	                limit.addProperty("currency", currency);
-	            }
-	            limitObject.add("limit", limit);
-	        }
-
-	        // Añadir limitObject al array si contiene datos válidos
-	        if (!limitObject.entrySet().isEmpty()) {
-	            transactionLimits.add(limitObject);
-	        }
-	    }
-
-	    // Añadir transactionLimits al creditorAccount si no está vacío
-	    if (transactionLimits.size() > 0) {
-	        creditorAccount.add("transactionLimits", transactionLimits);
-	    }
-
-	    // Añadir creditorAccount al jsonRequest
-	    jsonRequest.add("creditorAccount", creditorAccount);
-
-	    return jsonRequest;
+		return jsonRequest;
 	}
 
 
@@ -546,9 +542,9 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 			JsonParser jsonParser = new JsonParser();
 			String jsonRequestStringClean = aBagSPJavaOrchestration.get("responseBodyGetCustomerLimits").toString().replace("&quot;", "\"");
 			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
-			
+
 			logger.logInfo("jsonObject obtainLimitsValidations:: " + jsonObject);
-			
+
 			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
 
 			double transactionAmount = Double.parseDouble(aRequest.readValueParam("@i_amount"));// Monto de la transacción
@@ -628,7 +624,7 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		try {
 
 			IProcedureRequest anOriginalQueryContacts = new ProcedureRequestAS();
-            
+
 			// Add query params
 			anOriginalQueryContacts.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_operation"));
 			anOriginalQueryContacts.addInputParam("@i_pageSize", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_pageSize"));
@@ -810,17 +806,17 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		// Agregar header/metadata 4
 		IResultSetHeader metaData4 = new ResultSetHeader();
 		IResultSetData data4 = new ResultSetData();
-		
+
 		// Resultados tomados del response del connector
 		String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull() ? "false" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 		String code = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).isNull() ? "400218" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).getValue();
 		String message = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).isNull() ? "Service execution error" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).getValue();
-		
+
 		//data1
 		IResultSetRow row = new ResultSetRow();
 		row.addRowData(1, new ResultSetRowColumnData(false, success));
 		data.addRow(row);
-				
+
 		//data2
 		IResultSetRow row2 = new ResultSetRow();
 		row2.addRowData(1, new ResultSetRowColumnData(false, code));
@@ -861,33 +857,33 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 			row3.addRowData(2, new ResultSetRowColumnData(false, accountNumber));
 			row3.addRowData(3, new ResultSetRowColumnData(false, transactionType));
 			data3.addRow(row3);
-			
+
 			//metaData4
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("balanceAmount_amount", ICTSTypes.SQLVARCHAR, 100));
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("balanceAmount_currency", ICTSTypes.SQLVARCHAR, 100));
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("userConfiguredLimit_amount", ICTSTypes.SQLVARCHAR, 100));
 			metaData4.addColumnMetaData(new ResultSetHeaderColumn("userConfiguredLimit_currency", ICTSTypes.SQLVARCHAR, 100));
-			
+
 			JsonArray oneContactLimits = jsonObject.getAsJsonArray("contactLimit");
 			logger.logInfo("oneContactLimits LENGTH::" + oneContactLimits.size());
 
 			for (JsonElement limitElement : oneContactLimits) {
-			    IResultSetRow oneContactRow = new ResultSetRow();
+				IResultSetRow oneContactRow = new ResultSetRow();
 
-			    if (limitElement.getAsJsonObject().has("balanceAmount")) {
-			        oneContactRow.addRowData(1, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("amount").getAsString())); // balance amount
-			        oneContactRow.addRowData(2, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("currency").getAsString())); // balance currency
-			    }
-			    if (limitElement.getAsJsonObject().has("userConfiguredLimit")) {
-			        oneContactRow.addRowData(3, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("amount").getAsString())); // limit amount
-			        oneContactRow.addRowData(4, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("currency").getAsString())); // limit currency
-			    }
+				if (limitElement.getAsJsonObject().has("balanceAmount")) {
+					oneContactRow.addRowData(1, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("amount").getAsString())); // balance amount
+					oneContactRow.addRowData(2, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("balanceAmount").get("currency").getAsString())); // balance currency
+				}
+				if (limitElement.getAsJsonObject().has("userConfiguredLimit")) {
+					oneContactRow.addRowData(3, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("amount").getAsString())); // limit amount
+					oneContactRow.addRowData(4, new ResultSetRowColumnData(false, limitElement.getAsJsonObject().getAsJsonObject("userConfiguredLimit").get("currency").getAsString())); // limit currency
+				}
 
-			    data4.addRow(oneContactRow);
+				data4.addRow(oneContactRow);
 			}
 
 		}	
-			
+
 		// Declara bloques para el response final del orquestador
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
@@ -897,8 +893,8 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 			resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			resultsetBlock4 = new ResultSetBlock(metaData4, data4);
 		}
-		
-		
+
+
 		// Agrega informacion a bloques del response final del orquestador
 		finalGetOneContactLimitsResponse.setReturnCode(200);
 		finalGetOneContactLimitsResponse.addResponseBlock(resultsetBlock);
@@ -961,16 +957,16 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		row2.addRowData(2, new ResultSetRowColumnData(false, message));
 		data2.addRow(row2);
 
-		String requestBody = null;
+		String responseBody = null;
 		if(aBagSPJavaOrchestration.get("responseBodySaveContactLimit") != null  && !aBagSPJavaOrchestration.get("responseBodySaveContactLimit").toString().equals("{}")){
-			requestBody = aBagSPJavaOrchestration.get("responseBodySaveContactLimit").toString();
+			responseBody = aBagSPJavaOrchestration.get("responseBodySaveContactLimit").toString();
 		}
 
-		if(requestBody != null){
+		if(responseBody != null){
 			@SuppressWarnings("deprecation")
 			JsonParser jsonParser = new JsonParser();
 
-			String jsonRequestStringClean = requestBody.replace("&quot;", "\"");
+			String jsonRequestStringClean = responseBody.replace("&quot;", "\"");
 			logger.logInfo("jsonRequestStringClean:: " + jsonRequestStringClean );
 
 			@SuppressWarnings("deprecation")
@@ -1025,39 +1021,39 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 				savedContactRow.addRowData(1, new ResultSetRowColumnData(false, savedContactObject.get("id").getAsString()));
 				savedContactRow.addRowData(2, new ResultSetRowColumnData(false, savedContactObject.get("identification").getAsString()));
 				savedContactRow.addRowData(3, new ResultSetRowColumnData(false, savedContactObject.get("displayIdentification").getAsString()));
-				
+
 				Integer bankCode = savedContactObject.has("bankCode") ? savedContactObject.get("bankCode").getAsInt() : null;
 				savedContactRow.addRowData(4, new ResultSetRowColumnData(false, bankCode!=null?bankCode.toString():null ));
-				
+
 				String bankName = savedContactObject.has("bankName") ? savedContactObject.get("bankName").getAsString() : null;
 				savedContactRow.addRowData(5, new ResultSetRowColumnData(false, bankName));				
-				
+
 				savedContactRow.addRowData(6, new ResultSetRowColumnData(false, savedContactObject.get("name").getAsString()));
 				savedContactRow.addRowData(7, new ResultSetRowColumnData(false, savedContactObject.get("type").getAsString()));
-				
+
 				String alias = savedContactObject.has("alias") ? savedContactObject.get("alias").getAsString() : null;
 				savedContactRow.addRowData(8, new ResultSetRowColumnData(false, alias));			
-				
+
 				String maskedCardNumber = savedContactObject.has("maskedCardNumber") ? savedContactObject.get("maskedCardNumber").getAsString() : null;
 				savedContactRow.addRowData(9, new ResultSetRowColumnData(false, maskedCardNumber));				    
-				
+
 				String externalCardId = savedContactObject.has("externalCardId") ? savedContactObject.get("externalCardId").getAsString() : null;
 				savedContactRow.addRowData(10, new ResultSetRowColumnData(false, externalCardId));				
-				
+
 				BigDecimal dailyTxnLimitAmount = savedContactObject.has("dailyTxnLimitAmount") ? savedContactObject.get("dailyTxnLimitAmount").getAsBigDecimal() : null;
 				savedContactRow.addRowData(11, new ResultSetRowColumnData(false, dailyTxnLimitAmount!=null? dailyTxnLimitAmount.toString() : null));
 
-			    String dailyTxnLimitCurrency = savedContactObject.has("dailyTxnLimitCurrency") ? savedContactObject.get("dailyTxnLimitCurrency").getAsString() : null;
-			    savedContactRow.addRowData(12, new ResultSetRowColumnData(false, dailyTxnLimitCurrency));
-				
-			 // Verifica si el objeto JSON tiene el campo "isFavorite" y si no es null
-			    boolean isFavorite = savedContactObject.has("isFavorite") && !savedContactObject.get("isFavorite").isJsonNull()
-			        ? savedContactObject.get("isFavorite").getAsBoolean()
-			        : false; // O cualquier valor predeterminado que desees si es null
+				String dailyTxnLimitCurrency = savedContactObject.has("dailyTxnLimitCurrency") ? savedContactObject.get("dailyTxnLimitCurrency").getAsString() : null;
+				savedContactRow.addRowData(12, new ResultSetRowColumnData(false, dailyTxnLimitCurrency));
 
-			    savedContactRow.addRowData(13, new ResultSetRowColumnData(false, String.valueOf(isFavorite)));
-			    
-			   // savedContactRow.addRowData(13, new ResultSetRowColumnData(false, String.valueOf(savedContactObject.get("isFavorite").getAsBoolean())));
+				// Verifica si el objeto JSON tiene el campo "isFavorite" y si no es null
+				boolean isFavorite = savedContactObject.has("isFavorite") && !savedContactObject.get("isFavorite").isJsonNull()
+						? savedContactObject.get("isFavorite").getAsBoolean()
+								: false; // O cualquier valor predeterminado que desees si es null
+
+				savedContactRow.addRowData(13, new ResultSetRowColumnData(false, String.valueOf(isFavorite)));
+
+				// savedContactRow.addRowData(13, new ResultSetRowColumnData(false, String.valueOf(savedContactObject.get("isFavorite").getAsBoolean())));
 
 				data4.addRow(savedContactRow);
 			}
@@ -1069,7 +1065,7 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock3 = null;
 		IResultSetBlock resultsetBlock4 = null;
-		if(requestBody != null) {
+		if(responseBody != null) {
 			resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			resultsetBlock4 = new ResultSetBlock(metaData4, data4);
 		}
@@ -1078,11 +1074,20 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		finalSaveContactLimitResponse.setReturnCode(200);
 		finalSaveContactLimitResponse.addResponseBlock(resultsetBlock);
 		finalSaveContactLimitResponse.addResponseBlock(resultsetBlock2);
-		if(requestBody != null) {
+		if(responseBody != null) {
 			finalSaveContactLimitResponse.addResponseBlock(resultsetBlock3);
 			finalSaveContactLimitResponse.addResponseBlock(resultsetBlock4);
 		}
 
+		
+		// Log de request original y response de save contact limit
+		IProcedureRequest originalProcedureRequest = (IProcedureRequest) aBagSPJavaOrchestration
+				.get("originalProcedureRequest");		
+				
+		JsonObject jsonResponseLog = createJsonResponseLog(code, message, success);
+		aBagSPJavaOrchestration.put("jsonResponseLog", jsonResponseLog);
+		registerGlobalRequestAndResponse(originalProcedureRequest, aBagSPJavaOrchestration, finalSaveContactLimitResponse);
+		
 		return finalSaveContactLimitResponse;
 	}
 
@@ -1200,29 +1205,29 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 				contactRow.addRowData(1, new ResultSetRowColumnData(false, contactObject.get("id").getAsString()));
 				contactRow.addRowData(2, new ResultSetRowColumnData(false, contactObject.get("identification").getAsString()));
 				contactRow.addRowData(3, new ResultSetRowColumnData(false, contactObject.get("displayIdentification").getAsString()));
-				
+
 				Integer bankCode = contactObject.has("bankCode") ? contactObject.get("bankCode").getAsInt() : null;
 				contactRow.addRowData(4, new ResultSetRowColumnData(false, bankCode!=null?bankCode.toString():null ));
-				
+
 				contactRow.addRowData(5, new ResultSetRowColumnData(false, contactObject.get("bankName").getAsString()));
 				contactRow.addRowData(6, new ResultSetRowColumnData(false, contactObject.get("name").getAsString()));
 				contactRow.addRowData(7, new ResultSetRowColumnData(false, contactObject.get("type").getAsString()));
-				
+
 				String alias = contactObject.has("alias") ? contactObject.get("alias").getAsString() : null;
 				contactRow.addRowData(8, new ResultSetRowColumnData(false, alias));
-				
+
 				String maskedCardNumber = contactObject.has("maskedCardNumber") ? contactObject.get("maskedCardNumber").getAsString() : null;
 				contactRow.addRowData(9, new ResultSetRowColumnData(false, maskedCardNumber));				
-				
+
 				String externalCardId = contactObject.has("externalCardId") ? contactObject.get("externalCardId").getAsString() : null;
-			    contactRow.addRowData(10, new ResultSetRowColumnData(false, externalCardId));
+				contactRow.addRowData(10, new ResultSetRowColumnData(false, externalCardId));
 
-			    BigDecimal dailyTxnLimitAmount = contactObject.has("dailyTxnLimitAmount") ? contactObject.get("dailyTxnLimitAmount").getAsBigDecimal() : null;
-			    contactRow.addRowData(11, new ResultSetRowColumnData(false, dailyTxnLimitAmount!=null? dailyTxnLimitAmount.toString() : null));
+				BigDecimal dailyTxnLimitAmount = contactObject.has("dailyTxnLimitAmount") ? contactObject.get("dailyTxnLimitAmount").getAsBigDecimal() : null;
+				contactRow.addRowData(11, new ResultSetRowColumnData(false, dailyTxnLimitAmount!=null? dailyTxnLimitAmount.toString() : null));
 
-			    String dailyTxnLimitCurrency = contactObject.has("dailyTxnLimitCurrency") ? contactObject.get("dailyTxnLimitCurrency").getAsString() : null;
-			    contactRow.addRowData(12, new ResultSetRowColumnData(false, dailyTxnLimitCurrency));
-							
+				String dailyTxnLimitCurrency = contactObject.has("dailyTxnLimitCurrency") ? contactObject.get("dailyTxnLimitCurrency").getAsString() : null;
+				contactRow.addRowData(12, new ResultSetRowColumnData(false, dailyTxnLimitCurrency));
+
 				contactRow.addRowData(13, new ResultSetRowColumnData(false, String.valueOf(contactObject.get("isFavorite").getAsBoolean())));
 
 				data4.addRow(contactRow);
@@ -1275,21 +1280,21 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		IResultSetData data2 = new ResultSetData();
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
 		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
-		
+
 		//String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull() ? "false" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 		//String code = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).isNull() ? "400218" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 2).getValue();
 		//String message = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).isNull() ? "Service execution error" : anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 3).getValue();
-	
+
 		if(anOriginalProcedureRes.getReturnCode()> 0) {
 			success = "false";
-		    for (Object messageObj : anOriginalProcedureRes.getMessages()) {
-		        if (messageObj instanceof IMessageBlock) {
-		            IMessageBlock messageBlock = (IMessageBlock) messageObj;
-		            code = String.valueOf(messageBlock.getMessageNumber());
-		            message = messageBlock.getMessageText();
-		        }
-		    }
-		
+			for (Object messageObj : anOriginalProcedureRes.getMessages()) {
+				if (messageObj instanceof IMessageBlock) {
+					IMessageBlock messageBlock = (IMessageBlock) messageObj;
+					code = String.valueOf(messageBlock.getMessageNumber());
+					message = messageBlock.getMessageText();
+				}
+			}
+
 		}else
 		{
 			success = (anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1) != null && !anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()) ? anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue() : "false";
@@ -1305,21 +1310,21 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		row2.addRowData(1, new ResultSetRowColumnData(false, code));
 		row2.addRowData(2, new ResultSetRowColumnData(false, message));
 		data2.addRow(row2);
-         
+
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
 		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
-		
-		
+
+
 		anOriginalProcedureResponse.setReturnCode(500);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
-		
+
 		logger.logInfo("processResponseError creado= " + anOriginalProcedureResponse.toString()  );
 		return anOriginalProcedureResponse;
 	}
 
 	/**
-	 * Hace Log del Response en base de datos
+	 * Hace Log del Response en base de datos ( s_ssn de request original + el request enviado y response recibido de IDC )
 	 * @param aRequest
 	 * @param aBagSPJavaOrchestration
 	 */
@@ -1373,93 +1378,137 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 		}
 	}
 
-	    /**
-		  * Consulta datos para envío de OTP
-		  * @param aRequest
-		  * @param aBagSPJavaOrchestration
-		  * @return
-		  */
-		 
-		 private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-				
-		    	IProcedureRequest request = new ProcedureRequestAS();
-	
-				if (logger.isInfoEnabled()) {
-					logger.logInfo(className + " Entrando en getLoginById..."); 
-					}
-				
-				request.setSpName("cob_bvirtual..sp_cons_ente_med_envio");
-	
-				request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-						IMultiBackEndResolverService.TARGET_LOCAL);
-				request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-				
-	//			if (aBagSPJavaOrchestration.get("card_id_dock") != null){			
-	//				request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("card_id_dock"));
-	//				
-	//			} else {		
-					request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
-	//			}
-				request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
-				request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
-				
-				request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
-				request.addOutputParam("@o_mail_ente", ICTSTypes.SQLVARCHAR, "X");
-				request.addOutputParam("@o_num_phone", ICTSTypes.SQLVARCHAR, "X");
-				request.addOutputParam("@o_ente", ICTSTypes.SQLVARCHAR, "X");
-	
-				IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-				
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("login es: " +  wProductsQueryResp.readValueParam("@o_login"));
-					logger.logDebug("phone es: " +  wProductsQueryResp.readValueParam("@o_num_phone"));
-				}
-				
-				aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
-				aBagSPJavaOrchestration.put("o_phone", wProductsQueryResp.readValueParam("@o_num_phone"));
-				aBagSPJavaOrchestration.put("o_entebv", wProductsQueryResp.readValueParam("@o_ente"));
-	
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("Response Corebanking getLoginById: " + wProductsQueryResp.getProcedureResponseAsString());
-				}
-				
-				if (logger.isInfoEnabled()) {
-					logger.logInfo(className + " Saliendo de getLoginById...");
-				}
-				
-				return wProductsQueryResp;
-			}
 
-		 
-		 /**
-		  * Realiza validación de OTP
-		  * @param aRequest
-		  * @param aBagSPJavaOrchestration
-		  * @return
-		  */
+	private void registerGlobalRequestAndResponse(IProcedureRequest originalProcedureRequest, Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse finalSaveContactLimitResponse) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		JsonObject jsonResponseLog = (JsonObject) aBagSPJavaOrchestration.get("jsonResponseLog");
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" Entrando en registerGlobalRequestAndResponse");
+		}
+
+		request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		if (aBagSPJavaOrchestration.get("operation").equals("S")) {
+			request.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "SaveRegistContactLimit");
+			request.addInputParam("@i_transaccion", ICTSTypes.SQLVARCHAR, "SaveRegistContactLimit");
+			request.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, originalProcedureRequest.readValueParam("@i_externalCustomerId"));
+			request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, originalProcedureRequest.readValueParam("@i_json_req")); 
+			//request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, finalSaveContactLimitResponse.getProcedureResponseAsString());
+			request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, jsonResponseLog.toString());
+		}
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response registerGlobalRequestAndResponse: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}	
+
+	private JsonObject createJsonResponseLog(String code, String message, String success){
+		JsonObject responseObject = new JsonObject();
+		responseObject.addProperty("code", code);
+		responseObject.addProperty("message", message);
+
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("success", success);
+		jsonObject.add("response", responseObject);
+		return jsonObject;
+	}
+
+	/**
+	 * Consulta datos para envío de OTP
+	 * @param aRequest
+	 * @param aBagSPJavaOrchestration
+	 * @return
+	 */
+
+	private IProcedureResponse getLoginById(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(className + " Entrando en getLoginById..."); 
+		}
+
+		request.setSpName("cob_bvirtual..sp_cons_ente_med_envio");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		//			if (aBagSPJavaOrchestration.get("card_id_dock") != null){			
+		//				request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("card_id_dock"));
+		//				
+		//			} else {		
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+		//			}
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
+
+		request.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_mail_ente", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_num_phone", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_ente", ICTSTypes.SQLVARCHAR, "X");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("login es: " +  wProductsQueryResp.readValueParam("@o_login"));
+			logger.logDebug("phone es: " +  wProductsQueryResp.readValueParam("@o_num_phone"));
+		}
+
+		aBagSPJavaOrchestration.put("o_login", wProductsQueryResp.readValueParam("@o_login"));
+		aBagSPJavaOrchestration.put("o_phone", wProductsQueryResp.readValueParam("@o_num_phone"));
+		aBagSPJavaOrchestration.put("o_entebv", wProductsQueryResp.readValueParam("@o_ente"));
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getLoginById: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(className + " Saliendo de getLoginById...");
+		}
+
+		return wProductsQueryResp;
+	}
+
+
+	/**
+	 * Realiza validación de OTP
+	 * @param aRequest
+	 * @param aBagSPJavaOrchestration
+	 * @return
+	 */
 	private DataTokenResponse validateOTPCode(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) { 
-	
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(className + " Entrando en validateOTPCode...");
 		}
-		
+
 		DataTokenRequest tokenRequest = new DataTokenRequest();
-		
+
 		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
 		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
 		tokenRequest.setChannel(8);
-		
+
 		DataTokenResponse tokenResponse = this.tokenService.validateTokenUser(tokenRequest);
-		
+
 		logger.logDebug("Token response: "+tokenResponse.getSuccess());
-		
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(className + " Saliendo de validateOTPCode...");
 		}
-		
+
 		return tokenResponse;
 	}
-	
+
 
 	/**
 	 * Genera OTP
@@ -1467,27 +1516,27 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 	 * @param aBagSPJavaOrchestration
 	 * @return
 	 */
-	
+
 	private DataTokenResponse generareOTPCode (IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) { 
-	
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(className + " Entrando en generarOTPCode...");
 		}
-	
+
 		DataTokenRequest tokenRequest = new DataTokenRequest();
-	
+
 		tokenRequest.setLogin(aBagSPJavaOrchestration.get("o_login").toString());
 		tokenRequest.setToken(aRequest.readValueParam("@i_otp_code"));
 		tokenRequest.setChannel(8);
-		
+
 		DataTokenResponse tokenResponseG = this.tokenService.generateTokenUser(tokenRequest);
-		
+
 		logger.logDebug("Token response: "+tokenResponseG.getSuccess());
-		
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(className + " Saliendo de generarOTPCode...");
 		}
-		
+
 		return tokenResponseG;
 	}
 
@@ -1495,228 +1544,228 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 	 * Genera los logs de las solicitudes de token
 	 * @param login
 	 */
-	
-	 private void registerRequestType(String login) {
-	        IProcedureRequest request = new ProcedureRequestAS();
-	
-	        if (logger.isInfoEnabled()) {
-	            logger.logInfo( " Entrando en registerRequestType");
-	        }
-	
-	        request.setSpName("cob_bvirtual..sp_solicitud_OTP");
-	
-	        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-	                IMultiBackEndResolverService.TARGET_LOCAL);
-	        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-	
-	        request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, login);
-	        request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "S");
-	
-	        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-	
-	        if (logger.isDebugEnabled()) {
-	            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
-	        }
-	    }
 
-	 /**
-	  * Genera los logs generados de la tabla se_token
-	  * @param aBagSPJavaOrchestration
-	  * @return
-	  */
-	private IProcedureResponse registrosFallidos(Map<String, Object> aBagSPJavaOrchestration) {		
+	private void registerRequestType(String login) {
 		IProcedureRequest request = new ProcedureRequestAS();
-	
+
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(className + " Entrando en registrosFallidos...");
+			logger.logInfo( " Entrando en registerRequestType");
 		}
-		
-		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
-	
+
+		request.setSpName("cob_bvirtual..sp_solicitud_OTP");
+
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-		
+
+		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, login);
+		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "S");
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
+
+	/**
+	 * Genera los logs generados de la tabla se_token
+	 * @param aBagSPJavaOrchestration
+	 * @return
+	 */
+	private IProcedureResponse registrosFallidos(Map<String, Object> aBagSPJavaOrchestration) {		
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(className + " Entrando en registrosFallidos...");
+		}
+
+		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
 		request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_entebv"));
 		request.addInputParam("@i_canal", ICTSTypes.SQLINT1, "8" );
 		request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_codErrorOTP").toString());
-		
+
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking registrosFallidos: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
-		
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(className + " Saliendo de registrosFallidos...");
 		}
-		
+
 		return wProductsQueryResp;
 	}
 
 	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-        if (logger.isInfoEnabled()) {
-            logger.logInfo(className + " Entrando en executeBlockOperation");
-        }
-        String phoneNumber = null;
-        Integer phoneCode = 52;
-        String channel = null;
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(className + " Entrando en executeBlockOperation");
+		}
+		String phoneNumber = null;
+		Integer phoneCode = 52;
+		String channel = null;
 
-        IProcedureResponse connectorBlockOperationResponse = null;
+		IProcedureResponse connectorBlockOperationResponse = null;
 
-        IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
-        aBagSPJavaOrchestration.remove("trn_virtual");
+		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
+		aBagSPJavaOrchestration.remove("trn_virtual");
 
-        if(logger.isDebugEnabled())
-            logger.logDebug("aRequest execute blockOperation: " + aRequest);
+		if(logger.isDebugEnabled())
+			logger.logDebug("aRequest execute blockOperation: " + aRequest);
 
-        try {
-            //Parametros de entrada
-            anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE,
-                    "(service.identifier=CISConnectorBlockOperation)");
-            anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
-            anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
-            anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
-            anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
-            anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
+		try {
+			//Parametros de entrada
+			anOriginalRequest.addFieldInHeader("com.cobiscorp.cobis.csp.services.ICSPExecutorConnector", ICOBISTS.HEADER_STRING_TYPE,
+					"(service.identifier=CISConnectorBlockOperation)");
+			anOriginalRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
+			anOriginalRequest.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
+			anOriginalRequest.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("externalProvider", ICOBISTS.HEADER_STRING_TYPE, "0");
+			anOriginalRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
 
-            anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700122");
-            anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700122");
+			anOriginalRequest.addFieldInHeader("trn", ICOBISTS.HEADER_STRING_TYPE, "18700122");
+			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18700122");
 
-            anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
+			anOriginalRequest.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700122");
 
-            anOriginalRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
+			anOriginalRequest.addInputParam("@i_customer_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
 
-            if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
-                channel = "web";
-            }
-            anOriginalRequest.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, channel);
+			if(aRequest.readValueParam("@i_channel").toString().contains("DESKTOP_BROWSER")) {
+				channel = "web";
+			}
+			anOriginalRequest.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, channel);
 
-            //Construccion del body para el conector
-            JsonObject jsonRequest = new JsonObject();
+			//Construccion del body para el conector
+			JsonObject jsonRequest = new JsonObject();
 
-            //Validacion del numero de telefono
-            if(aBagSPJavaOrchestration.get("o_phone") != null) {
-                phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
-            }
-            jsonRequest.addProperty("phoneNumber", phoneCode + phoneNumber);
-            anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
+			//Validacion del numero de telefono
+			if(aBagSPJavaOrchestration.get("o_phone") != null) {
+				phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
+			}
+			jsonRequest.addProperty("phoneNumber", phoneCode + phoneNumber);
+			anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
-            //Validacion del blockCode
-            jsonRequest.addProperty("blockCode", "21");
+			//Validacion del blockCode
+			jsonRequest.addProperty("blockCode", "21");
 
-            //Validacion de blockResason
-            jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
+			//Validacion de blockResason
+			jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
 
-            anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
+			anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
-            //Se llama al conector de blockOperation
-            aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorBlockOperation)");
-            anOriginalRequest.setSpName("cob_procesador..sp_conne_block_operation");
+			//Se llama al conector de blockOperation
+			aBagSPJavaOrchestration.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorBlockOperation)");
+			anOriginalRequest.setSpName("cob_procesador..sp_conne_block_operation");
 
-            // SE EJECUTA CONECTOR
-            connectorBlockOperationResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
+			// SE EJECUTA CONECTOR
+			connectorBlockOperationResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
 
-            if (connectorBlockOperationResponse.readValueParam("@o_responseCode") != null)
-                aBagSPJavaOrchestration.put("responseCode", connectorBlockOperationResponse.readValueParam("@o_responseCode"));
+			if (connectorBlockOperationResponse.readValueParam("@o_responseCode") != null)
+				aBagSPJavaOrchestration.put("responseCode", connectorBlockOperationResponse.readValueParam("@o_responseCode"));
 
-            if (connectorBlockOperationResponse.readValueParam("@o_message") != null)
-                aBagSPJavaOrchestration.put("message", connectorBlockOperationResponse.readValueParam("@o_message"));
+			if (connectorBlockOperationResponse.readValueParam("@o_message") != null)
+				aBagSPJavaOrchestration.put("message", connectorBlockOperationResponse.readValueParam("@o_message"));
 
-            if (connectorBlockOperationResponse.readValueParam("@o_success") != null) {
-                aBagSPJavaOrchestration.put("success_block_operation", connectorBlockOperationResponse.readValueParam("@o_success"));
-            }
-            else {
-                aBagSPJavaOrchestration.put("success_block_operation", "false");
-            }
+			if (connectorBlockOperationResponse.readValueParam("@o_success") != null) {
+				aBagSPJavaOrchestration.put("success_block_operation", connectorBlockOperationResponse.readValueParam("@o_success"));
+			}
+			else {
+				aBagSPJavaOrchestration.put("success_block_operation", "false");
+			}
 
-            if(logger.isDebugEnabled())
-                logger.logDebug("Response executeBlockOperationConnector: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
+			if(logger.isDebugEnabled())
+				logger.logDebug("Response executeBlockOperationConnector: "+ connectorBlockOperationResponse.getProcedureResponseAsString());
 
-            registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_external_customer_id"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            connectorBlockOperationResponse = null;
-            logger.logInfo(className +" Error Catastrofico de executeBlockOperationConnector");
+			registerRequestBlockOperation(connectorBlockOperationResponse, jsonRequest.toString(), aRequest.readValueParam("@i_external_customer_id"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			connectorBlockOperationResponse = null;
+			logger.logInfo(className +" Error Catastrofico de executeBlockOperationConnector");
 
-        } finally {
-            if (logger.isInfoEnabled()) {
-                logger.logInfo(className + "--> executeBlockOperationConnector");
-            }
-        }
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(className + "--> executeBlockOperationConnector");
+			}
+		}
 
-        return connectorBlockOperationResponse;
-    }
-	
+		return connectorBlockOperationResponse;
+	}
+
 	private void registerRequestBlockOperation(IProcedureResponse wProcedureResponse, String requestSend, String customerId){
-        IProcedureRequest request = new ProcedureRequestAS();
-        final String METHOD_NAME = "[registerRequestBlockOperationError]";
+		IProcedureRequest request = new ProcedureRequestAS();
+		final String METHOD_NAME = "[registerRequestBlockOperationError]";
 
-        if (logger.isInfoEnabled()) {
-            logger.logInfo( " Entrando en registerRequestBlockOperationError");
-        }
+		if (logger.isInfoEnabled()) {
+			logger.logInfo( " Entrando en registerRequestBlockOperationError");
+		}
 
-        String bodyResponse = wProcedureResponse.readValueParam("@o_body_response");
+		String bodyResponse = wProcedureResponse.readValueParam("@o_body_response");
 
-        String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"false":wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
+		String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"false":wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
 
-        String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
-        String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
+		String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
+		String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
 
-        logger.logInfo("code:: " + code);
-        logger.logInfo("message:: " + message);
-        logger.logInfo("bodyResponse:: " + bodyResponse);
+		logger.logInfo("code:: " + code);
+		logger.logInfo("message:: " + message);
+		logger.logInfo("bodyResponse:: " + bodyResponse);
 
-        request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
+		request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
 
-        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-                IMultiBackEndResolverService.TARGET_LOCAL);
-        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
-        request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
-        request.addInputParam("@i_request_block_operation", ICTSTypes.SQLVARCHAR, requestSend);
-        request.addInputParam("@i_response_block_operation", ICTSTypes.SQLVARCHAR, bodyResponse);
-        request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, code);
-        request.addInputParam("@i_ente", ICTSTypes.SQLINTN, customerId);
-        request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, message);
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "B");
+		request.addInputParam("@i_request_block_operation", ICTSTypes.SQLVARCHAR, requestSend);
+		request.addInputParam("@i_response_block_operation", ICTSTypes.SQLVARCHAR, bodyResponse);
+		request.addInputParam("@i_cod_error", ICTSTypes.SQLVARCHAR, code);
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, customerId);
+		request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, message);
 
-        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
-        if (logger.isDebugEnabled()) {
-            logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
-        }
-    }
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+	}
 	private String processOtpReturnCode(String otpReturnCode) {
 
-	    if (otpReturnCode != null && !otpReturnCode.equals("0")) {
-	        if (otpReturnCode.equals("1890000")) { // Token no existe o inválido
-	            return "400385";
+		if (otpReturnCode != null && !otpReturnCode.equals("0")) {
+			if (otpReturnCode.equals("1890000")) { // Token no existe o inválido
+				return "400385";
 
-	        } else if (otpReturnCode.equals("1890006")) { // Usuario sin nuevo token validable
-	            return "400387";
+			} else if (otpReturnCode.equals("1890006")) { // Usuario sin nuevo token validable
+				return "400387";
 
-	        } else if (otpReturnCode.equals("1890003")) { // Token validado
-	            return "400386";
+			} else if (otpReturnCode.equals("1890003")) { // Token validado
+				return "400386";
 
-	        } else if (otpReturnCode.equals("1887677")) { // Token expirado
-	            return "400381";
+			} else if (otpReturnCode.equals("1887677")) { // Token expirado
+				return "400381";
 
-	        } else if (otpReturnCode.equals("1890004")) { // Token bloqueado
-	            return "400382";
+			} else if (otpReturnCode.equals("1890004")) { // Token bloqueado
+				return "400382";
 
-	        } else if (otpReturnCode.equals("1890005")) { // Token bloqueado, asistencia requerida
-	            return "400383";
+			} else if (otpReturnCode.equals("1890005")) { // Token bloqueado, asistencia requerida
+				return "400383";
 
-	        } else if (otpReturnCode.equals("1890002")) { // Longitud del token encriptado
-	            return "400384";
+			} else if (otpReturnCode.equals("1890002")) { // Longitud del token encriptado
+				return "400384";
 
-	        } else {
-	        	return "1"; 
-	        }
-	    }
+			} else {
+				return "1"; 
+			}
+		}
 
-	    return "1"; 
+		return "1"; 
 	}
 }
