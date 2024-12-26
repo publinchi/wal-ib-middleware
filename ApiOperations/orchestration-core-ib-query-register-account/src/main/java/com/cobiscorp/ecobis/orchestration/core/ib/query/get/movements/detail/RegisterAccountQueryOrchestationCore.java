@@ -233,6 +233,8 @@ public class RegisterAccountQueryOrchestationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 		request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
 		request.addInputParam("@i_tipo_des", ICTSTypes.SQLVARCHAR, type);
+		request.addInputParam("@i_contact_id", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_contact_id"));
+		
 		request.addInputParam("@s_servicio", ICTSTypes.SQLCHAR, CHANNEL_REQUEST);
 		request.addInputParam("@t_trn", ICTSTypes.SQLCHAR, "18500110");
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");

@@ -27,6 +27,7 @@ import cobiscorp.ecobis.datacontractoperations.dto.*;
 import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 
 import org.apache.felix.scr.annotations.*;
+
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import javax.validation.constraints.NotNull;
@@ -2699,5 +2700,102 @@ public class ServiceContractOperationsApiRest {
 		 return Response.ok(outResponseRegisterCardPan).build();
 
 	 }
+	 
+	    /**
+		 * Registrar cuenta de destino para transferencias
+		 */
+		@POST
+		@Path("/apiOperations/customer/registerAccountForTransfer")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response registerAccountForTransfer(
+				@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,
+				@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,
+				@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,
+				@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,
+				RequestRegisterAccount inRequestRegisterAccount) {
+			LOGGER.logDebug("Start service execution REST: registerAccountForTransfer");
+			ResponseRegisterAccount outResponseRegisterAccount = new ResponseRegisterAccount();
 
+			if (!validateMandatory(new Data("externalCustomerId", inRequestRegisterAccount.getExternalCustomerId()),
+					new Data("creditorAccount.identification",
+							inRequestRegisterAccount.getCreditorAccount().getIdentification()),
+					new Data("creditorAccount.bankCode", inRequestRegisterAccount.getCreditorAccount().getBankCode()),
+					new Data("creditorAccount.name", inRequestRegisterAccount.getCreditorAccount().getName()),
+					new Data("creditorAccount.type", inRequestRegisterAccount.getCreditorAccount().getType()),
+					new Data("creditorAccount.saveAccount", inRequestRegisterAccount.getCreditorAccount().isSaveAccount()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+
+			try {
+				outResponseRegisterAccount = iServiceContractOperationsApiService.registerAccountForTransfer(xrequestid,
+						xenduserrequestdatetime, xenduserip, xchannel, inRequestRegisterAccount);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: registerAccountForTransfer");
+			return Response.ok(outResponseRegisterAccount).build();
+
+		}
+
+		/**
+		 * Obtener contactos guardados
+		 */
+		@POST
+		@Path("/apiOperations/customer/fetchSaveContacts")
+		@Consumes({ "application/json" })
+		@Produces({ "application/json" })
+		public Response getSavedContacts(
+				@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xrequestid,
+				@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xenduserrequestdatetime,
+				@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xenduserip,
+				@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xchannel,
+				RequestFetchSaveContacts inRequestFetchSaveContacts) {
+			LOGGER.logDebug("Start service execution REST: getSavedContacts");
+			ResponseGetFetchSavedContacts outResponseGetFetchSavedContacts = new ResponseGetFetchSavedContacts();
+
+			if (!validateMandatory(new Data("externalCustomerId", inRequestFetchSaveContacts.getExternalCustomerId()),
+					new Data("pageSize", inRequestFetchSaveContacts.getPageSize()),
+					new Data("pageNumber", inRequestFetchSaveContacts.getPageNumber()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+
+			try {
+				outResponseGetFetchSavedContacts = iServiceContractOperationsApiService.getSavedContacts(xrequestid,
+						xenduserrequestdatetime, xenduserip, xchannel, inRequestFetchSaveContacts);
+			} catch (CTSRestException e) {
+				LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				LOGGER.logDebug("500 is returned - Code exception");
+				LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			LOGGER.logDebug("Ends service execution REST: getSavedContacts");
+			return Response.ok(outResponseGetFetchSavedContacts).build();
+
+		}
 }

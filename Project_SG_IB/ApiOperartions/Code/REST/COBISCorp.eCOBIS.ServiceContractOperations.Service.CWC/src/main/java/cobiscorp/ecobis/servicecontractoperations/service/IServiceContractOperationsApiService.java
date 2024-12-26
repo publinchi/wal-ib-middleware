@@ -439,4 +439,18 @@ public interface IServiceContractOperationsApiService {
 	 *Update fields by new changed
 	 */
 	public void updateFieldsByNewChanged(String operation, String ente)throws CTSRestException;
+	
+	/**
+     * Registrar cuenta de destino para transferencias
+     */
+   
+	// Return void 
+	public ResponseRegisterAccount registerAccountForTransfer(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,RequestRegisterAccount inRequestRegisterAccount  )throws CTSRestException;
+
+	/**
+     * Obtener contactos guardados
+     */
+   
+	//Have DTO
+	public ResponseGetFetchSavedContacts getSavedContacts(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,RequestFetchSaveContacts inRequestFetchSaveContacts  )throws CTSRestException;
 }

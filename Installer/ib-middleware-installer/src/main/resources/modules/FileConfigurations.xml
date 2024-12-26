@@ -296,6 +296,7 @@
 		<staff id="33" name="orchestration-core-api-template" version="4.6.1.0" />
 		<staff id="34" name="orchestration-core-ib-beneficiaries-operations-api" version="4.6.1.0" />
 		<staff id="35" name="orchestration-core-ib-register-card-pan-api" version="4.6.1.0" />
+		<staff id="36" name="orchestration-core-ib-registcontactlimit-api" version="4.6.1.0" />
 		<staff id="37" name="orchestration-core-ib-get-client-limit-api" version="4.6.1.0" />
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>

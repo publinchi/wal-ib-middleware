@@ -5114,6 +5114,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 String.valueOf(inRequestRegisterAccountSpei.getBankId()));
         procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
                 inRequestRegisterAccountSpei.getAccountNumber());
+        procedureRequestAS.addInputParam("@i_contact_id", ICTSTypes.SQLVARCHAR,
+        		inRequestRegisterAccountSpei.getContactId());
         procedureRequestAS.addInputParam("@i_tipo_tercero", ICTSTypes.SQLCHAR,
                 String.valueOf(inRequestRegisterAccountSpei.getTypeDestinationId()));
         procedureRequestAS.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "I");
@@ -8108,4 +8110,445 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
     }
 
+	/**
+	 * Registrar cuenta de destino para transferencias
+	 */
+	@Override
+	// Have DTO
+	public ResponseRegisterAccount registerAccountForTransfer(String xrequestid, String xenduserrequestdatetime,
+			String xenduserip, String xchannel, RequestRegisterAccount inRequestRegisterAccount)
+			throws CTSRestException {
+		LOGGER.logDebug("Start service execution: registerAccountForTransfer");
+		ResponseRegisterAccount outResponseRegisterAccount = new ResponseRegisterAccount();
+
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_orq_regist_contac_limit");
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700130");
+		procedureRequestAS.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "S");
+		procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR,
+				String.valueOf(inRequestRegisterAccount.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getAccountNumber());
+		procedureRequestAS.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getTransactionType());
+		procedureRequestAS.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getTransactionSubType());
+		procedureRequestAS.addInputParam("@i_identification", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getIdentification());
+		procedureRequestAS.addInputParam("@i_bankCode", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getBankCode());
+		procedureRequestAS.addInputParam("@i_bankName", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getBankName());
+		procedureRequestAS.addInputParam("@i_name", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getName());
+		procedureRequestAS.addInputParam("@i_type", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getType());
+		procedureRequestAS.addInputParam("@i_alias", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getAlias());
+		procedureRequestAS.addInputParam("@i_saveAccount", ICTSTypes.SQLBIT,
+				String.valueOf(inRequestRegisterAccount.getCreditorAccount().isSaveAccount()));
+		procedureRequestAS.addInputParam("@i_maskedCardNumber", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getMaskedCardNumber());
+		procedureRequestAS.addInputParam("@i_isFavorite", ICTSTypes.SQLBIT,
+				String.valueOf(inRequestRegisterAccount.getCreditorAccount().isIsFavorite()));
+		procedureRequestAS.addInputParam("@i_limitType", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getLimitType());
+		procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLMONEY,
+				String.valueOf(inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount()));
+		procedureRequestAS.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getCreditorAccount().getLimit().getCurrency());
+		procedureRequestAS.addInputParam("@i_otp_code",ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getOtpCode());
+		procedureRequestAS.addInputParam("@i_additionalData",ICTSTypes.SQLVARCHAR,
+				inRequestRegisterAccount.getAdditionalData());
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+
+		Gson gsonTrans = new Gson();
+	    String jsonReqTrans = gsonTrans.toJson(inRequestRegisterAccount);
+	    procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseRegisterAccount returnResponseRegisterAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseRegisterAccount>() {
+						@Override
+						public ResponseRegisterAccount mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterAccount dto = new ResponseRegisterAccount();
+
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterAccount.setSuccess(returnResponseRegisterAccount.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseRegisterAccount returnResponseRegisterAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseRegisterAccount>() {
+						@Override
+						public ResponseRegisterAccount mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterAccount dto = new ResponseRegisterAccount();
+
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterAccount.setResponse(returnResponseRegisterAccount.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+		
+		LOGGER.logDebug("Response ResultSets Size: " + response.getResultSets().size());
+		
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2 && response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseRegisterAccount returnResponseRegisterAccount = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseRegisterAccount>() {
+						@Override
+						public ResponseRegisterAccount mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseRegisterAccount dto = new ResponseRegisterAccount();
+
+							dto.setPageSize(resultSetMapper.getInteger(1));
+							dto.setPageNumber(resultSetMapper.getInteger(2));
+							dto.setTotalRecords(resultSetMapper.getInteger(3));
+							return dto;
+						}
+					}, false);
+
+			outResponseRegisterAccount.setPageSize(returnResponseRegisterAccount.getPageSize());
+			outResponseRegisterAccount.setPageNumber(returnResponseRegisterAccount.getPageNumber());
+			outResponseRegisterAccount.setTotalRecords(returnResponseRegisterAccount.getTotalRecords());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2 && response.getResultSets().get(3).getData().getRows().size() > 0) {
+			List<ResultSetRow> datos = response.getResultSets().get(3).getData().getRows();
+			List<ResponseRegisterAccount_savedContacts> savedContacts = new ArrayList<>();
+
+			for (ResultSetRow row : datos) {
+				
+				boolean isFavorite = false;
+				
+				ResponseRegisterAccount_savedContacts savedContact = new ResponseRegisterAccount_savedContacts();
+
+                savedContact.setId(getRowValue(row, 1));
+                savedContact.setIdentification(getRowValue(row, 2));
+                savedContact.setDisplayIdentification(getRowValue(row, 3));
+                savedContact.setBankCode(getRowValue(row, 4));
+                savedContact.setBankName(getRowValue(row, 5));
+                savedContact.setName(getRowValue(row, 6));
+                savedContact.setType(getRowValue(row, 7));
+                savedContact.setAlias(getRowValue(row, 8));
+                savedContact.setMaskedCardNumber(getRowValue(row, 9));
+                savedContact.setExternalCardId(getRowValue(row, 10));
+                if(getRowValue(row, 11) != null) {
+                	savedContact.setDailyTxnLimitAmount(new BigDecimal(getRowValue(row,11)));
+                }
+                
+                savedContact.setDailyTxnLimitCurrency(getRowValue(row, 12));
+                Object value = getRowValue(row, 13);
+                
+				if (value instanceof String) {
+				    isFavorite = Boolean.parseBoolean((String) value);
+				} else if (value instanceof Boolean) {
+				    isFavorite = (Boolean) value;
+				}
+				savedContact.setIsFavorite(isFavorite);
+				savedContacts.add(savedContact);
+
+			}
+
+			outResponseRegisterAccount
+					.setSavedContacts(savedContacts.toArray(new ResponseRegisterAccount_savedContacts[0]));
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+
+		String trn = "Register Account For Transfer";
+
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(inRequestRegisterAccount);
+
+		Gson gson2 = new Gson();
+		String jsonRes = gson2.toJson(outResponseRegisterAccount);
+
+		Header header = new Header();
+
+		header.setAccept("application/json");
+		header.setX_request_id(xrequestid);
+		header.setX_end_user_request_date_time(xenduserrequestdatetime);
+		header.setX_end_user_ip(xenduserip);
+		header.setX_channel(xchannel);
+		header.setContent_type("application/json");
+
+		Gson gson3 = new Gson();
+		String jsonHead = gson3.toJson(header);
+
+		saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+		LOGGER.logDebug("Ends service execution: registerAccountForTransfer");
+		// returns data
+		return outResponseRegisterAccount;
+	}
+
+	/**
+	 * Obtener contactos guardados
+	 */
+	@Override
+	// Have DTO
+	public ResponseGetFetchSavedContacts getSavedContacts(String xrequestid, String xenduserrequestdatetime,
+			String xenduserip, String xchannel, RequestFetchSaveContacts inRequestFetchSaveContacts)
+			throws CTSRestException {
+		LOGGER.logDebug("Start service execution: getSavedContacts");
+		ResponseGetFetchSavedContacts outResponseGetFetchSavedContacts = new ResponseGetFetchSavedContacts();
+
+		// create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_orq_regist_contac_limit");
+
+		procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700130");
+		procedureRequestAS.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "Q");
+		procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestFetchSaveContacts.getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xrequestid);
+		procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xenduserrequestdatetime);
+		procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xenduserip);
+		procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xchannel);
+		procedureRequestAS.addInputParam("@i_pageSize", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestFetchSaveContacts.getPageSize()));
+		procedureRequestAS.addInputParam("@i_pageNumber", ICTSTypes.SQLINT4,
+				String.valueOf(inRequestFetchSaveContacts.getPageNumber()));
+
+		// execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+				procedureRequestAS);
+
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		// throw error
+		if (errors != null && errors.size() > 0) {
+			LOGGER.logDebug("Procedure execution returns error");
+			if (LOGGER.isDebugEnabled()) {
+				for (int i = 0; i < errors.size(); i++) {
+					LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+				}
+			}
+			throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		// Init map returns
+		int mapTotal = 0;
+		int mapBlank = 0;
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetFetchSavedContacts returnResponseGetFetchSavedContacts = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseGetFetchSavedContacts>() {
+						@Override
+						public ResponseGetFetchSavedContacts mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetFetchSavedContacts dto = new ResponseGetFetchSavedContacts();
+
+							dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetFetchSavedContacts.setSuccess(returnResponseGetFetchSavedContacts.isSuccess());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().get(1).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetFetchSavedContacts returnResponseGetFetchSavedContacts = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseGetFetchSavedContacts>() {
+						@Override
+						public ResponseGetFetchSavedContacts mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetFetchSavedContacts dto = new ResponseGetFetchSavedContacts();
+
+							dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+							dto.responseInstance().setMessage(resultSetMapper.getString(2));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetFetchSavedContacts.setResponse(returnResponseGetFetchSavedContacts.getResponse());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		LOGGER.logDebug("Response ResultSets Size: " + response.getResultSets().size());
+		
+		mapTotal++;
+		if (response.getResultSets() != null && response.getResultSets().size() > 2 && response.getResultSets().get(2).getData().getRows().size() > 0) {
+			// ---------NO Array
+			ResponseGetFetchSavedContacts returnResponseGetFetchSavedContacts = MapperResultUtil
+					.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseGetFetchSavedContacts>() {
+						@Override
+						public ResponseGetFetchSavedContacts mapRow(ResultSetMapper resultSetMapper, int index) {
+							ResponseGetFetchSavedContacts dto = new ResponseGetFetchSavedContacts();
+
+							dto.setPageSize(resultSetMapper.getInteger(1));
+							dto.setPageNumber(resultSetMapper.getInteger(2));
+							dto.setTotalRecords(resultSetMapper.getInteger(3));
+							return dto;
+						}
+					}, false);
+
+			outResponseGetFetchSavedContacts.setPageSize(returnResponseGetFetchSavedContacts.getPageSize());
+			outResponseGetFetchSavedContacts.setPageNumber(returnResponseGetFetchSavedContacts.getPageNumber());
+			outResponseGetFetchSavedContacts.setTotalRecords(returnResponseGetFetchSavedContacts.getTotalRecords());
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		mapTotal++;
+		
+		if (response.getResultSets() != null && response.getResultSets().size() > 2 && response.getResultSets().get(3).getData().getRows().size() > 0) {
+            List<ResultSetRow> datos = response.getResultSets().get(3).getData().getRows();
+            List<ResponseGetFetchSavedContacts_savedContacts> savedContacts = new ArrayList<>();
+            for (ResultSetRow row : datos) {
+            	
+                ResponseGetFetchSavedContacts_savedContacts savedContact = new ResponseGetFetchSavedContacts_savedContacts();
+                boolean isFavorite = false;
+                
+                savedContact.setId(getRowValue(row, 1));
+                savedContact.setIdentification(getRowValue(row, 2));
+                savedContact.setDisplayIdentification(getRowValue(row, 3));
+                savedContact.setBankCode(getRowValue(row, 4));
+                savedContact.setBankName(getRowValue(row, 5));
+                savedContact.setName(getRowValue(row, 6));
+                savedContact.setType(getRowValue(row, 7));
+                savedContact.setAlias(getRowValue(row, 8));
+                savedContact.setExternalCardId(getRowValue(row, 9));
+                savedContact.setExternalCardId(getRowValue(row, 10));
+                
+                if(getRowValue(row, 11) != null) {
+                	savedContact.setDailyTxnLimitAmount(new BigDecimal(getRowValue(row, 11)));
+                }
+                savedContact.setDailyTxnLimitCurrency(getRowValue(row, 12));
+                
+                Object value = getRowValue(row, 13);
+                
+				if (value instanceof String) {
+				    isFavorite = Boolean.parseBoolean((String) value);
+				} else if (value instanceof Boolean) {
+				    isFavorite = (Boolean) value;
+				}
+				savedContact.setIsFavorite(isFavorite);
+            	savedContacts.add(savedContact);
+						
+            }
+
+            outResponseGetFetchSavedContacts.setSavedContacts(savedContacts.toArray(new ResponseGetFetchSavedContacts_savedContacts[0]));
+			
+			// break;
+
+		} else {
+			mapBlank++;
+
+		}
+
+		// End map returns
+		if (mapBlank != 0 && mapBlank == mapTotal) {
+			LOGGER.logDebug("No data found");
+			throw new CTSRestException("404", null);
+		}
+        String trn = "get fetch Save Contacts";
+
+        Gson gson = new Gson();
+        String jsonReq = gson.toJson(inRequestFetchSaveContacts);
+
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outResponseGetFetchSavedContacts);
+
+        Header header = new Header();
+
+        header.setAccept("application/json");
+        header.setX_request_id(xrequestid);
+        header.setX_end_user_request_date_time(xenduserrequestdatetime);
+        header.setX_end_user_ip(xenduserip);
+        header.setX_channel(xchannel);
+        header.setContent_type("application/json");
+
+        Gson gson3 = new Gson();
+        String jsonHead = gson3.toJson(header);
+
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+		LOGGER.logDebug("Ends service execution: getSavedContacts");
+		// returns data
+		return outResponseGetFetchSavedContacts;
+	}
+
+	// Método de utilidad para obtener valores y manejar null
+	private String getRowValue(ResultSetRow row, int columnIndex) {
+	    if (row.getRowData(columnIndex, false) != null) {
+	        Object value = row.getRowData(columnIndex, false).getValue();
+	        return value != null ? value.toString() : null; 
+	    }
+	    return null; 
+	}
+	
 }

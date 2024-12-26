@@ -27,54 +27,26 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestRegisterAccountSpei implements Serializable {
-  private String accountNumber;
-  private String accountNumberDestination;
-  private Integer typeDestinationId;
+public class RequestFetchSaveContacts implements Serializable {
+  private Integer pageSize;
+  private Integer pageNumber;
   private Integer externalCustomerId;
-  private int bankId;
-  private String productAlias;
-  private String contactId;
-  public String getAccountNumber(){
-    return this.accountNumber;
+  public Integer getPageSize(){
+    return this.pageSize;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public void setPageSize(Integer pageSize ){
+    this.pageSize=pageSize;
   }
-  public String getAccountNumberDestination(){
-    return this.accountNumberDestination;
+  public Integer getPageNumber(){
+    return this.pageNumber;
   }
-  public void setAccountNumberDestination(String accountNumberDestination ){
-    this.accountNumberDestination=accountNumberDestination;
-  }
-  public Integer getTypeDestinationId(){
-    return this.typeDestinationId;
-  }
-  public void setTypeDestinationId(Integer typeDestinationId ){
-    this.typeDestinationId=typeDestinationId;
+  public void setPageNumber(Integer pageNumber ){
+    this.pageNumber=pageNumber;
   }
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
   public void setExternalCustomerId(Integer externalCustomerId ){
     this.externalCustomerId=externalCustomerId;
-  }
-  public int getBankId(){
-    return this.bankId;
-  }
-  public void setBankId(int bankId ){
-    this.bankId=bankId;
-  }
-  public String getProductAlias(){
-    return this.productAlias;
-  }
-  public void setProductAlias(String productAlias ){
-    this.productAlias=productAlias;
-  }
-  public String getContactId(){
-    return this.contactId;
-  }
-  public void setContactId(String contactId ){
-    this.contactId=contactId;
   }
 }
