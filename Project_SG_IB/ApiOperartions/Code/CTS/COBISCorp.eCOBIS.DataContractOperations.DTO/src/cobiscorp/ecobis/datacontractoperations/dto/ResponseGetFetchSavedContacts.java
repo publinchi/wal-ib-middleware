@@ -27,54 +27,53 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class RequestRegisterAccountSpei implements Serializable {
-  private String accountNumber;
-  private String accountNumberDestination;
-  private Integer typeDestinationId;
-  private Integer externalCustomerId;
-  private int bankId;
-  private String productAlias;
-  private String contactId;
-  public String getAccountNumber(){
-    return this.accountNumber;
+public class ResponseGetFetchSavedContacts implements Serializable {
+  private Boolean success;
+  private Response response;
+  private Integer pageSize;
+  private Integer pageNumber;
+  private Integer totalRecords;
+  private ResponseGetFetchSavedContacts_savedContacts[] savedContacts;
+  public Boolean isSuccess(){
+    return this.success;
   }
-  public void setAccountNumber(String accountNumber ){
-    this.accountNumber=accountNumber;
+  public void setSuccess(Boolean success ){
+    this.success=success;
   }
-  public String getAccountNumberDestination(){
-    return this.accountNumberDestination;
+  public Response responseInstance(){
+	if(this.response==null){
+	this.response=new Response();
+	}
+	return this.response;
   }
-  public void setAccountNumberDestination(String accountNumberDestination ){
-    this.accountNumberDestination=accountNumberDestination;
+  public Response getResponse(){
+    return this.response;
   }
-  public Integer getTypeDestinationId(){
-    return this.typeDestinationId;
+  public void setResponse(Response response ){
+    this.response=response;
   }
-  public void setTypeDestinationId(Integer typeDestinationId ){
-    this.typeDestinationId=typeDestinationId;
+  public Integer getPageSize(){
+    return this.pageSize;
   }
-  public Integer getExternalCustomerId(){
-    return this.externalCustomerId;
+  public void setPageSize(Integer pageSize ){
+    this.pageSize=pageSize;
   }
-  public void setExternalCustomerId(Integer externalCustomerId ){
-    this.externalCustomerId=externalCustomerId;
+  public Integer getPageNumber(){
+    return this.pageNumber;
   }
-  public int getBankId(){
-    return this.bankId;
+  public void setPageNumber(Integer pageNumber ){
+    this.pageNumber=pageNumber;
   }
-  public void setBankId(int bankId ){
-    this.bankId=bankId;
+  public Integer getTotalRecords(){
+    return this.totalRecords;
   }
-  public String getProductAlias(){
-    return this.productAlias;
+  public void setTotalRecords(Integer totalRecords ){
+    this.totalRecords=totalRecords;
   }
-  public void setProductAlias(String productAlias ){
-    this.productAlias=productAlias;
+  public ResponseGetFetchSavedContacts_savedContacts[] getSavedContacts(){
+    return this.savedContacts;
   }
-  public String getContactId(){
-    return this.contactId;
-  }
-  public void setContactId(String contactId ){
-    this.contactId=contactId;
+  public void setSavedContacts(ResponseGetFetchSavedContacts_savedContacts[] savedContacts ){
+    this.savedContacts=savedContacts;
   }
 }
