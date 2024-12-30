@@ -467,6 +467,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         request.addFieldInHeader("reentryPriority", 'S', "5");
         request.addFieldInHeader("REENTRY_SSN_TRX", 'S', request.readValueFieldInHeader("ssn"));
         request.addFieldInHeader("targetId", 'S', "local");
+        request.addFieldInHeader("reentryExecution", 'S', "Y");
         request.removeFieldInHeader("serviceMethodName");
         request.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', request.readValueFieldInHeader("trn"));
         request.removeParam("@t_rty");
@@ -1049,7 +1050,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 		getLoginById(aRequest, aBagSPJavaOrchestration);
 		
-		if (!otpCode.equals("null") && !otpCode.trim().isEmpty()) {
+		if (!otpCode.equals("null") && !otpCode.trim().isEmpty()&& aBagSPJavaOrchestration.get("flowRty").equals(false)) {
 			
 			login = aBagSPJavaOrchestration.get("o_login").toString();
 			
