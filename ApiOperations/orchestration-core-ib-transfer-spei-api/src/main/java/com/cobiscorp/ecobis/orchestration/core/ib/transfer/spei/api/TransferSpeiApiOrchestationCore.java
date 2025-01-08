@@ -127,7 +127,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String OPERATING_INSTITUTION = "90715";
     private static final int ERROR_ACCOUNT_NULL_OR_EMPTY = 400001;
     private static final String SUCCESS_MESSAGE = "success";
-    private static final String ERROR_MESSAGE_TEMPLATE = "The transaction should be rejected due to the old CLABE account is no longer valid.";
+    private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
     private boolean successConnector = false;
     private int returnCode = 0;
     private String codBlockHigh;
