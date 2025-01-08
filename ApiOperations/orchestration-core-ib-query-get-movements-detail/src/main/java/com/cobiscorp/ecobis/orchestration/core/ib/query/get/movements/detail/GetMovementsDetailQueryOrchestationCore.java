@@ -108,6 +108,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 													   Map<String, Object> aBagSPJavaOrchestration) {
 
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+		IProcedureResponse anProcedureResponseCentral = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		
 		ServerRequest serverRequest = new ServerRequest();
@@ -156,9 +157,33 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				{
 					logger.logDebug("server is offline");
 				}
+				int numRegistros = Integer.parseInt(anOriginalRequest.readValueParam("@i_nro_registros"));
+				
+				logger.logDebug("@i_nro_registros FHU:" + numRegistros);
+				
 				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
+				
+				logger.logDebug("anProcedureResponse FHU:" + anProcedureResponse.toString());
+				int numberOfRecordsLocal = 0;
+				int numberOfRecords = 0;
+
+				if (anProcedureResponse != null && anProcedureResponse.getResultSets().size() > 0) {
+					numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
+					logger.logDebug("numberOfRecordsLocal FHU:" + numberOfRecordsLocal);
+				}
+				if (numberOfRecordsLocal < numRegistros) {
+					numberOfRecords = numRegistros - numberOfRecordsLocal;
+					logger.logDebug("numberOfRecords FHU:" + numberOfRecords);
+					
+					anOriginalRequest.setValueParam("@i_nro_registros", String.valueOf(numberOfRecords)); 
+					anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
+					logger.logDebug("anProcedureResponseCentral FHU:" + anProcedureResponseCentral.toString());
+					llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
+				}
+				
 			}
 		}
+		
 		if (anProcedureResponse.getResultSets().size()>2) {
 
 			proccessResponseCentralToObject(anProcedureResponse, aBagSPJavaOrchestration);
@@ -1273,5 +1298,30 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			return false;
 		}
 		return pattern.matcher(strNum).matches();
+	}
+	
+	private void llenarRegistrosLocal(IProcedureResponse anProcedureResponse, IProcedureResponse anProcedureResponseLocalOff) {
+
+		if (anProcedureResponse.getResultSets().size() >= 4) {
+		    IResultSetBlock resultSetBlock = anProcedureResponse.getResultSet(4);
+		    IResultSetData data = resultSetBlock.getData();
+
+		    if (anProcedureResponseLocalOff.getResultSets().size() >= 4) {
+
+		        IResultSetBlock sourceResultSetBlock = anProcedureResponseLocalOff.getResultSet(4); 
+		        IResultSetData sourceData = sourceResultSetBlock.getData();
+		        IResultSetRow[] sourceRows = sourceData.getRowsAsArray();
+		        for (IResultSetRow sourceRow : sourceRows) {
+		            IResultSetRow newRow = new ResultSetRow();
+		            IResultSetRowColumnData[] columns = sourceRow.getColumnsAsArray();
+		            for (int i = 0; i < columns.length; i++) {
+		                newRow.addRowData(i + 1, new ResultSetRowColumnData(false, columns[i].getValue()));
+		            }
+
+		            data.addRow(newRow);
+		        }
+		    }
+		} 
+		
 	}
 }
