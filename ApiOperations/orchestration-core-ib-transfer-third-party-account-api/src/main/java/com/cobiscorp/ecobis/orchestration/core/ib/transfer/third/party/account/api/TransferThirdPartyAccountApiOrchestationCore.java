@@ -83,7 +83,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	private static final int ERROR40002 = 40002;
     private static final int ERROR_ACCOUNT_NULL_OR_EMPTY = 400001;
     private static final String SUCCESS_MESSAGE = "success";
-    private static final String ERROR_MESSAGE_TEMPLATE = "The transaction should be rejected due to the old CLABE account is no longer valid.";
+    private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
 	protected static final String CHANNEL_REQUEST = "8";
