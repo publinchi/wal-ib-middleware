@@ -81,7 +81,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
-	
+    private static final int ERROR_ACCOUNT_NULL_OR_EMPTY = 400001;
+    private static final String SUCCESS_MESSAGE = "success";
+    private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
 	protected static final String CHANNEL_REQUEST = "8";
@@ -204,230 +206,255 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		logger.logDebug("Response Online: " + responseServer.getOnLine());
-		
-		if (responseServer != null && !responseServer.getOnLine()) {
-			aBagSPJavaOrchestration.put("IsReentry", "S");
-			if (!flowRty){
-				logger.logDebug("evaluateExecuteReentry FALSE");
-				anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-				
-				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-								 
-				try {
-					callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
+        anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
+        if (anProcedureResponse.getReturnCode() == 0) {
+			if (responseServer != null && !responseServer.getOnLine()) {
+				aBagSPJavaOrchestration.put("IsReentry", "S");
+				if (!flowRty) {
+					logger.logDebug("evaluateExecuteReentry FALSE");
+					anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 
-					if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-						obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
+					IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+					IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 
-						if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") && 
-							(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-							IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-							logger.logDebug("Respose Exeption: " + resp.toString());
-							return resp;
-						}
-									
-						if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") && 
-							(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-							IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-							logger.logDebug("Respose Exeption: " + resp.toString());
-							return resp;
-						}
-					}else{
-						logger.logDebug("Error en conexión hacia obtención de limites");
-						IProcedureResponse resp = Utils.returnException(50202, "Error obtención de limites");
-						return resp;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
-					logger.logError(e);
-				}
-				
-				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
-				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
-				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-					if(logger.isDebugEnabled())
-					{
-						logger.logDebug("BER cta:"+wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
-					}
-					anOriginalRequest.removeParam("@i_cta_des");
-					anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
-					
-					wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
-					logger.logInfo(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
-					if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-						return wAccountsRespVal;
-					}
-				}
-				else
-				{
-					return wAccountsResp;
-				}
-				
-				if(logger.isInfoEnabled()){
-					logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
-					logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
-					
-				anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
-				/*
-				if(anProcedureResponse.getReturnCode()==0){
-					anOriginalRequest.removeParam("@o_fecha_tran");
-					anProcedureResponse = saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get("anOriginalRequest"), (Map<String, Object>) aBagSPJavaOrchestration.get("aBagSPJavaOrchestration"));
-				}
-				else
-					return anProcedureResponse;
-				*/
-							
-				//aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
-			}
-			else{
-				if(logger.isDebugEnabled()){logger.logDebug("evaluateExecuteReentry FALSE");}
-				IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
-				if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
-				return resp;
-			}
-			
-			if(logger.isDebugEnabled()){logger.logDebug("Res IsReentry:: " + "S");}
-		} else {
-			aBagSPJavaOrchestration.put("IsReentry", "N");
-			
-			if(logger.isDebugEnabled()){
-				logger.logDebug("Res IsReentry:: " + "N");
-				logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);}
-			
-			IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-			IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
-			
-			wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);		
-			if(logger.isInfoEnabled()){
-				logger.logInfo(CLASS_NAME + " dataLocal "+ wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			}
-			
-			if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-				anOriginalRequest.removeParam("@i_cta_des");
-				anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
-				wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
-				
-				if(logger.isDebugEnabled()){
-					logger.logDebug(CLASS_NAME + " validaCentral "+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());}
-				
-				if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			      return wAccountsRespVal;
-			   }
-			}
-			else{
-				return wAccountsResp; }
-			
-			if ( evaluaRiesgo.equals("true") && (
-					( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
-					(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
-					(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))
-					)
-			) {
-				IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-				
-				if (aBagSPJavaOrchestration.get("success_risk") != null) {				
-					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
-					
-					if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-						codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-					}
-					
-					if (aBagSPJavaOrchestration.get("message") != null) {	
-						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-					}
+					try {
+						callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
-					if(aBagSPJavaOrchestration.get("responseBody") != null) {
-						responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
-						JsonParser jsonParser = new JsonParser();
-						JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
-						
-						if(logger.isDebugEnabled()){
-							logger.logDebug("Response body riskEvaluation: " + responseBody);
-							logger.logDebug("Objeto de respuesta de riskEvaluation: " + riskDetailsObject);
-						}
+						if (aBagSPJavaOrchestration.get("successGetLimits").equals("true")) {
+							obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
 
-						if (riskDetailsObject.has("riskDetails")) {
-							JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
-							if (riskDetails.has("riskStatus")) {
-								String riskStatus = riskDetails.get("riskStatus").getAsString();
-								
-								if(logger.isDebugEnabled()){
-									logger.logDebug("Estado riskEvaluation: " + riskStatus);}
+							if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded")
+									&& (Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+								IProcedureResponse resp = Utils.returnException(18056,
+										"Importe máximo diario excedido");
+								logger.logDebug("Respose Exeption: " + resp.toString());
+								return resp;
+							}
 
-
-								if(riskStatus.contains("HIGH")) {
-
-									if (riskDetails.has("actions")) {
-										//Construccion del body para el conector
-										JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
-
-										// Iterar sobre el JsonArray para obtener actionName
-										for (JsonElement actionElement : actionsArray) {
-											JsonObject actionObject = actionElement.getAsJsonObject();
-											actionName =  actionObject.get("actionName").getAsString();
-
-											if(logger.isDebugEnabled()){
-												logger.logDebug("Action name of riskEvaluation " + actionName);}
-
-											IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
-											blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
-
-											if (blockCode == "null" || blockCode.isEmpty()) {
-											logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
-
-											} else {
-												//Realizamos el bloqueo del usuario
-												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
-
-											}
-										}
-									}
-
-									//Generamos un bloqueo de la cuenta contra débitos
-									generaBloqueoCuenta(anOriginalRequest);
-
-									//Seteamos los valores para el retorno
-									anProcedureResponse.setReturnCode(400383);
-									anProcedureResponse.addMessage(1, "Usuario Bloqueado");
-
-									return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
-								}
-							} else {
-								logger.logError("No se encontró riskStatus en el objeto");
+							if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded")
+									&& (Boolean) aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+								IProcedureResponse resp = Utils.returnException(18057,
+										"Importe máximo por operación excedido");
+								logger.logDebug("Respose Exeption: " + resp.toString());
+								return resp;
 							}
 						} else {
-							logger.logError("No se encontró riskDetails en el objeto");
+							logger.logDebug("Error en conexión hacia obtención de limites");
+							IProcedureResponse resp = Utils.returnException(50202, "Error obtención de limites");
+							return resp;
 						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						logger.logInfo(CLASS_NAME + " Error Catastrofico en validacion Limites");
+						logger.logError(e);
 					}
 
-					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
-					}
-					
-					if(logger.isDebugEnabled()){
-						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-					}
-		
-					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-						anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+					wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+					logger.logInfo(
+							CLASS_NAME + " dataLocal " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+					if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("BER cta:" + wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+						}
+						anOriginalRequest.removeParam("@i_cta_des");
+						anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR,
+								wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+
+						wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+						logger.logInfo(CLASS_NAME + " validaCentral "
+								+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
+						if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+							return wAccountsRespVal;
+						}
 					} else {
-						IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
-						if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
-						return resp;
+						return wAccountsResp;
 					}
-				}
-				else {
-					IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
-					if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption: " + resp.toString());}
+
+					if (logger.isInfoEnabled()) {
+						logger.logInfo(
+								CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
+						logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
+					}
+
+					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest,
+							aBagSPJavaOrchestration);
+					/*
+					 * if(anProcedureResponse.getReturnCode()==0){
+					 * anOriginalRequest.removeParam("@o_fecha_tran"); anProcedureResponse =
+					 * saveReentry((IProcedureRequest)aBagSPJavaOrchestration.get(
+					 * "anOriginalRequest"), (Map<String, Object>)
+					 * aBagSPJavaOrchestration.get("aBagSPJavaOrchestration")); } else return
+					 * anProcedureResponse;
+					 */
+
+					// aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseOffline);
+				} else {
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("evaluateExecuteReentry FALSE");
+					}
+					IProcedureResponse resp = Utils.returnException(40004,
+							"NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("Respose Exeption:: " + resp.toString());
+					}
 					return resp;
 				}
-			}else {
-				anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Res IsReentry:: " + "S");
+				}
+			} else {
+				aBagSPJavaOrchestration.put("IsReentry", "N");
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Res IsReentry:: " + "N");
+					logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);
+				}
+
+				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
+
+				wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(
+							CLASS_NAME + " dataLocal " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+				}
+
+				if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+					anOriginalRequest.removeParam("@i_cta_des");
+					anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR,
+							wAccountsResp.getResultSetRowColumnData(3, 1, 1).getValue());
+					wAccountsRespVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(CLASS_NAME + " validaCentral "
+								+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
+					}
+
+					if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+						return wAccountsRespVal;
+					}
+				} else {
+					return wAccountsResp;
+				}
+
+				if (evaluaRiesgo.equals("true") && ((evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER"))
+						|| (evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER"))
+						|| (evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM")))) {
+					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest,
+							aBagSPJavaOrchestration);
+
+					if (aBagSPJavaOrchestration.get("success_risk") != null) {
+						valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+
+						if (aBagSPJavaOrchestration.get("responseCode") != null) {
+							codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+						}
+
+						if (aBagSPJavaOrchestration.get("message") != null) {
+							mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+						}
+
+						if (aBagSPJavaOrchestration.get("responseBody") != null) {
+							responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
+							JsonParser jsonParser = new JsonParser();
+							JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
+
+							if (logger.isDebugEnabled()) {
+								logger.logDebug("Response body riskEvaluation: " + responseBody);
+								logger.logDebug("Objeto de respuesta de riskEvaluation: " + riskDetailsObject);
+							}
+
+							if (riskDetailsObject.has("riskDetails")) {
+								JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+								if (riskDetails.has("riskStatus")) {
+									String riskStatus = riskDetails.get("riskStatus").getAsString();
+
+									if (logger.isDebugEnabled()) {
+										logger.logDebug("Estado riskEvaluation: " + riskStatus);
+									}
+
+									if (riskStatus.contains("HIGH")) {
+
+										if (riskDetails.has("actions")) {
+											// Construccion del body para el conector
+											JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+											// Iterar sobre el JsonArray para obtener actionName
+											for (JsonElement actionElement : actionsArray) {
+												JsonObject actionObject = actionElement.getAsJsonObject();
+												actionName = actionObject.get("actionName").getAsString();
+
+												if (logger.isDebugEnabled()) {
+													logger.logDebug("Action name of riskEvaluation " + actionName);
+												}
+
+												IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+												blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1)
+														.isNull() ? "null"
+																: objectCodeBlocking.getResultSetRowColumnData(1, 1, 1)
+																		.getValue();
+
+												if (blockCode == "null" || blockCode.isEmpty()) {
+													logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+
+												} else {
+													// Realizamos el bloqueo del usuario
+													IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(
+															anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+
+												}
+											}
+										}
+
+										// Generamos un bloqueo de la cuenta contra débitos
+										generaBloqueoCuenta(anOriginalRequest);
+
+										// Seteamos los valores para el retorno
+										anProcedureResponse.setReturnCode(400383);
+										anProcedureResponse.addMessage(1, "Usuario Bloqueado");
+
+										return processResponseTransfer(anOriginalRequest, anProcedureResponse,
+												aBagSPJavaOrchestration);
+									}
+								} else {
+									logger.logError("No se encontró riskStatus en el objeto");
+								}
+							} else {
+								logger.logError("No se encontró riskDetails en el objeto");
+							}
+						}
+
+						if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {
+							estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+						}
+
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo
+									+ " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo);
+						}
+
+						if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+							anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+						} else {
+							IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
+							if (logger.isDebugEnabled()) {
+								logger.logDebug("Respose Exeption:: " + resp.toString());
+							}
+							return resp;
+						}
+					} else {
+						IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
+						if (logger.isDebugEnabled()) {
+							logger.logDebug("Respose Exeption: " + resp.toString());
+						}
+						return resp;
+					}
+				} else {
+					anProcedureResponse = transferThirdAccount(anOriginalRequest, aBagSPJavaOrchestration);
+				}
 			}
 		}
-		
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 	}
 	
@@ -2132,4 +2159,122 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		return wProductsQueryResp;
 	}
 
+	private IProcedureResponse validateDestinyAccount(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Begin validateDestinyAccount");
+        }
+
+        // Leer los parámetros de entrada
+        String account = anOriginalRequest.readValueParam("@i_cta");
+        String destinyAccount = anOriginalRequest.readValueParam("@i_cta_des");
+
+        // Validación de parámetros de entrada
+        if (account == null || account.isEmpty() || destinyAccount == null || destinyAccount.isEmpty()) {
+            return createErrorResponse(ERROR_ACCOUNT_NULL_OR_EMPTY, "Account numbers cannot be null or empty.");
+        }
+
+        Integer code = 0;
+        String message = SUCCESS_MESSAGE;
+        String result = "true";
+        //String isSpei = "";
+
+        IProcedureRequest reqTMPCentral = initProcedureRequest(anOriginalRequest);
+        reqTMPCentral.setSpName("cob_ahorros..sp_validate_destiny_account");
+        reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_CENTRAL);
+        reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700124");
+        reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700124");
+        reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
+        reqTMPCentral.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, account);
+        reqTMPCentral.addInputParam("@i_accountDestination", ICTSTypes.SQLVARCHAR, destinyAccount);
+        reqTMPCentral.addInputParam("@i_bankIdDestination", ICTSTypes.SQLVARCHAR, "0");
+
+        IProcedureResponse wProcedureResponseCentral;
+        try {
+            wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+        } catch (Exception e) {
+
+            return createErrorResponse(500, "Internal server error while validating accounts.");
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Ending flow, validateAccountType with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+        }
+
+        if (wProcedureResponseCentral.hasError()) {
+            code = wProcedureResponseCentral.getReturnCode();
+            message = ERROR_MESSAGE_TEMPLATE;
+            result = "false";
+        } /*else {
+            if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+                IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+
+                if (resultSetRows.length > 0) {
+                    IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+                    isSpei = columns[1].getValue();
+
+                    if (!"S".equals(isSpei)) {
+                        code = ERROR_OLD_CLABE_INVALID;
+                        message = ERROR_MESSAGE_TEMPLATE;
+                        result = "false";
+                    }
+                }
+            }
+        }*/
+
+        return createSuccessResponse(result, code, message);
+    }
+
+    // Método para crear una respuesta de error
+    private IProcedureResponse createErrorResponse(int code, String message) {
+        IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+        IResultSetHeader headerRs = new ResultSetHeader();
+        IResultSetData data = new ResultSetData();
+        IResultSetRow row = new ResultSetRow();
+
+        row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+        data.addRow(row);
+
+        headerRs.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+        IResultSetBlock resultsetBlock = new ResultSetBlock(headerRs, data);
+
+        anProcedureResponse.addResponseBlock(resultsetBlock);
+        anProcedureResponse.setReturnCode(code);
+        anProcedureResponse.addMessage(code, message);
+
+        return anProcedureResponse;
+    }
+
+    // Método para crear una respuesta de éxito
+    private IProcedureResponse createSuccessResponse(String result, int code, String message) {
+        IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+        IResultSetHeader headerRs0 = new ResultSetHeader();
+        IResultSetData data0 = new ResultSetData();
+        IResultSetRow row0 = new ResultSetRow();
+
+        IResultSetHeader headerRs1 = new ResultSetHeader();
+        IResultSetData data1 = new ResultSetData();
+        IResultSetRow row1 = new ResultSetRow();
+
+        row0.addRowData(1, new ResultSetRowColumnData(false, result));
+        data0.addRow(row0);
+
+        row1.addRowData(1, new ResultSetRowColumnData(false, String.valueOf(code)));
+        row1.addRowData(2, new ResultSetRowColumnData(false, message));
+        data1.addRow(row1);
+
+        headerRs0.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+        headerRs1.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+        headerRs1.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+        IResultSetBlock resultsetBlock0 = new ResultSetBlock(headerRs0, data0);
+        IResultSetBlock resultsetBlock1 = new ResultSetBlock(headerRs1, data1);
+
+        anProcedureResponse.addResponseBlock(resultsetBlock0);
+        anProcedureResponse.addResponseBlock(resultsetBlock1);
+        anProcedureResponse.setReturnCode(code);
+        anProcedureResponse.addMessage(code, message);
+
+        return anProcedureResponse;
+    }
 }
