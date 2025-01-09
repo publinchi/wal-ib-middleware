@@ -7,12 +7,15 @@
   <parameters>
     <parameter name="@i_operacion" dataType="varchar" direction="in" />
     <parameter name="@i_account" dataType="varchar" direction="in" />
+    <parameter name="@i_accountDestination" dataType="varchar" direction="in" />
+    <parameter name="@i_bankIdDestination" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
       <columns>
         <column name="account" />
-        <column name="externalCustomerId" />
+        <column name="p2pSpei" />
+        <column name="result" />
       </columns>
       <queryText>SELECT "account"="","externalCustomerId"=0</queryText>
     </query>
