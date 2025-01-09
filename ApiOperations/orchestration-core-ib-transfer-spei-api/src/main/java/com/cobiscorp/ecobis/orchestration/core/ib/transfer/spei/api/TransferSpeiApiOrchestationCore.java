@@ -125,6 +125,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String I_PROD_LOCAL = "@i_prod";
     private static final String CANCEL_OPERATION = "0";
     private static final String OPERATING_INSTITUTION = "90715";
+    private static final int ERROR_ACCOUNT_NULL_OR_EMPTY = 400001;
+    private static final String SUCCESS_MESSAGE = "success";
+    private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
     private boolean successConnector = false;
     private int returnCode = 0;
     private String codBlockHigh;
@@ -298,12 +301,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
         
-      //  String decrypt = cryptaes.decryptData("aqui var tarjeta encriptada");
-        
+        anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
+        if(anProcedureResponse.getReturnCode()==0)
+        {
         anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+        
         if(anProcedureResponse.getReturnCode()==0)
         {
         	anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
+        }
         }
         return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
 
@@ -3708,4 +3714,123 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         return wProductsQueryResp;
     }
 
+    private IProcedureResponse validateDestinyAccount(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Begin validateDestinyAccount");
+        }
+
+        // Leer los parámetros de entrada
+        String account = anOriginalRequest.readValueParam("@i_origin_account_number");
+        String destinyAccount = anOriginalRequest.readValueParam("@i_destination_account_number");
+        String bankName = anOriginalRequest.readValueParam("@i_bank_name");
+
+        // Validación de parámetros de entrada
+        if (account == null || account.isEmpty() || destinyAccount == null || destinyAccount.isEmpty()) {
+            return createErrorResponse(ERROR_ACCOUNT_NULL_OR_EMPTY, "Account numbers cannot be null or empty.");
+        }
+
+        Integer code = 0;
+        String message = SUCCESS_MESSAGE;
+        String result = "true";
+        //String isSpei = "";
+
+        IProcedureRequest reqTMPCentral = initProcedureRequest(anOriginalRequest);
+        reqTMPCentral.setSpName("cob_ahorros..sp_validate_destiny_account");
+        reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+                IMultiBackEndResolverService.TARGET_CENTRAL);
+        reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700124");
+        reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700124");
+        reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
+        reqTMPCentral.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, account);
+        reqTMPCentral.addInputParam("@i_accountDestination", ICTSTypes.SQLVARCHAR, destinyAccount);
+        reqTMPCentral.addInputParam("@i_bankIdDestination", ICTSTypes.SQLVARCHAR, bankName);
+
+        IProcedureResponse wProcedureResponseCentral;
+        try {
+            wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+        } catch (Exception e) {
+
+            return createErrorResponse(500, "Internal server error while validating accounts.");
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Ending flow, validateAccountType with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+        }
+
+        if (wProcedureResponseCentral.hasError()) {
+            code = wProcedureResponseCentral.getReturnCode();
+            message = ERROR_MESSAGE_TEMPLATE;
+            result = "false";
+        } /*else {
+            if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+                IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+
+                if (resultSetRows.length > 0) {
+                    IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+                    isSpei = columns[1].getValue();
+
+                    if (!"S".equals(isSpei)) {
+                        code = ERROR_OLD_CLABE_INVALID;
+                        message = ERROR_MESSAGE_TEMPLATE;
+                        result = "false";
+                    }
+                }
+            }
+        }*/
+
+        return createSuccessResponse(result, code, message);
+    }
+
+    // Método para crear una respuesta de error
+    private IProcedureResponse createErrorResponse(int code, String message) {
+        IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+        IResultSetHeader headerRs = new ResultSetHeader();
+        IResultSetData data = new ResultSetData();
+        IResultSetRow row = new ResultSetRow();
+
+        row.addRowData(1, new ResultSetRowColumnData(false, "false"));
+        data.addRow(row);
+
+        headerRs.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+        IResultSetBlock resultsetBlock = new ResultSetBlock(headerRs, data);
+
+        anProcedureResponse.addResponseBlock(resultsetBlock);
+        anProcedureResponse.setReturnCode(code);
+        anProcedureResponse.addMessage(code, message);
+
+        return anProcedureResponse;
+    }
+
+    // Método para crear una respuesta de éxito
+    private IProcedureResponse createSuccessResponse(String result, int code, String message) {
+        IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+        IResultSetHeader headerRs0 = new ResultSetHeader();
+        IResultSetData data0 = new ResultSetData();
+        IResultSetRow row0 = new ResultSetRow();
+
+        IResultSetHeader headerRs1 = new ResultSetHeader();
+        IResultSetData data1 = new ResultSetData();
+        IResultSetRow row1 = new ResultSetRow();
+
+        row0.addRowData(1, new ResultSetRowColumnData(false, result));
+        data0.addRow(row0);
+
+        row1.addRowData(1, new ResultSetRowColumnData(false, String.valueOf(code)));
+        row1.addRowData(2, new ResultSetRowColumnData(false, message));
+        data1.addRow(row1);
+
+        headerRs0.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+        headerRs1.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+        headerRs1.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+        IResultSetBlock resultsetBlock0 = new ResultSetBlock(headerRs0, data0);
+        IResultSetBlock resultsetBlock1 = new ResultSetBlock(headerRs1, data1);
+
+        anProcedureResponse.addResponseBlock(resultsetBlock0);
+        anProcedureResponse.addResponseBlock(resultsetBlock1);
+        anProcedureResponse.setReturnCode(code);
+        anProcedureResponse.addMessage(code, message);
+
+        return anProcedureResponse;
+    }
 }
