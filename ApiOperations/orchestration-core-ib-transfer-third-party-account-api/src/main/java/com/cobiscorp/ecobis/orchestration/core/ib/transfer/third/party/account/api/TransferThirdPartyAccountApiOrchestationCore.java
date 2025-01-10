@@ -270,14 +270,116 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						return wAccountsResp;
 					}
 
-					if (logger.isInfoEnabled()) {
-						logger.logInfo(
-								CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
-						logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));
-					}
+					//Validamos risk
+					if ( evaluaRiesgo.equals("true") && (
+							( evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER")) || 
+							(evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER")) ||
+							(evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM")))) {
+						
+						IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+						
+						if (aBagSPJavaOrchestration.get("success_risk") != null) {				
+							valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+							
+							if (aBagSPJavaOrchestration.get("responseCode") != null) {	
+								codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+							}
+							
+							if (aBagSPJavaOrchestration.get("message") != null) {	
+								mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+							}
 
-					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest,
-							aBagSPJavaOrchestration);
+							if(aBagSPJavaOrchestration.get("responseBody") != null) {
+								responseBody = aBagSPJavaOrchestration.get("responseBody").toString();
+								JsonParser jsonParser = new JsonParser();
+								JsonObject riskDetailsObject = (JsonObject) jsonParser.parse(responseBody);
+								
+								if(logger.isDebugEnabled()){
+									logger.logDebug("Response body riskEvaluation: " + responseBody);
+									logger.logDebug("Objeto de respuesta de riskEvaluation: " + riskDetailsObject);
+								}
+
+								if (riskDetailsObject.has("riskDetails")) {
+									JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+									if (riskDetails.has("riskStatus")) {
+										String riskStatus = riskDetails.get("riskStatus").getAsString();
+										
+										if(logger.isDebugEnabled()){logger.logDebug("Estado riskEvaluation: " + riskStatus);}
+
+										if(riskStatus.contains("HIGH")) {
+											if (riskDetails.has("actions")) {
+												//Construccion del body para el conector
+												JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+												// Iterar sobre el JsonArray para obtener actionName
+												for (JsonElement actionElement : actionsArray) {
+													JsonObject actionObject = actionElement.getAsJsonObject();
+													actionName =  actionObject.get("actionName").getAsString();
+
+													if(logger.isDebugEnabled()){
+														logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+													IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+													blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+													if (blockCode.equals("null") || blockCode.isEmpty()) {
+														logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+													} else {
+														//Realizamos el bloqueo del usuario
+														IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+													}
+												}
+											}
+
+											//Generamos un bloqueo de la cuenta contra débitos
+											generaBloqueoCuenta(anOriginalRequest);
+
+											//Seteamos los valores para el retorno
+											anProcedureResponse.setReturnCode(400383);
+											anProcedureResponse.addMessage(1, blockCode);
+
+											return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+										}
+									} else {
+										logger.logError("No se encontrÃ³ riskStatus en el objeto");
+									}
+								} else {
+									logger.logError("No se encontrÃ³ riskDetails en el objeto");
+								}
+							}
+
+							if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
+								estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+							}
+							
+							if(logger.isDebugEnabled()){
+								logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " CÃ³digo: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+							}
+				
+							if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+								if(logger.isInfoEnabled()){
+									logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));  
+									logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
+		                  
+								anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+							} else {
+								IProcedureResponse resp = Utils.returnException(18054, "OPERACIÃ“N NO PERMITIDA");
+								if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
+								return resp;
+							}
+						}
+						else {
+							IProcedureResponse resp = Utils.returnException(18055, "OPERACIÃ“N NO PERMITIDA");
+							if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption: " + resp.toString());}
+							return resp;
+						}
+					} else {
+					if(logger.isInfoEnabled()){
+						logger.logInfo(CLASS_NAME + "Parametro2 @ssn: " + anOriginalRequest.readValueFieldInHeader("ssn"));
+						logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
+						
+					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+					}
 					/*
 					 * if(anProcedureResponse.getReturnCode()==0){
 					 * anOriginalRequest.removeParam("@o_fecha_tran"); anProcedureResponse =
@@ -374,8 +476,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 										logger.logDebug("Estado riskEvaluation: " + riskStatus);
 									}
 
-									if (riskStatus.contains("HIGH")) {
-
+									if(riskStatus.contains("HIGH")) {
 										if (riskDetails.has("actions")) {
 											// Construccion del body para el conector
 											JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
@@ -395,14 +496,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 																: objectCodeBlocking.getResultSetRowColumnData(1, 1, 1)
 																		.getValue();
 
-												if (blockCode == "null" || blockCode.isEmpty()) {
+												if (blockCode.equals("null") || blockCode.isEmpty()) {
 													logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
 
 												} else {
 													// Realizamos el bloqueo del usuario
-													IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(
-															anOriginalRequest, aBagSPJavaOrchestration, blockCode);
-
+												    IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
 												}
 											}
 										}
@@ -412,10 +511,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 										// Seteamos los valores para el retorno
 										anProcedureResponse.setReturnCode(400383);
-										anProcedureResponse.addMessage(1, "Usuario Bloqueado");
+									    anProcedureResponse.addMessage(1, blockCode);
 
-										return processResponseTransfer(anOriginalRequest, anProcedureResponse,
-												aBagSPJavaOrchestration);
+										return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
 									}
 								} else {
 									logger.logError("No se encontró riskStatus en el objeto");
@@ -1146,8 +1244,16 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			}
 			
 			//Validacion para llamar al conector blockOperation
-			if(otpReturnCode.equals("1890005")){
+			if(otpReturnCode.equals("1890005")){				
 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
+				
+				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+				
+				//Seteamos los valores para el retorno
+				wAccountsResp.setReturnCode(400383);
+				wAccountsResp.addMessage(1, codBlockOTP);
+
+				return processResponseTransfer(aRequest, wAccountsResp, aBagSPJavaOrchestration);
 			}
 		}
 		
