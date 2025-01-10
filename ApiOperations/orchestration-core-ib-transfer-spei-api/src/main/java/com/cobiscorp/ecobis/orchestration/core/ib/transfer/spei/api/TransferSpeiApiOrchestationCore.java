@@ -368,11 +368,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logError(e);
 		}  
 
-        wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);
-        if (logger.isInfoEnabled()) {
-        	logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+        wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);        
+        if (logger.isInfoEnabled()) {	        
+	        logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
         }
-
+        
         if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 
             IProcedureResponse wTransferResponse = new ProcedureResponseAS();
@@ -421,7 +421,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                                 	logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
 
                                 if(riskStatus.contains("HIGH")) {
-
                                     if (riskDetails.has("actions")) {
                                         //Construccion del body para el conector
                                         JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
@@ -437,13 +436,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                                             IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
                                             blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
-                                            if (blockCode == "null" || blockCode.isEmpty()) {
+                                            if (blockCode.equals("null") || blockCode.isEmpty()) {
                                                 logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
 
                                             } else {
                                                 //Realizamos el bloqueo del usuario
                                                 IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
-
                                             }
                                         }
                                     }
@@ -453,9 +451,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
                                     //Seteamos los valores para el retorno
                                     wAccountsResp.setReturnCode(400383);
-                                    wAccountsResp.addMessage(1, "Usuario Bloqueado");
+                                    wAccountsResp.addMessage(1, blockCode);
 
-                                    return processResponseTransfer(aRequest, wAccountsResp,aBagSPJavaOrchestration);
+                                    return wAccountsResp;
                                 }
                             } else {
                                 logger.logError("No se encontró riskStatus en el objeto");
@@ -492,16 +490,16 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     					logger.logDebug("Response Exeption: " + resp.toString());
     				}
     				return resp;
-    			}
-                
+    			}                
                 return wTransferResponse;
+                
             } else {
             	wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
             	return wTransferResponse;
             }
         }
-        
-        return wAccountsResp;
+
+        return wAccountsResp;        
     }
 
     private IProcedureResponse getDataTransfSpeiReq(IProcedureRequest aRequest,
@@ -638,7 +636,41 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
- 				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
+ 				
+				//Armamos la respuesta
+ 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
+				 				
+ 				// Agregar Header y data 1
+ 				IResultSetHeader mData = new ResultSetHeader();
+ 				IResultSetData data = new ResultSetData();
+ 				mData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+ 				mData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+ 				// Agregar Header y data 2
+ 				IResultSetHeader mData2 = new ResultSetHeader();
+ 				IResultSetData data2 = new ResultSetData();
+ 				mData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+ 				// Agregar info 1
+ 				IResultSetRow row = new ResultSetRow();
+ 				row.addRowData(1, new ResultSetRowColumnData(false, "400383"));
+ 				row.addRowData(2, new ResultSetRowColumnData(false, codBlockOTP));
+ 				data.addRow(row);
+
+ 				// Agregar info 2
+ 				IResultSetRow row2 = new ResultSetRow();
+ 				row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
+ 				data2.addRow(row2);
+
+ 				// Agregar resulBlock
+ 				IResultSetBlock resultsetBlock2 = new ResultSetBlock(mData2, data2);
+ 				IResultSetBlock resultsetBlock = new ResultSetBlock(mData, data);
+
+ 				wAccountsResp.addResponseBlock(resultsetBlock2);
+ 				wAccountsResp.addResponseBlock(resultsetBlock);
+
+				return wAccountsResp;
  			}
  		}
         
@@ -1128,11 +1160,16 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 message = "The source account has a debit block";       
                 success = "false";
             }
-            else {
-                logger.logInfo("bnbn false2--->" + this.returnCode);
+            else {                
+                if (logger.isDebugEnabled()) {
+                	logger.logDebug("Error: "+ codeReturn);}
+                
                 code = String.valueOf(codeReturn);
                 message = anOriginalProcedureRes.getMessage(1).getMessageText();
                 success = "false";
+                
+                if (logger.isDebugEnabled()) {
+                	logger.logDebug("Message: "+ message);}
             }
             
         }
@@ -2693,10 +2730,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String code = wProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
         String message = wProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":wProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
 
-        logger.logInfo("code:: " + code);
-        logger.logInfo("message:: " + message);
-        logger.logInfo("bodyResponse:: " + bodyResponse);
-
+        if (logger.isInfoEnabled()) {
+	        logger.logInfo("code:: " + code);
+	        logger.logInfo("message:: " + message);
+	        logger.logInfo("bodyResponse:: " + bodyResponse);
+        }
         request.setSpName("cob_bvirtual..sp_log_ingfallo_2FA");
 
         request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
