@@ -419,15 +419,14 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	@Override
 	protected Object paymentIn(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
 	{
+		logHour("1");	
+		long start = System.currentTimeMillis();
 		String response = "";
 		Mensaje msg = new Mensaje();
 		Respuesta responseXml = new Respuesta();
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		try
 		{
-		
-			long start = System.currentTimeMillis();
-			logHour("1");
-			mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 			String paramInsBen = getParam(request, "CBCCDK", "AHO");
 			String codTarDeb = getParam(request, "CODTAR", "BVI");
 			aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
@@ -637,10 +636,24 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				}
 				
 				msjIn.getOrdenpago().setOpCdClave(responseXml.getErrCodigo());
-				// Crear una instancia de MyCallableTask con parámetros
-				ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
-				// Enviar la tarea para su ejecución
-				executorService.submit(task);
+				//llamada a log entrante
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("Entra return payment:"+msjIn.getOrdenpago().getOpCveRastreo());
+					int activeCount = ((ThreadPoolExecutor) executorService).getActiveCount();
+					logger.logDebug("Numero de hilos payment:"+activeCount);
+					int queueCount = ((ThreadPoolExecutor) executorService).getQueue().size();
+					logger.logDebug("Numero hilos en cola payment:"+queueCount);
+				}
+				try {
+					// Crear una instancia de MyCallableTask con parámetros
+					ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
+					// Enviar la tarea para su ejecución
+					executorService.submit(task);
+				}catch(Exception e)
+				{
+					logger.logError("Error de return payment", e);
+				}
 		
 		        logHour("6");
 			}
@@ -661,9 +674,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			}
 		} catch (Exception e) {
 			logger.logError("Error de spei in karpay", e);
+			
 			msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
-			responseXml.setErrCodigo(-1);
-			responseXml.setErrDescripcion("Error interno del core");
+			responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
+			responseXml.setId(msjIn.getOrdenpago().getId());
+			responseXml.setErrCodigo(500);
+			responseXml.setErrDescripcion("Error interno de infraestructura");
 			msg.setRespuesta(responseXml);
 			response = toStringXmlObject(msg);
 		} 
