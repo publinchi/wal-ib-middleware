@@ -65,8 +65,8 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 		if(responseCda.getReturnCode()!=0)
 		{
 			if(logger.isDebugEnabled()) {
-				logger.logInfo("CDA mensaje: "+responseCda.readValueParam("@o_msj_respuesta"));
-				logger.logInfo("CDA respuesta: "+responseCda.readValueParam("@o_cod_respuesta"));
+				logger.logDebug("CDA mensaje: "+responseCda.readValueParam("@o_msj_respuesta"));
+				logger.logDebug("CDA respuesta: "+responseCda.readValueParam("@o_cod_respuesta"));
 			}
 			
 		}
@@ -82,8 +82,8 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 		IProcedureRequest anOriginalRequest = anOriginalReq.clone();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(" Entrando en getWsEsice");
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(" Entrando en getWsEsice");
 		}
 		 LocalTime horaActual = LocalTime.now();
         // Formatear la hora en formato hhmmss
@@ -173,11 +173,11 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 			e.printStackTrace();
 			aBagSPJavaOrchestration.put("@o_result", "999");
 			connectorResponse = null;
-			logger.logInfo(" Error Catastrofico de getWsEsice");
+			logger.logError(" Error de getWsEsice",e);
 
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo("--> getWsEsice");
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("--> getWsEsice");
 			}
 		}
 		return connectorResponse;
