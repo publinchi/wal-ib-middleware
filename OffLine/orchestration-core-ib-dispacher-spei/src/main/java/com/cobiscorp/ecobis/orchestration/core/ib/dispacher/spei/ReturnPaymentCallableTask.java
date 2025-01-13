@@ -60,9 +60,9 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
     private IProcedureResponse callPaymentInReturn(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, mensaje msjIn,
                    String codeBank ) {
 		// SE INICIALIZA VARIABLE
-		if (logger.isInfoEnabled()) 
+		if (logger.isDebugEnabled()) 
 		{
-			logger.logInfo("Entrando a callPaymentInReturn future");
+			logger.logDebug("Entrando a callPaymentInReturn future");
 		}
 		IProcedureResponse connectorSpeiResponse = null;
 		//llamada a log entrante
@@ -128,14 +128,10 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 			}
 			
 		} catch (Exception e) {
-			logger.logError(e);
-			logger.logInfo("Error Catastrofico de callPaymentInReturn future");
-			e.printStackTrace();
-			logger.logInfo("Error Catastrofico de callPaymentInReturn future");
-
+			logger.logError("Error de callPaymentInReturn future",e);
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo("Saliendo de callPaymentInReturn future");
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Saliendo de callPaymentInReturn future");
 			}
 		}
 		// SE REGRESA RESPUESTA
