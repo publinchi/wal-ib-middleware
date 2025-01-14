@@ -250,7 +250,7 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 		
 		if (wProcedureResponseLocal.getReturnCode()==0) {
 			
-			logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_lc_id"));
+			logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_de_id"));
 		} 
 		return logId;
 		
