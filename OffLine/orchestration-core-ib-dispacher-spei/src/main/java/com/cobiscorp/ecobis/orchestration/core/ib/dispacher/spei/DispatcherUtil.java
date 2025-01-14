@@ -48,9 +48,9 @@ public class DispatcherUtil {
 			
 			try {
 				
-				if(logger.isInfoEnabled())
+				if(logger.isDebugEnabled())
 				{
-					logger.logInfo("INICIA  Get Data Message: "+plot);	
+					logger.logDebug("INICIA  Get Data Message: "+plot);	
 				}
 				plot=plot.replace("<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body><ns1:ordenpago xmlns:ns1=\"http://www.praxis.com.mx/\">","").replace("</respuesta></soap:Body></soap:Envelope><?xml version=\"1.0\" encoding=\"Cp850\"?>","");
 				plot=plot.replace("<?xml version=\"1.0\" encoding=\"Cp850\"?>","").replace("xsi:","");
@@ -58,25 +58,25 @@ public class DispatcherUtil {
 				plot=plot.replace( "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"","");
 				plot=plot.replace( "</ns1:ordenpago></soapenv:Body></soapenv:Envelope>","");
 				plot= plot.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","");
-				if(logger.isInfoEnabled())
+				if(logger.isDebugEnabled())
 				{
-					logger.logInfo("INICIA  Marshal");	
-					logger.logInfo("LIMPIOX "+plot);	
+					logger.logDebug("INICIA  Marshal");	
+					logger.logDebug("LIMPIOX "+plot);	
 				}
 				jaxbContext = JAXBContext.newInstance(mensaje.class); 
 				Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 				message = (mensaje)  jaxbUnmarshaller.unmarshal(new StringReader(plot));
 		      
-				if(logger.isInfoEnabled())
+				if(logger.isDebugEnabled())
 			  	{
-					logger.logInfo("Termina  Marshal");	
-				    logger.logInfo("convert xml to object:"+message.getCategoria());
-					logger.logInfo(message);
+					logger.logDebug("Termina  Marshal");	
+				    logger.logDebug("convert xml to object:"+message.getCategoria());
+					logger.logDebug(message);
 			  	}
 				  
 		}catch(Exception xe ) {
 			
-			logger.logInfo("Error  Marshal");	
+			logger.logDebug("Error  Marshal");	
 			
 			logger.logError(xe);
 			  throw xe;
@@ -112,7 +112,7 @@ public class DispatcherUtil {
 				signed = signDataPrivateKey(byteArray, aBagSPJavaOrchestration);
 
 			}catch (Exception xe) {
-				logger.logInfo("::::::::::Error al FIRMAR::::::::::");
+				logger.logDebug("::::::::::Error al FIRMAR::::::::::");
 				logger.logError(xe);
 				
 			}
