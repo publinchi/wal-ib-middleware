@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
@@ -83,15 +84,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
-
-	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = service;
-	}
-
-	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = null;
-	}
-
+	
 	/**
 	 * Instance plugin to use services other core banking
 	 */
@@ -99,46 +92,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	protected ICoreServer coreServer;
 
 	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServer(ICoreServer service) {
-		coreServer = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServer(ICoreServer service) {
-		coreServer = null;
-	}
-
-	/**
 	 * Instance plugin to use services other core banking
 	 */
 	@Reference(referenceInterface = ICoreServiceSelfAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceSelfAccountTransfers", unbind = "unbindCoreServiceSelfAccountTransfers")
 	private ICoreServiceSelfAccountTransfers coreServiceSelfAccountTransfers;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = null;
-	}
 
 	@Override
 	public ICoreService getCoreService() {
@@ -151,45 +108,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
 	protected ICoreService coreService;
 
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreService(ICoreService service) {
-		coreService = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreService(ICoreService service) {
-		coreService = null;
-	}
-
-
 	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
 	public ICoreServiceSendNotification coreServiceNotification;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = null;
-	}
 
 	/**
 	 * /** Execute transfer first step of service
@@ -405,7 +325,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 	
 				if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-					response = this.validaLimite(anOriginalRequest);
+					response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
 					
 					if(response.getReturnCode() != 0) {
 						return response;
@@ -444,7 +364,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				return response;
 			}			
 		}else {
-			response = this.validaLimite(anOriginalRequest);
+			response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
 			
 			if(response.getReturnCode() != 0) {
 				return response;
@@ -553,23 +473,41 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return connectorRiskEvaluationResponse;
 	}
 	
-	private IProcedureResponse validaLimite(IProcedureRequest anOriginalRequest) {
+	private IProcedureResponse validaLimite(IProcedureRequest anOriginalRequest,
+			 Map<String, Object> aBagSPJavaOrchestration) {
+		
 		String wInfo = CLASS_NAME+"[validaLimite] ";
-		logger.logInfo(wInfo + INIT_TASK);
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo(wInfo + INIT_TASK);
+		}
+		
 		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
+		
+		Integer tipoCuentaBeneficiario  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
+		String tipoCuentaBeneficiarioS = String.format("%02d", tipoCuentaBeneficiario);
+		String cuentaBeneficiario = anOriginalRequest.readValueParam("@i_cuentaBeneficiario");
+		String codTarDeb = (String)aBagSPJavaOrchestration.get("codTarDeb");
 
 		procedureRequest.setSpName("cob_bvirtual..sp_bv_valida_limites");
 		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18500069");
 		procedureRequest.addInputParam("@i_tipo_trn", ICTSTypes.SQLINT4, "253");
 		procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
 		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));		
-		if (anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario").equals("10")) 
-			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
-		else
-			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
-				
+		
+		if ("10".equals(tipoCuentaBeneficiarioS)) {
+			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
+		}
+		else {
+			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
+		}
+		
+		if (Objects.nonNull(tipoCuentaBeneficiarioS) && tipoCuentaBeneficiarioS.equals(codTarDeb)) {
+			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
+		}
+		
 		Integer code = 0;
         String message = "success";
 		IProcedureResponse anProcedureResponse =  executeCoreBanking(procedureRequest);
@@ -1104,5 +1042,85 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
         
         return newDate;
     }
+	
+	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = service;
+	}
+
+	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServer(ICoreServer service) {
+		coreServer = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServer(ICoreServer service) {
+		coreServer = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreService(ICoreService service) {
+		coreService = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreService(ICoreService service) {
+		coreService = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = null;
+	}
 
 }
