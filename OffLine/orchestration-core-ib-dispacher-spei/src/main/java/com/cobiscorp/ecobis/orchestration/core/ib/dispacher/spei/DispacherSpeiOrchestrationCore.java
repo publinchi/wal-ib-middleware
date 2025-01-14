@@ -81,13 +81,13 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	private static final String POLICY_PROPERTY = "policy";
 	private int policy = 4;
 	private static final String CORE_POOL_SIZE_PROPERTY = "corePoolSize";
-	private int corePoolSize = 10;//el numero de hilos en el pooll 10
+	private int corePoolSize = 15;//el numero de hilos en el pooll 10
 	private static final String MAXIMUM_POOL_SIZE_PROPERTY = "maximumPoolSize";
-	private int maximumPoolSize = 15;//toma la diferencia de hilos en caso de necesitar 15
+	private int maximumPoolSize = 20;//toma la diferencia de hilos en caso de necesitar 15
 	private static final String KEEP_ALIVE_TIME_PROPERTY = "keepAliveTime";
 	private int keepAliveTime = 30;
 	private static final String CAPACITY_PROPERTY = "capacity";
-	private int capacity = 30;//capacidada de la cantidad de tareas encoladas 5
+	private int capacity = 35;//capacidada de la cantidad de tareas encoladas 5
 	
 	@Override
 	public void loadConfiguration(IConfigurationReader reader) {
@@ -673,15 +673,19 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				logger.logDebug("tiempo proceso spei in: "+(end-start)+", "+msjIn.getOrdenpago().getOpCveRastreo());
 			}
 		} catch (Exception e) {
-			logger.logError("Error de spei in karpay", e);
+			logger.logError("Error de spei in karpay:"+msjIn.getOrdenpago().getOpCveRastreo(), e);
 			
 			msg.setCategoria(Constans.ODPS_LIQUIDADAS_ABONOS_RESPUESTA);
 			responseXml.setFechaOper(msjIn.getOrdenpago().getOpFechaOper());
 			responseXml.setId(msjIn.getOrdenpago().getId());
 			responseXml.setErrCodigo(500);
-			responseXml.setErrDescripcion("Error interno de infraestructura");
+			responseXml.setErrDescripcion("Error interno de infraestructura consulte con el administrador.");
 			msg.setRespuesta(responseXml);
 			response = toStringXmlObject(msg);
+			aBagSPJavaOrchestration.put("result", response);
+			if(logger.isDebugEnabled()) {
+				logger.logDebug("response error spei in: "+response);
+			}
 		} 
 		
 		return response;
