@@ -341,10 +341,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 											return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 										}
 									} else {
-										logger.logError("No se encontrÃ³ riskStatus en el objeto");
+										logger.logError("No se encontró riskStatus en el objeto");
 									}
 								} else {
-									logger.logError("No se encontrÃ³ riskDetails en el objeto");
+									logger.logError("No se encontró riskDetails en el objeto");
 								}
 							}
 
@@ -353,7 +353,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 							}
 							
 							if(logger.isDebugEnabled()){
-								logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " CÃ³digo: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
+								logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
 							}
 				
 							if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
@@ -363,13 +363,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		                  
 								anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
 							} else {
-								IProcedureResponse resp = Utils.returnException(18054, "OPERACIÃ“N NO PERMITIDA");
+								IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
 								if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
 								return resp;
 							}
 						}
 						else {
-							IProcedureResponse resp = Utils.returnException(18055, "OPERACIÃ“N NO PERMITIDA");
+							IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
 							if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption: " + resp.toString());}
 							return resp;
 						}
