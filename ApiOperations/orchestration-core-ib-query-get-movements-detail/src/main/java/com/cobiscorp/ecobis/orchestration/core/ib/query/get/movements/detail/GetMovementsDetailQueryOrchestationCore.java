@@ -1071,13 +1071,15 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 				} else {
 					if (type_auth.equals("WITHDRAWAL")) {
+
 						if (is_dock_idc == null) {
+							rowDat.addRowData(20, new ResultSetRowColumnData(false, columns[45].getValue()));
 							rowDat.addRowData(21, new ResultSetRowColumnData(false, location_id_atm));
 							rowDat.addRowData(22, new ResultSetRowColumnData(false, transaction_id_atm));
 							rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
 							rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
 							rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
-							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
+							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));					
 
 						} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
 							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
