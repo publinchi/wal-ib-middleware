@@ -301,51 +301,48 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 								if (riskDetailsObject.has("riskDetails")) {
 									JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+									
 									if (riskDetails.has("riskStatus")) {
-										String riskStatus = riskDetails.get("riskStatus").getAsString();
-										
+										String riskStatus = riskDetails.get("riskStatus").getAsString();										
 										if(logger.isDebugEnabled()){logger.logDebug("Estado riskEvaluation: " + riskStatus);}
-
-										if(riskStatus.contains("HIGH")) {
-											if (riskDetails.has("actions")) {
-												//Construccion del body para el conector
-												JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
-
-												// Iterar sobre el JsonArray para obtener actionName
-												for (JsonElement actionElement : actionsArray) {
-													JsonObject actionObject = actionElement.getAsJsonObject();
-													actionName =  actionObject.get("actionName").getAsString();
-
-													if(logger.isDebugEnabled()){
-														logger.logDebug("Action name of riskEvaluation " + actionName);}
-
-													IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
-													blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
-
-													if (blockCode.equals("null") || blockCode.isEmpty()) {
-														logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
-													} else {
-														//Realizamos el bloqueo del usuario
-														IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
-													}
-												}
-											}
-
-											//Generamos un bloqueo de la cuenta contra débitos
-											generaBloqueoCuenta(anOriginalRequest);
-
-											//Seteamos los valores para el retorno
-											anProcedureResponse.setReturnCode(400383);
-											anProcedureResponse.addMessage(1, blockCode);
-
-											return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
-										}
-									} else {
-										logger.logError("No se encontró riskStatus en el objeto");
 									}
-								} else {
+										
+									if (riskDetails.has("actions")) {
+										//Construccion del body para el conector
+										JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+										// Iterar sobre el JsonArray para obtener actionName
+										for (JsonElement actionElement : actionsArray) {
+											JsonObject actionObject = actionElement.getAsJsonObject();
+											actionName =  actionObject.get("actionName").getAsString();
+
+											if(logger.isDebugEnabled()){
+												logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+											IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+											blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+											if (!blockCode.equals("null") && !blockCode.isEmpty()) {
+												//Realizamos el bloqueo del usuario
+												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+
+												//Generamos un bloqueo de la cuenta contra débitos
+												generaBloqueoCuenta(anOriginalRequest);
+
+												//Seteamos los valores para el retorno
+												anProcedureResponse.setReturnCode(400383);
+												anProcedureResponse.addMessage(1, blockCode);
+
+												return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+												
+											} else {
+												logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+											}
+										}										
+									}		
+								}else {
 									logger.logError("No se encontró riskDetails en el objeto");
-								}
+								} 
 							}
 
 							if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
@@ -469,56 +466,46 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 							if (riskDetailsObject.has("riskDetails")) {
 								JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+								
 								if (riskDetails.has("riskStatus")) {
-									String riskStatus = riskDetails.get("riskStatus").getAsString();
-
-									if (logger.isDebugEnabled()) {
-										logger.logDebug("Estado riskEvaluation: " + riskStatus);
-									}
-
-									if(riskStatus.contains("HIGH")) {
-										if (riskDetails.has("actions")) {
-											// Construccion del body para el conector
-											JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
-
-											// Iterar sobre el JsonArray para obtener actionName
-											for (JsonElement actionElement : actionsArray) {
-												JsonObject actionObject = actionElement.getAsJsonObject();
-												actionName = actionObject.get("actionName").getAsString();
-
-												if (logger.isDebugEnabled()) {
-													logger.logDebug("Action name of riskEvaluation " + actionName);
-												}
-
-												IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
-												blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1)
-														.isNull() ? "null"
-																: objectCodeBlocking.getResultSetRowColumnData(1, 1, 1)
-																		.getValue();
-
-												if (blockCode.equals("null") || blockCode.isEmpty()) {
-													logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
-
-												} else {
-													// Realizamos el bloqueo del usuario
-												    IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
-												}
-											}
-										}
-
-										// Generamos un bloqueo de la cuenta contra débitos
-										generaBloqueoCuenta(anOriginalRequest);
-
-										// Seteamos los valores para el retorno
-										anProcedureResponse.setReturnCode(400383);
-									    anProcedureResponse.addMessage(1, blockCode);
-
-										return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
-									}
-								} else {
-									logger.logError("No se encontró riskStatus en el objeto");
+									String riskStatus = riskDetails.get("riskStatus").getAsString();										
+									if(logger.isDebugEnabled()){logger.logDebug("Estado riskEvaluation: " + riskStatus);}
 								}
-							} else {
+									
+								if (riskDetails.has("actions")) {
+									//Construccion del body para el conector
+									JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+
+									// Iterar sobre el JsonArray para obtener actionName
+									for (JsonElement actionElement : actionsArray) {
+										JsonObject actionObject = actionElement.getAsJsonObject();
+										actionName =  actionObject.get("actionName").getAsString();
+
+										if(logger.isDebugEnabled()){
+											logger.logDebug("Action name of riskEvaluation " + actionName);}
+
+										IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+										blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+
+										if (!blockCode.equals("null") && !blockCode.isEmpty()) {
+											//Realizamos el bloqueo del usuario
+											IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+
+											//Generamos un bloqueo de la cuenta contra débitos
+											generaBloqueoCuenta(anOriginalRequest);
+
+											//Seteamos los valores para el retorno
+											anProcedureResponse.setReturnCode(400383);
+											anProcedureResponse.addMessage(1, blockCode);
+
+											return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+											
+										} else {
+											logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+										}
+									}										
+								}		
+							}else {
 								logger.logError("No se encontró riskDetails en el objeto");
 							}
 						}
