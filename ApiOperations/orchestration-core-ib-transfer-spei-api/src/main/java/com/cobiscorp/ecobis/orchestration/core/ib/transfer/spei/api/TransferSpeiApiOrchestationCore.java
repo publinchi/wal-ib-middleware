@@ -412,51 +412,46 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                         	logger.logDebug("Objeto responseBody de riskEvaluation:: " + riskDetailsObject);
                         }
 
-                        if (riskDetailsObject.has("riskDetails")) {
+                        if (riskDetailsObject.has("riskDetails")) {                      	
                             JsonObject riskDetails = riskDetailsObject.getAsJsonObject("riskDetails");
+                            
                             if (riskDetails.has("riskStatus")) {
                                 String riskStatus = riskDetails.get("riskStatus").getAsString();
+                                if(logger.isDebugEnabled()){logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
+                            }
+                            
+                            if (riskDetails.has("actions")) {
+                                //Construccion del body para el conector
+                                JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
 
-                                if(logger.isDebugEnabled()){
-                                	logger.logDebug("Estado riskEvaluation:: " + riskStatus);}
+                                // Iterar sobre el JsonArray para obtener actionName
+                                for (JsonElement actionElement : actionsArray) {
+                                    JsonObject actionObject = actionElement.getAsJsonObject();
+                                    actionName =  actionObject.get("actionName").getAsString();
 
-                                if(riskStatus.contains("HIGH")) {
-                                    if (riskDetails.has("actions")) {
-                                        //Construccion del body para el conector
-                                        JsonArray actionsArray = riskDetails.getAsJsonArray("actions");
+                                    if(logger.isDebugEnabled()){
+                                        logger.logDebug("Action name of riskEvaluation " + actionName);}
 
-                                        // Iterar sobre el JsonArray para obtener actionName
-                                        for (JsonElement actionElement : actionsArray) {
-                                            JsonObject actionObject = actionElement.getAsJsonObject();
-                                            actionName =  actionObject.get("actionName").getAsString();
+                                    IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+                                    blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
-                                            if(logger.isDebugEnabled()){
-                                                logger.logDebug("Action name of riskEvaluation " + actionName);}
+                                    if (!blockCode.equals("null") && !blockCode.isEmpty()) {
+                                        //Realizamos el bloqueo del usuario
+                                        IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
+                                        
+                                        //Generamos un bloqueo de la cuenta contra débitos
+                                        generaBloqueoCuenta(aRequest);
 
-                                            IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
-                                            blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
+                                        //Seteamos los valores para el retorno
+                                        wAccountsResp.setReturnCode(400383);
+                                        wAccountsResp.addMessage(1, blockCode);
 
-                                            if (blockCode.equals("null") || blockCode.isEmpty()) {
-                                                logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
+                                        return wAccountsResp;                                                
 
-                                            } else {
-                                                //Realizamos el bloqueo del usuario
-                                                IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
-                                            }
-                                        }
+                                    } else {
+                                        logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
                                     }
-
-                                    //Generamos un bloqueo de la cuenta contra débitos
-                                    generaBloqueoCuenta(aRequest);
-
-                                    //Seteamos los valores para el retorno
-                                    wAccountsResp.setReturnCode(400383);
-                                    wAccountsResp.addMessage(1, blockCode);
-
-                                    return wAccountsResp;
                                 }
-                            } else {
-                                logger.logError("No se encontró riskStatus en el objeto");
                             }
                         } else {
                             logger.logError("No se encontró riskDetails en el objeto");
