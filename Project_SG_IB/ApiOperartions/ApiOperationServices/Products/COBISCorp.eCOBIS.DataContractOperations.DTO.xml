@@ -21,7 +21,7 @@
         </class>
       </collection>
       <field type="String" name="id" value="DTOJavaPOJO" />
-      <field type="String" name="outputFolder" value="C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO" />
+      <field type="String" name="outputFolder" value="{SG-OUTPUT-DIR}\Code\CTS\COBISCorp.eCOBIS.DataContractOperations.DTO" />
       <field type="boolean" name="package" value="true" />
       <enum type="cobiscorp.ecobis.censervicegenerator.dto.commons.TemplateMode" id="8" name="templateMode" value="XSLT" />
       <field type="String" name="packageTypeName" value="Jar" />
