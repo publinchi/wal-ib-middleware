@@ -9,6 +9,7 @@
   </parent>
   <properties>
     <skip.pmd>true</skip.pmd>
+    <path.build>C:/WaltMart/ibMiddleware/wal-ib-middleware</path.build>
   </properties>
   <groupId>COBISCorp.eCOBIS.ServiceContractOperations.Service</groupId>
   <artifactId>COBISCorp.eCOBIS.ServiceContractOperations.Service</artifactId>
@@ -19,8 +20,7 @@
       <artifactId>COBISCorp.eCOBIS.DataContractOperations.DTO</artifactId>
       <version>1.0.0.0</version>
       <scope>system</scope>
-      <systemPath>C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/CTS/COBISCorp.eCOBIS.DataContractOperations.DTO/build/dist/COBISCorp.eCOBIS.DataContractOperations.DTO-1.0.0.0.jar
-            </systemPath>
+      <systemPath>${path.build}/Output/Code/CTS/COBISCorp.eCOBIS.DataContractOperations.DTO/build/dist/COBISCorp.eCOBIS.DataContractOperations.DTO-1.0.0.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
