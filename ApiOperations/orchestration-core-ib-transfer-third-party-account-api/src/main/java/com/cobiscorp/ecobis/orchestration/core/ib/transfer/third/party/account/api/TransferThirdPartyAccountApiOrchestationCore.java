@@ -1629,6 +1629,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 		anOriginalRequest.setSpName("cob_bvirtual..sp_bv_transaccion_off_api"); 
 		anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18306");
+		anOriginalRequest.addInputParam("@i_trn", ICTSTypes.SQLINTN, "18500114");
 		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
@@ -2269,7 +2270,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         Integer code = 0;
         String message = SUCCESS_MESSAGE;
         String result = "true";
-        //String isSpei = "";
 
         IProcedureRequest reqTMPCentral = initProcedureRequest(anOriginalRequest);
         reqTMPCentral.setSpName("cob_ahorros..sp_validate_destiny_account");
@@ -2298,22 +2298,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
             code = wProcedureResponseCentral.getReturnCode();
             message = ERROR_MESSAGE_TEMPLATE;
             result = "false";
-        } /*else {
-            if (wProcedureResponseCentral.getResultSetListSize() > 0) {
-                IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
-
-                if (resultSetRows.length > 0) {
-                    IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-                    isSpei = columns[1].getValue();
-
-                    if (!"S".equals(isSpei)) {
-                        code = ERROR_OLD_CLABE_INVALID;
-                        message = ERROR_MESSAGE_TEMPLATE;
-                        result = "false";
-                    }
-                }
-            }
-        }*/
+        } 
 
         return createSuccessResponse(result, code, message);
     }
