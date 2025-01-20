@@ -1038,9 +1038,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(7, new ResultSetRowColumnData(false, columns[34].getValue()));
 				rowDat.addRowData(8, new ResultSetRowColumnData(false, iva_val));
 				rowDat.addRowData(9, new ResultSetRowColumnData(false, columns[24].getValue()));//8, 11?
-				rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue()));
 
-				rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
+				if (type_auth !=null && type_auth.equals("WITHDRAWAL") && is_dock_idc == null) {
+					rowDat.addRowData(10, new ResultSetRowColumnData(false, null));
+					rowDat.addRowData(11, new ResultSetRowColumnData(false, null));
+				}else{
+					rowDat.addRowData(10, new ResultSetRowColumnData(false, columns[1].getValue()));
+					rowDat.addRowData(11, new ResultSetRowColumnData(false, columns[25].getValue()));
+				}
 
 				rowDat.addRowData(12, new ResultSetRowColumnData(false, sourceOwnerName));
 				rowDat.addRowData(13, new ResultSetRowColumnData(false, sourceAccountNumber));
@@ -1204,7 +1209,13 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(31, new ResultSetRowColumnData(false, withdrawalVal));
 
 				rowDat.addRowData(32, new ResultSetRowColumnData(false, columns[42].getValue()));
-				rowDat.addRowData(33, new ResultSetRowColumnData(false, columns[43].getValue()));
+
+				if (type_auth !=null && type_auth.equals("WITHDRAWAL") && is_dock_idc == null) {
+					rowDat.addRowData(33, new ResultSetRowColumnData(false, null));
+				}else {
+					rowDat.addRowData(33, new ResultSetRowColumnData(false, columns[43].getValue()));
+				}
+				
 				rowDat.addRowData(34, new ResultSetRowColumnData(false, reason_commission));
 
 				data0.addRow(rowDat);
