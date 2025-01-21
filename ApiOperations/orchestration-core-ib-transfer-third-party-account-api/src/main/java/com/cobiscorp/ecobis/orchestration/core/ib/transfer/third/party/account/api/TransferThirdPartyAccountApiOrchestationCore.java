@@ -1337,13 +1337,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 		
-		if (aBagSPJavaOrchestration.get("card_id_dock") != null){			
-			request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("card_id_dock"));
-			
-		} else {		
-			request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
-		}
 		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
 		

@@ -754,12 +754,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 		
-		if (aBagSPJavaOrchestration.get("card_id_dock") != null){			
-			request.addInputParam("@i_card_id", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("card_id_dock"));
-			
-		} else {		
-			request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
-		}
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+		
 		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "S");
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINTN, "8");
 		
@@ -3213,28 +3209,35 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	    	result = "false";
 		}else
 		{ 
-			logger.logDebug(" JC VALIDANDO SI ES TARJETA");
-			
-			logger.logDebug("tarjeta prueba 1 "+opTcClaveBen);
+			if(logger.isDebugEnabled())
+			{
+				logger.logDebug(" JC VALIDANDO SI ES TARJETA");
+				logger.logDebug("tarjeta prueba 1 "+opTcClaveBen);
+			}
 			
 			if(opTcClaveBen.equals("03"))
 			{
-				
-				logger.logDebug("tarjeta prueba 1 "+opTcClaveBen);
-
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("tarjeta prueba 1 "+opTcClaveBen);
+				}
 				
 				IProcedureResponse respomse3=queryCardAccount(request,aBagSPJavaOrchestration);
 				
 				String tarjeta= respomse3.readValueParam("@o_card_crypt");
-				
-				logger.logDebug("tarjeta prueba 2 "+tarjeta);
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("tarjeta prueba 2 "+tarjeta);
+				}
 				
 	         	String tarjetaClaro = cryptaes.decryptData(tarjeta);   
 	         	
 	         	aBagSPJavaOrchestration.put("clear_card", tarjetaClaro);
 	         	aBagSPJavaOrchestration.put("card_destination", "3");
-				
-				logger.logDebug("tarjeta prueba 3 "+tarjeta);
+	         	if(logger.isDebugEnabled())
+				{
+	         		logger.logDebug("tarjeta prueba 3 "+tarjeta);
+				}
 	         	
 				if( !digitValidateNum(tarjetaClaro))
 				{
