@@ -334,6 +334,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String responseBody = "";
         String actionName = "";
         String blockCode = "";
+        String reasonOfLock = "";
 
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
@@ -436,8 +437,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                                     blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
                                     if (!blockCode.equals("null") && !blockCode.isEmpty()) {
+                                    	reasonOfLock = "Bloqueo del cliente por evaluación de riesgo alto o medio";
+                                    	
                                         //Realizamos el bloqueo del usuario
-                                        IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
+                                        IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode, reasonOfLock);
                                         
                                         //Generamos un bloqueo de la cuenta contra débitos
                                         generaBloqueoCuenta(aRequest);
@@ -521,6 +524,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String otpReturnCodeNew = null;
         String login = null;
         String codBlockOTP = getParam(aRequest, "CBT", "BVI");
+        String reasonOfLock = "";
         
         if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
             xRequestId = "E";
@@ -631,7 +635,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
+ 				reasonOfLock = "Usuario bloqueado por 2FA";
+ 				
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP, reasonOfLock);
  				
 				//Armamos la respuesta
  				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
@@ -2608,7 +2614,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return "";
 	}
 
-    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
+    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock, String reason) {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
         }
@@ -2653,6 +2659,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             if(aBagSPJavaOrchestration.get("o_phone") != null) {
                 phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
             }
+            
             jsonRequest.addProperty("phoneNumber", phoneCode + phoneNumber);
             anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
@@ -2660,11 +2667,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             jsonRequest.addProperty("blockCode", codBlock);
 
             //Validacion de blockResason
-			if (codBlock.equals(codBlockHigh)){
-					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
-			}else {
-            jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
-			}
+			jsonRequest.addProperty("blockReason", reason);
 
             anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
