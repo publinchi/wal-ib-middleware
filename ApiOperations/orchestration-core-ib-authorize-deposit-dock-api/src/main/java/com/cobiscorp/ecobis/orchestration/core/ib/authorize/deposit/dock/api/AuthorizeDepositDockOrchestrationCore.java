@@ -812,6 +812,8 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("cta").toString());
 		request.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("amount").toString());
 		request.addInputParam("@i_s", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@o_ssn_host").toString());
+		request.addInputParam("@i_autorizationCode", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("authorizationCode").toString());
+		
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 

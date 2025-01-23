@@ -774,7 +774,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "M");
 		request.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLVARCHAR, "F");
 		request.addInputParam("@i_print", ICTSTypes.SQLVARCHAR, "S");
-		request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_card_id"));
+		request.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("authorizationCode").toString());
 		request.addInputParam("@i_aux1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_establishment"));
 		request.addInputParam("@i_ente_mis", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
 		request.addInputParam("@i_ente_ib", ICTSTypes.SQLINTN, "0");
