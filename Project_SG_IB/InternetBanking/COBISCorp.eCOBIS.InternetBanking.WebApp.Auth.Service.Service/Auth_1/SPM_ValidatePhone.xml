@@ -41,6 +41,7 @@
           <field type="String" name="dTOAlias" value="returnAuthValidatePhoneResponse" />
           <field type="String" name="dTOPropertyName" value="lastConnection" />
           <field type="String" name="dataType" value="string" />
+          <field type="String" name="format" value="" />
         </class>
       </collection>
     </class>

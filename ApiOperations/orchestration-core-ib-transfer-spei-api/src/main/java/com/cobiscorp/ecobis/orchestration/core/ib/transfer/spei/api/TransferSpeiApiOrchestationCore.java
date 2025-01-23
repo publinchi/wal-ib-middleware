@@ -920,6 +920,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitude"));
         request.addInputParam("@i_reference_number", ICTSTypes.SQLINTN,
                 aRequest.readValueParam("@i_reference_number"));
+        request.addInputParam("@i_session_start_time", ICTSTypes.SQLDATETIME, aRequest.readValueParam("@i_session_start_time"));
         
         
         request.addInputParam("@s_ssn", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
@@ -1899,9 +1900,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
      * Método que permite crear un request para ser enviado al Corebanking
      *
      * @param anOriginalRequest       Request original
-     * @param lastResponse            Último response recibido.
-     * @param aBagSPJavaOrchestration Objetos que son resultado de la ejecución de
-     *                                los métodos.
+     * @param responseLocalValidation Último response recibido.
      */
     private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest,
             IProcedureResponse responseLocalValidation) {
@@ -3048,6 +3047,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_request") != null ? bag.get("@o_spei_request").toString() : "");
         request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response") != null ? bag.get("@o_spei_response").toString(): "");      
         request.addInputParam("@i_reference_number", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_reference_number"));
+        request.addInputParam("@i_session_start_time", ICTSTypes.SQLDATETIME, anOriginalRequest.readValueParam("@i_session_start_time"));
+        request.addInputParam("@i_operacion_log", ICTSTypes.SQLCHAR, "I");
 
         // SE SETEA VARIABLE DE SALIDA
         request.addOutputParam("@o_salida", ICTSTypes.SYBVARCHAR, "0");

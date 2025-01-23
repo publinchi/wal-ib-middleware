@@ -1059,6 +1059,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-update-session</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
 			<artifactId>orchestration-core-ib-encryptdata</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
@@ -1594,6 +1599,7 @@
 							<stripVersion>false</stripVersion>
 							<includeArtifactIds>						
 							orchestration-core-ib-affiliatecustomer,
+							orchestration-core-ib-update-session,
 							orchestration-core-ib-encryptdata,
 							orchestration-core-ib-getCatalogue,
 							orchestration-core-ib-getcustomer,
