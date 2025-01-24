@@ -148,6 +148,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		String responseBody = "";
 		String actionName = "";
 		String blockCode = "";
+		String reasonOfLock = "";
 		
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
@@ -323,17 +324,47 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 											blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
 											if (!blockCode.equals("null") && !blockCode.isEmpty()) {
+												reasonOfLock = "Bloqueo del cliente por evaluación de riesgo alto o medio";
+												
 												//Realizamos el bloqueo del usuario
-												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode, reasonOfLock);
 
 												//Generamos un bloqueo de la cuenta contra débitos
 												generaBloqueoCuenta(anOriginalRequest);
+												
+												//Armamos la respuesta
+								 				IProcedureResponse wAccountsRespRisk = new ProcedureResponseAS();
+												 				
+								 				// Agregar Header y data 1
+								 				IResultSetHeader mData = new ResultSetHeader();
+								 				IResultSetData data = new ResultSetData();
+								 				mData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+								 				mData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
-												//Seteamos los valores para el retorno
-												anProcedureResponse.setReturnCode(400383);
-												anProcedureResponse.addMessage(1, blockCode);
+								 				// Agregar Header y data 2
+								 				IResultSetHeader mData2 = new ResultSetHeader();
+								 				IResultSetData data2 = new ResultSetData();
+								 				mData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
 
-												return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+								 				// Agregar info 1
+								 				IResultSetRow row = new ResultSetRow();
+								 				row.addRowData(1, new ResultSetRowColumnData(false, "400383"));
+								 				row.addRowData(2, new ResultSetRowColumnData(false, blockCode));
+								 				data.addRow(row);
+
+								 				// Agregar info 2
+								 				IResultSetRow row2 = new ResultSetRow();
+								 				row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
+								 				data2.addRow(row2);
+
+								 				// Agregar resulBlock
+								 				IResultSetBlock resultsetBlock2 = new ResultSetBlock(mData2, data2);
+								 				IResultSetBlock resultsetBlock = new ResultSetBlock(mData, data);
+
+								 				wAccountsRespRisk.addResponseBlock(resultsetBlock2);
+								 				wAccountsRespRisk.addResponseBlock(resultsetBlock);
+
+												return wAccountsRespRisk;
 												
 											} else {
 												logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
@@ -488,17 +519,47 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 										blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
 										if (!blockCode.equals("null") && !blockCode.isEmpty()) {
+											reasonOfLock = "Bloqueo del cliente por evaluación de riesgo alto o medio";
+											
 											//Realizamos el bloqueo del usuario
-											IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
+											IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode, reasonOfLock);
 
 											//Generamos un bloqueo de la cuenta contra débitos
 											generaBloqueoCuenta(anOriginalRequest);
 
-											//Seteamos los valores para el retorno
-											anProcedureResponse.setReturnCode(400383);
-											anProcedureResponse.addMessage(1, blockCode);
+											//Armamos la respuesta
+							 				IProcedureResponse wAccountsRespRisk = new ProcedureResponseAS();
+											 				
+							 				// Agregar Header y data 1
+							 				IResultSetHeader mData = new ResultSetHeader();
+							 				IResultSetData data = new ResultSetData();
+							 				mData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+							 				mData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
-											return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+							 				// Agregar Header y data 2
+							 				IResultSetHeader mData2 = new ResultSetHeader();
+							 				IResultSetData data2 = new ResultSetData();
+							 				mData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+							 				// Agregar info 1
+							 				IResultSetRow row = new ResultSetRow();
+							 				row.addRowData(1, new ResultSetRowColumnData(false, "400383"));
+							 				row.addRowData(2, new ResultSetRowColumnData(false, blockCode));
+							 				data.addRow(row);
+
+							 				// Agregar info 2
+							 				IResultSetRow row2 = new ResultSetRow();
+							 				row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
+							 				data2.addRow(row2);
+
+							 				// Agregar resulBlock
+							 				IResultSetBlock resultsetBlock2 = new ResultSetBlock(mData2, data2);
+							 				IResultSetBlock resultsetBlock = new ResultSetBlock(mData, data);
+
+							 				wAccountsRespRisk.addResponseBlock(resultsetBlock2);
+							 				wAccountsRespRisk.addResponseBlock(resultsetBlock);
+
+											return wAccountsRespRisk;
 											
 										} else {
 											logger.logInfo("Error al obtener el codigo de bloqueo de IDC ");
@@ -1135,6 +1196,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		String otpReturnCodeNew = null;
 		String login = null;
 		String codBlockOTP = getParam(aRequest, "CBT", "BVI");
+		String reasonOfLock = "";
 		
 		if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
 			xRequestId = "E";
@@ -1232,15 +1294,43 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){				
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
+				reasonOfLock = "Usuario bloqueado por 2FA";
 				
-				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-				
-				//Seteamos los valores para el retorno
-				wAccountsResp.setReturnCode(400383);
-				wAccountsResp.addMessage(1, codBlockOTP);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP, reasonOfLock);
+								
+				//Armamos la respuesta
+ 				IProcedureResponse wAccountsRespRisk = new ProcedureResponseAS();
+				 				
+ 				// Agregar Header y data 1
+ 				IResultSetHeader mData = new ResultSetHeader();
+ 				IResultSetData data = new ResultSetData();
+ 				mData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+ 				mData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
-				return processResponseTransfer(aRequest, wAccountsResp, aBagSPJavaOrchestration);
+ 				// Agregar Header y data 2
+ 				IResultSetHeader mData2 = new ResultSetHeader();
+ 				IResultSetData data2 = new ResultSetData();
+ 				mData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+ 				// Agregar info 1
+ 				IResultSetRow row = new ResultSetRow();
+ 				row.addRowData(1, new ResultSetRowColumnData(false, "400383"));
+ 				row.addRowData(2, new ResultSetRowColumnData(false, codBlockOTP));
+ 				data.addRow(row);
+
+ 				// Agregar info 2
+ 				IResultSetRow row2 = new ResultSetRow();
+ 				row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
+ 				data2.addRow(row2);
+
+ 				// Agregar resulBlock
+ 				IResultSetBlock resultsetBlock2 = new ResultSetBlock(mData2, data2);
+ 				IResultSetBlock resultsetBlock = new ResultSetBlock(mData, data);
+
+ 				wAccountsRespRisk.addResponseBlock(resultsetBlock2);
+ 				wAccountsRespRisk.addResponseBlock(resultsetBlock);
+ 				
+				return wAccountsRespRisk;
 			}
 		}
 		
@@ -1812,7 +1902,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	    
 	}
 
-	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
+	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock, String reason) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
@@ -1861,6 +1951,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			if(aBagSPJavaOrchestration.get("o_phone") != null) {
 				phoneNumber = aBagSPJavaOrchestration.get("o_phone").toString();
 			}
+			
 			jsonRequest.addProperty("phoneNumber", phoneCode + phoneNumber);
 			anOriginalRequest.addInputParam("@i_phone_header", ICTSTypes.SQLVARCHAR, phoneCode + phoneNumber);
 
@@ -1868,12 +1959,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			jsonRequest.addProperty("blockCode", codBlock);
 
 			//Validacion de blockResason
-			if (codBlock.equals(codBlockHigh)){
-					jsonRequest.addProperty("blockReason", "Bloqueo del cliente por una evaluación de riesgo alto");
-			}else {
-				jsonRequest.addProperty("blockReason", "Token bloqueado por exceder limite de intentos");
-			}
-			
+			jsonRequest.addProperty("blockReason", reason);
+						
 			anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
 			//Se llama al conector de blockOperation
