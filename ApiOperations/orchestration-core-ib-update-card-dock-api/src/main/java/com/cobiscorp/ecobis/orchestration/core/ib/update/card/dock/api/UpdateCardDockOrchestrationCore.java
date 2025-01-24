@@ -146,8 +146,12 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 						if (logger.isDebugEnabled()) {
 							 logger.logDebug("Entrando en switch case = 0");
 					 	}
-						if (!validateActivationDate(aBagSPJavaOrchestration))	
-							accreditation = "N";						 
+						if (!validateActivationDate(aBagSPJavaOrchestration)) {	
+							wAccountsResp.setReturnCode(161945);
+							wAccountsResp.addMessage(1, "La fecha de expiración de la tarjeta es menor a la fecha proceso");
+							accreditation = "N";
+							return wAccountsResp;
+						}
 						break;	
 					default:
 						if (logger.isDebugEnabled()) {
@@ -883,18 +887,18 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 			// PARAMETROS DE ENTRADA
 			anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("ente_mis").toString());
 			if (typeCard.equals("PHYSICAL")){
-				anOriginalRequest.addInputParam("@i_id_card_dock", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_card_available").toString());
+				anOriginalRequest.addInputParam("@i_id_card_dock", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("o_card_available"));
 			}else{
-				anOriginalRequest.addInputParam("@i_id_card_dock", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_id_card_dock").toString());
+				anOriginalRequest.addInputParam("@i_id_card_dock", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("o_id_card_dock"));
 				anOriginalRequest.addInputParam("@i_status", ICTSTypes.SQLVARCHAR, "NORMAL");
 			}
 			anOriginalRequest.addInputParam("@i_reason_status", ICTSTypes.SQLVARCHAR, "X");
-			anOriginalRequest.addInputParam("@i_id_person_dock", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_id_person_dock").toString());
-			anOriginalRequest.addInputParam("@i_id_account_dock", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_id_account_dock").toString());
+			anOriginalRequest.addInputParam("@i_id_person_dock", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("o_id_person_dock"));
+			anOriginalRequest.addInputParam("@i_id_account_dock", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("o_id_account_dock"));
 			
 			anOriginalRequest.addInputParam("@i_type_card", ICTSTypes.SQLVARCHAR, typeCard);
 			anOriginalRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "ASC");
-			anOriginalRequest.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("o_account_number").toString());
+			anOriginalRequest.addInputParam("@i_account", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("o_account_number"));
 			
 			// VARIABLES DE SALIDA
 			anOriginalRequest.addOutputParam("@o_cod_respuesta", ICTSTypes.SQLVARCHAR, "0");
