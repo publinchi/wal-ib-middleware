@@ -1602,7 +1602,7 @@ public class ServiceContractOperationsApiRest {
 	}
 
 	@POST
-	@Path("/apiOperations/enrollment/updateSession")
+	@Path("/apiOperations/security/updateSession")
 	@Consumes({"application/json"})
 	@Produces({"application/json"})
 	public Response  updateSession(RequestTransferSpi inRequestTransferSpi ){
