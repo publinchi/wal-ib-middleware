@@ -263,7 +263,6 @@
 	</orchestrations>
 	<api-rest-orchest>
 		<staff id="1" name="orchestration-core-ib-affiliatecustomer" version="4.6.1.0" />
-		<staff id="1" name="orchestration-core-ib-update-session" version="4.6.1.0" />
 		<staff id="2" name="orchestration-core-ib-encryptdata" version="4.6.1.0" />
 		<staff id="3" name="orchestration-core-ib-getCatalogue" version="4.6.1.0" />
 		<staff id="4" name="orchestration-core-ib-getcustomer" version="4.6.1.0" />
@@ -299,6 +298,7 @@
 		<staff id="35" name="orchestration-core-ib-register-card-pan-api" version="4.6.1.0" />
 		<staff id="36" name="orchestration-core-ib-registcontactlimit-api" version="4.6.1.0" />
 		<staff id="37" name="orchestration-core-ib-get-client-limit-api" version="4.6.1.0" />
+		<staff id="38" name="orchestration-core-ib-update-session" version="4.6.1.0" />
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
