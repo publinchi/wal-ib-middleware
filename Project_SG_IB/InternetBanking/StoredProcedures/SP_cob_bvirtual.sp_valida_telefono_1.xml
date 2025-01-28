@@ -19,6 +19,7 @@
     <parameter name="@i_telefono" dataType="varchar" direction="in" />
     <parameter name="@i_canal" dataType="int" direction="in" />
     <parameter name="@o_result" dataType="char" direction="out" />
+    <parameter name="@i_session_start_time" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

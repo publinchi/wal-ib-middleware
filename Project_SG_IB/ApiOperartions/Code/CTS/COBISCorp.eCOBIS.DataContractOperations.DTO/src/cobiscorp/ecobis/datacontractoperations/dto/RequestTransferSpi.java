@@ -52,6 +52,8 @@ public class RequestTransferSpi implements Serializable {
   private String authenticationMethod;
   private String currency;
   private String channel;
+  private String sessionStartTime;
+  private String sessionEndTime;
   public Integer getExternalCustomerId(){
     return this.externalCustomerId;
   }
@@ -195,5 +197,17 @@ public class RequestTransferSpi implements Serializable {
   }
   public void setChannel(String channel ){
     this.channel=channel;
+  }
+  public String getSessionStartTime(){
+    return this.sessionStartTime;
+  }
+  public void setSessionStartTime(String sessionStartTime ){
+    this.sessionStartTime=sessionStartTime;
+  }
+  public String getSessionEndTime(){
+    return this.sessionEndTime;
+  }
+  public void setSessionEndTime(String sessionEndTime ){
+    this.sessionEndTime=sessionEndTime;
   }
 }

@@ -317,6 +317,9 @@ public interface IServiceContractOperationsApiService {
 	public ResponseUpdateProfile updateProfile(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp,
 			String xChannel, RequestUpdateProfile inRequestUpdateProfile)
 			throws CTSRestException;
+         
+   //Have DTO 
+	public ResponseTransferSpi updateSession(RequestTransferSpi inRequestTransferSpi  )throws CTSRestException;
 
 	// Have DTO
 	public ResponseValidateCustomerIdentityCard validateCustomerIdentityCard(
