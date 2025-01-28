@@ -249,6 +249,8 @@ public interface IServiceContractOperationsApi{
   * Service to Update Profile
   */
   ServiceResponseTO updateProfile(ServiceRequestTO requestTO);  
+  
+  ServiceResponseTO updateSession(ServiceRequestTO requestTO);  
 
   /**
   * Validate All Security Questions and Answers

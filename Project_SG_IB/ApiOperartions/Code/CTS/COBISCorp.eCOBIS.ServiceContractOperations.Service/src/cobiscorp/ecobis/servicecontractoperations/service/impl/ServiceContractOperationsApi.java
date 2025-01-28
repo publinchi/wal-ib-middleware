@@ -2767,6 +2767,54 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       ServiceResponseTO responseTO = this.getManager().execute(requestTO);
       return responseTO;
       }
+      
+	@CTSProcedure(
+		name = "cob_bvirtual..bv_update_session_log", dbms = "SQLCANALES",  
+		objectRequest = {
+		
+			@CTSRequest(
+				name = "inRequestTransferSpi",
+				input = {
+				
+					@CTSInputParam(field = "sessionStartTime", param = "@i_session_start_time", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "sessionEndTime", param = "@i_session_end_time", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "userSessionId", param = "@i_session_id", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "externalCustomerId", param = "@i_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "originAccountNumber", param = "@i_account", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "channel", param = "@i_canal", dataType = ICTSTypes.SQLINT4)
+				}
+			)
+		},
+		defaultRequest = {
+    
+				@CTSDefaultInputParam(dataType = ICTSTypes.SQLINT4, param = "@t_trn", value = "18500176"),
+				@CTSDefaultInputParam(value = "U", param = "@i_operacion", dataType = ICTSTypes.SQLCHAR)
+		},
+  response = {
+  
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "success", columnIndex = 1)
+      }
+    ),
+    @CTSResponse(
+      name = "returnResponseTransferSpi",
+      type = cobiscorp.ecobis.datacontractoperations.dto.ResponseTransferSpi.class,
+      columns = {
+		    @CTSColumn(field = "response.code", columnIndex = 1),
+		    @CTSColumn(field = "response.message", columnIndex = 2)
+      }
+    )
+  }
+  
+	)
+	
+      public ServiceResponseTO updateSession(ServiceRequestTO requestTO) {
+      ServiceResponseTO responseTO = this.getManager().execute(requestTO);
+      return responseTO;
+      }
     
 	@CTSProcedure(
 		name = "cob_procesador..sp_val_all_security_qa_api", dbms = "SQLCTS",  
