@@ -146,12 +146,8 @@ public class UpdateCardDockOrchestrationCore extends SPJavaOrchestrationBase {
 						if (logger.isDebugEnabled()) {
 							 logger.logDebug("Entrando en switch case = 0");
 					 	}
-						if (!validateActivationDate(aBagSPJavaOrchestration)) {	
-							wAccountsResp.setReturnCode(161945);
-							wAccountsResp.addMessage(1, "La fecha de expiración de la tarjeta es menor a la fecha proceso");
+						if (!validateActivationDate(aBagSPJavaOrchestration))
 							accreditation = "N";
-							return wAccountsResp;
-						}
 						break;	
 					default:
 						if (logger.isDebugEnabled()) {
