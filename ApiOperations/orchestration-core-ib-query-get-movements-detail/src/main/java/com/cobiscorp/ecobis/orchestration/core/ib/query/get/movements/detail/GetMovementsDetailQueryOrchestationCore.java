@@ -159,7 +159,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					logger.logDebug("server is offline");
 				}
 				
-				if(anOriginalRequest.readValueParam(INRO_REGISTRO)!= null){
+				if(anOriginalRequest.readValueParam(INRO_REGISTRO)!= null && anOriginalRequest.readValueParam(INRO_REGISTRO).matches("\\d+")){
 					numRegistros = Integer.parseInt(anOriginalRequest.readValueParam(INRO_REGISTRO));
 					logger.logDebug("numRegistros" + numRegistros);
 				}
