@@ -20,7 +20,6 @@ import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.CISResponseManagmentHelper;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
-import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
@@ -320,14 +319,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 											if(logger.isDebugEnabled()){
 												logger.logDebug("Action name of riskEvaluation " + actionName);}
 
-											IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+											IProcedureResponse objectCodeBlocking = getCatalog(actionName, "bv_cod_bloqueo_idc");
 											blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
 											if (!blockCode.equals("null") && !blockCode.isEmpty()) {
-												reasonOfLock = "Bloqueo del cliente por evaluación de riesgo alto o medio";
+												reasonOfLock = "Bloqueo del cliente por evaluacion de riesgo alto o medio";
+												aBagSPJavaOrchestration.put("reasonOfLock", reasonOfLock);
 												
 												//Realizamos el bloqueo del usuario
-												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode, reasonOfLock);
+												IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
 
 												//Generamos un bloqueo de la cuenta contra débitos
 												generaBloqueoCuenta(anOriginalRequest);
@@ -515,14 +515,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 										if(logger.isDebugEnabled()){
 											logger.logDebug("Action name of riskEvaluation " + actionName);}
 
-										IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+										IProcedureResponse objectCodeBlocking = getCatalog(actionName, "bv_cod_bloqueo_idc");
 										blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
 										if (!blockCode.equals("null") && !blockCode.isEmpty()) {
-											reasonOfLock = "Bloqueo del cliente por evaluación de riesgo alto o medio";
+											reasonOfLock = "Bloqueo del cliente por evaluacion de riesgo alto o medio";
+											aBagSPJavaOrchestration.put("reasonOfLock", reasonOfLock);
 											
 											//Realizamos el bloqueo del usuario
-											IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode, reasonOfLock);
+											IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(anOriginalRequest, aBagSPJavaOrchestration, blockCode);
 
 											//Generamos un bloqueo de la cuenta contra débitos
 											generaBloqueoCuenta(anOriginalRequest);
@@ -1295,8 +1296,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			//Validacion para llamar al conector blockOperation
 			if(otpReturnCode.equals("1890005")){				
 				reasonOfLock = "Usuario bloqueado por 2FA";
+				aBagSPJavaOrchestration.put("reasonOfLock", reasonOfLock);
 				
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP, reasonOfLock);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
 								
 				//Armamos la respuesta
  				IProcedureResponse wAccountsRespRisk = new ProcedureResponseAS();
@@ -1901,13 +1903,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	    
 	}
 
-	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock, String reason) {
+	private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
 		}
 		String phoneNumber = null;
 		String phoneCode = prefixPhone;
 		String channel = null;
+		String channelBO = "COBIS";
 
 		IProcedureResponse connectorBlockOperationResponse = null;
 
@@ -1958,7 +1961,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			jsonRequest.addProperty("blockCode", codBlock);
 
 			//Validacion de blockResason
-			jsonRequest.addProperty("blockReason", reason);
+			if(aBagSPJavaOrchestration.get("reasonOfLock") != null) {
+				jsonRequest.addProperty("blockReason", aBagSPJavaOrchestration.get("reasonOfLock").toString());
+			}
+			
+            IProcedureResponse canalBlockOperation = getCatalog(codBlock, "bv_canal_blockOperation");
+            channelBO = canalBlockOperation.getResultSetRowColumnData(1, 1, 2).isNull() ? "null" : canalBlockOperation.getResultSetRowColumnData(1, 1, 2).getValue();
+			anOriginalRequest.addInputParam("@i_channel_block", ICTSTypes.SQLVARCHAR, channelBO);
 						
 			anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
@@ -2302,12 +2311,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 	}
 
-	private IProcedureResponse getCodeBlocking(String description) {
+	private IProcedureResponse getCatalog(String valor, String table) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getMessageErrors");
+			logger.logInfo(CLASS_NAME + " Entrando en getCatalog");
 		}
 
 		request.setSpName("cobis..sp_catalogo");
@@ -2315,21 +2324,28 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-
 		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
-		request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
-		request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, "bv_cod_bloqueo_idc");
-		request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, description);
 
-		logger.logDebug("Request Corebanking getMessageErrors: " + request.toString());
+		if(table.equals("bv_cod_bloqueo_idc")) {
+		request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
+			request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, valor);
+		} else {
+			request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "5");
+			request.addInputParam("@i_codigo1", ICTSTypes.SQLVARCHAR, valor);
+		}
+
+		request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, table);
+
+
+		logger.logDebug("Request Corebanking getCatalog: " + request.toString());
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Corebanking getMessageErrors: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Response Corebanking getCatalog: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de getMessageErrors");
+			logger.logInfo(CLASS_NAME + " Saliendo de getCatalog");
 		}
 		return wProductsQueryResp;
 	}

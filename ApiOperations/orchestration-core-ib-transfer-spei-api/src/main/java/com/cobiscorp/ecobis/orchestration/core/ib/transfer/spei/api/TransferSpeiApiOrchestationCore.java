@@ -433,14 +433,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                                     if(logger.isDebugEnabled()){
                                         logger.logDebug("Action name of riskEvaluation " + actionName);}
 
-                                    IProcedureResponse objectCodeBlocking = getCodeBlocking(actionName);
+                                    IProcedureResponse objectCodeBlocking = getCatalog(actionName, "bv_cod_bloqueo_idc");
                                     blockCode = objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).isNull() ? "null" : objectCodeBlocking.getResultSetRowColumnData(1, 1, 1).getValue();
 
                                     if (!blockCode.equals("null") && !blockCode.isEmpty()) {
-                                    	reasonOfLock = "Bloqueo del cliente por evaluación de riesgo alto o medio";
+                                    	reasonOfLock = "Bloqueo del cliente por evaluacion de riesgo alto o medio";
+										aBagSPJavaOrchestration.put("reasonOfLock", reasonOfLock);
                                     	
                                         //Realizamos el bloqueo del usuario
-                                        IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode, reasonOfLock);
+                                        IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, blockCode);
                                         
                                         //Generamos un bloqueo de la cuenta contra débitos
                                         generaBloqueoCuenta(aRequest);
@@ -636,8 +637,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
  			//Validacion para llamar al conector blockOperation
  			if(otpReturnCode.equals("1890005")){
  				reasonOfLock = "Usuario bloqueado por 2FA";
+ 				aBagSPJavaOrchestration.put("reasonOfLock", reasonOfLock);
  				
-				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP, reasonOfLock);
+				IProcedureResponse wConectorBlockOperationResponseConn = executeBlockOperationConnector(aRequest, aBagSPJavaOrchestration, codBlockOTP);
  				
 				//Armamos la respuesta
  				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
@@ -2613,13 +2615,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		return "";
 	}
 
-    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock, String reason) {
+    private IProcedureResponse executeBlockOperationConnector(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String codBlock) {
         if (logger.isInfoEnabled()) {
             logger.logInfo(CLASS_NAME + " Entrando en executeBlockOperation");
         }
         String phoneNumber = null;
         Integer phoneCode = 52;
         String channel = null;
+		String channelBO = "COBIS";
 
         IProcedureResponse connectorBlockOperationResponse = null;
 
@@ -2665,9 +2668,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             //Validacion del blockCode
             jsonRequest.addProperty("blockCode", codBlock);
 
-            //Validacion de blockResason
-			jsonRequest.addProperty("blockReason", reason);
+          //Validacion de blockResason
+			if(aBagSPJavaOrchestration.get("reasonOfLock") != null) {
+				jsonRequest.addProperty("blockReason", aBagSPJavaOrchestration.get("reasonOfLock").toString());
+			}
 
+			IProcedureResponse canalBlockOperation = getCatalog(codBlock, "bv_canal_blockOperation");
+            channelBO = canalBlockOperation.getResultSetRowColumnData(1, 1, 2).isNull() ? "null" : canalBlockOperation.getResultSetRowColumnData(1, 1, 2).getValue();
+			anOriginalRequest.addInputParam("@i_channel_block", ICTSTypes.SQLVARCHAR, channelBO);
+			
             anOriginalRequest.addInputParam("@i_json_request", ICTSTypes.SQLVARCHAR, jsonRequest.toString());
 
             //Se llama al conector de blockOperation
@@ -3722,36 +3731,43 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		}
 	}
 
-    private IProcedureResponse getCodeBlocking(String description) {
+    private IProcedureResponse getCatalog(String valor, String table) {
 
-        IProcedureRequest request = new ProcedureRequestAS();
+    	IProcedureRequest request = new ProcedureRequestAS();
 
-        if (logger.isInfoEnabled()) {
-            logger.logInfo(CLASS_NAME + " Entrando en getMessageErrors");
-        }
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en getCatalog");
+		}
 
-        request.setSpName("cobis..sp_catalogo");
+		request.setSpName("cobis..sp_catalogo");
 
-        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-                IMultiBackEndResolverService.TARGET_CENTRAL);
-        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
 
-        request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
-        request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
-        request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, "bv_cod_bloqueo_idc");
-        request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, description);
+		if(table.equals("bv_cod_bloqueo_idc")) {
+		request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "6");
+			request.addInputParam("@i_descripcion", ICTSTypes.SQLVARCHAR, valor);
+		} else {
+			request.addInputParam("@i_modo", ICTSTypes.SQLINTN, "5");
+			request.addInputParam("@i_codigo1", ICTSTypes.SQLVARCHAR, valor);
+		}
 
-        logger.logDebug("Request Corebanking getMessageErrors: " + request.toString());
-        IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		request.addInputParam("@i_tabla", ICTSTypes.SQLVARCHAR, table);
 
-        if (logger.isDebugEnabled()) {
-            logger.logDebug("Response Corebanking getMessageErrors: " + wProductsQueryResp.getProcedureResponseAsString());
-        }
 
-        if (logger.isInfoEnabled()) {
-            logger.logInfo(CLASS_NAME + " Saliendo de getMessageErrors");
-        }
-        return wProductsQueryResp;
+		logger.logDebug("Request Corebanking getCatalog: " + request.toString());
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking getCatalog: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getCatalog");
+		}
+		return wProductsQueryResp;
     }
 
     private IProcedureResponse validateDestinyAccount(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
