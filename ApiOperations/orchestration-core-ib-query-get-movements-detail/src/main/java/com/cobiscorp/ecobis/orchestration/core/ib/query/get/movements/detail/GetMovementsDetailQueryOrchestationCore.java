@@ -75,7 +75,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
 	protected static final int CHANNEL_REQUEST = 8;
-
+	private static final String INRO_REGISTRO = "@i_nro_registros";
 	/**
 	 * Instance of ICTSServiceIntegration
 	 */
@@ -114,6 +114,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
+		int numRegistros = 10;
 		try 
 		{
 			responseServer = getServerStatus(serverRequest);
@@ -157,27 +158,27 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				{
 					logger.logDebug("server is offline");
 				}
-				int numRegistros = Integer.parseInt(anOriginalRequest.readValueParam("@i_nro_registros"));
 				
-				logger.logDebug("@i_nro_registros FHU:" + numRegistros);
-				
+				if(anOriginalRequest.readValueParam(INRO_REGISTRO)!= null && anOriginalRequest.readValueParam(INRO_REGISTRO).matches("\\d+")){
+					numRegistros = Integer.parseInt(anOriginalRequest.readValueParam(INRO_REGISTRO));
+					logger.logDebug("numRegistros" + numRegistros);
+				}
+			
 				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
 				
-				logger.logDebug("anProcedureResponse FHU:" + anProcedureResponse.toString());
 				int numberOfRecordsLocal = 0;
 				int numberOfRecords = 0;
 
-				if (anProcedureResponse != null && anProcedureResponse.getResultSets().size() > 0) {
+				if (anProcedureResponse != null && !anProcedureResponse.getResultSets().isEmpty()) {
 					numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
-					logger.logDebug("numberOfRecordsLocal FHU:" + numberOfRecordsLocal);
 				}
 				if (numberOfRecordsLocal < numRegistros) {
 					numberOfRecords = numRegistros - numberOfRecordsLocal;
-					logger.logDebug("numberOfRecords FHU:" + numberOfRecords);
+
 					
-					anOriginalRequest.setValueParam("@i_nro_registros", String.valueOf(numberOfRecords)); 
+					anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords)); 
 					anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
-					logger.logDebug("anProcedureResponseCentral FHU:" + anProcedureResponseCentral.toString());
+
 					llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
 				}
 				
