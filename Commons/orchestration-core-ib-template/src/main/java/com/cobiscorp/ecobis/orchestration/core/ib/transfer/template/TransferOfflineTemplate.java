@@ -220,6 +220,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 
 		anOriginalRequest.setSpName("cob_bvirtual..sp_bv_transaccion_off_api");
 		anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18306");
+		anOriginalRequest.addInputParam("@i_trn", ICTSTypes.SYBINT4, "18500115");
 		anOriginalRequest.addInputParam("@s_ofi", ICTSTypes.SYBINT4, "1");
 		anOriginalRequest.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		anOriginalRequest.addInputParam("@s_term", ICTSTypes.SQLVARCHAR, "0:0:0:0:0:0:0:1");
