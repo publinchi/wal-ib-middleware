@@ -66,7 +66,8 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AuthorizePurchase starts...");		
+		if (logger.isDebugEnabled()) {logger.logDebug("Begin flow, AuthorizePurchase starts...");}
+		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		Boolean serverStatus = null;
@@ -699,6 +700,8 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				// Se agrega el AuthorizationCode al request para Webhook
+				aRequest.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, authorizationCode);
 				registerTransactionSuccess("Authorize Purchase", "IDC", aRequest, 
 											(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
 											(String)aBagSPJavaOrchestration.get("@o_causal"), null);
