@@ -76,22 +76,23 @@ public class UpdateSessionOrchestrationCore extends SPJavaOrchestrationBase {// 
 		IProcedureResponse response = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE");
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 
+		// Agregar Header y data
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
-		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
 
-		// Agregar Header y data 2
+
 		IResultSetHeader metaData2 = new ResultSetHeader();
 		IResultSetData data2 = new ResultSetData();
-		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
 
 		String code;
 		String message;
 		String success;
 
 		if (response.hasError()){
-			code = "99";
+			code = String.valueOf(response.getReturnCode());
 			message = "Error al actualizar";
 			success = "false";
 		}
@@ -100,24 +101,26 @@ public class UpdateSessionOrchestrationCore extends SPJavaOrchestrationBase {// 
 			message = "Sesión actualizada";
 			success = "true";
 		}
+
 		// Agregar info 1
 		IResultSetRow row = new ResultSetRow();
-		row.addRowData(1, new ResultSetRowColumnData(false, code));
-		row.addRowData(2, new ResultSetRowColumnData(false, message));
+		row.addRowData(1, new ResultSetRowColumnData(false, success));
 		data.addRow(row);
 
 		// Agregar info 2
 		IResultSetRow row2 = new ResultSetRow();
-		row2.addRowData(1, new ResultSetRowColumnData(false, success));
+		row2.addRowData(1, new ResultSetRowColumnData(false, code));
+		row2.addRowData(2, new ResultSetRowColumnData(false, message));
 		data2.addRow(row2);
 
+
 		// Agregar resulBlock
-		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
 
 		anOriginalProcedureResponse.setReturnCode(200);
-		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 
 		logger.logDebug("Process response UpdateSessionOrchestrationCore --> "+response.getProcedureResponseAsString());
 
