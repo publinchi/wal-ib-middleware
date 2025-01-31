@@ -698,6 +698,8 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				// Se agrega el AuthorizationCode al request para Webhook
+				aRequest.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, authorizationCode);
 				registerTransactionSuccess("Authorize Withdrawal", "IDC", aRequest, 
 										(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
 										(String)aBagSPJavaOrchestration.get("@o_causal"), null);
