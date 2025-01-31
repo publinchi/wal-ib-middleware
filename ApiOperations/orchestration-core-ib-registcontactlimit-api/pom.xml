@@ -87,15 +87,6 @@
 	      <groupId>com.cobiscorp.ecobis</groupId>
 	      <artifactId>cobis-admintoken</artifactId>
 	      <version>1.0.0</version>
-	    </dependency>		
-		<dependency>
-			<groupId>
-				COBISCorp.eCOBIS.ServiceContractOperations.Service
-			</groupId>
-			<artifactId>
-				COBISCorp.eCOBIS.ServiceContractOperations.Service
-			</artifactId>
-			<version>1.0.0.0</version>
-		</dependency>		
+	    </dependency>			
 	</dependencies>
 </project>
