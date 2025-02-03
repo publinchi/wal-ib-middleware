@@ -27,7 +27,7 @@
       <field type="String" name="packageTypeName" value="Jar" />
     </class>
   </collection>
-  <collection type="List" length="10" id="9" name="dTOs">
+  <collection type="List" length="11" id="9" name="dTOs">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="10" index="0">
       <field type="String" name="name" value="AuthAccessRequest" />
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
@@ -78,14 +78,19 @@
       <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
       <field type="String" name="version" value="1" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOBase" id="20" index="10">
+      <field type="String" name="name" value="SendNotificationRequest" />
+      <field type="String" name="namespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" />
+      <field type="String" name="version" value="1" />
+    </class>
   </collection>
-  <collection type="List" length="2" id="20" name="properties">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="21" index="0">
+  <collection type="List" length="2" id="21" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="22" index="0">
       <field type="String" name="name" value="MavenGroupId" />
       <field type="String" name="value" value="com.cobiscorp.channels.ib" />
       <field type="char" name="type" value="\u0000" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="22" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="23" index="1">
       <field type="String" name="name" value="UseNamingConvention" />
       <field type="String" name="value" value="False" />
       <field type="char" name="type" value="\u0000" />
@@ -96,12 +101,12 @@
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="0" id="23" name="references">
+  <collection type="List" length="0" id="24" name="references">
   </collection>
-  <collection type="List" length="0" id="24" name="externalReferences">
+  <collection type="List" length="0" id="25" name="externalReferences">
   </collection>
-  <collection type="List" length="1" id="25" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="26" index="0">
+  <collection type="List" length="1" id="26" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="27" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobisBV" />
       <field type="String" name="keyPassword" value="cobisbvadminadmin" />
@@ -114,7 +119,7 @@
       <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.6.0_45" />
     </class>
   </collection>
-  <collection type="List" length="6" id="27" name="templateCommands">
+  <collection type="List" length="6" id="28" name="templateCommands">
     <field type="String" index="0" value="cmd_Maven install in local repository" />
     <field type="String" index="1" value="cmd_Maven deploy in remote repository" />
     <field type="String" index="2" value="cmd_Nuget install in local repository" />

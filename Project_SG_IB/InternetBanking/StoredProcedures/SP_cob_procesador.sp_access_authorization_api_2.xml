@@ -27,6 +27,12 @@
     <parameter name="@o_access_granted" dataType="varchar" direction="out" />
     <parameter name="@o_description" dataType="varchar" direction="out" />
     <parameter name="@i_servicio" dataType="int" direction="in" />
+    <parameter name="@i_latitude" dataType="decimal" direction="in" />
+    <parameter name="@i_longitude" dataType="decimal" direction="in" />
+    <parameter name="@i_maxKmGeo" dataType="int" direction="in" />
+    <parameter name="@i_maxMinutesGeo" dataType="int" direction="in" />
+    <parameter name="@i_activateGeo" dataType="varchar" direction="in" />
+    <parameter name="@i_deviceId" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
