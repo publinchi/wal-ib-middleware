@@ -360,7 +360,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				logger.logInfo(" Saliendo de registerTransactionSuccess");
 			}
 		}catch(Exception e){
-			logger.logError("Fallo catastrofico registerTransactionSuccess");
+			logger.logError("Fallo catastrofico registerTransactionSuccess", e);
 		}
 		
 	}
@@ -371,8 +371,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		try{
 			IProcedureRequest request = new ProcedureRequestAS();
 			String movementId = null;
-			String transDate = aBagSPJavaOrchestration.get("transaccionDate").toString();			
+			String transDate = null;
 			String movementType = null;
+
+			if(!tipoTran.equals("transferThirdPartyAccount") && !aBagSPJavaOrchestration.get("transaccionDate").toString().isEmpty()) {
+				transDate = (String)aBagSPJavaOrchestration.get("transaccionDate");
+			}
 			
 			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
 			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
@@ -504,7 +508,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				logger.logInfo(" Saliendo de registerAllTransactionSuccess");
 			}
 		}catch(Exception e){
-			logger.logError("Fallo catastrofico registerAllTransactionSuccess:"+ e.getMessage());
+			logger.logError("Fallo catastrofico registerAllTransactionSuccess:", e);
 		}
 	}
 	
