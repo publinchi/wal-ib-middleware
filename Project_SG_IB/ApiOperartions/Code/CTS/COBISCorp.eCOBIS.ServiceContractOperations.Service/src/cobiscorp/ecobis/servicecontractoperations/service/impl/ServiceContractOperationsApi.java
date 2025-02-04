@@ -2527,18 +2527,19 @@ public class ServiceContractOperationsApi extends CTSAbstractService implements 
       }
     
 	@CTSProcedure(
-		name = "cob_procesador..sp_get_account_status_api", dbms = "SQLCTS",  
+		name = "cob_procesador..sp_update_account_status_api", dbms = "SQLCTS",  
 		objectRequest = {
 		
 			@CTSRequest(
 				name = "inRequestUpdateAccountStatus",
 				input = {
 				
-					@CTSInputParam(field = "externalCustomerId", param = "@i_externalCustomerId", dataType = ICTSTypes.SQLINT4),
-					@CTSInputParam(field = "accountStatus", param = "@i_accountStatus", dataType = ICTSTypes.SQLVARCHAR),
-					@CTSInputParam(field = "accountNumber", param = "@i_accountNumber", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "externalCustomerId", param = "@i_external_customer_id", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "accountStatus", param = "@i_account_status", dataType = ICTSTypes.SQLVARCHAR),
+					@CTSInputParam(field = "accountNumber", param = "@i_account_number", dataType = ICTSTypes.SQLVARCHAR),
 					@CTSInputParam(field = "blockingValue", param = "@i_blockingValue", dataType = ICTSTypes.SQLMONEY),
-					@CTSInputParam(field = "period", param = "@i_period", dataType = ICTSTypes.SQLINT4)
+					@CTSInputParam(field = "period", param = "@i_period", dataType = ICTSTypes.SQLINT4),
+					@CTSInputParam(field = "skipNotification", param = "@i_skipNotification", dataType = ICTSTypes.SQLVARCHAR)
 				}
 			)
 		},

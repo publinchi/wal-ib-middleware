@@ -8,6 +8,9 @@
     <parameter name="@i_external_customer_id" dataType="int" direction="in" />
     <parameter name="@i_account_status" dataType="varchar" direction="in" />
     <parameter name="@i_account_number" dataType="varchar" direction="in" />
+    <parameter name="@i_skipNotification" dataType="varchar" direction="in" />
+    <parameter name="@i_blockingValue" dataType="decimal" direction="in" />
+    <parameter name="@i_period" dataType="int" direction="in" />
   </parameters>
   <queries>
     <query>
