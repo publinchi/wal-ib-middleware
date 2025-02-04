@@ -66,7 +66,8 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AuthorizePurchase starts...");		
+		if (logger.isDebugEnabled()) {logger.logDebug("Begin flow, AuthorizePurchase starts...");}
+		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		Boolean serverStatus = null;
@@ -82,35 +83,49 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
-		logger.logDebug("Response Online: " + serverStatus);
-		logger.logDebug("Response flowRty: " + flowRty);		
+		if(logger.isDebugEnabled()){
+			logger.logDebug("Response ServerStatus: " + serverStatus);
+			logger.logDebug("Response flowRty: " + flowRty);
+		}
+
 		if (serverStatus != null && !serverStatus) {
 			aBagSPJavaOrchestration.put("IsReentry", "S");
 			if (!flowRty){
 				
 				anProcedureResponse = valDataLocal(anOriginalRequest, aBagSPJavaOrchestration);
 				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-					
-					logger.logDebug("Code Error local" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
+
+					if(logger.isDebugEnabled()){
+						logger.logDebug("Code Error local" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
+					}
+
 					anProcedureResponse = valTranDataCentralOff(anOriginalRequest, aBagSPJavaOrchestration);		
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-						logger.logDebug("Code Error central" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
 						anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-						logger.logDebug("executeOfflinePurchaseCobis " + anProcedureResponse.toString() );
 						anProcedureResponse = executeOfflinePurchaseCobis(anOriginalRequest, aBagSPJavaOrchestration);
+
+						if(logger.isDebugEnabled()){
+							logger.logDebug("Code Error central" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
+							logger.logDebug("executeOfflinePurchaseCobis " + anProcedureResponse.toString() );
+						}
 					}
 				}				
 			}
 			else{
-				logger.logDebug("evaluateExecuteReentry True");
 				IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
-				logger.logDebug("Respose Exeption:: " + resp.toString());
+
+				if(logger.isDebugEnabled()){
+					logger.logDebug("evaluateExecuteReentry True");
+					logger.logDebug("Respose Exeption:: " + resp.toString());
+				}
 				return resp;
 			}
 		} else {
 			aBagSPJavaOrchestration.put("IsReentry", "N");
-			logger.logDebug("Res IsReentry:: " + "N");
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Res IsReentry:: " + "N");
+			}
 			anProcedureResponse = authorizePurchase(anOriginalRequest, aBagSPJavaOrchestration);
 		}
 		
@@ -125,8 +140,11 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		
 		IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
 		wAuthValDataLocal = valDataLocal(aRequest, aBagSPJavaOrchestration);
-		
-		logger.logInfo(CLASS_NAME + " code resp auth: " + wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue());
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " code resp auth: " + wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue());
+		}
+
 		if (wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
 			IProcedureResponse wAuthTrnDataCentral = new ProcedureResponseAS();
@@ -411,8 +429,10 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		if (!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
 			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
-			
-			logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
+
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
+			}
 		}
 				
 		if (logger.isDebugEnabled()) {
@@ -480,8 +500,11 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 
 		if(response.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			response.readValueParam("@o_fecha_tran");
-			
-			logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + "Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
+			}
+
 			if(response.readValueFieldInHeader("ssn")!=null){
 				aBagSPJavaOrchestration.put("@o_ssn_host", response.readValueFieldInHeader("ssn"));
 				aBagSPJavaOrchestration.put("authorizationCode", response.readValueParam("@o_ssn"));
@@ -528,8 +551,10 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR, "V");
 		
 		request.addOutputParam("@o_seq_tran", ICTSTypes.SQLINTN, "0");
-		
-		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+
+		if(logger.isDebugEnabled()){
+			logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		}
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -570,8 +595,10 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_error", ICTSTypes.SQLINTN, code);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
-		
-		logger.logDebug("Request Corebanking registerLog: " + request.toString());
+
+		if(logger.isDebugEnabled()){
+			logger.logDebug("Request Corebanking registerLog: " + request.toString());
+		}
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -596,15 +623,19 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 	}
 	
 	public IProcedureResponse processResponseApi(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
-		
-		logger.logInfo("processResponseApi [INI] --->" );
-		
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("processResponseApi [INI] --->" );
+		}
+
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
 		Integer codeReturn = anOriginalProcedureRes.getReturnCode();
 		String executionStatus = null;
-		
-		logger.logInfo("return code resp--->" + codeReturn );
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("return code resp--->" + codeReturn );
+		}
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
@@ -651,10 +682,12 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 				registerLogBd(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
 
 			if(anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-				
-				logger.logDebug("Return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-				logger.logDebug("Ending flow, processResponse successful...");
-				
+
+				if(logger.isDebugEnabled()){
+					logger.logDebug("Return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+					logger.logDebug("Ending flow, processResponse successful...");
+				}
+
 				String authorizationCode = aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0";
 				String seq = aBagSPJavaOrchestration.containsKey("@o_seq_tran")?(String)aBagSPJavaOrchestration.get("@o_seq_tran"):"0"; 
 				String movementId = aBagSPJavaOrchestration.containsKey("@o_ssn_host")?(String)aBagSPJavaOrchestration.get("@o_ssn_host"):"0"; 
@@ -699,6 +732,8 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
+				// Se agrega el AuthorizationCode al request para Webhook
+				aRequest.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, authorizationCode);
 				registerTransactionSuccess("Authorize Purchase", "IDC", aRequest, 
 											(String)aBagSPJavaOrchestration.get("@o_ssn_host"), 
 											(String)aBagSPJavaOrchestration.get("@o_causal"), null);
@@ -706,8 +741,9 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 				data6.addRow(row6);
 				
 			} else {
-				 
-				logger.logDebug("Ending flow, processResponse error");
+				if(logger.isDebugEnabled()){
+					logger.logDebug("Ending flow, processResponse error");
+				}
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 				String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
@@ -757,9 +793,10 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			}
 			
 		} else {
-			
-			logger.logDebug("Ending flow, processResponse failed with code: ");
-			
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Ending flow, processResponse failed with code: ");
+			}
+
 			executionStatus = "ERROR";
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, codeReturn.toString());
