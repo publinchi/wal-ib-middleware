@@ -6226,8 +6226,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 inRequestUpdateAccountStatus.getAccountStatus());
         procedureRequestAS.addInputParam("@i_account_number", ICTSTypes.SQLVARCHAR,
                 inRequestUpdateAccountStatus.getAccountNumber());
-        procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
-        procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
+        procedureRequestAS.addInputParam("@i_blockingValue",ICTSTypes.SQLMONEY,
+        		String.valueOf(inRequestUpdateAccountStatus.getBlockingValue()));
+        procedureRequestAS.addInputParam("@i_period",ICTSTypes.SQLINT4,
+        		String.valueOf(inRequestUpdateAccountStatus.getPeriod()));
+        procedureRequestAS.addInputParam("@i_skipNotification",ICTSTypes.SQLVARCHAR,
+        		inRequestUpdateAccountStatus.getSkipNotification());
 
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,

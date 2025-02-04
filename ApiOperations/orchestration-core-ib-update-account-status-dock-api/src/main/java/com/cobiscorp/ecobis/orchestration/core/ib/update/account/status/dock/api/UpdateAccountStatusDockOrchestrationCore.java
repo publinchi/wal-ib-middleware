@@ -8,8 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -74,14 +72,22 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isDebugEnabled()){logger.logDebug("Begin flow, UpdateAccountStatusDock starts executeJavaOrchestration...");}		
 		
-		logger.logDebug("Begin flow, UpdateAccountStatusDock starts executeJavaOrchestration...");		
-		
+		String skipNotification = "";
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		
 		Collection<?> params = anOriginalRequest.getParams();
-		logger.logDebug("REQUEST INFO: " + params);		
+		if (logger.isDebugEnabled()){logger.logDebug("REQUEST INFO: " + params);}	
+		
+		//Obtenemos el valor para enviar o no notificaciones
+		if (anOriginalRequest.readValueParam("@i_skipNotification") != null) {
+			skipNotification = anOriginalRequest.readValueParam("@i_skipNotification");			
+		}
+		
+		//Asignamos el valor de notificaciones
+		aBagSPJavaOrchestration.put("skipNotification", skipNotification);		
 		
 		// Sub flujo 1: Cambiar el estado de una cuenta
 		anProcedureResponse = updateAccountStatusDock(anOriginalRequest, aBagSPJavaOrchestration);
@@ -91,12 +97,14 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		String blokingValue = String.valueOf(aBagSPJavaOrchestration.get("blockingValue"));
 		String changedStateDate =  String.valueOf(aBagSPJavaOrchestration.get("o_changedStateDate"));
 		
-		logger.logDebug("End sub-flow, changing state, Codigo=" + String.valueOf(codeReturn) + ", o_changedStateDate hasta aqui: " +  changedStateDate);	
+		if (logger.isDebugEnabled()){
+			logger.logDebug("End sub-flow, changing state, Codigo=" + String.valueOf(codeReturn) 
+			                 + ", o_changedStateDate hasta aqui: " +  changedStateDate);	
+		}
 		
 		//  Sub flujo 2: Cambiar el estado de las tarjetas asociadas a la cuenta, si el estado es BM1
-		if(accountStatus.equals("BM") && blokingValue.equals("1")) {
-			
-			logger.logDebug("Begin sub-flow, UpdateAccountStatusDock starts blocking cards...");		
+		if(accountStatus.equals("BM") && blokingValue.equals("1")) {			
+			if (logger.isDebugEnabled()){logger.logDebug("Begin sub-flow, UpdateAccountStatusDock starts blocking cards...");}		
 			anProcedureResponse2 = new ProcedureResponseAS();
 
 			// Agregar entradas invariables para Bloquear tarjeta(s)
@@ -114,23 +122,26 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			anProcedureResponse2 = updaterCardStatus(anOriginalRequest, aBagSPJavaOrchestration);
 			Integer codeReturn2 = anProcedureResponse2.getReturnCode();
 			
-			if (codeReturn2 == 0) { //Codigo general de la respuesta del SP
-				
+			if (codeReturn2 == 0) { //Codigo general de la respuesta del SP				
 				Boolean flag = aBagSPJavaOrchestration.containsKey("o_success");
 				
-				logger.logDebug("[executeJavaOrchestration] response conector dock to block card: " + anProcedureResponse2.toString());
-				logger.logDebug("[executeJavaOrchestration] code o_success: " + flag);
-				logger.logDebug("[executeJavaOrchestration] general response code: " + anProcedureResponse2.getResultSetRowColumnData(2, 1, 1));
-
-				if(flag == true){
-					//Imprime si bloqueo de tarjeta es exitoso
-					logger.logInfo("[executeJavaOrchestration] Ending sub-flow, with success in block card: ");
-					logger.logInfo(String.format("[executeJavaOrchestration] return o_card_available: %s, return o_id_card_dock: %s",  aBagSPJavaOrchestration.get("o_card_available"), aBagSPJavaOrchestration.get("o_id_card_dock")));
-
+				if (logger.isDebugEnabled()){
+					logger.logDebug("[executeJavaOrchestration] response conector dock to block card: " + anProcedureResponse2.toString());
+					logger.logDebug("[executeJavaOrchestration] code o_success: " + flag);
+					logger.logDebug("[executeJavaOrchestration] general response code: " + anProcedureResponse2.getResultSetRowColumnData(2, 1, 1));
+				}
+				
+				if(Boolean.TRUE.equals(flag)){
+					if (logger.isInfoEnabled()){
+						//Imprime si bloqueo de tarjeta es exitoso
+						logger.logInfo("[executeJavaOrchestration] Ending sub-flow, with success in block card: ");
+						logger.logInfo(String.format("[executeJavaOrchestration] return o_card_available: %s, return o_id_card_dock: %s",  aBagSPJavaOrchestration.get("o_card_available"), aBagSPJavaOrchestration.get("o_id_card_dock")));
+					}
 				}
 				else {
 					//Imprime si bloqueo de tarjeta da algun error
-					logger.logDebug("[executeJavaOrchestration] Ending sub-flow, with error in block card");
+					if (logger.isDebugEnabled()){logger.logDebug("[executeJavaOrchestration] Ending sub-flow, with error in block card");}
+					
 					String success = anProcedureResponse2.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anProcedureResponse2.getResultSetRowColumnData(1, 1, 1).getValue();
 					String code = anProcedureResponse2.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anProcedureResponse2.getResultSetRowColumnData(2, 1, 1).getValue();
 					String message = anProcedureResponse2.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anProcedureResponse2.getResultSetRowColumnData(2, 1, 2).getValue();
@@ -139,16 +150,15 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 					
 				}
 			}
-			logger.logInfo("End flow, Terminado updaterCardStatus.Sub-flujo Cambiar Estado: Codigo respuesta=" + codeReturn);			
-			logger.logInfo("End flow, Terminado updaterCardStatus.Sub-flujo Bloquear Tarjetas: Codigo respuesta=" + codeReturn2);
-			
-		}
-		
+			if (logger.isInfoEnabled()){
+				logger.logInfo("End flow, Terminado updaterCardStatus.Sub-flujo Cambiar Estado: Codigo respuesta=" + codeReturn);			
+				logger.logInfo("End flow, Terminado updaterCardStatus.Sub-flujo Bloquear Tarjetas: Codigo respuesta=" + codeReturn2);
+			}
+		}		
 		return processResponseApi(anProcedureResponse,aBagSPJavaOrchestration, anOriginalRequest);
 	}
 	
 	private IProcedureResponse updateAccountStatusDock(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en updateAccountStatusDock: ");
 		}
@@ -163,16 +173,20 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		wAccountsResp = valDataCentral(aRequest, aBagSPJavaOrchestration);
 		
-		logger.logInfo(CLASS_NAME + " code resp account dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
+		if (logger.isInfoEnabled()){
+			logger.logInfo(CLASS_NAME + " code resp account dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());}
+		
 		if (wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			
 			if (accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM"))
 			{
-				aBagSPJavaOrchestration.put("success", "success");
-				
+				aBagSPJavaOrchestration.put("success", "success");				
 				String changedStateDate = wAccountsResp.readValueParam("@o_changedStateDate");
-				logger.logInfo(CLASS_NAME + " AccountStatus Changed TO: " + String.valueOf(accountStatus.trim())
-						+ ", AT changedStateDate: " + String.valueOf(changedStateDate));
+				
+				if (logger.isInfoEnabled()){
+					logger.logInfo(CLASS_NAME + " AccountStatus Changed TO: " + String.valueOf(accountStatus.trim())
+					+ ", AT changedStateDate: " + String.valueOf(changedStateDate));
+				}
+				
 				if (changedStateDate != null)
 					aBagSPJavaOrchestration.put("o_changedStateDate", changedStateDate);
 				else
@@ -180,38 +194,32 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				
 				return wAccountsResp;
 			}
+			
 			IProcedureResponse wAccountsValDataLocal = new ProcedureResponseAS();
 			wAccountsValDataLocal = valDataLocal(aRequest, aBagSPJavaOrchestration);
 			
-			if (wAccountsValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-				
+			if (wAccountsValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {				
 				IProcedureResponse wAccountStatusCobAhorros = new ProcedureResponseAS();
 				wAccountStatusCobAhorros = updateAccountStatusCobAhorros(aRequest, aBagSPJavaOrchestration);
 				
-				if (wAccountStatusCobAhorros.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-				
+				if (wAccountStatusCobAhorros.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {				
 					IProcedureResponse wAccountsRespConector = new ProcedureResponseAS();
 					wAccountsRespConector = updateAccountStatusDockConector(aRequest, aBagSPJavaOrchestration);
 					
 					return wAccountsRespConector;
 					
-				} else {
-					
+				} else {					
 					return wAccountStatusCobAhorros; 
-				}
-				
-			} else {
-				
+				}				
+			} else {				
 				return wAccountsValDataLocal;
-			}
-			
+			}			
 		}
 		
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
 			logger.logInfo(CLASS_NAME + " Saliendo de updateAccountStatusDock");
 		}
-
 		return wAccountsResp;
 	}
 	
@@ -251,7 +259,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	}
 	
 	private IProcedureResponse valDataLocal(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
@@ -273,15 +280,12 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("account dock(1) id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
-		}
-		
 		aBagSPJavaOrchestration.put("accountDockId", wProductsQueryResp.readValueParam("@o_account_dock_id"));
 		aBagSPJavaOrchestration.put("bv_ente", wProductsQueryResp.readValueParam("@o_bv_ente"));
 		aBagSPJavaOrchestration.put("login", wProductsQueryResp.readValueParam("@o_login"));
 		
 		if (logger.isDebugEnabled()) {
+			logger.logDebug("account dock(1) id es " +  wProductsQueryResp.readValueParam("@o_account_dock_id"));
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
 		}
 
@@ -323,12 +327,14 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	}
 	
 	private IProcedureResponse updateAccountStatusDockConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
-		
 		IProcedureResponse connectorAccountResponse = null;
 		String accountDockId = null;
-		
 		IProcedureRequest anOriginalRequest = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update ");
+		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("account dock(2) id es " + aBagSPJavaOrchestration.get("accountDockId").toString());
@@ -336,9 +342,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		accountDockId = aBagSPJavaOrchestration.containsKey("accountDockId")? aBagSPJavaOrchestration.get("accountDockId").toString():null;;
 		
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en execute AccountStatus update ");
-		}
 		try {
 			// PARAMETROS DE ENTRADA
 			anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("externalCustomerId").toString());
@@ -370,40 +373,37 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			anOriginalRequest.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500112");
 			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500112");
 
-			logger.logDebug("accountDock--> request update account status: " + anOriginalRequest.toString());
-			
-			
+			if (logger.isDebugEnabled()){logger.logDebug("accountDock--> request update account status: " + anOriginalRequest.toString());}
+						
 			// SE EJECUTA CONECTOR
 			connectorAccountResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
 
-			if (logger.isDebugEnabled())
+			if (logger.isDebugEnabled()) {
 				logger.logDebug("connectorUpdateAccountStatusResponse: " + connectorAccountResponse);
+			}
+			
+			if (connectorAccountResponse.readValueParam("@o_account_id") != null) {
+				aBagSPJavaOrchestration.put("accountId", connectorAccountResponse.readValueParam("@o_account_id"));}
+			else {
+				aBagSPJavaOrchestration.put("accountId", "null");}
 
-			if (connectorAccountResponse.readValueParam("@o_account_id") != null)
-				aBagSPJavaOrchestration.put("accountId", connectorAccountResponse.readValueParam("@o_account_id"));
-			else
-				aBagSPJavaOrchestration.put("accountId", "null");
-
-			if (connectorAccountResponse.readValueParam("@o_success") != null)
-				aBagSPJavaOrchestration.put("success", connectorAccountResponse.readValueParam("@o_account_id"));
+			if (connectorAccountResponse.readValueParam("@o_success") != null) {
+				aBagSPJavaOrchestration.put("success", connectorAccountResponse.readValueParam("@o_account_id"));}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			connectorAccountResponse = null;
-			logger.logInfo(CLASS_NAME +" Error Catastrofico de updateAccountStatusExecution");
+			if (logger.isInfoEnabled()) {logger.logInfo(CLASS_NAME +" Error Catastrofico de updateAccountStatusExecution");}
 
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(CLASS_NAME + "--> updateAccountStatusExecution");
 			}
 		}
-
 		return connectorAccountResponse	;
-
 	}
 
 	private void registerLogBd(IProcedureResponse reponseAccount, Map<String, Object> aBagSPJavaOrchestration) {
-
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
@@ -434,9 +434,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		String message = reponseAccount.readValueParam("@o_response_update_account")!=null?reponseAccount.readValueParam("@o_response_update_account"):reponseAccount.getResultSetRowColumnData(2, 1, 2).getValue();
 		request.addInputParam("@i_response_cd", ICTSTypes.SQLVARCHAR, message);
 		
-		logger.logDebug("Request Corebanking registerLog: " + request.toString());
-		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+		if (logger.isDebugEnabled()){logger.logDebug("Request Corebanking registerLog: " + request.toString());}
 		
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);		
 		aBagSPJavaOrchestration.put("o_changedStateDate2", fechaActual );
 
 		if (logger.isDebugEnabled()) {
@@ -454,9 +454,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	}
 	
 	public IProcedureResponse processResponseApi(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
-		
-		logger.logInfo("processResponseApi [INI] --->" );
-		
+		if (logger.isInfoEnabled()){logger.logInfo("processResponseApi [INI] --->" );}
+		String sendNotification = aBagSPJavaOrchestration.get("skipNotification").toString();
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
 		// Response del flujo principal update account status
@@ -464,8 +463,10 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		// Response del flujo secundario, bloqueo de tarjetas (SOLO Si el cambio de estado era BM1, debe verificar el response de tarjetas)
 		Integer codeReturn2 = anProcedureResponse2 != null ? anProcedureResponse2.getReturnCode() : 0;
 		
-		logger.logInfo("return code resp Conector - UpdateStatusAccount --->" + codeReturn );
-		logger.logInfo("return code resp Conector - UpdateCardStatus--->" + codeReturn2 );
+		if (logger.isInfoEnabled()){
+			logger.logInfo("return code resp Conector - UpdateStatusAccount --->" + codeReturn );
+			logger.logInfo("return code resp Conector - UpdateCardStatus--->" + codeReturn2 );
+		}
 
 		IResultSetHeader metaData = new ResultSetHeader();
 		IResultSetData data = new ResultSetData();
@@ -488,9 +489,8 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		Boolean flagSubBloqueo = accountStatus.trim().equals("BV") || accountStatus.trim().equals("BM") || accountStatus.trim().equals("EBM");
 		
 		// Valida que no hayan errores bloqueando las tarjetas en caso de ser un cambio de estado BM1
-		if (codeReturn2 != 0) {
-			
-			logger.logDebug("Ending sub-flow, processResponse2 failed with code: ");
+		if (codeReturn2 != 0) {			
+			if (logger.isDebugEnabled()){logger.logDebug("Ending sub-flow, processResponse2 failed with code: ");}
 			
 			IResultSetRow row = new ResultSetRow();
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
@@ -503,16 +503,18 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 		}
 		else if (codeReturn == 0) {
-		
-		logger.logDebug("response conector dock: " + anOriginalProcedureRes.toString());
-		logger.logDebug("code o_assign_date: " + flag);
-		logger.logDebug("flag respose: " + flag);
-		logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
-		logger.logDebug("account status: " + String.valueOf(flagSubBloqueo) + "flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
-		logger.logDebug("account status: " + String.valueOf(accountStatus) + ", flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
-		
-			if(flag == true){
-				logger.logDebug("Ending flow, processResponse success with code: ");
+			if (logger.isDebugEnabled()){
+				logger.logDebug("response conector dock: " + anOriginalProcedureRes.toString());
+				logger.logDebug("code o_assign_date: " + flag);
+				logger.logDebug("flag respose: " + flag);
+				logger.logDebug("return code response: " + anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1));
+				logger.logDebug("account status: " + String.valueOf(flagSubBloqueo) + "flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
+				logger.logDebug("account status: " + String.valueOf(accountStatus) + ", flag sub-bloqueo: " + String.valueOf(flagSubBloqueo));
+			}
+			
+			if(Boolean.TRUE.equals(flag)){
+				if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse success with code: ");}
+				
 				IResultSetRow row = new ResultSetRow();
 				row.addRowData(1, new ResultSetRowColumnData(false, "true"));
 				data.addRow(row);
@@ -523,32 +525,27 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				data2.addRow(row2);
 				
 				// Fecha de cambio de estado por un sub-bloqueo
-				if (flagSubBloqueo == true)
+				if (Boolean.TRUE.equals(flagSubBloqueo))
 				{
-					logger.logDebug("Ending flow, processResponse success with code: changedStateDate ");
+					if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse success with code: changedStateDate ");}
 					IResultSetRow row3 = new ResultSetRow();
 					String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate").toString();
 					row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
 					data3.addRow(row3);
 				}
 				
-				if (!accountStatus.equals("C")) {
-			           
-		            if (accountStatus.equals("BM") || accountStatus.equals("EBM")) {
-		               
-		                if (blockingValue != null && !blockingValue.equals("1")) {
-		                   
+				if (!accountStatus.equals("C") && !sendNotification.equals("S")) {			           
+		            if (accountStatus.equals("BM") || accountStatus.equals("EBM")) {		               
+		                if (blockingValue != null && !blockingValue.equals("1")) {		                   
 		                	sendMail(anOriginalRequest, aBagSPJavaOrchestration);
-		                }
-		                
-		            } else {
-		                
+		                }		                
+		            } else {		                
 		            	sendMail(anOriginalRequest, aBagSPJavaOrchestration);
 		            }
 		        }			
 				
 			} else { // Error de VALIDACION en el procedure
-				logger.logDebug("Ending flow, processResponse error");
+				if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse error");}
 				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 				String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
@@ -563,12 +560,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 				row2.addRowData(1, new ResultSetRowColumnData(false, code));
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
-			}
-			
+			}			
 		} else { //Error en la EJECUCION del procedure de datos
-
-			
-			logger.logDebug("Ending flow, processResponse failed with code: ");
+			if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse failed with code: ");}
 			
 			IResultSetRow row = new ResultSetRow();
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
@@ -592,20 +586,22 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		// Registra logs bloqueo de Tarjetas cuando estado de cuenta es BM1 
 		if (wAccountsRespInsertArray!=null && !wAccountsRespInsertArray.isEmpty()) {
 			for (IProcedureResponse iProcedureResponse : wAccountsRespInsertArray) {
-				logger.logDebug("Data sent to registerLogBd2: {}"+ iProcedureResponse.toString());
+				if (logger.isDebugEnabled()){logger.logDebug("Data sent to registerLogBd2: {}"+ iProcedureResponse.toString());}
 				registerLogBd2(iProcedureResponse, aBagSPJavaOrchestration);
 			}
 		}			
 	  
 		// Fecha de cambio de estado sub-bloqueo
-		if (flag == true && flagSubBloqueo == true) {
-			logger.logDebug("Ending flow, processResponse success with code for sub-blocking state");
+		if (Boolean.TRUE.equals(flag) && Boolean.TRUE.equals(flagSubBloqueo)) {
+			if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse success with code for sub-blocking state");}
+		
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
 		} 
-		else if (flag == true && flagSubBloqueo == false) // Fecha de cambio de estado general
+		else if (Boolean.TRUE.equals(flag) && Boolean.FALSE.equals(flagSubBloqueo)) // Fecha de cambio de estado general
 		{
-			logger.logDebug("Ending flow, processResponse success with code for general state");
+			if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse success with code for general state");}
+			
 			IResultSetRow row3 = new ResultSetRow();
 			String changedStateDate =  aBagSPJavaOrchestration.get("o_changedStateDate2").toString();
 			row3.addRowData(1, new ResultSetRowColumnData(false, changedStateDate));
@@ -613,85 +609,33 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
 		}
-		else
-		{
-			logger.logDebug("Ending flow, processResponse error or failed");
+		else{
+			if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse error or failed");}
+			
 			IResultSetRow row3 = new ResultSetRow();
 			//NA, para que en el service sea removida esta fila de la respueta Json
 			row3.addRowData(1, new ResultSetRowColumnData(false, "NA"));
 			data3.addRow(row3);
 			IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
 			wProcedureResponse.addResponseBlock(resultsetBlock3);
-		}
-		
-		
+		}		
 		return wProcedureResponse;		
 	}
 
 	private void sendMail(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureRequest request = new ProcedureRequestAS();
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en sendMail");
-		}
+		if (logger.isInfoEnabled()){logger.logInfo(CLASS_NAME + " Entrando en sendMail");}
 		
 		String status = aBagSPJavaOrchestration.get("accountStatus").toString();
 		String value =  aBagSPJavaOrchestration.get("blockingValue").toString();
 		String titulo = null;
 		
-		if (status.equals("A")) {
-			
-			titulo = "Cuenta activada exitosamente";
+		if (value.isEmpty() || aBagSPJavaOrchestration.get("blockingValue") == null) {
 			value = "0";
-			
-		} else if (status.equals("B")) {
-			
-			titulo = "Cuenta bloqueada exitosamente";
-			value = "0";
-			
-		} else if (status.equals("C")) {
-			
-			titulo = "Cuenta cancelada exitosamente";
-			value = "0";
-			
-		} else if (status.equals("BV")) {
-			
-			titulo = "Cuenta bloqueada por valores";
-			
-		} else if (status.equals("EBV")) {
-			
-			titulo = "Cuenta desbloqueada por valores";
-			
-		} else if (status.equals("BM")) {
-			
-			if (value.equals("1")) {
-				
-				titulo = "Cuenta bloqueada por movimientos: contra crédito";
-				
-			} else if (value.equals("2")) {
-				
-				titulo = "Cuenta bloqueada por movimientos: contra débito";
-				
-			} else if (value.equals("3")) {
-				
-				titulo = "Cuenta bloqueada por movimientos: contra crédito y débito";
-			}
-			
-		} else if (status.equals("EBM")) {
-			
-			if (value.equals("1")) {
-				
-				titulo = "Cuenta desbloqueada por movimientos: contra crédito";
-				
-			} else if (value.equals("2")) {
-				
-				titulo = "Cuenta desbloqueada por movimientos: contra débito";
-				
-			} else if (value.equals("3")) {
-				
-				titulo = "Cuenta desbloqueada por movimientos: contra crédito y débito";
-			}
 		}
+		
+		titulo = getTitle(status, value);
 		
 		request.setSpName("cob_bvirtual..sp_bv_enviar_notif_ib_api");
 
@@ -733,84 +677,67 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	// Bloqueo de Tarjetas Virtuales y Fisicas para SuBbloqueo BM1-(Pre-cancelación)
 	// ------------------------------------------------------------------------------
 	
-	private IProcedureResponse updaterCardStatus(IProcedureRequest aRequest,
-			Map<String, Object> aBagSPJavaOrchestration) {
-	
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en updaterCardStatus: " );
-}
+	private IProcedureResponse updaterCardStatus(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()){logger.logInfo(CLASS_NAME + " Entrando en updaterCardStatus: " );}
 		
 		aBagSPJavaOrchestration.put("ente_mis", aRequest.readValueParam("@i_external_customer_id"));
-		
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-		
 		String flag = "S";
 		
 		// Obtine el card id y card type por cada cliente para cada tarjeta
 		wAccountsResp = getCardsByCustomer(aRequest, aBagSPJavaOrchestration);
 		
 		IResultSetHeaderColumn[]  headers = (IResultSetHeaderColumn[]) aBagSPJavaOrchestration.get("cardsResultSetHeaders");
-		logger.logDebug(CLASS_NAME + "Response headers: updaterCardStatus : headers: " + headers);
+		
+		if (logger.isDebugEnabled()){logger.logDebug(CLASS_NAME + "Response headers: updaterCardStatus : headers: " + headers);}
 		
 		IResultSetRow[] cardsData = (IResultSetRow[]) aBagSPJavaOrchestration.get("cardsResultSetsData");
 
 		wAccountsRespInsertArray = new ArrayList<IProcedureResponse>();
 			
 		// MO - Llama los metodos para continuar con el bloqueo, por CADA tarjeta
-		for (int i = 0; i < cardsData.length; i++) {
+		for (int i = 0; i < cardsData.length; i++) 
+		{
 			IResultSetRow iResultSetRow = cardsData[i];
 			IResultSetRowColumnData[] cardDataColumns = iResultSetRow.getColumnsAsArray();
-			logger.logDebug(CLASS_NAME + " updaterCardStatus : cardDataColumns[]: " + cardDataColumns);
+			if (logger.isDebugEnabled()){logger.logDebug(CLASS_NAME + " updaterCardStatus : cardDataColumns[]: " + cardDataColumns);}
 			
 			//Datos de una tarjeta
 			String cardId = cardDataColumns[0].getValue();
 			String estado = cardDataColumns[3].getValue();
 			String tipoPHVI = cardDataColumns[18].getValue().equals("PHYSICAL")?"PH":"VI"; //Por defecto, intenta con Virutal(VI)
 			String mensaje = String.format("La tarjeta con ID %s tiene estado %s y es tipo %s.", cardId, estado, tipoPHVI);
-			logger.logDebug(CLASS_NAME + " updaterCardStatus : " + mensaje );
+			
+			if (logger.isDebugEnabled()){logger.logDebug(CLASS_NAME + " updaterCardStatus : " + mensaje );}
 			
 			// Agrega los datos VARIABLES del bundle por CADA tarjeta para que pueda procesar getDataCardDock
 			aBagSPJavaOrchestration.put("i_type_card", tipoPHVI);
 			aBagSPJavaOrchestration.put("i_card_id",cardId);
 						
 			wAccountsResp = getDataCardDock(aRequest, aBagSPJavaOrchestration);
-			logger.logInfo( CLASS_NAME + " code resp card dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());			
+			if (logger.isInfoEnabled()){logger.logInfo( CLASS_NAME + " code resp card dock: " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());}			
 			
-			if (wAccountsResp.getReturnCode()==0 ){
-					if(!wAccountsResp.readValueParam("@o_id_card_atm").equals("0") && flag.equals("S")) {
-						IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
-						wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
-						if(aBagSPJavaOrchestration.get("i_card_status").toString().equals("C")){
-							// MO - Flujo de cancelacion no aplica en este caso, copiado de api de bloqueo
-							//cancelCardAtm(aRequest, aBagSPJavaOrchestration);
-							logger.logInfo(CLASS_NAME + "Flujo de cancelacion - No deberia entrar aqui en un bloqueo");
-						}
-						else{
-							updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
-						}						
-						wAccountsRespInsertArray.add(wAccountsRespInsert);
-					}else if(wAccountsResp.readValueParam("@o_type_card").toString().equals("VIRTUAL") && !wAccountsResp.readValueParam("@o_id_card_dock").toString().equals("X") && flag.equals("S")) {
-						IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
-						wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
-						if(aBagSPJavaOrchestration.get("i_card_status").toString().equals("C")){
-							// MO - Flujo de cancelacion no aplica en este caso, copiado de api de bloqueo
-							//cancelCardAtm(aRequest, aBagSPJavaOrchestration);
-							logger.logInfo(CLASS_NAME + "Flujo de cancelacion - No deberia entrar aqui en un bloqueo");
-						}
-						else{
-							updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
-						}						
-						wAccountsRespInsertArray.add(wAccountsRespInsert);
-					}
-			}
-			
+			if (wAccountsResp.getReturnCode()==0 && flag.equals("S") && (!wAccountsResp.readValueParam("@o_id_card_atm").equals("0") || 
+				(wAccountsResp.readValueParam("@o_type_card").toString().equals("VIRTUAL") && 
+				!wAccountsResp.readValueParam("@o_id_card_dock").toString().equals("X"))))
+			{			
+				IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
+				wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
+				if(aBagSPJavaOrchestration.get("i_card_status").toString().equals("C")){
+					if (logger.isInfoEnabled()){logger.logInfo(CLASS_NAME + "Flujo de cancelacion - No deberia entrar aqui en un bloqueo");}
+				}
+				else{
+					updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
+				}						
+				wAccountsRespInsertArray.add(wAccountsRespInsert);
+			}			
 		}//end for
 		
 		// Retorna el response del ultimo bloqueo de tarjeta
 		if (wAccountsRespInsertArray != null && !wAccountsRespInsertArray.isEmpty()) {
             return wAccountsRespInsertArray.get(wAccountsRespInsertArray.size() - 1);
         } else {
-        	logger.logWarning("La lista de tarjetas es vacía o es nula.");
+        	if (logger.isWarningEnabled()){logger.logWarning("La lista de tarjetas es vacía o es nula.");}
         }
 	
 		if (logger.isInfoEnabled()) {
@@ -827,22 +754,18 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	 * @param aBagSPJavaOrchestration
 	 * @return IProcedureResponse
 	 */
-	private IProcedureResponse getCardsByCustomer (IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse getCardsByCustomer(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 	    // Crear una instancia de la solicitud del procedimiento
 	    IProcedureRequest request = new ProcedureRequestAS();
-	
 	    
 	    if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en getCardsByCustomer");
 		}
 	  	
 	  	request.setSpName("cob_atm..sp_atm_cli_tarjetas");
-	    
-	
 	  	request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 	  			IMultiBackEndResolverService.TARGET_LOCAL);
 	  	request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-	
 	  	request.addInputParam("@i_app_org", ICTSTypes.SQLVARCHAR, "BV");
 	  	request.addInputParam("@i_cliente", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_external_customer_id"));
 	
@@ -853,10 +776,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	        logger.logDebug("Ending flow, getCardsByCustomer with wProcedureResponse as String: " + wProcedureResponse.getProcedureResponseAsString());
 	    }
 	    
-	    if (!wProcedureResponse.hasError()) {
-	        
+	    if (!wProcedureResponse.hasError()) { 
 	    	Integer codeReturn =  wProcedureResponse.getReturnCode();
-	        logger.logDebug("Response Code: getCardsByCustomer with wProcedureResponse: " + codeReturn);
+	    	if (logger.isDebugEnabled()){logger.logDebug("Response Code: getCardsByCustomer with wProcedureResponse: " + codeReturn);}
 	        
 	        
 	        IResultSetHeaderColumn[] resutlSetHeaders = null;
@@ -864,58 +786,52 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	       	        
         
 	        if ( wProcedureResponse.getResultSet(1) != null) { //Un output que no aplica
-
 	        	resutlSetHeaders = wProcedureResponse.getResultSet(1).getMetaData().getColumnsMetaDataAsArray();
-	        	logger.logDebug("Response SP: getCardsByCustomer1 : resutlSetHeader: " + resutlSetHeaders);
-
 	        	resultSetRows = wProcedureResponse.getResultSet(1).getData().getRowsAsArray();
-	        	logger.logDebug("Response SP: getCardsByCustomer1 : OutputsSP: " + resultSetRows.length);
-	        	logger.logDebug("Response SP: getCardsByCustomer1 : IResultSetRow[]: " + resultSetRows);
-
+	        	
+	        	if (logger.isDebugEnabled()){
+		        	logger.logDebug("Response SP: getCardsByCustomer1 : resutlSetHeader: " + resutlSetHeaders);
+		        	logger.logDebug("Response SP: getCardsByCustomer1 : OutputsSP: " + resultSetRows.length);
+		        	logger.logDebug("Response SP: getCardsByCustomer1 : IResultSetRow[]: " + resultSetRows);
+	        	}
 	        }
 
 	        if ( wProcedureResponse.getResultSet(2) != null) { //Filas con tajertas 
 	        	resutlSetHeaders = wProcedureResponse.getResultSet(2).getMetaData().getColumnsMetaDataAsArray();
-	        	logger.logDebug("Response SP: getCardsByCustomer2 : resutlSetHeader #columnas="+resutlSetHeaders.length + " columnas=" + Arrays.toString(resutlSetHeaders));
-
 	        	resultSetRows = wProcedureResponse.getResultSet(2).getData().getRowsAsArray();
-	        	logger.logDebug("Response SP: getCardsByCustomer2 : Cantidad Filas/Tarjetas: " + resultSetRows.length);
 	        	IResultSetRowColumnData[] firstRow = resultSetRows != null ? resultSetRows[0].getColumnsAsArray() : null ;
-	        	logger.logDebug("Response SP: getCardsByCustomer2 : FirstCard: " + Arrays.toString(firstRow));
-
+	        	
+	        	if (logger.isDebugEnabled()){
+		        	logger.logDebug("Response SP: getCardsByCustomer2 : resutlSetHeader #columnas="+resutlSetHeaders.length + " columnas=" + Arrays.toString(resutlSetHeaders));
+		        	logger.logDebug("Response SP: getCardsByCustomer2 : Cantidad Filas/Tarjetas: " + resultSetRows.length);
+		        	logger.logDebug("Response SP: getCardsByCustomer2 : FirstCard: " + Arrays.toString(firstRow));
+	        	}
 	        }
 	        
 	        aBagSPJavaOrchestration.put("cardsResultSetHeaders", resutlSetHeaders);
 	        aBagSPJavaOrchestration.put("cardsResultSetsData", resultSetRows);
 	        
-	        logger.logDebug("Response Data: getCardsByCustomer added aBagSPJavaOrchestration" );
-	    }
-	    
-	        
-	    return wProcedureResponse;      
-	           
+	        if (logger.isDebugEnabled()){logger.logDebug("Response Data: getCardsByCustomer added aBagSPJavaOrchestration" );}
+	    }    
+	    return wProcedureResponse; 
 	}
 
 	private IProcedureResponse getDataCardDock(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
 		IProcedureRequest request = new ProcedureRequestAS();
 		String mode;
 		
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en getDataCardDock");
-		}
+		if (logger.isInfoEnabled()) {logger.logInfo(CLASS_NAME + " Entrando en getDataCardDock");}
 		
 		if(aRequest.readValueParam("@i_mode")!=null){
 			mode = aRequest.readValueParam("@i_mode").equals("null")?"X":aRequest.readValueParam("@i_mode").toString();
 			aBagSPJavaOrchestration.put("mode", mode);
 		}
-		else
-			mode= "X";
+		else {
+			mode= "X";}
 
-		logger.logInfo(CLASS_NAME + " mode_getDataCardDock" + mode);
+		if (logger.isInfoEnabled()) {logger.logInfo(CLASS_NAME + " mode_getDataCardDock" + mode);}
 		
 		request.setSpName("cob_atm..sp_get_data_card_dock_api");
-
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");	
@@ -986,7 +902,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		
 	private IProcedureResponse executeUpdateCard(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse connectorCardResponse = null;
-		String idCardDock = null, status = null, reasonStatus = null;
+		String idCardDock = null;
+		String status = null; 
+		String reasonStatus = null;
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
@@ -996,7 +914,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		reasonStatus = aBagSPJavaOrchestration.containsKey("o_det_reason_stat")? aBagSPJavaOrchestration.get("o_det_reason_stat").toString():"X";
 		
 		if (logger.isInfoEnabled()) {
-			 String mapData = "{";
+			String mapData = "{";
 	        for (Map.Entry<String, Object> entry : aBagSPJavaOrchestration.entrySet()) {
 	        	mapData += entry.getKey() + ": " + String.valueOf(entry.getValue()) + ", ";
 	        }
@@ -1037,56 +955,50 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			request.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, "18500112");
 			request.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500112");
 
-			logger.logDebug(CLASS_NAME + "executeUpdateCard : cardDock--> request update card app: " + request.toString());
+			if (logger.isDebugEnabled()) {
+				logger.logDebug(CLASS_NAME + "executeUpdateCard : cardDock--> request update card app: " + request.toString());
+			}
 			
 			// SE EJECUTA CONECTOR
 			connectorCardResponse = executeProvider(request, aBagSPJavaOrchestration);
 
-			if (logger.isDebugEnabled())
-				logger.logDebug("jcos--> connectorUpdateCardApplicationResponse: " + connectorCardResponse);
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("jcos--> connectorUpdateCardApplicationResponse: " + connectorCardResponse);}
 
-			if (connectorCardResponse.readValueParam("@o_card_id") != null)
-				aBagSPJavaOrchestration.put("o_card_id", connectorCardResponse.readValueParam("@o_card_id"));
-			else
-				aBagSPJavaOrchestration.put("o_card_id", "null");
+			if (connectorCardResponse.readValueParam("@o_card_id") != null) {
+				aBagSPJavaOrchestration.put("o_card_id", connectorCardResponse.readValueParam("@o_card_id"));}
+			else {
+				aBagSPJavaOrchestration.put("o_card_id", "null");}
 
-			if (connectorCardResponse.readValueParam("@o_success") != null)
-				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_card_id"));
+			if (connectorCardResponse.readValueParam("@o_success") != null) {
+				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_card_id"));}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			connectorCardResponse = null;
-			logger.logInfo(CLASS_NAME +" Error Catastrofico de updateCardStatusExecution: " + e.getMessage());
 			
-
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME +" Error Catastrofico de updateCardStatusExecution: " + e.getMessage());
+				}
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(CLASS_NAME + "--> Saliendo de updateCardStatusExecution");
 			}
 		}
-
 		return connectorCardResponse;
-
 	}
 	
 	private IProcedureResponse updateStatusAtm(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
 		IProcedureRequest request = new ProcedureRequestAS();
 		Integer trn = 0;
-		String process = null, reason = null;
+		String process = null;
+		String reason = null;
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en updateStatusAtm");
-		}
+		if (logger.isInfoEnabled()) {logger.logInfo(CLASS_NAME + " Entrando en updateStatusAtm");}
 
-		if(aBagSPJavaOrchestration.get("i_card_status").toString().equals("N"))
-		{
+		if(aBagSPJavaOrchestration.get("i_card_status").toString().equals("N")){
 			trn = 16537;
 			process = "LBW";
-			reason = "SCL";
-		}else if (aBagSPJavaOrchestration.get("i_card_status").toString().equals("B")){
-			trn = 16507;
-			process = "BLW";
 			reason = "SCL";
 		}else{
 			trn = 16507;
@@ -1094,24 +1006,19 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 			reason = "SCL";
 		}
 		
-		
 		request.setSpName("cob_atm..sp_atm_bloqueo_tarjeta");
-
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-
 		request.addInputParam("@i_proceso", ICTSTypes.SQLVARCHAR, process);
 		request.addInputParam("@i_banco", ICTSTypes.SQLINT4, "1");
 		request.addInputParam("@i_tarjeta", ICTSTypes.SQLVARCHAR,aBagSPJavaOrchestration.get("o_id_card_atm").toString());
 		request.addInputParam("@i_motivo", ICTSTypes.SQLVARCHAR, reason);
 		request.addInputParam("@i_oficina", ICTSTypes.SQLINT4, "1");
 		request.addInputParam("@i_retener", ICTSTypes.SQLVARCHAR, "N");
-		
 		request.addInputParam("@s_ofi", ICTSTypes.SQLINT4, "1");
 		request.addInputParam("@s_user", ICTSTypes.SQLVARCHAR, "usuariobv");
 		request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, String.valueOf(trn));
-		
 		request.addOutputParam("@o_secuencial", ICTSTypes.SQLVARCHAR, "0");
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -1128,7 +1035,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	}
 	
 	private void registerLogBd2(IProcedureResponse reponseCard, Map<String, Object> aBagSPJavaOrchestration) {
-
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isInfoEnabled()) {
@@ -1137,7 +1043,7 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		}
 
 		if (logger.isInfoEnabled()) {
-			 String mapData = "{";
+			String mapData = "{";
 	        for (Map.Entry<String, Object> entry : aBagSPJavaOrchestration.entrySet()) {
 	        	mapData += entry.getKey() + ": " + String.valueOf(entry.getValue()) + ", ";
 	        }
@@ -1147,7 +1053,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		}
 		
 		request.setSpName("cob_atm..sp_insert_data_dock_api");
-
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
@@ -1159,19 +1064,17 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
         // Toma el cardId y el typeCard del reponseCard recibido para CADA tarjeta
      	String typeCard = reponseCard.readValueParam("@o_type_card"); // VIRTUAL o PHYSICAL
      	if (reponseCard.readValueParam("@o_card_type")!=null ){
-     		if(reponseCard.readValueParam("@o_card_type").equals("VI"))
-     			typeCard = "VIRTUAL";
-     				
-     		else 		
-     			typeCard = "PHYSICAL";
-     		}     		
+     		if(reponseCard.readValueParam("@o_card_type").equals("VI")) {
+     			typeCard = "VIRTUAL";}
+    		else { 		
+     			typeCard = "PHYSICAL";}
+     	}     		
      		 
         request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("externalCustomerId").toString());
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("accountNumber").toString());
 		request.addInputParam("@i_fecha_reg", ICTSTypes.SQLVARCHAR, fechaACtual);
 		request.addInputParam("@i_fecha_mod", ICTSTypes.SQLVARCHAR, fechaACtual);
 		request.addInputParam("@i_modo", ICTSTypes.SQLVARCHAR, "UCS");
-					
 		request.addInputParam("@i_tarjeta_id", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_card_id"));
 		request.addInputParam("@i_request_td", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_requestUpdateCard"));
 		request.addInputParam("@i_estado_tarjeta", ICTSTypes.SQLVARCHAR, reponseCard.readValueParam("@o_card_status"));
@@ -1191,6 +1094,48 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de registerLogBd2");
 		}
+	}
+	
+	private String getTitle(String status, String value) {
+		String title = "";
+		
+		if (status.equals("A")) {			
+			title = "Cuenta activada exitosamente";
+		}
+		if (status.equals("B")) {			
+			title = "Cuenta bloqueada exitosamente";
+		}
+		if (status.equals("C")) {			
+			title = "Cuenta cancelada exitosamente";
+		}
+		if (status.equals("BV")) {			
+			title = "Cuenta bloqueada por valores";
+		}
+		if (status.equals("EBV")) {
+			title = "Cuenta desbloqueada por valores";
+		}
+		
+		if (status.equals("BM")){
+			if (value.equals("1")) {
+				title = "Cuenta bloqueada por movimientos: contra crédito";
+			} else if (value.equals("2")) {
+				title = "Cuenta bloqueada por movimientos: contra débito";
+			} else if (value.equals("3")) {
+				title = "Cuenta bloqueada por movimientos: contra crédito y débito";
+			}
+		}
+		
+		if (status.equals("EBM")) {
+			if (value.equals("1")) {
+				title = "Cuenta desbloqueada por movimientos: contra crédito";
+			} else if (value.equals("2")) {
+				title = "Cuenta desbloqueada por movimientos: contra débito";
+			} else if (value.equals("3")) {
+				title = "Cuenta desbloqueada por movimientos: contra crédito y débito";
+			}
+		}
+		
+		return title;
 	}
 		
 }
