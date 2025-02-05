@@ -526,6 +526,13 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			}
             
 			// Actualizacion local
+			aBagSPJavaOrchestration.put("@o_spei_response", responseTransfer.readValueParam("@o_spei_response"));
+			aBagSPJavaOrchestration.put("@o_spei_request", responseTransfer.readValueParam("@o_spei_request"));
+			aBagSPJavaOrchestration.put("@intento", responseTransfer.readValueParam("@o_spei_request"));
+			 logger.logDebug("@o_spei_response:CMFJBaseTemplate" + responseTransfer.readValueParam("@o_spei_response"));
+	         logger.logDebug("@o_spei_request:CMFJBaseTemplate" + responseTransfer.readValueParam("@o_spei_request"));
+	         
+			
 			IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
 			if (Utils.flowError("updateLocalTransfer", responseLocalExecution)) {
@@ -662,11 +669,19 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			case 1800016:
 			case 1870001:
 			case 1870013:
+				logger.logInfo("Entrando a transaccion 1870013 " );
 				request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
+				logger.logInfo("antes if banco destino ");
 				if(bag!=null && bag.containsKey("@i_banco_dest"))
 				request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
+				logger.logInfo("antes if clave rastreo");
 				if(bag!=null && bag.containsKey("@i_clave_rastreo"))
 				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+				logger.logInfo("despues de if calve rastreo");
+				logger.logInfo("Comienza a imprimir logs");
+				logger.logInfo("@o_spei_response:CMFJBase2"  + bag.get("@o_spei_response"));
+				logger.logInfo("@o_spei_request:CMFJBase2"  + bag.get("@o_spei_request"));
+				logger.logInfo("@intento" + bag.get("@intento"));
 				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
 				request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
 				request.addInputParam("@i_mensaje_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_mensaje_acc")!=null? bag.get("@i_mensaje_acc").toString():"");
@@ -676,6 +691,8 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, (bag.get("@o_spei_request")!=null)?bag.get("@o_spei_request").toString():"");
 				request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response")!=null?bag.get("@o_spei_response").toString():""  );
 				request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch").toString());
+				
+				
 				if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nombre_benef"))) {
 					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_beneficiario
 					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_nombre_cr
