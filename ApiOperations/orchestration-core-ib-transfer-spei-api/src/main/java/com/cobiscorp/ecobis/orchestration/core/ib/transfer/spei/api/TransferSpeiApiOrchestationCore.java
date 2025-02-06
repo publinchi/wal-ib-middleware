@@ -339,7 +339,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-        /*
+        
         try {
             callGetLimits(aRequest, aBagSPJavaOrchestration);
             if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
@@ -368,7 +368,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
 			logger.logError(e);
 		}  
-*/
+
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);        
         if (logger.isInfoEnabled()) {	        
 	        logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -1621,9 +1621,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                             	SpeiMappingResponse responseTransferOff = sendSpeiOfflineBanpay(requestSpei, responseTransfer, aBagSPJavaOrchestration, originalRequest);
                             	responseTransfer = mappingResponseSpeiToProcedureOffline(responseTransferOff, responseTransfer, aBagSPJavaOrchestration);
                             	
-                           	    logger.logDebug("@o_spei_response:CMFJExecuteTransfer " + responseTransferOff.getSpeiRequest());
-                                logger.logDebug("@o_spei_request:CMFJExecuteTransfer " + responseTransferOff.getSpeiResponse());
-                                
                                 aBagSPJavaOrchestration.put("@o_spei_response", responseTransferOff.getSpeiResponse());
                                 aBagSPJavaOrchestration.put("@o_spei_request", responseTransferOff.getSpeiRequest());
                                 responseTransfer.addParam("@o_spei_response",ICTSTypes.SQLVARCHAR,1,responseTransferOff.getSpeiResponse());
@@ -1700,9 +1697,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logInfo("VALOR @o_referencia: " + responseTransfer.readValueParam("@o_referencia"));
 	        // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
 	        List<String> respuesta = banpayExecution(anOriginalRequest, aBagSPJavaOrchestration);
-
-	   	    logger.logDebug("@o_spei_response:CMFJSendSpei " + aBagSPJavaOrchestration.get("@o_spei_response"));
-	        logger.logDebug("@o_spei_request:CMFJSendSpei " + aBagSPJavaOrchestration.get("@o_spei_request"));
 	        
 	        logger.logInfo("Ver data bag:::  "+ (String) aBagSPJavaOrchestration.get("clave_rastreo"));
 	        mappingResponse.setClaveRastreo((String) aBagSPJavaOrchestration.get("clave_rastreo"));
@@ -2344,8 +2338,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
         // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
         List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
-        logger.logDebug("@o_spei_response:CMFJEXBan " + aBagSPJavaOrchestration.get("@o_spei_response"));
-        logger.logDebug("@o_spei_request:CMFJEXBan " + aBagSPJavaOrchestration.get("@o_spei_request"));
         
         // SE ACTUALIZA TABLA DE SECUENCIAL SPEI
         speiSec(originalRequest, aBagSPJavaOrchestration);
@@ -2577,11 +2569,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 bag.put("@o_spei_response", connectorSpeiResponse.readValueParam("@o_spei_response"));
 
                 bag.put("@o_transaccion_spei",anOriginalRequest.readValueParam("@i_transaccion_spei"));
-               
-                logger.logDebug("@o_spei_response:CMFJBanPay " + bag.get("@o_spei_response"));
-                logger.logDebug("@o_spei_request:CMFJBanPay " + bag.get("@o_spei_request"));   
-                
-                 // hola
+                 
                 data = null;
             } else {
 

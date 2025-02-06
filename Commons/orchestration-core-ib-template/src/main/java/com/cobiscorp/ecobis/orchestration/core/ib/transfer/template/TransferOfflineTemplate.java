@@ -63,10 +63,6 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 		      
 		 responseTransfer = executeTransfer(aBagSPJavaOrchestration);
 		
-		 logger.logDebug("@o_spei_response:CMFJExecuteTransaccion " + responseTransfer.readValueParam("@o_spei_response"));
-         logger.logDebug("@o_spei_request:CMFJExecuteTransaccion " + responseTransfer.readValueParam("@o_spei_request"));
-         
-		
 		if (serverResponse.getOnLine()) {
 
 			if (logger.isInfoEnabled())
@@ -98,6 +94,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 				    saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
 
+					
 					logger.logInfo("i_register_off_mov::: "+responseTransfer.readValueParam("@i_register_off_mov"));
 					//almacenar movimiento offline JC
 					logger.logInfo("i_register_off_mov APLICADO 22");
@@ -105,7 +102,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 					responseTransfer.readValueParam("@i_register_off_mov").equals("S")) {
 						movementOffline(anOriginalRequestClone, aBagSPJavaOrchestration);
 					}
-
+                    
 					
 
 				}else {				
