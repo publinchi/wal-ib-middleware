@@ -950,7 +950,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addInputParam("@t_debug", ICTSTypes.SQLVARCHAR, "S");
         request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
         request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
-        request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, "8");
+        request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, ("DESKTOP_BROWSER".equals(aRequest.readValueParam("@i_channel"))? "1":"8"));
         
         // 18500115
         logger.logInfo(METHOD_NAME + " Datos Cabecera");
@@ -981,7 +981,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 "InternetBanking.WebApp.Transfers.Service.Transfer.TransferSPI");
         request.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
         request.addFieldInHeader("filial", ICOBISTS.HEADER_NUMBER_TYPE, "1");
-        request.addFieldInHeader("servicio", ICOBISTS.HEADER_NUMBER_TYPE, "8");
+        request.addFieldInHeader("servicio", ICOBISTS.HEADER_NUMBER_TYPE,  ("DESKTOP_BROWSER".equals(aRequest.readValueParam("@i_channel"))? "1":"8"));
         request.addFieldInHeader("org", ICOBISTS.HEADER_STRING_TYPE, "U");
         request.addFieldInHeader("contextId", ICOBISTS.HEADER_STRING_TYPE, "COBISBV");
         // request.addFieldInHeader("sessionId", ICOBISTS.HEADER_STRING_TYPE,
@@ -3048,9 +3048,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
                 IMultiBackEndResolverService.TARGET_LOCAL);
         request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+        request.addFieldInHeader("servicio", ICOBISTS.HEADER_NUMBER_TYPE,  ("DESKTOP_BROWSER".equals(anOriginalRequest.readValueParam("@i_channel"))? "1":"8"));
         request.setSpName("cob_bvirtual..sp_registra_spei");
         request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
         request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "L");
+        request.addInputParam("@s_servicio", ICTSTypes.SYBINT4,  ("DESKTOP_BROWSER".equals(anOriginalRequest.readValueParam("@i_channel"))? "1":"8"));
         request.addInputParam("@i_ente_bv", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@s_cliente"));
         request.addInputParam("@i_login", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_login"));
         request.addInputParam("@i_canal", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
