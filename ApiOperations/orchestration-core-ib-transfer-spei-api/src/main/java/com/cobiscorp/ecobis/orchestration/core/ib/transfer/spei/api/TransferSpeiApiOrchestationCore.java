@@ -951,6 +951,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addInputParam("@t_rty", ICTSTypes.SQLVARCHAR, "N");
         request.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
         request.addInputParam("@s_servicio", ICTSTypes.SQLVARCHAR, ("DESKTOP_BROWSER".equals(aRequest.readValueParam("@i_channel"))? "1":"8"));
+        
         // 18500115
         logger.logInfo(METHOD_NAME + " Datos Cabecera");
         // Date fecha = new Date();
