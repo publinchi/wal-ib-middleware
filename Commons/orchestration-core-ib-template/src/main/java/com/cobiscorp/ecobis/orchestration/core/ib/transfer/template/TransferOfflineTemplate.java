@@ -60,10 +60,9 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 
 		aBagSPJavaOrchestration.put("origin_spei", anOriginalRequest.readValueParam("@i_origin_req"));
 		aBagSPJavaOrchestration.put("ssn_operation", anOriginalRequest.readValueParam("@i_ssn_operation"));
+		      
+		 responseTransfer = executeTransfer(aBagSPJavaOrchestration);
 		
-		responseTransfer = executeTransfer(aBagSPJavaOrchestration);
-		
-
 		if (serverResponse.getOnLine()) {
 
 			if (logger.isInfoEnabled())
@@ -95,6 +94,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 				    saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 					aBagSPJavaOrchestration.put(RESPONSE_OFFLINE, responseTransfer);
 
+					
 					logger.logInfo("i_register_off_mov::: "+responseTransfer.readValueParam("@i_register_off_mov"));
 					//almacenar movimiento offline JC
 					logger.logInfo("i_register_off_mov APLICADO 22");
@@ -102,7 +102,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 					responseTransfer.readValueParam("@i_register_off_mov").equals("S")) {
 						movementOffline(anOriginalRequestClone, aBagSPJavaOrchestration);
 					}
-
+                    
 					
 
 				}else {				
