@@ -526,6 +526,11 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			}
             
 			// Actualizacion local
+			aBagSPJavaOrchestration.put("@o_spei_response", responseTransfer.readValueParam("@o_spei_response"));
+			aBagSPJavaOrchestration.put("@o_spei_request", responseTransfer.readValueParam("@o_spei_request"));
+			aBagSPJavaOrchestration.put("@intento", responseTransfer.readValueParam("@o_spei_request"));
+		
+			
 			IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
 			if (Utils.flowError("updateLocalTransfer", responseLocalExecution)) {
@@ -666,16 +671,23 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 				if(bag!=null && bag.containsKey("@i_banco_dest"))
 				request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR, bag.get("@i_banco_dest").toString());
 				if(bag!=null && bag.containsKey("@i_clave_rastreo"))
-				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+				request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());				
+				request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response")!=null?bag.get("@o_spei_response").toString():""  );
+				request.removeParam("@i_spei_request");
+				request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, (bag.get("@o_spei_request")!=null)?bag.get("@o_spei_request").toString():"");
+				
 				request.addInputParam("@i_bandera_spei", ICTSTypes.SQLVARCHAR, "S");
 				request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
 				request.addInputParam("@i_mensaje_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_mensaje_acc")!=null? bag.get("@i_mensaje_acc").toString():"");
 				request.addInputParam("@i_id_spei_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_id_spei_acc")!=null?bag.get("@i_id_spei_acc").toString():"");
-				request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc").toString());
-				request.addInputParam("@i_transaccion_spei", ICTSTypes.SQLINT4, bag.get("@i_transaccion_spei")!=null?bag.get("@i_transaccion_spei").toString():"");
-				request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, (bag.get("@o_spei_request")!=null)?bag.get("@o_spei_request").toString():"");
-				request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response")!=null?bag.get("@o_spei_response").toString():""  );
-				request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch").toString());
+				//request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc").toString());
+				request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc")!=null?bag.get("@i_codigo_acc").toString():"");			
+				//request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch").toString());
+				request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, bag.get("@i_ssn_branch")!=null?bag.get("@i_ssn_branch").toString():"0");
+				request.addInputParam("@i_transaccion_spei", ICTSTypes.SQLINT4, bag.get("@i_transaccion_spei")!=null?bag.get("@i_transaccion_spei").toString():"0");
+			
+				
+				
 				if (!Utils.isNull(anOriginalRequest.readValueParam("@i_nombre_benef"))) {
 					request.addInputParam("@i_nombre_benef", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_beneficiario
 					request.addInputParam("@i_nombre_cr", ICTSTypes.SYBVARCHAR, anOriginalRequest.readValueParam("@i_nombre_benef"));//pa_nombre_cr
@@ -691,15 +703,17 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			}catch(Exception xe) {
 				
 				xe.printStackTrace();
+				
 			}
 
 			Utils.copyParam("@i_cta_des", anOriginalRequest, request);
 			Utils.copyParam("@i_prod_des", anOriginalRequest, request);
 			Utils.copyParam("@i_mon_des", anOriginalRequest, request);
+			
 		} else {
 			request.addInputParam("@i_sinc_cta_des", ICTSTypes.SQLVARCHAR, "N");
 		}
-
+		
 		switch (t_trn) {
 		case 1800009:
 			request.addInputParam("@i_tipo_notif", ICTSTypes.SQLVARCHAR, "F");
