@@ -200,6 +200,13 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             request.addInputParam("@i_estado_ejec", ICTSTypes.SQLVARCHAR, (String)bag.get("@i_estado_ejec"));
             request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
             request.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
+            request.addInputParam("@i_nombreOrdenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombreOrdenante"));
+            request.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
+            request.addInputParam("@i_institucionOrdenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_institucionOrdenante"));
+            request.addInputParam("@i_institucionBeneficiaria", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_institucionBeneficiaria"));
+            request.addInputParam("@i_tipoCuentaBeneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
+            request.addInputParam("@i_tipoCuentaOrdenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipoCuentaOrdenante"));
+            request.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_idSpei"));
         }
 
         // Datos de tran monet
