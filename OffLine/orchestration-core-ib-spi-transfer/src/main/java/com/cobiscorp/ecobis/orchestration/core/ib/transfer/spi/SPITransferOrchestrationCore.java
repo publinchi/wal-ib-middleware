@@ -922,8 +922,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		requestTransfer.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
 		requestTransfer.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
-
-		requestTransfer.setSpName("cob_ahorros..sp_tr04_transferencia_ob");
+		requestTransfer.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH)); 
+		requestTransfer.addFieldInHeader(ICOBISTS.HEADER_SSN, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
+		
+		requestTransfer.setSpName("cob_ahorros..sp_tr04_transferencia_ob");   
 		requestTransfer.addInputParam("@t_online", ICTSTypes.SQLCHAR, "S");
 		requestTransfer.addInputParam("@t_trn", ICTSTypes.SYBINTN, "18340");
 
@@ -1036,6 +1038,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("Fin transfer SPI");
 		}
+		 
 		return requestTransfer;
 	}
 
