@@ -1,0 +1,13 @@
+
+  Esta aplicación es parte de los paquetes bancarios propiedad de
+  COBISCORP.
+ 
+  Su uso no autorizado queda expresamente prohibido así como
+  cualquier alteración o agregado hecho por alguno de sus usuarios
+  sin el debido consentimiento por escrito de COBISCORP.
+ 
+  Este programa está protegido por la ley de derechos de autor y
+  por las convenciones internacionales de propiedad intelectual.
+  Su uso no autorizado dará derecho a COBISCORP para obtener
+  órdenes de secuestro o retención y para perseguir penalmente
+  a los autores de cualquier infracción.

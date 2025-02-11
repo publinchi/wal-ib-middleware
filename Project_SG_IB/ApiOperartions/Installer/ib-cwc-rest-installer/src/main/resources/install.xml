@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installation version="1.0">
+
+	<info>
+		<appname>${product.name}</appname>
+		<appversion>${project.version}</appversion>
+		<authors>
+			<author name="COBISCorp" email="support.center@cobiscorp.com" />
+		</authors>
+		<url>${project.url}</url>
+		<summarylogfilepath>$INSTALL_PATH/$APP_NAME/installinfo/Summary${product.name}.htm
+		</summarylogfilepath>
+
+		<uninstaller
+			name="${product.name}-uninstaller-${project.version}.jar"
+			path="${INSTALL_PATH}/$APP_NAME/uninstaller">
+		</uninstaller>
+	</info>
+
+	<variables>
+		<variable name="COBIS_HOME_WEB" value="/COBIS_HOME_WEB_REST"></variable>
+		<variable name="InstallerFrame.logfilePath"
+			value="$INSTALL_PATH/$APP_NAME/update${project.version}.log" />
+		<variable name="logInstallerOutput"
+			value="$INSTALL_PATH/$APP_NAME/logInstallerOutput.log." />
+		<variable name="TargetPanel.dir.windows"
+			value="${ENV[SystemDrive]}/COBIS_HOME_WEB_REST" />
+		<variable name="TargetPanel.dir.unix"
+			value="/usr/local/cobishomeweb" />
+	</variables>
+
+	<guiprefs width="600" height="400" resizable="no">
+		<modifier key="useHeadingPanel" value="yes" />
+		<modifier key="headingBackgroundColor" value="0x00ffffff" />
+		<modifier key="headingPanelCounter" value="text" />
+	</guiprefs>
+
+	<locale>
+		<langpack iso3="eng" />
+		<langpack iso3="spa" />
+	</locale>
+
+	<resources>
+		<res id="Heading.image" src="img/cobiscorp.jpg" />
+		<res id="CustomLangpack.xml_eng"
+			src="langpacks/CustomLangpack_eng.xml" />
+		<res id="CustomLangpack.xml_spa"
+			src="langpacks/CustomLangpack_spa.xml" />
+		<res id="userInputSpec.xml" src="specs/userInput.Spec.xml" />
+		<res id="userInputLang.xml_eng"
+			src="langpacks/userInputLang_eng.xml" />
+		<res id="userInputLang.xml_spa"
+			src="langpacks/userInputLang_spa.xml" />
+		<res id="LicencePanel.licence_eng"
+			src="installResources/LICENSE_eng.txt" />
+		<res id="LicencePanel.licence_spa"
+			src="installResources/LICENSE_spa.txt" />
+		<res id="InfoPanel.info_eng" src="installResources/README_eng.txt" />
+		<res id="InfoPanel.info_spa" src="installResources/README_spa.txt" />
+		<res id="ProcessPanel.Spec.xml" src="specs/processPanel.Spec.xml" />
+	</resources>
+
+	<conditions>
+		<condition type="variable" id="installationTypeVar">
+			<name>installation.type</name>
+			<value>cwc</value>
+		</condition>
+	</conditions>
+
+	<panels>
+		<panel classname="HelloPanel" />
+		<panel classname="InfoPanel" />
+		<panel classname="LicencePanel" />
+		<!-- >panel classname="UserInputPanel" id="installationType" / -->
+		<panel classname="TargetPanel" />
+		<panel classname="InstallPanel" />
+		<panel id="processPanel" classname="ProcessPanel" />
+		<panel classname="FinishPanel">
+		</panel>
+	</panels>
+
+	<packs>
+		<pack name="rest-service" required="yes">
+			<description>Copy plugins</description>
+			<fileset dir="packs/plugins"
+				targetdir="$INSTALL_PATH/cwc/plugins/ApiServicesWM" includes="**/*" override="true" />
+		</pack>
+		<pack name="config-Installers" required="yes">
+			<description>Copy script files </description>
+			<fileset dir="scripts"
+				targetdir="$INSTALL_PATH/$APP_NAME/installer/scripts"
+				includes="*.groovy" override="true" />
+		</pack>
+	</packs>
+	<jar src="../${project.build.finalName}.jar" />
+	<jar src="libs/groovy-all.jar" />
+	<jar src="libs/commons-lang.jar" />
+	<jar src="libs/cobis-installer-api.jar" />
+	<jar src="libs/cobis-installer-jobs.jar" />
+	<jar src="libs/log4j.jar" />
+	<jar src="libs/slf4j-api.jar" />
+	<jar src="libs/slf4j-log4j12.jar" />
+	<jar src="libs/commons-io.jar" />
+</installation>
