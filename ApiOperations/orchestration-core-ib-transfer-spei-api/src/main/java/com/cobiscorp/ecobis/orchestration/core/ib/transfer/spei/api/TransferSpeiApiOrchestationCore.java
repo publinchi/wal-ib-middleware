@@ -339,7 +339,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-        
+        /*
         try {
             callGetLimits(aRequest, aBagSPJavaOrchestration);
             if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
@@ -368,7 +368,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
 			logger.logError(e);
 		}  
-
+        
+        */
+        
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);        
         if (logger.isInfoEnabled()) {	        
 	        logger.logInfo(CLASS_NAME + " zczc " + wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -1527,10 +1529,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                         int transacctionApplied = Integer.parseInt(idTransaccion.trim());
                         if (transacctionApplied > 0) {
 
+                        	
                             originalRequestClone.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR,
                                     String.valueOf(transacctionApplied));
                             aBagSPJavaOrchestration.put("@i_transaccion_spei", String.valueOf(transacctionApplied));
-
+                            logger.logDebug("@i_transaccion_spei: " + aBagSPJavaOrchestration.get("@i_transaccion_spei").toString()); //quitar
+                        	
                             if (logger.isDebugEnabled()) {
                                 logger.logDebug("Spei Armed");
                             }
@@ -1547,6 +1551,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
 	                            if (typeConnector != null && typeConnector.equals("KARPAY")) {
 	                            	responseTransfer = executeBanpay(aBagSPJavaOrchestration, responseTransfer, originalRequest);
+	                            	responseTransfer.addParam("@o_spei_response",ICTSTypes.SQLVARCHAR,1,aBagSPJavaOrchestration.get("@o_spei_response").toString());
+	                                responseTransfer.addParam("@o_spei_request",ICTSTypes.SQLVARCHAR,1,aBagSPJavaOrchestration.get("@o_spei_request").toString());
+	                                
 	                            } else if (typeConnector != null && typeConnector.equals("STP")) { 
                                                          
 	                            	SpeiMappingResponse responseSpei = speiOrchestration.sendSpei(requestSpei);
@@ -1930,7 +1937,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 IMultiBackEndResolverService.TARGET_CENTRAL);
         requestTransfer.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
         requestTransfer.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
-        requestTransfer.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader(ICOBISTS.HEADER_SSN)); // Fabri
+        requestTransfer.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH));
         requestTransfer.setSpName("cob_ahorros..sp_tr04_transferencia_ob");
         requestTransfer.addInputParam("@t_online", ICTSTypes.SQLCHAR, "S");
         requestTransfer.addInputParam("@t_trn", ICTSTypes.SYBINTN, "18340");
@@ -1952,9 +1959,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         requestTransfer.addInputParam(T_EJEC, anOriginalRequest.readParam(T_EJEC).getDataType(),
                 anOriginalRequest.readValueParam(T_EJEC));
         requestTransfer.addInputParam(T_RTY, anOriginalRequest.readParam(T_RTY).getDataType(),
-                anOriginalRequest.readValueParam(T_RTY));
-        requestTransfer.addInputParam(S_SSN_BRANCH, anOriginalRequest.readParam("@s_ssn").getDataType(),
-                anOriginalRequest.readValueParam("@s_ssn")); //fabri
+                anOriginalRequest.readValueParam(T_RTY)); 
 
         anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
@@ -2045,7 +2050,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo("Fin transfer SPI");
         }
-        
+      
         return requestTransfer;
     }
     
@@ -2536,7 +2541,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 response.add(anOriginalRequest.readValueParam("@i_transaccion_spei"));
 
                 response.add(connectorSpeiResponse.readValueParam("@o_spei_request"));
-                response.add(connectorSpeiResponse.readValueParam("@o_spei_response"));        
+                response.add(connectorSpeiResponse.readValueParam("@o_spei_response")); 
+                
                 
                 if (logger.isDebugEnabled()) {
                     logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
