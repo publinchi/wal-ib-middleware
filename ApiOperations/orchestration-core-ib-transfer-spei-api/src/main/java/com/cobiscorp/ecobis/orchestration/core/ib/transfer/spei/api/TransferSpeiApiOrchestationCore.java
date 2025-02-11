@@ -339,7 +339,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String channel = aRequest.readValueParam("@i_channel").toString() != null ? aRequest.readValueParam("@i_channel").toString() : "SYSTEM";
 
         IProcedureResponse wAccountsResp = new ProcedureResponseAS();
-        /*
+        
         try {
             callGetLimits(aRequest, aBagSPJavaOrchestration);
             if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
@@ -369,7 +369,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			logger.logError(e);
 		}  
         
-        */
+        
         
         wAccountsResp = getDataTransfSpeiReq(aRequest, aBagSPJavaOrchestration);        
         if (logger.isInfoEnabled()) {	        
