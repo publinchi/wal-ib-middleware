@@ -148,7 +148,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		String actionName = "";
 		String blockCode = "";
 		String reasonOfLock = "";
-		
+
 		String evaluarRiesgo = getParam(anOriginalRequest, "ACEVRI", "BVI");
 		String evaluarRiesgoMobile = getParam(anOriginalRequest, "AERIMB", "BVI");
 		String evaluarRiesgoSystem = getParam(anOriginalRequest, "AERISY", "BVI");
@@ -212,7 +212,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				aBagSPJavaOrchestration.put("IsReentry", "S");
 				if (!flowRty) {
 					logger.logDebug("evaluateExecuteReentry FALSE");
-					anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+
+					IProcedureRequest anOriginalRequestClone=anOriginalRequest.clone();
+					Map<String, Object> aBagSPJavaOrchestrationClone=aBagSPJavaOrchestration;
 
 					IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 					IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
@@ -390,6 +392,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 									logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
 		                  
 								anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+								if(aBagSPJavaOrchestration.get("ssn")!=null && !aBagSPJavaOrchestration.get("ssn").toString().isEmpty()) {
+									anProcedureResponse = saveReentry(anOriginalRequestClone, aBagSPJavaOrchestrationClone);
+								}
 							} else {
 								IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
 								if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
