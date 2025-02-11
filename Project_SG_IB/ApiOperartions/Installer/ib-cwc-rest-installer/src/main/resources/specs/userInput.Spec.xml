@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<userInput>
+
+	<panel id="installationType">
+		<field type="title" txt="Installation Type" id="input.title" />
+		<field type="staticText" align="left" txt="Choose the preferred installation type:" id="input.description" />
+
+		<field type="radio" variable="installation.type" summaryKey="key.intallationType">
+			<spec>
+				<choice txt="Couple Installation Type" value="CTS_MF" id="input.couple" />
+				<choice txt="Decouple Installation Type" value="cwc" id="input.decouple" />
+			</spec>
+		</field>
+	</panel>
+	
+</userInput>

@@ -9,8 +9,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <db.provider>DataSource</db.provider>
     <sign.alias>cobis</sign.alias>
-    <path.build>C:/WaltMart/ibMiddleware/wal-ib-middleware</path.build>
-    <sign.keystore>${path.build}/Project_SG_IB/ApiOperartions/ApiOperationServices/Products/COBISCorp.eCOBIS.ServiceContractOperations.Service/cobis.keystore</sign.keystore>
+    <sign.keystore>${project.basedir}/../properties/cobis.keystore</sign.keystore>
     <sign.keypass>cobisadmin</sign.keypass>
     <sign.storepass>cobisadminadmin</sign.storepass>
     <pmd.fail.on.violation>true</pmd.fail.on.violation>
@@ -314,7 +313,7 @@
             <version>3.1</version>
             <configuration>
               <rulesets>
-                <ruleset>${project.build.directory}/cobis-pdm-rules-v2.xml</ruleset>
+                <ruleset>${project.basedir}/../properties/cobis-pdm-rules-v2.xml</ruleset>
               </rulesets>
               <targetJdk>${java.source.version}</targetJdk>
               <format>xml</format>
@@ -344,12 +343,12 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.5</version>
             <configuration>
               <threshold>High</threshold>
               <skip>${skip.findbugs}</skip>
-              <excludeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Exclude.xml</excludeFilterFile>
-              <includeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Include.xml</includeFilterFile>
+              <excludeFilterFile>${project.basedir}/../properties/findbugs-Exclude.xml</excludeFilterFile>
+              <includeFilterFile>${project.basedir}/../properties/findbugs-Include.xml</includeFilterFile>
               <xmlOutput>true</xmlOutput>
               <outputDirectory>${basedir}/target/</outputDirectory>
               <findbugsXmlOutputDirectory>${basedir}/target/finbugs</findbugsXmlOutputDirectory>
