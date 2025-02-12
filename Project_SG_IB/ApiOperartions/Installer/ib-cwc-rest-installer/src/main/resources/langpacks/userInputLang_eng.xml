@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<langpack>
+
+	<str id="input.title" txt="Installation Type" />
+	<str id="input.description" txt="Choose the preferred installation type:" />
+
+	<str id="input.couple" txt="Couple Installation Type" />
+	<str id="input.decouple" txt="Decouple Installation Type" />
+
+</langpack>

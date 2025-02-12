@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<langpack>
+
+	<str id="pack.modules.name" txt="modules" />
+
+	<str id="JdbcConnectionValidator.errorMessage" txt="Failed to connect to the specified database" />
+
+	<str id="CommonsJob.done" txt="Done" />
+	<!-- errors -->
+	<str id="CommonsJob.fileNotFound.title" txt="File not found" />
+	<str id="CommonsJob.fileNotFound.message" txt="No file found at location {0}" />
+	<str id="CommonsJob.envVarNotDefined.title" txt="Environment variable" />
+	<str id="CommonsJob.envVarNotDefined.message" txt="Environment variable {0} not defined" />
+	<str id="CommonsJob.closingConnection.title" txt="Close connection" />
+	<str id="CommonsJob.closingConnection.message" txt="An error ocurred closing database connection" />
+
+	<str id="ValidateVersionJob.sybaseVersion" txt="Sybase version: {0}" />
+	<!-- errors -->
+	<str id="ValidateVersionJob.invalidVersion.title" txt="Invalid version" />
+	<str id="ValidateVersionJob.invalidVersion.message" txt="Sybase version must be greater than or equal to {0}" />
+
+	<str id="CreateDatabaseJob.executingScript" txt="Executing script {0}..." />
+	<!-- questions -->
+	<str id="CreateDatabaseJob.alreadyExist.title" txt="Database already exist" />
+	<str id="CreateDatabaseJob.alreadyExist.question"
+		txt="Database {0} already exist. Do you want to drop it and create again?" />
+
+</langpack>
