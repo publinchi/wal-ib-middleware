@@ -1023,13 +1023,14 @@
       <field type="String" name="keyCertificatePassword" value="cobisadmin" />
       <field type="String" name="keyFileName" value="cobis.keystore" />
       <field type="boolean" name="relativeFolder" value="true" />
-      <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="DTOJavaPOJO" />
       <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_271" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_281" />
     </class>
   </collection>
-  <collection type="List" length="0" id="210" name="templateCommands">
+  <collection type="List" length="2" id="210" name="templateCommands">
+    <field type="String" index="0" value="cmd_Maven install in local repository" />
+    <field type="String" index="1" value="cmd_Maven deploy in remote repository" />
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.DataContractOperations.DTO" />

@@ -9,8 +9,7 @@
   </parent>
   <properties>
     <skip.pmd>true</skip.pmd>
-    <path.build>C:/WaltMart/ibMiddleware/wal-ib-middleware</path.build>
-  </properties>
+    </properties>
   <groupId>COBISCorp.eCOBIS.ServiceContractOperations.Service.rest
       </groupId>
   <artifactId>COBISCorp.eCOBIS.ServiceContractOperations.Service-rest
@@ -21,18 +20,14 @@
       <groupId>COBISCorp.eCOBIS.DataContractOperations.DTO</groupId>
       <artifactId>COBISCorp.eCOBIS.DataContractOperations.DTO</artifactId>
       <version>1.0.0.0</version>
-      <scope>system</scope>
-      <systemPath>${path.build}/Output/Code/CTS/COBISCorp.eCOBIS.DataContractOperations.DTO/build/dist/COBISCorp.eCOBIS.DataContractOperations.DTO-1.0.0.0.jar</systemPath>
-    </dependency>
+      <scope>provided</scope>
+      </dependency>
     <dependency>
       <groupId>COBISCorp.eCOBIS.ServiceContractOperations.Service</groupId>
       <artifactId>COBISCorp.eCOBIS.ServiceContractOperations.Service</artifactId>
       <version>1.0.0.0</version>
-      <scope>system</scope>
-      <systemPath>
-            ${project.basedir}/../COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/target/COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar
-          </systemPath>
-    </dependency>
+      <scope>provided</scope>
+      </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
@@ -60,31 +55,62 @@
       <groupId>com.cobiscorp.cobis</groupId>
       <artifactId>cobis-log-util</artifactId>
       <version>2.0.5</version>
-      <scope>system</scope>
-      <systemPath>C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cobis-log-util-2.0.5.jar
-          </systemPath>
-    </dependency>
+      <scope>provided</scope>
+      </dependency>
     <dependency>
       <groupId>com.cobiscorp.cobis.cwc</groupId>
       <artifactId>cobis-container-api</artifactId>
       <version>2.7.0</version>
-      <scope>system</scope>
-      <systemPath>C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cobis-container-api-2.7.0.jar
-          </systemPath>
-    </dependency>
+      <scope>provided</scope>
+      </dependency>
     <dependency>
       <groupId>com.cobiscorp.cobis.cts.integration</groupId>
       <artifactId>cts-integration-rest</artifactId>
       <version>2.0.2</version>
-      <scope>system</scope>
-      <systemPath>C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cts-integration-rest-2.0.2.jar
-          </systemPath>
-    </dependency>
+      <scope>provided</scope>
+      </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.felix</groupId>
+        <groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>com.springsource.bundlor</groupId>
+									<artifactId>com.springsource.bundlor.maven</artifactId>
+									<versionRange>[1.0.0.RELEASE,)</versionRange>
+									<goals>
+										<goal>bundlor</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore></ignore>
+								</action>
+							</pluginExecution>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>org.apache.felix</groupId>
+									<artifactId>maven-scr-plugin</artifactId>
+									<versionRange>[1.7.2,)</versionRange>
+									<goals>
+										<goal>scr</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore></ignore>
+								</action>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
         <artifactId>maven-scr-plugin</artifactId>
         <version>1.7.2</version>
         <configuration>
@@ -107,11 +133,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
+            <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jarsigner-plugin</artifactId>
       </plugin>
