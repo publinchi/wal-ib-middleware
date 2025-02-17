@@ -709,7 +709,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
 	        request.addInputParam("@i_ente", ICTSTypes.SQLINTN, externalCustomerId);
 	        request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, accountNumber);
-
+            request.addInputParam("@i_error_ndnc", ICTSTypes.SQLVARCHAR, "S");
+			
 	        // Ejecutar el procedimiento
 	        response = executeCoreBanking(request);
 
