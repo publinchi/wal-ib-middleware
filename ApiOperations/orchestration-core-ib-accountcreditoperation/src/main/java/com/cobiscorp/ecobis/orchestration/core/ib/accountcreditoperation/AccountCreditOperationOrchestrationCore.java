@@ -697,7 +697,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 
 	        request.addInputParam("@i_ente", ICTSTypes.SQLINTN, externalCustomerId);
 	        request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, accountNumber);
-
+            request.addInputParam("@i_error_ndnc", ICTSTypes.SQLVARCHAR, "S");
+			
 	        // Ejecutar el procedimiento
 	        response = executeCoreBanking(request);
 
