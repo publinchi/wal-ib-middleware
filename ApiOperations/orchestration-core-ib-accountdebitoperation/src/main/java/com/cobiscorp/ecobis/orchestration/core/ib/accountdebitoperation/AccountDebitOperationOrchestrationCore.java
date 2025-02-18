@@ -15,7 +15,6 @@ import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
-import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.exceptions.COBISInfrastructureRuntimeException;
@@ -63,7 +62,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 	
 	private ILogger logger = (ILogger) this.getLogger();
 	private IResultSetRowColumnData[] columnsToReturn;
-
+	private static final String CLASS_NAME = "AccountDebitOperationOrchestrationCore --->";
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
@@ -96,8 +95,20 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		logger.logDebug("Response Online: " + responseServer.getOnLine() + " Response flowRty" + flowRty);
+		
+		
 		if (responseServer != null && !responseServer.getOnLine()) {
 			aBagSPJavaOrchestration.put("IsReentry", "S");
+			
+			anProcedureResponse = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+			logger.logInfo(CLASS_NAME + " validaCentral "
+					+ anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
+			if (!anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+				logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponse);
+				aBagSPJavaOrchestration.clear();
+				aBagSPJavaOrchestration.put(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue(), anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue());
+				return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+			}
 			if (!flowRty){
 				logger.logDebug("evaluateExecuteReentry");
 				anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
@@ -667,5 +678,54 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	private IProcedureResponse getValAccountReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	    IProcedureRequest request = new ProcedureRequestAS();
+	    IProcedureResponse response = null;
 
+	    try {
+	        if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " Entrando en getValAccountReq");
+	        }
+	        aBagSPJavaOrchestration.clear();
+	        // Configuración del procedimiento
+	        request.setSpName("cobis..sp_val_data_account_api");
+
+	        // Agregar encabezados
+	        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+	                IMultiBackEndResolverService.TARGET_CENTRAL);
+	        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+	        // Validar y agregar parámetros de entrada
+	        String externalCustomerId = aRequest.readValueParam("@i_externalCustomerId");
+	        String accountNumber = aRequest.readValueParam("@i_accountNumber");
+
+	        if (externalCustomerId == null) {
+	            throw new IllegalArgumentException("El ID del cliente externo no puede ser nulo.");
+	        }
+	        if (accountNumber == null || accountNumber.isEmpty()) {
+	            throw new IllegalArgumentException("El número de cuenta no puede ser nulo o vacío.");
+	        }
+
+	        request.addInputParam("@i_ente", ICTSTypes.SQLINTN, externalCustomerId);
+	        request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, accountNumber);
+            request.addInputParam("@i_error_ndnc", ICTSTypes.SQLVARCHAR, "S");
+			
+	        // Ejecutar el procedimiento
+	        response = executeCoreBanking(request);
+
+	        if (logger.isDebugEnabled()) {
+	            logger.logDebug("Response Corebanking getValAccountReq FHU : " + response.getProcedureResponseAsString());
+	        }
+	    } catch (Exception e) {
+	        logger.logError(CLASS_NAME + " Error al obtener la validación de la cuenta: " + e.getMessage(), e);
+	        throw new RuntimeException("Error en la validación de la cuenta", e); 
+	    } finally {
+	        if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " Saliendo de getValAccountReq");
+	        }
+	    }
+
+	    return response;
+	}
 }
