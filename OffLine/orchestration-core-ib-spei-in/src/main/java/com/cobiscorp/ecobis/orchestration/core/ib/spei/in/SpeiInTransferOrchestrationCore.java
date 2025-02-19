@@ -320,6 +320,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
+		if (logger.isDebugEnabled()){
+			logger.logDebug("Status Servidor 2");
+			logger.logDebug(serverResponse);
+		}
+
 		if(getFromReentryExcecution(aBagSPJavaOrchestration) && serverResponse.getOnLine()){
 
 			if(logger.isInfoEnabled())
@@ -334,10 +339,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				logger.logInfo("Finaliza ejecución directa");
 			}
 
-		}else if(serverResponse.getOnLine()
-				|| (!serverResponse.getOnLine()
-				&& !getFromReentryExcecution(aBagSPJavaOrchestration))) {
-
+		}else if(!getFromReentryExcecution(aBagSPJavaOrchestration)) {
 
 			if (logger.isInfoEnabled()) {
 				logger.logInfo("codTar:" + codTarDeb + " opTcClaveBen:" + opTcClaveBen);
