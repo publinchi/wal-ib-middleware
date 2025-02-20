@@ -1,12 +1,14 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.spei.in;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferInOfflineTemplate;
@@ -66,6 +68,9 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	/**
 	 * Read configuration of parent component
 	 */
+
+	private static String privateKeyAes="";
+
 	private java.util.Properties properties;
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
@@ -73,6 +78,32 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			logger.logInfo(" loadConfiguration INI SpeiInTransferOrchestrationCore");
 		}
 		properties = arg0.getProperties("//property");
+
+		if(privateKeyAes==null || privateKeyAes.isEmpty()){
+
+			String pathSecurityAes = System.getProperty(COBIS_HOME).concat(SecurityDock).concat(DockAes);
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Loading private key by firts time");
+				logger.logInfo("Loading.... "+pathSecurityAes);
+			}
+			BufferedReader br = null;
+
+			try {
+				br = new BufferedReader(new FileReader(pathSecurityAes));
+				String linea;
+				while ((linea = br.readLine()) != null) {
+					privateKeyAes=privateKeyAes.concat(linea);
+				}
+			} catch (Exception xe) {
+				if (logger.isErrorEnabled())
+			    	logger.logError(xe);
+			}
+			if (logger.isInfoEnabled())
+		    	logger.logInfo("the key has been loaded "+privateKeyAes);
+
+		}
+
 	}
 
 	/**
@@ -81,6 +112,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	private static ILogger logger = LogFactory.getLogger(SpeiInTransferOrchestrationCore.class);
 	private static final String CCORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
 	private String validaRiesgo = "";
+
 
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
@@ -285,102 +317,125 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("codTarDeb: "+codTarDeb);
-		
-		if(logger.isInfoEnabled())
-		{
-			logger.logInfo("codTar:"+codTarDeb + " opTcClaveBen:"+opTcClaveBen);
+
+		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+
+		if (logger.isDebugEnabled()){
+			logger.logDebug("Status Servidor 2");
+			logger.logDebug(serverResponse);
 		}
-		if(codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock
-		{
-			response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
-		}
-		if(response.getReturnCode() != 0)
-		{
-			return response;
-		}
-		
-		// Validar el risk
-		if (validaRiesgo.equals("true")){
-			executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-			
-			if (aBagSPJavaOrchestration.get("success_risk") != null) {				
-				valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
-				
-				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-				}
-				
-				if (aBagSPJavaOrchestration.get("message") != null) {	
-					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-				}
-	
-				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-					estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
-				}
-				
-				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-	
-				if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-					response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
-					
-					if(response.getReturnCode() != 0) {
-						return response;
-					}
-					
-					IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
-	
-					if (logger.isDebugEnabled()) {
-						logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-					}
-	
-					response = executeCoreBanking(requestTransfer);
-	
-					if (logger.isDebugEnabled()) {
-						logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
-						logger.logDebug(wInfo+ "response de central: " + response);
-					}
-	
-				} else {
-					message = "OPERACIÓN NO PERMITIDA";
-					code = 16; 
-					
-					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
-					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
-					
-					return response;
-				}
+
+		if(getFromReentryExcecution(aBagSPJavaOrchestration) && serverResponse.getOnLine()){
+
+			if(logger.isInfoEnabled())
+			{
+				logger.logInfo("Ejecución en reentry - ONLINE");
 			}
-			else {
-				message = "OPERACIÓN NO PERMITIDA";
-				code = 2;
-							
-				response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
-				response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
-				
-				return response;
-			}			
-		}else {
-			response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
-			
-			if(response.getReturnCode() != 0) {
-				return response;
-			}
-			
 			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
-
-			if (logger.isDebugEnabled()) {
-				logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-			}
-
 			response = executeCoreBanking(requestTransfer);
 
-			if (logger.isDebugEnabled()) {
-				logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
-				logger.logDebug(wInfo+ "response de central: " + response);
+			if(logger.isInfoEnabled())
+			{
+				logger.logInfo("Finaliza ejecución directa");
+			}
+
+		}else if(!getFromReentryExcecution(aBagSPJavaOrchestration)) {
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("codTar:" + codTarDeb + " opTcClaveBen:" + opTcClaveBen);
+			}
+			if (codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock JCOS
+			{
+				response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+			}
+			if (response.getReturnCode() != 0) {
+				return response;
+			}
+
+			// Validar el risk
+			if (validaRiesgo.equals("true")) {
+				executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+
+				if (aBagSPJavaOrchestration.get("success_risk") != null) {
+					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+
+					if (aBagSPJavaOrchestration.get("responseCode") != null) {
+						codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+					}
+
+					if (aBagSPJavaOrchestration.get("message") != null) {
+						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+					}
+
+					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {
+						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+					}
+
+					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo);
+
+					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+						response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
+
+						if (response.getReturnCode() != 0) {
+							return response;
+						}
+
+						IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+
+						if (logger.isDebugEnabled()) {
+							logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
+						}
+
+						response = executeCoreBanking(requestTransfer);
+
+						if (logger.isDebugEnabled()) {
+							logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+							logger.logDebug(wInfo + "response de central: " + response);
+						}
+
+					} else {
+						message = "OPERACIÓN NO PERMITIDA";
+						code = 2;
+
+						response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
+						response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());
+
+						return response;
+					}
+				} else {
+					message = "OPERACIÓN NO PERMITIDA";
+					code = 2;
+
+					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
+					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());
+
+					return response;
+				}
+			} else {
+				response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
+
+				if (response.getReturnCode() != 0) {
+					return response;
+				}
+
+				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
+				}
+
+				response = executeCoreBanking(requestTransfer);
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+					logger.logDebug(wInfo + "response de central: " + response);
+				}
 			}
 		}
 		
 		logger.logInfo(wInfo+END_TASK);
+
+
 
 		return response;
 	}
@@ -948,13 +1003,19 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		}
 		IProcedureResponse anProcedureResponse =  new ProcedureResponseAS();
 
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug("AES: "+privateKeyAes );
+		}
+
 		
-		Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaBen, properties.get("publicKey").toString());
+	   	Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaBen,privateKeyAes);
 		if(logger.isDebugEnabled())
 		{
 			logger.logDebug("[res]: + ctaDestEncrypt " + dataMapEncrypt);
+			logger.logDebug("JC tmp Send pan " + ctaBen);
 		}
-		
+
 		aBagSPJavaOrchestration.putAll(dataMapEncrypt);
 	
 		IProcedureResponse anProcedureResPan = findCardByPanConector(aBagSPJavaOrchestration);
