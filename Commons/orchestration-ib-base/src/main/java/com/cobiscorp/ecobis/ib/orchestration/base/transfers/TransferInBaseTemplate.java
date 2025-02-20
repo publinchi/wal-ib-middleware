@@ -45,6 +45,9 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
     protected static final String ERROR_SPEI = "ERROR EN TRANSFERENCIA SPEI";
     protected static final String INIT_TASK = "-----------------> init task ";
     protected static final String END_TASK = "-----------------> end task ";
+    protected static final String COBIS_HOME="COBIS_HOME";
+    protected static final String DockAes="Aeskey.pem";
+    protected static final String SecurityDock="/CTS_MF/security/Dock/";
 
 
     private static ILogger logger = LogFactory.getLogger(TransferInBaseTemplate.class);
