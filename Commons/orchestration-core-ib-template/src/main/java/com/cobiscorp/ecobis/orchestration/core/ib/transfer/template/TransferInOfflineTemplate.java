@@ -42,7 +42,12 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
         ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
-        // if is Offline and if is reentryExecution , have to leave
+        if (logger.isDebugEnabled()){
+            logger.logDebug("Status Servidor 1");
+            logger.logDebug(serverResponse);
+        }
+
+        // JC if is Offline and if is reentryExecution , have to leave
         if (Boolean.TRUE.equals(getFromReentryExcecution(aBagSPJavaOrchestration))) {
             if (Boolean.FALSE.equals(serverResponse.getOnLine())) {
                 IProcedureResponse resp = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
