@@ -643,13 +643,25 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	}
 	
 	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest) {
-		String wInfo = CLASS_NAME+"[getRequestTransfer] ";
-		logger.logInfo(wInfo + INIT_TASK);
+
+		String wInfo = CLASS_NAME+" [getRequestTransfer] ";
+
+
+		if (logger.isInfoEnabled()){
+
+			logger.logInfo(wInfo + INIT_TASK);
+			logger.logInfo(wInfo + INIT_TASK);
+			if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
+				logger.logInfo("JC Apply REENTRY_SSN_TRX" + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
+		}
+
 		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
 		procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500069");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
+			procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_SSN, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		procedureRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		boolean isReentryExecution = "Y".equals(anOriginalRequest.readValueFieldInHeader(REENTRY_EXE));
 
@@ -663,6 +675,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_mon", ICTSTypes.SYBINT4, "0");
 		procedureRequest.addInputParam("@i_fecha", ICTSTypes.SYBDATETIME, anOriginalRequest.readValueParam("@i_fechaOperacion"));
 		procedureRequest.addInputParam("@i_canal", ICTSTypes.SYBINT4, "9");
+		if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
+			procedureRequest.addInputParam("@s_ssn", ICTSTypes.SYBINT4, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 
 		procedureRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
