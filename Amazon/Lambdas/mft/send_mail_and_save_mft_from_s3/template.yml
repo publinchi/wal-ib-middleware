@@ -1,0 +1,271 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation Template to deploy the process_mft_and_send_mail Lambda function with EventBridge trigger and Secrets Manager secret.
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: process_mft_and_send_mail
+    Description: Name of the Lambda function
+  LambdaHandler:
+    Type: String
+    Default: lambda_function.lambda_handler
+    Description: The handler for the Lambda function
+  LambdaRuntime:
+    Type: String
+    Default: python3.10
+    AllowedValues:
+      - python3.10
+    Description: The runtime environment for the Lambda function
+  LambdaTimeout:
+    Type: Number
+    Default: 180
+    Description: Timeout in seconds for the Lambda function
+  LambdaMemorySize:
+    Type: Number
+    Default: 128
+    Description: Memory size in MB for the Lambda function
+  LambdaEphemeralStorage:
+    Type: Number
+    Default: 512
+    Description: Ephemeral storage in MB for the Lambda function
+  LambdaCodeS3Key:
+    Type: String
+    Default: lambda-code/code.zip
+    Description: S3 key (path) to the Lambda code file
+  LayerMFTS3Key:
+    Type: String
+    Default: lambda-code/layer.zip
+    Description: S3 key (path) to the MFT layer code file
+  BucketName:
+    Type: String
+    Default: bkt-wal01-dev-sftp-01
+    Description: Name of the S3 bucket
+  EventBusName:
+    Type: String
+    Default: default
+    Description: Name of the EventBridge event bus
+  Environment:
+    Type: String
+    Default: dev
+    Description: Environment name
+  StateEventRule:
+    Type: String
+    Default: ENABLED
+    AllowedValues:
+      - ENABLED
+      - DISABLED
+    Description: State of the EventBridge rule
+
+Resources:
+  SecretMFT:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${Environment}/SecretName/MFT"
+      Description: Secret for MFT
+      SecretString: !Sub |
+        {
+          "user": "your-mft-username",
+          "host": "your-mft-host",
+          "port": "your-mft-port"
+        }
+
+  SecretMFTPem:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${Environment}/SecretName/MFT_PEM"
+      Description: Secret for MFT PEM
+      SecretString: "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA7v...\n...\n-----END RSA PRIVATE KEY-----"
+
+  SecretDB:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${Environment}/SecretName/BDDL"
+      Description: Secret for Database
+      SecretString: !Sub |
+        {
+          "username": "your-db-username",
+          "password": "your-db-password",
+          "host": "your-db-host",
+          "port": "your-db-port",
+          "dbname": "cob_bvirtual"
+        }
+
+  ProcessMFTRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Role_lambda_process_mft
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: S3ReadAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub arn:aws:s3:::${BucketName}
+                  - !Sub arn:aws:s3:::${BucketName}/*
+        - PolicyName: SecretsManagerReadAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                Resource:
+                  - !Ref SecretMFT
+                  - !Ref SecretDB
+                  - !Ref SecretMFTPem
+
+  ProcessMFTLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Handler: !Ref LambdaHandler
+      Runtime: !Ref LambdaRuntime
+      Role: !GetAtt ProcessMFTRole.Arn
+      MemorySize: !Ref LambdaMemorySize
+      EphemeralStorage:
+        Size: !Ref LambdaEphemeralStorage
+      Timeout: !Ref LambdaTimeout
+      Environment:
+        Variables:
+          S3_FILES_BUCKET_NAME: !Ref BucketName
+          SECRET_NAME_DB: !Ref SecretDB
+          SECRET_NAME_MFT: !Ref SecretMFT
+          SECRET_NAME_MFT_PEM: !Ref SecretMFTPem
+      Layers:
+        - !Ref ProcessMFTLayer
+      Code:
+        S3Bucket: !Ref BucketName
+        S3Key: !Ref LambdaCodeS3Key
+
+  ProcessMFTLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      LayerName: processMFTLayer
+      Content:
+        S3Bucket: !Ref BucketName
+        S3Key: !Ref LayerMFTS3Key
+      CompatibleRuntimes:
+        - !Ref LambdaRuntime
+
+  ProcessMFTEventRuleMINDS:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${LambdaFunctionName}-event-MINDS
+      ScheduleExpression: cron(0 2 * * ? *)
+      State: !Ref StateEventRule
+      Targets:
+        - Arn: !GetAtt ProcessMFTLambda.Arn
+          Id: processMFTTargetMINDS
+          Input: |
+            {
+              "flow_name": "MINDS",
+              "user_execute": "eventbridge-MINDS"
+            }
+
+  ProcessMFTEventRuleIDC:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${LambdaFunctionName}-event-IDC
+      ScheduleExpression: cron(0 2 * * ? *)
+      State: !Ref StateEventRule
+      Targets:
+        - Arn: !GetAtt ProcessMFTLambda.Arn
+          Id: processMFTTargetIDC
+          Input: |
+            {
+              "flow_name": "IDC",
+              "user_execute": "eventbridge-IDC"
+            }
+
+  ProcessMFTEventRuleDOCK:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${LambdaFunctionName}-event-DOCK
+      ScheduleExpression: cron(0 3 * * ? *)
+      State: !Ref StateEventRule
+      Targets:
+        - Arn: !GetAtt ProcessMFTLambda.Arn
+          Id: processMFTTargetDOCK
+          Input: |
+            {
+              "flow_name": "DOCK",
+              "user_execute": "eventbridge-DOCK"
+            }
+
+  ProcessMFTEventRuleCRSP:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${LambdaFunctionName}-event-CRSP
+      ScheduleExpression: cron(0 3 * * ? *)
+      State: !Ref StateEventRule
+      Targets:
+        - Arn: !GetAtt ProcessMFTLambda.Arn
+          Id: processMFTTargetCRSP
+          Input: |
+            {
+              "flow_name": "CRSP",
+              "user_execute": "eventbridge-CRSP"
+            }
+
+  LambdaInvokePermissionMINDS:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessMFTLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessMFTEventRuleMINDS.Arn
+
+  LambdaInvokePermissionIDC:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessMFTLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessMFTEventRuleIDC.Arn
+
+  LambdaInvokePermissionDOCK:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessMFTLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessMFTEventRuleDOCK.Arn
+
+  LambdaInvokePermissionCRSP:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessMFTLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessMFTEventRuleCRSP.Arn
+
+Outputs:
+  LambdaFunctionARN:
+    Description: The ARN of the Lambda function
+    Value: !GetAtt ProcessMFTLambda.Arn
+  EventRuleARNMINDS:
+    Description: The ARN of the EventBridge rule for MINDS
+    Value: !GetAtt ProcessMFTEventRuleMINDS.Arn
+  EventRuleARNIDC:
+    Description: The ARN of the EventBridge rule for IDC
+    Value: !GetAtt ProcessMFTEventRuleIDC.Arn
+  EventRuleARNDOCK:
+    Description: The ARN of the EventBridge rule for DOCK
+    Value: !GetAtt ProcessMFTEventRuleDOCK.Arn
+  EventRuleARNCRSP:
+    Description: The ARN of the EventBridge rule for CRSP
+    Value: !GetAtt ProcessMFTEventRuleCRSP.Arn
