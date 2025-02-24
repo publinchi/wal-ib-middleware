@@ -46,8 +46,8 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
     protected static final String INIT_TASK = "-----------------> init task ";
     protected static final String END_TASK = "-----------------> end task ";
     protected static final String COBIS_HOME="COBIS_HOME";
-    protected static final String DockAes="Aeskey.pem";
-    protected static final String SecurityDock="/CTS_MF/security/Dock/";
+    protected static final String DOCKAES="Aeskey.pem";
+    protected static final String SECURITYDOCK="/CTS_MF/security/Dock/";
 
 
     private static ILogger logger = LogFactory.getLogger(TransferInBaseTemplate.class);
@@ -147,9 +147,6 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             }
         }
 
-        // Actualizacion local
-        IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
-        aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
 
         if (logger.isInfoEnabled())
             logger.logInfo(new StringBuilder(CLASS_NAME).append("Respuesta metodo executeStepsTransactionsBase: " + aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION)).toString());
@@ -211,7 +208,6 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             request.addInputParam("@i_tipoCuentaOrdenante", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaOrdenante"));
             request.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_idSpei"));
         }
-
         // Datos de tran monet
         Utils.copyParam("@i_cta", anOriginalRequest, request);
         Utils.copyParam("@i_mon", anOriginalRequest, request);
