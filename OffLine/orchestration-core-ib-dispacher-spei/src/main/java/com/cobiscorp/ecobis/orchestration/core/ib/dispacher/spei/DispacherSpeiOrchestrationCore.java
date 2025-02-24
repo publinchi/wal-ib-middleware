@@ -429,7 +429,9 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		{
 			String paramInsBen = getParam(request, "CBCCDK", "AHO");
 			String codTarDeb = getParam(request, "CODTAR", "BVI");
+			String codTelDeb = getParam(request, "CODTEL", "BVI");
 			aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
+			aBagSPJavaOrchestration.put("codTelDeb", codTarDeb);
 			aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
 			boolean isCoreError = false;
 			
@@ -1030,6 +1032,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 					validate = false;	
 				}else
 				{ 
+					if (logger.isDebugEnabled()) 
+					{
+						logger.logDebug("JC Tipo de cuenta "+opTcClaveBen);
+					}
+					
 					if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTarDeb")))
 					{
 						if( !digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
@@ -1044,6 +1051,21 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 								aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.");
 								validate = false;	
 							}
+					}else if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTelDeb"))) {
+						
+						
+						if( !digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
+						{
+							aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 34);
+							aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La cuenta del beneficiario solo puede ser numérica");
+							validate = false;	
+						}else
+							if(!(msjIn.getOrdenpago().getOpCuentaBen().length()==10))
+							{
+								aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
+								aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Telefono, la cuenta del beneficiario debe ser de 10 dígitos.");
+								validate = false;	
+							}						
 					}
 						
 				}

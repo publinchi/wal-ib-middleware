@@ -81,7 +81,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		if(privateKeyAes==null || privateKeyAes.isEmpty()){
 
-			String pathSecurityAes = System.getProperty(COBIS_HOME).concat(SecurityDock).concat(DockAes);
+			String pathSecurityAes = System.getProperty(COBIS_HOME).concat(SECURITYDOCK).concat(DOCKAES);
 
 			if (logger.isInfoEnabled()) {
 				logger.logInfo("Loading private key by firts time");
@@ -100,7 +100,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			    	logger.logError(xe);
 			}
 			if (logger.isInfoEnabled())
-		    	logger.logInfo("the key has been loaded "+privateKeyAes);
+		    	logger.logInfo("jc the key has been loaded "+privateKeyAes);
 
 		}
 
@@ -313,10 +313,14 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
 		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
+		String codTelDeb = getParam(anOriginalRequest, "CODTEL", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("codTarDeb: "+codTarDeb);
+		
+		if (logger.isInfoEnabled())
+			logger.logInfo("codTelDeb: "+codTelDeb);
 
 		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
@@ -344,9 +348,18 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			if (logger.isInfoEnabled()) {
 				logger.logInfo("codTar:" + codTarDeb + " opTcClaveBen:" + opTcClaveBen);
 			}
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("codTar:" + codTarDeb + " opTcClaveBen:" + opTcClaveBen);
+			}
+			
 			if (codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock JCOS
 			{
 				response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+			}
+			else if(codTelDeb.equals(opTcClaveBen)) {
+				
+				response = validateAccountPhone(anOriginalRequest);
 			}
 			if (response.getReturnCode() != 0) {
 				return response;
@@ -354,6 +367,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 			// Validar el risk
 			if (validaRiesgo.equals("true")) {
+				
+				if (logger.isDebugEnabled()) {					
+					logger.logDebug("Flujo, Valida Resgo");					
+				}
+				
 				executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 
 				if (aBagSPJavaOrchestration.get("success_risk") != null) {
@@ -370,9 +388,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {
 						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
 					}
-
-					logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo);
-
+					
+					if (logger.isDebugEnabled()) {	
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo);
+					}
 					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
 						response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
 
@@ -384,13 +403,22 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 						if (logger.isDebugEnabled()) {
 							logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-						}
-
-						response = executeCoreBanking(requestTransfer);
-
-						if (logger.isDebugEnabled()) {
-							logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
-							logger.logDebug(wInfo + "response de central: " + response);
+						}	
+							response = executeCoreBanking(requestTransfer);		
+							
+							if (logger.isDebugEnabled()) {
+								logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+								logger.logDebug(wInfo + "response de central: " + response);
+							}
+						if(!serverResponse.getOnLine()) { 
+							
+					        IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+					        aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
+							
+							if (logger.isDebugEnabled()) {
+								logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+								logger.logDebug(wInfo + "response de local: " + response);
+							}							
 						}
 
 					} else {
@@ -412,19 +440,47 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					return response;
 				}
 			} else {
+				
+				if (logger.isDebugEnabled()) {					
+					logger.logInfo("Flujo, No Valida Resgo");					
+				}
+				
 				response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
 
 				if (response.getReturnCode() != 0) {
 					return response;
 				}
 
-				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);			
+
 
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-				}
+				}			
+					
+					logger.logInfo("Aplicando transaccion online");
 
-				response = executeCoreBanking(requestTransfer);
+					response = executeCoreBanking(requestTransfer);		
+					
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+						logger.logDebug(wInfo + "response de central: " + response);
+					}
+				if(!serverResponse.getOnLine()) { 
+					
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("Aplicando transaccion offline");
+					}
+					
+			        IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+			        aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
+					
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+						logger.logDebug(wInfo + "response de local: " + response);
+					}
+				}
+				
 
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
@@ -548,16 +604,22 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
 		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));		
 		
-		if ("10".equals(tipoCuentaBeneficiarioS)) {
+		/*if ("10".equals(tipoCuentaBeneficiarioS)) {
 			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
 		}
-		else {
+		else {*/
+		if ("40".equals(tipoCuentaBeneficiarioS)) {
 			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
+		}else if("03".equals(tipoCuentaBeneficiarioS) || "10".equals(tipoCuentaBeneficiarioS)){
+			
+			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		}
+
+			
 		
-		if (Objects.nonNull(tipoCuentaBeneficiarioS) && tipoCuentaBeneficiarioS.equals(codTarDeb)) {
+	/*	if (Objects.nonNull(tipoCuentaBeneficiarioS) && tipoCuentaBeneficiarioS.equals(codTarDeb)) {
 			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
-		}
+		} */
 		
 		Integer code = 0;
         String message = "success";
@@ -989,6 +1051,55 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return wProductsQueryResp;
 	}
 	
+	private IProcedureResponse findAccountByPhone(String phoneNumber) {
+		
+		
+		String wInfo = CLASS_NAME+"[findAccountByPhone] ";		
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo(wInfo + INIT_TASK);
+		}
+
+		IProcedureRequest procedureRequest = new ProcedureRequestAS();		
+		
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);		
+
+		procedureRequest.setSpName("cob_bvirtual..sp_bv_account_phone");
+		
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "P");
+		procedureRequest.addInputParam("@i_phone", ICTSTypes.SQLVARCHAR, phoneNumber);
+		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "SMS");
+		procedureRequest.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "XXXXX");	
+		procedureRequest.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");	
+		
+		IProcedureResponse ProcedureResponse =  executeCoreBanking(procedureRequest);
+		
+		return ProcedureResponse;
+	}
+	
+	private IProcedureResponse validateAccountPhone(IProcedureRequest anOriginalRequest) {
+		
+		String phoneNumber=anOriginalRequest.readValueParam("@i_cuentaBeneficiario");
+		
+        if(logger.isInfoEnabled())
+		{
+			logger.logInfo("validateAccountPhone:"+ phoneNumber );
+		}
+        
+        IProcedureResponse anProcedureResponse= this.findAccountByPhone(phoneNumber);   
+        
+        anOriginalRequest.setValueParam("@i_cuentaBeneficiario", (String) anProcedureResponse.readValueParam("@o_account"));
+		
+        if(logger.isInfoEnabled())
+		{
+			logger.logInfo("Cuenta beneficiario phone : "+ anOriginalRequest.readValueParam("@i_cuentaBeneficiario") );
+		}
+        
+        
+		return anProcedureResponse;
+		
+	}
 	
 	private IProcedureResponse validateCardAccount(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration)
 	{
