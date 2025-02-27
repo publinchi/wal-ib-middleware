@@ -204,6 +204,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			logger.logError(e.toString());
 		}
 		
+		String msgError = "";
+		
+	    /* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine(), msgError)) {
+		   aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(msgError));
+		   return Utils.returnException(msgError);
+		}
+		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		logger.logDebug("Response Online: " + responseServer.getOnLine());
         anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
