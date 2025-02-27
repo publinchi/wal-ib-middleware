@@ -83,6 +83,15 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logError(e.toString());
 		}
 		
+		String msgError = "";
+			
+	    /* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus, msgError)) {
+		   aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(msgError));
+		   return Utils.returnException(msgError);
+		}
+			
+		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
