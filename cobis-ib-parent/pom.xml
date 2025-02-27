@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.cobiscorp.cobis</groupId>
     <artifactId>cobis-app-parent</artifactId>
-    <version>1.1.0</version>
+    <version>2.2.0</version>
   </parent>
   <groupId>com.cobiscorp.cobis</groupId>
   <artifactId>cobis-ib-parent</artifactId>
@@ -222,6 +222,31 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
+                <configuration>
+                    <!-- Indica que se reporten unicamente los bug de prioridad High,Default,
+                                      Low -->
+                    <threshold>High</threshold>
+                    <skip>${skip.findbugs}</skip>
+                    <excludeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Exclude.xml</excludeFilterFile>
+                    <includeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Include.xml</includeFilterFile>
+                    <xmlOutput>true</xmlOutput>
+                    <outputDirectory>${basedir}/target/</outputDirectory>
+                    <findbugsXmlOutputDirectory>${basedir}/target/finbugs</findbugsXmlOutputDirectory>
+                    <detail>true</detail>
+                    <failOnError>${findbugs.fail.on.violation}</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			</plugins>
     </pluginManagement>
   </build>
