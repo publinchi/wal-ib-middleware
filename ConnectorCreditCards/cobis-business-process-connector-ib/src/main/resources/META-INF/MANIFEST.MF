@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Build-Jdk: 1.8.0_231
+Built-By: jtagle
+Bundle-ManifestVersion: 2
+Bundle-Name: cobis-business-process-connector-ib
+Bundle-Version: 1.0.0
