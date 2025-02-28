@@ -3,6 +3,7 @@ import pymssql
 import paramiko
 import json
 import os
+import socket
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from aws_secretsmanager_caching import SecretCache, SecretCacheConfig
 from io import StringIO
@@ -11,7 +12,8 @@ from io import StringIO
 SECRET_NAME_MFT = os.environ.get('SECRET_NAME_MFT', '')
 SECRET_NAME_MFT_PEM = os.environ.get('SECRET_NAME_MFT_PEM', '')
 S3_FILES_BUCKET_NAME = os.environ.get('S3_FILES_BUCKET_NAME', '')
-SECRET_NAME_DB = os.environ.get('SECRET_NAME_DB')
+SECRET_NAME_DB = os.environ.get('SECRET_NAME_DB', '')
+TIMEOUT_MFT_CONNECTION = os.environ.get('TIMEOUT_MFT_CONNECTION', 60)
 PROCEDURE_NAME = 'cob_bvirtual..sp_mft_operations'
 BUSINESS_CODE_ERROR = 600
 BUSINESS_CODE_SUCCESS = 200
@@ -230,15 +232,18 @@ def save_file_to_sftp(file_path_local, path,context):
         private_key = paramiko.RSAKey.from_private_key(StringIO(secret_value_pem))
 
         transport = paramiko.Transport((host, port))
-        transport.connect(username=user, pkey=private_key)
+        transport.connect(username=user, pkey=private_key, )
 
         sftp = paramiko.SFTPClient.from_transport(transport)
+        sftp.get_channel().settimeout(int(TIMEOUT_MFT_CONNECTION))
 
         create_sftp_directory(sftp, path)
         file_name = get_basename(file_path_local)
 
         path = os.path.join(path, file_name)
         sftp.put(file_path_local, remotepath=path)
+    except socket.timeout as e:
+        raise BusinessException(f"Error de tiempo de espera al subir archivo a SFTP. Revisar configuración de timeout")
     except Exception as e:
         raise BusinessException(f"Error al subir archivo a SFTP: {e}")
     finally:
