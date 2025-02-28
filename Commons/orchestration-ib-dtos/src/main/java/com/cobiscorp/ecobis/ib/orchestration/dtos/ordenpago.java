@@ -20,7 +20,7 @@ public class ordenpago implements Serializable{
 			int opMeClave, String opUsuClave, String opNomOrd, int opTcClaveOrd, String opCuentaOrd,
 			String opRfcCurpOrd, String opNomBen, int opTcClaveBen, String opCuentaBen, String opNomBen2,
 			int opTcClaveBen2, String opCuentaBen2, String opConceptoPago, int opRefNumerica, String opFirmaDig,
-			int opToClave, String opConceptoPag2, String Id) {
+			int opToClave, String opConceptoPag2, String Id, int paqFolio) {
 		super();
 		this.OpFechaOper = opFechaOper;
 		this.OpFolio = opFolio;
@@ -50,6 +50,7 @@ public class ordenpago implements Serializable{
 		this.OpToClave = opToClave;
 		this.OpConceptoPag2 = opConceptoPag2;
 		this.Id = Id;
+		this.paqFolio = paqFolio;
 	}
 	@XmlAttribute(name="Id")
 	private String Id;
@@ -191,6 +192,9 @@ public class ordenpago implements Serializable{
     
 	@XmlElement
     private String opNomProvRemesaExtranjera;
+	
+	@XmlElement
+	private int paqFolio;
 	
 	/**
 	 * @return the opRastreoOri
@@ -722,5 +726,15 @@ public class ordenpago implements Serializable{
 	{
 		this.opFolioOri = opFolioOri;
 	}
+
+	public int getPaqFolio() {
+		return paqFolio;
+	}
+
+	public void setPaqFolio(int paqFolio) {
+		this.paqFolio = paqFolio;
+	}
+	
+	
     
 }
