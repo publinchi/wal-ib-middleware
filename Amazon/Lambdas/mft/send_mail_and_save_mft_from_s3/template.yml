@@ -36,6 +36,10 @@ Parameters:
     Type: String
     Default: lambda-code/layer.zip
     Description: S3 key (path) to the MFT layer code file
+  TimeoutMFTConnection:
+    Type: Number
+    Default: 150
+    Description: Timeout in seconds for the MFT connection
   BucketName:
     Type: String
     Default: bkt-wal01-dev-sftp-01
@@ -145,6 +149,7 @@ Resources:
           SECRET_NAME_DB: !Ref SecretDB
           SECRET_NAME_MFT: !Ref SecretMFT
           SECRET_NAME_MFT_PEM: !Ref SecretMFTPem
+          TIMEOUT_MFT_CONNECTION: !Ref TimeoutMFTConnection
       Layers:
         - !Ref ProcessMFTLayer
       Code:
