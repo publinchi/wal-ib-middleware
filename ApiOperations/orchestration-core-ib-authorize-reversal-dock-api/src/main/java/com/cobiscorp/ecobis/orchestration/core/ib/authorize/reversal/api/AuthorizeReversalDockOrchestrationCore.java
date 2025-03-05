@@ -83,12 +83,12 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logError(e.toString());
 		}
 		
-		String msgError = "";
-			
-	    /* Validar comportamiento transaccion */
-		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus, msgError)) {
-		   aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(msgError));
-		   return Utils.returnException(msgError);
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		
+		/* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus)) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
 		}
 			
 		
