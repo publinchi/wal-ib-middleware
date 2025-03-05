@@ -204,12 +204,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			logger.logError(e.toString());
 		}
 		
-		String msgError = "";
+	    aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+        
 		
-	    /* Validar comportamiento transaccion */
-		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine(), msgError)) {
-		   aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(msgError));
-		   return Utils.returnException(msgError);
+		/* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
 		}
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();

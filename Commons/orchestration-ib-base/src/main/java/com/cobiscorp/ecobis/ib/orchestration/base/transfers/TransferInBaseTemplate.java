@@ -49,6 +49,7 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
     protected static final String COBIS_HOME="COBIS_HOME";
     protected static final String DOCKAES="Aeskey.pem";
     protected static final String SECURITYDOCK="/CTS_MF/security/Dock/";
+	public String MESSAGE_RESPONSE =  "SUCCESS";
 
 
     private static ILogger logger = LogFactory.getLogger(TransferInBaseTemplate.class);
@@ -117,20 +118,17 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
         logger.logInfo("SERVER RESPONSE: "+responseServer.toString());
         aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
 
-        String msgError = "";
+	    aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest); 
 		
 		/* Validar comportamiento transaccion */
-		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine(), msgError)) {
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(msgError));
-			return Utils.returnException(msgError);
+		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
 		}
-        
         if(anOriginalRequest.readValueFieldInHeader("comision") != null) {
             if (logger.isInfoEnabled())
                 logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
         }
-
-        SUPPORT_OFFLINE = true;
 
         // Valida firmas fisicas
         IProcedureResponse responseSigner = new ProcedureResponseAS();
@@ -290,13 +288,15 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
         return pResponse;
     }
 
-    private Boolean validateContextTransacction(Map<String, Object> aBagSPJavaOrchestration, Boolean isOnline, String msgError) {
+    public Boolean validateContextTransacction(Map<String, Object> aBagSPJavaOrchestration, Boolean isOnline) {
 		//Valida el fuera de línea
 		  boolean SUPPORT_OFFLINE = false;
 		  boolean SUPPORT_HABILITA = false;
+		  
 		
 				if (logger.isInfoEnabled())
 					logger.logInfo("Llama a la funcion validateBvTransaction");
+				
 				
 				 Map<String, Object> responseContextTrans = validateBvTransaction(aBagSPJavaOrchestration);	
 				 
@@ -307,14 +307,14 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
 					logger.logInfo("responseSupportOffline ---> " + responseContextTrans);
 				
 				if(responseContextTrans == null || responseSupportOffline.isEmpty()) {
-					msgError = "Ha ocurrido un error intentando validar si la transferencia permite fuera de línea";
+					MESSAGE_RESPONSE = "Ha ocurrido un error intentando validar si la transferencia permite fuera de línea";
 					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Ha ocurrido un error intentando validar si la transferencia permite fuera de línea"));
 					//return Utils.returnException("Ha ocurrido un error intentando validar si la transferencia permite fuera de línea");
 					return false;
 				}
 				
 				if(responseHabilitado == null || responseHabilitado.isEmpty()) {
-					msgError = "Ha ocurrido un error intentando validar si la transferencia esta habilitada";
+					MESSAGE_RESPONSE = "Ha ocurrido un error intentando validar si la transferencia esta habilitada";
 					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Ha ocurrido un error intentando validar si la transferencia esta habilitada"));
 					//return Utils.returnException("Ha ocurrido un error intentando validar si la transferencia esta habilitada");
 					return false;
@@ -333,14 +333,14 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
 				}
 				
 				if (!SUPPORT_OFFLINE && !isOnline) {
-					msgError = "Transferencia no permite ejecución mientras el servidor este fuera de linea";
+					MESSAGE_RESPONSE = "Transferencia no permite ejecución mientras el servidor este fuera de linea";
 					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Transferencia no permite ejecución mientras el servidor este fuera de linea"));
 					//return Utils.returnException("Transferencia no permite ejecución mientras el servidor este fuera de linea");	
 					return false;
 				}
 				
 				if (!SUPPORT_HABILITA) {
-					msgError = "Transaccion no habilitada, revise la parametrizacion";
+					MESSAGE_RESPONSE = "Transaccion no habilitada, revise la parametrizacion";
 					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Transferencia no habilitada"));
 					//return Utils.returnException("Transferencia no habilitada");	
 					return false;
@@ -349,6 +349,7 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
 				return true;
 
 	}
+
 
     protected Map<String, Object> validateBvTransaction(Map<String, Object> aBagSPJavaOrchestration) {
 		
