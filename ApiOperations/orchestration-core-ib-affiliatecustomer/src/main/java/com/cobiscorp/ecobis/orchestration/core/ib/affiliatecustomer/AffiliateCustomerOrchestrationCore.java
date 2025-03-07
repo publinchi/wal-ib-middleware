@@ -197,7 +197,7 @@ public class AffiliateCustomerOrchestrationCore extends SPJavaOrchestrationBase 
 				reqTMPLocal.addInputParam("@i_pc_oficial", ICTSTypes.SQLINT4, columns[5].getValue());
 				reqTMPLocal.addInputParam("@i_pc_oficina", ICTSTypes.SQLINT4, columns[6].getValue());
 				reqTMPLocal.addInputParam("@i_pc_pnombre", ICTSTypes.SQLVARCHAR, columns[7].getValue());
-				reqTMPLocal.addInputParam("@i_pc_papellido ", ICTSTypes.SQLVARCHAR, columns[8].getValue());
+				reqTMPLocal.addInputParam("@i_pc_papellido", ICTSTypes.SQLVARCHAR, columns[8].getValue());
 				reqTMPLocal.addInputParam("@i_pc_sapellido", ICTSTypes.SQLVARCHAR, columns[9].getValue());
 				reqTMPLocal.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, user);
 				reqTMPLocal.addInputParam("@i_password", ICTSTypes.SQLVARCHAR, password);
