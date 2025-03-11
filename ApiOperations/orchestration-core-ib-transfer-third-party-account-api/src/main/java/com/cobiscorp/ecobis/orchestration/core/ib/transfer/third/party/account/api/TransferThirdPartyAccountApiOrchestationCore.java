@@ -402,7 +402,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		                  
 								anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
 								if(aBagSPJavaOrchestration.get("ssn")!=null && !aBagSPJavaOrchestration.get("ssn").toString().isEmpty()) {
+									if(aBagSPJavaOrchestration.get("unique_id_card")!=null && !aBagSPJavaOrchestration.get("unique_id_card").toString().isEmpty()) {
+										anOriginalRequestClone.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("unique_id_card").toString());
+									}
 									anProcedureResponse = saveReentry(anOriginalRequestClone, aBagSPJavaOrchestrationClone);
+									anOriginalRequestClone.setValueParam("@i_cta_des", ctaDest);
 								}
 							} else {
 								IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
@@ -421,6 +425,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						logger.logInfo(CLASS_NAME + "Parametro3 @ssn: " + anOriginalRequest.readValueParam("@s_ssn"));}
 						
 					anProcedureResponse = executeOfflineThirdAccountTransferCobis(anOriginalRequest, aBagSPJavaOrchestration);
+					if(aBagSPJavaOrchestration.get("ssn")!=null && !aBagSPJavaOrchestration.get("ssn").toString().isEmpty()) {
+						if(aBagSPJavaOrchestration.get("unique_id_card")!=null && !aBagSPJavaOrchestration.get("unique_id_card").toString().isEmpty()) {
+							anOriginalRequestClone.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("unique_id_card").toString());
+						}
+						anProcedureResponse = saveReentry(anOriginalRequestClone, aBagSPJavaOrchestrationClone);
+					}
 					}
 					/*
 					 * if(anProcedureResponse.getReturnCode()==0){
