@@ -59,6 +59,10 @@ Parameters:
       - ENABLED
       - DISABLED
     Description: State of the EventBridge rule
+  LogRetentionInDays:
+    Type: Number
+    Default: 14
+    Description: Retention period in days for the log group
 
 Resources:
   SecretMFT:
@@ -93,6 +97,12 @@ Resources:
           "port": "your-db-port",
           "dbname": "cob_bvirtual"
         }
+
+  ProcessMFTLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${LambdaFunctionName}"
+      RetentionInDays: !Ref LogRetentionInDays
 
   ProcessMFTRole:
     Type: AWS::IAM::Role
@@ -131,6 +141,18 @@ Resources:
                   - !Ref SecretMFT
                   - !Ref SecretDB
                   - !Ref SecretMFTPem
+        - PolicyName: CloudWatchLogsAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub arn:aws:logs:*:*:log-group:/aws/lambda/${LambdaFunctionName}
+                  - !Sub arn:aws:logs:*:*:log-group:/aws/lambda/${LambdaFunctionName}:*
 
   ProcessMFTLambda:
     Type: AWS::Lambda::Function
@@ -233,6 +255,7 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
       SourceArn: !GetAtt ProcessMFTEventRuleMINDS.Arn
+    DependsOn: ProcessMFTEventRuleMINDS
 
   LambdaInvokePermissionIDC:
     Type: AWS::Lambda::Permission
@@ -241,6 +264,7 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
       SourceArn: !GetAtt ProcessMFTEventRuleIDC.Arn
+    DependsOn: ProcessMFTEventRuleIDC
 
   LambdaInvokePermissionDOCK:
     Type: AWS::Lambda::Permission
@@ -249,6 +273,7 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
       SourceArn: !GetAtt ProcessMFTEventRuleDOCK.Arn
+    DependsOn: ProcessMFTEventRuleDOCK
 
   LambdaInvokePermissionCRSP:
     Type: AWS::Lambda::Permission
@@ -257,6 +282,7 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
       SourceArn: !GetAtt ProcessMFTEventRuleCRSP.Arn
+    DependsOn: ProcessMFTEventRuleCRSP
 
 Outputs:
   LambdaFunctionARN:
