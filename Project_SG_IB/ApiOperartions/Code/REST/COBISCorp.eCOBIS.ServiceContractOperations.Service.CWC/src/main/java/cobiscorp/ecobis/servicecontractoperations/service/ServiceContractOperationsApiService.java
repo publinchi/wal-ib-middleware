@@ -2329,15 +2329,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         } else if (!isAlpha(lastName)) {
             lastName = "S";
         }
-
-        if (secondLastName.equals("null") || secondLastName.trim().isEmpty()) {
-            secondLastName = "E";
-        } else if (secondLastName.trim().length() < 2) {
-            secondLastName = "L";
-        } else if (isNumeric(secondLastName)) {
-            secondLastName = "N";
-        } else if (!isAlpha(secondLastName)) {
-            secondLastName = "S";
+        
+        if (secondLastName != null && !secondLastName.isEmpty()) {
+            if (secondLastName.trim().length() < 2) {
+            	secondLastName = "L";
+            } else if (isNumeric(secondLastName)) {
+            	secondLastName = "N";
+            } else if (!isAlpha(secondLastName)) {
+            	secondLastName = "S";
+            }
         }
 
         if (secondName != null && !secondName.isEmpty()) {
