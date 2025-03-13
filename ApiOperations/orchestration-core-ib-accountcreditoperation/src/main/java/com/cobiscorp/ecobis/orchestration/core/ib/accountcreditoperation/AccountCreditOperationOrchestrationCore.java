@@ -95,16 +95,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		logger.logDebug("Response Online: " + responseServer.getOnLine() + " Response flowRty" + flowRty);
-		
-		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
-        
-		
-		/* Validar comportamiento transaccion */
-		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
-			return Utils.returnException(this.MESSAGE_RESPONSE);
-		}
-		
 		if (responseServer != null && !responseServer.getOnLine()) {
 			aBagSPJavaOrchestration.put("IsReentry", "S");
 			if (!flowRty){
