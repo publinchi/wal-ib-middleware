@@ -1086,6 +1086,9 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	}
 	
 	private String unifyDateFormat(String dateString) {
+		Date date = null;
+		String horMinSeg = "";
+		
         String[] formats = {
             "yyyy-MM-dd HH:mm:ssZ",
 			"yyyy/MM/dd HH:mm:ssZ",
@@ -1100,10 +1103,19 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
             "yyyy-MM-dd HH:mm:ss.SSSXXX",
 			"yyyy/MM/dd HH:mm:ss.SSSXXX",
             "yyyy-MM-dd HH:mm:ssXXX",
-			"yyyy/MM/dd HH:mm:ssXXX"
+			"yyyy/MM/dd HH:mm:ssXXX",
+			"MM/dd/yyyy",
+            "yyyyMMdd",
+            "EEE MMM dd HH:mm:ss z yyyy"
         };
 
-        Date date = null;
+        if (dateString != null) {
+        	horMinSeg = dateString.substring(10, dateString.length()).trim();
+        	if ( horMinSeg.equals("00:00:00.000")){
+        		dateString = dateString.substring(0, 10);
+        	}
+        }
+        
         String newDate = dateString;
 
         for (String format : formats) {
@@ -1111,6 +1123,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
                 SimpleDateFormat sdf = new SimpleDateFormat(format);
                 sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Establecer zona horaria si es necesario
                 date = sdf.parse(dateString);
+                date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
                 break; // Si se analiza correctamente, salir del bucle
             } catch (ParseException ignored) {
                 // Ignorar y continuar con el siguiente formato
