@@ -315,7 +315,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				 }
 				
 				if(tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK)) {
-					if (aRequest.readValueParam("@i_bank_account_number") != null ) {
+					if (aRequest.readValueParam("@i_bank_account_number") != null && !"null".equals(aRequest.readValueParam("@i_bank_account_number"))) {
 						bank_account_number = aRequest.readValueParam("@i_bank_account_number");
 					}else {
 						bank_account_number = aRequest.readValueParam("@i_account_id");
