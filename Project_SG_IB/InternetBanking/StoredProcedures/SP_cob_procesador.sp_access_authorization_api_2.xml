@@ -33,12 +33,15 @@
     <parameter name="@i_maxMinutesGeo" dataType="int" direction="in" />
     <parameter name="@i_activateGeo" dataType="varchar" direction="in" />
     <parameter name="@i_deviceId" dataType="varchar" direction="in" />
+    <parameter name="@i_sessionId" dataType="varchar" direction="in" />
+    <parameter name="@i_operacion" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
       <columns>
         <column name="accessGranted" />
         <column name="description" />
+        <column name="sessionId" />
       </columns>
       <queryText>SELECT "code"=0,"message"="Success"</queryText>
     </query>
