@@ -2987,7 +2987,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
         try {
             IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
-
+            request.removeFieldInHeader("ssn_branch");
             // SE SETEAN DATOS
             request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
             request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
