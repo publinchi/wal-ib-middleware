@@ -1088,6 +1088,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	private String unifyDateFormat(String dateString) {
 		Date date = null;
 		String horMinSeg = "";
+		String newDate = "";
 		
         String[] formats = {
             "yyyy-MM-dd HH:mm:ssZ",
@@ -1110,13 +1111,21 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
         };
 
         if (dateString != null) {
-        	horMinSeg = dateString.substring(10, dateString.length()).trim();
-        	if ( horMinSeg.equals("00:00:00.000")){
-        		dateString = dateString.substring(0, 10);
+        	try {
+        		if (dateString.length() > 10) {
+		        	horMinSeg = dateString.substring(10, dateString.length()).trim();
+		        	if ( horMinSeg.equals("00:00:00.000")){
+		        		dateString = dateString.substring(0, 10);
+		        	}
+        		}
+        	}catch(Exception e) {
+        		if(logger.isDebugEnabled()){
+					logger.logDebug("Fecha: "+ dateString);
+				}
         	}
         }
         
-        String newDate = dateString;
+        newDate = dateString;
 
         for (String format : formats) {
             try {
