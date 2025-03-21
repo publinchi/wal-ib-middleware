@@ -39,6 +39,7 @@ import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Institucion;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
@@ -170,114 +171,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	 */
 	private static ILogger logger = LogFactory.getLogger(DispacherSpeiOrchestrationCore.class);
 	
-	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
-	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
-
-	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = service;
-	}
-
-	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = null;
-	}
-
-	/**
-	 * Instance plugin to use services other core banking
-	 */
-	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
-	protected ICoreServer coreServer;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServer(ICoreServer service) {
-		coreServer = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServer(ICoreServer service) {
-		coreServer = null;
-	}
-
-	/**
-	 * Instance plugin to use services other core banking
-	 */
-	@Reference(referenceInterface = ICoreServiceSelfAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceSelfAccountTransfers", unbind = "unbindCoreServiceSelfAccountTransfers")
-	private ICoreServiceSelfAccountTransfers coreServiceSelfAccountTransfers;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = null;
-	}
-
-	@Override
-	public ICoreService getCoreService() {
-		return coreService;
-	}
-
-	/**
-	 * Instance plugin to use services other core banking
-	 */
-	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
-	protected ICoreService coreService;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreService(ICoreService service) {
-		coreService = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreService(ICoreService service) {
-		coreService = null;
-	}
-
-	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
-	public ICoreServiceSendNotification coreServiceNotification;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = null;
-	}
+	
 
 	/**
 	 * /** Execute transfer first step of service
@@ -315,7 +209,17 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if (message != null) {
 				aBagSPJavaOrchestration.put("speiTransaction", message);
 				//llamada a log entrante
-				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null,anOriginalRequest.readValueParam("@i_pay_order"));
+				CardPAN card= new CardPAN();
+				
+				if( message.getOrdenpago().getOpTcClaveBen()==3)
+				{
+					xmls.replace(message.getOrdenpago().getOpCuentaBen(), card.maskNumber(message.getOrdenpago().getOpCuentaBen()));
+				}
+		        if( message.getOrdenpago().getOpTcClaveOrd()==3)
+		        {
+		        	xmls.replace(message.getOrdenpago().getOpCuentaOrd(), card.maskNumber(message.getOrdenpago().getOpCuentaOrd()));
+		        }
+				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null, xmls);
 				executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 			}
 			
@@ -1343,6 +1247,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		}
 		Integer logId = 0;
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		CardPAN card= new CardPAN();
 		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
 		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_log_conn_karpay");
 		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
@@ -1368,12 +1273,26 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	        
 	        // Formatea la fecha a MM/dd/yyyy
 	        String processDate = date.format(outputFormatter);
+	        
+	        //enmascara las tarjetas
+	        String opCuentaBen="";
+			String opCuentaOrd="";
 			
-			requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+	        if( msjIn.getOrdenpago().getOpTcClaveBen()==3)
+	        	opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
+	        else
+	        	opCuentaBen = msjIn.getOrdenpago().getOpCuentaBen();
+	        
+	        if( msjIn.getOrdenpago().getOpTcClaveOrd()==3)
+	        	opCuentaOrd = card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd());
+	        else
+	        	opCuentaOrd = msjIn.getOrdenpago().getOpCuentaOrd();
+			
+	        requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 			requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
+			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, opCuentaOrd);
 			requestProcedureLocal.addInputParam("@i_lc_institucion_ordenante",ICTSTypes.SQLVARCHAR, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
-			requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
+			requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  opCuentaBen);
 			requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
 			requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
 			requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
@@ -1517,5 +1436,114 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		} catch(Exception ex) {
 			return defaultValue;
 		}
+	}
+	
+	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
+	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
+
+	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = service;
+	}
+
+	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = null;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+	protected ICoreServer coreServer;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServer(ICoreServer service) {
+		coreServer = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServer(ICoreServer service) {
+		coreServer = null;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServiceSelfAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceSelfAccountTransfers", unbind = "unbindCoreServiceSelfAccountTransfers")
+	private ICoreServiceSelfAccountTransfers coreServiceSelfAccountTransfers;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = null;
+	}
+
+	@Override
+	public ICoreService getCoreService() {
+		return coreService;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+	protected ICoreService coreService;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreService(ICoreService service) {
+		coreService = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreService(ICoreService service) {
+		coreService = null;
+	}
+
+	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
+	public ICoreServiceSendNotification coreServiceNotification;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = null;
 	}
 }
