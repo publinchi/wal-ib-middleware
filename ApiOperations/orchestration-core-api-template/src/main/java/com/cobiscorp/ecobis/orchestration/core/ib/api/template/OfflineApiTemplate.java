@@ -2,6 +2,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.api.template;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
@@ -12,6 +13,7 @@ import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSInfrastructureException;
 import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
+import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
@@ -30,6 +32,13 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
+	
+	protected static final String CLASS_NAME = " >-----> ";
+	protected static final String COBIS_CONTEXT = "COBIS";
+	protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
+	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
+	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION"; 
+	public String MESSAGE_RESPONSE =  "SUCCESS";
 
 	public Boolean getServerStatus() throws CTSServiceException, CTSInfrastructureException {
 		ServerRequest serverRequest = new ServerRequest();
