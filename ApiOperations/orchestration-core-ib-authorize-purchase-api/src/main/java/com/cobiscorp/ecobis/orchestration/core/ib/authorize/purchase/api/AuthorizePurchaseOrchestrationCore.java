@@ -81,6 +81,7 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		IProcedureResponse anProcedureResponseVal;
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		if(logger.isDebugEnabled()){
@@ -93,6 +94,16 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			if (!flowRty){
 				
 				anProcedureResponse = valDataLocal(anOriginalRequest, aBagSPJavaOrchestration);
+				logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponse);
+				aBagSPJavaOrchestration.put("debitoCredito", "D");
+				aBagSPJavaOrchestration.put("accountNumber", anOriginalRequest.readValueParam("@i_account_number"));
+				anProcedureResponseVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+				if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+					logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
+					aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
+					aBagSPJavaOrchestration.put("message_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
+					return processResponseApi(anOriginalRequest, anProcedureResponseVal,aBagSPJavaOrchestration);
+				}
 				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 
 					if(logger.isDebugEnabled()){
@@ -371,7 +382,16 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		}
 		aBagSPJavaOrchestration.put("@o_causal", wProductsQueryResp.readValueParam("@o_causal"));
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
-		aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
+
+		ResultSetRowColumnData resultSetData = (ResultSetRowColumnData) wProductsQueryResp.getResultSetRowColumnData(3, 1, 1);
+
+		if (resultSetData != null) {
+		    String authorizationCode = resultSetData.isNull() ? "0" : resultSetData.getValue();
+		    aBagSPJavaOrchestration.put("authorizationCode", authorizationCode);
+		} else {
+		    aBagSPJavaOrchestration.put("authorizationCode", "0"); 
+		}
+		
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if (logger.isDebugEnabled()) {
