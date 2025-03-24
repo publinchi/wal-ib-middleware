@@ -112,7 +112,6 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 						if (logger.isDebugEnabled()){logger.logDebug("Code Error central" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));}
-						anOriginalRequest.removeParam("@i_installments");
 						anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 						
 						if (logger.isDebugEnabled()){logger.logDebug("executeOfflinePurchaseCobis " + anProcedureResponse.toString() );}
