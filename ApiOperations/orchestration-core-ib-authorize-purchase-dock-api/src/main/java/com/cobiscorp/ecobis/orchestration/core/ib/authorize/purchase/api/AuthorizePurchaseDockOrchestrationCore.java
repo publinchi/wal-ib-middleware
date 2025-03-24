@@ -89,6 +89,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		IProcedureResponse anProcedureResponseVal;
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		
@@ -102,6 +103,16 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			if (!flowRty){				
 				anProcedureResponse = valDataLocalDock(anOriginalRequest, aBagSPJavaOrchestration);
 				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
+					logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponse);
+					aBagSPJavaOrchestration.put("debitoCredito", "D");
+					aBagSPJavaOrchestration.put("accountNumber", anProcedureResponse.readValueParam("@o_cta"));
+					anProcedureResponseVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+					if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+						logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
+						aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
+						aBagSPJavaOrchestration.put("message_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
+						return processResponseApi(anOriginalRequest, anProcedureResponseVal,aBagSPJavaOrchestration);
+					}
 					
 					if (logger.isDebugEnabled()){logger.logDebug("Code Error local" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));}
 					
@@ -109,7 +120,6 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 						if (logger.isDebugEnabled()){logger.logDebug("Code Error central" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));}
-						
 						anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 						
 						if (logger.isDebugEnabled()){logger.logDebug("executeOfflinePurchaseCobis " + anProcedureResponse.toString() );}
