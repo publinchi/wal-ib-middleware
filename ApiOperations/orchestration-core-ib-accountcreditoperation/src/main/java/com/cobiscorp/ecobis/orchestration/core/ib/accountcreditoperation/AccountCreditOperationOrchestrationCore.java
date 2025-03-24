@@ -685,7 +685,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	        if (logger.isInfoEnabled()) {
 	            logger.logInfo(CLASS_NAME + " Entrando en getValAccountReq");
 	        }
-	        aBagSPJavaOrchestration.clear();
 	        // Configuración del procedimiento
 	        request.setSpName("cobis..sp_val_data_account_api");
 
