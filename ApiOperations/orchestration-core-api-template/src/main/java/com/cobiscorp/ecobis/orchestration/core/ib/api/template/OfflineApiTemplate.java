@@ -109,7 +109,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 		String originCode = request.readValueParam("@i_originCode");
 		
-		if (logger.isDebugEnabled()) {logger.logDebug("@i_originCode = " + originCode);}
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("@i_originCode = " + originCode);
+			logger.logDebug("request FHU-->1 " + request);
+		}
 		
 		if (originCode == null) {
 			request.addInputParam("@i_originCode", ICTSTypes.SQLINT4, "");
@@ -527,6 +530,182 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		}catch(Exception e){
 			if (logger.isErrorEnabled()){logger.logError("Fallo catastrofico registerAllTransactionSuccess:", e);}
 		}
+	}
+
+    protected Map<String, Object> validateBvTransaction(Map<String, Object> aBagSPJavaOrchestration) {
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Initialize method validateBvTransaction");
+		}
+		
+		 Map<String, Object> mapResponse = new  HashMap<String, Object>();
+				
+		//valida la parametria de la tabla bv_transaccion
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		IProcedureRequest request = initProcedureRequest(originalRequest);
+
+		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800090");
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		request.setSpName("cob_bvirtual..sp_bv_transaction_context");
+
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "IB");
+		request.addInputParam("@i_transaccion", ICTSTypes.SQLINTN, originalRequest.readValueParam("@t_trn"));
+		request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, originalRequest.readValueParam("@s_servicio"));
+		
+		request.addOutputParam("@o_autenticacion", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_fuera_de_linea", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_doble_autorizacion", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_sincroniza_saldos", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_mostrar_costo", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_tipo_costo", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_habilitado", ICTSTypes.SYBCHAR, "N");
+		
+		
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Finalize method validateBvTransaction");
+		}
+		
+		// Ejecuta validacion a la tabla bv_transaccion
+		IProcedureResponse tResponse = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: " + tResponse.getProcedureResponseAsString());
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Finaliza validacion local");
+		
+		
+		mapResponse.put("@o_autenticacion",tResponse.readValueParam("@o_autenticacion"));
+		mapResponse.put("@o_fuera_de_linea",tResponse.readValueParam("@o_fuera_de_linea"));
+		mapResponse.put("@o_doble_autorizacion",tResponse.readValueParam("@o_doble_autorizacion"));
+		mapResponse.put("@o_sincroniza_saldos",tResponse.readValueParam("@o_sincroniza_saldos"));
+		mapResponse.put("@o_mostrar_costo",tResponse.readValueParam("@o_mostrar_costo"));
+		mapResponse.put("@o_tipo_costo",tResponse.readValueParam("@o_tipo_costo"));
+		mapResponse.put("@o_habilitado",tResponse.readValueParam("@o_habilitado"));
+		
+		aBagSPJavaOrchestration.put(RESPONSE_BV_TRANSACTION, tResponse);
+
+		// Valida si ocurrio un error en la ejecucion
+		if (Utils.flowError("validateBvTransaction", tResponse)) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, tResponse);
+		}
+		
+		return mapResponse;
+		
+		
+	}
+
+	public Boolean validateContextTransacction(Map<String, Object> aBagSPJavaOrchestration, Boolean isOnline) {
+		//Valida el fuera de línea
+		  boolean SUPPORT_OFFLINE = false;
+		  boolean SUPPORT_HABILITA = false;
+		  
+		
+				if (logger.isInfoEnabled())
+					logger.logInfo("Llama a la funcion validateBvTransaction");
+				
+				
+				 Map<String, Object> responseContextTrans = validateBvTransaction(aBagSPJavaOrchestration);	
+				 
+				 String responseHabilitado = responseContextTrans.get("@o_habilitado").toString();
+				 String responseSupportOffline = responseContextTrans.get("@o_fuera_de_linea").toString();
+				 
+				if (logger.isInfoEnabled())
+					logger.logInfo("responseSupportOffline ---> " + responseContextTrans);
+				
+				if(responseContextTrans == null || responseSupportOffline.isEmpty()) {
+					MESSAGE_RESPONSE = "Ha ocurrido un error intentando validar si la transferencia permite fuera de línea";
+					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Ha ocurrido un error intentando validar si la transferencia permite fuera de línea"));
+					//return Utils.returnException("Ha ocurrido un error intentando validar si la transferencia permite fuera de línea");
+					return false;
+				}
+				
+				if(responseHabilitado == null || responseHabilitado.isEmpty()) {
+					MESSAGE_RESPONSE = "Ha ocurrido un error intentando validar si la transferencia esta habilitada";
+					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Ha ocurrido un error intentando validar si la transferencia esta habilitada"));
+					//return Utils.returnException("Ha ocurrido un error intentando validar si la transferencia esta habilitada");
+					return false;
+				}
+			
+				if(responseSupportOffline.equals("S")) {
+					SUPPORT_OFFLINE = true;
+				}else {
+					SUPPORT_OFFLINE = false;
+				}
+				
+				if(responseHabilitado.equals("S")) {
+					SUPPORT_HABILITA = true;
+				}else {
+					SUPPORT_HABILITA = false;
+				}
+				
+				if (!SUPPORT_OFFLINE && !isOnline) {
+					MESSAGE_RESPONSE = "Transferencia no permite ejecución mientras el servidor este fuera de linea";
+					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Transferencia no permite ejecución mientras el servidor este fuera de linea"));
+					//return Utils.returnException("Transferencia no permite ejecución mientras el servidor este fuera de linea");	
+					return false;
+				}
+				
+				if (!SUPPORT_HABILITA) {
+					MESSAGE_RESPONSE = "Transaccion no habilitada, revise la parametrizacion";
+					//aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException("Transferencia no habilitada"));
+					//return Utils.returnException("Transferencia no habilitada");	
+					return false;
+				}
+				
+				return true;
+
+	}
+	
+	public IProcedureResponse getValAccountReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	    IProcedureRequest request = new ProcedureRequestAS();
+	    IProcedureResponse response = null;
+
+	    try {
+	        if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " Entrando en getValAccountReq");
+	            logger.logInfo(CLASS_NAME + " Entrando en getValAccountReq FHU " + aBagSPJavaOrchestration.toString());
+	        }
+
+	        request.setSpName("cobis..sp_val_data_account_api");
+
+	        // Agregar encabezados
+	        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+	                IMultiBackEndResolverService.TARGET_CENTRAL);
+	        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+	        Object accountNumberObj = aBagSPJavaOrchestration.get("accountNumber");
+	        Object debitoCreditoObj = aBagSPJavaOrchestration.get("debitoCredito");
+
+	        String accountNumber = (accountNumberObj != null) ? accountNumberObj.toString() : null;
+	        String debitoCredito = (debitoCreditoObj != null) ? debitoCreditoObj.toString() : null;
+
+	        if ("C".equals(debitoCredito)) {
+	        	request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, accountNumber);
+	        }
+	        else {
+	        	request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, accountNumber);
+	        }
+	        	        
+            request.addInputParam("@i_error_ndnc", ICTSTypes.SQLVARCHAR, "S");
+			
+	        // Ejecutar el procedimiento
+	        response = executeCoreBanking(request);
+
+	        if (logger.isDebugEnabled()) {
+	            logger.logDebug("Response Corebanking getValAccountReq FHU : " + response.getProcedureResponseAsString());
+	        }
+	    } catch (Exception e) {
+	        logger.logError(CLASS_NAME + " Error al obtener la validación de la cuenta: " + e.getMessage(), e);
+	        throw new RuntimeException("Error en la validación de la cuenta", e); 
+	    } finally {
+	        if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " Saliendo de getValAccountReq");
+	        }
+	    }
+
+	    return response;
 	}
 
 }
