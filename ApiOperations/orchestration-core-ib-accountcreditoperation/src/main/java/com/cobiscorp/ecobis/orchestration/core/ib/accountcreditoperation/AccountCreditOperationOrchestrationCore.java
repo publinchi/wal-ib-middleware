@@ -108,7 +108,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		if (responseServer != null && !responseServer.getOnLine()) {
 			aBagSPJavaOrchestration.put("IsReentry", "S");
 			if (!flowRty){
-				anProcedureResponse = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+				anProcedureResponse = getValAccountR(anOriginalRequest, aBagSPJavaOrchestration);
 				logger.logInfo(CLASS_NAME + " validaCentral "
 						+ anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
 				if (!anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
@@ -677,7 +677,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		// TODO Auto-generated method stub
 		
 	}
-	private IProcedureResponse getValAccountReq(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse getValAccountR(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 	    IProcedureRequest request = new ProcedureRequestAS();
 	    IProcedureResponse response = null;
 
