@@ -210,15 +210,17 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				aBagSPJavaOrchestration.put("speiTransaction", message);
 				//llamada a log entrante
 				CardPAN card= new CardPAN();
-				
+				//ofuscacion tipo de cuentas 3
 				if( message.getOrdenpago().getOpTcClaveBen()==3)
 				{
-					xmls.replace(message.getOrdenpago().getOpCuentaBen(), card.maskNumber(message.getOrdenpago().getOpCuentaBen()));
+					xmls = xmls.replace(message.getOrdenpago().getOpCuentaBen(), card.maskNumber(message.getOrdenpago().getOpCuentaBen()));
 				}
 		        if( message.getOrdenpago().getOpTcClaveOrd()==3)
 		        {
-		        	xmls.replace(message.getOrdenpago().getOpCuentaOrd(), card.maskNumber(message.getOrdenpago().getOpCuentaOrd()));
+		        	xmls = xmls.replace(message.getOrdenpago().getOpCuentaOrd(), card.maskNumber(message.getOrdenpago().getOpCuentaOrd()));
 		        }
+		        
+		        anOriginalRequest.setValueParam("@i_pay_order", xmls);
 				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null, xmls);
 				executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 			}
@@ -229,7 +231,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		} catch (CTSInfrastructureException e) {
 			e.printStackTrace();
 		}catch (Exception xe) {
-			logger.logError(xe);
+			logger.logError("Error dispacher",xe);
 		}
 		//llamada a log update
 		logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "U", "Dispacher in", null, null, aBagSPJavaOrchestration.get("result").toString(), idLog, null);
@@ -429,7 +431,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 								procedureRequest.addInputParam("@i_rfcCurpOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
 								procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
 								procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
-								procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
+								procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, request.readValueParam("@i_pay_order"));
 								procedureRequest.addInputParam("@i_tipoCuentaBeneficiario", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen()));
 								procedureRequest.addInputParam("@i_tipoCuentaOrdenante", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveOrd()));
 								procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
@@ -1257,8 +1259,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
 		requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
 		requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
-		requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
-		
+				
 		if("I".equals(operacion) && 
 			   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria())|| 
 				Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria())||
@@ -1296,13 +1297,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
 			requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
 			requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
-			
+			requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);	
 		}else
 			if("U".equals(operacion) )
 			{
 				requestProcedureLocal.addInputParam("@i_lc_firma",ICTSTypes.SQLVARCHAR, firma);
 				requestProcedureLocal.addInputParam("@i_lc_error",ICTSTypes.SQLVARCHAR, error);
-				requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
 				requestProcedureLocal.addInputParam("@i_lc_response",ICTSTypes.SQLVARCHAR, response);
 				requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());
 			}
