@@ -110,6 +110,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 					
 					if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 						logger.logDebug("Code Error central" + anProcedureResponse.getResultSetRowColumnData(2, 1, 2));
+						anOriginalRequest.removeParam("@i_installments");
 						anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 						logger.logDebug("executeOfflineReversalCobis " + anProcedureResponse.toString() );
 						anProcedureResponse = executeOfflineReversalCobis(anOriginalRequest, aBagSPJavaOrchestration);if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
