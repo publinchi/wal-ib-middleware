@@ -10,10 +10,12 @@ from io import StringIO
 
 
 SECRET_NAME_MFT = os.environ.get('SECRET_NAME_MFT', '')
-SECRET_NAME_MFT_PEM = os.environ.get('SECRET_NAME_MFT_PEM', '')
 S3_FILES_BUCKET_NAME = os.environ.get('S3_FILES_BUCKET_NAME', '')
 SECRET_NAME_DB = os.environ.get('SECRET_NAME_DB', '')
-TIMEOUT_MFT_CONNECTION = os.environ.get('TIMEOUT_MFT_CONNECTION', 60)
+TIMEOUT_MFT_CONNECTION = int(os.environ.get('TIMEOUT_MFT_CONNECTION', 60))
+TYPE_CREDENTIAL = 'C'
+TYPE_KEY = 'K'
+YES_ENABLE_MFT = 'S'
 PROCEDURE_NAME = 'cob_bvirtual..sp_mft_operations'
 BUSINESS_CODE_ERROR = 600
 BUSINESS_CODE_SUCCESS = 200
@@ -23,12 +25,18 @@ database_connection = None
 
 def lambda_handler(event, context):
     print('init execute lambda_handler')
-    flow_name = event.get('flow_name')
-    user_execute = event.get('user_execute')
     file_name = None
     file_path_local = None
     file_names = []
     files_path_local = []
+
+    flow_name = event.get('flow_name')
+    user_execute = event.get('user_execute')
+    if flow_name is None or flow_name == '':
+        return {
+            'statusCode': BUSINESS_CODE_SUCCESS,
+            'body': "Nombre de flujo no puede ser vacio"
+        }
     try:
         params = get_params_from_database(flow_name,context)
         path_s3 = params.get('path_origin')
@@ -36,41 +44,33 @@ def lambda_handler(event, context):
         path_mft = params.get('path_destination')
         enable_mft = params.get('enable_mft')
 
-        if enable_mft is None or enable_mft == '' or enable_mft == 'N':
-            return {
-                'statusCode': BUSINESS_CODE_SUCCESS,
-                'body': "No se procesaron archivos porque el proceso de MFT no está habilitado"
-            }
+        if enable_mft is None or enable_mft == '' or enable_mft != YES_ENABLE_MFT:
+            return build_response(BUSINESS_CODE_SUCCESS, "No se procesaron archivos porque el proceso de MFT no está habilitado")
+
         for path in paths_s3:
             file_path_local = download_file_from_s3(S3_FILES_BUCKET_NAME, path)
-            save_file_to_sftp(file_path_local, path_mft,context)
+            save_file_to_sftp(file_path_local, path_mft, flow_name ,context)
             file_name = get_basename(file_path_local)
             files_path_local.append(file_path_local)
             file_names.append(file_name)
         send_email_from_database(flow_name, 'E', f'{BUSINESS_CODE_SUCCESS}-Proceso completado exitosamente', '|'.join(file_names), user_execute,context)
     except BusinessException as e:
         handle_error(e, file_name, flow_name, user_execute,context)
-        return {
-            'statusCode': BUSINESS_CODE_ERROR,
-            'body': e.description
-        }
+        return build_response(BUSINESS_CODE_ERROR, e.description)
     except Exception as e:
         handle_error(e, file_name, flow_name, user_execute,context)
-        return {
-            'statusCode': INFRASTRUCTURE_CODE_ERROR,
-            'body': str(e)
-        }
+        return build_response(INFRASTRUCTURE_CODE_ERROR, str(e))
     finally:
         close_connection()
-        for file_path_local in files_path_local:
-            if file_path_local is not None:
-                os.remove(file_path_local)
-                print(f"File {file_path_local} deleted")
+        remove_local_files(files_path_local)
         print('end execute lambda_handler')
 
+    return build_response(BUSINESS_CODE_SUCCESS, "Proceso completado exitosamente")
+
+def build_response(status_code, body):
     return {
-        'statusCode': BUSINESS_CODE_SUCCESS,
-        'body': "Proceso completado exitosamente"
+        'statusCode': status_code,
+        'body': body
     }
 
 def handle_error(e, file_name, flow_name, user_execute,context):
@@ -80,6 +80,12 @@ def handle_error(e, file_name, flow_name, user_execute,context):
         send_email_from_database(flow_name, 'F', f"{BUSINESS_CODE_ERROR}-{e.description}", file_name_tmp, user_execute,context)
     except Exception as email_error:
         print(f"Error al enviar el correo: {email_error}")
+
+def remove_local_files(files_path_local):
+    for file_path_local in files_path_local:
+        if file_path_local is not None:
+            os.remove(file_path_local)
+            print(f"File {file_path_local} deleted")
 
 def get_params_from_database(flow_name, context):
     print('init execute get_params_from_database')
@@ -180,14 +186,12 @@ def get_secret(secret_name, context):
 
 def download_file_from_s3(bucket_name, prefix):
     print('init execute download_file_from_s3')
-    local_path = '/tmp/'
     try:
         s3 = boto3.client('s3')
         s3_key = get_most_recent_file(s3, bucket_name, prefix)
         file_name = get_basename(s3_key)
-        file_name_tmp = f'{local_path}{file_name}'
+        file_name_tmp = f'{PATH_TMP}{file_name}'
         s3.download_file(bucket_name, s3_key, file_name_tmp)
-        print('end execute download_file_from_s3')
         return file_name_tmp
     except NoCredentialsError:
         raise BusinessException("S3: Credenciales no encontradas")
@@ -195,6 +199,8 @@ def download_file_from_s3(bucket_name, prefix):
         raise BusinessException("S3: Credenciales incompletas")
     except Exception as e:
         raise BusinessException(f"S3: Error al descargar archivo {e}")
+    finally:
+        print('end execute download_file_from_s3')
 
 def get_most_recent_file(s3,bucket_name, prefix):
     print('init execute get_most_recent_file')
@@ -215,28 +221,38 @@ def get_most_recent_file(s3,bucket_name, prefix):
         print('end execute get_most_recent_file')
 
 
-def save_file_to_sftp(file_path_local, path,context):
+def save_file_to_sftp(file_path_local, path, flow_name, context):
     print('init execute save_file_to_sftp')
-    secret_value = get_secret(SECRET_NAME_MFT,context)
-    secret_value = json.loads(secret_value)
+    secret_value = json.loads(get_secret(SECRET_NAME_MFT, context))
+    values = secret_value.get(flow_name)
 
-    user = secret_value.get('user')
-    host = secret_value.get('host')
-    port = int(secret_value.get('port'))
-
-    secret_value_pem = get_secret(SECRET_NAME_MFT_PEM,context)
+    user = values.get('user')
+    host = values.get('host')
+    port = int(values.get('port'))
+    type = values.get('type')
 
     transport = None
     sftp = None
     try:
-        private_key = paramiko.RSAKey.from_private_key(StringIO(secret_value_pem))
-
         transport = paramiko.Transport((host, port))
-        transport.connect(username=user, pkey=private_key, )
+
+        if type == TYPE_CREDENTIAL:
+            password = values.get('password')
+            if not password:
+                raise BusinessException("La contraseña no está definida en el secreto MFT")
+            transport.connect(username=user, password=password)
+        elif type == TYPE_KEY:
+            secret_name_pem= values.get('name_secret_pem')
+            if not secret_name_pem:
+                raise BusinessException("El nombre del secreto PEM no está definido en el secreto MFT")
+            secret_value_pem = get_secret(secret_name_pem,context)
+            private_key = paramiko.RSAKey.from_private_key(StringIO(secret_value_pem))
+            transport.connect(username=user, pkey=private_key)
+        else:
+            raise BusinessException("Tipo de autenticación SFTP no soportada, revisar configuración para el flujo" + flow_name)
 
         sftp = paramiko.SFTPClient.from_transport(transport)
-        sftp.get_channel().settimeout(int(TIMEOUT_MFT_CONNECTION))
-
+        sftp.get_channel().settimeout(TIMEOUT_MFT_CONNECTION)
         create_sftp_directory(sftp, path)
         file_name = get_basename(file_path_local)
 

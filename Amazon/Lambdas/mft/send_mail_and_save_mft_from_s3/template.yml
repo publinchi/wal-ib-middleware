@@ -72,16 +72,41 @@ Resources:
       Description: Secret for MFT
       SecretString: !Sub |
         {
-          "user": "your-mft-username",
-          "host": "your-mft-host",
-          "port": "your-mft-port"
+          "MINDS": {
+            "type": "C",
+            "user": "your-mft-username",
+            "host": "your-mft-host",
+            "port": "your-mft-port",
+            "password": "your-mft-password"
+          },
+          "DOCK": {
+            "type": "C",
+            "user": "your-mft-username",
+            "host": "your-mft-host",
+            "port": "your-mft-port",
+            "password": "your-mft-password"
+          },
+          "CRSP": {
+            "type": "C",
+            "user": "your-mft-username",
+            "host": "your-mft-host",
+            "port": "your-mft-port",
+            "password": "your-mft-password"
+          },
+          "IDC": {
+            "type": "K",
+            "user": "your-mft-username",
+            "host": "your-mft-host",
+            "port": "your-mft-port",
+            "name_secret_pem": "your-name_secret_pem"
+          }
         }
 
-  SecretMFTPem:
+  SecretMFTIDCPEM:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "${Environment}/SecretName/MFT_PEM"
-      Description: Secret for MFT PEM
+      Name: !Sub "${Environment}/SecretName/MFT_IDC_PEM"
+      Description: Secret for MFT IDC PEM
       SecretString: "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA7v...\n...\n-----END RSA PRIVATE KEY-----"
 
   SecretDB:
@@ -140,7 +165,7 @@ Resources:
                 Resource:
                   - !Ref SecretMFT
                   - !Ref SecretDB
-                  - !Ref SecretMFTPem
+                  - !Ref SecretMFTIDCPEM
         - PolicyName: CloudWatchLogsAccess
           PolicyDocument:
             Version: "2012-10-17"
@@ -170,7 +195,6 @@ Resources:
           S3_FILES_BUCKET_NAME: !Ref BucketName
           SECRET_NAME_DB: !Ref SecretDB
           SECRET_NAME_MFT: !Ref SecretMFT
-          SECRET_NAME_MFT_PEM: !Ref SecretMFTPem
           TIMEOUT_MFT_CONNECTION: !Ref TimeoutMFTConnection
       Layers:
         - !Ref ProcessMFTLayer
