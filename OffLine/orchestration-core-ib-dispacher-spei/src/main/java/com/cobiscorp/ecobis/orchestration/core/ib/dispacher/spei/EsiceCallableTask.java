@@ -200,7 +200,27 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
 		requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
 		requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
-				
+		  //enmascara las tarjetas
+        String opCuentaBen="";
+		String opCuentaOrd="";
+		
+        if( msjIn.getOrdenpago().getOpTcClaveBen()==3)
+        {
+        	opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
+        	if(request != null)
+        		request = request.replace(msjIn.getOrdenpago().getOpCuentaBen(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen()));
+        }
+        else
+        	opCuentaBen = msjIn.getOrdenpago().getOpCuentaBen();
+        
+        if( msjIn.getOrdenpago().getOpTcClaveOrd()==3)
+        {
+        	opCuentaOrd = card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd());
+        	if(request != null)
+        		request = request.replace(msjIn.getOrdenpago().getOpCuentaOrd(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd()));
+        }
+        else
+        	opCuentaOrd = msjIn.getOrdenpago().getOpCuentaOrd();		
 		if("I".equals(operacion) && 
 			   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria())|| 
 				Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria())||
@@ -215,29 +235,7 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 	        
 	        // Formatea la fecha a MM/dd/yyyy
 	        String processDate = date.format(outputFormatter);
-	        
-	        //enmascara las tarjetas
-	        String opCuentaBen="";
-			String opCuentaOrd="";
-			
-	        if( msjIn.getOrdenpago().getOpTcClaveBen()==3)
-	        {
-	        	opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
-	        	if(request != null)
-	        		request = request.replace(msjIn.getOrdenpago().getOpCuentaBen(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen()));
-	        }
-	        else
-	        	opCuentaBen = msjIn.getOrdenpago().getOpCuentaBen();
-	        
-	        if( msjIn.getOrdenpago().getOpTcClaveOrd()==3)
-	        {
-	        	opCuentaOrd = card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd());
-	        	if(request != null)
-	        		request = request.replace(msjIn.getOrdenpago().getOpCuentaOrd(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd()));
-	        }
-	        else
-	        	opCuentaOrd = msjIn.getOrdenpago().getOpCuentaOrd();
-			
+	        			
 	        requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 			requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
 			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, opCuentaOrd);
