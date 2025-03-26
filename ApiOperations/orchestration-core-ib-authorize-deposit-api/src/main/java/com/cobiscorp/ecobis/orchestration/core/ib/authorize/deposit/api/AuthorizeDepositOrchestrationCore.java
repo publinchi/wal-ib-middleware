@@ -99,7 +99,7 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponse);
 				aBagSPJavaOrchestration.put("debitoCredito", "C");
 				aBagSPJavaOrchestration.put("accountNumber", anOriginalRequest.readValueParam("@i_account_number"));
-				anProcedureResponseVal = getValAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
+				anProcedureResponseVal = getValAccountR(anOriginalRequest, aBagSPJavaOrchestration);
 				if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 					logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
 					aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
