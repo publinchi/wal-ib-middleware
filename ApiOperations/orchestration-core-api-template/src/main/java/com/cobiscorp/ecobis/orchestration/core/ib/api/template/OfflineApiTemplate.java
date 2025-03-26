@@ -667,7 +667,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 	}
 	
-	public IProcedureResponse getValAccountR(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	public IProcedureResponse getValAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
 	    IProcedureRequest request = new ProcedureRequestAS();
 	    IProcedureResponse response = null;
 
