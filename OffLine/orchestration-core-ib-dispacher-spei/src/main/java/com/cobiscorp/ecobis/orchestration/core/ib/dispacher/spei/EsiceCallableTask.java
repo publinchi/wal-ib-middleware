@@ -17,6 +17,7 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Constans;
 
@@ -182,13 +183,14 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 		}
 		return connectorResponse;
 	}
-	private int logEntryApi(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
+    private int logEntryApi(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
 			String operacion, String tipoEntrada, String firma, String error, String response, Integer id, String request ) {
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Begin flow, logEntryApi callable");
+			logger.logDebug("Begin flow, singType");
 		}
 		Integer logId = 0;
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		CardPAN card= new CardPAN();
 		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
 		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_log_conn_karpay");
 		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
@@ -198,8 +200,27 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
 		requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
 		requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
-		requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
+		  //enmascara las tarjetas
+        String opCuentaBen="";
+		String opCuentaOrd="";
 		
+        if( msjIn.getOrdenpago().getOpTcClaveBen()==3)
+        {
+        	opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
+        	if(request != null)
+        		request = request.replace(msjIn.getOrdenpago().getOpCuentaBen(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen()));
+        }
+        else
+        	opCuentaBen = msjIn.getOrdenpago().getOpCuentaBen();
+        
+        if( msjIn.getOrdenpago().getOpTcClaveOrd()==3)
+        {
+        	opCuentaOrd = card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd());
+        	if(request != null)
+        		request = request.replace(msjIn.getOrdenpago().getOpCuentaOrd(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd()));
+        }
+        else
+        	opCuentaOrd = msjIn.getOrdenpago().getOpCuentaOrd();		
 		if("I".equals(operacion) && 
 			   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria())|| 
 				Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria())||
@@ -214,22 +235,21 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 	        
 	        // Formatea la fecha a MM/dd/yyyy
 	        String processDate = date.format(outputFormatter);
-			
-			requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+	        			
+	        requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 			requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
+			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, opCuentaOrd);
 			requestProcedureLocal.addInputParam("@i_lc_institucion_ordenante",ICTSTypes.SQLVARCHAR, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
-			requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
+			requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  opCuentaBen);
 			requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
 			requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
 			requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
-			
 		}else
 			if("U".equals(operacion) )
 			{
 				requestProcedureLocal.addInputParam("@i_lc_firma",ICTSTypes.SQLVARCHAR, firma);
 				requestProcedureLocal.addInputParam("@i_lc_error",ICTSTypes.SQLVARCHAR, error);
-				requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
+				requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);	
 				requestProcedureLocal.addInputParam("@i_lc_response",ICTSTypes.SQLVARCHAR, response);
 				requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());
 			}
@@ -239,7 +259,7 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Ending flow, logEntryApi callable: " + wProcedureResponseLocal.getProcedureResponseAsString());
+			logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
 		}
 		
 		if (wProcedureResponseLocal.getReturnCode()==0) {
