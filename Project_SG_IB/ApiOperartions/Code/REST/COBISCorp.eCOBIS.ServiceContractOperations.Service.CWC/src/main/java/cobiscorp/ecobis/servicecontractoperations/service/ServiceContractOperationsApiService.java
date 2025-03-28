@@ -8262,7 +8262,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_limitType", ICTSTypes.SQLVARCHAR,
 				inRequestRegisterAccount.getCreditorAccount().getLimitType());
 		procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLMONEY,
-				String.valueOf(inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount()));
+				String.valueOf(inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount() != null ? inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount() : 0.0));
 		procedureRequestAS.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR,
 				inRequestRegisterAccount.getCreditorAccount().getLimit().getCurrency());
 		procedureRequestAS.addInputParam("@i_otp_code",ICTSTypes.SQLVARCHAR,
