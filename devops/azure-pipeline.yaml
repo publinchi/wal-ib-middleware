@@ -17,8 +17,8 @@ resources:
   repositories:
     - repository: templates #alias name
       type: git #type of repository
-      name: wal-ib-middleware #repository name
-    #  ref: 'refs' #git branch reference
+      name: cobis-cloud-devops #repository name
+      ref: 'refs/heads/infra' #git branch reference
 
 stages:
   - stage: Build
