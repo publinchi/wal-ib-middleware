@@ -5,24 +5,24 @@
 trigger: none
 parameters:
   - name: BUILD_PROJECTS
-    default: 'cobis-tcp-handler-parent'
+    default: 'cobis-ib-parent'
   - name: DEPLOYMENT_REPOSITORY
-    default: 'https://nexus.devops.core.cloud-cobiscorp.com:8000/repository/cobis-cloud/'
+    default: 'http://repolib.cobiscorp.com:8081/nexus/content/repositories/tfr-mvn-dev/'
   - name: PROJECT_KEY
-    default: 'cobisdevops_cobis-transactional-server'
+    default: 'cobisdevopscobis-ib-parent'
   - name: POM_PATH_SONAR
-    default: 'code/cobis-cloud-cis-sonar'
+    default: 'wal/cobis-ib-parent-sonar'
 
 resources:
   repositories:
     - repository: templates #alias name
       type: git #type of repository
-      name: cobis-cloud-devops #repository name
-      ref: 'refs/heads/infra' #git branch reference
+      name: wal-ib-middleware #repository name
+      ref: 'refs/origin' #git branch reference
 
 stages:
   - stage: Build
-    pool: 'aws-pool-linux'
+    pool: 'Build-TRF-Dev'
     jobs:
       - job: ScanSonar
         container:
