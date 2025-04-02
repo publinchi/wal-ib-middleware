@@ -1,0 +1,88 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+trigger: none
+parameters:
+  - name: BUILD_PROJECTS
+    default: 'cobis-tcp-handler-parent'
+  - name: DEPLOYMENT_REPOSITORY
+    default: 'https://nexus.devops.core.cloud-cobiscorp.com:8000/repository/cobis-cloud/'
+  - name: PROJECT_KEY
+    default: 'cobisdevops_cobis-transactional-server'
+  - name: POM_PATH_SONAR
+    default: 'code/cobis-cloud-cis-sonar'
+
+resources:
+  repositories:
+    - repository: templates #alias name
+      type: git #type of repository
+      name: cobis-cloud-devops #repository name
+      ref: 'refs/heads/infra' #git branch reference
+
+stages:
+  - stage: Build
+    pool: 'aws-pool-linux'
+    jobs:
+      - job: ScanSonar
+        container:
+          image: darkaru/maven-awscliv2-samcli:v4
+        steps:
+          - script: |
+              IFS=','
+              read -a PROJECTS <<< "${{ parameters.BUILD_PROJECTS }}"
+              modulesStart="<modules>"
+              modulesEnd="</modules>"
+              moduleFinal=""
+              for PROJECT in "${PROJECTS[@]}";
+              do
+                module=""
+                module="<module>../${PROJECT}</module>"
+                echo module:$module
+                moduleFinal=$moduleFinal$module
+              done
+              echo moduleFinal:$moduleFinal
+              modulesFinal=$modulesStart$moduleFinal$modulesEnd
+              echo modulesFinal:$modulesFinal
+              echo pathCompleteSonar:$(Build.Repository.LocalPath)/${{ parameters.POM_PATH_SONAR }}
+              pomSonar="$(Build.Repository.LocalPath)/${{ parameters.POM_PATH_SONAR }}/pom.xml"
+              echo "**** CloudFormationParametersFile before replacement modules *****"
+              cat $pomSonar
+              sed -i "s#<modules></modules>#$modulesFinal#" $(Build.Repository.LocalPath)/${{ parameters.POM_PATH_SONAR }}/pom.xml
+              echo "**** CloudFormationParametersFile after replacement modules *****"
+              pomSonar2="$(Build.Repository.LocalPath)/${{ parameters.POM_PATH_SONAR }}/pom.xml"
+              cat $pomSonar2
+            displayName: 'Prepare pom.xml cobis-sonar'
+          - template: azure/steps/maven/mavenSettingsDownload.yml@templates
+          - template: azure/steps/maven/mavenVerify.yml@templates
+            parameters:
+              PROJECT_KEY: '${{ parameters.PROJECT_KEY }}'
+              POM_PATH: '${{ parameters.POM_PATH_SONAR }}'
+      - job: Build
+        container:
+          image: darkaru/maven-jdk8-awscli:v4
+        steps:
+          - template: azure/steps/maven/mavenSettingsDownload.yml@templates
+          - script: |
+              IFS=','
+              read -a PROJECTS <<< "${{ parameters.BUILD_PROJECTS }}"
+              for PROJECT in "${PROJECTS[@]}";
+              do
+                echo Starting build ${PROJECT}
+                cd $(Build.Repository.LocalPath)/code/${PROJECT}
+                mvn clean install -U -Dmaven.test.skip=true --settings $(MavenSettings.secureFilePath) -Dsettings.security=$(MavenSecureSettings.secureFilePath)
+                echo Finished build ${PROJECT}
+              done
+            displayName: 'Build Maven Projects'
+          - script: |
+              IFS=','
+              read -a PROJECTS <<< "${{ parameters.BUILD_PROJECTS }}"
+              for PROJECT in "${PROJECTS[@]}";
+              do
+                echo Starting deploy  ${PROJECT}
+                cd $(Build.Repository.LocalPath)/code/${PROJECT}
+                mvn deploy --settings $(MavenSettings.secureFilePath) -Dsettings.security=$(MavenSecureSettings.secureFilePath) -DaltDeploymentRepository=cobiscloud::default::${{ parameters.DEPLOYMENT_REPOSITORY }} -Dmaven.test.skip=true -source:jar -U -X
+                echo Finished deploy ${PROJECT}
+              done
+            displayName: 'Deploy to Nexus'
+    displayName: 'Compile Projects TCPHandler Java'
