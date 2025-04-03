@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<userInput>
+
+	<panel order="0" id="0">
+		<field type="title" id="wsPanel.title" />
+		<field type="dir" variable="WS_SERVER_DIRECTORY">
+			<spec id="wsPanel.serverDirectory" size="30" />
+		</field>
+		<field type="space" />
+		<field type="text" variable="WS_USER_NAME">
+		<spec id="wsPanel.userName" size="20" />
+		</field>
+		<field type="space" />
+		<field type="password" variable="WS_PASSWORD">
+			<spec>
+				<pwd id="wsPanel.password" size="20" />
+			</spec>
+		</field>
+	</panel>
+	
+	<panel order="1" id="1">
+             <field type="title" id="wsPanel.MQtittle" />
+             <field type="space" />
+             <field type="text" variable="QUEUE_MANAGER_IP">
+                    <spec id="wsPanel.qmIp" size="15" />
+             </field>             
+             <field type="space" />
+             <field type="text" variable="QUEUE_MANAGER_PORT"  align="right">
+                    <spec id="wsPanel.qmPort" size="4" />
+             </field>
+             <field type="space" />
+             <field type="text" variable="QUEUE_MANAGER_CHANNEL">
+                    <spec id="wsPanel.qmChannel" size="20" />
+             </field>
+       </panel>
+<panel id="panel1">
+<field type="check" variable="checkSelection.fe">
+  <description align="left" txt="Install fe"
+            id="description.check.1"/>
+  <spec txt="check box 1" id="check.label.1" true="true" false="false"
+      set="false"/>
+</field>
+<field type="check" variable="checkSelection.be" conditionid="containsbe">
+  <description align="left" txt="Intall be"
+            id="description.check.1"/>
+  <spec txt="check box 1" id="check.label.1" true="true" false="false"
+      set="false"/>
+</field>
+
+  </panel>	
+</userInput>
