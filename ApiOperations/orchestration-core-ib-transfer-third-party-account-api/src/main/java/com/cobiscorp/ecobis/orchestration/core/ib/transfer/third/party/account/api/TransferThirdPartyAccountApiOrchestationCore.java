@@ -84,6 +84,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
     private static final String SUCCESS_MESSAGE = "success";
     private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
+	private static final String IS_REENTRY = "@i_is_reentry";
 
 	protected static final String CHANNEL_REQUEST = "8";
 
@@ -91,6 +92,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	private IAdminTokenUser tokenService;
 	private String codBlockHigh;
 	private String prefixPhone;
+	private String isReentry = "N"; 
 
 	public void setTokenService(IAdminTokenUser tokenService) {
 		this.tokenService = tokenService;
@@ -396,6 +398,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 									if(aBagSPJavaOrchestration.get("unique_id_card")!=null && !aBagSPJavaOrchestration.get("unique_id_card").toString().isEmpty()) {
 										anOriginalRequestClone.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("unique_id_card").toString());
 									}
+									anOriginalRequestClone.addInputParam(IS_REENTRY, ICTSTypes.SQLVARCHAR, "S");
 									anProcedureResponse = saveReentry(anOriginalRequestClone, aBagSPJavaOrchestrationClone);
 									anOriginalRequestClone.setValueParam("@i_cta_des", ctaDest);
 								}
@@ -420,6 +423,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						if(aBagSPJavaOrchestration.get("unique_id_card")!=null && !aBagSPJavaOrchestration.get("unique_id_card").toString().isEmpty()) {
 							anOriginalRequestClone.setValueParam("@i_cta_des", aBagSPJavaOrchestration.get("unique_id_card").toString());
 						}
+						anOriginalRequestClone.addInputParam(IS_REENTRY, ICTSTypes.SQLVARCHAR, "S");
 						anProcedureResponse = saveReentry(anOriginalRequestClone, aBagSPJavaOrchestrationClone);
 					}
 					}
@@ -450,12 +454,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				}
 			} else {
 				aBagSPJavaOrchestration.put("IsReentry", "N");
-
+				isReentry = (anOriginalRequest.readValueParam(IS_REENTRY) == null) ? "N" : anOriginalRequest.readValueParam(IS_REENTRY);
+				
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("Res IsReentry:: " + "N");
 					logger.logDebug("Evaluar riesgo P2P: " + evaluaRiesgo);
 				}
-
+				
 				IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 				IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 
@@ -485,7 +490,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 				if (evaluaRiesgo.equals("true") && ((evaluarRiesgo.equals("true") && channel.equals("DESKTOP_BROWSER"))
 						|| (evaluarRiesgoMobile.equals("true") && channel.equals("MOBILE_BROWSER"))
-						|| (evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM")))) {
+						|| (evaluarRiesgoSystem.equals("true") && channel.equals("SYSTEM"))) && "N".equals(isReentry)) {
 					IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest,
 							aBagSPJavaOrchestration);
 
@@ -756,7 +761,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				
 				executionStatus = "CORRECT";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
-				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
 				code = "0";
 				message = "Success";
@@ -1375,6 +1380,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
 		request.addInputParam("@i_unique_id_card", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("unique_id_card").toString());
 		request.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("tipo_cta_des").toString());
+		request.addInputParam(IS_REENTRY, ICTSTypes.SQLVARCHAR, isReentry);
 		
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))
 			request.addInputParam("@i_reentry", ICTSTypes.SQLCHAR, "S");
