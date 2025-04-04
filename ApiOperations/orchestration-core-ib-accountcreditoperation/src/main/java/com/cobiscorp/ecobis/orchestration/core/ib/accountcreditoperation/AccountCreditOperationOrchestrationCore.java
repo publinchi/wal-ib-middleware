@@ -47,9 +47,9 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
- * @author cecheverria
- * @since Sep 2, 2014
- * @version 1.0.0
+ * @author jolmos
+ * @since Sep 2, 2025
+ * @version 2.0.0
  */
 @Component(name = "AccountCreditOperationOrchestrationCore", immediate = false)
 @Service(value = { ICISSPBaseOrchestration.class, IOrchestrator.class })
@@ -75,6 +75,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
 		logger.logDebug("Begin flow, AccountCreditOperation start. RTY " + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
@@ -94,6 +95,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
+		
+		if(logger.isDebugEnabled())
 		logger.logDebug("Response Online: " + responseServer.getOnLine() + " Response flowRty" + flowRty);
 		
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
@@ -105,35 +108,43 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return Utils.returnException(this.MESSAGE_RESPONSE);
 		}
 		
-		if (responseServer != null && !responseServer.getOnLine()) {
-			aBagSPJavaOrchestration.put("IsReentry", "S");
-			if (!flowRty){
-				anProcedureResponse = getValAccountR(anOriginalRequest, aBagSPJavaOrchestration);
-				logger.logInfo(CLASS_NAME + " validaCentral "
-						+ anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
-				if (!anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
-					logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponse);
-					aBagSPJavaOrchestration.clear();
-					aBagSPJavaOrchestration.put(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue(), anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue());
-					return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-				}
-				logger.logDebug("evaluateExecuteReentry");
-				anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+		if (responseServer != null && (!responseServer.getOnLine() && !flowRty)) {
+			//aBagSPJavaOrchestration.put("IsReentry", "S");
 
-				executeOfflineTransacction(aBagSPJavaOrchestration);
+			anProcedureResponse = getValAccountR(anOriginalRequest, aBagSPJavaOrchestration);
+			if(logger.isInfoEnabled()) {
+				
+			logger.logInfo(CLASS_NAME + " validaCentral "
+					+ anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
 			}
-			else{
-				logger.logDebug("evaluateExecuteReentry FALSE");
-				anProcedureResponse = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
-				logger.logDebug("Respose Exeption:: " + anProcedureResponse.toString());
+			if (!anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+				logger.logInfo(CLASS_NAME + " anProcedureResponse JC " + anProcedureResponse);
 				aBagSPJavaOrchestration.clear();
-				aBagSPJavaOrchestration.put("50041", "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
-				return anProcedureResponse;
+				aBagSPJavaOrchestration.put(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue(), anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue());
+				return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 			}
-			
+			logger.logDebug("evaluateExecuteReentry");
+			anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+
+			executeOfflineTransacction(aBagSPJavaOrchestration);
+
+			if(logger.isDebugEnabled())
 			logger.logDebug("Res IsReentry:: " + "S");
-		} else {
+
+		}else if(flowRty && !responseServer.getOnLine()){
+
+			if(logger.isDebugEnabled())
+			logger.logDebug("evaluateExecuteReentry FALSE");
+			anProcedureResponse = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!! JC");
+			if(logger.isDebugEnabled())
+			logger.logDebug("Respose Exeption:: " + anProcedureResponse.toString());			
+			aBagSPJavaOrchestration.clear();
+			aBagSPJavaOrchestration.put("50041", "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
+			return anProcedureResponse;
+		}
+		 else if ((responseServer.getOnLine()&& flowRty) || responseServer.getOnLine() ){
 			aBagSPJavaOrchestration.put("IsReentry", "N");
+			if(logger.isDebugEnabled())
 			logger.logDebug("Res IsReentry:: " + "N");
 			queryAccountCreditOperation(anOriginalRequest, aBagSPJavaOrchestration);
 		}
@@ -182,6 +193,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
             response.addFieldInHeader("executionResult", 'S', "1");
             response.addMessage(1, "Ocurrio un error al tratar de registrar la transaccion en el Reentry CORE COBIS");
         } else {
+        	if(logger.isDebugEnabled())
         	logger.logDebug("Ending flow, saveReentry success");
             response.addFieldInHeader("executionResult", 'S', "0");
         }
@@ -237,10 +249,14 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
 		}
 
-		if (logger.isDebugEnabled())
+		if (logger.isDebugEnabled()) {
+			if(logger.isDebugEnabled())
 			logger.logDebug("Respuesta Devuelta: " + serverResponse);
-		if (logger.isInfoEnabled())
+		}
+		if (logger.isInfoEnabled()) {			
+			if(logger.isDebugEnabled())
 			logger.logInfo("TERMINANDO SERVICIO");
+		}
 
 		return serverResponse;
 	}
@@ -287,7 +303,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			aBagSPJavaOrchestration.put("40093", "creditConcept must not be empty");
 			return;
 		}
-				
+
+
 		logger.logDebug("Begin flow, queryAccountCreditOperation with id: " + idCustomer);
 		
 		logger.logDebug("Request wQueryRequest: " + wQueryRequest.toString());
