@@ -4,7 +4,7 @@
 <com.izforge.izpack.panels.InfoPanel id="infoPanelId"/>
 <com.izforge.izpack.panels.LicencePanel id="licencePanelId"/>
 <com.izforge.izpack.panels.TargetPanel id="targetPanelId">
-<installpath>/home/Jboss/cobishome</installpath>
+<installpath>COBISHOME</installpath>
 </com.izforge.izpack.panels.TargetPanel>
 <com.izforge.izpack.panels.InstallPanel id="installPanelId"/>
 <com.izforge.izpack.panels.ProcessPanel id="processPanelId"/>
