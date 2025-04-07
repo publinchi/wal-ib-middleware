@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<processing>
+	<logfiledir>$INSTALL_PATH/$APP_NAME/installer</logfiledir>
+	<job name="Updating configuration files">
+		<executeclass
+			name="com.cobiscorp.cobis.installer.jobs.EditConfigurationJob">
+			<arg>$INSTALL_PATH/CTS_MF/infrastructure/cts-ccm-plan-config.xml</arg>
+			<arg>$INSTALL_PATH/$APP_NAME/installer/scripts</arg>
+			<arg>cobis-edit-plan-config.groovy</arg>
+			<arg>$INSTALL_PATH</arg> <!-- COBIS_HOME -->
+		</executeclass>
+		</job>
+	
+	<job name="Updating version [$APP_NAME]">
+		<executeclass name="com.cobiscorp.cobis.installer.jobs.UpdateVersionJob">
+			<arg>$INSTALL_PATH/$APP_NAME/version.txt</arg>
+			<arg>$APP_VER</arg>
+		</executeclass>
+	</job>
+	
+</processing>

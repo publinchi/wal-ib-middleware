@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<langpack>
+
+	<str id="pack.modules.name" txt="módulos" />
+
+	<str id="JdbcConnectionValidator.errorMessage" txt="No se pudo conectar a la base de datos especificada" />
+
+	<str id="CommonsJob.done" txt="Hecho" />
+	<!-- errors -->
+	<str id="CommonsJob.fileNotFound.title" txt="Archivo no encontrado" />
+	<str id="CommonsJob.fileNotFound.message" txt="No se encuentra el archivo en la ubicación {0}" />
+	<str id="CommonsJob.envVarNotDefined.title" txt="Variable de entorno" />
+	<str id="CommonsJob.envVarNotDefined.message" txt="Variable de entorno {0} no definida" />
+	<str id="CommonsJob.closingConnection.title" txt="Cerrar conexión" />
+	<str id="CommonsJob.closingConnection.message"
+		txt="Se ha producido un error cerrando la conexión con la base de datos" />
+
+	<str id="ValidateVersionJob.sybaseVersion" txt="Versión de Sybase: {0}" />
+	<!-- errors -->
+	<str id="ValidateVersionJob.invalidVersion.title" txt="Versión inválida" />
+	<str id="ValidateVersionJob.invalidVersion.message" txt="La versión de Sybase debe ser mayor o igual a {0}" />
+
+	<str id="CreateDatabaseJob.executingScript" txt="Ejecutando script {0}..." />
+	<!-- questions -->
+	<str id="CreateDatabaseJob.alreadyExist.title" txt="La base de datos ya existe" />
+	<str id="CreateDatabaseJob.alreadyExist.question"
+		txt="La base de datos {0} ya existe. Desea borrarla y crearla de nuevo?" />
+    
+    <str id="installer.madewith" txt="Hecho por COBISCorp"/>
+    
+    <str id="installer.title" txt="default de "/>
+    
+</langpack>
