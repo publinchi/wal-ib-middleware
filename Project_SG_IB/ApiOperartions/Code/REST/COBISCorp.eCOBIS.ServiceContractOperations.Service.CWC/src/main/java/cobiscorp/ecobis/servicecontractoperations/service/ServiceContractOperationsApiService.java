@@ -186,9 +186,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
                 String.valueOf(inCreditAccountRequest.getOriginCode()));        
         procedureRequestAS.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR,
-                String.valueOf(inCreditAccountRequest.getOriginCode()));
+                String.valueOf(inCreditAccountRequest.getOriginMovementId()));
         procedureRequestAS.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR,
-                String.valueOf(inCreditAccountRequest.getOriginCode()));
+                String.valueOf(inCreditAccountRequest.getOriginReferenceNumber()));
         
         
 

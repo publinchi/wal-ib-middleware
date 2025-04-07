@@ -285,7 +285,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		String creditConcept = wQueryRequest.readValueParam("@i_creditConcept");
 		BigDecimal amount = new BigDecimal(wQueryRequest.readValueParam("@i_amount"));
 		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));		
-		int originMovementId =  convertStringToInteger(wQueryRequest.readValueParam("@i_originMovementId"));
+		String originMovementId =  (wQueryRequest.readValueParam("@i_originMovementId"));
 		String originReferenceNumber =  (wQueryRequest.readValueParam("@i_originReferenceNumber"));
 		
 		aBagSPJavaOrchestration.clear();
@@ -322,13 +322,13 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		
 		if(creditConcept.equals("REFUND")) {
 		
-			if(originMovementId==0) {
-				aBagSPJavaOrchestration.put("40093", "creditConcept must not be empty");
+			if(originMovementId.isEmpty()) {
+				aBagSPJavaOrchestration.put("40093", "originMovementId must not be empty");
 				return;
 			}
 			
 			if(originReferenceNumber.isEmpty()) {
-				aBagSPJavaOrchestration.put("40093", "creditConcept must not be empty");
+				aBagSPJavaOrchestration.put("40093", "originReferenceNumber must not be empty");
 				return;
 			}
 		}
@@ -364,8 +364,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	    reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 	    
 	    if(creditConcept.equals("REFUND")) {
-	    	reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originMovementId"));
-	    	reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originReferenceNumber"));	    	
+	    	reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_originMovementId"));
+	    	reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_originReferenceNumber"));	    	
 	    }
 	    
 	    aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
