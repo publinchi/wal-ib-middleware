@@ -1,0 +1,4 @@
+<langpack>
+    <str id="plugins" txt="Plugins"/>
+    <str id="plugins.description" txt="Plugins de la aplicación"/>
+</langpack>

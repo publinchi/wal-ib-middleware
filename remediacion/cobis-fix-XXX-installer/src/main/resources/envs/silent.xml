@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AutomatedInstallation langpack="spa">
+<com.izforge.izpack.panels.HelloPanel id="helloPanelId"/>
+<com.izforge.izpack.panels.InfoPanel id="infoPanelId"/>
+<com.izforge.izpack.panels.LicencePanel id="licencePanelId"/>
+<com.izforge.izpack.panels.TargetPanel id="targetPanelId">
+<installpath>COBISHOME</installpath>
+</com.izforge.izpack.panels.TargetPanel>
+<com.izforge.izpack.panels.InstallPanel id="installPanelId"/>
+<com.izforge.izpack.panels.ProcessPanel id="processPanelId"/>
+<com.izforge.izpack.panels.FinishPanel id="finishPanelId"/>
+</AutomatedInstallation>
