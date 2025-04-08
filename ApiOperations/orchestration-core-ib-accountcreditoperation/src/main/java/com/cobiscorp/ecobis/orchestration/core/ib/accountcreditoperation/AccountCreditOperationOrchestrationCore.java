@@ -323,12 +323,12 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		if(creditConcept.equals("REFUND")) {
 		
 			if(originMovementId.isEmpty()) {
-				aBagSPJavaOrchestration.put("40093", "originMovementId must not be empty");
+				aBagSPJavaOrchestration.put("40126", "The originMovementId must not be empty");
 				return;
 			}
 			
 			if(originReferenceNumber.isEmpty()) {
-				aBagSPJavaOrchestration.put("40093", "originReferenceNumber must not be empty");
+				aBagSPJavaOrchestration.put("40127", "The originReferenceNumber must not be empty");
 				return;
 			}
 		}

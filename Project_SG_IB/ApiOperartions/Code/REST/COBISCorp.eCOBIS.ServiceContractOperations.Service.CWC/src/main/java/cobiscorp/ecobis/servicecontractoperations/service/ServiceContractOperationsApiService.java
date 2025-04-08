@@ -157,14 +157,35 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
     // Return DTO
-    public CreditAccountResponse creditOperation(String xRequestId,CreditAccountRequest inCreditAccountRequest) throws CTSRestException {
+    public CreditAccountResponse creditOperation(String xRequestId, String xEndUserRequestDateTime,
+            String xEndUserIp, String xChannel,CreditAccountRequest inCreditAccountRequest) throws CTSRestException {
         LOGGER.logDebug("Start service execution: accountCreditOperation");
         CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
+        
+        
+        if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+            xRequestId = "E";
+        }
+
+        if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+            xChannel = "E";
+        }
 
         // create procedure
         ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_credit_operation_api");
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
         procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
         procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
