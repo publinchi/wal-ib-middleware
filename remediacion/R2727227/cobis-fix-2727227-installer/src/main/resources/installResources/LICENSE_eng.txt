@@ -1,0 +1,11 @@
+
+  This application is part of the bank owned COBISCORP packages. 
+ 
+  Unauthorized use is prohibited as well as any 
+  alteration or addition made by some of its members without due 
+  COBISCORP written consent. 
+ 
+  This program is protected by copyright law and by 
+  international conventions on intellectual property. Its use is not 
+  COBISCORP authorized right to give orders for sequestration 
+  or retention and to prosecute the perpetrators of any breach.

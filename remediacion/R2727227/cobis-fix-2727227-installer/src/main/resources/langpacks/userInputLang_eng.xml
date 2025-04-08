@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<langpack>
+
+	<str id="JdbcPanel.host" txt="Host:" />
+	<str id="JdbcPanel.port" txt="Port:" />
+	<str id="JdbcPanel.schema" txt="Schema:" />
+	<str id="JdbcPanel.userName" txt="User Name:" />
+	<str id="JdbcPanel.password" txt="Password:" />
+
+</langpack>

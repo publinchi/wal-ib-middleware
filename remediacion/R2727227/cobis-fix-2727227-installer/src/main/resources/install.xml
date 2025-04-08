@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installation version="1.0">
+
+	<info>
+		<appname>${product.name}</appname>
+		<appversion>${project.version}</appversion>
+		<authors>
+			<author name="COBISCorp" email="support.center@cobiscorp.com" />
+		</authors>
+		<url>${project.url}</url>
+		<summarylogfilepath>$INSTALL_PATH/$APP_NAME/installinfo/Summary${product.name}.htm
+		</summarylogfilepath>
+		<uninstaller name="${product.name}-uninstaller-${project.version}.jar" path="${INSTALL_PATH}/$APP_NAME/uninstaller">
+		</uninstaller>
+		<writeinstallationinformation>false</writeinstallationinformation>
+		</info>
+
+	<variables>
+		<variable name="COBIS_HOME" value="/COBIS_HOME"></variable>
+		<variable name="InstallerFrame.logfilePath" value="$INSTALL_PATH/update${project.version}.log" />
+		<variable name="logInstallerOutput" value="$INSTALL_PATH/logInstallerOutput.log." />
+		<variable name="TargetPanel.dir.windows" value="${ENV[SystemDrive]}/COBIS_HOME" />
+		<variable name="TargetPanel.dir.unix" value="/usr/local/cobishome" />
+		</variables>
+	<conditions>
+		<condition type="variable" id="containsbe">
+			<name>wContainsBe</name>
+			<value>true</value>
+		</condition>
+	</conditions>
+
+	<guiprefs width="600" height="400" resizable="no">
+		<modifier key="useHeadingPanel" value="yes" />
+		<modifier key="headingBackgroundColor" value="0x00ffffff" />
+		<modifier key="headingPanelCounter" value="text" />
+	</guiprefs>
+
+	<locale>
+		<langpack iso3="eng" />
+		<langpack iso3="spa" />
+	</locale>
+
+	<resources>
+		<res id="Heading.image" src="img/cobiscorp.jpg" />
+		<res id="CustomLangPack.xml" src="langpacks/CustomLangpack.xml" />
+		<res id="CustomLangPack.xml_eng" src="langpacks/CustomLangpack_eng.xml" />
+		<res id="CustomLangPack.xml_spa" src="langpacks/CustomLangpack_spa.xml" />
+		<res id="userInputSpec.xml" src="specs/userInput.Spec.xml" />
+		<res id="userInputLang.xml_eng" src="langpacks/userInputLang_eng.xml" />
+		<res id="userInputLang.xml_spa" src="langpacks/userInputLang_spa.xml" />
+		<res id="LicencePanel.licence_eng" src="installResources/LICENSE_eng.txt" />
+		<res id="LicencePanel.licence_spa" src="installResources/LICENSE_spa.txt" />
+		<res id="InfoPanel.info_eng" src="installResources/README_eng.txt" />
+		<res id="InfoPanel.info_spa" src="installResources/README_spa.txt" />
+		<res id="ProcessPanel.Spec.xml" src="specs/processPanel.Spec.xml" />
+		<res id="packsLang.xml" src="langpacks/packsLang.xml" />
+		<res id="packsLang_eng.xml" src="langpacks/packsLang.xml" />
+		<res id="packsLang_spa.xml" src="langpacks/packsLang.xml" />
+
+	</resources>
+	<panels>
+		<panel classname="HelloPanel" id="helloPanelId" />
+		<panel classname="InfoPanel" id="infoPanelId" />
+		<panel classname="LicencePanel" id="licencePanelId" />
+		<panel classname="TargetPanel" id="targetPanelId" />
+		<panel classname="InstallPanel" id="installPanelId" />
+		<panel classname="ProcessPanel" id="processPanelId" />
+		<panel classname="FinishPanel" id="finishPanelId">
+		</panel>
+	</panels>
+
+	<packs>
+		<pack id="plugins" name="plugins" required="yes">
+			<description>Copy plugins</description>
+			<fileset dir="packs/plugins" targetdir="$INSTALL_PATH/plugins" 
+			includes= "*.jar" override="true" />
+		</pack>
+		<pack id="groovy-scripts" name="groovy-scripts" required="yes">
+			<description>Copy script files </description>
+			<fileset dir="scripts" targetdir="$INSTALL_PATH/$APP_NAME/installer/scripts"
+				includes="*.groovy" override="true" />
+		</pack>
+
+		<pack id="version-file" name="version-file" required="yes">
+			<description>Copy plugins</description>
+			<fileset dir="packs" targetdir="$INSTALL_PATH/$APP_NAME/"
+				includes="*.txt" override="true" />
+		</pack>
+	</packs>
+
+	<!-- <jar src="../${project.build.finalName}.jar" /> -->
+	<jar src="libs/groovy-all.jar" />
+	<jar src="libs/commons-lang.jar" />
+	<jar src="libs/cobis-installer-api.jar" />
+	<jar src="libs/cobis-installer-jobs.jar" />
+	<jar src="libs/log4j.jar" />
+	<jar src="libs/slf4j-api.jar" />
+	<jar src="libs/slf4j-log4j12.jar" />
+	<jar src="libs/commons-io.jar" />
+</installation>
