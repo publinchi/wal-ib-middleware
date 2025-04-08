@@ -1261,7 +1261,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
 			requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
 			requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
-					
+			requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);		
 			if("I".equals(operacion) && 
 				   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria() )   || 
 					Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria() )||
@@ -1300,15 +1300,13 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
 				requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
 				requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
-				requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);	
 			}else
 				if("U".equals(operacion) )
 				{
 					requestProcedureLocal.addInputParam("@i_lc_firma",ICTSTypes.SQLVARCHAR, firma);
 					requestProcedureLocal.addInputParam("@i_lc_error",ICTSTypes.SQLVARCHAR, error);
 					requestProcedureLocal.addInputParam("@i_lc_response",ICTSTypes.SQLVARCHAR, response);
-					requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());
-					requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);	
+					requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());	
 				}
 			
 			requestProcedureLocal.addOutputParam("@o_lc_id", ICTSTypes.SQLINT4, "0");
