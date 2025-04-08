@@ -8,9 +8,9 @@
 			<author name="COBISCorp" email="support.center@cobiscorp.com" />
 		</authors>
 		<url>${project.url}</url>
-		<summarylogfilepath>$INSTALL_PATH/$APP_NAME/installinfo/Summary${product.name}.htm
+		<summarylogfilepath>$INSTALL_PATH/fix/$APP_NAME/installinfo/Summary${product.name}.htm
 		</summarylogfilepath>
-		<uninstaller name="${product.name}-uninstaller-${project.version}.jar" path="${INSTALL_PATH}/$APP_NAME/uninstaller">
+		<uninstaller name="${product.name}-uninstaller-${project.version}.jar" path="${INSTALL_PATH}/fix/$APP_NAME/uninstaller">
 		</uninstaller>
 		<writeinstallationinformation>false</writeinstallationinformation>
 		</info>
@@ -70,6 +70,7 @@
 	</panels>
 
 	<packs>
+	<!-- COPIA DE ARCHIVOS A LA RUTA INDICADA EN EL MOMENTO DE LA INSTALACIÓN-->
 		<pack id="plugins" name="plugins" required="yes">
 			<description>Copy plugins</description>
 			<fileset dir="packs/plugins" targetdir="$INSTALL_PATH/plugins" 
