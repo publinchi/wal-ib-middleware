@@ -132,22 +132,31 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 	public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal, Map<String, Object> aBagSPJavaOrchestration) {	
 		try{
 			IProcedureRequest request = new ProcedureRequestAS();
-			String movementType = null;
-			if(causal.equals("2040")){
-				movementType = "SPEI_DEBIT";
-			}else{
-				movementType = "SPEI_RETURN";
-			}
-			
+			String movementType = tipoTran;
+			String eventType = "TRANSACCION PENDING";
+			Integer longSsnBranch = 0;
+	        String authorizationCode = null;
+	        
+	        if (aBagSPJavaOrchestration.get("ssn_branch") !=null) {
+	        	authorizationCode = aBagSPJavaOrchestration.get("ssn_branch").toString();
+	        	longSsnBranch = Math.max(authorizationCode.length() - 6, 0);
+	        	
+	    		authorizationCode = authorizationCode.substring(longSsnBranch);
+	        }
+
+	        if (aBagSPJavaOrchestration.get("typeTrnWH") !=null && aBagSPJavaOrchestration.get("typeTrnWH").equals("S")) {
+	        	eventType = "TRANSACCION SUCCESS";
+	        }
+
 			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
 			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
 			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
-			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
+			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, eventType);
 
 			request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aRequest.readValueParam("@x_end_user_request_date"));
+			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@x_end_user_request_date"));
 			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
 			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
 			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
@@ -156,23 +165,27 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
 			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aBagSPJavaOrchestration.get("movementId"));
 			
-			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
+			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 			
 			request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, "CASHI");
-		
 			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
-
 			request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
 			
-			request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_owner_name")); //consultar
-				
+			request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_owner_name")); 
 			request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
 			request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 			request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_name"));
 			
 			request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_codigo_acc"));
 			request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("@i_clave_rastreo"));
+			
+			// Asignación de dirección IP
+			if (aRequest.readValueParam("@x_end_user_ip") != null) {
+				request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
+	        }
+			
+			request.addInputParam("@i_authorizationCode", ICTSTypes.SQLVARCHAR, authorizationCode);
 			
 			request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR,(String)aRequest.readValueParam("@i_json_req"));
 			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
@@ -277,6 +290,75 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 
 	}
 
+	public void registerTransactionFailed(String tipoTran, IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) 
+	{
+		IProcedureRequest request = new ProcedureRequestAS();
+		String movementType = tipoTran;
+		String movementId = "0";
+		String codeError = "0";
+		String messageError = "";
+		String causal = "";
+		
+		try{
+			
+			if (aBagSPJavaOrchestration.get("movementId")!= null) {
+				movementId = aBagSPJavaOrchestration.get("movementId").toString();
+			}
+
+			if (aBagSPJavaOrchestration.get("code_error")!= null) {
+				codeError = aBagSPJavaOrchestration.get("code_error").toString();
+			}
+			
+			if (aBagSPJavaOrchestration.get("message_error")!= null) {
+				messageError = aBagSPJavaOrchestration.get("message_error").toString();
+			}
+			
+			if (aBagSPJavaOrchestration.get("causal")!= null) {
+				causal = aBagSPJavaOrchestration.get("causal").toString();
+			}
+			
+			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION FAILED");
+
+			request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
+			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
+			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
+			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@x_end_user_request_date"));
+			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+			
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , movementId);
+			
+			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
+			request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_owner_name"));
+			request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
+			request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
+			
+			request.addInputParam("@i_errorDetailsCode", ICTSTypes.SQLVARCHAR, codeError);
+			request.addInputParam("@i_errorDetailsMessage", ICTSTypes.SQLVARCHAR, messageError);
+			
+			request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_json_req"));
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+			
+			IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+				
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response Corebanking registerAllTransactionFailed: " + wProductsQueryResp.getProcedureResponseAsString());
+			}
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerAllTransactionFailed");
+			}
+		}catch(Exception e){
+			logger.logError("Error Catastrofico en registerAllTransactionFailed SPEI_DEBIT");	
+		}
+	}
+	
 	protected IProcedureResponse saveReentry(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 

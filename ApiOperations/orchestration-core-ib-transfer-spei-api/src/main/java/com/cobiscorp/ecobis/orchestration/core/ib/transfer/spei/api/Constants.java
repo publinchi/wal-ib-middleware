@@ -32,6 +32,7 @@ public class Constants {
 
     public static final String COMPANY_ID = "COMPID";
     public static final String TRACKING_KEY_PREFIX = "BANKPREFIX";
+    public static final String SPEI_DEBIT = "SPEI_DEBIT";
 
     /*------------------ SPEI -----------------------------------*/
     //ENTRADAS

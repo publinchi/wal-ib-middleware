@@ -799,7 +799,17 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
-				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();				
+				
+				//Realizamos el registro del evento no exitoso
+				aBagSPJavaOrchestration.put("code_error", code);
+	        	aBagSPJavaOrchestration.put("message_error", message);
+	        	
+	        	aBagSPJavaOrchestration.put("causal", "1010");
+				registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
+
+				aBagSPJavaOrchestration.put("causal", "1020");
+				registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
 			}
 			
 		} else {
@@ -852,6 +862,16 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				message = anOriginalProcedureRes.getMessage(1).getMessageText();
 				success = "false";
 			}
+			
+			//Realizamos el registro del evento no exitoso
+			aBagSPJavaOrchestration.put("code_error", code);
+        	aBagSPJavaOrchestration.put("message_error", message);
+        	
+        	aBagSPJavaOrchestration.put("causal", "1010");
+			registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
+
+			aBagSPJavaOrchestration.put("causal", "1020");
+			registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
 		}
 		
 		// Agregar Header y data 1

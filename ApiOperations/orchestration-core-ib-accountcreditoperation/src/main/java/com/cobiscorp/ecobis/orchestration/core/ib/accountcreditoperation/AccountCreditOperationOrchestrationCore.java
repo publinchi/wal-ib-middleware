@@ -411,6 +411,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	    }
 	    
 	    aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("ssn_branch", wQueryRequest.readValueFieldInHeader("ssn_branch"));
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
@@ -713,11 +714,14 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		IResultSetData data = new ResultSetData();
 		IResultSetRow row = new ResultSetRow();
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
+		String messageError = "";
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SYBVARCHAR, 255));
+		
+		aBagSPJavaOrchestration.put("transaccionDate", transaccionDate);
 		
 		if (keyList.get(0).equals("0")) {
 			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
@@ -727,7 +731,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			row.addRowData(4, new ResultSetRowColumnData(false, this.columnsToReturn[3].getValue()));
 			data.addRow(row);
 
-			aBagSPJavaOrchestration.put("transaccionDate",transaccionDate);
 	    	registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050", aBagSPJavaOrchestration);
 		} else {
 			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
@@ -736,6 +739,14 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get(keyList.get(0))));
 			row.addRowData(4, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
+			
+			//Registramos la transacción webhook fallida
+			messageError = aBagSPJavaOrchestration.get(keyList.get(0)).toString();
+			aBagSPJavaOrchestration.put("code_error", keyList.get(0));
+        	aBagSPJavaOrchestration.put("message_error", messageError);
+        	aBagSPJavaOrchestration.put("causal", "4050");
+        	
+			registerTransactionFailed("AccountCreditOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
 		}
 		
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);

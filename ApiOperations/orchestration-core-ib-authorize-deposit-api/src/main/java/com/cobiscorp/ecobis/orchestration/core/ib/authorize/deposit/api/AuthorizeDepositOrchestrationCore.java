@@ -730,6 +730,12 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
 					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, code);
 				
+				aBagSPJavaOrchestration.put("code_error", code);
+	        	aBagSPJavaOrchestration.put("message_error", message);
+	        	aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("@o_causal"));
+	        	
+				registerTransactionFailed("Authorize Deposit", "IDC", aRequest, aBagSPJavaOrchestration);
+				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, success));
@@ -776,6 +782,12 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 			executionStatus = "ERROR";
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, codeReturn.toString());
+			
+			aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("code_error"));
+        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("message_error"));
+        	aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("@o_causal"));
+        	
+			registerTransactionFailed("Authorize Deposit", "IDC", aRequest, aBagSPJavaOrchestration);
 			
 			IResultSetRow row = new ResultSetRow();
 			

@@ -706,6 +706,15 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
 					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				
+				String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
+				String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+				
+				aBagSPJavaOrchestration.put("code_error", codeError);
+	        	aBagSPJavaOrchestration.put("message_error", mesageError);
+	        	aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("@o_causal"));
+	        	
+				registerTransactionFailed("Authorize Deposit Dock", "DOCK", aRequest, aBagSPJavaOrchestration);
+				
 				IResultSetRow row = new ResultSetRow();
 				
 				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
@@ -768,6 +777,13 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 			
 			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
 			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			
+			aBagSPJavaOrchestration.put("code_error", codeError);
+        	aBagSPJavaOrchestration.put("message_error", mesageError);
+        	aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("@o_causal"));
+        	
+			registerTransactionFailed("Authorize Deposit Dock", "DOCK", aRequest,  aBagSPJavaOrchestration);
+			
 			
 			IResultSetRow row = new ResultSetRow();
 			
