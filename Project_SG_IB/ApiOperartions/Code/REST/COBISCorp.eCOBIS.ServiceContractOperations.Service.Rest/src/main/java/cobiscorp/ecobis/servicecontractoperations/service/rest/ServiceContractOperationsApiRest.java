@@ -66,7 +66,10 @@ public class ServiceContractOperationsApiRest {
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response creditOperation(
-		@HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 		CreditAccountRequest inCreditAccountRequest) {
 		LOGGER.logDebug("Start service execution REST: creditOperation");
 		CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
