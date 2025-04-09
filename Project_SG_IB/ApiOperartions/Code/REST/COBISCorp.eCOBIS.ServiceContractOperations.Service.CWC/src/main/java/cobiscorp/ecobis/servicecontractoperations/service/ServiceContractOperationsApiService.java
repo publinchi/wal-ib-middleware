@@ -7019,14 +7019,34 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
     // Return DTO
-    public  DebitAccountResponse  debitOperation(String xRequestId, DebitAccountRequest inDebitAccountRequest  )throws CTSRestException{
+    public  DebitAccountResponse  debitOperation(String xRequestId, String xEndUserRequestDateTime,
+                                                 String xEndUserIp, String xChannel, DebitAccountRequest inDebitAccountRequest)throws CTSRestException{
         LOGGER.logDebug("Start service execution: debitOperation");
         DebitAccountResponse outSingleDebitAccountResponse  = new DebitAccountResponse();
+
+        if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+            xRequestId = "E";
+        }
+
+        if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+            xChannel = "E";
+        }
 
         //create procedure
         ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_debit_operation_api");
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
         procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18500118");
         procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getExternalCustomerId()));
@@ -7035,6 +7055,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getReferenceNumber());
         procedureRequestAS.addInputParam("@i_originCode",ICTSTypes.SQLINT4,String.valueOf(inDebitAccountRequest.getOriginCode()));
         procedureRequestAS.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitReason());
+        procedureRequestAS.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getOriginMovementId());
+        procedureRequestAS.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getOriginReferenceNumber());
 
 		Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inDebitAccountRequest);
@@ -7045,7 +7067,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         List<MessageBlock> errors = ErrorUtil.getErrors(response);
         //throw error
-        if(errors!= null && errors.size()> 0){
+        if (errors != null && !errors.isEmpty()) {
             LOGGER.logDebug("Procedure execution returns error");
             if ( LOGGER.isDebugEnabled() ) {
                 for (int i = 0; i < errors.size(); i++) {
@@ -7060,27 +7082,23 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         int mapBlank=0;
 
         mapTotal++;
-        if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {
+        if (response.getResultSets() != null && !response.getResultSets().isEmpty() && response.getResultSets().get(0).getData() != null && !response.getResultSets().get(0).getData().getRows().isEmpty()) {
             //----------------Assume Array return
-            DebitAccountResponse returnDebitAccountResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<DebitAccountResponse>() {
-                @Override
-                public DebitAccountResponse mapRow(ResultSetMapper resultSetMapper, int index) {
-                    DebitAccountResponse dto = new DebitAccountResponse();
+            DebitAccountResponse returnDebitAccountResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), (resultSetMapper, index) -> {
+                DebitAccountResponse dto = new DebitAccountResponse();
 
-                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-                    dto.setMovementId(resultSetMapper.getString(4));
-                    dto.responseInstance().setCode(resultSetMapper.getInteger(2));
-                    dto.responseInstance().setMessage(resultSetMapper.getString(3));
-                    return dto;
-                }
-            },false);
+                dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                dto.setMovementId(resultSetMapper.getString(4));
+                dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+                dto.responseInstance().setMessage(resultSetMapper.getString(3));
+                return dto;
+            });
             outSingleDebitAccountResponse=returnDebitAccountResponse ;
 
         }else {
             mapBlank++;
 
         }
-
         //End map returns
         if(mapBlank!=0&&mapBlank==mapTotal){
             LOGGER.logDebug("No data found");

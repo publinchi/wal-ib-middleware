@@ -39,6 +39,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION"; 
 	public String MESSAGE_RESPONSE =  "SUCCESS";
+	public String transaccionDate;
 
 	public Boolean getServerStatus() throws CTSServiceException, CTSInfrastructureException {
 		ServerRequest serverRequest = new ServerRequest();
@@ -75,10 +76,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
 
 			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				transaccionDate = wServerStatusResp.readValueParam("@o_fecha_proceso");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 				try {
-					serverResponse
-							.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

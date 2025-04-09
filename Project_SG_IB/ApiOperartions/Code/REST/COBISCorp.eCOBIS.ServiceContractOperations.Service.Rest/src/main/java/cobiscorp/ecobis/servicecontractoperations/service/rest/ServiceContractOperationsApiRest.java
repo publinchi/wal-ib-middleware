@@ -36,6 +36,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.math.BigDecimal;
 
@@ -2189,23 +2190,35 @@ public class ServiceContractOperationsApiRest {
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response debitOperation(
-		@HeaderParam("x-request-id") String xRequestId,
-		DebitAccountRequest inDebitAccountRequest) {
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			DebitAccountRequest inDebitAccountRequest) {
 		LOGGER.logDebug("Start service execution REST: debitOperation");
-		DebitAccountResponse outSingleDebitAccountResponse = new DebitAccountResponse();
+		DebitAccountResponse outSingleDebitAccountResponse;
 
-		if (!validateMandatory(new Data("externalCustomerId", inDebitAccountRequest.getExternalCustomerId()),
-				new Data("accountNumber", inDebitAccountRequest.getAccountNumber()),
-				new Data("amount", inDebitAccountRequest.getAmount()),
-				new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()),
-				new Data("debitReason", inDebitAccountRequest.getDebitReason()))) {
+		String reason = inDebitAccountRequest.getDebitReason();
+		List<Data> mandatoryFields = new ArrayList<>();
+		mandatoryFields.add(new Data("externalCustomerId", inDebitAccountRequest.getExternalCustomerId()));
+		mandatoryFields.add(new Data("accountNumber", inDebitAccountRequest.getAccountNumber()));
+		mandatoryFields.add(new Data("amount", inDebitAccountRequest.getAmount()));
+		mandatoryFields.add(new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()));
+
+		if ("FALSE_CHARGEBACK".equals(reason) || "False chargeback claim".equals(reason)) {
+			mandatoryFields.add(new Data("originMovementId", inDebitAccountRequest.getOriginMovementId()));
+			mandatoryFields.add(new Data("originReferenceNumber", inDebitAccountRequest.getOriginReferenceNumber()));
+		} else {
+			mandatoryFields.add(new Data("debitReason", inDebitAccountRequest.getDebitReason()));
+		}
+
+		if (!validateMandatory(mandatoryFields.toArray(new Data[0]))) {
 			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
 		}
 
 		try {
-			outSingleDebitAccountResponse = iServiceContractOperationsApiService.debitOperation(xRequestId, inDebitAccountRequest);
+			outSingleDebitAccountResponse = iServiceContractOperationsApiService.debitOperation(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inDebitAccountRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
