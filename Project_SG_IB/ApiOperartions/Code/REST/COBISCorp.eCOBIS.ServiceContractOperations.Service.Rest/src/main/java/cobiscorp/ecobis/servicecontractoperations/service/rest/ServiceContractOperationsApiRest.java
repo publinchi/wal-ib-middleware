@@ -88,7 +88,7 @@ public class ServiceContractOperationsApiRest {
 
 		try {
 			outSingleCreditAccountResponse = iServiceContractOperationsApiService
-					.creditOperation(xRequestId, inCreditAccountRequest);
+					.creditOperation(xRequestId,xEndUserRequestDateTime, xEndUserIp, xChannel, inCreditAccountRequest);
 		} catch (CTSRestException e) {
 			LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
