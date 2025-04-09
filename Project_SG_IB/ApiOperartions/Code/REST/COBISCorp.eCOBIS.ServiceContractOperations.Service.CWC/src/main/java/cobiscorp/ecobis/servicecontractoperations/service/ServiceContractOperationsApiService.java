@@ -157,14 +157,35 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
     // Return DTO
-    public CreditAccountResponse creditOperation(String xRequestId,CreditAccountRequest inCreditAccountRequest) throws CTSRestException {
+    public CreditAccountResponse creditOperation(String xRequestId, String xEndUserRequestDateTime,
+            String xEndUserIp, String xChannel,CreditAccountRequest inCreditAccountRequest) throws CTSRestException {
         LOGGER.logDebug("Start service execution: accountCreditOperation");
         CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
+        
+        
+        if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+            xRequestId = "E";
+        }
+
+        if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+            xChannel = "E";
+        }
 
         // create procedure
         ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_credit_operation_api");
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
         procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
         procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
@@ -184,7 +205,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_creditConcept", ICTSTypes.SQLVARCHAR,
                 inCreditAccountRequest.getCreditConcept());
         procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
-                String.valueOf(inCreditAccountRequest.getOriginCode()));
+                String.valueOf(inCreditAccountRequest.getOriginCode()));        
+        procedureRequestAS.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR,
+                String.valueOf(inCreditAccountRequest.getOriginMovementId()));
+        procedureRequestAS.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR,
+                String.valueOf(inCreditAccountRequest.getOriginReferenceNumber()));
+        
+        
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
@@ -8280,7 +8307,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@i_limitType", ICTSTypes.SQLVARCHAR,
 				inRequestRegisterAccount.getCreditorAccount().getLimitType());
 		procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLMONEY,
-				String.valueOf(inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount()));
+				String.valueOf(inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount() != null ? inRequestRegisterAccount.getCreditorAccount().getLimit().getAmount() : 0.0));
 		procedureRequestAS.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR,
 				inRequestRegisterAccount.getCreditorAccount().getLimit().getCurrency());
 		procedureRequestAS.addInputParam("@i_otp_code",ICTSTypes.SQLVARCHAR,

@@ -121,7 +121,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return list
-	public CreditAccountResponse creditOperation(String xRequestId, CreditAccountRequest inCreditAccountRequest) throws CTSRestException;
+	public CreditAccountResponse creditOperation(String xRequestId, String xEndUserRequestDateTime,
+            String xEndUserIp, String xChannel,CreditAccountRequest inCreditAccountRequest) throws CTSRestException;
 
 	/**
 	 * Encrypt Data

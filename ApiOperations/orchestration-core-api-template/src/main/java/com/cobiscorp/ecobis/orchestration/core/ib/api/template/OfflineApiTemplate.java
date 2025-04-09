@@ -119,7 +119,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 		String originCode = request.readValueParam("@i_originCode");
 		
-		if (logger.isDebugEnabled()) {logger.logDebug("@i_originCode = " + originCode);}
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("@i_originCode = " + originCode);
+			logger.logDebug("request FHU-->1 " + request);
+		}
 		
 		if (originCode == null) {
 			request.addInputParam("@i_originCode", ICTSTypes.SQLINT4, "");
@@ -663,6 +666,56 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				
 				return true;
 
+	}
+	
+	public IProcedureResponse getValAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+	    IProcedureRequest request = new ProcedureRequestAS();
+	    IProcedureResponse response = null;
+
+	    try {
+	        if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " Entrando en getValAccountReq");
+	            logger.logInfo(CLASS_NAME + " Entrando en getValAccountReq FHU " + aBagSPJavaOrchestration.toString());
+	        }
+
+	        request.setSpName("cobis..sp_val_data_account_api");
+
+	        // Agregar encabezados
+	        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+	                IMultiBackEndResolverService.TARGET_CENTRAL);
+	        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+	        Object accountNumberObj = aBagSPJavaOrchestration.get("accountNumber");
+	        Object debitoCreditoObj = aBagSPJavaOrchestration.get("debitoCredito");
+
+	        String accountNumber = (accountNumberObj != null) ? accountNumberObj.toString() : null;
+	        String debitoCredito = (debitoCreditoObj != null) ? debitoCreditoObj.toString() : null;
+
+	        if ("C".equals(debitoCredito)) {
+	        	request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, accountNumber);
+	        }
+	        else {
+	        	request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, accountNumber);
+	        }
+	        	        
+            request.addInputParam("@i_error_ndnc", ICTSTypes.SQLVARCHAR, "S");
+			
+	        // Ejecutar el procedimiento
+	        response = executeCoreBanking(request);
+
+	        if (logger.isDebugEnabled()) {
+	            logger.logDebug("Response Corebanking getValAccountReq FHU : " + response.getProcedureResponseAsString());
+	        }
+	    } catch (Exception e) {
+	        logger.logError(CLASS_NAME + " Error al obtener la validación de la cuenta: " + e.getMessage(), e);
+	        throw new RuntimeException("Error en la validación de la cuenta", e); 
+	    } finally {
+	        if (logger.isInfoEnabled()) {
+	            logger.logInfo(CLASS_NAME + " Saliendo de getValAccountReq");
+	        }
+	    }
+
+	    return response;
 	}
 
 }

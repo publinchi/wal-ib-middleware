@@ -39,6 +39,7 @@ import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Institucion;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
@@ -170,114 +171,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	 */
 	private static ILogger logger = LogFactory.getLogger(DispacherSpeiOrchestrationCore.class);
 	
-	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
-	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
-
-	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = service;
-	}
-
-	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = null;
-	}
-
-	/**
-	 * Instance plugin to use services other core banking
-	 */
-	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
-	protected ICoreServer coreServer;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServer(ICoreServer service) {
-		coreServer = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServer(ICoreServer service) {
-		coreServer = null;
-	}
-
-	/**
-	 * Instance plugin to use services other core banking
-	 */
-	@Reference(referenceInterface = ICoreServiceSelfAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceSelfAccountTransfers", unbind = "unbindCoreServiceSelfAccountTransfers")
-	private ICoreServiceSelfAccountTransfers coreServiceSelfAccountTransfers;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = null;
-	}
-
-	@Override
-	public ICoreService getCoreService() {
-		return coreService;
-	}
-
-	/**
-	 * Instance plugin to use services other core banking
-	 */
-	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
-	protected ICoreService coreService;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreService(ICoreService service) {
-		coreService = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreService(ICoreService service) {
-		coreService = null;
-	}
-
-	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
-	public ICoreServiceSendNotification coreServiceNotification;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = null;
-	}
+	
 
 	/**
 	 * /** Execute transfer first step of service
@@ -302,33 +196,44 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logDebug("JCOS DispacherSpeiOrchestrationCore: executeJavaOrchestration");
 			logger.logDebug(anOriginalRequest);
 		}
-		
+		String xmls = anOriginalRequest.readValueParam("@i_pay_order");
 		aBagSPJavaOrchestration.putAll( mapDataSigns);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "SPEI DISPACHER");
 		mensaje message = null;
 		Integer idLog = 0;
 		try {
 			// METODO GUARDAR XML
-			String xmls = anOriginalRequest.readValueParam("@i_pay_order");
+			
 			DispatcherUtil plot = new DispatcherUtil();
 			message = plot.getDataMessage(xmls);
 			if (message != null) {
 				aBagSPJavaOrchestration.put("speiTransaction", message);
 				//llamada a log entrante
-				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null,anOriginalRequest.readValueParam("@i_pay_order"));
+				
+				if(!Constans.ENSESION.equals(message.getCategoria()))
+				{
+					CardPAN card= new CardPAN();
+					//ofuscacion tipo de cuentas 3
+					if( message.getOrdenpago().getOpTcClaveBen()==3)
+					{
+						xmls = xmls.replace(message.getOrdenpago().getOpCuentaBen(), card.maskNumber(message.getOrdenpago().getOpCuentaBen()));
+					}
+			        if( message.getOrdenpago().getOpTcClaveOrd()==3)
+			        {
+			        	xmls = xmls.replace(message.getOrdenpago().getOpCuentaOrd(), card.maskNumber(message.getOrdenpago().getOpCuentaOrd()));
+			        }
+				}
+		        
+		        anOriginalRequest.setValueParam("@i_pay_order", xmls);
+				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null, xmls);
 				executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 			}
 			
-
-		}catch (CTSServiceException e) {
-			e.printStackTrace();
-		} catch (CTSInfrastructureException e) {
-			e.printStackTrace();
 		}catch (Exception xe) {
-			logger.logError(xe);
+			logger.logError("Error dispacher:",xe);
 		}
 		//llamada a log update
-		logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "U", "Dispacher in", null, null, aBagSPJavaOrchestration.get("result").toString(), idLog, null);
+		logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "U", "Dispacher in", null, null, aBagSPJavaOrchestration.get("result").toString(), idLog, xmls);
 	
 		IProcedureResponse valuesOutput = new ProcedureResponseAS();
 		valuesOutput.addParam("@o_result", 39, 1, aBagSPJavaOrchestration.get("result").toString());
@@ -525,7 +430,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 								procedureRequest.addInputParam("@i_rfcCurpOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpRfcCurpOrd());
 								procedureRequest.addInputParam("@i_referenciaNumerica", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpRefNumerica()));
 								procedureRequest.addInputParam("@i_idTipoPago", ICTSTypes.SYBINT4,String.valueOf(msjIn.getOrdenpago().getOpTpClave()));
-								procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, toStringXmlObject(msjIn));
+								procedureRequest.addInputParam("@i_string_request", ICTSTypes.SQLVARCHAR, request.readValueParam("@i_pay_order"));
 								procedureRequest.addInputParam("@i_tipoCuentaBeneficiario", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveBen()));
 								procedureRequest.addInputParam("@i_tipoCuentaOrdenante", ICTSTypes.SQLVARCHAR, String.valueOf(msjIn.getOrdenpago().getOpTcClaveOrd()));
 								procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
@@ -1339,67 +1244,86 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	private int logEntryApi(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
 			String operacion, String tipoEntrada, String firma, String error, String response, Integer id, String request ) {
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Begin flow, singType");
+			logger.logDebug("Begin flow, logEntryApi");
 		}
 		Integer logId = 0;
-		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
-		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
-		requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_log_conn_karpay");
-		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
-				IMultiBackEndResolverService.TARGET_LOCAL);
-		
-		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
-		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
-		requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
-		requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
-		requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
-		
-		if("I".equals(operacion) && 
-			   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria())|| 
-				Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria())||
-				Constans.ODPS_LIQUIDADAS_ABONOS.equals( msjIn.getCategoria())||
-				Constans.ODPS_CANCELADAS_LOCAL.equals( msjIn.getCategoria())))
+		try
 		{
-			DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-	        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-	        
-	        // Convierte la fecha de String a LocalDate
-	        LocalDate date = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
-	        
-	        // Formatea la fecha a MM/dd/yyyy
-	        String processDate = date.format(outputFormatter);
 			
-			requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
-			requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
-			requestProcedureLocal.addInputParam("@i_lc_institucion_ordenante",ICTSTypes.SQLVARCHAR, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
-			requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  msjIn.getOrdenpago().getOpCuentaBen());
-			requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
-			requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
-			requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
+			mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+			CardPAN card= new CardPAN();
+			IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
+			requestProcedureLocal.setSpName("cob_bvirtual..sp_bv_log_conn_karpay");
+			requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
+					IMultiBackEndResolverService.TARGET_LOCAL);
 			
-		}else
-			if("U".equals(operacion) )
+			requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700121");
+			requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, operacion);
+			requestProcedureLocal.addInputParam("@i_lc_tipo_entrada",ICTSTypes.SQLVARCHAR, tipoEntrada);
+			requestProcedureLocal.addInputParam("@i_lc_categoria",ICTSTypes.SQLVARCHAR, msjIn.getCategoria());
+			requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);		
+			if("I".equals(operacion) && 
+				   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria() )   || 
+					Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria() )||
+					Constans.ODPS_LIQUIDADAS_ABONOS.equals( msjIn.getCategoria() )   ||
+					Constans.ODPS_CANCELADAS_LOCAL.equals( msjIn.getCategoria() )  
+					))
 			{
-				requestProcedureLocal.addInputParam("@i_lc_firma",ICTSTypes.SQLVARCHAR, firma);
-				requestProcedureLocal.addInputParam("@i_lc_error",ICTSTypes.SQLVARCHAR, error);
-				requestProcedureLocal.addInputParam("@i_lc_request",ICTSTypes.SQLVARCHAR, request);
-				requestProcedureLocal.addInputParam("@i_lc_response",ICTSTypes.SQLVARCHAR, response);
-				requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());
-			}
-		
-		requestProcedureLocal.addOutputParam("@o_lc_id", ICTSTypes.SQLINT4, "0");
+				DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+		        LocalDate date = null;
+		        //enmascara las tarjetas
+		        String opCuentaBen="";
+				String opCuentaOrd="";
+				
+		        // Convierte la fecha de String a LocalDate
+  
+				date = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
+				if( msjIn.getOrdenpago().getOpTcClaveBen()==3)
+					opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
+				else
+					opCuentaBen = msjIn.getOrdenpago().getOpCuentaBen();
 	        
-	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
-		}
-		
-		if (wProcedureResponseLocal.getReturnCode()==0) {
+    	 		if( msjIn.getOrdenpago().getOpTcClaveOrd()==3)
+    	 			opCuentaOrd = card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd());
+    	 		else
+    	 			opCuentaOrd = msjIn.getOrdenpago().getOpCuentaOrd();
+  
+		        // Formatea la fecha a MM/dd/yyyy
+		        String processDate = date.format(outputFormatter);
+	
+		        requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
+				requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
+				requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, opCuentaOrd);
+				requestProcedureLocal.addInputParam("@i_lc_institucion_ordenante",ICTSTypes.SQLVARCHAR, String.valueOf( msjIn.getOrdenpago().getOpInsClave()));
+				requestProcedureLocal.addInputParam("@i_lc_cuenta_beneficiaria",ICTSTypes.SQLVARCHAR,  opCuentaBen);
+				requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
+				requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
+				requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
+			}else
+				if("U".equals(operacion) )
+				{
+					requestProcedureLocal.addInputParam("@i_lc_firma",ICTSTypes.SQLVARCHAR, firma);
+					requestProcedureLocal.addInputParam("@i_lc_error",ICTSTypes.SQLVARCHAR, error);
+					requestProcedureLocal.addInputParam("@i_lc_response",ICTSTypes.SQLVARCHAR, response);
+					requestProcedureLocal.addInputParam("@i_lc_id",ICTSTypes.SQLINT4, id.toString());	
+				}
 			
-			logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_lc_id"));
-		} 
+			requestProcedureLocal.addOutputParam("@o_lc_id", ICTSTypes.SQLINT4, "0");
+		        
+		    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
+			}
+			
+			if (wProcedureResponseLocal.getReturnCode()==0) {
+				
+				logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_lc_id"));
+			}
+		}catch (Exception xe) {
+			logger.logError("Error logEntryApi:",xe);
+		}
 		return logId;
 		
 	}
@@ -1517,5 +1441,114 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		} catch(Exception ex) {
 			return defaultValue;
 		}
+	}
+	
+	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
+	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
+
+	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = service;
+	}
+
+	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = null;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+	protected ICoreServer coreServer;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServer(ICoreServer service) {
+		coreServer = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServer(ICoreServer service) {
+		coreServer = null;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreServiceSelfAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceSelfAccountTransfers", unbind = "unbindCoreServiceSelfAccountTransfers")
+	private ICoreServiceSelfAccountTransfers coreServiceSelfAccountTransfers;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = null;
+	}
+
+	@Override
+	public ICoreService getCoreService() {
+		return coreService;
+	}
+
+	/**
+	 * Instance plugin to use services other core banking
+	 */
+	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+	protected ICoreService coreService;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreService(ICoreService service) {
+		coreService = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreService(ICoreService service) {
+		coreService = null;
+	}
+
+	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
+	public ICoreServiceSendNotification coreServiceNotification;
+
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = null;
 	}
 }
