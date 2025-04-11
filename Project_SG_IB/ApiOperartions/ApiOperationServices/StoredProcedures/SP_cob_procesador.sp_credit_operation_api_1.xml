@@ -14,6 +14,12 @@
     <parameter name="@i_referenceNumber" dataType="varchar" direction="in" />
     <parameter name="@i_creditConcept" dataType="varchar" direction="in" />
     <parameter name="@i_originCode" dataType="int" direction="in" />
+    <parameter name="@x_request_id" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_request_date" dataType="varchar" direction="in" />
+    <parameter name="@x_end_user_ip" dataType="varchar" direction="in" />
+    <parameter name="@x_channel" dataType="varchar" direction="in" />
+    <parameter name="@i_originMovementId" dataType="varchar" direction="in" />
+    <parameter name="@i_originReferenceNumber" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
