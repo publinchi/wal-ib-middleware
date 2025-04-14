@@ -86,6 +86,17 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 			logger.logError(e.toString());
 		}
 		
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		
+		/* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus)) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
+		}
+		
+		dataTrn(anOriginalRequest,aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
@@ -921,11 +932,16 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
     	 aBagSPJavaOrchestration.put("i_prod", null);
     	 aBagSPJavaOrchestration.put("i_prod_des", null );
     	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
+    	 aBagSPJavaOrchestration.put("i_cta_des", null);  
+    	 aBagSPJavaOrchestration.put("i_cta",  aRequest.readValueParam("@i_account_number") ); 
     	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
     	 aBagSPJavaOrchestration.put("i_mon", null );
+    	 
+    	 aBagSPJavaOrchestration.put("i_movement_type", "DEBIT_AT_STORE"); 
+    	 aBagSPJavaOrchestration.put("i_establishmentName",  aRequest.readValueParam("@i_origin_institution_name")); 
+    	 aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction")); 
+    	 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@i_uuid")); 
     }
 
 }
