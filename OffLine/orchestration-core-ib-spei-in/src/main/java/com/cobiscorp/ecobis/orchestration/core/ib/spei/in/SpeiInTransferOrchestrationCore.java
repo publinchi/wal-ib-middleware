@@ -1,12 +1,14 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.spei.in;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferInOfflineTemplate;
@@ -28,19 +30,10 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetData;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
-import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.NotificationRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.OfficerByAccountResponse;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -75,6 +68,9 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	/**
 	 * Read configuration of parent component
 	 */
+
+	private static String privateKeyAes="";
+
 	private java.util.Properties properties;
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
@@ -83,7 +79,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		}
 		properties = arg0.getProperties("//property");
 	}
-
 	/**
 	 * Instance logger component
 	 */
@@ -91,17 +86,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
 	private String validaRiesgo = "";
 
+
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
-
-	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = service;
-	}
-
-	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
-		coreServiceMonetaryTransaction = null;
-	}
-
+	
 	/**
 	 * Instance plugin to use services other core banking
 	 */
@@ -109,46 +97,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	protected ICoreServer coreServer;
 
 	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServer(ICoreServer service) {
-		coreServer = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServer(ICoreServer service) {
-		coreServer = null;
-	}
-
-	/**
 	 * Instance plugin to use services other core banking
 	 */
 	@Reference(referenceInterface = ICoreServiceSelfAccountTransfers.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceSelfAccountTransfers", unbind = "unbindCoreServiceSelfAccountTransfers")
 	private ICoreServiceSelfAccountTransfers coreServiceSelfAccountTransfers;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
-		coreServiceSelfAccountTransfers = null;
-	}
 
 	@Override
 	public ICoreService getCoreService() {
@@ -161,45 +113,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	@Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
 	protected ICoreService coreService;
 
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreService(ICoreService service) {
-		coreService = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreService(ICoreService service) {
-		coreService = null;
-	}
-
-
 	@Reference(referenceInterface = ICoreServiceSendNotification.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceNotification", unbind = "unbindCoreServiceNotification")
 	public ICoreServiceSendNotification coreServiceNotification;
-
-	/**
-	 * Instance Service Interface
-	 *
-	 * @param service
-	 */
-	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = service;
-	}
-
-	/**
-	 * Deleting Service Interface
-	 *
-	 * @param service
-	 */
-	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
-		coreServiceNotification = null;
-	}
 
 	/**
 	 * /** Execute transfer first step of service
@@ -303,7 +218,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 	@Override
 	public IProcedureResponse processResponse(IProcedureRequest arg0, Map<String, Object> aBagSPJavaOrchestration) {
-		// TODO Auto-generated method stub
 		return (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
 	}
 
@@ -375,106 +289,185 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
 		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
+		String codTelDeb = getParam(anOriginalRequest, "CODTEL", "BVI");
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("codTarDeb: "+codTarDeb);
 		
-		if(logger.isInfoEnabled())
-		{
-			logger.logInfo("codTar:"+codTarDeb + " opTcClaveBen:"+opTcClaveBen);
+		if (logger.isInfoEnabled())
+			logger.logInfo("codTelDeb: "+codTelDeb);
+
+		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+
+		if (logger.isDebugEnabled()){
+			logger.logDebug("Status Servidor 2");
+			logger.logDebug(serverResponse);
 		}
-		if(codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock
-		{
-			response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
-		}
-		if(response.getReturnCode() != 0)
-		{
-			return response;
-		}
-		
-		// Validar el risk
-		if (validaRiesgo.equals("true")){
-			IProcedureResponse wConectorRiskResponseConn = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
-			
-			if (aBagSPJavaOrchestration.get("success_risk") != null) {				
-				valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
-				
-				if (aBagSPJavaOrchestration.get("responseCode") != null) {	
-					codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
-				}
-				
-				if (aBagSPJavaOrchestration.get("message") != null) {	
-					mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
-				}
-	
-				if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {	
-					estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
-				}
-				
-				logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo );
-	
-				if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
-					response = this.validaLimite(anOriginalRequest,aBagSPJavaOrchestration);
-					
-					if(response.getReturnCode() != 0) {
-						return response;
-					}
-					
-					IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
-	
-					if (logger.isDebugEnabled()) {
-						logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-					}
-	
-					response = executeCoreBanking(requestTransfer);
-	
-					if (logger.isDebugEnabled()) {
-						logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
-						logger.logDebug(wInfo+ "response de central: " + response);
-					}
-	
-				} else {
-					message = "OPERACIÓN NO PERMITIDA";
-					code = 2; 
-					
-					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
-					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
-					
-					return response;
-				}
+
+		if(getFromReentryExcecution(aBagSPJavaOrchestration) && serverResponse.getOnLine()){
+
+			if(logger.isInfoEnabled())
+			{
+				logger.logInfo("Ejecución en reentry - ONLINE");
 			}
-			else {
-				message = "OPERACIÓN NO PERMITIDA";
-				code = 2; //18055;
-							
-				response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
-				response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
-				
-				return response;
-			}			
-		}else {
-			response = this.validaLimite(anOriginalRequest,aBagSPJavaOrchestration);
-			
-			if(response.getReturnCode() != 0) {
-				return response;
-			}
-			
 			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
-
-			if (logger.isDebugEnabled()) {
-				logger.logDebug(wInfo+ "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
-			}
-
 			response = executeCoreBanking(requestTransfer);
 
-			if (logger.isDebugEnabled()) {
-				logger.logDebug(wInfo+ "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
-				logger.logDebug(wInfo+ "response de central: " + response);
+			if(logger.isInfoEnabled())
+			{
+				logger.logInfo("Finaliza ejecución directa");
+			}
+
+		}else if(!getFromReentryExcecution(aBagSPJavaOrchestration)) {
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("codTar:" + codTarDeb + " opTcClaveBen:" + opTcClaveBen);
+			}
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("codTar:" + codTarDeb + " opTcClaveBen:" + opTcClaveBen);
+			}
+			
+			if (codTarDeb.equals(opTcClaveBen))//validacion de tarjeta de debito llamado a dock JCOS
+			{
+				response = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+			}
+			else if(codTelDeb.equals(opTcClaveBen)) {
+				
+				response = validateAccountPhone(anOriginalRequest);
+			}
+			if (response.getReturnCode() != 0) {
+				return response;
+			}
+
+			// Validar el risk
+			if (validaRiesgo.equals("true")) {
+				
+				if (logger.isDebugEnabled()) {					
+					logger.logDebug("Flujo, Valida Resgo");					
+				}
+				
+				executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+
+				if (aBagSPJavaOrchestration.get("success_risk") != null) {
+					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
+
+					if (aBagSPJavaOrchestration.get("responseCode") != null) {
+						codigoRiesgo = aBagSPJavaOrchestration.get("responseCode").toString();
+					}
+
+					if (aBagSPJavaOrchestration.get("message") != null) {
+						mensajeRiesgo = aBagSPJavaOrchestration.get("message").toString();
+					}
+
+					if (aBagSPJavaOrchestration.get("isOperationAllowed") != null) {
+						estadoRiesgo = aBagSPJavaOrchestration.get("isOperationAllowed").toString();
+					}
+					
+					if (logger.isDebugEnabled()) {	
+						logger.logDebug("Respuesta RiskEvaluation: " + valorRiesgo + " Código: " + codigoRiesgo + " Estado: " + estadoRiesgo + " Mensaje: " + mensajeRiesgo);
+					}
+					if (valorRiesgo.equals("true") && estadoRiesgo.equals("true")) {
+						response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
+
+						if (response.getReturnCode() != 0) {
+							return response;
+						}
+
+						IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+
+						if (logger.isDebugEnabled()) {
+							logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
+						}	
+							response = executeCoreBanking(requestTransfer);		
+							
+							if (logger.isDebugEnabled()) {
+								logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+								logger.logDebug(wInfo + "response de central: " + response);
+							}
+						if(!serverResponse.getOnLine()) { 
+							
+					        IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+					        aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
+							
+							if (logger.isDebugEnabled()) {
+								logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+								logger.logDebug(wInfo + "response de local: " + response);
+							}							
+						}
+
+					} else {
+						message = "OPERACIÓN NO PERMITIDA";
+						code = 2;
+
+						response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
+						response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());
+
+						return response;
+					}
+				} else {
+					message = "OPERACIÓN NO PERMITIDA";
+					code = 2;
+
+					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
+					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());
+
+					return response;
+				}
+			} else {
+				
+				if (logger.isDebugEnabled()) {					
+					logger.logInfo("Flujo, No Valida Resgo");					
+				}
+				
+				response = this.validaLimite(anOriginalRequest, aBagSPJavaOrchestration);
+
+				if (response.getReturnCode() != 0) {
+					return response;
+				}
+
+				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);			
+
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
+				}			
+					
+					logger.logInfo("Aplicando transaccion online");
+
+					response = executeCoreBanking(requestTransfer);		
+					
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+						logger.logDebug(wInfo + "response de central: " + response);
+					}
+				if(!serverResponse.getOnLine()) { 
+					
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("Aplicando transaccion offline");
+					}
+					
+			        IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+			        aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
+					
+					if (logger.isDebugEnabled()) {
+						logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+						logger.logDebug(wInfo + "response de local: " + response);
+					}
+				}
+				
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(wInfo + "aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+					logger.logDebug(wInfo + "response de central: " + response);
+				}
 			}
 		}
 		
 		logger.logInfo(wInfo+END_TASK);
+
+
 
 		return response;
 	}
@@ -507,7 +500,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
 		
-		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, consultaCliente.readValueParam("@o_client_code").toString());
+		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, consultaCliente.readValueParam("@o_client_code"));
 		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "SPEI_CREDIT");
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, "SYSTEM");
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, userSessionId);
@@ -564,8 +557,13 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	}
 	
 	private IProcedureResponse validaLimite(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		
 		String wInfo = CLASS_NAME+"[validaLimite] ";
-		logger.logInfo(wInfo + INIT_TASK);
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo(wInfo + INIT_TASK);
+		}
+		
 		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_LOCAL);
@@ -581,16 +579,20 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
 		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));		
 		
-		if ("10".equals(tipoCuentaBeneficiarioS)) {
+		/*if ("10".equals(tipoCuentaBeneficiarioS)) {
 			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
 		}
-		else {
+		else {*/
+		if ("40".equals(tipoCuentaBeneficiarioS)) {
 			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
+		}else if("03".equals(tipoCuentaBeneficiarioS) || "10".equals(tipoCuentaBeneficiarioS)){
+			
+			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		}
+
+			
 		
-		if (Objects.nonNull(tipoCuentaBeneficiarioS) && tipoCuentaBeneficiarioS.equals(codTarDeb)) {
-			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
-		}
+
 		
 		Integer code = 0;
         String message = "success";
@@ -677,13 +679,25 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	}
 	
 	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest) {
-		String wInfo = CLASS_NAME+"[getRequestTransfer] ";
-		logger.logInfo(wInfo + INIT_TASK);
+
+		String wInfo = CLASS_NAME+" [getRequestTransfer] ";
+
+
+		if (logger.isInfoEnabled()){
+
+			logger.logInfo(wInfo + INIT_TASK);
+			logger.logInfo(wInfo + INIT_TASK);
+			if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
+				logger.logInfo("JC Apply REENTRY_SSN_TRX" + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
+		}
+
 		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
 		procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500069");
 		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
 				IMultiBackEndResolverService.TARGET_CENTRAL);
 		procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
+			procedureRequest.setValueFieldInHeader(ICOBISTS.HEADER_SSN, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		procedureRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		boolean isReentryExecution = "Y".equals(anOriginalRequest.readValueFieldInHeader(REENTRY_EXE));
 
@@ -697,6 +711,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_mon", ICTSTypes.SYBINT4, "0");
 		procedureRequest.addInputParam("@i_fecha", ICTSTypes.SYBDATETIME, anOriginalRequest.readValueParam("@i_fechaOperacion"));
 		procedureRequest.addInputParam("@i_canal", ICTSTypes.SYBINT4, "9");
+		if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
+			procedureRequest.addInputParam("@s_ssn", ICTSTypes.SYBINT4, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 
 		procedureRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
@@ -710,8 +726,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_rfcCurpOrdenante"));
 		procedureRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
 		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_idTipoPago"));
-		//procedureRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuenta_cobis"));
-		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipo_destino"));
+		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "I");
 		procedureRequest.addInputParam("@i_xml_request", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_string_request"));
 		procedureRequest.addInputParam("@i_tipo_ejecucion", ICTSTypes.SQLVARCHAR, isReentryExecution ? "F" : "L");
@@ -738,8 +753,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				return;
 			}
 
-			ServerResponse serverResponse = (ServerResponse) map.get(RESPONSE_SERVER);
-
 			logger.logInfo(CLASS_NAME + "Enviando notificacion spei");
 
 			IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
@@ -754,7 +767,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 			procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "1800195");
 			procedureRequest.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
-			// procedureRequest.addInputParam("@i_num_producto", Types.VARCHAR, "");
 			procedureRequest.addInputParam("@i_tipo_mensaje", ICTSTypes.SQLCHAR, "F");
 			procedureRequest.addInputParam("@i_notificacion", ICTSTypes.SYBVARCHAR, "N145");
 			procedureRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "I");
@@ -770,7 +782,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			procedureRequest.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_conceptoPago"));
 			procedureRequest.addInputParam("@i_aux9", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
 			procedureRequest.addInputParam("@i_aux8", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombreOrdenante"));
-
 
 			IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
 
@@ -789,14 +800,12 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 	@Override
 	public ICoreServiceReexecutionComponent getCoreServiceReexecutionComponent() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected IProcedureResponse validateCentralExecution(IProcedureRequest request,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -885,15 +894,13 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
 		
-		if (!wProcedureResponseCentral.hasError()) {
+		if (!wProcedureResponseCentral.hasError() && wProcedureResponseCentral.getResultSetListSize() > 0) {
 			
-			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
-				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
-				
-				if (resultSetRows.length > 0) {
-					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-					return columns[2].getValue();
-				} 
+			IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				return columns[2].getValue();
 			} 
 		} 
 		
@@ -901,7 +908,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	}
 	
 	
-	private IProcedureResponse findCardByPanConector(IProcedureRequest anOriginalReq, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse findCardByPanConector(Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureResponse connectorAccountResponse = null;
 
@@ -980,7 +987,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return connectorAccountResponse;
 	}
 	
-	private IProcedureResponse findCardId(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
+	private IProcedureResponse findCardId(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		IProcedureRequest request = new ProcedureRequestAS();
 
@@ -1018,6 +1025,56 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return wProductsQueryResp;
 	}
 	
+	private IProcedureResponse findAccountByPhone(String phoneNumber) {
+		
+		
+		String wInfo = CLASS_NAME+"[findAccountByPhone] ";		
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo(wInfo + INIT_TASK);
+		}
+
+		IProcedureRequest procedureRequest = new ProcedureRequestAS();		
+		
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);		
+
+		procedureRequest.setSpName("cob_bvirtual..sp_bv_account_phone");
+		
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "P");
+		procedureRequest.addInputParam("@i_phone", ICTSTypes.SQLVARCHAR, phoneNumber);
+		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "SMS");
+		procedureRequest.addOutputParam("@o_account", ICTSTypes.SQLVARCHAR, "XXXXX");	
+		procedureRequest.addOutputParam("@o_ente", ICTSTypes.SQLINT4, "0");	
+		
+		IProcedureResponse ProcedureResponse =  executeCoreBanking(procedureRequest);
+		
+		return ProcedureResponse;
+	}
+	
+	private IProcedureResponse validateAccountPhone(IProcedureRequest anOriginalRequest) {
+		
+		String phoneNumber=anOriginalRequest.readValueParam("@i_cuentaBeneficiario");
+		
+        if(logger.isInfoEnabled())
+		{
+			logger.logInfo("validateAccountPhone:"+ phoneNumber );
+		}
+        
+        IProcedureResponse anProcedureResponse= this.findAccountByPhone(phoneNumber);   
+        
+        anOriginalRequest.setValueParam("@i_cuentaBeneficiario", (String) anProcedureResponse.readValueParam("@o_account"));
+		
+        if(logger.isInfoEnabled())
+		{
+			logger.logInfo("Cuenta beneficiario phone : "+ anOriginalRequest.readValueParam("@i_cuentaBeneficiario") );
+		}
+        
+        
+		return anProcedureResponse;
+		
+	}
+	
 	private IProcedureResponse validateCardAccount(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration)
 	{
 	    Integer code = 0;
@@ -1031,16 +1088,22 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		}
 		IProcedureResponse anProcedureResponse =  new ProcedureResponseAS();
 
+		if(logger.isDebugEnabled())
+		{
+			logger.logDebug("AES: "+privateKeyAes );
+		}
+
 		
 		Map<String, Object> dataMapEncrypt = EncryptData.encryptWithAESGCM(ctaBen, properties.get("publicKey").toString());
 		if(logger.isDebugEnabled())
 		{
 			logger.logDebug("[res]: + ctaDestEncrypt " + dataMapEncrypt);
+			logger.logDebug("JC tmp Send pan " + ctaBen);
 		}
-		
+
 		aBagSPJavaOrchestration.putAll(dataMapEncrypt);
 	
-		IProcedureResponse anProcedureResPan = findCardByPanConector(anOriginalRequest, aBagSPJavaOrchestration);
+		IProcedureResponse anProcedureResPan = findCardByPanConector(aBagSPJavaOrchestration);
 		
 		if(anProcedureResPan != null){
 			
@@ -1050,11 +1113,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				logger.logDebug("[res]: + idCard: " + idCard);
 			}
 			if (idCard == null || "Non-existent".equals(idCard) ){
-				code = 1;
+				code = 50201;
 				message = "Non-existent card number";
 			}else
 			{
-				IProcedureResponse anProcedureResFind = findCardId(anOriginalRequest, anProcedureResPan,aBagSPJavaOrchestration);
+				IProcedureResponse anProcedureResFind = findCardId(anProcedureResPan,aBagSPJavaOrchestration);
 				
 				if (anProcedureResFind.getResultSets() != null && anProcedureResFind.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 					anOriginalRequest.setValueParam("@i_cuentaBeneficiario", (String) aBagSPJavaOrchestration.get("o_account"));
@@ -1064,7 +1127,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 						logger.logDebug("ACCOUNT RESPONSE:: " + anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 					}
 				}else{
-					code = 1;
+					code = 50201;
 					message = "Non-existent card number";
 				}
 			}
@@ -1147,5 +1210,85 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
         
         return newDate;
     }
+	
+	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = service;
+	}
+
+	public void unbindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
+		coreServiceMonetaryTransaction = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServer(ICoreServer service) {
+		coreServer = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServer(ICoreServer service) {
+		coreServer = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	protected void bindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	protected void unbindCoreServiceSelfAccountTransfers(ICoreServiceSelfAccountTransfers service) {
+		coreServiceSelfAccountTransfers = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreService(ICoreService service) {
+		coreService = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreService(ICoreService service) {
+		coreService = null;
+	}
+	
+	/**
+	 * Instance Service Interface
+	 *
+	 * @param service
+	 */
+	public void bindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = service;
+	}
+
+	/**
+	 * Deleting Service Interface
+	 *
+	 * @param service
+	 */
+	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
+		coreServiceNotification = null;
+	}
 
 }
