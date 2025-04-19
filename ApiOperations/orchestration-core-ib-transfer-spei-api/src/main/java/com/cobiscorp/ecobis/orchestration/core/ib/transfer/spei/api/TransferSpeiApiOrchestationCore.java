@@ -1357,7 +1357,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
 
         ArrayList a = (ArrayList) aResponse.getMessages();
-        int errorNumber = 0;
+        Integer errorNumber = 0;
         String errorMessage = null;
 
 		for (int i = 0; i < a.size(); i++) {
@@ -1367,6 +1367,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 errorMessage = msg.getMessageText();
             }
 		}
+        Object errorNumberObj = aBagSPJavaOrchestration.get("@i_codigo_acc");
+        if((Objects.isNull(errorNumber) || errorNumber == 0) && Objects.nonNull(errorNumberObj)) {
+            errorNumber = Integer.parseInt((String)errorNumberObj);
+            errorMessage = (String)aBagSPJavaOrchestration.get("@i_mensaje_acc");
+        }
 
         request.setSpName("cob_bvirtual..sp_update_transfer_status");
 
@@ -1379,7 +1384,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("movementId")); 
 		
-        if(errorNumber != 0) {
+        if(Objects.nonNull(errorNumber) && errorNumber != 0) {
             request.addInputParam("@i_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
             request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn_branch"));
             request.addInputParam("@i_error_number", ICTSTypes.SQLINT4, errorNumber+"");
