@@ -2,6 +2,7 @@ package com.cobiscorp.ecobis.ib.orchestration.base.transfers;
 
 import java.awt.print.PrinterException;
 import java.util.Map;
+import java.util.Objects;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.log.ILogger;
@@ -44,6 +45,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	protected static final String COBIS_CONTEXT = "COBIS";
 	protected static final String RESPONSE_SERVER = "RESPONSE_SERVER";
 	protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
+	protected static final String AN_ORIGINAL_REQUEST = "anOriginalRequest";
 	protected static final String RESPONSE_UPDATE_LOCAL = "RESPONSE_UPDATE_LOCAL";
 	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String RESPONSE_BALANCE = "RESPONSE_BALANCE";
@@ -215,20 +217,36 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 	 * @return IProcedureResponse
 	 */
 	protected IProcedureResponse validateLocalExecution(Map<String, Object> aBagSPJavaOrchestration) {
-		if (logger.isInfoEnabled())
+		if (logger.isInfoEnabled()){
 			logger.logInfo(CLASS_NAME + "Inicia validacion local");
+		}
 		
-
-
 		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
-		IProcedureResponse responseSigners = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_QUERY_SIGNER);
+		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
+
+		if(Objects.isNull(originalRequest)) {
+			originalRequest = anOriginalRequest;
+			originalRequest.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
+			aBagSPJavaOrchestration.put(ORIGINAL_REQUEST,originalRequest);
+		}
+
 		IProcedureRequest request = initProcedureRequest(originalRequest);	
 		ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
-		
-		ServerResponse responseServer =(ServerResponse)aBagSPJavaOrchestration.get(RESPONSE_SERVER);
-	
-		
+
+		if(Objects.isNull(serverResponse)) {
+			ServerRequest serverRequest = new ServerRequest();
+			serverRequest.setChannelId(originalRequest.readValueFieldInHeader("servicio"));
+			try {
+				serverResponse = getCoreServer().getServerStatus(serverRequest);
+			} catch (CTSServiceException | CTSInfrastructureException e) {
+				if(logger.isErrorEnabled()){
+					logger.logError(CLASS_NAME + "Error al obtener el estado del servidor", e);
+				}
+				return Utils.returnException(18070, "Error al obtener el estado del servidor");
+			}
 			
+		}
+	
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800048");
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
@@ -250,6 +268,21 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			logger.logInfo("t_trn a evaluar: " + t_trn);
 
 		request.addInputParam("@t_trn", ICTSTypes.SYBINTN, String.valueOf(Utils.getTransactionMenu(t_trn)));	
+
+		//Parametros adicionales
+		request.addInputParam("@i_origen", ICTSTypes.SYBVARCHAR, "SPEI");
+		String referenceNumber = anOriginalRequest.readValueParam("@i_reference_number");
+		if (Objects.nonNull(referenceNumber)) {
+			request.addInputParam("@i_reference_number", ICTSTypes.SQLINT4, referenceNumber);
+		}
+		String transactionId = anOriginalRequest.readValueParam("@x_request_id");
+		if (Objects.nonNull(transactionId)) {
+			request.addInputParam("@i_request_id", ICTSTypes.SQLVARCHAR, transactionId);
+		}
+		String bankName = anOriginalRequest.readValueParam("@i_bank_name");
+		if (Objects.nonNull(bankName)) {
+			request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, bankName);
+		}
 		
 		switch (t_trn) {
 		case 1800009:
@@ -260,6 +293,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			}
 			request.addInputParam("@i_option", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_option"));
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
+			if(Objects.isNull(request.readValueParam("@i_detail"))){
+				request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_detail"));
+			}
+
 			//same accounts
 			
 			break;
@@ -296,7 +333,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_tercero", ICTSTypes.SYBVARCHAR, "N");
 			break;
 		}
-		request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR, responseServer!=null &&responseServer.getOnLine() ? "N" : "O" );
+		request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR, serverResponse!=null && serverResponse.getOnLine() ? "N" : "O" );
 		
 		if (!getFromReentryExcecution(aBagSPJavaOrchestration))
 			request.addInputParam("@i_genera_clave", ICTSTypes.SYBVARCHAR, "S");
@@ -307,12 +344,21 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_prod", originalRequest, request);
 		Utils.copyParam("@i_mon", originalRequest, request);
 
+		if (Objects.isNull(request.readValueParam("@i_cta"))){
+			request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_origin_account_number"));
+		}
+
 		// Datos de cuenta destino
 		if (!Utils.isNull(originalRequest.readValueParam("@i_cta_des"))) {
 
 			Utils.copyParam("@i_cta_des", originalRequest, request);
 			Utils.copyParam("@i_prod_des", originalRequest, request);
 			Utils.copyParam("@i_mon_des", originalRequest, request);
+		}
+
+		if (Objects.isNull(request.readValueParam("@i_cta_des"))){
+			request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_destination_account_number"));
+			request.addInputParam("@i_prod_des", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_destination_type_account"));
 		}
 
 		String servicio = originalRequest.readValueFieldInHeader("@s_servicio");
@@ -325,9 +371,19 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		if (!Utils.isNull(originalRequest.readParam("@i_val"))) {
 			request.addInputParam("@i_val", originalRequest.readParam("@i_val").getDataType(), originalRequest.readValueParam("@i_val"));
 		}
+
+		if (Objects.isNull(request.readValueParam("@i_val"))){
+			request.addInputParam("@i_val", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
+		}
+
 		if (!Utils.isNull(originalRequest.readParam("@i_concepto"))) {
 			request.addInputParam("@i_concepto", originalRequest.readParam("@i_concepto").getDataType(), originalRequest.readValueParam("@i_concepto"));
 		}
+
+		if (Objects.isNull(request.readValueParam("@i_concepto"))){
+			request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_detail"));
+		}
+
 		request.addInputParam("@i_valida_limites", ICTSTypes.SYBCHAR, "S");
 		request.addOutputParam("@o_cliente_mis", ICTSTypes.SYBINT4, "0");
 		request.addOutputParam("@o_prod", ICTSTypes.SYBINT2, "0");
@@ -508,6 +564,14 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 
 			// Ejecuta transaccion core
 			responseTransfer = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
+
+			// Actualizacion local
+			aBagSPJavaOrchestration.put("@o_spei_response", responseTransfer.readValueParam("@o_spei_response"));
+			aBagSPJavaOrchestration.put("@o_spei_request", responseTransfer.readValueParam("@o_spei_request"));
+			aBagSPJavaOrchestration.put("@intento", responseTransfer.readValueParam("@o_spei_request"));
+		
+			IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+			
 			if (Utils.flowError("executeTransaction", responseTransfer)) {
 				if (responseServer.getOnLine()) {
 					if (!getFromReentryExcecution(aBagSPJavaOrchestration)) {
@@ -523,20 +587,13 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 					}
 				}
 			}
-            
-			// Actualizacion local
-			aBagSPJavaOrchestration.put("@o_spei_response", responseTransfer.readValueParam("@o_spei_response"));
-			aBagSPJavaOrchestration.put("@o_spei_request", responseTransfer.readValueParam("@o_spei_request"));
-			aBagSPJavaOrchestration.put("@intento", responseTransfer.readValueParam("@o_spei_request"));
-		
-			
-			IProcedureResponse responseLocalExecution = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+
 			aBagSPJavaOrchestration.put(RESPONSE_UPDATE_LOCAL, responseLocalExecution);
 			if (Utils.flowError("updateLocalTransfer", responseLocalExecution)) {
 				aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseLocalExecution);
 				return responseLocalExecution;
 			}
-
+            
 			// Envia notificacion
 			IProcedureResponse responseNotification = sendNotification(anOriginalRequest, aBagSPJavaOrchestration);
 			if (Utils.flowError("sendNotification", responseNotification)) {
