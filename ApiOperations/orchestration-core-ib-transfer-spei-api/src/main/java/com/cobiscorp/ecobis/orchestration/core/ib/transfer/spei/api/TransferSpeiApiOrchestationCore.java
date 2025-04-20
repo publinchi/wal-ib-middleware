@@ -1383,12 +1383,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("movementId")); 
-		
+
+        request.addInputParam("@i_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
+        request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn_branch"));
+
         if(Objects.nonNull(errorNumber) && errorNumber != 0) {
-            request.addInputParam("@i_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
-            request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn_branch"));
             request.addInputParam("@i_error_number", ICTSTypes.SQLINT4, errorNumber+"");
             request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, errorMessage);
+        } 
+
+        Object claveRastreo = aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+        if(Objects.nonNull(claveRastreo)) {
+            request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, (String) claveRastreo);
         } 
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
