@@ -224,7 +224,7 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
 
-		if(Objects.isNull(originalRequest)) {
+		if(Objects.isNull(originalRequest) && Objects.nonNull(anOriginalRequest)) {
 			originalRequest = anOriginalRequest;
 			originalRequest.addInputParam("@t_trn", ICTSTypes.SQLVARCHAR, "1870013");
 			aBagSPJavaOrchestration.put(ORIGINAL_REQUEST,originalRequest);
@@ -271,15 +271,21 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 
 		//Parametros adicionales
 		request.addInputParam("@i_origen", ICTSTypes.SYBVARCHAR, "SPEI");
-		String referenceNumber = anOriginalRequest.readValueParam("@i_reference_number");
+		String referenceNumber = Objects.nonNull(anOriginalRequest)
+									?anOriginalRequest.readValueParam("@i_reference_number")
+									:null;
 		if (Objects.nonNull(referenceNumber)) {
 			request.addInputParam("@i_reference_number", ICTSTypes.SQLINT4, referenceNumber);
 		}
-		String transactionId = anOriginalRequest.readValueParam("@x_request_id");
+		String transactionId = Objects.nonNull(anOriginalRequest)
+								?anOriginalRequest.readValueParam("@x_request_id")
+								:null;
 		if (Objects.nonNull(transactionId)) {
 			request.addInputParam("@i_request_id", ICTSTypes.SQLVARCHAR, transactionId);
 		}
-		String bankName = anOriginalRequest.readValueParam("@i_bank_name");
+		String bankName = Objects.nonNull(anOriginalRequest)
+							?anOriginalRequest.readValueParam("@i_bank_name")
+							:null;
 		if (Objects.nonNull(bankName)) {
 			request.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, bankName);
 		}
@@ -294,7 +300,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_option", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_option"));
 			request.addInputParam("@i_detail", ICTSTypes.SYBVARCHAR, originalRequest.readValueParam("@i_detail"));
 			if(Objects.isNull(request.readValueParam("@i_detail"))){
-				request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_detail"));
+				String detail = Objects.nonNull(anOriginalRequest)
+									?anOriginalRequest.readValueParam("@i_detail")
+									:null;
+				request.addInputParam("@i_detail", ICTSTypes.SQLVARCHAR, detail);
 			}
 
 			//same accounts
@@ -345,7 +354,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		Utils.copyParam("@i_mon", originalRequest, request);
 
 		if (Objects.isNull(request.readValueParam("@i_cta"))){
-			request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_origin_account_number"));
+			String accountNumber = Objects.nonNull(anOriginalRequest)
+										?anOriginalRequest.readValueParam("@i_origin_account_number")
+										:null;
+			request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, accountNumber);
 		}
 
 		// Datos de cuenta destino
@@ -357,8 +369,14 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		}
 
 		if (Objects.isNull(request.readValueParam("@i_cta_des"))){
-			request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_destination_account_number"));
-			request.addInputParam("@i_prod_des", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_destination_type_account"));
+			String accountNumber = Objects.nonNull(anOriginalRequest)
+										?anOriginalRequest.readValueParam("@i_destination_account_number")
+										:null;
+			String accountType = Objects.nonNull(anOriginalRequest)
+										?anOriginalRequest.readValueParam("@i_destination_type_account")
+										:null;
+			request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, accountNumber);
+			request.addInputParam("@i_prod_des", ICTSTypes.SQLINT4, accountType);
 		}
 
 		String servicio = originalRequest.readValueFieldInHeader("@s_servicio");
@@ -373,7 +391,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		}
 
 		if (Objects.isNull(request.readValueParam("@i_val"))){
-			request.addInputParam("@i_val", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
+			String amount = Objects.nonNull(anOriginalRequest)
+										?anOriginalRequest.readValueParam("@i_amount")
+										:null;
+			request.addInputParam("@i_val", ICTSTypes.SQLMONEY, amount);
 		}
 
 		if (!Utils.isNull(originalRequest.readParam("@i_concepto"))) {
@@ -381,7 +402,10 @@ public abstract class TransferBaseTemplate extends SPJavaOrchestrationBase {
 		}
 
 		if (Objects.isNull(request.readValueParam("@i_concepto"))){
-			request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_detail"));
+			String concept = Objects.nonNull(anOriginalRequest)
+										?anOriginalRequest.readValueParam("@i_detail")
+										:null;
+			request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, concept);
 		}
 
 		request.addInputParam("@i_valida_limites", ICTSTypes.SYBCHAR, "S");
