@@ -131,8 +131,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");
-		
+		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");		
+
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		
@@ -226,7 +226,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						// datos para webhook fail
 						Integer returnCode = validateLimits.getReturnCode();
 						String message = validateLimits.getMessage(1).getMessageText();
-						
+						doLogRegisterTransactionFailedFromParams(anOriginalRequest, aBagSPJavaOrchestration, returnCode.toString(), message);
 						return validateLimits;
 					}				
 
@@ -245,9 +245,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						logger.logInfo(CLASS_NAME + " validaCentral "
 								+ wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue());
 						if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
+
 							return wAccountsRespVal;
 						}
 					} else {
+						
+						logger.logInfo(" ANTES DE registerTransactionFailed OTP--->");
+						
+						doLogRegisterTransactionFailedFromResponse(anOriginalRequest, aBagSPJavaOrchestration, wAccountsResp);
+						
 						return wAccountsResp;
 					}
 
@@ -344,7 +350,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 								 				wAccountsRespRisk.addResponseBlock(resultsetBlock2);
 								 				wAccountsRespRisk.addResponseBlock(resultsetBlock);
-
+								 				
 												return wAccountsRespRisk;
 												
 											} else {
@@ -382,12 +388,16 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 							} else {
 								IProcedureResponse resp = Utils.returnException(18054, "OPERACIÓN NO PERMITIDA");
 								if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption:: " + resp.toString());}
+								
+								doLogRegisterTransactionFailedFromParams(anOriginalRequest, aBagSPJavaOrchestration, "18054" , "OPERACIÓN NO PERMITIDA" );
 								return resp;
 							}
 						}
 						else {
 							IProcedureResponse resp = Utils.returnException(18055, "OPERACIÓN NO PERMITIDA");
 							if(logger.isDebugEnabled()){logger.logDebug("Respose Exeption: " + resp.toString());}
+							
+							doLogRegisterTransactionFailedFromParams(anOriginalRequest, aBagSPJavaOrchestration, "18055" , "OPERACIÓN NO PERMITIDA" );
 							return resp;
 						}
 					} else {
@@ -461,7 +471,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					if (!wAccountsRespVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 						return wAccountsRespVal;
 					}
-				} else {
+				} else {		
+					
+					logger.logDebug( " doLogRegisterTransactionFailedFromResponse ");
+					doLogRegisterTransactionFailedFromResponse(anOriginalRequest, aBagSPJavaOrchestration, wAccountsResp);
 					return wAccountsResp;
 				}
 
@@ -556,7 +569,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 							 				wAccountsRespRisk.addResponseBlock(resultsetBlock2);
 							 				wAccountsRespRisk.addResponseBlock(resultsetBlock);
-
+                                            
+							 				doLogRegisterTransactionFailedFromResponse(anOriginalRequest, aBagSPJavaOrchestration, wAccountsResp);
 											return wAccountsRespRisk;
 											
 										} else {
@@ -585,6 +599,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 							if (logger.isDebugEnabled()) {
 								logger.logDebug("Respose Exeption:: " + resp.toString());
 							}
+							
+							doLogRegisterTransactionFailedFromParams(anOriginalRequest, aBagSPJavaOrchestration, "18054" , "OPERACIÓN NO PERMITIDA" );
+							
 							return resp;
 						}
 					} else {
@@ -592,6 +609,9 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 						if (logger.isDebugEnabled()) {
 							logger.logDebug("Respose Exeption: " + resp.toString());
 						}
+						
+						doLogRegisterTransactionFailedFromParams(anOriginalRequest, aBagSPJavaOrchestration, "18055" , "OPERACIÓN NO PERMITIDA" );
+						
 						return resp;
 					}
 				} else {
@@ -599,9 +619,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				}
 			}
 		}
+        
+        
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 	}
-	
+		
 	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
 		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
 			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
@@ -728,6 +750,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		//referenceCode =  aBagSPJavaOrchestration.get("ssn").toString();
 		logger.logInfo("xdcxv2 --->" + referenceCode );
 		logger.logInfo("xdcxv3 --->" + codeReturn );
+		
 		if(!aBagSPJavaOrchestration.containsKey("IsReentry"))
 			reety = "N";
 		else
@@ -747,11 +770,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				if(aBagSPJavaOrchestration.get("IsReentry").equals("S")){
 					referenceCode = aBagSPJavaOrchestration.containsKey("rty_ssn")?aBagSPJavaOrchestration.get("rty_ssn").toString():"0";
 					aBagSPJavaOrchestration.put("ssn",referenceCode);
-					
-					
+				
 				}
 				else{
 					trnRegistration(aRequest, anOriginalProcedureRes, aBagSPJavaOrchestration);
+			
 				}
 
 				// Notificacion debito
@@ -796,20 +819,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 				}
 					
+				logger.logInfo(" ANTES DE registerTransactionFailed  --->");
 				
 				code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
 				success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();				
 				
 				//Realizamos el registro del evento no exitoso
-				aBagSPJavaOrchestration.put("code_error", code);
-	        	aBagSPJavaOrchestration.put("message_error", message);
-	        	
-	        	aBagSPJavaOrchestration.put("causal", "1010");
-				registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
-
-				aBagSPJavaOrchestration.put("causal", "1020");
-				registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
+				doLogRegisterTransactionFailedFromResponse(aRequest, aBagSPJavaOrchestration, anOriginalProcedureRes);
 			}
 			
 		} else {
@@ -817,12 +834,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			executionStatus = "ERROR";
 			referenceCode = null;
 			
-			
-			if(aBagSPJavaOrchestration.get("flowRty").equals(false)) {
-			updateLimitStatus(aBagSPJavaOrchestration);
-			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
+			if(aBagSPJavaOrchestration.get("flowRty").equals(false)) {			
+			updateLimitStatus(aBagSPJavaOrchestration);			
+			updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);			
 			}
-				
+	
 			if (codeReturn == 250046)
 			{
 				code = String.valueOf(500010);
@@ -864,14 +880,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			}
 			
 			//Realizamos el registro del evento no exitoso
-			aBagSPJavaOrchestration.put("code_error", code);
-        	aBagSPJavaOrchestration.put("message_error", message);
-        	
-        	aBagSPJavaOrchestration.put("causal", "1010");
-			registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
-
-			aBagSPJavaOrchestration.put("causal", "1020");
-			registerTransactionFailed("transferThirdPartyAccount", "", aRequest, aBagSPJavaOrchestration);
+			doLogRegisterTransactionFailedFromResponse(aRequest, aBagSPJavaOrchestration, anOriginalProcedureRes);
 		}
 		
 		// Agregar Header y data 1
@@ -917,13 +926,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				data3.addRow(row3);			
 			}		
 		}
-
+		
+		logger.logInfo(" saliendo de processResponseTransfer --->");
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 		
 		return anOriginalProcedureResponse;
+		
 	}
 	
 	private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
@@ -1048,7 +1059,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			// datos para webhook fail
 			Integer returnCode = validateLimits.getReturnCode();
 			String message = validateLimits.getMessage(1).getMessageText();
-			
+			doLogRegisterTransactionFailedFromParams(aRequest, aBagSPJavaOrchestration, returnCode.toString(), message);
 			return validateLimits;
 		}
 		
@@ -1281,11 +1292,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					logger.logError(ex.toString());
 				}		
 				//Ingresamos el log de OTP ingresadas fallidas por sistema
-				registrosFallidos(aBagSPJavaOrchestration);		
+				registrosFallidos(aBagSPJavaOrchestration);
+ 	            
 			}else {
 				if ( otpReturnCode.equals("1890004") || otpReturnCode.equals("1890005")) {
 					//Ingresamos el log de OTP ingresadas fallidas por el usuario en bloqueo y asistencia requerida
 					registrosFallidos(aBagSPJavaOrchestration);
+					
 				}
 			}
 			
@@ -1327,7 +1340,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
  				wAccountsRespRisk.addResponseBlock(resultsetBlock2);
  				wAccountsRespRisk.addResponseBlock(resultsetBlock);
- 				
+ 
 				return wAccountsRespRisk;
 			}
 		}
@@ -1412,6 +1425,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			logger.logInfo(CLASS_NAME + " Saliendo de getDataAccountReq");
 		}
 
+		
+		
 		return wProductsQueryResp;
 	}
 
@@ -2525,4 +2540,55 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		return resp;
 	}
 
+    
+    /**
+     * Método para registrar las transacciones fallidas 
+     * @param anOriginalRequest
+     * @param aBagSPJavaOrchestration
+     * @param wProcedureResponse
+     */
+    private void doLogRegisterTransactionFailedFromResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse wProcedureResponse) {
+		
+		logger.logDebug( " Entrando a doLogRegisterTransactionFailedFromResponse ");
+			
+		String code = wProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue();
+		String message = wProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue();
+		//String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();				
+		
+		//Realizamos el registro del evento no exitoso basado en datos del RESPONSE
+		aBagSPJavaOrchestration.put("code_error", code);
+		aBagSPJavaOrchestration.put("message_error", message); 	
+		
+		
+		aBagSPJavaOrchestration.put("causal", "1010");      	
+		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
+
+		aBagSPJavaOrchestration.put("causal", "1020");		
+		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
+		
+		logger.logDebug( " wAccountsResp " + wProcedureResponse);
+	}
+    
+    /**
+     * Método para registrar las transacciones fallidas por parametros
+     * @param anOriginalRequest
+     * @param aBagSPJavaOrchestration
+     * @param code
+     * @param message
+     */
+    private void doLogRegisterTransactionFailedFromParams(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String code, String message) {
+		
+		logger.logDebug( " Entrando a doLogRegisterTransactionFailedFromParams ");
+
+		//Realizamos el registro del evento no exitoso basado en PARAMETROS
+		aBagSPJavaOrchestration.put("code_error", code);
+		aBagSPJavaOrchestration.put("message_error", message);	        	
+		
+		aBagSPJavaOrchestration.put("causal", "1010");      	
+		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
+
+		aBagSPJavaOrchestration.put("causal", "1020");		
+		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
+		
+	}
 }
