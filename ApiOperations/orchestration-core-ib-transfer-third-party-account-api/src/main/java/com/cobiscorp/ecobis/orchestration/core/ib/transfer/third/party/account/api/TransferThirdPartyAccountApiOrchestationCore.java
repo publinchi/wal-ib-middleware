@@ -134,6 +134,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");
+		
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE,"8" );
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		//registro re tran monent al inicio de la transaccion
 		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
