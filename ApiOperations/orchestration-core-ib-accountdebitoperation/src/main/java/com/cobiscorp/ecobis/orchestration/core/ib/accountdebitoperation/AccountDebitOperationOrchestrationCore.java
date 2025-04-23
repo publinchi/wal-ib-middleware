@@ -298,6 +298,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 		reqTMPCentral.setSpName("cob_bvirtual..sp_account_operation_val_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', IMultiBackEndResolverService.TARGET_LOCAL);
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500118");
+		reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500118");
 		reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, idCustomer);
 		reqTMPCentral.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
 		reqTMPCentral.addInputParam("@i_amount",ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
@@ -428,7 +429,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 				return;
 				
 			} else {
-				
+				aBagSPJavaOrchestration.clear();
 				aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
 				return;
 			}
