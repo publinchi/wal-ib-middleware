@@ -133,10 +133,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");
+		if(logger.isDebugEnabled())
+			logger.logDebug("Begin flow, TransferThirdParty [INI]: "+anOriginalRequest);
 		
 		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE,"8" );
-		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
 		//registro re tran monent al inicio de la transaccion
 		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
 		validateLocalExecution(aBagSPJavaOrchestration);
@@ -941,6 +942,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 		
 		logger.logInfo(" saliendo de processResponseTransfer --->");
+		//inicio actualiza el estado de la trn 
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
+		//fin actualiza el estado de la trn
+		
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
@@ -2679,5 +2686,4 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
     	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_val"));
     	 aBagSPJavaOrchestration.put("i_movement_type", "P2P_DEBIT");  
     }
-
 }

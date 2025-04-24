@@ -19,6 +19,9 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeaderColumn;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
@@ -1006,7 +1009,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			
 	}
 	
-	protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		if (logger.isDebugEnabled())
 			logger.logDebug("Ejecutando metodo updateLocalExecution: " + anOriginalRequest.toString());
 		IProcedureResponse pResponse = null;
