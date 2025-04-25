@@ -400,7 +400,8 @@ public interface IServiceContractOperationsApiService {
 	 */
 
 	// Return DTO
-	public DebitAccountResponse debitOperation(String xRequestId, DebitAccountRequest inDebitAccountRequest) throws CTSRestException;
+	public DebitAccountResponse debitOperation(String xRequestId, String xEndUserRequestDateTime,
+											   String xEndUserIp, String xChannel, DebitAccountRequest inDebitAccountRequest) throws CTSRestException;
 
 	/**
 	 * Valdate token transaction factor API

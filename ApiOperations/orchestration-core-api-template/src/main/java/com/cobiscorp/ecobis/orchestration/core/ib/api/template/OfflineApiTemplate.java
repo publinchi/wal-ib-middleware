@@ -18,8 +18,6 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
@@ -39,6 +37,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION"; 
 	public String MESSAGE_RESPONSE =  "SUCCESS";
+	public String transaccionDate;
 
 	public Boolean getServerStatus() throws CTSServiceException, CTSInfrastructureException {
 		ServerRequest serverRequest = new ServerRequest();
@@ -75,10 +74,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
 
 			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				transaccionDate = wServerStatusResp.readValueParam("@o_fecha_proceso");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 				try {
-					serverResponse
-							.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -394,6 +393,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	
 	public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {	
 		if (logger.isInfoEnabled()) {logger.logInfo(" Entrando en registerAllTransactionSuccess");}
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("transaccionDate: " +  transaccionDate);
+		}
 		
 		try{
 			IProcedureRequest request = new ProcedureRequestAS();
@@ -495,16 +498,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			}else if(tipoTran.equals("AccountDebitOperationOrchestrationCore")) {
 				movementId = (String)aBagSPJavaOrchestration.get("ssn");
 				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
-				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D"); 
-				
-				if (causal.equals("4060")) {
-					movementType = Constants.CARD_DELIVERY_FEE;
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.COMMISSION);
-				}
-				
+				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR,movementType);
+				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_debitReason"));
 				request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
 				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber"));
@@ -513,7 +510,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_latitude")); 
 				request.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_longitude")); 
 				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , movementId);				
-				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR ,transDate );
+				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR ,transaccionDate );
 				request.addInputParam("@i_beginningBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
@@ -680,8 +677,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	        request.setSpName("cobis..sp_val_data_account_api");
 
 	        // Agregar encabezados
-	        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-	                IMultiBackEndResolverService.TARGET_CENTRAL);
+	        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
 	        request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
 	        Object accountNumberObj = aBagSPJavaOrchestration.get("accountNumber");
@@ -717,4 +713,34 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	    return response;
 	}
 
+	public IProcedureResponse logIdempotence(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Begin [" + CLASS_NAME + "][logIdempotence]");
+		}
+
+		String xRequestId = aRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip");
+		String xChannel = aRequest.readValueParam("@x_channel");
+		String xProcess = (String)aBagSPJavaOrchestration.get("process");
+
+		IProcedureRequest idempotenceRequest = new ProcedureRequestAS();
+
+		idempotenceRequest.setSpName("cob_bvirtual..sp_idempotency_ope_reg");
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ICOBISTS.HEADER_STRING_TYPE, COBIS_CONTEXT);
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, "18500111");
+		idempotenceRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		idempotenceRequest.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		idempotenceRequest.addInputParam("@x_end_user_request_date",ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+		idempotenceRequest.addInputParam("@x_end_user_ip",ICTSTypes.SQLVARCHAR, xEndUserIp);
+		idempotenceRequest.addInputParam("@x_channel",ICTSTypes.SQLVARCHAR, xChannel);
+		idempotenceRequest.addInputParam("@x_process",ICTSTypes.SQLVARCHAR, xProcess);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("REQUEST [idempotenceRequest] " + idempotenceRequest.getProcedureRequestAsString());
+		}
+
+		return executeCoreBanking(idempotenceRequest);
+	}
 }
