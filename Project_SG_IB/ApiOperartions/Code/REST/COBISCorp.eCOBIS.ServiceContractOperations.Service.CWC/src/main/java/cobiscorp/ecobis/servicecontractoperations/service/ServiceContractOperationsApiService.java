@@ -7046,24 +7046,20 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
      */
     @Override
     // Return DTO
-    public  DebitAccountResponse  debitOperation(String xRequestId, String xEndUserRequestDateTime,
-                                                 String xEndUserIp, String xChannel, DebitAccountRequest inDebitAccountRequest)throws CTSRestException{
-        LOGGER.logDebug("Start service execution: debitOperation");
+    public  DebitAccountResponse debitOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, DebitAccountRequest inDebitAccountRequest)throws CTSRestException{
+        if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution: debitOperation");
+
         DebitAccountResponse outSingleDebitAccountResponse  = new DebitAccountResponse();
 
-        if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
-            xRequestId = "E";
-        }
-
-        if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+        if (xEndUserRequestDateTime == null || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
             xEndUserRequestDateTime = "E";
         }
 
-        if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+        if (xEndUserIp == null || xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
             xEndUserIp = "E";
         }
 
-        if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+        if (xChannel == null || xChannel.equals("null") || xChannel.trim().isEmpty()) {
             xChannel = "E";
         }
 
@@ -7095,15 +7091,17 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         List<MessageBlock> errors = ErrorUtil.getErrors(response);
         //throw error
         if (errors != null && !errors.isEmpty()) {
-            LOGGER.logDebug("Procedure execution returns error");
             if ( LOGGER.isDebugEnabled() ) {
+                LOGGER.logDebug("Procedure execution returns error");
                 for (int i = 0; i < errors.size(); i++) {
                     LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
                 }
             }
             throw new CTSRestException("Procedure Response has errors", null, errors);
         }
-        LOGGER.logDebug("Procedure ok");
+
+        if (LOGGER.isDebugEnabled())LOGGER.logDebug("Procedure ok");
+
         //Init map returns
         int mapTotal=0;
         int mapBlank=0;
@@ -7128,7 +7126,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         }
         //End map returns
         if(mapBlank!=0&&mapBlank==mapTotal){
-            LOGGER.logDebug("No data found");
+            if (LOGGER.isDebugEnabled()) LOGGER.logDebug("No data found");
             throw new CTSRestException("404",null);
         }
 
@@ -7142,14 +7140,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
 
-        LOGGER.logDebug("Ends service execution: debitOperation");
+        if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution: debitOperation");
+
         //returns data
         return outSingleDebitAccountResponse;
     }
 
-
-
-    /**
+     /**
      * Get All Customer Questions
      */
     @Override
