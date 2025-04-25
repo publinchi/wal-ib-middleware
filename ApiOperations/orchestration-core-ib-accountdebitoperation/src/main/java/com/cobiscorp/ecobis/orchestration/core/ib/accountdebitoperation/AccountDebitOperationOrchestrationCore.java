@@ -103,7 +103,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logInfo("Begin [" + CLASS_NAME + "][validateParameters]");
         }
 
-        String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
         String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
         String referenceNumber = anOriginalRequest.readValueParam("@i_referenceNumber");
         String debitReason = anOriginalRequest.readValueParam("@i_debitReason").trim();
@@ -115,10 +114,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
         String originMovementId = anOriginalRequest.readValueParam("@i_originMovementId");
         String originReferenceNumber = anOriginalRequest.readValueParam("@i_originReferenceNumber");
-        if (idCustomer.isEmpty()) {
-            setError(aBagSPJavaOrchestration, "40030", "externalCustomerId must not be empty.");
-            return true;
-        }
         if (accountNumber.isEmpty()) {
             setError(aBagSPJavaOrchestration, "40082", "accountNumber must not be empty.");
             return true;
