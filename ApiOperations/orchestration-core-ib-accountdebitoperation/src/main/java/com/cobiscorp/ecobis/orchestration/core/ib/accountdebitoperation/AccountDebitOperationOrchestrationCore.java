@@ -57,24 +57,37 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.logDebug("ORIGINAL REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
+            logger.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
         }
+
+        aBagSPJavaOrchestration.put("process", "DEBIT_OPERATION");
+		IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
+		IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
+		IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
+		if (columns[0].getValue().equals("false") ) {
+            setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
+			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+		}
 
         if (validateParameters(aBagSPJavaOrchestration, anOriginalRequest))
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 
         try {
-            isOnline = getServerStatus();
+            this.isOnline = getServerStatus();
         } catch (CTSServiceException | CTSInfrastructureException e) {
-            logger.logError("Error getting server status: " + e.toString());
-        }
-        if (logger.isDebugEnabled()) {
-            logger.logDebug("Response Online: " + isOnline);
+            if (logger.isErrorEnabled()){
+                logger.logError("Error getting server status: " + e.toString());
+            }
         }
 
-        flowRty = evaluateExecuteReentry(anOriginalRequest);
         if (logger.isDebugEnabled()) {
-            logger.logDebug("Response flowRty: " + flowRty);
+            logger.logDebug("Response Online: " + this.isOnline);
+        }
+
+        this.flowRty = evaluateExecuteReentry(anOriginalRequest);
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response flowRty: " + this.flowRty);
         }
 
         return processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
@@ -159,10 +172,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logInfo("Begin [" + CLASS_NAME + "][processTransaction]");
         }
 
-        if (!isOnline) {
+        if (!this.isOnline) {
             IProcedureResponse anProcedureResponse;
 
-            if (!flowRty) {
+            if (!this.flowRty) {
                 anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
 
                 if (logger.isDebugEnabled()) {
@@ -304,6 +317,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                     columns = resultSetRow.getColumnsAsArray();
 
                     if (columns[0].getValue().equals("true")) {
+                        this.isErrors = false;
                         this.columnsToReturn = columns;
                         aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
                     } else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50041")) {
@@ -388,10 +402,12 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 if (logger.isInfoEnabled()) {
                     logger.logDebug("Ending flow, queryAccountDebitOperation with wProcedureResponseLocal: " + wProcedureResponseLocal.getProcedureResponseAsString());
                 }
+
                 if (!wProcedureResponseLocal.hasError()) {
                     resultSetRow = wProcedureResponseLocal.getResultSet(1).getData().getRowsAsArray()[0];
                     columns = resultSetRow.getColumnsAsArray();
                     if (columns[0].getValue().equals("true")) {
+                        this.isErrors = false;
                         aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
                     } else if (columns[0].getValue().equals("false") && columns[1].getValue().equals("50045")) {
                         setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
@@ -415,7 +431,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logInfo("Begin [" + CLASS_NAME + "][processResponse]");
         }
 
-        ArrayList<String> keyList = new ArrayList<String>(aBagSPJavaOrchestration.keySet());
         IResultSetHeader metaData = new ResultSetHeader();
         IResultSetData data = new ResultSetData();
         IResultSetRow row = new ResultSetRow();
@@ -427,10 +442,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         metaData.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SYBVARCHAR, 255));
 
         if (logger.isDebugEnabled()) {
-            logger.logDebug("Valida errores [isErrors]: " + isErrors);
+            logger.logDebug("Valida errores [isErrors]: " + this.isErrors);
         }
 
-        if (!isErrors) {
+        if (!this.isErrors) {
             if (logger.isDebugEnabled()) {
                 logger.logDebug("Ending flow, processResponse success.");
                 logger.logDebug("success: " +  this.columnsToReturn[0].getValue());
@@ -454,7 +469,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 logger.logDebug("message: " +  aBagSPJavaOrchestration.get("error_message"));
                 logger.logDebug("referenceCode: null");
             }
-            logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
             row.addRowData(1, new ResultSetRowColumnData(false, "false"));
             row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_code")));
             row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_message")));
@@ -467,6 +481,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         if (logger.isDebugEnabled()) {
             logger.logDebug("Response: " +  wProcedureResponse.getProcedureResponseAsString());
         }
+
+        aBagSPJavaOrchestration.replace("process", "FINISH_OPERATION");
+        logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
+
         return wProcedureResponse;
     }
 
@@ -477,7 +495,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         if (logger.isInfoEnabled()) {
             logger.logInfo("Begin [" + CLASS_NAME + "][setError]");
         }
-        isErrors = true;
+        this.isErrors = true;
         aBagSPJavaOrchestration.put("error_code", errorCode);
         aBagSPJavaOrchestration.put("error_message", errorMessage);
     }

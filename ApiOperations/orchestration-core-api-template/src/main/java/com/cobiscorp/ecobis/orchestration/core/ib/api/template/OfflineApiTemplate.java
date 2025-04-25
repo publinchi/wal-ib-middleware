@@ -713,4 +713,34 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	    return response;
 	}
 
+	public IProcedureResponse logIdempotence(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Begin [" + CLASS_NAME + "][logIdempotence]");
+		}
+
+		String xRequestId = aRequest.readValueParam("@x_request_id");
+		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
+		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip");
+		String xChannel = aRequest.readValueParam("@x_channel");
+		String xProcess = (String)aBagSPJavaOrchestration.get("process");
+
+		IProcedureRequest idempotenceRequest = new ProcedureRequestAS();
+
+		idempotenceRequest.setSpName("cob_bvirtual..sp_idempotency_ope_reg");
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ICOBISTS.HEADER_STRING_TYPE, COBIS_CONTEXT);
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, "18500111");
+		idempotenceRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		idempotenceRequest.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+		idempotenceRequest.addInputParam("@x_end_user_request_date",ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+		idempotenceRequest.addInputParam("@x_end_user_ip",ICTSTypes.SQLVARCHAR, xEndUserIp);
+		idempotenceRequest.addInputParam("@x_channel",ICTSTypes.SQLVARCHAR, xChannel);
+		idempotenceRequest.addInputParam("@x_process",ICTSTypes.SQLVARCHAR, xProcess);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("REQUEST [idempotenceRequest] " + idempotenceRequest.getProcedureRequestAsString());
+		}
+
+		return executeCoreBanking(idempotenceRequest);
+	}
 }

@@ -163,19 +163,19 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
         
         
-        if (xRequestId.equals("null") || xRequestId.trim().isEmpty()) {
+        if (xRequestId==null || xRequestId.equals("null") || xRequestId.isEmpty()) {
             xRequestId = "E";
         }
 
-        if (xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+        if (xEndUserRequestDateTime==null || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.isEmpty()) {
             xEndUserRequestDateTime = "E";
         }
 
-        if (xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+        if (xEndUserIp==null ||xEndUserIp.equals("null") || xEndUserIp.isEmpty()) {
             xEndUserIp = "E";
         }
 
-        if (xChannel.equals("null") || xChannel.trim().isEmpty()) {
+        if (xChannel==null || xChannel.equals("null") || xChannel.isEmpty()) {
             xChannel = "E";
         }
 
