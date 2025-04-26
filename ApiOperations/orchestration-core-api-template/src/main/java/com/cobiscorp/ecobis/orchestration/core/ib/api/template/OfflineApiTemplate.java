@@ -38,6 +38,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION";
 	public String MESSAGE_RESPONSE =  "SUCCESS";
 	public String transaccionDate;
+	public abstract ICoreServer getCoreServer();
 
 	protected static final String IS_ONLINE = "isOnline";
 	protected static final String IS_REENTRY = "flowRty";

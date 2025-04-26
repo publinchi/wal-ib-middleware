@@ -32,6 +32,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 @Component(name = "AccountDebitOperationOrchestrationCore", immediate = false)
@@ -42,6 +44,11 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplat
         @Property(name = "service.spName", value = "cob_procesador..sp_debit_operation_api")
 })
 public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {// SPJavaOrchestrationBase
+
+    @Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
 
     private ILogger logger = (ILogger) this.getLogger();
     private static final String CLASS_NAME = "AccountDebitOperationOrchestrationCore --->";
@@ -489,5 +496,16 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
 
         return wProcedureResponse;
+    }
+
+   @Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+ 
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+ 
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
     }
 }
