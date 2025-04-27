@@ -4,3 +4,4 @@ Bundle-Vendor: COBISCORP
 Bundle-ManifestVersion: 2
 Service-Component: OSGI-INF/serviceComponents.xml
 Excluded-Imports: org.apache.felix.scr.annotations
+Import-Package: cobiscorp.ecobis.datacontractoperations.dto,com.cobiscorp.cobis.commons.log,com.cobiscorp.cobis.cts.rest.client.api,com.cobiscorp.cobis.cts.rest.client.api.exception,com.cobiscorp.cobis.cts.rest.client.dto,com.cobiscorp.cobis.cts.rest.client.mapper,com.cobiscorp.cobis.cts.rest.client.util,com.cobiscorp.cobis.cwc.cts.rest,com.cobiscorp.cobis.jaxrs.publisher,com.google.gson

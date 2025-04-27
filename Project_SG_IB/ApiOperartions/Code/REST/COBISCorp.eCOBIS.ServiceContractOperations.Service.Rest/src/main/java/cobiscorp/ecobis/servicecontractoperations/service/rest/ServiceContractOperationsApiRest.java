@@ -36,6 +36,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.math.BigDecimal;
 
@@ -2192,41 +2193,70 @@ public class ServiceContractOperationsApiRest {
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
 	public Response debitOperation(
-		@HeaderParam("x-request-id") String xRequestId,
-		DebitAccountRequest inDebitAccountRequest) {
-		LOGGER.logDebug("Start service execution REST: debitOperation");
-		DebitAccountResponse outSingleDebitAccountResponse = new DebitAccountResponse();
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			DebitAccountRequest inDebitAccountRequest) {
+		if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: debitOperation");
 
-		if (!validateMandatory(new Data("externalCustomerId", inDebitAccountRequest.getExternalCustomerId()),
-				new Data("accountNumber", inDebitAccountRequest.getAccountNumber()),
-				new Data("amount", inDebitAccountRequest.getAmount()),
-				new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()),
-				new Data("debitReason", inDebitAccountRequest.getDebitReason()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
+
+		// Lista de parámetros obligatorios del encabezado de la solicitud
+		List<Data> mandatoryHeaders = new ArrayList<>();
+		mandatoryHeaders.add(new Data("x-request-id", xRequestId));
+		//mandatoryHeaders.add(new Data("x-end-user-request-date-time", xEndUserRequestDateTime));
+		//mandatoryHeaders.add(new Data("x-end-user-ip", xEndUserIp));
+		//mandatoryHeaders.add(new Data("x-channel", xChannel));
+
+		// Validar los parámetros del encabezado
+		if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+			if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El encabezado de la solicitud no se encuentra debidamente formateado.").build();
 		}
 
+		// Lista de parámetros obligatorios del cuerpo de la solicitud
+		List<Data> mandatoryFields = new ArrayList<>();
+		mandatoryFields.add(new Data("externalCustomerId", inDebitAccountRequest.getExternalCustomerId()));
+		mandatoryFields.add(new Data("accountNumber", inDebitAccountRequest.getAccountNumber()));
+		mandatoryFields.add(new Data("amount", inDebitAccountRequest.getAmount()));
+		mandatoryFields.add(new Data("referenceNumber", inDebitAccountRequest.getReferenceNumber()));
+		String reason = inDebitAccountRequest.getDebitReason();
+		if ("FALSE_CHARGEBACK".equals(reason) || "False chargeback claim".equals(reason)) {
+			mandatoryFields.add(new Data("originCode", inDebitAccountRequest.getOriginCode()));
+			mandatoryFields.add(new Data("originMovementId", inDebitAccountRequest.getOriginMovementId()));
+			mandatoryFields.add(new Data("originReferenceNumber", inDebitAccountRequest.getOriginReferenceNumber()));
+		} else {
+			mandatoryFields.add(new Data("debitReason", inDebitAccountRequest.getDebitReason()));
+		}
+
+		// Validar los parámetros del cuerpo
+		mandatoryHeaders.addAll(mandatoryFields);
+		if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+			if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado.").build();
+		}
+
+		DebitAccountResponse outSingleDebitAccountResponse;
+
 		try {
-			outSingleDebitAccountResponse = iServiceContractOperationsApiService.debitOperation(xRequestId, inDebitAccountRequest);
+			outSingleDebitAccountResponse = iServiceContractOperationsApiService.debitOperation(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inDebitAccountRequest);
 		} catch (CTSRestException e) {
-			LOGGER.logError("CTSRestException", e);
+			if (LOGGER.isErrorEnabled()) LOGGER.logError("CTSRestException", e);
 			if ("404".equals(e.getMessage())) {
-				LOGGER.logDebug("404 is returned - No data found");
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("404 is returned - No data found");
 				return Response.status(404).entity("No data found").build();
 			}
 
-			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			if (LOGGER.isDebugEnabled()) LOGGER.logDebug("409 is returned - The stored procedure raise an error");
 			return Response.status(409).entity(e.getMessageBlockList()).build();
 		} catch (Exception e) {
-			LOGGER.logDebug("500 is returned - Code exception");
-			LOGGER.logError("Exception", e);
+			if (LOGGER.isDebugEnabled()) LOGGER.logDebug("500 is returned - Code exception");
+			if (LOGGER.isErrorEnabled()) LOGGER.logError("Exception", e);
 			return Response.status(500).entity(e.getMessage()).build();
 		}
 
-		LOGGER.logDebug("Ends service execution REST: debitOperation");
+		if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution REST: debitOperation");
 		return Response.ok(outSingleDebitAccountResponse).build();
-
 	}
 
 	/**
