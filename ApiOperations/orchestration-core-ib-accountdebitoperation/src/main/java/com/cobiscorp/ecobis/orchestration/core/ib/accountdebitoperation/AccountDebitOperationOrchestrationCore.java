@@ -105,7 +105,18 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(IS_ONLINE));
         }
 
-        return processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
+        aBagSPJavaOrchestration.put(ORIGINAL_REQUEST,anOriginalRequest);
+        dataTrn(anOriginalRequest,aBagSPJavaOrchestration);
+        validateLocalExecution(aBagSPJavaOrchestration);
+
+        IProcedureResponse wProcedureResponse = processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
+
+        aBagSPJavaOrchestration.put("s_error", aBagSPJavaOrchestration.get(ERROR_CODE));
+        aBagSPJavaOrchestration.put("s_msg", aBagSPJavaOrchestration.get(ERROR_MESSAGE));
+
+        updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+
+        return wProcedureResponse;
     }
 
     @Override
@@ -486,10 +497,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             row.addRowData(4, new ResultSetRowColumnData(false, null));
             data.addRow(row);
 
-			aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code").toString());
-        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message").toString());
-        	
-			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
+            aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code").toString());
+            aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message").toString());
+            
+            registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
         }
 
         IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
@@ -503,8 +514,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
         return wProcedureResponse;
     }
-		
-	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+        
+    @Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
     protected ICoreServer coreServer;
  
     protected void bindCoreServer(ICoreServer service) {
@@ -532,15 +543,22 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
     }
     
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-    	
-    	 aBagSPJavaOrchestration.put("i_prod", null);
-    	 aBagSPJavaOrchestration.put("i_prod_des", null );
-    	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
-    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
-    	 aBagSPJavaOrchestration.put("i_mon", null );
-    }
+        if (logger.isInfoEnabled()) {
+            logger.logInfo("Begin [" + CLASS_NAME + "][dataTrn]");
+        }
+        
+        String debitConcept = Objects.nonNull(aBagSPJavaOrchestration.get("debitConcept"))
+                              ? aBagSPJavaOrchestration.get("debitConcept").toString()
+                              : "";
+
+        aBagSPJavaOrchestration.put("i_prod", null);
+        aBagSPJavaOrchestration.put("i_prod_des", null );
+        aBagSPJavaOrchestration.put("i_login", null );
+        aBagSPJavaOrchestration.put("i_cta_des", null);  
+        aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_accountNumber") ); 
+        aBagSPJavaOrchestration.put("i_concepto", debitConcept);
+        aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
+        aBagSPJavaOrchestration.put("i_mon", null );
+   }
 
 }

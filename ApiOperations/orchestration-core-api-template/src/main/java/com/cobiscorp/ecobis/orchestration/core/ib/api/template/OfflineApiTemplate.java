@@ -1029,8 +1029,8 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@s_perfil", ICTSTypes.SYBINT2, anOriginalRequest.readValueParam("@s_perfil"));
 			request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, anOriginalRequest.readValueParam("@s_servicio"));
 			request.addInputParam("@i_graba_log", ICTSTypes.SQLVARCHAR, "N");
-
-			request.addInputParam("@i_causa", ICTSTypes.SQLINT4, isInteger(bag.get("causa")));
+			Object causa = bag.get("causa");
+			request.addInputParam("@i_causa", ICTSTypes.SQLINT4, Objects.nonNull(causa) ? causa.toString() : null);
 			
 			// Datos de cuenta origen
 			Utils.copyParam("@i_cta", anOriginalRequest, request);
