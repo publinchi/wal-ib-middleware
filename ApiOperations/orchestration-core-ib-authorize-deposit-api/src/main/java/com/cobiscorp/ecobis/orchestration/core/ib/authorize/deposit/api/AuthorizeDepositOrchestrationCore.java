@@ -74,6 +74,8 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isDebugEnabled()) {logger.logDebug("Begin flow, AuthorizeDeposit starts...");}		
 		
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE,"8" );
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);		
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		serverStatus = null;
@@ -119,8 +121,8 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				anProcedureResponseVal = getValAccount(anOriginalRequest, aBagSPJavaOrchestration);
 				if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 					logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
-					aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
-					aBagSPJavaOrchestration.put("message_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
+					aBagSPJavaOrchestration.put("s_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
+					aBagSPJavaOrchestration.put("s_msg", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
 					return processResponseApi(anOriginalRequest, anProcedureResponseVal,aBagSPJavaOrchestration);
 				}
 				if(anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
@@ -433,10 +435,10 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		wProductsQueryResp.setReturnCode(0);
 		
 		if (!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 			
-			if (logger.isDebugEnabled()) {logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			if (logger.isDebugEnabled()) {logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 				
 		if (logger.isDebugEnabled()) {
@@ -514,10 +516,10 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 			}
 		}
 		else{
-			aBagSPJavaOrchestration.put("code_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", response.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", response.getResultSetRowColumnData(2, 1, 2).getValue());
 				
-			if (logger.isDebugEnabled()) {logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			if (logger.isDebugEnabled()) {logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 		
 		return response;
@@ -604,8 +606,8 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -794,8 +796,8 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
-				row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
-				row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+				row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_msg")));
+				row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_error")));
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, null));
 				
@@ -847,8 +849,8 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 			row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
 			row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
 			row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
-			row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
-			row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+			row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_msg")));
+			row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_error")));
 			row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 			row6.addRowData(7, new ResultSetRowColumnData(false, null));
 			
@@ -868,6 +870,10 @@ public class AuthorizeDepositOrchestrationCore extends OfflineApiTemplate {
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
 		wProcedureResponse.addResponseBlock(resultsetBlock5);
 		wProcedureResponse.addResponseBlock(resultsetBlock6);
+		
+		//inicio actualiza el estado de la trn 
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
+		//fin actualiza el estado de la trn
 		
 		return wProcedureResponse;		
 	}
