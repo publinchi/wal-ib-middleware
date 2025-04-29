@@ -997,19 +997,19 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	protected Boolean getFromReentryExcecution(Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureRequest request = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 		if (logger.isDebugEnabled())
+		{
 			logger.logDebug(CLASS_NAME + "getFromReentryExcecution local originalRequest:"+request);
-		if (logger.isDebugEnabled())
 			logger.logDebug("getFromReentryExcecution: "+request.readValueFieldInHeader("reentryExecution"));
-
-			
+		}
 		if (!Utils.isNull(request.readValueFieldInHeader("reentryExecution"))){
 			return ("Y".equals(request.readValueFieldInHeader("reentryExecution")));
 		}else
 			return false;
 			
 	}
+
 	
-protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+	protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		if (logger.isDebugEnabled())
 			logger.logDebug("Ejecutando metodo updateLocalExecution: " + anOriginalRequest.toString());
 		IProcedureResponse pResponse = null;

@@ -70,6 +70,16 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE, anOriginalRequest.readValueParam("@x_channel") );
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		IProcedureResponse procedureResponse = executeJavaOrchestrationDepositDock(anOriginalRequest, aBagSPJavaOrchestration);
+		// actualiza el estado de la trn 
+		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration, procedureResponse);
+		return procedureResponse;
+	}
+	public IProcedureResponse executeJavaOrchestrationDepositDock(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if(logger.isDebugEnabled()) {
 			logger.logDebug("Begin flow, AuthorizeDepositDock starts...");
 		}
@@ -93,9 +103,6 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
 			return Utils.returnException(this.MESSAGE_RESPONSE);
 		}
-		
-		dataTrn(anOriginalRequest,aBagSPJavaOrchestration);
-		validateLocalExecution(aBagSPJavaOrchestration);
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;

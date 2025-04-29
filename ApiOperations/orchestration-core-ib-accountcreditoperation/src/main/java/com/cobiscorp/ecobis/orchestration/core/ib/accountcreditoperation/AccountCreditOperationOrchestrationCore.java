@@ -80,7 +80,42 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE, anOriginalRequest.readValueParam("@x_channel") );
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		IProcedureResponse procedureResponse = executeJavaOrchestrationCredit(anOriginalRequest, aBagSPJavaOrchestration);
+		// actualiza el estado de la trn 
+		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration, procedureResponse);
+		return procedureResponse;
+	}
+	public void  updateStatusTrn(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse response)
+	{
+		String code = "0";
+		String message ="";
+		if (response.getResultSetListSize() > 1) {
+			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				if(columns.length > 1)
+				{
+					code= columns[0].getValue();
+					message =columns[1].getValue();
+				}
+			} 
+		} 			
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+	}
+	
+	public IProcedureResponse executeJavaOrchestrationCredit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		logger.logDebug("Begin flow, AccountCreditOperation start. RTY " + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));		
+		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		
+		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		if(logger.isDebugEnabled())
 			logger.logDebug("Inicia credit operation Orquestation");
 
@@ -97,11 +132,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 				return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 			}
 		}
-		
-		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-		
-		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
@@ -121,10 +151,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		   logger.logDebug("Response Online: " + responseServer.getOnLine() + " Response flowRty" + flowRty);
 		
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
-        
-		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
-		validateLocalExecution(aBagSPJavaOrchestration);
-		
+        	
 		/* Validar comportamiento transaccion */
 		
 		/*if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {

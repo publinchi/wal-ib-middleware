@@ -133,14 +133,46 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		if(logger.isDebugEnabled())
-			logger.logDebug("Begin flow, TransferThirdParty [INI]: "+anOriginalRequest);
-		
-		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE,"8" );
+		//registro re tran monent al inicio de la transaccion no meter mas codigo aqui
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE, anOriginalRequest.readValueParam("@x_channel") );
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
-		//registro re tran monent al inicio de la transaccion
 		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
 		validateLocalExecution(aBagSPJavaOrchestration);
+		
+		IProcedureResponse response = executeJavaOrchestrationP2P(anOriginalRequest ,aBagSPJavaOrchestration);
+		
+		// actualiza el estado de la trn 
+		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration,response);
+				
+		return response;
+	}
+	
+	public void  updateStatusTrn(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse response)
+	{
+		String code = "0";
+		String message ="";
+		if (response.getResultSetListSize() > 1) {
+			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				if(columns.length > 1)
+				{
+					code= columns[0].getValue();
+					message =columns[1].getValue();
+				}
+			} 
+		} 			
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+	}
+	public IProcedureResponse executeJavaOrchestrationP2P(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration)
+	{
+		if(logger.isDebugEnabled())
+			logger.logDebug("Begin flow, TransferThirdParty [INI]: "+anOriginalRequest);
 		
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
@@ -634,7 +666,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 	}
-		
 	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
 		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
 			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
@@ -2685,5 +2716,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
     	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_concepto"));
     	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_val"));
     	 aBagSPJavaOrchestration.put("i_movement_type", "P2P_DEBIT");  
+		 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@x_request_id")); 
     }
 }
