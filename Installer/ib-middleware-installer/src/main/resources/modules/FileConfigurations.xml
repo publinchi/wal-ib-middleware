@@ -299,6 +299,7 @@
 		<staff id="36" name="orchestration-core-ib-registcontactlimit-api" version="4.6.1.0" />
 		<staff id="37" name="orchestration-core-ib-get-client-limit-api" version="4.6.1.0" />
 		<staff id="38" name="orchestration-core-ib-update-session" version="4.6.1.0" />
+		<staff id="39" name="orchestration-core-ib-unlock-credit-operation-api" version="4.6.1.0" />
 	</api-rest-orchest>
 	<orchestrationsAuthenticate>
 		<staff id="1" name="orchestration-ib-authenticate-interfaces" version="4.6.1.0" />
