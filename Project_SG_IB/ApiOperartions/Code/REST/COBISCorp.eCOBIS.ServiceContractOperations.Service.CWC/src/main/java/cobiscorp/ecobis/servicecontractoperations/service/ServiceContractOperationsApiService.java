@@ -4732,6 +4732,123 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         return toReturn;
 
     }
+    
+    /**
+    * It allows the unlocking of account values, which were credited by remittances.
+    */
+    @Override
+	//Have DTO
+	public ResponseUnlockCreditOperation unlockCreditOperation(	String xapigwapiid, String legacyid, String clientid,
+            													String uuid, RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: unlockCreditOperation");
+		ResponseUnlockCreditOperation outResponseUnlockCreditOperation  = new ResponseUnlockCreditOperation();
+		    
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_desbloquea_remesas");
+		
+		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18700137");
+		procedureRequestAS.addInputParam("@i_external_customer_id",ICTSTypes.SQLINT4,String.valueOf(inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber());
+		procedureRequestAS.addInputParam("@i_reference_number",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber());
+		procedureRequestAS.addInputParam("@i_movement_id",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getMovementId());
+		procedureRequestAS.addInputParam("@x_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
+		procedureRequestAS.addInputParam("@x_apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
+		procedureRequestAS.addInputParam("@x_client-id", ICTSTypes.SQLVARCHAR, clientid);
+		procedureRequestAS.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, uuid);
+		
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+		
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUnlockCreditOperation>() { 
+		              @Override
+		              public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
+		              
+		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseUnlockCreditOperation.setSuccess(returnResponseUnlockCreditOperation.isSuccess());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseUnlockCreditOperation>() { 
+		              @Override
+		              public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
+		              
+		                    dto.setMovementId(resultSetMapper.getInteger(1));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseUnlockCreditOperation.setMovementId(returnResponseUnlockCreditOperation.getMovementId());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		      mapTotal++;
+		      if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
+									//---------NO Array
+									ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseUnlockCreditOperation>() { 
+		              @Override
+		              public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
+		              ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
+		              
+								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
+								dto.responseInstance().setMessage(resultSetMapper.getString(2));
+		              return dto;
+		              }
+		              },false);
+		
+		              outResponseUnlockCreditOperation.setResponse(returnResponseUnlockCreditOperation.getResponse());
+		                  // break;
+		                
+		      }else {
+		      mapBlank++;
+		
+		      }
+		    
+		//End map returns
+		if(mapBlank!=0&&mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+		  LOGGER.logDebug("Ends service execution: unlockCreditOperation");
+		  //returns data
+		  return outResponseUnlockCreditOperation;
+		} 
 
     /**
      * Update customer address

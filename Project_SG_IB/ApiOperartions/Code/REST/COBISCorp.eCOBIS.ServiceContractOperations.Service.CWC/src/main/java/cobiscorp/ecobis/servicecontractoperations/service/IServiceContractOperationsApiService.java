@@ -379,6 +379,14 @@ public interface IServiceContractOperationsApiService {
 			RequestValidateAllSecurityQA inRequestValidateAllSecurityQA) throws CTSRestException;
 	
 	/**
+     * It allows the unlocking of account values, which were credited by remittances.
+     */
+   
+	//Have DTO
+	public ResponseUnlockCreditOperation unlockCreditOperation(String xapigwapiid, String legacyid, String clientid,
+				String uuid, RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException;
+		
+	/**
 	 * Update Account Status
 	 */
 
