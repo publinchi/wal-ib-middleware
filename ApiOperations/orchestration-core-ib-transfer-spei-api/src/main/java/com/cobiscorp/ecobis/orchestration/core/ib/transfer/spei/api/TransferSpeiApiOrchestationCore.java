@@ -128,9 +128,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final int ERROR_ACCOUNT_NULL_OR_EMPTY = 400001;
     private static final String SUCCESS_MESSAGE = "success";
     private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
-    private static final String SUCCESS_CONNECTOR = "successConnector";
-    private static final String RETURN_CODE =  "returnCode";
-    //private static final String COD_BLOCK_HIGH = "codBlockHigh";
+    private boolean successConnector = false;
+    private int returnCode = 0;
+    private String codBlockHigh;
 
     private static ILogger logger = LogFactory.getLogger(TransferSpeiApiOrchestationCore.class);
     private static final String CLASS_NAME = "TransferSpeiApiOrchestationCore--->";
@@ -296,10 +296,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     @Override
     public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
             Map<String, Object> aBagSPJavaOrchestration) {
-    	aBagSPJavaOrchestration.put(RETURN_CODE, 0);
-    	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
+
         aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-        
+
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
         
         anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
@@ -326,7 +325,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		String evaluarRiesgo = getParam(aRequest, "ACEVRI", "BVI");
         String evaluarRiesgoMobile = getParam(aRequest, "AERIMB", "BVI");
         String evaluarRiesgoSystem = getParam(aRequest, "AERISY", "BVI");
-        //codBlockHigh = getParam(aRequest, "CBP", "BVI");
+        codBlockHigh = getParam(aRequest, "CBP", "BVI");
         String valorRiesgo = "";
 		String codigoRiesgo = "";
 		String mensajeRiesgo = "";
@@ -499,8 +498,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             	wTransferResponse = executeTransferApi(aRequest, aBagSPJavaOrchestration);
             	return wTransferResponse;
             }
-        }else {
-        	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false); 
         }
 
         return wAccountsResp;        
@@ -1077,7 +1074,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo(anOriginalProcedureRes.getProcedureResponseAsString());
             logger.logInfo(anOriginalProcedureRes.toString());
             logger.logInfo("The code return is: " + codeReturn.toString());
-            logger.logInfo("successConnector is: " + aBagSPJavaOrchestration.get(SUCCESS_CONNECTOR));
+            logger.logInfo("successConnector is: " + successConnector);
             logger.logInfo("movementId: " + anOriginalProcedureRes.readValueParam("@o_referencia"));
             logger.logInfo("ssn_branch: " + anOriginalRequest.readValueParam("@s_ssn_branch"));
             logger.logInfo("referenceCode: " + (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC));
@@ -1092,19 +1089,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			aBagSPJavaOrchestration.put("ssn_branch_offline", movementId);
 		}
         
-         aBagSPJavaOrchestration.put("movementId", movementId);
-        if (logger.isDebugEnabled()){
-			 logger.logDebug("movementID --->" + movementId);
-			 logger.logDebug("@o_referencia --->" + anOriginalProcedureRes.readValueParam("@o_referencia"));
-			 logger.logDebug("ssn_branch --->" + aBagSPJavaOrchestration.get("ssn_branch_offline"));
-		}
-        int returnCode = (Integer)aBagSPJavaOrchestration.get(RETURN_CODE);
+        
+
+		logger.logInfo("xdcxv2 --->" + movementId);
 		if (codeReturn == 0 || codeReturn == 50000 || codeReturn == 1) {
 			if (null != movementId) {
 				IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
 				
-				Boolean successConnector = (Boolean)aBagSPJavaOrchestration.get(SUCCESS_CONNECTOR);
-				if (successConnector) {
+				if (this.successConnector) {
 					
 					executionStatus = "CORRECT";
 					updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
@@ -1118,8 +1110,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					
                     int lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
                     int lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
-                   
-                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, "SPEI_DEBIT", "2040", lengthCtaOrig, lengthCtaDest);					
+                    aBagSPJavaOrchestration.put("movementId", movementId);
+                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, "SPEI_DEBIT", "2040", lengthCtaOrig, lengthCtaDest);
+					
 					logger.logInfo("bnbn true--->" + movementId);
 					
 				} else {
@@ -1156,16 +1149,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         } else {
             
-            logger.logInfo("bnbn false--->" + returnCode);
+            logger.logInfo("bnbn false--->" + this.returnCode);
             executionStatus = "ERROR";
             updateTransferStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
-           
             
-            if (returnCode == 1875285 || returnCode == 2600069) {
+            if (this.returnCode == 1875285 || this.returnCode == 2600069) {
                 code = "400178";
                 message = "The amount to be transferred exceeds the current account balance";       
                 success = "false";
-            } else if (returnCode == 400177) {
+            } else if (this.returnCode == 400177) {
                 code = "400177";
                 message = "The source account has a debit block";       
                 success = "false";
@@ -1345,8 +1337,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("@i_movementId")); 
-		
+		if  (aResponse.readValueParam("@o_referencia") != null) {
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, Integer.parseInt(aResponse.readValueParam("@o_referencia")) == 0  ? (String) aBagSPJavaOrchestration.get("ssn_branch_offline") : (String) aResponse.readValueParam("@o_referencia"));
+		} else {
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aResponse.readValueParam("@o_referencia"));
+		}
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
@@ -1491,7 +1486,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 }
                 
                 if (refBranch.equals("0")) {
-                	aBagSPJavaOrchestration.put(RETURN_CODE,responseTransfer.getReturnCode()); 
+                    this.returnCode = responseTransfer.getReturnCode(); 
                 }
 
                 responseTransfer = transformToProcedureResponse(responseTransfer, aBagSPJavaOrchestration,
@@ -1734,7 +1729,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	                    logger.logDebug("Error SPEI");
 	                }
 	                
-	                aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
+	                this.successConnector = false;
 	                //return Utils.returnException(1, ERROR_SPEI);
 	            } else
 	            {
@@ -1746,7 +1741,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	                responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
 	                        respuesta.get(2));
 	                
-	                aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, true);
+	                this.successConnector = true;
 	                aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, respuesta.get(2));
 
 	                /*
@@ -1767,10 +1762,31 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				mappingResponse.setMensajeAcc(respuesta.get(1));
 	            persistDataLocalOnFailureSpei(anOriginalRequest, aBagSPJavaOrchestration);
 	            
-	            aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
+	            this.successConnector = false;
 
 	            //return Utils.returnException(1, ERROR_SPEI);
 	        }
+	        
+	        /*
+			if(transactionResponse.getResponse() != null && transactionResponse.getResponse().getId() != null){ //Si existe error en procesamiento
+				mappingResponse.setErrorCode(Integer.parseInt(transactionResponse.getResponse().getId()));
+				mappingResponse.setErrorMessage(transactionResponse.getResponse().getDescripcion());
+				mappingResponse.setMensajeAcc(transactionResponse.getResponse().getDescripcion());
+				sendSpeiSERVImpl.persistDataLocalOnFailureSpei(request, mappingResponse);
+			}else{
+				int responseFromProvider = transactionResponse.getResultado().getId();
+				String responseMessage = transactionResponse.getResultado().getDescripcionError();
+				mappingResponse.setCodigoAcc(String.valueOf(responseFromProvider));
+
+				if(responseFromProvider > 999){ //si respuesta tiene mas de 3 digitos
+					mappingResponse.setMensajeAcc("Transferencia exitosa");
+				}else{
+					mappingResponse.setMensajeAcc( responseMessage != null ? responseMessage : "Error en transferencia");
+					sendSpeiSERVImpl.persistDataLocalOnFailureSpei(request, mappingResponse);
+					sendSpeiSERVImpl.setErrorResponse(mappingResponse, responseFromProvider, "Error en transferencia");
+				}
+
+			}*/
 
 		}catch (BusinessException be){
 			logger.logError(wInfo+"ERROR ",be);
@@ -2093,10 +2109,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         logger.logInfo(wInfo + "response de entrada spei: " + response.toString());
 
         if (response.getErrorCode() != null) {
-        	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
+            this.successConnector = false;
             return Utils.returnException(1, ERROR_SPEI);
         } else {
-        	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, true);
+            this.successConnector = true;
         }
 
         logger.logInfo(wInfo + Constants.END_TASK);
@@ -2347,7 +2363,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                     logger.logDebug("Error SPEI");
                 }
                 
-                aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
+                this.successConnector = false;
                 return Utils.returnException(1, ERROR_SPEI);
             } else
             {
@@ -2359,7 +2375,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 responseTransfer.addParam("@o_clave_rastreo", ICTSTypes.SQLVARCHAR, respuesta.get(2).length(),
                         respuesta.get(2));
                 
-                aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, true);
+                this.successConnector = true;
                 aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, respuesta.get(2));
 
                 /*
@@ -2382,7 +2398,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             //SE REGISTRA EN LOCAL CASO DE ERROR
             persistDataLocalOnFailureSpei(originalRequest, aBagSPJavaOrchestration);
             
-            aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
+            this.successConnector = false;
 
             return Utils.returnException(1, ERROR_SPEI);
         }
