@@ -86,15 +86,15 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 	{
 		String code = "0";
 		String message ="";
-		if (response.getResultSetListSize() > 1) {
-			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+		if (response.getResultSetListSize() > 0) {
+			IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
 			
 			if (resultSetRows.length > 0) {
 				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-				if(columns.length > 1)
+				if(columns.length > 3)
 				{
-					code= columns[0].getValue();
-					message =columns[1].getValue();
+					code = columns[4].getValue();
+					message = columns[3].getValue();
 				}
 			} 
 		} 			
@@ -1001,17 +1001,11 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
     
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
     	
-    	 aBagSPJavaOrchestration.put("i_prod", null);
-    	 aBagSPJavaOrchestration.put("i_prod_des", null );
-    	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_id") ); 
     	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
     	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
     	 aBagSPJavaOrchestration.put("i_card_id", aRequest.readValueParam("@i_card_id") );
-
-		
-		 
+		 aBagSPJavaOrchestration.put("i_movement_type", "CREDIT_AT_STORE" );
 		 aBagSPJavaOrchestration.put("i_code", aRequest.readValueParam("@i_card_entry_code" ) );
 		 aBagSPJavaOrchestration.put("i_pin", aRequest.readValueParam("@i_pin" ) );
 		 aBagSPJavaOrchestration.put("i_mode", aRequest.readValueParam("@i_mode" ) );
