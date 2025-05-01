@@ -3585,6 +3585,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					String limitType = subTypeElement.getAsJsonObject().get("transactionLimitsType").getAsString();
 					
 					if ("DAILY".equals(limitType)) {
+						if (subTypeElement.getAsJsonObject().has("configuredLimit")) {
+							dailyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("configuredLimit")
+								.get("amount").getAsDouble();
+							boolean isDailyLimitExceeded = transactionAmount > (dailyLimit != null ? dailyLimit : 0);
+							aBagSPJavaOrchestration.put("isDailyLimitExceeded", isDailyLimitExceeded);
+						}
 						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
 							dailyLimit = subTypeElement.getAsJsonObject()
 								.getAsJsonObject("userConfiguredLimit")
@@ -3599,12 +3606,25 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 								.getAsJsonObject("userConfiguredLimit")
 								.get("amount").getAsDouble();
 						}
+						if (subTypeElement.getAsJsonObject().has("configuredLimit")) {
+							montlyLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("configuredLimit")
+								.get("amount").getAsDouble();
+						}
 						if (subTypeElement.getAsJsonObject().has("balanceAmount")) {
 							balanceAmountMontly = subTypeElement.getAsJsonObject()
 								.getAsJsonObject("balanceAmount")
 								.get("amount").getAsDouble();
 						}
 					} else if ("MAX_TXN_LIMIT".equals(limitType)) {
+						if (subTypeElement.getAsJsonObject().has("configuredLimit")) {
+							maxTxnLimit = subTypeElement.getAsJsonObject()
+								.getAsJsonObject("configuredLimit")
+								.get("amount").getAsDouble();
+
+							boolean isMaxTxnLimitExceeded = transactionAmount > (maxTxnLimit != null ? maxTxnLimit : 0);
+							aBagSPJavaOrchestration.put("isMaxTxnLimitExceeded", isMaxTxnLimitExceeded);
+						}
 						if (subTypeElement.getAsJsonObject().has("userConfiguredLimit")) {
 							maxTxnLimit = subTypeElement.getAsJsonObject()
 								.getAsJsonObject("userConfiguredLimit")
