@@ -33,6 +33,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -41,6 +42,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
+
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
@@ -76,8 +78,29 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		validateLocalExecution(aBagSPJavaOrchestration);
 		IProcedureResponse procedureResponse = executeJavaOrchestrationDepositDock(anOriginalRequest, aBagSPJavaOrchestration);
 		// actualiza el estado de la trn 
-		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration, procedureResponse);
+		updateStatusTrn(anOriginalRequest, aBagSPJavaOrchestration, procedureResponse);
 		return procedureResponse;
+	}
+	public void  updateStatusTrn(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse response)
+	{
+		String code = "0";
+		String message ="";
+		if (response.getResultSetListSize() > 1) {
+			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				if(columns.length > 1)
+				{
+					code= columns[0].getValue();
+					message =columns[1].getValue();
+				}
+			} 
+		} 			
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 	public IProcedureResponse executeJavaOrchestrationDepositDock(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if(logger.isDebugEnabled()) {
@@ -985,7 +1008,18 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
     	 aBagSPJavaOrchestration.put("i_cta", null ); 
     	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
     	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
-    	 aBagSPJavaOrchestration.put("i_mon", null );
+    	 aBagSPJavaOrchestration.put("i_card_id", aRequest.readValueParam("@i_card_id") );
+
+		
+		 
+		 aBagSPJavaOrchestration.put("i_code", aRequest.readValueParam("@i_card_entry_code" ) );
+		 aBagSPJavaOrchestration.put("i_pin", aRequest.readValueParam("@i_pin" ) );
+		 aBagSPJavaOrchestration.put("i_mode", aRequest.readValueParam("@i_mode" ) );
+
+		 aBagSPJavaOrchestration.put("i_establishmentName", aRequest.readValueParam("@i_establishment") );
+         aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_retrieval_reference_number") );
+		 aBagSPJavaOrchestration.put("i_campo8", aRequest.readValueParam("@x_uuid") );
+	
     }
 
 }

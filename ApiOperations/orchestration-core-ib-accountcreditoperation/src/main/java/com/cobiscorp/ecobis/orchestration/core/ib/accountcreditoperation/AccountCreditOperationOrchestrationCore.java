@@ -535,7 +535,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logDebug("execute executeOfflineTransacction: ");
 		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
-		
 		String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = anOriginalRequest.readValueParam("@i_referenceNumber");
