@@ -91,10 +91,11 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 			
 			if (resultSetRows.length > 0) {
 				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-				if(columns.length > 3)
+				if(columns.length > 5)
 				{
 					code = columns[4].getValue();
 					message = columns[3].getValue();
+					aBagSPJavaOrchestration.put("i_auth_code", columns[6].getValue());
 				}
 			} 
 		} 			
