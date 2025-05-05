@@ -84,6 +84,11 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			logger.logError(e.toString());
 		}
 		
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
@@ -143,8 +148,15 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			}
 			anProcedureResponse = authorizePurchase(anOriginalRequest, aBagSPJavaOrchestration);
 		}
+
+		IProcedureResponse finalProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+
+		aBagSPJavaOrchestration.put("s_error", aBagSPJavaOrchestration.get("code_error"));
+        aBagSPJavaOrchestration.put("s_msg", aBagSPJavaOrchestration.get("message_error"));
+
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		return processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+		return finalProcedureResponse;
 	}
 	
 	private IProcedureResponse authorizePurchase(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -977,17 +989,21 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
     public ICoreServer getCoreServer() {
         return coreServer;
     }
-    
+
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
     	
     	 aBagSPJavaOrchestration.put("i_prod", null);
     	 aBagSPJavaOrchestration.put("i_prod_des", null );
     	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
-    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
-    	 aBagSPJavaOrchestration.put("i_mon", null );
-    }
-
+		aBagSPJavaOrchestration.put("i_cta_des", null);  
+		aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_number") ); 
+		aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
+		aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
+		aBagSPJavaOrchestration.put("i_mon", null );
+		
+		aBagSPJavaOrchestration.put("i_movement_type", Constants.PURCHASE_AT_STORE); 
+		aBagSPJavaOrchestration.put("i_establishmentName",  aRequest.readValueParam("@i_institution_name")); 
+		aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction")); 
+		aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@i_uuid")); 
+   }
 }
