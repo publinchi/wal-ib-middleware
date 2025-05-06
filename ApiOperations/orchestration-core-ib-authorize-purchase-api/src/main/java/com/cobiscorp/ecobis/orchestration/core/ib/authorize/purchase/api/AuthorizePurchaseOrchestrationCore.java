@@ -32,6 +32,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -151,8 +152,12 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 
 		IProcedureResponse finalProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 
-		aBagSPJavaOrchestration.put("s_error", aBagSPJavaOrchestration.get("code_error"));
-        aBagSPJavaOrchestration.put("s_msg", aBagSPJavaOrchestration.get("message_error"));
+		IResultSetRowColumnData resultSetRowColumnDataError = finalProcedureResponse.getResultSetRowColumnData(2, 1, 1);
+		if(resultSetRowColumnDataError != null && !"0".equals(resultSetRowColumnDataError.getValue())) {
+			aBagSPJavaOrchestration.put("s_error", resultSetRowColumnDataError.getValue());
+			IResultSetRowColumnData resultSetRowColumnDataMsg = finalProcedureResponse.getResultSetRowColumnData(2, 1, 2);
+			aBagSPJavaOrchestration.put("s_msg", resultSetRowColumnDataMsg != null ? resultSetRowColumnDataMsg.getValue() : "");
+		}
 
 		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 		
