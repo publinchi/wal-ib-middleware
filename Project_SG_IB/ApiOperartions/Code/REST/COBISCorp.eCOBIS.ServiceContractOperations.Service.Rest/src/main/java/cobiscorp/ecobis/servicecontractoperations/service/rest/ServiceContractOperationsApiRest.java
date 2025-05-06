@@ -1510,7 +1510,7 @@ public class ServiceContractOperationsApiRest {
     * It allows the unlocking of account values, which were credited by remittances.
     */
 	@POST
-	@Path("/apiOperations/accounts/unlockCreditOperation")
+	@Path("/apiOperations/accounts/unlockCreditOperationTSDeposit")
 	@Consumes({"application/json"})
 	@Produces({"application/json"})
 	 public Response  unlockCreditOperation(@Null @HeaderParam("legacy-id") String legacyid,
