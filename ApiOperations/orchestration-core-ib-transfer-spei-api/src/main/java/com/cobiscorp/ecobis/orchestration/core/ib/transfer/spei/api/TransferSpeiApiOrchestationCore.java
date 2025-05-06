@@ -2,6 +2,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.transfer.spei.api;
 
 import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1345,7 +1346,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_seq", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_seq"));
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
-		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("@i_movementId")); 
+		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("movementId")); 
 		
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
@@ -1718,7 +1719,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	        mappingResponse.setCuentaClabe((String) aBagSPJavaOrchestration.get("cuenta_clab"));
 	        mappingResponse.setInstitucionOrdenante((String) aBagSPJavaOrchestration.get("institucion_ordenante"));
 	        mappingResponse.setSpeiRequest((String)aBagSPJavaOrchestration.get("@o_spei_request"));
-	        mappingResponse.setSpeiResponse((String)aBagSPJavaOrchestration.get("@o_spei_response"));
+	        mappingResponse.setSpeiResponse((String)aBagSPJavaOrchestration.get("@o_spei_response"));	
             
 	        if (respuesta != null)
 	        {
@@ -1747,7 +1748,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	                        respuesta.get(2));
 	                
 	                aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, true);
-	                aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, respuesta.get(2));
+	               aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, respuesta.get(2));
 
 	                /*
 	                 * String wPrcessingSpeiMessage = "PENDIENTE";
@@ -2327,7 +2328,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
         // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
         List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
-        
         // SE ACTUALIZA TABLA DE SECUENCIAL SPEI
         speiSec(originalRequest, aBagSPJavaOrchestration);
         // SE HACE LA VALIDACION DE LA RESPUESTA
