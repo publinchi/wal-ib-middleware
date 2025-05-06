@@ -145,30 +145,17 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 			logger.logInfo(CLASS_NAME + " Entrando en unlockCreditOperation: ");
 		}
 		
-		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse wAuthValDataLocal = new ProcedureResponseAS();
 		wAuthValDataLocal = valDataOperationRemesas(aRequest, aBagSPJavaOrchestration);
 		
 		if (logger.isInfoEnabled()){logger.logInfo(CLASS_NAME + " code resp auth: " + wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue());}
 		if (wAuthValDataLocal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			
-			
-			if(aBagSPJavaOrchestration.get("o_tran_status_credit").equals("O") && aBagSPJavaOrchestration.get("o_tran_status_reentry").equals("P")){
-				if (logger.isDebugEnabled()){logger.logInfo(CLASS_NAME + " force reentry tran ");}
-				
-				anProcedureResponse = saveReentry(aRequest, aBagSPJavaOrchestration);
-					
-				if (logger.isDebugEnabled()){logger.logDebug("executeOfflineUnlockCreditOperation " + anProcedureResponse.toString() );}
-					
-				anProcedureResponse = executeOfflineUnlockCreditOperation(aRequest, aBagSPJavaOrchestration);
-				
-			}
-			else{
 			IProcedureResponse wAuthTrnDataCentral = new ProcedureResponseAS();
 			wAuthTrnDataCentral = executeUnlockCreditOperation(aRequest, aBagSPJavaOrchestration);
 			
 			return wAuthTrnDataCentral;
-			}
+			
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -215,8 +202,6 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_sender_name", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_money_transmitter", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_credit_concept", ICTSTypes.SQLVARCHAR, "X");
-		request.addOutputParam("@o_tran_status_credit", ICTSTypes.SQLVARCHAR, "X");
-		request.addOutputParam("@o_tran_status_reentry", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -228,8 +213,6 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 			logger.logDebug("sender name " +  wProductsQueryResp.readValueParam("@o_sender_name"));
 			logger.logDebug("money transmitter " +  wProductsQueryResp.readValueParam("@o_money_transmitter"));
 			logger.logDebug("credit concept " +  wProductsQueryResp.readValueParam("@o_credit_concept"));
-			logger.logDebug("tran status credit " +  wProductsQueryResp.readValueParam("@o_tran_status_credit"));
-			logger.logDebug("tran status reentry " +  wProductsQueryResp.readValueParam("@o_tran_status_reentry"));
 		}
 		
 		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
@@ -239,8 +222,6 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("o_sender_name", wProductsQueryResp.readValueParam("@o_sender_name"));
 		aBagSPJavaOrchestration.put("o_money_transmitter", wProductsQueryResp.readValueParam("@o_money_transmitter"));
 		aBagSPJavaOrchestration.put("o_credit_concept", wProductsQueryResp.readValueParam("@o_credit_concept"));
-		aBagSPJavaOrchestration.put("o_tran_status_credit", wProductsQueryResp.readValueParam("@o_tran_status_credit"));
-		aBagSPJavaOrchestration.put("o_tran_status_reentry", wProductsQueryResp.readValueParam("@o_tran_status_reentry"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
