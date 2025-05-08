@@ -7235,14 +7235,13 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 dto.responseInstance().setMessage(resultSetMapper.getString(3));
                 return dto;
             });
-            outSingleDebitAccountResponse=returnDebitAccountResponse ;
+            outSingleDebitAccountResponse = returnDebitAccountResponse ;
 
         }else {
             mapBlank++;
-
         }
         //End map returns
-        if(mapBlank!=0&&mapBlank==mapTotal){
+        if(mapBlank != 0 && mapBlank == mapTotal){
             if (LOGGER.isDebugEnabled()) LOGGER.logDebug("No data found");
             throw new CTSRestException("404",null);
         }
@@ -8816,5 +8815,110 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	    }
 	    return null; 
 	}
-	
+
+    @Override
+	public  ReverseOperationResponse reverseCreditOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, ReverseOperationRequest inReverseOperationRequest  )throws CTSRestException{
+        if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: reverseCreditOperation");
+
+        ReverseOperationResponse outSingleReverseOperationResponse = new ReverseOperationResponse();
+
+        if (xEndUserRequestDateTime == null || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (xEndUserIp == null || xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (xChannel == null || xChannel.equals("null") || xChannel.trim().isEmpty()) {
+            xChannel = "E";
+        }
+
+        //create procedure
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_reverse_operation");
+
+        procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+
+        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18700138");
+
+        procedureRequestAS.addInputParam("@i_reversalConcept",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReversalConcept());
+        procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_externalCustomerId_ori",ICTSTypes.SQLINT4,String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+        procedureRequestAS.addInputParam("@i_accountNumber_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getAccountNumber());
+        procedureRequestAS.addInputParam("@i_referenceNumber_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_movementId_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getMovementId());
+        procedureRequestAS.addInputParam("@i_reversalReason_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
+        procedureRequestAS.addInputParam("@i_amount_com",ICTSTypes.SQLMONEY,String.valueOf(inReverseOperationRequest.getCommission().getAmount()));
+        procedureRequestAS.addInputParam("@i_reason_com",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getReason());
+        procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
+        procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
+
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inReverseOperationRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans);
+     
+        //execute procedure
+        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+        List<MessageBlock> errors = ErrorUtil.getErrors(response);
+        //throw error
+        if (errors != null && !errors.isEmpty()) {
+            if ( LOGGER.isDebugEnabled() ) {
+                LOGGER.logDebug("Procedure execution returns error");
+                for (int i = 0; i < errors.size(); i++) {
+                    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+                }
+            }
+            throw new CTSRestException("Procedure Response has errors", null, errors);
+        }
+
+        if (LOGGER.isDebugEnabled())LOGGER.logDebug("Procedure ok");
+
+        //Init map returns
+        int mapTotal=0;
+        int mapBlank=0;
+
+        mapTotal++;
+        if (response.getResultSets() != null && !response.getResultSets().isEmpty() && response.getResultSets().get(0).getData() != null && !response.getResultSets().get(0).getData().getRows().isEmpty()) {
+            //----------------Assume Array return
+            ReverseOperationResponse returnReverseOperationResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), (resultSetMapper, index) -> {
+                ReverseOperationResponse dto = new ReverseOperationResponse();
+
+                dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                dto.setMovementId(resultSetMapper.getString(4));
+                dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+                dto.responseInstance().setMessage(resultSetMapper.getString(3));
+                dto.supplementaryDataInstance().setKey(resultSetMapper.getString(5));
+                dto.supplementaryDataInstance().setValue(resultSetMapper.getString(6));
+                return dto;
+            });
+            outSingleReverseOperationResponse = returnReverseOperationResponse ;
+
+        }else {
+            mapBlank++;
+        }
+        //End map returns
+        if(mapBlank != 0 && mapBlank == mapTotal){
+            if (LOGGER.isDebugEnabled()) LOGGER.logDebug("No data found");
+            throw new CTSRestException("404",null);
+        }
+
+        String trn = "Reversal Credit Operation";
+
+        Gson gson = new Gson();
+        String jsonReq = gson.toJson(inReverseOperationRequest);
+
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleReverseOperationResponse);
+
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+        if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution: reverseOperation");
+
+        //returns data
+        return outSingleReverseOperationResponse;
+    }
 }

@@ -2917,4 +2917,73 @@ public class ServiceContractOperationsApiRest {
 			return Response.ok(outResponseGetFetchSavedContacts).build();
 
 		}
+		
+	    @POST
+		@Path("/apiOperations/accounts/reverseCreditOperation")
+		@Consumes({"application/json"})
+		@Produces({"application/json"})
+		public Response  reverseCreditOperation(
+				   @Null @HeaderParam("x-request-id") String xRequestId,
+				   @Null @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+				   @Null @HeaderParam("x-end-user-ip") String xEndUserIp,
+				   @Null @HeaderParam("x-channel") String xChannel,
+				   ReverseOperationRequest inReverseOperationRequest ){
+			if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: reverseCreditOperation");
+
+			// Lista de parámetros obligatorios del encabezado de la solicitud
+			List<Data> mandatoryHeaders = new ArrayList<>();
+			mandatoryHeaders.add(new Data("x-request-id", xRequestId));
+			//mandatoryHeaders.add(new Data("x-end-user-request-date-time", xEndUserRequestDateTime));
+			//mandatoryHeaders.add(new Data("x-end-user-ip", xEndUserIp));
+			//mandatoryHeaders.add(new Data("x-channel", xChannel));
+
+			// Validar los parámetros del encabezado
+			if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El encabezado de la solicitud no se encuentra debidamente formateado.").build();
+			}
+
+			// Lista de parámetros obligatorios del cuerpo de la solicitud
+			List<Data> mandatoryFields = new ArrayList<>();
+			mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
+			mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+			mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
+			mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
+			mandatoryFields.add(new Data("commission.amount", inReverseOperationRequest.getCommission().getAmount()));
+			mandatoryFields.add(new Data("commission.reason", inReverseOperationRequest.getCommission().getReason()));
+			mandatoryFields.add(new Data("commission.originalTransactionData.movementId", inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId()));
+			mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));
+
+			// Validar los parámetros del cuerpo
+			mandatoryHeaders.addAll(mandatoryFields);
+			if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado.").build();
+			}
+
+			ReverseOperationResponse outSingleReverseOperationResponse;
+
+	      	try {
+	      		outSingleReverseOperationResponse=iServiceContractOperationsApiService.reverseCreditOperation(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inReverseOperationRequest );
+			} catch (CTSRestException e) {
+				if (LOGGER.isErrorEnabled()) LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					if (LOGGER.isDebugEnabled()) LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("500 is returned - Code exception");
+				if (LOGGER.isErrorEnabled()) LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution REST: reverseCreditOperation");
+			return Response.ok(outSingleReverseOperationResponse).build();
+		}
 }
