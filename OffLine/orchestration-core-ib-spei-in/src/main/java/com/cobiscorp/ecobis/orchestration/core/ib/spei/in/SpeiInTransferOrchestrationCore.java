@@ -350,7 +350,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				
 				executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
 
-				if (aBagSPJavaOrchestration.get("success_risk") != null) {
+				if (aBagSPJavaOrchestration.get("success_risk") != null && !aBagSPJavaOrchestration.get("success_risk").equals("false")) {
 					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
 
 					if (aBagSPJavaOrchestration.get("responseCode") != null) {
@@ -400,7 +400,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					} else {
 						message = "OPERACIÓN NO PERMITIDA";
 						code = 2;
-
+						response.setReturnCode(code);
 						response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 						response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());
 
@@ -409,7 +409,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				} else {
 					message = "OPERACIÓN NO PERMITIDA";
 					code = 2;
-
+					response.setReturnCode(code);
 					response.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 					response.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());
 
