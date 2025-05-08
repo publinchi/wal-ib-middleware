@@ -466,4 +466,7 @@ public interface IServiceContractOperationsApiService {
    
 	//Have DTO
 	public ResponseGetFetchSavedContacts getSavedContacts(String xrequestid,String xenduserrequestdatetime,String xenduserip,String xchannel,RequestFetchSaveContacts inRequestFetchSaveContacts  )throws CTSRestException;
+
+	
+	public  ReverseOperationResponse reverseCreditOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, ReverseOperationRequest inReverseOperationRequest  )throws CTSRestException;
 }
