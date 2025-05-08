@@ -69,7 +69,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
                 aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseTransfer);
                 return responseTransfer;
             }
-        } else if (responseTransfer.getReturnCode()!=2){
+        } else if (responseTransfer.readValueParam("@o_id_causa_devolucion")==null ){
             // Si no es ejecucion de reentry, grabar en reentry
             if (Boolean.FALSE.equals(getFromReentryExcecution(aBagSPJavaOrchestration))) {
                 if (logger.isInfoEnabled()){
