@@ -5750,6 +5750,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getChannel());
         procedureRequestAS.addInputParam("@i_session_start_time", ICTSTypes.SQLVARCHAR, inRequestTransferSpi.getSessionStartTime());
+        procedureRequestAS.addInputParam("@i_contactId", ICTSTypes.SQLVARCHAR,
+                inRequestTransferSpi.getContactId());
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inRequestTransferSpi);
@@ -5958,6 +5960,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inRequestTransferThirdPartyAccount.getAutoActionExecution()));
         procedureRequestAS.addInputParam("@i_channel", ICTSTypes.SQLVARCHAR, inRequestTransferThirdPartyAccount.getChannel());
+        procedureRequestAS.addInputParam("@i_contactId", ICTSTypes.SQLVARCHAR,
+                inRequestTransferThirdPartyAccount.getContactId());
 		
 		Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inRequestTransferThirdPartyAccount);

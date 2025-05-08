@@ -38,6 +38,7 @@
     <parameter name="@i_autoActionExecution" dataType="bit" direction="in" />
     <parameter name="@i_channel" dataType="varchar" direction="in" />
     <parameter name="@i_session_start_time" dataType="varchar" direction="in" />
+    <parameter name="@i_contactId" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
