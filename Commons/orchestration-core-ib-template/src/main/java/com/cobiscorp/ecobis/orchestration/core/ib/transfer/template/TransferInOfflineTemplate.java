@@ -60,6 +60,17 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
         responseTransfer = executeTransfer(aBagSPJavaOrchestration);
 
+        logger.logInfo("WInfo 22 is offline: "+responseTransfer.toString());
+
+        boolean saveReentry=true;
+
+        if(responseTransfer.readValueParam("@o_id_causa_devolucion")!=null){
+
+            if(responseTransfer.readValueParam("@o_id_causa_devolucion").equals("20")){
+                saveReentry=false;
+            }
+        }
+
         if (Boolean.TRUE.equals(serverResponse.getOnLine())) {
 
             logDebug(CLASS_NAME + " Respuesta de ejecución método executeTransfer: " + responseTransfer.getProcedureResponseAsString());
@@ -69,7 +80,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
                 aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, responseTransfer);
                 return responseTransfer;
             }
-        } else if (responseTransfer.readValueParam("@o_id_causa_devolucion")==null ){
+        } else if (saveReentry){
             // Si no es ejecucion de reentry, grabar en reentry
             if (Boolean.FALSE.equals(getFromReentryExcecution(aBagSPJavaOrchestration))) {
                 if (logger.isInfoEnabled()){
@@ -92,8 +103,8 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
         return responseTransfer;
     }
-    
-    public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {	
+
+    public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {
         try {
             IProcedureRequest request = new ProcedureRequestAS();
 
@@ -103,13 +114,13 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
             String movementType = "SPEI_CREDIT";
             request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
             request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
-            
+
             request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
             request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
             if(tipoTran.equals("SPEI_CREDIT")) {
                 request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
-               
+
                 request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, (String)aBagSPJavaOrchestration.get("externalCustId"));
                 request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
                 request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_fechaOperacion"));
@@ -122,20 +133,20 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
                 request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aRequest.readValueParam("@s_ssn"));
                 request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
                 request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
-                
+
                 request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@i_institucionOrdenante"));
                 request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
                 request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@i_cuentaOrdenante"));
                 request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreOrdenante")); //consultar
-                
+
                 request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreBeneficiario")); //consultar
                 request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cuentaBeneficiario"));
                 request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
                 request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("externalCustId"));
-                
+
                 request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_idSpei"));
                 request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_claveRastreo"));
-                
+
                 request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR, "{}");
                 request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
                 IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -147,7 +158,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
             }
         }catch(Exception e){
             logger.logError(" Error Catastrofico en registerAllTransactionSuccess SPEI_CREDIT");
-        }	
+        }
     }
 
     protected IProcedureResponse saveReentry(IProcedureRequest anOriginalRequest,
