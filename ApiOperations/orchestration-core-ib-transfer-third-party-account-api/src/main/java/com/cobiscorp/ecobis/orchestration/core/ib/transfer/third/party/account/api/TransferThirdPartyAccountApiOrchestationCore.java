@@ -230,37 +230,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 					IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 
-					try {
-						callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
-
-						if (aBagSPJavaOrchestration.get("successGetLimits").equals("true")) {
-							obtainLimits(anOriginalRequest, aBagSPJavaOrchestration);
-
-							if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded")
-									&& (Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-								IProcedureResponse resp = Utils.returnException(18056,
-										"Importe máximo diario excedido");
-								logger.logDebug("Respose Exeption: " + resp.toString());
-								return resp;
-							}
-
-							if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded")
-									&& (Boolean) aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-								IProcedureResponse resp = Utils.returnException(18057,
-										"Importe máximo por operación excedido");
-								logger.logDebug("Respose Exeption: " + resp.toString());
-								return resp;
-							}
-						} else {
-							logger.logDebug("Error en conexión hacia obtención de limites");
-							IProcedureResponse resp = Utils.returnException(50202, "Error obtención de limites");
-							return resp;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						logger.logInfo(CLASS_NAME + " Error Catastrofico en validacion Limites");
-						logger.logError(e);
-					}
+					IProcedureResponse validateLimits = validateLimitsUserConfigured(anOriginalRequest, aBagSPJavaOrchestration);
+					if(validateLimits != null) {
+						// datos para webhook fail
+						Integer returnCode = validateLimits.getReturnCode();
+						String message = validateLimits.getMessage(1).getMessageText();
+						
+						return validateLimits;
+					}				
 
 					wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
 					logger.logInfo(
@@ -1055,36 +1032,15 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 		IProcedureResponse wAccountsRespVal = new ProcedureResponseAS();
 
-		try {
-			callGetLimits(aRequest, aBagSPJavaOrchestration);
-
-			if(aBagSPJavaOrchestration.get("successGetLimits").equals("true")){
-				obtainLimits(aRequest, aBagSPJavaOrchestration);
-
-				if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded") &&
-						(Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
-					IProcedureResponse resp = Utils.returnException(18056, "Importe máximo diario excedido");
-					logger.logDebug("Respose Exeption: " + resp.toString());
-					return resp;
-				}
-
-				if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded") &&
-						(Boolean)aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
-					IProcedureResponse resp = Utils.returnException(18057, "Importe máximo por operación excedido");
-					logger.logDebug("Respose Exeption: " + resp.toString());
-					return resp;
-				}
-			}else{
-				logger.logDebug("Error en conexión hacia obtención de limites");
-				IProcedureResponse resp = Utils.returnException(50202, "Error obtención de limites");
-				return resp;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.logInfo(CLASS_NAME +" Error Catastrofico en validacion Limites");
-			logger.logError(e);
+		IProcedureResponse validateLimits = validateLimitsUserConfigured(aRequest, aBagSPJavaOrchestration);
+		if(validateLimits != null) {
+			// datos para webhook fail
+			Integer returnCode = validateLimits.getReturnCode();
+			String message = validateLimits.getMessage(1).getMessageText();
+			
+			return validateLimits;
 		}
-
+		
 		IProcedureResponse wTransferResponse = new ProcedureResponseAS();
 
 		if (logger.isDebugEnabled()) {
@@ -2184,16 +2140,20 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	}
     
 	private void callGetLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
-		if(logger.isDebugEnabled())
-			logger.logDebug("Transfer Third Party callGetLimitsConn [INI]");
-
 		try {
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Transfer Third Party callGetLimitsConn [INI]");
+			}
 
 			IProcedureRequest anOriginalRequestLimits = new ProcedureRequestAS();
 
 			anOriginalRequestLimits.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR, "DEBIT");
 			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, "P2P_DEBIT");
 			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ente"));
+			String contactId = aRequest.readValueParam("@i_contactId");
+            if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null"))){
+                anOriginalRequestLimits.addInputParam("@i_contactId", ICTSTypes.SQLVARCHAR, contactId);                
+            }
 
 			anOriginalRequestLimits.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
 			anOriginalRequestLimits.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
@@ -2218,19 +2178,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 			anOriginalRequestLimits.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "18700128");
 	
 			IProcedureResponse connectorGetLimitsResponse = executeProvider(anOriginalRequestLimits, aBagSPJavaOrchestration);
-
-			if (logger.isDebugEnabled()){
-				logger.logDebug("connectorGetLimitsResponse ->" + connectorGetLimitsResponse.toString());
-			}
-
-			String responseCode = connectorGetLimitsResponse.readValueParam("@o_responseCode") == null ? "0" : connectorGetLimitsResponse.readValueParam("@o_responseCode");
-			String message = connectorGetLimitsResponse.readValueParam("@o_message") == null ? "Error" : connectorGetLimitsResponse.readValueParam("@o_message");
+						
 			String success = connectorGetLimitsResponse.readValueParam("@o_success") == null ? "false" : connectorGetLimitsResponse.readValueParam("@o_success");
 			String responseBody = connectorGetLimitsResponse.readValueParam("@o_responseBody") == null ? "{}" : connectorGetLimitsResponse.readValueParam("@o_responseBody");
 			String queryString = connectorGetLimitsResponse.readValueParam("@o_queryString") == null ? "" : connectorGetLimitsResponse.readValueParam("@o_queryString");
-
-			aBagSPJavaOrchestration.put("responseCodeGetLimits", responseCode);
-			aBagSPJavaOrchestration.put("messageGetLimits", message);
+			
 			aBagSPJavaOrchestration.put("successGetLimits", success);
 			aBagSPJavaOrchestration.put("responseBodyGetLimits", responseBody);
 			aBagSPJavaOrchestration.put("queryString", queryString);
@@ -2269,21 +2221,29 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 	}
 
-	private void obtainLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration){
+	private void obtainLimits(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, JsonObject jsonObject){
 		try{
-			JsonParser jsonParser = new JsonParser();
-			String jsonRequestStringClean = aBagSPJavaOrchestration.get("responseBodyGetLimits").toString().replace("&quot;", "\"");
-			JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);
-
-			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
-
-			double transactionAmount =  Double.parseDouble(aRequest.readValueParam("@i_val"));// Monto de la transacción
-	
-			// Inicializar variables para límites
 			Double dailyLimit = null;
 			Double montlyLimit = null;
 			Double balanceAmountMontly = null;
 			Double maxTxnLimit = null;
+			Double maxTxnLimitContact = null;
+			JsonParser jsonParser = new JsonParser();
+
+			double transactionAmount =  Double.parseDouble(aRequest.readValueParam("@i_val"));
+			JsonArray transactionLimits = jsonObject.getAsJsonArray("transactionLimits");
+
+			if(jsonObject.has("contactLimit")){
+				JsonElement contactLimitElement = jsonObject.get("contactLimit");
+				if (contactLimitElement.getAsJsonObject().has("userConfiguredLimit")) {
+					maxTxnLimitContact = contactLimitElement.getAsJsonObject()
+						.getAsJsonObject("userConfiguredLimit")
+						.get("amount").getAsDouble();
+					
+					boolean isDailyLimitContactExceeded = transactionAmount > (maxTxnLimitContact != null ? maxTxnLimitContact : 0);					
+					aBagSPJavaOrchestration.put("isDailyLimitContactExceeded", isDailyLimitContactExceeded);
+				}
+			}			
 
 			for (JsonElement limitElement : transactionLimits) {
 				JsonArray subTypeLimits = limitElement.getAsJsonObject().getAsJsonArray("transactionSubTypeLimits");
@@ -2322,13 +2282,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					}
 				}
 			}
-		
+
 			boolean isMontlyLimitExceeded = transactionAmount + balanceAmountMontly > (montlyLimit != null ? montlyLimit : 0);
-			
+
 			aBagSPJavaOrchestration.put("isMontlyLimitExceeded", isMontlyLimitExceeded);
-			
+
 			if (logger.isDebugEnabled()) {
-				logger.logDebug("dailyLimit:: " + dailyLimit);
 				logger.logDebug("dailyLimit:: " + dailyLimit);
 				logger.logDebug("maxTxnLimit:: " + maxTxnLimit);
 				logger.logDebug("isMontlyLimitExceeded:: " + isMontlyLimitExceeded);
@@ -2483,4 +2442,61 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
         return anProcedureResponse;
     }
+
+	private IProcedureResponse validateLimitsUserConfigured(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureResponse resp = null;
+		try {
+			callGetLimits(anOriginalRequest, aBagSPJavaOrchestration);
+			String contactId = anOriginalRequest.readValueParam("@i_contactId");
+
+			if (aBagSPJavaOrchestration.get("successGetLimits").equals("true")) {
+				JsonParser jsonParser = new JsonParser();
+                String jsonRequestStringClean = aBagSPJavaOrchestration.get("responseBodyGetLimits").toString().replace("&quot;", "\"");
+                JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);            
+
+                if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
+                    && !jsonObject.has("contactLimit")){
+					resp = Utils.returnException(50205, "Error al obtener el limite del contacto");
+                    return resp;
+                }
+
+				obtainLimits(anOriginalRequest, aBagSPJavaOrchestration, jsonObject);
+
+				if (aBagSPJavaOrchestration.containsKey("isDailyLimitExceeded")
+						&& (Boolean) aBagSPJavaOrchestration.get("isDailyLimitExceeded")) {
+					resp = Utils.returnException(18056,
+							"Importe máximo diario excedido");
+					return resp;
+				}
+
+				if (aBagSPJavaOrchestration.containsKey("isMaxTxnLimitExceeded")
+						&& (Boolean) aBagSPJavaOrchestration.get("isMaxTxnLimitExceeded")) {
+					resp = Utils.returnException(18057,
+							"Importe máximo por operación excedido");
+					return resp;
+				}
+
+				if (aBagSPJavaOrchestration.containsKey("isDailyLimitContactExceeded")
+						&& (Boolean) aBagSPJavaOrchestration.get("isDailyLimitContactExceeded")) {
+					logger.logInfo("isDailyLimitContactExceeded: " + aBagSPJavaOrchestration.get("isDailyLimitContactExceeded"));
+					resp = Utils.returnException(18059,
+							"Importe máximo diario por contacto excedido");
+					return resp;
+				}
+			} else {
+				logger.logError(CLASS_NAME + "Error en conexión hacia obtención de limites");
+                resp = Utils.returnException(50202, "Error obtención de limites");
+
+                if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
+                    && contactId.length() < 32){                   
+                    resp = Utils.returnException(50204, "Error al obtener el limite del contacto");
+                }
+			}
+		} catch (Exception e) {
+			logger.logError(CLASS_NAME + " Error Catastrofico en validacion Limites", e);
+			resp = Utils.returnException(50203, "Error obtención de limites");
+		}
+		return resp;
+	}
+
 }
