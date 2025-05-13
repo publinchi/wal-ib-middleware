@@ -64,11 +64,8 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
         boolean saveReentry=true;
 
-        if(responseTransfer.readValueParam("@o_id_causa_devolucion")!=null){
-
-            if(responseTransfer.readValueParam("@o_id_causa_devolucion").equals("20")){
+        if((responseTransfer.readValueParam("@o_id_causa_devolucion") != null) && !responseTransfer.readValueParam("@o_id_causa_devolucion").equals("0")){
                 saveReentry=false;
-            }
         }
 
         if (Boolean.TRUE.equals(serverResponse.getOnLine())) {
