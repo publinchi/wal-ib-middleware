@@ -99,6 +99,13 @@ Resources:
             "host": "your-mft-host",
             "port": "your-mft-port",
             "name_secret_pem": "your-name_secret_pem"
+          },
+          "CONTA": {
+            "type": "C",
+            "user": "your-mft-username",
+            "host": "your-mft-host",
+            "port": "your-mft-port",
+            "password": "your-mft-password"
           }
         }
 
@@ -272,6 +279,21 @@ Resources:
               "user_execute": "eventbridge-CRSP"
             }
 
+  ProcessMFTEventRuleCONTA:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${LambdaFunctionName}-event-CONTA
+      ScheduleExpression: cron(0 2 * * ? *)
+      State: !Ref StateEventRule
+      Targets:
+        - Arn: !GetAtt ProcessMFTLambda.Arn
+          Id: processMFTTargetCONTA
+          Input: |
+            { 269
+              "flow_name": "CONTA",
+              "user_execute": "eventbridge-CONTA"
+            }
+
   LambdaInvokePermissionMINDS:
     Type: AWS::Lambda::Permission
     Properties:
@@ -307,6 +329,15 @@ Resources:
       Principal: events.amazonaws.com
       SourceArn: !GetAtt ProcessMFTEventRuleCRSP.Arn
     DependsOn: ProcessMFTEventRuleCRSP
+  
+  LambdaInvokePermissionCONTA:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessMFTLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessMFTEventRuleCONTA.Arn
+    DependsOn: ProcessMFTEventRuleCONTA
 
 Outputs:
   LambdaFunctionARN:
@@ -324,3 +355,6 @@ Outputs:
   EventRuleARNCRSP:
     Description: The ARN of the EventBridge rule for CRSP
     Value: !GetAtt ProcessMFTEventRuleCRSP.Arn
+  EventRuleARNCONTA:
+    Description: The ARN of the EventBridge rule for CONTA
+    Value: !GetAtt ProcessMFTEventRuleCONTA.Arn
