@@ -361,18 +361,17 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_cardId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_card_id"));
 				request.addInputParam("@i_maskedCardNumber", ICTSTypes.SQLVARCHAR, null);
 
-				if(aRequest.readValueParam("@i_store_number") != null) {
-					request.addInputParam("@i_merchantEstablishmentName", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_merchantTransactionId", ICTSTypes.SQLVARCHAR, null);
 
-					request.addInputParam("@i_storeEstablishmentName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
-					request.addInputParam("@i_storeTransactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-				} else {
+				if(causal.equals("9030") || causal.equals("9050")) {
 					request.addInputParam("@i_merchantEstablishmentName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
 					request.addInputParam("@i_merchantTransactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
-
 					request.addInputParam("@i_storeEstablishmentName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_storeTransactionId", ICTSTypes.SQLVARCHAR, null);
+				}else{
+					request.addInputParam("@i_merchantEstablishmentName", ICTSTypes.SQLVARCHAR, null);
+					request.addInputParam("@i_merchantTransactionId", ICTSTypes.SQLVARCHAR, null);
+					request.addInputParam("@i_storeEstablishmentName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment"));
+					request.addInputParam("@i_storeTransactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_establishment_code"));
 				}
 
 				if(aRequest.readValueParam("@i_terminal_code") != null) {
