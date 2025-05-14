@@ -57,18 +57,23 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
 
         aBagSPJavaOrchestration.put(IS_ONLINE, false);
-        aBagSPJavaOrchestration.put(IS_REENTRY, false);
         aBagSPJavaOrchestration.put(IS_ERRORS, false);
+        aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
-        aBagSPJavaOrchestration.put("process", "DEBIT_OPERATION");
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
+        }
 
-		IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
-		IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
-		IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
-		if (columns[0].getValue().equals("false") ) {
-            setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
-			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-		}
+        if (!(Boolean)aBagSPJavaOrchestration.get(IS_REENTRY)) {
+            aBagSPJavaOrchestration.put("process", "DEBIT_OPERATION");
+            IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
+            IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
+            IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
+            if (columns[0].getValue().equals("false") ) {
+                setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
+                return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+            }
+        }
 
         if (validateParameters(aBagSPJavaOrchestration, anOriginalRequest))
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -84,12 +89,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
         if (logger.isDebugEnabled()) {
             logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(IS_ONLINE));
-        }
-
-        aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
-
-        if (logger.isDebugEnabled()) {
-            logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
         }
 
         return processTransaction(aBagSPJavaOrchestration, anOriginalRequest);

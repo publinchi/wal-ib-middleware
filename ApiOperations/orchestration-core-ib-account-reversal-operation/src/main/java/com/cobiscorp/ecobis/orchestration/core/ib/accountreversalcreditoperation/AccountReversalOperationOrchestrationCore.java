@@ -77,17 +77,22 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		}
 
 		aBagSPJavaOrchestration.put(IS_ONLINE, false);
-		aBagSPJavaOrchestration.put(IS_REENTRY, false);
 		aBagSPJavaOrchestration.put(IS_ERRORS, false);
+		aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
-		aBagSPJavaOrchestration.put("process", "REVERSAL_CREDIT_OPERATION");
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
+		}
 
-		IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
-		IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
-		IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
-		if (columns[0].getValue().equals("false") ) {
-			setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
-			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+		if (!(Boolean)aBagSPJavaOrchestration.get(IS_REENTRY)) {
+			aBagSPJavaOrchestration.put("process", "REVERSAL_CREDIT_OPERATION");
+			IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
+			IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
+			IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
+			if (columns[0].getValue().equals("false") ) {
+				setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
+				return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+			}
 		}
 
 		if (validateParameters(aBagSPJavaOrchestration, anOriginalRequest))
