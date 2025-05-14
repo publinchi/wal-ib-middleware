@@ -303,6 +303,22 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
         anOriginalRequestRegistContacLimit.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("operation").toString());
         anOriginalRequestRegistContacLimit.addInputParam("@i_request_json", ICTSTypes.SQLVARCHAR, requestBody.toString());
 
+        String additionalData = originalProcedureRequest.readValueParam("@i_additionalData");
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonAdditionalData = (JsonObject) jsonParser.parse(additionalData);
+
+        String latitude = jsonAdditionalData.get("latitude").getAsString();
+        String longitude = jsonAdditionalData.get("longitude").getAsString();
+        String precision = jsonAdditionalData.get("accuracy").getAsString();
+        String loginSessionId = jsonAdditionalData.get("userSessionId").getAsString();
+        String riesgoId = jsonAdditionalData.get("riskId").getAsString();
+
+        anOriginalRequestRegistContacLimit.addInputParam("@i_latitude", ICTSTypes.SQLVARCHAR, latitude);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_longitude", ICTSTypes.SQLVARCHAR, longitude);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_precision", ICTSTypes.SQLVARCHAR, precision);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_loginSessionId", ICTSTypes.SQLVARCHAR, loginSessionId);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_riesgoId", ICTSTypes.SQLVARCHAR, riesgoId);
+
         anOriginalRequestRegistContacLimit.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
         anOriginalRequestRegistContacLimit.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
         anOriginalRequestRegistContacLimit.addOutputParam("@o_success", ICTSTypes.SQLVARCHAR, "X");
