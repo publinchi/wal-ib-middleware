@@ -148,11 +148,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			return true;
 		}
 
-		if (referenceNumber.length() != 6) {
-			setError(aBagSPJavaOrchestration, "40104", "referenceNumber must have 6 digits.");
-			return true;
-		}
-
 		if (externalCustomerIdOrigin <= 0) {
 			setError(aBagSPJavaOrchestration, "40129", "originalTransactionData.externalCustomerId must be greater than 0.");
 			return true;
@@ -200,11 +195,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 
 		if (referenceNumberComOri.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40138", "commission.originalTransactionData.referenceNumber must not be empty.");
-			return true;
-		}
-
-		if (referenceNumberComOri.length() != 6) {
-			setError(aBagSPJavaOrchestration, "40139", "commission.originalTransactionData.referenceNumber must have 6 digits.");
 			return true;
 		}
 

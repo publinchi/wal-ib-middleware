@@ -129,10 +129,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             setError(aBagSPJavaOrchestration, "40092", "referenceNumber must not be empty.");
             return true;
         }
-        if (referenceNumber.length() != 6) {
-            setError(aBagSPJavaOrchestration, "40104", "referenceNumber must have 6 digits.");
-            return true;
-        }
         if (debitReason.isEmpty()) {
             setError(aBagSPJavaOrchestration, "40123", "debitReason must not be empty.");
             return true;
@@ -282,6 +278,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
                 anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
                 anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
+                anOriginalRequest.addInputParam("@i_refer_transaction", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber"));
 
                 anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
