@@ -452,6 +452,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 logger.logDebug("message: " +  aBagSPJavaOrchestration.get("error_message"));
                 logger.logDebug("movementId: null");
             }
+			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
             row.addRowData(1, new ResultSetRowColumnData(false, "false"));
             row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_code")));
             row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_message")));

@@ -235,9 +235,35 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 																							// CTSServiceException,
 																							// CTSInfrastructureException
 		IProcedureResponse response = null;
+		String codeError = "";
+		
 		try {
 			IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			response = mappingResponse(executeTransferSpeiIn(anOriginalRequest, aBagSPJavaOrchestration), aBagSPJavaOrchestration);
+						
+			//Validamos la respuesta para ingresar la transacción fallida en Webhook
+			if (aBagSPJavaOrchestration.get("@s_error") != null) {
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("ERROR SPEI IN: "+ aBagSPJavaOrchestration.get("@s_error").toString());
+					logger.logDebug("MESSAGE ERROR SPEI IN: "+ aBagSPJavaOrchestration.get("@s_message").toString());
+				}
+				
+				codeError = aBagSPJavaOrchestration.get("@s_error").toString();
+				
+				if (!codeError.equals("0")) {
+					IProcedureResponse consulClienteRes = this.consultaCliente(anOriginalRequest);
+					
+					aBagSPJavaOrchestration.put("code_error", codeError);
+		        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("@s_message").toString());
+		        	aBagSPJavaOrchestration.put("destinationAccountType", consulClienteRes.readValueParam("@o_tipo_cuenta_dest"));
+					aBagSPJavaOrchestration.put("originAccountType", consulClienteRes.readValueParam("@o_tipo_cuenta_orig"));
+					aBagSPJavaOrchestration.put("externalCustId", consulClienteRes.readValueParam("@o_client_code"));
+					aBagSPJavaOrchestration.put("causal", "2040");
+					
+		        	registerTransactionFailed("SPEI_CREDIT", anOriginalRequest, aBagSPJavaOrchestration);
+				}
+			}
+			
 		} catch (Exception e){
 			logger.logError("AN ERROR OCURRED: ", e);
 		}
@@ -251,6 +277,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		if (aResponse != null && aResponse.getMessageListSize() != 0 && aResponse.readValueParam("@o_descripcion_error") != null) {
 			aBagSPJavaOrchestration.put("@s_error", String.valueOf(aResponse.getReturnCode()));
+			aBagSPJavaOrchestration.put("@s_message", aResponse.readValueFieldInHeader("messageError").split(":")[1]);
+			
 			String causaDevolucion = aResponse.readValueParam("@o_id_causa_devolucion");
 
 			if (null != causaDevolucion && !"0".equals(causaDevolucion)) {
@@ -644,6 +672,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
 		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "V");
+		procedureRequest.addInputParam("@i_tipo_cuenta_dest", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
+		procedureRequest.addInputParam("@i_tipo_cuenta_orig", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaOrdenante"));
 
 		procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_client_code", ICTSTypes.SQLINT4, "");
@@ -652,6 +682,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
 		procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
+		procedureRequest.addOutputParam("@o_tipo_cuenta_dest", ICTSTypes.SQLVARCHAR, "");
+		procedureRequest.addOutputParam("@o_tipo_cuenta_orig", ICTSTypes.SQLVARCHAR, "");
 
 			
 		IProcedureResponse ccProcedureResponse =  executeCoreBanking(procedureRequest);

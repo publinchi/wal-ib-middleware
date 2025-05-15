@@ -1050,6 +1050,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String code = null, message, success, referenceCode = null, trackingKey = null, movementId = null, 
         executionStatus = null;
         Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+        int lengthCtaDest = 0;
+        int lengthCtaOrig = 0;
+        
+        if (aRequest != null) {
+        	lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
+            lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
+        }
         
         if (logger.isInfoEnabled()) {
             logger.logInfo("Mensaje NJ_912006");
@@ -1093,12 +1100,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					message = "Success";
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
-					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-					
-                    int lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
-                    int lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
+					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);					
                    
-                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, "SPEI_DEBIT", "2040", lengthCtaOrig, lengthCtaDest);					
+                    aBagSPJavaOrchestration.put("movementId", movementId);
+                    aBagSPJavaOrchestration.put("typeTrnWH", "P");
+                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, Constants.SPEI_DEBIT, "2010", lengthCtaOrig, lengthCtaDest);
+					
 					logger.logInfo("bnbn true--->" + movementId);
 					
 				} else {
@@ -1233,6 +1240,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
         anOriginalProcedureResponse.addResponseBlock(resultsetBlock4);
 
+        if (success.equals("false")) {
+        	aBagSPJavaOrchestration.put("code_error", code);
+        	aBagSPJavaOrchestration.put("message_error", message);
+        	aBagSPJavaOrchestration.put("typeTrnWH", "F");
+        	
+        	registerWebhook(aRequest, aBagSPJavaOrchestration, Constants.SPEI_DEBIT, "2010", lengthCtaOrig, lengthCtaDest);
+        }
+        
         return anOriginalProcedureResponse;
     }
 
@@ -1240,8 +1255,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     String causal, int lengthCtaOrig, int lengthCtaDest){
 
         IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+        String identificationTypeOrig;
+        String identificationTypeDest = null;
+        String typeTrnWH = "S";
         
-        String identificationTypeOrig, identificationTypeDest = null;
+        if (aBagSPJavaOrchestration.get("typeTrnWH") != null) {
+        	typeTrnWH = (String) aBagSPJavaOrchestration.get("typeTrnWH");
+        }
         
         if (lengthCtaDest == 18) {
             identificationTypeDest = "clabe";
@@ -1256,8 +1276,19 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         aBagSPJavaOrchestration.put("destinationAccountType", identificationTypeDest);
+        
+        if (typeTrnWH.equals("P") || typeTrnWH.equals("S")) {
+        	//Registramos la transacción exitosa o pendiente
         aBagSPJavaOrchestration.put("originAccountType", identificationTypeOrig);
+			aBagSPJavaOrchestration.put("ssn_branch", aRequest.readValueParam("@s_ssn_branch"));
+			
         registerAllTransactionSuccess(tipoTrans, anOriginalRequest, causal, aBagSPJavaOrchestration);
+        }else {
+        	//Registramos la transacción fallida
+        	aBagSPJavaOrchestration.put("causal", causal);
+        	
+        	registerTransactionFailed(tipoTrans, aRequest, aBagSPJavaOrchestration);
+        }
     }
     
     private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
@@ -1389,9 +1420,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String idTransaccion = "";
         String idMovement = "";
         String refBranch = "";
-        try {
+        int lengthCtaDest = 0;
+        int lengthCtaOrig = 0;
+
             IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
             
+        try {
             if (originalRequest != null) {
                 logger.logDebug("Inicia originalRequest no es null" +originalRequest.toString());
                 
@@ -1430,6 +1464,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 if (originalRequest.readValueParam(T_RTY) != null) {
                     logger.logDebug(T_RTY + " no es null");
                 }
+                
+                lengthCtaDest = originalRequest.readValueParam("@i_cta").length();
+                lengthCtaOrig = originalRequest.readValueParam("@i_cta_des").length();
             }
             
             ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
@@ -1553,11 +1590,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                                         if(resultado.has("descripcionError")){
                                             aBagSPJavaOrchestration.put("@i_clave_rastreo", responseSpei.getClaveRastreo());
                                             aBagSPJavaOrchestration.put("@i_codigo_acc", responseSpei.getCodigoAcc());
-
-                                            int lengthCtaDest = originalRequest.readValueParam("@i_cta").length();
-                                            int lengthCtaOrig = originalRequest.readValueParam("@i_cta_des").length();
-                                            
                                             aBagSPJavaOrchestration.put("movementId", idTransaccion);
+                                            aBagSPJavaOrchestration.put("typeTrnWH", "S");
+
                                             registerWebhook(originalRequest, aBagSPJavaOrchestration, "SPEI_RETURN", "2010", lengthCtaOrig, lengthCtaDest);
                                         }
                                     }
@@ -1664,6 +1699,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 logger.logDebug("Almacenadox !!! " + idTransaccion);
             }
             responseTransfer.addParam("@o_idTransaccion", ICTSTypes.SQLVARCHAR, idTransaccion.length(), idTransaccion);
+        }else {
+        	//Registramos la transaccion fallida
+        	aBagSPJavaOrchestration.put("code_error", responseTransfer.getReturnCode());
+        	aBagSPJavaOrchestration.put("message_error", responseTransfer.getMessages());
+        	aBagSPJavaOrchestration.put("typeTrnWH", "F");
+        	
+        	registerWebhook(originalRequest, aBagSPJavaOrchestration, "SPEI_RETURN", "2010", lengthCtaOrig, lengthCtaDest);
+        	
         }
 
         logger.logDebug("Responde devuelto a TransferOfflineTemplate " + responseTransfer);
@@ -3378,11 +3421,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
 		
 		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
-		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "SPEI_DEBIT");
+		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, Constants.SPEI_DEBIT);
 		
-		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel").toString());//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel"));//se obtiene con el response del f1
 		
-		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent").toString());//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));//preguntar, en la doc dice los posibles valores
@@ -3687,7 +3730,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			IProcedureRequest anOriginalRequestLimits = new ProcedureRequestAS();
 
 			anOriginalRequestLimits.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR, "DEBIT");
-			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, "SPEI_DEBIT");
+			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, Constants.SPEI_DEBIT);
 			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
             String contactId = aRequest.readValueParam("@i_contactId");
             if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null"))){

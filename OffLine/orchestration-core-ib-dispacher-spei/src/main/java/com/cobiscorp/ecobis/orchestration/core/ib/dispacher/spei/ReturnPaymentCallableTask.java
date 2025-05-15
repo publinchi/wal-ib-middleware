@@ -15,6 +15,7 @@ import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Constans;
 
@@ -66,6 +67,7 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 			logger.logDebug("Entrando a callPaymentInReturn future");
 		}
 		IProcedureResponse connectorSpeiResponse = null;
+		Integer logIDDev = 0;
 		//llamada a log entrante
 		Integer idLog =	logEntryApi(request, aBagSPJavaOrchestration, "I", "Return Payment in", null, null, null, null, null);
 	
@@ -120,6 +122,18 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 				logEntryApi(request, aBagSPJavaOrchestration, "U", "Return Payment in", null, returnCodeMsj, responseConnector, idLog, requestConnector);
 				registerDevolution(request, aBagSPJavaOrchestration, "I", returnCode!=null?Integer.valueOf(returnCode):-1, connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
 				
+				//Validamos si se genero el registro de la devolucion
+				if(aBagSPJavaOrchestration.get("logIdDev") != null) {
+					logIDDev = Integer.parseInt(aBagSPJavaOrchestration.get("logIdDev").toString());
+				}
+				
+				if (logIDDev > 0) {
+					//SPEI_RETURN EXITOSO
+			        aBagSPJavaOrchestration.put("idLog", idLog);
+			        aBagSPJavaOrchestration.put("eventWH", "S");
+			        
+					registerTransactionWebHook(anOriginalRequest, aBagSPJavaOrchestration, msjIn);
+				}
 			} else {
 
 				if (logger.isDebugEnabled()) {
@@ -266,8 +280,84 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 			
 			logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_de_id"));
 		} 
+		
+		aBagSPJavaOrchestration.put("logIdDev", logId.toString());
+		
 		return logId;
 		
 	}
 	
+	public void registerTransactionWebHook(IProcedureRequest aRequest,  Map<String, Object> aBagSPJavaOrchestration, mensaje msjSPEI_In) {	
+        String movementType = "SPEI_RETURN";
+        String typeEvent = "S";
+        String codeError = "0";
+		String messageError = "";
+		String logKarpay = "0";
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug(" Entrando en registerTransactionWebHook");
+        }
+
+        if (aBagSPJavaOrchestration.get("eventWH") != null) {
+        	typeEvent = aBagSPJavaOrchestration.get("eventWH").toString();
+        }
+        
+        if (aBagSPJavaOrchestration.get("idLog") != null) {
+        	logKarpay = aBagSPJavaOrchestration.get("idLog").toString();
+        }
+
+    	try {
+        	if (typeEvent.equals("F")) {
+        		if (aBagSPJavaOrchestration.get("code_error")!= null) {
+    				codeError = aBagSPJavaOrchestration.get("code_error").toString();
+    			}
+    			
+    			if (aBagSPJavaOrchestration.get("message_error")!= null) {
+    				messageError = aBagSPJavaOrchestration.get("message_error").toString();
+    			}    			
+        	}
+        	 
+			IProcedureRequest request = new ProcedureRequestAS();
+			
+			request.setSpName("cob_bvirtual..sp_bv_devolucion_spei_webhook");
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");			
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+			
+			request.addInputParam("@i_tipotrn", ICTSTypes.SQLVARCHAR, typeEvent);
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
+			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
+			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, "2040");
+			request.addInputParam("@i_logKarpay", ICTSTypes.SQLINT4, logKarpay);
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn"));
+			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+			request.addInputParam("@i_typeAccountBenf", ICTSTypes.SQLVARCHAR, String.valueOf(msjSPEI_In.getOrdenpago().getOpTcClaveBen()));
+			request.addInputParam("@i_typeAccountOrig", ICTSTypes.SQLVARCHAR, String.valueOf(msjSPEI_In.getOrdenpago().getOpTcClaveOrd()));
+			request.addInputParam("@i_accountNameOrig", ICTSTypes.SQLVARCHAR, msjSPEI_In.getOrdenpago().getOpNomOrd()); 
+			request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR,  msjSPEI_In.getOrdenpago().getOpCveRastreo());
+			request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, msjSPEI_In.getOrdenpago().getId());
+			request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR, "{}");			
+			request.addInputParam("@i_errorDetailsCode", ICTSTypes.SQLVARCHAR, codeError);
+			request.addInputParam("@i_errorDetailsMessage", ICTSTypes.SQLVARCHAR, messageError);
+			
+			if (aRequest.readValueParam("@x_end_user_ip") != null) {
+				request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
+	        }
+			
+			IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response Corebanking registerAllTransactionFailed: " + wProductsQueryResp.getProcedureResponseAsString());
+			}
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerTransactionWebHook");
+			}
+
+        }catch(Exception e){
+            logger.logError(" Error Catastrofico en registerTransactionWebHook SPEI_RETURN");
+        }	
+    }	
 }

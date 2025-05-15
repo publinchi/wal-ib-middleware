@@ -752,6 +752,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				if(logger.isDebugEnabled()) {
 					logger.logDebug("Ending flow, processResponse error");
 				}
+				
 				String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
 				String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
 				String message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
@@ -759,6 +760,12 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				executionStatus = "ERROR";
 				if (aBagSPJavaOrchestration.get("flowRty").equals(false))
 					updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, code);
+				
+				aBagSPJavaOrchestration.put("code_error", code);
+	        	aBagSPJavaOrchestration.put("message_error", message);
+	        	aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("@o_causal"));
+	        	
+				registerTransactionFailed("Authorize Withdrawal", "IDC", aRequest, aBagSPJavaOrchestration);
 				
 				IResultSetRow row = new ResultSetRow();
 				
@@ -806,6 +813,16 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 			executionStatus = "ERROR";
 			if (aBagSPJavaOrchestration.get("flowRty").equals(false))
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus, codeReturn.toString());
+			
+			String success = anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anOriginalProcedureRes.getResultSetRowColumnData(1, 1, 1).getValue();
+			String code = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 1).getValue();
+			String message = anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anOriginalProcedureRes.getResultSetRowColumnData(2, 1, 2).getValue();
+
+			aBagSPJavaOrchestration.put("code_error", code);
+        	aBagSPJavaOrchestration.put("message_error", message);
+        	aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("@o_causal"));
+        	
+			registerTransactionFailed("Authorize Withdrawal", "IDC", aRequest, aBagSPJavaOrchestration);
 			
 			IResultSetRow row = new ResultSetRow();
 			

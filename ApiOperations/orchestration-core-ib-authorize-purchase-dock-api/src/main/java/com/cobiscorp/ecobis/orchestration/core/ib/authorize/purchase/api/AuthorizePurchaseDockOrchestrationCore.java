@@ -689,6 +689,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(7, new ResultSetRowColumnData(false, null));
 				row.addRowData(8, new ResultSetRowColumnData(false, null));
 				
+				registerTransactionFailed("Authorize Purchase Dock", "DOCK", aRequest, aBagSPJavaOrchestration);
+				
 				data.addRow(row);
 
 			} else {
@@ -737,6 +739,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
 			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
 			
+			registerTransactionFailed("Authorize Purchase Dock", "DOCK", aRequest, aBagSPJavaOrchestration);
+
 			IResultSetRow row = new ResultSetRow();
 			
 			row.addRowData(1, new ResultSetRowColumnData(false, "0"));

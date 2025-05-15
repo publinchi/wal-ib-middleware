@@ -38,6 +38,7 @@ import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
+import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Institucion;
@@ -301,6 +302,16 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			{
 				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, procedureResponseLocal.getReturnCode());
 				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Error en la actualizacion de la transferencia spei");
+				
+		       if(msjIn.getOrdenpago().getOpTpClave()==0) {
+					//SPEI_RETURN FALLIDO
+					aBagSPJavaOrchestration.put("eventWH", "F");
+					aBagSPJavaOrchestration.put("code_error", procedureResponseLocal.getReturnCode());
+					aBagSPJavaOrchestration.put("message_error",  "Error en la actualizacion de la transferencia spei");
+					    
+					registerTransactionWebHook(aBagSPJavaOrchestration, msjIn);
+		       }
+				
 			}else
 			{
 				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 0);
@@ -1320,6 +1331,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if (wProcedureResponseLocal.getReturnCode()==0) {
 				
 				logId = Integer.parseInt(wProcedureResponseLocal.readValueParam("@o_lc_id"));
+				aBagSPJavaOrchestration.put("idLog", logId);
 			}
 		}catch (Exception xe) {
 			logger.logError("Error logEntryApi:",xe);
@@ -1551,4 +1563,62 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
 		coreServiceNotification = null;
 	}
+	private void registerTransactionWebHook(Map<String, Object> aBagSPJavaOrchestration, mensaje msjSPEI_In) {	
+        String movementType = "SPEI_RETURN";
+		String typeEvent = "S";
+        String codeError = "0";
+		String messageError = "";
+		String logKarpay = "0";
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug(" Entrando en registerTransactionWebHook");
+        }
+
+        if (aBagSPJavaOrchestration.get("eventWH") != null) {
+        	typeEvent = aBagSPJavaOrchestration.get("eventWH").toString();
+        }
+        
+        if (aBagSPJavaOrchestration.get("idLog") != null) {
+        	logKarpay = aBagSPJavaOrchestration.get("idLog").toString();
+        }
+
+    	try {
+        	if (typeEvent.equals("F")) {
+        		if (aBagSPJavaOrchestration.get("code_error")!= null) {
+    				codeError = aBagSPJavaOrchestration.get("code_error").toString();
+    			}
+    			
+    			if (aBagSPJavaOrchestration.get("message_error")!= null) {
+    				messageError = aBagSPJavaOrchestration.get("message_error").toString();
+    			}    			
+        	}
+        	 
+			IProcedureRequest request = new ProcedureRequestAS();
+			
+			request.setSpName("cob_bvirtual..sp_bv_devolucion_spei_webhook");
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");			
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+			
+			request.addInputParam("@i_tipotrn", ICTSTypes.SQLVARCHAR, typeEvent);
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "U");
+			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
+			request.addInputParam("@i_logKarpay", ICTSTypes.SQLINT4, logKarpay);
+			request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR,  msjSPEI_In.getOrdenpago().getOpCveRastreo());
+			request.addInputParam("@i_errorDetailsCode", ICTSTypes.SQLVARCHAR, codeError);
+			request.addInputParam("@i_errorDetailsMessage", ICTSTypes.SQLVARCHAR, messageError);
+			
+			IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response Corebanking registerAllTransactionFailed: " + wProductsQueryResp.getProcedureResponseAsString());
+			}
+			
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerTransactionWebHook");
+			}
+
+        }catch(Exception e){
+            logger.logError(" Error Catastrofico en registerTransactionWebHook SPEI_RETURN");
+        }	
+    }	
 }
