@@ -1,0 +1,35 @@
+---CMD---
+
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for COBISCorp.eCOBIS.ServiceContractOperations.Service.rest:COBISCorp.eCOBIS.ServiceContractOperations.Service-rest:jar:1.0.0.0
+[WARNING] 'dependencies.dependency.systemPath' for COBISCorp.eCOBIS.DataContractOperations.DTO:COBISCorp.eCOBIS.DataContractOperations.DTO:jar should use a variable instead of a hard-coded path C:/WaltMart/ibMiddleware/wal-ib-middleware/Project_SG_IB/ApiOperartions/Code/CTS/COBISCorp.eCOBIS.DataContractOperations.DTO/build/dist/COBISCorp.eCOBIS.DataContractOperations.DTO-1.0.0.0.jar @ line 24, column 19
+[WARNING] 'dependencies.dependency.systemPath' for COBISCorp.eCOBIS.ServiceContractOperations.Service:COBISCorp.eCOBIS.ServiceContractOperations.Service:jar should not point at files within the project directory, ${project.basedir}/../COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC/target/COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar will be unresolvable by dependent projects @ line 32, column 19
+[WARNING] 'dependencies.dependency.systemPath' for com.cobiscorp.cobis:cobis-log-util:jar should use a variable instead of a hard-coded path C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cobis-log-util-2.0.5.jar @ line 64, column 19
+[WARNING] 'dependencies.dependency.systemPath' for com.cobiscorp.cobis.cwc:cobis-container-api:jar should use a variable instead of a hard-coded path C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cobis-container-api-2.7.0.jar @ line 72, column 19
+[WARNING] 'dependencies.dependency.systemPath' for com.cobiscorp.cobis.cts.integration:cts-integration-rest:jar should use a variable instead of a hard-coded path C:/Program Files/COBIS/COBIS Services Generator 4/Packager/Java/Rest/cts-integration-rest-2.0.2.jar @ line 80, column 19
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-jar-plugin is missing. @ line 110, column 15
+[WARNING] 'dependencies.dependency.systemPath' for COBISCorp.eCOBIS.ServiceContractOperations.Service:COBISCorp.eCOBIS.ServiceContractOperations.Service:jar refers to a non-existing file C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest\..\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar @ line 32, column 19
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building COBISCorp.eCOBIS.ServiceContractOperations.Service-rest 1.0.0.0
+[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 0.248 s
+[INFO] Finished at: 2023-09-17T14:09:04-05:00
+[INFO] Final Memory: 11M/300M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal on project COBISCorp.eCOBIS.ServiceContractOperations.Service-rest: Could not resolve dependencies for project COBISCorp.eCOBIS.ServiceContractOperations.Service.rest:COBISCorp.eCOBIS.ServiceContractOperations.Service-rest:jar:1.0.0.0: Could not find artifact COBISCorp.eCOBIS.ServiceContractOperations.Service:COBISCorp.eCOBIS.ServiceContractOperations.Service:jar:1.0.0.0 at specified path C:\WaltMart\ibMiddleware\wal-ib-middleware\Project_SG_IB\ApiOperartions\Code\REST\COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest\..\COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC\target\COBISCorp.eCOBIS.ServiceContractOperations.Service-1.0.0.0.jar -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/DependencyResolutionException
