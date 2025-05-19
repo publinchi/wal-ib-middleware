@@ -120,7 +120,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
             if(tipoTran.equals("SPEI_CREDIT")) {
                 request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, (String)aBagSPJavaOrchestration.get("externalCustId"));
                 request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
-                request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_fechaOperacion"));
+                request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aBagSPJavaOrchestration.get("fechaTrn"));
                 request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
                 request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
                 request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
@@ -201,7 +201,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
 			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
-			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_fechaOperacion"));
+			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aBagSPJavaOrchestration.get("fechaTrn"));
 			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 			
