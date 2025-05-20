@@ -12,6 +12,7 @@ public class Constants {
     public static final String P2P_CREDIT = "P2P_CREDIT";
     public static final String P2P_DEBIT = "P2P_DEBIT";
     public static final String CARD_DELIVERY_FEE = "CARD_DELIVERY_FEE";
+    public static final String FALSE_CHARGEBACK = "FALSE_CHARGEBACK";
     public static final String FALSE_CHARGEBACK_PENALTY = "FALSE_CHARGEBACK_PENALTY";
     public static final String COMMISSION = "COMMISSION";
     public static final String BONUS = "BONUS";

@@ -763,6 +763,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip");
 		String xChannel = aRequest.readValueParam("@x_channel");
 		String xProcess = (String)aBagSPJavaOrchestration.get("process");
+		aBagSPJavaOrchestration.put(PROCESS_DATE, xEndUserRequestDateTime);
 
 		IProcedureRequest idempotenceRequest = new ProcedureRequestAS();
 
@@ -808,6 +809,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		String movementType = null;
 		String bank_account_number = null;
 		String description = tipoTran;
+		String debitReason = "";
 
 		try {
 			if (aBagSPJavaOrchestration.get("movementId")!= null) {
@@ -824,6 +826,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 			if (aBagSPJavaOrchestration.get("causal")!= null) {
 				causal = aBagSPJavaOrchestration.get("causal").toString();
+			}
+
+			if (aBagSPJavaOrchestration.get("@i_debitReason")!=null) {
+				debitReason = aBagSPJavaOrchestration.get("@i_debitReason").toString();
 			}
 
 			IProcedureRequest request = new ProcedureRequestAS();
@@ -971,13 +977,22 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 					
 				}
 				
-				if(causal.equals("8110") || causal.equals("3101") ) 
+				if(tipoTran.equals("AccountDebitOperationOrchestrationCore")) 
 				{
 					movementType = Constants.COMMISSION;
-					if (causal.equals("8110")) {
-						description = Constants.CARD_DELIVERY_FEE;
-					}else {
-						description = Constants.FALSE_CHARGEBACK_PENALTY;					
+					
+					switch (debitReason) {
+			            case "Card delivery fee":
+			            	description = Constants.CARD_DELIVERY_FEE;
+			                break;
+			            case "False chargeback claim":
+			            	description = Constants.FALSE_CHARGEBACK_PENALTY;
+			            	break;
+			            case "FALSE_CHARGEBACK":
+			            	description = Constants.FALSE_CHARGEBACK;
+			                break;
+			            default:
+			            	description = Constants.FALSE_CHARGEBACK_PENALTY;
 					}
 
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
