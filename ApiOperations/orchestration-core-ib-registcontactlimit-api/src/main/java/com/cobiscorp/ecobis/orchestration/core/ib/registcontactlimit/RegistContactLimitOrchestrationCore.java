@@ -303,6 +303,25 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
         anOriginalRequestRegistContacLimit.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("operation").toString());
         anOriginalRequestRegistContacLimit.addInputParam("@i_request_json", ICTSTypes.SQLVARCHAR, requestBody.toString());
 
+        String additionalData = originalProcedureRequest.readValueParam("@i_additionalData");
+
+        logger.logInfo("Additional Data OFD:" + additionalData);
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonAdditionalData = (JsonObject) jsonParser.parse(additionalData);
+
+        String latitude = jsonAdditionalData.get("latitude").getAsString();
+        String longitude = jsonAdditionalData.get("longitude").getAsString();
+        String precision = jsonAdditionalData.get("accuracy").getAsString();
+        String loginSessionId = jsonAdditionalData.get("userSessionId").getAsString();
+        String riesgoId = jsonAdditionalData.get("riesgoId").getAsString();
+
+        anOriginalRequestRegistContacLimit.addInputParam("@i_latitude", ICTSTypes.SQLVARCHAR, latitude);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_longitude", ICTSTypes.SQLVARCHAR, longitude);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_precision", ICTSTypes.SQLVARCHAR, precision);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_loginSessionId", ICTSTypes.SQLVARCHAR, loginSessionId);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_riesgoId", ICTSTypes.SQLVARCHAR, riesgoId);
+
         anOriginalRequestRegistContacLimit.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
         anOriginalRequestRegistContacLimit.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
         anOriginalRequestRegistContacLimit.addOutputParam("@o_success", ICTSTypes.SQLVARCHAR, "X");
@@ -1340,6 +1359,7 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
 
     if (logger.isInfoEnabled()) {
       logger.logInfo(" Entrando en logRequestAndResponse");
+      logger.logInfo(" aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
     }
 
     request.setSpName("cob_bvirtual..sp_log_configuracion_limite");
@@ -1357,6 +1377,8 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
       request.addInputParam("@i_request", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("queryString").toString());
       request.addInputParam("@i_response", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("responseBodyGetOneContactLimits").toString());
     }
+
+
 
     //Log response SaveRegistContactLimit
     else if (aBagSPJavaOrchestration.get("operation").equals("S")) {
