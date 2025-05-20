@@ -20,6 +20,11 @@
       <version>1.0.0.0</version>
       </dependency>
     <dependency>
+      <groupId>COBISCorp.eCOBIS.ServiceContractOperations.dto.customize</groupId>
+      <artifactId>COBISCorp.eCOBIS.ServiceContractOperations.dto.customize</artifactId>
+      <version>1.0.0.0</version>
+      </dependency>
+    <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.scr.annotations</artifactId>
       <version>1.6.0</version>
