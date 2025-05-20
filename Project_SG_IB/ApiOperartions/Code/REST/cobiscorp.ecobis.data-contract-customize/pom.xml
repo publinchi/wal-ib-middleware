@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.cobiscorp.cobis</groupId>
-    <version>1.0.0</version>
+    <version>3.0.0</version>
     <artifactId>cobis-parent</artifactId>
     <relativePath>../cobis-parent/pom.xml</relativePath>
   </parent>
@@ -69,6 +69,11 @@
       <version>2.0.2</version>
       <scope>provided</scope>
       </dependency>
+	<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+           <version>2.13.0</version> <!-- Use the latest version -->
+	</dependency>      
   </dependencies>
   <build>
     <plugins>
@@ -133,10 +138,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
       </plugin>
-            <plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jarsigner-plugin</artifactId>
       </plugin>
+
     </plugins>
   </build>
 </project>

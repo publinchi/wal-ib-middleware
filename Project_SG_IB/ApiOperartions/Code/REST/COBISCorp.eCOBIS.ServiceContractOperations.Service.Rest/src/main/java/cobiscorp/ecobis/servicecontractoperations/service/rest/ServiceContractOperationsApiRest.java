@@ -24,6 +24,7 @@ package cobiscorp.ecobis.servicecontractoperations.service.rest;
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 
 import cobiscorp.ecobis.datacontractoperations.dto.*;
+import cobiscorp.ecobis.dtocontractoperations.customize.*;
 import cobiscorp.ecobis.servicecontractoperations.service.IServiceContractOperationsApiService;
 
 import org.apache.felix.scr.annotations.*;
@@ -168,7 +169,7 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
-			RequestAuthorizePurchase inRequestAuthorizePurchase) {
+			RequestAuthorizePurchase_Customize inRequestAuthorizePurchase) {
 		LOGGER.logDebug("Start service execution REST: authorizePurchase");
 		ResponseAuthorizePurchase outResponseAuthorizePurchase = new ResponseAuthorizePurchase();
 
@@ -244,7 +245,7 @@ public class ServiceContractOperationsApiRest {
 			@Null @HeaderParam("legacy-id") String legacyid,
 			@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
 			@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
-			RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) {
+			RequestAuthorizePurchaseDock_Customize inRequestAuthorizePurchaseDock) {
 		LOGGER.logDebug("Start service execution REST: authorizePurchaseDock");
 		ResponseAuthorizePurchaseDock outResponseAuthorizePurchaseDock = new ResponseAuthorizePurchaseDock();
 		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
@@ -335,7 +336,7 @@ public class ServiceContractOperationsApiRest {
 				@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 				@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 				@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
-				RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal) {
+				RequestAuthorizeWithdrawal_Customize inRequestAuthorizeWithdrawal) {
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawal");
 			ResponseAuthorizeWithdrawal outResponseAuthorizeWithdrawal = new ResponseAuthorizeWithdrawal();
 
@@ -403,7 +404,7 @@ public class ServiceContractOperationsApiRest {
 				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
 				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
 				@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
-				RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock) {
+				RequestAuthorizeWithdrawalDock_Customize inRequestAuthorizeWithdrawalDock) {
 			LOGGER.logDebug("Start service execution REST: authorizeWithdrawalDock");
 			ResponseAuthorizeWithdrawalDock outResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
 			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
@@ -471,7 +472,7 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
-			RequestAuthorizeDeposit inRequestAuthorizeDeposit) {
+			RequestAuthorizeDeposit_Customize inRequestAuthorizeDeposit) {
 		LOGGER.logDebug("Start service execution REST: authorizeDeposit");
 		ResponseAuthorizeDeposit outResponseAuthorizeDeposit = new ResponseAuthorizeDeposit();
 
@@ -539,7 +540,7 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
 			@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
 			@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
-			RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) {
+			RequestAuthorizeDepositDock_Customize inRequestAuthorizeDepositDock) {
 		LOGGER.logDebug("Start service execution REST: authorizeDepositDock");
 		ResponseAuthorizeDepositDock outResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
 		//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
@@ -607,7 +608,7 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
-			RequestAuthorizeReversal inRequestAuthorizeReversal) {
+			RequestAuthorizeReversal_Customize inRequestAuthorizeReversal) {
 		LOGGER.logDebug("Start service execution REST: authorizeReversal");
 		ResponseAuthorizeReversal outResponseAuthorizeReversal = new ResponseAuthorizeReversal();
 
@@ -2081,8 +2082,7 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/onboarding/getColonyByMunicipality")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response getColonyByMunicipality(RequestGetColonyByMunicipality inRequestGetColonyByMunicipality) {
-		LOGGER.logDebug("Start service execution REST: getColonyByMunicipality");
+	public Response getColonyByMunicipality(RequestGetColonyByMunicipality_Customize inRequestGetColonyByMunicipality) {
 		ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality = new ResponseGetColonyByMunicipality();
 
 		try {
@@ -2524,7 +2524,7 @@ public class ServiceContractOperationsApiRest {
 				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
 				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
 				@NotNull(message = "x-apigw-api-id may not be null") @HeaderParam("x-apigw-api-id") String xapigwapiid,
-				RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) {
+				RequestAuthorizeReversalDock_Customize inRequestAuthorizeReversalDock) {
 			LOGGER.logDebug("Start service execution REST: authorizeReversalDock");
 			ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock = new ResponseAuthorizeReversalDock();
 			//se realiza la implementacion interna para no tener que mover la orquestacion se divide la cadena 
