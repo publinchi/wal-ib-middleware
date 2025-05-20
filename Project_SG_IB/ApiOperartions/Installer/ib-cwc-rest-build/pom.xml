@@ -23,6 +23,7 @@
 			</activation>
 			<modules>
 				<module>../../Code/REST/cobis-parent</module>
+				<module>../../Code/REST/cobiscorp-ecobis.data-contract-customize</module>				
 				<module>../../Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC</module>
 				<module>../../Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest</module>
 				<module>../ib-cwc-rest-installer</module>
@@ -32,6 +33,7 @@
 			<id>env-hardening</id>
 			<modules>
 				<module>../../Code/REST/cobis-parent</module>
+				<module>../../Code/REST/cobiscorp-ecobis.data-contract-customize</module>
 				<module>../../Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.CWC</module>
 				<module>../../Code/REST/COBISCorp.eCOBIS.ServiceContractOperations.Service.Rest</module>
 				<module>../ib-cwc-rest-installer</module>
