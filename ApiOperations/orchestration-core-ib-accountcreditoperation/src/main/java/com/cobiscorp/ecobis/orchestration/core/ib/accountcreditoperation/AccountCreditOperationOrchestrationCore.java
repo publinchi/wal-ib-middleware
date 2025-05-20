@@ -287,7 +287,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		String xRequestId = aRequest.readValueParam("@x_request_id");
 		String xEndUserRequestDateTime = aRequest.readValueParam("@x_end_user_request_date");
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip"); 
-		String xChannel = aRequest.readValueParam("@x_channel");		
+		String xChannel = aRequest.readValueParam("@x_channel");
+		transaccionDate = xEndUserRequestDateTime;		
 		
 		IProcedureRequest empotencyRequest = new ProcedureRequestAS(); 
 		
@@ -483,10 +484,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		} else {
 			aBagSPJavaOrchestration.put("50041", "Error account credit operation");
 			return;
-		}
-		
-		//aBagSPJavaOrchestration.put("transaccionDate",transaccionDate);
-		//registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", wQueryRequest,"4050", aBagSPJavaOrchestration);
+		}		
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {

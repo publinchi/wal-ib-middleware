@@ -291,8 +291,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
                 response.readValueParam("@o_fecha_tran");
 
-                if (response.readValueFieldInHeader("ssn") != null)
+                if (response.readValueFieldInHeader("ssn") != null){
                     aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
+                    aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
+                }
 
                 if (!response.hasError()) {
                     resultSetRow = response.getResultSet(1).getData().getRowsAsArray()[0];
@@ -352,6 +354,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         reqTMPCentral.addOutputParam("@o_causa", ICTSTypes.SQLVARCHAR, "X");
 
         aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
+        aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
         IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 
@@ -423,6 +426,9 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logDebug("Valida errores [isErrors]: " + aBagSPJavaOrchestration.get(IS_ERRORS).toString());
         }
 
+        aBagSPJavaOrchestration.put("@i_debitReason", anOriginalRequest.readValueParam("@i_debitReason").trim());
+        aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa"));
+
         if (!(Boolean)aBagSPJavaOrchestration.get(IS_ERRORS)) {
             IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(COLUMNS_RETURN);
             if (logger.isDebugEnabled()) {
@@ -448,6 +454,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 logger.logDebug("message: " +  aBagSPJavaOrchestration.get("error_message"));
                 logger.logDebug("movementId: null");
             }
+            aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code").toString());
+        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message").toString());
 			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
             row.addRowData(1, new ResultSetRowColumnData(false, "false"));
             row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_code")));
