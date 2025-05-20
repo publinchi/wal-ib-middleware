@@ -208,12 +208,14 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String clientCode = ccProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
 		String cuentaOrig = ccProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
 		String cuentaDest = ccProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
+		String sl_fecha = ccProcedureResponse.getResultSetRowColumnData(1, 1, 4).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 4).getValue();
 
 		aBagSPJavaOrchestration.put("destinationAccountType", cuentaDest);
 		aBagSPJavaOrchestration.put("originAccountType", cuentaOrig);
 		aBagSPJavaOrchestration.put("externalCustId", clientCode);
+		aBagSPJavaOrchestration.put("fechaTrn", sl_fecha);
 				
-		registerAllTransactionSuccess("SPEI_CREDIT", anOriginalRequest,"2010", aBagSPJavaOrchestration);
+		registerAllTransactionSuccess("SPEI_CREDIT", anOriginalRequest,"2040", aBagSPJavaOrchestration);	
 	}
 
 	@Override
