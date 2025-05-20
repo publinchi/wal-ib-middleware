@@ -57,18 +57,23 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
 
         aBagSPJavaOrchestration.put(IS_ONLINE, false);
-        aBagSPJavaOrchestration.put(IS_REENTRY, false);
         aBagSPJavaOrchestration.put(IS_ERRORS, false);
+        aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
-        aBagSPJavaOrchestration.put("process", "DEBIT_OPERATION");
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
+        }
 
-		IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
-		IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
-		IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
-		if (columns[0].getValue().equals("false") ) {
-            setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
-			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
-		}
+        if (!(Boolean)aBagSPJavaOrchestration.get(IS_REENTRY)) {
+            aBagSPJavaOrchestration.put("process", "DEBIT_OPERATION");
+            IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
+            IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
+            IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
+            if (columns[0].getValue().equals("false") ) {
+                setError(aBagSPJavaOrchestration, columns[1].getValue(), columns[2].getValue());
+                return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
+            }
+        }
 
         if (validateParameters(aBagSPJavaOrchestration, anOriginalRequest))
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -84,12 +89,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
         if (logger.isDebugEnabled()) {
             logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(IS_ONLINE));
-        }
-
-        aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
-
-        if (logger.isDebugEnabled()) {
-            logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
         }
 
         return processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
@@ -127,10 +126,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         }
         if (referenceNumber.isEmpty()) {
             setError(aBagSPJavaOrchestration, "40092", "referenceNumber must not be empty.");
-            return true;
-        }
-        if (referenceNumber.length() != 6) {
-            setError(aBagSPJavaOrchestration, "40104", "referenceNumber must have 6 digits.");
             return true;
         }
         if (debitReason.isEmpty()) {
@@ -282,6 +277,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 anOriginalRequest.addInputParam("@i_login", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_login"));
                 anOriginalRequest.addInputParam("@i_bank_name", ICTSTypes.SQLVARCHAR, "CASHI");
                 anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
+                anOriginalRequest.addInputParam("@i_refer_transaction", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber"));
 
                 anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
