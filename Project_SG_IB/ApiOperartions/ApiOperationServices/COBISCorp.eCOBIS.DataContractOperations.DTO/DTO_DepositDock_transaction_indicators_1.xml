@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="21" id="2" name="properties">
+  <collection type="List" length="22" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="card_present" />
       <field type="String" name="type" value="boolean?" />
@@ -211,9 +211,19 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="24" index="21">
+      <field type="String" name="name" value="is_funds_transfer" />
+      <field type="String" name="type" value="boolean?" />
+      <field type="boolean" name="isCollection" value="false" />
+      <field type="int" name="maxLength" value="0" />
+      <field type="boolean" name="required" value="false" />
+      <field type="boolean" name="encrypted" value="false" />
+      <field type="String" name="stateProperty" value="" />
+      <field type="boolean" name="obfuscated" value="false" />
+    </class>
   </collection>
   <field type="String" name="name" value="DepositDock_transaction_indicators" />
-  <collection type="Map" length="0" id="24" name="templatesProperties">
+  <collection type="Map" length="0" id="25" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />
