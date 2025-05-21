@@ -50,7 +50,6 @@ import com.cobiscorp.cobis.cts.rest.client.util.ConverterUtil;
 import com.cobiscorp.cobis.cts.rest.client.util.ICTSTypes;
 
 import cobiscorp.ecobis.datacontractoperations.dto.*;
-import cobiscorp.ecobis.dtocontractoperations.customize.*;
 
 @Component
 @Service({ IServiceContractOperationsApiService.class })
@@ -395,7 +394,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizePurchase authorizePurchase(String xRequestId, String xEndUserRequestDateTime,
-                                                       String xEndUserIp, String xChannel, RequestAuthorizePurchase_Customize inRequestAuthorizePurchase)
+                                                       String xEndUserIp, String xChannel, RequestAuthorizePurchase inRequestAuthorizePurchase)
             throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizePurchase");
         ResponseAuthorizePurchase outResponseAuthorizePurchase = new ResponseAuthorizePurchase();
@@ -677,7 +676,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid, String legacyid, String clientid,
-                                                               String uuid, RequestAuthorizePurchaseDock_Customize inRequestAuthorizePurchaseDock) throws CTSRestException {
+                                                               String uuid, RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizePurchaseDock");
         ResponseAuthorizePurchaseDock outSingleResponseAuthorizePurchaseDock = new ResponseAuthorizePurchaseDock();
 
@@ -945,7 +944,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizeWithdrawal authorizeWithdrawal(String xRequestId, String xEndUserRequestDateTime,
-                                                           String xEndUserIp, String xChannel, RequestAuthorizeWithdrawal_Customize inRequestAuthorizeWithdrawal)
+                                                           String xEndUserIp, String xChannel, RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
             throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizeWithdrawal");
         ResponseAuthorizeWithdrawal outResponseAuthorizeWithdrawal = new ResponseAuthorizeWithdrawal();
@@ -1213,7 +1212,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizeWithdrawalDock authorizeWithdrawalDock(String legacyid, String clientid, String uuid,
-                                                                   String xapigwapiid, RequestAuthorizeWithdrawalDock_Customize inRequestAuthorizeWithdrawalDock)
+                                                                   String xapigwapiid, RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock)
             throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizeWithdrawalDock");
         ResponseAuthorizeWithdrawalDock outSingleResponseAuthorizeWithdrawalDock = new ResponseAuthorizeWithdrawalDock();
@@ -1473,7 +1472,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizeDeposit authorizeDeposit(String xRequestId, String xEndUserRequestDateTime,
-                                                     String xEndUserIp, String xChannel, RequestAuthorizeDeposit_Customize inRequestAuthorizeDeposit)
+                                                     String xEndUserIp, String xChannel, RequestAuthorizeDeposit inRequestAuthorizeDeposit)
             throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizeDeposit");
         ResponseAuthorizeDeposit outResponseAuthorizeDeposit = new ResponseAuthorizeDeposit();
@@ -1746,7 +1745,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizeDepositDock authorizeDepositDock(String legacyid, String clientid, String uuid,
-                                                             String xapigwapiid, RequestAuthorizeDepositDock_Customize inRequestAuthorizeDepositDock) throws CTSRestException {
+                                                             String xapigwapiid, RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizeDepositDock");
         ResponseAuthorizeDepositDock outSingleResponseAuthorizeDepositDock = new ResponseAuthorizeDepositDock();
 
@@ -2004,7 +2003,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseAuthorizeReversal authorizeReversal(String xRequestId, String xEndUserRequestDateTime,
-                                                       String xEndUserIp, String xChannel, RequestAuthorizeReversal_Customize inRequestAuthorizeReversal)
+                                                       String xEndUserIp, String xChannel, RequestAuthorizeReversal inRequestAuthorizeReversal)
             throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizeReversal");
         ResponseAuthorizeReversal outResponseAuthorizeReversal = new ResponseAuthorizeReversal();
@@ -2769,7 +2768,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Have DTO
     public ResponseGetColonyByMunicipality getColonyByMunicipality(
-            RequestGetColonyByMunicipality_Customize inRequestGetColonyByMunicipality) throws CTSRestException {
+            RequestGetColonyByMunicipality inRequestGetColonyByMunicipality) throws CTSRestException {
         LOGGER.logDebug("Start service execution: getColonyByMunicipality");
         ResponseGetColonyByMunicipality outResponseGetColonyByMunicipality = new ResponseGetColonyByMunicipality();
 
@@ -7793,7 +7792,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     @Override
     // Return DTO
     public ResponseAuthorizeReversalDock authorizeReversalDock(String legacyid, String clientid, String uuid,
-                                                               String xapigwapiid, RequestAuthorizeReversalDock_Customize inRequestAuthorizeReversalDock)
+                                                               String xapigwapiid, RequestAuthorizeReversalDock inRequestAuthorizeReversalDock)
             throws CTSRestException {
         LOGGER.logDebug("Start service execution: authorizeReversalDock");
         ResponseAuthorizeReversalDock outSingleResponseAuthorizeReversalDock = new ResponseAuthorizeReversalDock();
