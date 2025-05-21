@@ -22,8 +22,6 @@
 package cobiscorp.ecobis.servicecontractoperations.service;
 
 import cobiscorp.ecobis.datacontractoperations.dto.*;
-import cobiscorp.ecobis.dtocontractoperations.customize.*;
-
 import cobiscorp.ecobis.datacontractoperations.dto.Error;
 
 import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
@@ -47,7 +45,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizePurchase authorizePurchase(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestAuthorizePurchase_Customize inRequestAuthorizePurchase)
+			String xEndUserIp, String xChannel, RequestAuthorizePurchase inRequestAuthorizePurchase)
 			throws CTSRestException;
 
 	/**
@@ -56,7 +54,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizePurchaseDock authorizePurchaseDock(String xapigwapiid, String legacyid, String clientid,
-			String uuid, RequestAuthorizePurchaseDock_Customize inRequestAuthorizePurchaseDock) throws CTSRestException;
+			String uuid, RequestAuthorizePurchaseDock inRequestAuthorizePurchaseDock) throws CTSRestException;
 	  
 	/**
 	 * Authorize Withdrawal
@@ -64,7 +62,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizeWithdrawal authorizeWithdrawal(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestAuthorizeWithdrawal_Customize inRequestAuthorizeWithdrawal)
+			String xEndUserIp, String xChannel, RequestAuthorizeWithdrawal inRequestAuthorizeWithdrawal)
 			throws CTSRestException;
 	
 	/**
@@ -73,7 +71,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizeWithdrawalDock authorizeWithdrawalDock(String legacyid, String clientid, String uuid,
-			String xapigwapiid, RequestAuthorizeWithdrawalDock_Customize inRequestAuthorizeWithdrawalDock)
+			String xapigwapiid, RequestAuthorizeWithdrawalDock inRequestAuthorizeWithdrawalDock)
 			throws CTSRestException;
 	
 	/**
@@ -82,7 +80,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizeDeposit authorizeDeposit(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestAuthorizeDeposit_Customize inRequestAuthorizeDeposit)
+			String xEndUserIp, String xChannel, RequestAuthorizeDeposit inRequestAuthorizeDeposit)
 			throws CTSRestException;
 	
 	/**
@@ -91,7 +89,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizeDepositDock authorizeDepositDock(String legacyid, String clientid, String uuid,
-			String xapigwapiid, RequestAuthorizeDepositDock_Customize inRequestAuthorizeDepositDock) throws CTSRestException;
+			String xapigwapiid, RequestAuthorizeDepositDock inRequestAuthorizeDepositDock) throws CTSRestException;
 
 	/**
 	 * Authorize Reversal
@@ -99,7 +97,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseAuthorizeReversal authorizeReversal(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestAuthorizeReversal_Customize inRequestAuthorizeReversal)
+			String xEndUserIp, String xChannel, RequestAuthorizeReversal inRequestAuthorizeReversal)
 			throws CTSRestException;
 
 	/**
@@ -186,7 +184,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseGetColonyByMunicipality getColonyByMunicipality(
-			RequestGetColonyByMunicipality_Customize inRequestGetColonyByMunicipality) throws CTSRestException;
+			RequestGetColonyByMunicipality inRequestGetColonyByMunicipality) throws CTSRestException;
 
 	/**
 	 * Service to obtain the detail of movements of an existing savings account
@@ -434,7 +432,7 @@ public interface IServiceContractOperationsApiService {
 
 	// Return DTO
 	public ResponseAuthorizeReversalDock authorizeReversalDock(String legacyid, String clientid, String uuid,
-			String xapigwapiid, RequestAuthorizeReversalDock_Customize inRequestAuthorizeReversalDock) throws CTSRestException;
+			String xapigwapiid, RequestAuthorizeReversalDock inRequestAuthorizeReversalDock) throws CTSRestException;
 	
 	 /**
      * Delete Contact
