@@ -245,14 +245,13 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 						
 			//Validamos la respuesta para ingresar la transacción fallida en Webhook
 			if (aBagSPJavaOrchestration.get("@s_error") != null) {
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("ERROR SPEI IN: "+ aBagSPJavaOrchestration.get("@s_error").toString());
-					logger.logDebug("MESSAGE ERROR SPEI IN: "+ aBagSPJavaOrchestration.get("@s_message").toString());
-				}
 				
 				codeError = aBagSPJavaOrchestration.get("@s_error").toString();
 				
 				if (!codeError.equals("0")) {
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("ERROR SPEI IN: "+ aBagSPJavaOrchestration.get("@s_error").toString());															
+					}
 					IProcedureResponse consulClienteRes = this.consultaCliente(anOriginalRequest);
 					
 					aBagSPJavaOrchestration.put("code_error", codeError);
