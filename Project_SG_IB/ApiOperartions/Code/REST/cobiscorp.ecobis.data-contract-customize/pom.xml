@@ -23,6 +23,12 @@
       <scope>provided</scope>
       </dependency>
     <dependency>
+      <groupId>COBISCorp.eCOBIS.ServiceContractOperations.Service</groupId>
+      <artifactId>COBISCorp.eCOBIS.ServiceContractOperations.Service</artifactId>
+      <version>1.0.0.0</version>
+      <scope>provided</scope>
+      </dependency>
+    <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
       <version>2.1.1</version>

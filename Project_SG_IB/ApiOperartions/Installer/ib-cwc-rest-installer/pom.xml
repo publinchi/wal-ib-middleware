@@ -47,12 +47,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>COBISCorp.eCOBIS.ServiceContractOperations.dto.customize</groupId>
-			<artifactId>COBISCorp.eCOBIS.ServiceContractOperations.dto.customize</artifactId>
-			<version>1.0.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>COBISCorp.eCOBIS.ServiceContractOperations.Service</groupId>
 			<artifactId>COBISCorp.eCOBIS.ServiceContractOperations.Service</artifactId>
 			<version>1.0.0.0</version>
@@ -114,7 +108,6 @@
 							<excludeTransitive>true</excludeTransitive>
 							<includeArtifactIds>
 								COBISCorp.eCOBIS.DataContractOperations.DTO,
-								COBISCorp.eCOBIS.ServiceContractOperations.dto.customize,
 								COBISCorp.eCOBIS.ServiceContractOperations.Service,
 								COBISCorp.eCOBIS.ServiceContractOperations.Service-rest</includeArtifactIds>
 						</configuration>
