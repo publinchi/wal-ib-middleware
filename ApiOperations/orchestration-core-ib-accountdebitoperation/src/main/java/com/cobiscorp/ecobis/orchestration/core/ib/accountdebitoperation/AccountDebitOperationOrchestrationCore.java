@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -110,20 +111,23 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         BigDecimal amount = new BigDecimal(anOriginalRequest.readValueParam("@i_amount"));
         int originCode = 0;
         String originCodeStr = anOriginalRequest.readValueParam("@i_originCode");
-        if (originCodeStr != null && !originCodeStr.isEmpty() && !originCodeStr.equals("null")) {
-            originCode = Integer.parseInt(originCodeStr);
-        }
         String originMovementId = anOriginalRequest.readValueParam("@i_originMovementId");
         String originReferenceNumber = anOriginalRequest.readValueParam("@i_originReferenceNumber");
 
+        if (originCodeStr != null && !originCodeStr.isEmpty() && !originCodeStr.equals("null")) {
+            originCode = Integer.parseInt(originCodeStr);
+        }
+        
         if (accountNumber.isEmpty()) {
             setError(aBagSPJavaOrchestration, "40082", "accountNumber must not be empty.");
             return true;
         }
+        
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             setError(aBagSPJavaOrchestration, "40107", "amount must be greater than 0.");
             return true;
         }
+        
         if (referenceNumber.isEmpty()) {
             setError(aBagSPJavaOrchestration, "40092", "referenceNumber must not be empty.");
             return true;
@@ -132,6 +136,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             setError(aBagSPJavaOrchestration, "40123", "debitReason must not be empty.");
             return true;
         }
+        
         switch (debitReason) {
             case "Card delivery fee":
                 aBagSPJavaOrchestration.put("debitConcept", "CARD_DELIVERY_FEE");
@@ -153,10 +158,12 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 setError(aBagSPJavaOrchestration, "40124", "debit reason not found.");
                 return true;
         }
+        
         if (originCode <= 0 || originCode > 3) {
             setError(aBagSPJavaOrchestration, "40125", "origin code not found.");
             return true;
         }
+        
         return false;
     }
 
@@ -416,6 +423,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         IResultSetHeader metaData = new ResultSetHeader();
         IResultSetData data = new ResultSetData();
         IResultSetRow row = new ResultSetRow();
+        IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 
         metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
         metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
@@ -428,6 +436,11 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
         aBagSPJavaOrchestration.put("@i_debitReason", anOriginalRequest.readValueParam("@i_debitReason").trim());
         aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa"));
+
+        if(aBagSPJavaOrchestration.get("debitConcept").toString().equals("FALSE_CHARGEBACK")) {
+            aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
+            aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
+        }
 
         if (!(Boolean)aBagSPJavaOrchestration.get(IS_ERRORS)) {
             IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(COLUMNS_RETURN);
@@ -454,18 +467,19 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 logger.logDebug("message: " +  aBagSPJavaOrchestration.get("error_message"));
                 logger.logDebug("movementId: null");
             }
-            aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code").toString());
-        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message").toString());
-			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
             row.addRowData(1, new ResultSetRowColumnData(false, "false"));
             row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_code")));
             row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_message")));
             row.addRowData(4, new ResultSetRowColumnData(false, null));
             data.addRow(row);
+
+			aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code").toString());
+        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message").toString());
+        	
+			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
         }
 
         IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
-        IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
         wProcedureResponse.addResponseBlock(resultBlock);
         if (logger.isDebugEnabled()) {
             logger.logDebug("Response: " +  wProcedureResponse.getProcedureResponseAsString());

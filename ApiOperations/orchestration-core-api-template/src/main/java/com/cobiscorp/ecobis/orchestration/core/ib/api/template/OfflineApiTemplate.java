@@ -37,6 +37,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION";
 	public String MESSAGE_RESPONSE =  "SUCCESS";
+	public String transaccionDate;
 
 	protected static final String IS_ONLINE = "isOnline";
 	protected static final String IS_REENTRY = "flowRty";
@@ -78,6 +79,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
 
 			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				transaccionDate = wServerStatusResp.readValueParam("@o_fecha_proceso");
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 				try {
 					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
@@ -418,6 +420,14 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			String movementType = null;
 			Integer longSsnBranch = 0;
 			String authorizationCode = null;
+			String debitReason = ""; 
+			String originMovementId = null;
+			String originTrnRefNum = null;
+			String amount = null;
+			String externalCustomerId = null;
+			String accountNumber = null;
+
+			movementId = (String)aBagSPJavaOrchestration.get("ssn");
 			
 			if(tipoTran.equals("transferThirdPartyAccount")) {
 				authorizationCode = aBagSPJavaOrchestration.containsKey("o_ssn_branch") ? aBagSPJavaOrchestration.get("o_ssn_branch").toString() : null;
@@ -432,12 +442,20 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				authorizationCode = authorizationCode.substring(longSsnBranch);
 			}
 			
-			movementId = (String)aBagSPJavaOrchestration.get("ssn");
-
 			if(!tipoTran.equals("transferThirdPartyAccount") && !aBagSPJavaOrchestration.get("transaccionDate").toString().isEmpty()) {
 				transDate = aBagSPJavaOrchestration.get("transaccionDate").toString();
+			}else {
+				transDate = transaccionDate;
 			}
 
+			if ( aBagSPJavaOrchestration.get("@i_originMovementId") != null) {
+				originMovementId = aBagSPJavaOrchestration.get("@i_originMovementId").toString();
+			}
+			
+			if (aBagSPJavaOrchestration.get("@i_originReferenceNumber") != null) {
+				originTrnRefNum = aBagSPJavaOrchestration.get("@i_originReferenceNumber").toString();
+			}	
+			
 			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
 			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
 			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
@@ -497,7 +515,6 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
 				
 			}else if(tipoTran.equals("AccountCreditOperationOrchestrationCore")) {
-				movementId = (String)aBagSPJavaOrchestration.get("ssn");
 				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
 				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
@@ -509,7 +526,13 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 				if(causal.equals("4050")) {
 					movementType = Constants.BONUS;
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.BONUS);
+
+					if(aBagSPJavaOrchestration.get("creditConcept").equals("REFUND")) {
+						movementType = Constants.ACCOUNT_CREDIT;
+					}
+
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
+
 				}
 
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
@@ -526,23 +549,65 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
 
+				//REFUND
+				if(aBagSPJavaOrchestration.get("creditConcept").equals("REFUND")) {
+					request.addInputParam("@i_concept", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("creditConcept").toString());
+					request.addInputParam("@i_originCode", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("originCode").toString());
+					request.addInputParam("@i_originMovementId", ICTSTypes.SQLINTN, originMovementId);
+					request.addInputParam("@i_originTrnRefNum", ICTSTypes.SQLINTN, originTrnRefNum);
+				}
+
+
 			}else if(tipoTran.equals("AccountDebitOperationOrchestrationCore")) {
-				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
+				amount = aRequest.readValueParam("@i_amount");
+				externalCustomerId = aRequest.readValueParam("@i_externalCustomerId");
+				accountNumber = aRequest.readValueParam("@i_accountNumber");
+				
+				if (aBagSPJavaOrchestration.get("@i_debitReason")!=null) {
+					debitReason = aBagSPJavaOrchestration.get("@i_debitReason").toString();
+				}
+				
 				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D"); 
 				
-				if (causal.equals("8110")) {
+				if (logger.isDebugEnabled()){
+					logger.logDebug("ALLTRN debitReason: "+ debitReason);
+				}
+				
+				switch (debitReason) {
+		            case "Card delivery fee":
 					movementType = Constants.CARD_DELIVERY_FEE;
-				}else {
+		                break;
+		            case "False chargeback claim":
+		            	movementType = Constants.FALSE_CHARGEBACK_PENALTY;
+		            	break;
+		            case "FALSE_CHARGEBACK":
+		            	movementType = Constants.FALSE_CHARGEBACK;
+		                break;
+		            default:
 					movementType = Constants.FALSE_CHARGEBACK_PENALTY;					
 				}
 				
+				//FALSE_CHARGEBACK
+				if (movementType.equals(Constants.FALSE_CHARGEBACK)) {
+					if (aRequest.readValueParam("@i_amount_com") != null) {
+						amount = aRequest.readValueParam("@i_amount_com");
+					}
+					if (aRequest.readValueParam("@i_externalCustomerId_ori") != null) {
+						externalCustomerId = aRequest.readValueParam("@i_externalCustomerId_ori");
+					}
+					if (aRequest.readValueParam("@i_accountNumber_ori") != null) {
+						accountNumber = aRequest.readValueParam("@i_accountNumber_ori");
+					}			
+				}
+				
+				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, amount);
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.COMMISSION);
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_debitReason"));
+				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 				request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
-				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
-				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber"));
+				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, externalCustomerId);
+				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , Constants.MXN);
 				request.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_referenceNumber"));
 				request.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_latitude"));
@@ -553,6 +618,29 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+				request.addInputParam("@i_originMovementId", ICTSTypes.SQLINTN, originMovementId);
+				request.addInputParam("@i_originTrnRefNum", ICTSTypes.SQLINTN, originTrnRefNum);
+				
+			} else if(tipoTran.equals("AccountReversalOperationOrchestrationCore")) {
+				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
+				request.addInputParam("@i_concept", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_reversalConcept"));
+				request.addInputParam("@i_originCode", ICTSTypes.SQLINTN, (String)aBagSPJavaOrchestration.get("origin_code"));
+				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber_ori"));
+				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , Constants.MXN);
+				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR ,transaccionDate);
+				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
+				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount_com"));
+				request.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_referenceNumber"));
+				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , null);
+				request.addInputParam("@i_movementId", ICTSTypes.SQLMONEY, movementId);
+				request.addInputParam("@i_originTrnRefNum", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_referenceNumber_ori"));
+				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_reversalReason_ori"));
+				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.CREDIT_REVERSAL);
+				request.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR, originMovementId);
+				request.addInputParam("@i_originTrnRefNum", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_referenceNumber_com_ori"));
+				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, (String)aBagSPJavaOrchestration.get("amount"));
+				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("causa_rev").toString());
 			}
 			
 			request.addInputParam("@i_authorizationCode", ICTSTypes.SQLVARCHAR, authorizationCode);
@@ -807,9 +895,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		String causal = "";
 		String transDate = "";
 		String movementType = null;
-		String bank_account_number = null;
+		String bankAccountNumber = null;
 		String description = tipoTran;
 		String debitReason = "";
+		String amount = null;
+		String extCustomerId = null;
+		String accountNumber = null;
 
 		try {
 			if (aBagSPJavaOrchestration.get("movementId")!= null) {
@@ -928,14 +1019,14 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			            request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_account_number"));
 			            
 			        	if (aRequest.readValueParam("@i_bank_account_number") != null ) {
-							bank_account_number = aRequest.readValueParam("@i_bank_account_number");
+							bankAccountNumber = aRequest.readValueParam("@i_bank_account_number");
 						}else {
-							bank_account_number = aRequest.readValueParam("@i_account_id");
+							bankAccountNumber = aRequest.readValueParam("@i_account_id");
 						}
 		            
 						request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLVARCHAR, null);
 						request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
-						request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,bank_account_number);
+						request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,bankAccountNumber);
 						request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destiny_account_type"));
 				
 					} else if (tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK)) {
@@ -957,20 +1048,30 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				}
 			}else if(tipoTran.equals("AccountCreditOperationOrchestrationCore") || tipoTran.equals("AccountDebitOperationOrchestrationCore")) 
 			{
+				amount = aRequest.readValueParam("@i_amount");
+				extCustomerId = aRequest.readValueParam("@i_externalCustomerId");
+				accountNumber = aRequest.readValueParam("@i_accountNumber");
+				
 				if (aBagSPJavaOrchestration.get("transaccionDate")!= null) {
 					transDate = aBagSPJavaOrchestration.get("transaccionDate").toString();
+				}else {
+					transDate = transaccionDate;
 				}
 				
 				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR ,transDate );
-				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 				
 				if(causal.equals("4050")) {
 					description = Constants.BONUS;
 					movementType = Constants.BONUS;
+
+					if(aBagSPJavaOrchestration.get("creditConcept").equals("REFUND")) {
+						movementType = Constants.ACCOUNT_CREDIT;
+						description = Constants.ACCOUNT_CREDIT;
+					}
+
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
-					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber"));
+					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
@@ -995,12 +1096,42 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			            	description = Constants.FALSE_CHARGEBACK_PENALTY;
 					}
 
+					if (description.equals(Constants.FALSE_CHARGEBACK)) {
+						if (aRequest.readValueParam("@i_externalCustomerId_ori") != null) {
+							extCustomerId = aRequest.readValueParam("@i_externalCustomerId_ori");
+						}
+						if (aRequest.readValueParam("@i_accountNumber_ori") != null) {
+							accountNumber = aRequest.readValueParam("@i_accountNumber_ori");
+						}
+						if (aRequest.readValueParam("@i_amount_com") != null) {
+							amount = aRequest.readValueParam("@i_amount_com");
+						}
+					}
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
 					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
-					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber"));
+					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
 				}
+				
+				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, extCustomerId);
+				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, amount);
 				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);				
 			}
+
+			if(tipoTran.equals("AccountReversalOperationOrchestrationCore")) {
+				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId_ori"));
+				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+				request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.CREDIT_REVERSAL);
+				
+				if (aBagSPJavaOrchestration.get("amount") != null) {
+					request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aBagSPJavaOrchestration.get("amount").toString());
+				}
+				
+				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR, transaccionDate);
+				request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
+				description = Constants.CREDIT_REVERSAL;
+				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber_ori"));
+			}
+
 			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
 			
 			IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
