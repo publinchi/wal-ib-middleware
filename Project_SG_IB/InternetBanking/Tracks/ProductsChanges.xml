@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<collection type="List" length="26" id="1">
+<collection type="List" length="27" id="1">
   <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="2" index="0">
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.Publicity.Service.Service" />
     <field type="String" name="state" value="Change" />
@@ -100,5 +100,9 @@
     <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SpeiIn.Service.Service" />
     <field type="String" name="state" value="Error" />
   </class>
-  <reference id="26" index="25" />
+  <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductsTrack" id="27" index="25">
+    <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service" />
+    <field type="String" name="state" value="Change" />
+  </class>
+  <reference id="27" index="26" />
 </collection>

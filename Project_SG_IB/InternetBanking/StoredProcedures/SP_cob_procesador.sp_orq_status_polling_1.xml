@@ -8,6 +8,7 @@
     <parameter name="@i_processId" dataType="varchar" direction="in" />
     <parameter name="@i_authToken" dataType="varchar" direction="in" />
     <parameter name="@i_loginSessionId" dataType="varchar" direction="in" />
+    <parameter name="@o_messageError" dataType="varchar" direction="out" />
   </parameters>
   <queries>
     <query>
