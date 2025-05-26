@@ -122,7 +122,11 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
 	    IProcedureResponse responseLocalTM = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration); 
 	    aBagSPJavaOrchestration.put(RESPONSE_LOCAL_TRANMONET, responseLocalTM);
 	    
-
+		/* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
+		}
         if(anOriginalRequest.readValueFieldInHeader("comision") != null) {
             if (logger.isInfoEnabled())
                 logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
