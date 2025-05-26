@@ -14,6 +14,8 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
@@ -40,6 +42,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
 /**
  * @author D. Collaguazo
@@ -53,7 +56,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplat
 		@Property(name = "service.identifier", value = "UnlockCreditOperationOrchestrationCore"),
 		@Property(name = "service.spName", value = "cob_procesador..sp_desbloquea_remesas")})
 public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
-	
+
 	private ILogger logger = (ILogger) this.getLogger();
 	private static final String CLASS_NAME = "UnlockCreditOperationOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
@@ -682,4 +685,20 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
+
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+ 
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+ 
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
+    }
 }

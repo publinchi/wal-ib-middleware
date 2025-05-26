@@ -192,7 +192,12 @@ public interface IServiceContractOperationsApiService {
 
 	// Have DTO
 	public ResponseGetMovementsDetail getMovementsDetail(String xRequestId, String xEndUserRequestDateTime,
-			String xEndUserIp, String xChannel, RequestGetMovementsDetail inRequestGetMovementsDetail)
+														 String xEndUserIp, String xChannel, RequestGetMovementsDetail inRequestGetMovementsDetail)
+			throws CTSRestException;
+
+	// Have DTO
+	public ResponseGetMovementsDetail getMovementsDetailV1(String xRequestId, String xEndUserRequestDateTime,
+														 String xEndUserIp, String xChannel, RequestGetMovementsDetail inRequestGetMovementsDetail)
 			throws CTSRestException;
 
 	/**
