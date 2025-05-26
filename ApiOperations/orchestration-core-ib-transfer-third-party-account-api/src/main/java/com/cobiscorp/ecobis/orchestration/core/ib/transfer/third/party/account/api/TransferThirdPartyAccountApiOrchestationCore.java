@@ -795,7 +795,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		//referenceCode =  aBagSPJavaOrchestration.get("ssn").toString();
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Reference --->" + referenceCode );
-			logger.logDebug("Retorno   --->" + codeReturn );
+			logger.logDebug("Return    --->" + codeReturn );
 		}
 		if(!aBagSPJavaOrchestration.containsKey("IsReentry"))
 			reety = "N";
