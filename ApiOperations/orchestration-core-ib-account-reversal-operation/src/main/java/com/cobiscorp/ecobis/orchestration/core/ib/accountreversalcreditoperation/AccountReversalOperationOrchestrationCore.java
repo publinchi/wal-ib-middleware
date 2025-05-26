@@ -42,6 +42,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 
 /**
  * @author jolmos
@@ -142,6 +143,9 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		String reasonCommision = anOriginalRequest.readValueParam("@i_reason_com");
 		String movementIdComOri = anOriginalRequest.readValueParam("@i_movementId_com_ori");
 		String referenceNumberComOri = anOriginalRequest.readValueParam("@i_referenceNumber_com_ori");
+
+		aBagSPJavaOrchestration.put("@i_originMovementId", movementIdOrigin);
+		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberComOri);
 
 		if (reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
@@ -339,6 +343,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPCentral.addOutputParam("@o_amount_ori", ICTSTypes.SQLMONEY, "0");
 
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 
@@ -415,6 +420,8 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Valida errores [isErrors]: " + aBagSPJavaOrchestration.get(IS_ERRORS).toString());
 		}
+		//Consulta datos de la transaccion original
+		searchDataTransactionOrigin(anOriginalRequest, aBagSPJavaOrchestration);
 
 		if (!(Boolean)aBagSPJavaOrchestration.get(IS_ERRORS)) {
 			IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(COLUMNS_RETURN);
@@ -436,8 +443,9 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			row.addRowData(6, new ResultSetRowColumnData(false, columnsToReturn[5].getValue()));
 			data.addRow(row);
 
-			//registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_rev").toString(), aBagSPJavaOrchestration);
-			//registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_com").toString(), aBagSPJavaOrchestration);
+			registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_rev").toString(), aBagSPJavaOrchestration);
+			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
+			registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_com").toString(), aBagSPJavaOrchestration);
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Ending flow, processResponse failed.");
@@ -448,6 +456,17 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 				logger.logDebug("key: null");
 				logger.logDebug("value: null");
 			}
+
+			aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message"));
+			aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code"));
+			
+			aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa_rev"));
+			registerTransactionFailed("AccountReversalOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
+
+			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
+			aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa_com"));
+			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
+			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_code")));
 			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_message")));
@@ -468,5 +487,47 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
 
 		return wProcedureResponse;
+	}
+
+	public void searchDataTransactionOrigin(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo("Begin [" + CLASS_NAME + "][searchDataTransactionOrigin]");
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
+		}
+
+		try{
+			IProcedureRequest reqTMPCentral = new ProcedureRequestAS();
+
+			reqTMPCentral.setSpName("cob_bvirtual..sp_bv_consulta_request");
+			reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+			reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+			reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+			reqTMPCentral.addInputParam("@i_nombreTrn", ICTSTypes.SQLVARCHAR, "Account Credit Operation");
+			reqTMPCentral.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
+
+			reqTMPCentral.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
+			reqTMPCentral.addOutputParam("@o_originCode", ICTSTypes.SQLVARCHAR, "X");
+
+			IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+			aBagSPJavaOrchestration.put("amount", wProcedureResponseCentral.readValueParam("@o_amount"));
+			aBagSPJavaOrchestration.put("origin_code", wProcedureResponseCentral.readValueParam("@o_originCode"));
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response executeCoreBanking cob_bvirtual..sp_bv_consulta_request: " + wProcedureResponseCentral.getProcedureResponseAsString());
+			}
+		} catch (Exception e) {
+			logger.logError(CLASS_NAME + " Error al obtener datos de transaccion de origen: " + e.getMessage(), e);
+			throw new RuntimeException("Error al obtener datos:", e);
+		} finally{
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + " Saliendo de searchDataTransactionOrigin");
+			}
+		}
+
 	}
 }
