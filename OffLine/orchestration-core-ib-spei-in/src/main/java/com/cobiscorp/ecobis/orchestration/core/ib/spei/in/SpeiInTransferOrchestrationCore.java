@@ -255,7 +255,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					IProcedureResponse consulClienteRes = this.consultaCliente(anOriginalRequest);
 					
 					aBagSPJavaOrchestration.put("code_error", codeError);
-		        	aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("@s_message").toString());
+					if(aBagSPJavaOrchestration.containsKey("@s_message") && aBagSPJavaOrchestration.get("@s_message") != null){
+						aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("@s_message").toString());
+					}else{
+						aBagSPJavaOrchestration.put("message_error", response.readValueParam("@o_descripcion"));
+					}
 		        	aBagSPJavaOrchestration.put("destinationAccountType", consulClienteRes.readValueParam("@o_tipo_cuenta_dest"));
 					aBagSPJavaOrchestration.put("originAccountType", consulClienteRes.readValueParam("@o_tipo_cuenta_orig"));
 					aBagSPJavaOrchestration.put("externalCustId", consulClienteRes.readValueParam("@o_client_code"));
@@ -377,7 +381,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					logger.logDebug("Flujo, Valida Resgo");					
 				}
 				
-				executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+				response = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+				if(response.getReturnCode() != 0 && !aBagSPJavaOrchestration.containsKey("success_risk")) {
+					return response;
+				}
 
 				if (aBagSPJavaOrchestration.get("success_risk") != null && !aBagSPJavaOrchestration.get("success_risk").equals("false")) {
 					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
@@ -618,10 +625,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			
 			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		}
-
-			
-		
-
 		
 		Integer code = 0;
         String message = "success";
@@ -697,8 +700,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			ccProcedureResponse.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 			ccProcedureResponse.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
 			
-			logger.logDebug("Code Error local" + code);
-			logger.logDebug("Message Error local" + message);
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Code Error consultaCliente" + code);
+				logger.logDebug("Message Error consultaCliente" + message);
+			}
 		}
 	
 		ccProcedureResponse.setReturnCode(code);
