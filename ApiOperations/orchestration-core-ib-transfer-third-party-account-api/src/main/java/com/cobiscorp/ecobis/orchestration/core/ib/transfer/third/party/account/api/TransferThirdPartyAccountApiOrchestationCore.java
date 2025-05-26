@@ -779,8 +779,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 	public IProcedureResponse processResponseTransfer(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(" start processResponseAccounts--->");
-			logger.logInfo("xdcxv --->" + aBagSPJavaOrchestration.get("ssn") );
+			logger.logInfo(" start processResponseTransfer ");
+		}
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("SSN: " + aBagSPJavaOrchestration.get("ssn") );			
 		}
 		
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
@@ -791,9 +793,10 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		Boolean respAdditionalData = Boolean.valueOf(false);
 		
 		//referenceCode =  aBagSPJavaOrchestration.get("ssn").toString();
-		logger.logInfo("xdcxv2 --->" + referenceCode );
-		logger.logInfo("xdcxv3 --->" + codeReturn );
-		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Reference --->" + referenceCode );
+			logger.logDebug("Retorno   --->" + codeReturn );
+		}
 		if(!aBagSPJavaOrchestration.containsKey("IsReentry"))
 			reety = "N";
 		else
