@@ -315,12 +315,16 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
         String precision = jsonAdditionalData.get("accuracy").getAsString();
         String loginSessionId = jsonAdditionalData.get("userSessionId").getAsString();
         String riesgoId = jsonAdditionalData.get("riesgoId").getAsString();
+        String deviceModel = jsonAdditionalData.get("channel").getAsString();
+        String deviceOsModel = jsonAdditionalData.get("userAgent").getAsString();
 
         anOriginalRequestRegistContacLimit.addInputParam("@i_latitude", ICTSTypes.SQLVARCHAR, latitude);
         anOriginalRequestRegistContacLimit.addInputParam("@i_longitude", ICTSTypes.SQLVARCHAR, longitude);
         anOriginalRequestRegistContacLimit.addInputParam("@i_precision", ICTSTypes.SQLVARCHAR, precision);
         anOriginalRequestRegistContacLimit.addInputParam("@i_loginSessionId", ICTSTypes.SQLVARCHAR, loginSessionId);
         anOriginalRequestRegistContacLimit.addInputParam("@i_riesgoId", ICTSTypes.SQLVARCHAR, riesgoId);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_deviceModel", ICTSTypes.SQLVARCHAR, deviceModel);
+        anOriginalRequestRegistContacLimit.addInputParam("@i_deviceOsModel", ICTSTypes.SQLVARCHAR, deviceOsModel);
 
         anOriginalRequestRegistContacLimit.addOutputParam("@o_responseCode", ICTSTypes.SQLVARCHAR, "X");
         anOriginalRequestRegistContacLimit.addOutputParam("@o_message", ICTSTypes.SQLVARCHAR, "X");
