@@ -27,7 +27,6 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
     protected static final String RESPONSE_SERVER = "RESPONSE_SERVER";
     protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
     protected static final String RESPONSE_UPDATE_LOCAL = "RESPONSE_UPDATE_LOCAL";
-    protected static final String RESPONSE_LOCAL_TRANMONET = "RESPONSE_LOCAL_TRANMONET";
     protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
     protected static final String RESPONSE_BALANCE = "RESPONSE_BALANCE";
     protected static final String RESPONSE_OFFLINE = "RESPONSE_OFFLINE";
@@ -117,16 +116,6 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
         logger.logInfo("SERVER RESPONSE: "+responseServer.toString());
         aBagSPJavaOrchestration.put(RESPONSE_SERVER, responseServer);
 
-	    aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest); 
-		//guarda en la reetranmonet
-	    IProcedureResponse responseLocalTM = updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration); 
-	    aBagSPJavaOrchestration.put(RESPONSE_LOCAL_TRANMONET, responseLocalTM);
-	    
-		/* Validar comportamiento transaccion */
-		if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
-			return Utils.returnException(this.MESSAGE_RESPONSE);
-		}
         if(anOriginalRequest.readValueFieldInHeader("comision") != null) {
             if (logger.isInfoEnabled())
                 logger.logInfo("Llegada de comisiom ---> " + anOriginalRequest.readValueFieldInHeader("comision"));
@@ -141,10 +130,6 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
 
         // Ejecuta transaccion core
         responseTransfer = executeTransaction(anOriginalRequest, aBagSPJavaOrchestration);
-        
-      //actualiza en la reetranmonet
-        updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
-
         if (Utils.flowError("executeTransaction", responseTransfer)) {
             if (Boolean.TRUE.equals(responseServer.getOnLine())) {
                 if (Boolean.FALSE.equals(getFromReentryExcecution(aBagSPJavaOrchestration))) {
@@ -222,10 +207,6 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             request.addInputParam("@i_tipoCuentaBeneficiario", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
             request.addInputParam("@i_tipoCuentaOrdenante", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaOrdenante"));
             request.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_idSpei"));
-            request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "API");
-            request.addInputParam("@i_tipo_trn", ICTSTypes.SQLVARCHAR, "SPEI_CREDIT");
-            
-            request.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
         }
         // Datos de tran monet
         Utils.copyParam("@i_cta", anOriginalRequest, request);
@@ -255,13 +236,11 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
                 if (logger.isInfoEnabled())
                     logger.logInfo("ParÃ¡metro @o_clave no encontrado");
             }
-            request.addInputParam("@i_tipo_ejec", ICTSTypes.SQLVARCHAR, "F");
-        }else
-        {
-	        if (logger.isInfoEnabled()) {
-	            logger.logInfo("Transaccion ejecutando en linea: " + responseServer.getOnLine());
-	        }
-	        request.addInputParam("@i_tipo_ejec", ICTSTypes.SQLVARCHAR, "L");
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.logInfo("Transaccion ejecutando en linea: " + responseServer.getOnLine());
+            //logger.logInfo("Respuesta del core al ejecutar transferencia: " + responseTransaction != null ? responseTransaction.toString() : "ERROR ejecucion en el core es NULL");
         }
 
         // obtener returnCode de ejecucion de Core, si es fuera de linea el error es 40004
@@ -312,5 +291,5 @@ public abstract class TransferInBaseTemplate extends SPJavaOrchestrationBase {
             logger.logDebug(aMessage);
         }
     }
-    
+
 }
