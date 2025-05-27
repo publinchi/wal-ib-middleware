@@ -289,7 +289,7 @@ Resources:
         - Arn: !GetAtt ProcessMFTLambda.Arn
           Id: processMFTTargetCONTA
           Input: |
-            { 269
+            {
               "flow_name": "CONTA",
               "user_execute": "eventbridge-CONTA"
             }

@@ -67,42 +67,54 @@
 
     <build>
         <plugins>
-            <!-- plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
-                <extensions>true</extensions>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
                 <configuration>
-                    <instructions>
-                        <Bundle-ClassPath>${bundle.classpath}</Bundle-ClassPath>
-						<Bundle-Activator>com.cobiscorp.ecobis.businessprocess.connector.impl.Activator</Bundle-Activator>
-                        <Export-Package/>
-                    </instructions>
+                    <!-- Indica que se reporten unicamente los bug de prioridad High,Default,
+                                      Low -->
+                    <threshold>High</threshold>
+                    <skip>${skip.findbugs}</skip>
+                    <excludeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Exclude.xml</excludeFilterFile>
+                    <includeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Include.xml</includeFilterFile>
+                    <xmlOutput>true</xmlOutput>
+                    <outputDirectory>${basedir}/target/</outputDirectory>
+                    <findbugsXmlOutputDirectory>${basedir}/target/finbugs</findbugsXmlOutputDirectory>
+                    <detail>true</detail>
+                    <failOnError>${findbugs.fail.on.violation}</failOnError>
                 </configuration>
-            </plugin-->
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-jarsigner-plugin</artifactId>
-		</plugin>
-		<plugin>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>maven-scr-plugin</artifactId>
-		</plugin>
-		
-		<plugin>
-			<groupId>com.springsource.bundlor</groupId>
-			<artifactId>com.springsource.bundlor.maven</artifactId>
-		</plugin>
-		
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-jar-plugin</artifactId>
-		</plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.4.0</version>
-        </plugin>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-scr-plugin</artifactId>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.springsource.bundlor</groupId>
+				<artifactId>com.springsource.bundlor.maven</artifactId>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
         </plugins>
      <pluginManagement>
      	<plugins>
