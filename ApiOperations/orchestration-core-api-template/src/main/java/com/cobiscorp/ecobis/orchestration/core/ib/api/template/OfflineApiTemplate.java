@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
@@ -23,6 +24,8 @@ import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
 public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
@@ -35,9 +38,14 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	protected static final String COBIS_CONTEXT = "COBIS";
 	protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
 	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
-	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION";
+	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION"; 
+	protected static final String REENTRY_EXE = "reentryExecution";
+	protected static final String RESPONSE_SERVER = "RESPONSE_SERVER";
+	protected static final String RESPONSE_LOCAL_VALIDATION = "RESPONSE_LOCAL_VALIDATION";
+	protected static final String RESPONSE_BALANCE = "RESPONSE_BALANCE";
 	public String MESSAGE_RESPONSE =  "SUCCESS";
 	public String transaccionDate;
+	public abstract ICoreServer getCoreServer();
 
 	protected static final String IS_ONLINE = "isOnline";
 	protected static final String IS_REENTRY = "flowRty";
@@ -839,6 +847,399 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	    }
 
 	    return response;
+	}
+	
+	// METODO PARA GUARDAR RE_TRAN_MONET LOCAL
+	
+	protected IProcedureResponse validateLocalExecution(Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Inicia validacion local");
+
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local originalRequest:"+originalRequest);
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setChannelId(originalRequest.readValueFieldInHeader("servicio"));
+		ServerResponse serverResponse;
+		IProcedureResponse pResponse = null;
+		try {
+			serverResponse = getCoreServer().getServerStatus(serverRequest);
+		
+	    IProcedureRequest request = initProcedureRequest(originalRequest);	
+
+				
+		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800048");
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+		request.setSpName("cob_bvirtual..sp_bv_validacion");
+
+		request.addInputParam("@s_ssn_branch", ICTSTypes.SQLINT4, originalRequest.readValueParam("@s_ssn_branch"));
+		request.addInputParam("@s_cliente", ICTSTypes.SYBINT4, originalRequest.readValueParam("@s_cliente"));
+		request.addInputParam("@s_perfil", ICTSTypes.SYBINT2, originalRequest.readValueParam("@s_perfil"));
+		request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, originalRequest.readValueParam("@s_servicio"));
+				
+		if (getFromReentryExcecution(aBagSPJavaOrchestration)) {
+			Utils.addInputParam(request, "@t_rty", ICTSTypes.SQLVARCHAR, "S");
+		} else { // no es ejecucion de reentry
+			Utils.addInputParam(request, "@t_rty", ICTSTypes.SQLVARCHAR, "N");
+		}
+
+		int t_trn = Integer.parseInt(originalRequest.readValueParam("@t_trn"));		
+		if (logger.isInfoEnabled())
+			logger.logInfo("t_trn a evaluar: " + t_trn);
+		
+		request.addInputParam("@t_trn", ICTSTypes.SYBINTN, String.valueOf(Utils.getTransactionMenu(t_trn)));	
+		
+		request.addInputParam("@i_prod", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_prod"));
+		request.addInputParam("@i_prod_des", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_prod_des"));
+		request.addInputParam("@i_login", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_login"));
+		request.addInputParam("@i_cta_des", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_cta_des"));
+		request.addInputParam("@i_cta", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_cta"));
+		request.addInputParam("@i_concepto", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_concepto"));
+		request.addInputParam("@i_val", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_val"));
+		request.addInputParam("@i_mon", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_mon"));
+		
+		// Parametros Withdrawal
+		request.addInputParam("@i_movement_type", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_movement_type"));
+		request.addInputParam("@i_establishmentName", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_establishmentName")); 
+		request.addInputParam("@i_transactionId", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_transactionId")); 
+		request.addInputParam("@i_uuid", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_uuid")); 
+		
+		// Parametros Dock
+		request.addInputParam("@i_card_id", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_card_id"));
+		request.addInputParam("@i_pin", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_pin")); 
+		request.addInputParam("@i_code", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_code")); 
+		request.addInputParam("@i_mode", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_mode"));
+
+		request.addInputParam("@i_campo8", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_campo8")); 
+		request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR,"N");
+		request.addInputParam("@i_origen", ICTSTypes.SYBVARCHAR, "API");
+		
+		if (!getFromReentryExcecution(aBagSPJavaOrchestration)) {
+			request.addInputParam("@i_genera_clave", ICTSTypes.SYBVARCHAR,"S");
+			request.addInputParam("@i_valida_limites", ICTSTypes.SYBCHAR,"S");	
+		}else {
+			request.addInputParam("@i_valida_limites", ICTSTypes.SYBCHAR,"N");	
+		}
+		
+		if(!serverResponse.getOnLine()) {	
+			request.addInputParam("@i_linea", ICTSTypes.SQLVARCHAR, "N");
+			request.addInputParam("@i_saldo", ICTSTypes.SQLVARCHAR, "S");
+			request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR,"O");
+		}else {
+			request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR,"N");
+		}
+			
+		request.addOutputParam("@o_cliente_mis", ICTSTypes.SYBINT4, "0");
+		request.addOutputParam("@o_prod", ICTSTypes.SYBINT2, "0");
+		request.addOutputParam("@o_cta", ICTSTypes.SYBVARCHAR, "0000000000000000000000000000000");
+		request.addOutputParam("@o_mon", ICTSTypes.SYBINT2, "0");
+		request.addOutputParam("@o_prod_des", ICTSTypes.SYBINT2, "0");
+		request.addOutputParam("@o_cta_des", ICTSTypes.SYBVARCHAR, "0000000000000000000000000000000");
+		request.addOutputParam("@o_mon_des", ICTSTypes.SYBINT2, "0");
+		request.addOutputParam("@o_retorno", ICTSTypes.SYBINT4, "0");
+		request.addOutputParam("@o_condicion", ICTSTypes.SYBINT4, "0");
+		request.addOutputParam("@o_fecha_ini", ICTSTypes.SYBDATETIME, "01/01/2013");
+		request.addOutputParam("@o_fecha_fin", ICTSTypes.SYBDATETIME, "01/01/2013");
+		request.addOutputParam("@o_ult_fecha", ICTSTypes.SYBDATETIME, "01/01/2013");
+		request.addOutputParam("@o_srv_host", ICTSTypes.SYBVARCHAR, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		request.addOutputParam("@o_autorizacion", ICTSTypes.SYBCHAR, "N");
+		request.addOutputParam("@o_ssn_branch", ICTSTypes.SYBINT4, "0");
+		request.addOutputParam("@o_cta_cobro", ICTSTypes.SYBVARCHAR, "0000000000000000000000000000000");
+		request.addOutputParam("@o_prod_cobro", ICTSTypes.SYBINT2, "0");
+		request.addOutputParam("@o_cod_mis", ICTSTypes.SYBINT4, "0");
+		request.addOutputParam("@o_clave_bv", ICTSTypes.SYBINT4, "0");
+		
+		request.addOutputParam("@o_saldo_local", ICTSTypes.SQLMONEY, "0");
+		request.addOutputParam("@o_aplica_tran", ICTSTypes.SYBVARCHAR, "X");
+
+	
+		if (!Utils.isNull(originalRequest.readParam("@i_val"))) {
+			
+			String valies=originalRequest.readParam("@i_val").toString();
+			
+			if (logger.isDebugEnabled())
+				logger.logDebug(CLASS_NAME + "Valorsito " + valies);			
+		}
+		
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: Transaccion "+String.valueOf(t_trn)+" monto::::  "  );
+		
+		
+		request.addOutputParam("@o_comision", ICTSTypes.SYBMONEY, "0");
+		
+		
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, request: " + request.getProcedureRequestAsString());
+
+		// Ejecuta validacion
+		pResponse = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "Validacion local, response: " + pResponse.getProcedureResponseAsString());
+		if (logger.isInfoEnabled())
+			logger.logInfo(CLASS_NAME + "Finaliza validacion local");
+
+		} catch (CTSServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CTSInfrastructureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pResponse;
+	}
+	
+	protected Boolean getFromReentryExcecution(Map<String, Object> aBagSPJavaOrchestration) {
+		IProcedureRequest request = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		if (logger.isDebugEnabled())
+			logger.logDebug(CLASS_NAME + "getFromReentryExcecution local originalRequest:"+request);
+		if (logger.isDebugEnabled())
+			logger.logDebug("getFromReentryExcecution: "+request.readValueFieldInHeader("reentryExecution"));
+
+			
+		if (!Utils.isNull(request.readValueFieldInHeader("reentryExecution"))){
+			return ("Y".equals(request.readValueFieldInHeader("reentryExecution")));
+		}else
+			return false;
+			
+	}
+
+	public boolean registerMovementsAuthAdditionalData(boolean isOnline, String provider, String movementType, String sequential, String secBranch, String codAlter,
+													   String authorizationCode, String maskedCardNumber, IProcedureRequest aRequest){
+		try{
+			String transaction  = aRequest.readValueParam("@t_trn");
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Entrando en registerMovementsAdditionalData");
+			}
+			String externalCustomerId = aRequest.readValueParam("@i_external_customer_id");
+			SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
+			Map<String, String> additionalData = new HashMap<String, String>();
+
+			String cardId = aRequest.readValueParam("@i_card_id");
+			String typeAuth = aRequest.readValueParam("@i_type");
+			String locationId = aRequest.readValueParam("@i_terminal_code");
+			String bankBranchCode = aRequest.readValueParam("@i_bank_branch_number");
+			String transactionID = aRequest.readValueParam("@i_retrieval_reference_number");
+			String establishmentName = aRequest.readValueParam("@i_establishment");
+			String institutionName = aRequest.readValueParam("@i_institution_name");
+			String requestID = aRequest.readValueParam("@i_uuid") == null ? aRequest.readValueParam("@x_uuid") :
+					aRequest.readValueParam("@i_uuid");
+			String cardEntryCode =  aRequest.readValueParam("@i_card_entry_code");
+			String cardEntryPin =  aRequest.readValueParam("@i_pin");
+			String cardEntryMode =  aRequest.readValueParam("@i_mode");
+			String data = String.join("|", provider, cardId, typeAuth, locationId,
+					bankBranchCode,transactionID,establishmentName,institutionName,
+					authorizationCode,externalCustomerId,requestID,maskedCardNumber,
+					cardEntryCode, cardEntryPin, cardEntryMode,"N");
+			additionalData.put("secuential", sequential);
+			additionalData.put("secBranch", secBranch);
+			additionalData.put("alternateCod", codAlter);
+			additionalData.put("transaction", transaction);
+			additionalData.put("movementType", movementType);
+			additionalData.put("provider", provider);
+			additionalData.put("data",data);
+
+
+
+			Boolean res = saveAdditional.saveData(movementType, isOnline, additionalData );
+
+			if(Boolean.TRUE.equals(res) && logger.isInfoEnabled()) {
+				logger.logInfo("saveAditionalData: " + res);
+			}
+
+			return res;
+
+		}catch(Exception e){
+			if (logger.isErrorEnabled()){logger.logError("Fallo  registerMovementsAdditionalData", e);}
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerMovementsAdditionalData");
+			}
+		}
+		return false;
+	}
+
+	protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+		if (logger.isDebugEnabled())
+			logger.logDebug("Ejecutando metodo updateLocalExecution: " + anOriginalRequest.toString());
+		IProcedureResponse pResponse = null;
+		try
+		{
+			
+			IProcedureRequest request = initProcedureRequest(anOriginalRequest);
+	
+			request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, anOriginalRequest.readValueParam("@t_trn"));
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+			request.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH));
+			request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+			request.addInputParam("@t_trn", ICTSTypes.SYBINTN, anOriginalRequest.readValueParam("@t_trn"));
+			request.setSpName("cob_bvirtual..sp_bv_transaccion");
+	
+			request.addInputParam("@s_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn_branch"));
+			request.addInputParam("@s_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
+			request.addInputParam("@s_cliente", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@s_cliente"));
+			request.addInputParam("@s_perfil", ICTSTypes.SYBINT2, anOriginalRequest.readValueParam("@s_perfil"));
+			request.addInputParam("@s_servicio", ICTSTypes.SYBINT1, anOriginalRequest.readValueParam("@s_servicio"));
+			request.addInputParam("@i_graba_log", ICTSTypes.SQLVARCHAR, "N");
+
+			request.addInputParam("@i_causa", ICTSTypes.SQLINT4, isInteger(bag.get("causa")));
+			
+			// Datos de cuenta origen
+			Utils.copyParam("@i_cta", anOriginalRequest, request);
+			Utils.copyParam("@i_prod", anOriginalRequest, request);
+			Utils.copyParam("@i_mon", anOriginalRequest, request);
+			
+			Utils.copyParam("@i_val", anOriginalRequest, request);
+			Utils.copyParam("@i_concepto", anOriginalRequest, request);
+	
+			if (!Utils.isNull(anOriginalRequest.readValueParam("@i_login")))
+				request.addInputParam("@i_login", anOriginalRequest.readParam("@i_login").getDataType(), anOriginalRequest.readValueParam("@i_login"));
+			else
+				request.addInputParam("@i_login", anOriginalRequest.readParam("@s_user").getDataType(), anOriginalRequest.readValueParam("@s_user"));
+			
+			request.addInputParam("@s_error", ICTSTypes.SQLVARCHAR, (String) bag.get("s_error"));
+			request.addInputParam("@s_msg", ICTSTypes.SQLVARCHAR, (String) bag.get("s_msg"));
+			request.addInputParam("@i_auth_code", ICTSTypes.SQLINT4, (String)bag.get("i_auth_code"));
+
+			//DOCK
+			request.addInputParam("@i_movement_type", ICTSTypes.SQLVARCHAR, (String)bag.get("i_movement_type"));
+			request.addInputParam("@i_tarjeta_mascara",ICTSTypes.SQLVARCHAR, (String)bag.get("i_tarjeta_mascara"));
+
+			String authorizationCode = anOriginalRequest.readValueParam("@i_authorization_code");
+			if (authorizationCode != null && !authorizationCode.isEmpty()) {
+				request.addInputParam("@i_authorization_code", ICTSTypes.SQLVARCHAR, authorizationCode);
+			}
+	
+			request.addInputParam("@i_graba_tranmonet", ICTSTypes.SQLVARCHAR, "S");
+	
+			// envio de t_rty
+			if (logger.isInfoEnabled())
+				logger.logInfo("Update local param reentryExecution" + request.readValueFieldInHeader("reentryExecution"));
+			request.removeParam("@t_rty");
+			if (getFromReentryExcecution(bag)) {
+				Utils.addInputParam(request, "@t_rty", ICTSTypes.SQLVARCHAR, "S");
+			} else { // no es ejecucion de reentry
+				Utils.addInputParam(request, "@t_rty", ICTSTypes.SQLVARCHAR, "N");
+			}
+	
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Update local, request: " + request.getProcedureRequestAsString());
+			}
+	
+			/* Ejecuta y obtiene la respuesta */
+			pResponse = executeCoreBanking(request);
+	
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Update local, response: " + pResponse.getProcedureResponseAsString());
+			}
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("Finalize Update local");
+			}
+			
+		}catch (Exception e) {
+			if (logger.isErrorEnabled()) {
+				logger.logError("Error Update local trn: ",e );
+			}
+		}
+		return pResponse;
+	}
+
+    public Boolean registerMovementsP2PAdditionalData (String movType, boolean isOnline, IProcedureRequest request, IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration){
+    	
+	    Map<String, String> aditionalData = new HashMap<String, String>();
+	    Boolean respSaveAdditionalDataImplDebt = Boolean.FALSE;
+	    Boolean respSaveAdditionalDataImplCred = Boolean.FALSE;
+	    String accountNumberOrg = movType.equals("TRANSFER") ? request.readValueParam("@i_cta") : request.readValueParam("@i_accountNumber");
+	    String accountNumberDes = movType.equals("TRANSFER") ? request.readValueParam("@i_cta_des") : request.readValueParam("@i_accountNumber");
+	    String xRequestId = aBagSPJavaOrchestration.get("x_request_id")==null ? "0" : aBagSPJavaOrchestration.get("x_request_id").toString();
+	    
+	    String dataDebit = (movType.equals("TRANSFER") 
+	    		            ? request.readValueParam("@o_benef_cta_des") + "|" + accountNumberDes
+	    		            : request.readValueParam("@o_benef_cta_org") + "|" + accountNumberOrg)
+	    		   + "|" + (movType.equals("TRANSFER") ? xRequestId : "0") 
+	    		   + "|" + movType.charAt(0);
+	    
+	    String dataCredit = (movType.equals("TRANSFER") 
+	                         ? request.readValueParam("@o_benef_cta_org") + "|" + accountNumberOrg
+	                         : request.readValueParam("@o_benef_cta_des") + "|" + accountNumberDes)
+	    		   + "|" + (movType.equals("TRANSFER") ? xRequestId : "0")  
+	               + "|" + movType.charAt(0);
+	    
+	    aditionalData.put("secuential", isOnline ? response.readValueParam("@o_ssn"): response.readValueFieldInHeader("ssn"));  // request.readValueParam("@s_ssn")
+	    aditionalData.put("secBranch" , isOnline ? response.readValueParam("@o_ssn_branch"): request.readValueParam("@o_referencia"));
+	    aditionalData.put("transaction", request.readValueFieldInHeader("trn"));
+
+	    if (movType.equals("DEBIT") || movType.equals("TRANSFER")){
+			SaveAdditionalDataImpl aditionalDataProcDebt = new SaveAdditionalDataImpl();
+		    aditionalData.put("alternateCod", request.readValueParam("@o_cod_alt_org"));
+		    aditionalData.put("movementType", Constants.P2P_DEBIT);
+		    aditionalData.put("data", dataDebit);
+		    respSaveAdditionalDataImplDebt = aditionalDataProcDebt.saveData(Constants.P2P_DEBIT, isOnline, aditionalData);
+		    respSaveAdditionalDataImplDebt = respSaveAdditionalDataImplDebt != null ? respSaveAdditionalDataImplDebt : Boolean.FALSE;
+		    
+			if (logger.isDebugEnabled())
+				logger.logDebug("Registro datos adicionales P2P  Transacción: " + movType + " Tipo: Débito"
+						+ " Codigo alterno org: " + request.readValueParam("@o_cod_alt_org")
+						+ " Datos adicionales org: " + dataDebit
+						+ " Resultado: " + (respSaveAdditionalDataImplDebt ? "Exitoso" : "Fallido"));
+	    }
+	    
+	    if (movType.equals("CREDIT") || movType.equals("TRANSFER")){
+	    	SaveAdditionalDataImpl aditionalDataProcCred = new SaveAdditionalDataImpl();
+			aditionalData.remove("alternateCod");
+			aditionalData.remove("movementType");
+			aditionalData.remove("data");
+		    aditionalData.put("alternateCod", request.readValueParam("@o_cod_alt_des"));
+		    aditionalData.put("movementType", Constants.P2P_CREDIT);
+		    aditionalData.put("data", dataCredit);
+		    respSaveAdditionalDataImplCred = aditionalDataProcCred.saveData(Constants.P2P_CREDIT, isOnline, aditionalData);
+		    respSaveAdditionalDataImplCred = respSaveAdditionalDataImplCred != null ? respSaveAdditionalDataImplCred : Boolean.FALSE;
+		    
+            if (logger.isDebugEnabled())
+				logger.logDebug("Registro datos adicionales P2P  Transacción: " + movType + " Tipo: Crédito"
+						+ " Codigo alterno des: " + request.readValueParam("@o_cod_alt_des")
+						+ " Datos adicionales des: " + dataCredit
+						+ " Resultado: " + (respSaveAdditionalDataImplCred ? "Exitoso" : "Fallido"));
+	    }
+	    
+	    return movType.equals("DEBIT") 
+	    	    ? respSaveAdditionalDataImplDebt 
+	    	    : movType.equals("CREDIT") 
+	    	        ? respSaveAdditionalDataImplCred 
+	    	        : (respSaveAdditionalDataImplDebt && respSaveAdditionalDataImplCred 
+	    	            ? Boolean.TRUE 
+	    	            : Boolean.FALSE);
+	}
+
+	private String isInteger(Object obj) {
+		if (obj == null) {
+			return null; // Null objects are not integers
+		}
+
+		if (obj instanceof Integer) {
+			return obj.toString(); // Already an integer, return its string representation
+		}
+	
+		// Check if the object is a String
+		if (obj instanceof String) {
+			String str = (String) obj;
+	
+			if (str.isEmpty()) {
+				return null; // Empty strings are not integers
+			}
+	
+			try {
+				Integer.parseInt(str); // Try parsing the string as an integer
+				return obj.toString(); // Successfully parsed, it is an integer
+			} catch (NumberFormatException e) {
+				return null; // Parsing failed, not an integer
+			}
+		}
+		return null; // Not an integer or string, return null
 	}
 
 	public IProcedureResponse logIdempotence(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
