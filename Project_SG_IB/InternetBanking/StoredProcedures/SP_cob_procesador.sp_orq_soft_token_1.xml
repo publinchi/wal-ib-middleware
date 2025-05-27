@@ -15,10 +15,10 @@
   <queries>
     <query>
       <columns>
-        <column name="CRONTO" />
-        <column name=" PROCESS ID" />
-        <column name=" POLLING INTERVAL" />
-        <column name=" CRONTO EXPIRY" />
+        <column name="cronto" />
+        <column name=" processId" />
+        <column name=" pollingInterval" />
+        <column name=" crontoExpiry" />
       </columns>
       <queryText></queryText>
     </query>
