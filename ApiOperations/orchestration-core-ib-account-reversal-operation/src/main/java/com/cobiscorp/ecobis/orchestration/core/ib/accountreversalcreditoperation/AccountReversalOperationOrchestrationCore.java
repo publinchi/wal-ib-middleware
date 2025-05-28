@@ -43,6 +43,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
 /**
  * @author jolmos
