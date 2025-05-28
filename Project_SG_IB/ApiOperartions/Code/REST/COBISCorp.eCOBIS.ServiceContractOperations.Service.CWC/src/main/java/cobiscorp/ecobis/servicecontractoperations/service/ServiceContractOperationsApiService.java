@@ -8606,7 +8606,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	 */
 	@Override
 	// Have DTO
-	public ResponseRegisterAccount registerAccountForTransfer(String xrequestid, String xenduserrequestdatetime,
+	pu ResponseRegisterAccount registerAccountForTransfer(String xrequestid, String xenduserrequestdatetime,
 			String xenduserip, String xchannel, RequestRegisterAccount inRequestRegisterAccount)
 			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: registerAccountForTransfer");
