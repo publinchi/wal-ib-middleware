@@ -68,16 +68,10 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		return coreServer;
 	}
 
-	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+	
 	protected ICoreServer coreServer;
 
-	public void bindCoreServer(ICoreServer service) {
-		coreServer = service;
-	}
 
-	public void unbindCoreServer(ICoreServer service) {
-		coreServer = null;
-	}
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
