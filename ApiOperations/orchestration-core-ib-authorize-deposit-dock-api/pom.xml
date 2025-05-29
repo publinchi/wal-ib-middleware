@@ -14,35 +14,6 @@
   <properties>
     <version.project>${project.version}</version.project>
   </properties>
-    <build>
-  <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.4</version>
-                <configuration>
-                    <!-- Indica que se reporten unicamente los bug de prioridad High,Default,
-                                      Low -->
-                    <threshold>High</threshold>
-                    <skip>${skip.findbugs}</skip>
-                    <excludeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Exclude.xml</excludeFilterFile>
-                    <includeFilterFile>${project.build.directory}/maven-shared-archive-resources/findbugs-Include.xml</includeFilterFile>
-                    <xmlOutput>true</xmlOutput>
-                    <outputDirectory>${basedir}/target/</outputDirectory>
-                    <findbugsXmlOutputDirectory>${basedir}/target/finbugs</findbugsXmlOutputDirectory>
-                    <detail>true</detail>
-                    <failOnError>${findbugs.fail.on.violation}</failOnError>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-  </plugins>
- </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.felix</groupId>

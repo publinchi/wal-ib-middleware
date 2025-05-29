@@ -49,7 +49,6 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceMonetaryTran
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceReexecutionComponent;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSelfAccountTransfers;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
-import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 
 /**
  * Plugin of between accounts transfers
@@ -85,7 +84,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	 */
 	private static ILogger logger = LogFactory.getLogger(SpeiInTransferOrchestrationCore.class);
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
-	private static final String SPEI_CREDIT = "SPEI_CREDIT";
 	private String validaRiesgo = "";
 
 
@@ -143,7 +141,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			logger.logInfo("SpeiInTransferOrchestrationCore: executeJavaOrchestration");
 
 		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
-		Boolean respAdditionalData = Boolean.valueOf(false);
 
 		mapInterfaces.put("coreServer", coreServer);
 		mapInterfaces.put("coreService", coreService);
@@ -168,13 +165,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 				notifySpei(anOriginalRequest, aBagSPJavaOrchestration);
 				registerWebhook(anOriginalRequest, aBagSPJavaOrchestration);
 			}
-			
-			/*Datos adicionales*/
-			respAdditionalData = registerMovementsSpeiInAdditionalData(
-					((ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER)).getOnLine(), 
-					anOriginalRequest, 
-					(IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION),
-					(IProcedureResponse)aBagSPJavaOrchestration.get(RESPONSE_LOCAL_TRANMONET));
+	
 		}
 
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -785,7 +776,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
 		procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
-		procedureRequest.addOutputParam("@o_nom_institucion_ordenante", ICTSTypes.SQLVARCHAR, "");
 
 
 		logger.logInfo(wInfo + END_TASK);
@@ -1339,43 +1329,4 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		coreServiceNotification = null;
 	}
 
-    public Boolean registerMovementsSpeiInAdditionalData (boolean isOnline, IProcedureRequest request, IProcedureResponse response, IProcedureResponse responseTm){
-	    
-        Map<String, String> aditionalData = new HashMap<>();
-		    
-		Boolean respSaveAdditionalDataImplSpeiIn = Boolean.FALSE;
-		SaveAdditionalDataImpl aditionalDataProcSpeiIn = new SaveAdditionalDataImpl();
-		
-		String idSpei = request.readValueParam("@i_idSpei");
-		String claveRastreo = request.readValueParam("@i_claveRastreo");
-		String referenciaNumerica = request.readValueParam("@i_referenciaNumerica");
-		String nombreOrdenante = request.readValueParam("@i_nombreOrdenante");
-        String cuentaOrdenante = request.readValueParam("@i_cuentaOrdenante");
-	    String institucionOrdenante = request.readValueParam("@i_institucionOrdenante");
-	    String institucionBeneficiaria = request.readValueParam("@i_institucionBeneficiaria");
-	    String nombInstitucionOrdenante = response.readValueParam("@o_nom_institucion_ordenante");
-		    
-	    String aditionalDataConcat = idSpei + '|' + claveRastreo + '|' + referenciaNumerica + '|' + nombreOrdenante + '|' 
-		    		         + cuentaOrdenante + '|' + institucionOrdenante + '|' + institucionBeneficiaria + '|' + nombInstitucionOrdenante;
-
-		aditionalData.put("secuential", request.readValueParam("@s_ssn"));
-		aditionalData.put("secBranch" , request.readValueParam("@s_ssn_branch"));
-		aditionalData.put("transaction", request.readValueParam("@t_trn")); // response.readValueFieldInHeader(ICOBISTS.HEADER_TRN)
-	    aditionalData.put("alternateCod", isOnline ? "0" :responseTm.readValueParam("@o_cod_alt_des").toString());
-	    aditionalData.put("movementType", SPEI_CREDIT);		    
-	    aditionalData.put("data", aditionalDataConcat);
-
-		respSaveAdditionalDataImplSpeiIn = aditionalDataProcSpeiIn.saveData(SPEI_CREDIT, isOnline, aditionalData);
-		    
-	    if (logger.isDebugEnabled())
-	      	logger.logDebug("Registro datos adicionales SPEI IN:" 
-	                + " Secuencial" + request.readValueParam("@s_ssn")
-					+ " Transacción: " + request.readValueParam("@t_trn")
-					+ " Tipo movimiento: " + SPEI_CREDIT
-					+ " Resultado: " + (respSaveAdditionalDataImplSpeiIn ? "Exitoso" : "Fallido"));
-		
-        return respSaveAdditionalDataImplSpeiIn;
-        
-    }
-	   
 }
