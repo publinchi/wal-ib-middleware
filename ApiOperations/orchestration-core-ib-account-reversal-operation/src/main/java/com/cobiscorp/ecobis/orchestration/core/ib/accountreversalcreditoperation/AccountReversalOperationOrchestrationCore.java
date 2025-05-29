@@ -43,7 +43,6 @@ import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
-import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
 /**
  * @author jolmos
@@ -62,22 +61,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 	private ILogger logger = (ILogger) this.getLogger();
 	private static final String CLASS_NAME = "AccountReversalOperationOrchestrationCore --->";
 	protected static final String COLUMNS_RETURN = "columnsToReturn";
-
-	@Override
-	public ICoreServer getCoreServer() {
-		return coreServer;
-	}
-
-	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
-	protected ICoreServer coreServer;
-
-	public void bindCoreServer(ICoreServer service) {
-		coreServer = service;
-	}
-
-	public void unbindCoreServer(ICoreServer service) {
-		coreServer = null;
-	}
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
