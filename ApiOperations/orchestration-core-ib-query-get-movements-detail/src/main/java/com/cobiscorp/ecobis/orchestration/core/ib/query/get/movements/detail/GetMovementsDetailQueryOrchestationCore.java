@@ -356,6 +356,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
 		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
 		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
+		request.addInputParam("@i_ordenamiento", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_ordenamiento")!= null?aRequest.readValueParam("@i_ordenamiento"):"DESC");
 
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
 		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
