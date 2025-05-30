@@ -3762,6 +3762,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
         procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500106");
+        procedureRequestAS.addInputParam("@i_show_failed", ICTSTypes.SQLINT4, "S");
         procedureRequestAS.addInputParam("@i_cliente", ICTSTypes.SQLINT4,
                 String.valueOf(inRequestGetMovementsDetail.getExternalCustomerId()));
         procedureRequestAS.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR,
@@ -3911,7 +3912,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
                             dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
                             dto.commissionDetailsInstance().setReason(resultSetMapper.getString(34));
-
+                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(35));
+                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(36));
+                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(37));
+                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(38));
+                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(39));
+                            dto.setTransactionStatus(resultSetMapper.getString(40));
                             return dto;
                         }
                     }, false);

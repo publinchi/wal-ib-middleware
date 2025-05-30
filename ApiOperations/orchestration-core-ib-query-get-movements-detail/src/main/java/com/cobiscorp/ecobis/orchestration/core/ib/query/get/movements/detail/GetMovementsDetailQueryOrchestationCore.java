@@ -3,9 +3,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.query.get.movements.detail;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
@@ -285,6 +283,74 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
 		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
+		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, minDate);
+		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
+		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
+		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
+
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
+		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
+		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
+		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
+		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getMovementsDetail");
+		}
+
+		return wProductsQueryResp;
+	}
+
+	private IProcedureResponse getFailedMovementsDetail(IProcedureRequest aRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(CLASS_NAME + " Entrando en getMovementsDetail : LOCAL" );
+		}
+
+		cuenta = aRequest.readValueParam("@i_cta");
+		cuenta = cuenta.replace("*","");
+
+		String minDate = aRequest.readValueParam("@i_fecha_ini");
+		String maxDate = aRequest.readValueParam("@i_fecha_fin");
+
+		if(minDate.equals("null")){
+			minDate  = "";
+		} else if (minDate != null && !minDate.isEmpty() && !isDate(minDate)) {
+			minDate = "01/01/1910";
+		}
+
+		if(maxDate.equals("null")){
+			maxDate  = "";
+		} else if (maxDate != null && !maxDate.isEmpty() && !isDate(maxDate)) {
+			maxDate = "01/01/1910";
+		}
+
+
+		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
+		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
+		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+
+		request.addInputParam("@t_online", ICTSTypes.SYBCHAR, "S");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "F");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLCHAR, "T");
+
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, cuenta);
 		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
 		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, minDate);
 		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
@@ -1338,4 +1404,309 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		} 
 		
 	}
+
+	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
+		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1); //APA debo obtener los otros 3 resultsets?
+		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
+		List<MovementDetails> movementDetailsList = new ArrayList<>();
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			MovementDetails movementDetails = new MovementDetails();
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			BigDecimal amount = getBigDecimalValue(columns[2].getValue());
+			BigDecimal iva = getBigDecimalValue(columns[6].getValue());
+			amount = amount.add(iva);
+			movementDetails.setOperationType(columns[4].getValue());
+			movementDetails.setMovementType(columns[26].getValue());
+			movementDetails.setAccountingBalance(getBigDecimalValue(columns[0].getValue()));
+			movementDetails.setAvailableBalance(getBigDecimalValue(columns[1].getValue()));
+			movementDetails.setAmount(amount);
+			movementDetails.setIva(getBigDecimalValue(columns[6].getValue()));
+			movementDetails.setTransactionDate(columns[3].getValue());
+			movementDetails.setCommission(getBigDecimalValue(columns[5].getValue()));
+			movementDetails.setDescription(columns[7].getValue());
+			movementDetails.setTransactionId(columns[8].getValue());
+			movementDetails.setOwnerNameSA(columns[17].getValue());
+			movementDetails.setAccountNumberSA(columns[18].getValue());
+			movementDetails.setOwnerNameDA(columns[20].getValue());
+			movementDetails.setAccountNumberDA(columns[21].getValue());
+			movementDetails.setUuid(columns[10].getValue());
+			movementDetails.setReferenceCode(columns[25].getValue());
+			movementDetails.setTransactionId(columns[8].getValue());
+			movementDetails.setTransactionReferenceNumber(columns[25].getValue() != null ? Integer.parseInt(columns[25].getValue()):null);
+			movementDetails.setBankNameDA(columns[22].getValue());
+			movementDetails.setBankNameSA(columns[19].getValue());
+			movementDetails.setTrackingId(columns[24].getValue());
+			movementDetails.setMaskedCardNumber(columns[12].getValue());
+			movementDetails.setCardId(columns[13].getValue());
+			movementDetails.setAuthorizationCode(columns[9].getValue());
+			movementDetails.setEstablishmentNameSD(columns[32].getValue());
+			movementDetails.setPurchaseAmount(amount);
+			movementDetails.setWithdrawalAmount(amount);
+			movementDetails.setLocationId(columns[27].getValue());
+			movementDetails.setBankBranchCode(columns[28].getValue());
+			movementDetails.setReason(columns[35].getValue());
+			movementDetails.setPin(columns[14].getValue());
+			movementDetails.setCode(columns[15].getValue());
+			movementDetails.setMode(columns[16].getValue());
+			movementDetails.setErrorCode(columns[35].getValue());
+			movementDetails.setErrorMessage(columns[36].getValue());
+			movementDetails.setTransactionStatus(columns[11].getValue());
+			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
+			movementDetailsList.add(movementDetails);
+		}
+		return movementDetailsList;
+	}
+	public List<MovementDetails> getMovementsDetails(IProcedureResponse anProcedureResponse) {
+		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(4);
+		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
+		List<MovementDetails> movementDetailsList = new ArrayList<>();
+		String isISO;
+
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			MovementDetails movementDetails = new MovementDetails();
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			String[] additionalDataArray = columns[25].getValue().split("\\|");
+			String typeMovement = columns[26].getValue();
+			BigDecimal amount = getBigDecimalValue(columns[5].getValue());
+			BigDecimal iva = getBigDecimalValue(columns[28].getValue());
+			amount = amount.add(iva);
+			movementDetails.setOperationType(columns[4].getValue());
+			movementDetails.setMovementType(typeMovement);
+			movementDetails.setAccountingBalance(getBigDecimalValue(columns[6].getValue()));
+			movementDetails.setAvailableBalance(getBigDecimalValue(columns[7].getValue()));
+			movementDetails.setAmount(amount);
+			movementDetails.setIva(getBigDecimalValue(columns[28].getValue()));
+			movementDetails.setTransactionDate(columns[10].getValue());
+			//movementDetails.setTrackingId(columns[27].getValue());
+			movementDetails.setCommission(getBigDecimalValue(columns[29].getValue()));
+			movementDetails.setDescription(columns[12].getValue());
+			movementDetails.setTransactionId(columns[8].getValue());
+
+
+			switch (typeMovement){
+				case Constants.P2P_DEBIT:
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
+					break;
+				case Constants.P2P_CREDIT:
+					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					break;
+				case Constants.SPEI_DEBIT :
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					break;
+
+				case Constants.SPEI_CREDIT:
+					movementDetails.setTransactionReferenceNumber(Integer.parseInt(columns[24].getValue()));
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setBankNameSA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(columns[19].getValue());
+					break;
+				case Constants.SPEI_PENDING:
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					break;
+				case Constants.SPEI_RETURN:
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					break;
+				case Constants.CREDIT_AT_STORE:
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.DEBIT_AT_STORE:
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.PURCHASE_AT_STORE:
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.PURCHASE_ONLINE: //revision
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					}else{
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					}
+					break;
+				case Constants.PURCHASE_WITH_CASHBACK: //revision
+					movementDetails.setPurchaseAmount(getBigDecimalValue(columns[5].getValue()));
+					movementDetails.setWithdrawalAmount(getBigDecimalValue(columns[5].getValue()));
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					}else{
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						//movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					}
+					break;
+				case Constants.REVERSAL_PURCHASE_WITH_CASHBACK:
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					}else{
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					}
+					break;
+				case Constants.REVERSAL:
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					}else{
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					}
+					break;
+				case Constants.REVERSAL_ONLINE:
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					}else{
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					}
+					break;
+				case Constants.REVERSAL_PHYSICAL:
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					}else{
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					}
+					break;
+				case Constants.ATM_DEBIT:
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionId(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setLocationId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setBankBranchCode("");
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					break;
+				case Constants.COMMISSION:
+					String causa = columns[27].getValue();
+					if(causa.equals("8110")){
+						movementDetails.setReason("CARD_DELIVERY");
+					}else if(causa.equals("3101")) {
+						movementDetails.setReason("FALSE_CHARGEBACK");
+					}
+					break;
+				default:
+					logger.logDebug("Unexpected value: " + typeMovement);
+			}
+			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
+			movementDetailsList.add(movementDetails);
+		}
+		return movementDetailsList;
+	}
+
+	public String getAdditionalValue(String [] additionalData, int index){
+		if(additionalData.length > index){
+			String data = additionalData[index];
+			return data.equals("null") ? null : data;
+		}
+		return null;
+	}
+
+	public BigDecimal getBigDecimalValue(String value){
+		if(value != null && !value.isEmpty()){
+			return new BigDecimal(value);
+		}
+		return new BigDecimal(0);
+
+	}
+
+	public String getOperation(String cuenta) {
+		return cuenta.contains("*") ? "X":"A";
+	}
+
 }
