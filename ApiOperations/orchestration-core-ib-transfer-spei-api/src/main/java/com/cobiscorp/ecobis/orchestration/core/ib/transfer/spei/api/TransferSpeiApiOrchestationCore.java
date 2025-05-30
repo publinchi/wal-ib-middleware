@@ -3677,8 +3677,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);            
                 
                 if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
-                    && !jsonObject.has("contactLimit")){                   
-                    resp = Utils.returnException(50205, "Error al obtener el limite del contacto");
+                    && contactId.length() < 36){
+					resp = Utils.returnException(50205, "Error al obtener el límite del contacto");
                     return resp;
                 }
 
@@ -3706,17 +3706,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					return resp;
 				}
 			} else {
-                logger.logError(CLASS_NAME + "Error en conexión hacia obtención de limites");
-                resp = Utils.returnException(50202, "Error obtención de limites");
+                logger.logError(CLASS_NAME + "Error en conexión hacia obtención de límites");
+                resp = Utils.returnException(50202, "Error obtención de límites");
 
                 if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
-                    && contactId.length() < 32){                   
-                    resp = Utils.returnException(50204, "Error al obtener el limite del contacto");
+                    && contactId.length() < 36){                   
+                    resp = Utils.returnException(50204, "Error al obtener el límite del contacto");
                 }                								
 			}
 		} catch (Exception e) {
-			logger.logError(CLASS_NAME + " Error Catastrofico en validacion Limites", e);
-			resp = Utils.returnException(50203, "Error obtención de limites");
+			logger.logError(CLASS_NAME + " Error Catastrofico en validacion límites", e);
+			resp = Utils.returnException(50203, "Error obtención de límites");
 		}
 		return resp;
 	}

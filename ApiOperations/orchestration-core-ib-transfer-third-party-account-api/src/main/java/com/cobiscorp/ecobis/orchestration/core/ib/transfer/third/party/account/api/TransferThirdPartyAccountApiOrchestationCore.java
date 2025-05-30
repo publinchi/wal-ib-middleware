@@ -223,11 +223,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 					IProcedureResponse validateLimits = validateLimitsUserConfigured(anOriginalRequest, aBagSPJavaOrchestration);
 					if(validateLimits != null) {
-						// datos para webhook fail
+						
 						Integer returnCode = validateLimits.getReturnCode();
 						String message = validateLimits.getMessage(1).getMessageText();
-						doLogRegisterTransactionFailedFromParams(anOriginalRequest, aBagSPJavaOrchestration, returnCode.toString(), message);
-						return validateLimits;
+									 				
+						validateLimits = responseCreator(validateLimits,returnCode.toString(), message);						
+						 
+						return processResponseTransfer(anOriginalRequest, validateLimits, aBagSPJavaOrchestration);
 					}				
 
 					wAccountsResp = getDataAccountReq(anOriginalRequest, aBagSPJavaOrchestration);
@@ -1059,10 +1061,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 		IProcedureResponse validateLimits = validateLimitsUserConfigured(aRequest, aBagSPJavaOrchestration);
 		if(validateLimits != null) {
-			// datos para webhook fail
+			
 			Integer returnCode = validateLimits.getReturnCode();
 			String message = validateLimits.getMessage(1).getMessageText();
-			doLogRegisterTransactionFailedFromParams(aRequest, aBagSPJavaOrchestration, returnCode.toString(), message);
+													
+			validateLimits = responseCreator(null,returnCode.toString(), message);
+
 			return validateLimits;
 		}
 		
@@ -2499,8 +2503,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);            
 
                 if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
-                    && !jsonObject.has("contactLimit")){
-					resp = Utils.returnException(50205, "Error al obtener el limite del contacto");
+                    && contactId.length() < 36){
+					resp = Utils.returnException(50205, "Error al obtener el límite del contacto");
                     return resp;
                 }
 
@@ -2528,17 +2532,17 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 					return resp;
 				}
 			} else {
-				logger.logError(CLASS_NAME + "Error en conexión hacia obtención de limites");
-                resp = Utils.returnException(50202, "Error obtención de limites");
+				logger.logError(CLASS_NAME + "Error en conexión hacia obtención de límites");
+                resp = Utils.returnException(50202, "Error obtención de límites");
 
                 if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
-                    && contactId.length() < 32){                   
-                    resp = Utils.returnException(50204, "Error al obtener el limite del contacto");
+                    && contactId.length() < 36){                   
+                    resp = Utils.returnException(50204, "Error al obtener el límite del contacto");
                 }
 			}
 		} catch (Exception e) {
-			logger.logError(CLASS_NAME + " Error Catastrofico en validacion Limites", e);
-			resp = Utils.returnException(50203, "Error obtención de limites");
+			logger.logError(CLASS_NAME + " Error Catastrofico en validacion límites", e);
+			resp = Utils.returnException(50203, "Error obtención de límites");
 		}
 		return resp;
 	}
@@ -2551,25 +2555,29 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
      * @param wProcedureResponse
      */
     private void doLogRegisterTransactionFailedFromResponse(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse wProcedureResponse) {
+		try{
+			if(logger.isDebugEnabled()){
+				logger.logDebug( " Entrando a doLogRegisterTransactionFailedFromResponse ");
+			}
+				
+			String code = wProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue();
+			String message = wProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue();
 		
-		logger.logDebug( " Entrando a doLogRegisterTransactionFailedFromResponse ");
+			aBagSPJavaOrchestration.put("code_error", code);
+			aBagSPJavaOrchestration.put("message_error", message);
 			
-		String code = wProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue();
-		String message = wProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue();
-		//String success = wProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();				
-		
-		//Realizamos el registro del evento no exitoso basado en datos del RESPONSE
-		aBagSPJavaOrchestration.put("code_error", code);
-		aBagSPJavaOrchestration.put("message_error", message); 	
-		
-		
-		aBagSPJavaOrchestration.put("causal", "1010");      	
-		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
+			aBagSPJavaOrchestration.put("causal", "1010");      	
+			registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
 
-		aBagSPJavaOrchestration.put("causal", "1020");		
-		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
-		
-		logger.logDebug( " wAccountsResp " + wProcedureResponse);
+			aBagSPJavaOrchestration.put("causal", "1020");		
+			registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
+			
+			if(logger.isDebugEnabled()){
+				logger.logDebug("Saliendo de doLogRegisterTransactionFailedFromResponse");
+			}
+		} catch (Exception e) {
+			logger.logError("Error en doLogRegisterTransactionFailedFromResponse", e);
+		}
 	}
     
     /**
@@ -2594,4 +2602,39 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		registerTransactionFailed("transferThirdPartyAccount", "", anOriginalRequest, aBagSPJavaOrchestration);
 		
 	}
+
+	private IProcedureResponse responseCreator(IProcedureResponse xProcedureResponse,String code, String message){
+		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+		
+		if(xProcedureResponse != null) {
+			anProcedureResponse = xProcedureResponse;
+		}
+		
+		IResultSetHeader mData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+		mData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		mData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+		IResultSetHeader mData2 = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+		mData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+		IResultSetRow row = new ResultSetRow();
+		row.addRowData(1, new ResultSetRowColumnData(false, code));
+		row.addRowData(2, new ResultSetRowColumnData(false, message));
+		data.addRow(row);
+
+		IResultSetRow row2 = new ResultSetRow();
+		row2.addRowData(1, new ResultSetRowColumnData(false, "false"));
+		data2.addRow(row2);
+
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(mData2, data2);
+		IResultSetBlock resultsetBlock = new ResultSetBlock(mData, data);
+
+		anProcedureResponse.addResponseBlock(resultsetBlock2);
+		anProcedureResponse.addResponseBlock(resultsetBlock);
+
+		return anProcedureResponse;
+	}
+
 }
