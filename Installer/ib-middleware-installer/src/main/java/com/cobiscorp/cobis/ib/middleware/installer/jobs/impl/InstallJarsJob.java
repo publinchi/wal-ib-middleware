@@ -221,12 +221,12 @@ public class InstallJarsJob extends AbstractProcessJob {
 					updateConfigurations.verifySocketSsnConfig(socketSsnConfig);					
 					
 					updateConfigurations.verifyReentryConfig(reentryConf);
-					updateConfigurations.editDbmsName(cobisSessionManager, SQLCTS);
-					updateConfigurations.editDbmsName(cobisSsnUnique, SYBCTS);
-					updateConfigurations.editDbmsName(cobisBvSsnUnique, SQLCTS);
-					updateConfigurations.editDbmsName(businessServExecutor, SYBCTS);
-					updateConfigurations.editDualMode(businessServExecutor);
-					updateConfigurations.editDualMode(servExecutor);
+					//updateConfigurations.editDbmsName(cobisSessionManager, SQLCTS);
+					//updateConfigurations.editDbmsName(cobisSsnUnique, SYBCTS);
+					//updateConfigurations.editDbmsName(cobisBvSsnUnique, SQLCTS);
+					//updateConfigurations.editDbmsName(businessServExecutor, SYBCTS);
+					//updateConfigurations.editDualMode(businessServExecutor);
+					//updateConfigurations.editDualMode(servExecutor);
 					
 					logger.info("Antes de editServices");
 					updateConfigurations.editServices(services,"IB-services.xml");
