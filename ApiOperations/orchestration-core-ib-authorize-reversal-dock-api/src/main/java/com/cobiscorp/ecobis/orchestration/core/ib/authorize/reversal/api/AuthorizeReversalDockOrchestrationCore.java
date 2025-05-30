@@ -372,7 +372,9 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("monto", aRequest.readValueParam("@i_values_source_value"));
 		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
-		
+		aBagSPJavaOrchestration.put("tipo_tarjeta", wProductsQueryResp.readValueParam("@o_tipo_tarjeta"));
+		aBagSPJavaOrchestration.put("tarjeta_mascara", wProductsQueryResp.readValueParam("@o_tarjeta_mascara"));
+
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
 			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
