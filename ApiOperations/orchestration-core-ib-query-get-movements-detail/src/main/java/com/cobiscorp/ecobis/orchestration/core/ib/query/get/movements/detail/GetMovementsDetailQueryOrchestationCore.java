@@ -362,6 +362,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addOutputParam("@o_total_registros", ICTSTypes.SQLINT4,"0");
 
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
