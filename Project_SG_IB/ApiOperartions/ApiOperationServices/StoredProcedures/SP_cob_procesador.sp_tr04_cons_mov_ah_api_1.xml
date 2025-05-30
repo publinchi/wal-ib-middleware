@@ -12,6 +12,7 @@
     <parameter name="@i_cliente" dataType="int" direction="in" />
     <parameter name="@i_nro_registros" dataType="int" direction="in" />
     <parameter name="@i_mov_id" dataType="int" direction="in" />
+    <parameter name="@i_order" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
