@@ -23,6 +23,7 @@ import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 
 public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
@@ -1147,4 +1148,127 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			if (logger.isErrorEnabled()){logger.logError("Fallo catastrofico registerTransactionFailed:", e);}
 		}
 	}
+
+	public boolean registerMovementsAuthAdditionalData(boolean isOnline, String provider, String movementType, String sequential, String secBranch, String codAlter,
+													   String authorizationCode, String maskedCardNumber, IProcedureRequest aRequest){
+		try{
+			String transaction  = aRequest.readValueParam("@t_trn");
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Entrando en registerMovementsAdditionalData");
+			}
+			String externalCustomerId = aRequest.readValueParam("@i_external_customer_id");
+			SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
+			Map<String, String> additionalData = new HashMap<String, String>();
+
+			String cardId = aRequest.readValueParam("@i_card_id");
+			String typeAuth = aRequest.readValueParam("@i_type");
+			String locationId = aRequest.readValueParam("@i_terminal_code");
+			String bankBranchCode = aRequest.readValueParam("@i_bank_branch_number");
+			String transactionID = aRequest.readValueParam("@i_retrieval_reference_number");
+			String establishmentName = aRequest.readValueParam("@i_establishment");
+			String institutionName = aRequest.readValueParam("@i_institution_name");
+			String requestID = aRequest.readValueParam("@i_uuid") == null ? aRequest.readValueParam("@x_uuid") :
+					aRequest.readValueParam("@i_uuid");
+			String cardEntryCode =  aRequest.readValueParam("@i_card_entry_code");
+			String cardEntryPin =  aRequest.readValueParam("@i_pin");
+			String cardEntryMode =  aRequest.readValueParam("@i_mode");
+			String data = String.join("|", provider, cardId, typeAuth, locationId,
+					bankBranchCode,transactionID,establishmentName,institutionName,
+					authorizationCode,externalCustomerId,requestID,maskedCardNumber,
+					cardEntryCode, cardEntryPin, cardEntryMode,"N");
+			additionalData.put("secuential", sequential);
+			additionalData.put("secBranch", secBranch);
+			additionalData.put("alternateCod", codAlter);
+			additionalData.put("transaction", transaction);
+			additionalData.put("movementType", movementType);
+			additionalData.put("provider", provider);
+			additionalData.put("data",data);
+
+
+
+			Boolean res = saveAdditional.saveData(movementType, isOnline, additionalData );
+
+			if(Boolean.TRUE.equals(res) && logger.isInfoEnabled()) {
+				logger.logInfo("saveAditionalData: " + res);
+			}
+
+			return res;
+
+		}catch(Exception e){
+			if (logger.isErrorEnabled()){logger.logError("Fallo  registerMovementsAdditionalData", e);}
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerMovementsAdditionalData");
+			}
+		}
+		return false;
+	}
+
+	public Boolean registerMovementsP2PAdditionalData (String movType, boolean isOnline, IProcedureRequest request, IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration){
+
+		Map<String, String> aditionalData = new HashMap<String, String>();
+		Boolean respSaveAdditionalDataImplDebt = Boolean.FALSE;
+		Boolean respSaveAdditionalDataImplCred = Boolean.FALSE;
+		String accountNumberOrg = movType.equals("TRANSFER") ? request.readValueParam("@i_cta") : request.readValueParam("@i_accountNumber");
+		String accountNumberDes = movType.equals("TRANSFER") ? request.readValueParam("@i_cta_des") : request.readValueParam("@i_accountNumber");
+		String xRequestId = aBagSPJavaOrchestration.get("x_request_id")==null ? "0" : aBagSPJavaOrchestration.get("x_request_id").toString();
+
+		String dataDebit = (movType.equals("TRANSFER")
+				? request.readValueParam("@o_benef_cta_des") + "|" + accountNumberDes
+				: request.readValueParam("@o_benef_cta_org") + "|" + accountNumberOrg)
+				+ "|" + (movType.equals("TRANSFER") ? xRequestId : "0")
+				+ "|" + movType.charAt(0);
+
+		String dataCredit = (movType.equals("TRANSFER")
+				? request.readValueParam("@o_benef_cta_org") + "|" + accountNumberOrg
+				: request.readValueParam("@o_benef_cta_des") + "|" + accountNumberDes)
+				+ "|" + (movType.equals("TRANSFER") ? xRequestId : "0")
+				+ "|" + movType.charAt(0);
+
+		aditionalData.put("secuential", isOnline ? response.readValueParam("@o_ssn"): response.readValueFieldInHeader("ssn"));  // request.readValueParam("@s_ssn")
+		aditionalData.put("secBranch" , isOnline ? response.readValueParam("@o_ssn_branch"): request.readValueParam("@o_referencia"));
+		aditionalData.put("transaction", request.readValueFieldInHeader("trn"));
+
+		if (movType.equals("DEBIT") || movType.equals("TRANSFER")){
+			SaveAdditionalDataImpl aditionalDataProcDebt = new SaveAdditionalDataImpl();
+			aditionalData.put("alternateCod", request.readValueParam("@o_cod_alt_org"));
+			aditionalData.put("movementType", Constants.P2P_DEBIT);
+			aditionalData.put("data", dataDebit);
+			respSaveAdditionalDataImplDebt = aditionalDataProcDebt.saveData(Constants.P2P_DEBIT, isOnline, aditionalData);
+			respSaveAdditionalDataImplDebt = respSaveAdditionalDataImplDebt != null ? respSaveAdditionalDataImplDebt : Boolean.FALSE;
+
+			if (logger.isDebugEnabled())
+				logger.logDebug("Registro datos adicionales P2P  Transacción: " + movType + " Tipo: Débito"
+						+ " Codigo alterno org: " + request.readValueParam("@o_cod_alt_org")
+						+ " Datos adicionales org: " + dataDebit
+						+ " Resultado: " + (respSaveAdditionalDataImplDebt ? "Exitoso" : "Fallido"));
+		}
+
+		if (movType.equals("CREDIT") || movType.equals("TRANSFER")){
+			SaveAdditionalDataImpl aditionalDataProcCred = new SaveAdditionalDataImpl();
+			aditionalData.remove("alternateCod");
+			aditionalData.remove("movementType");
+			aditionalData.remove("data");
+			aditionalData.put("alternateCod", request.readValueParam("@o_cod_alt_des"));
+			aditionalData.put("movementType", Constants.P2P_CREDIT);
+			aditionalData.put("data", dataCredit);
+			respSaveAdditionalDataImplCred = aditionalDataProcCred.saveData(Constants.P2P_CREDIT, isOnline, aditionalData);
+			respSaveAdditionalDataImplCred = respSaveAdditionalDataImplCred != null ? respSaveAdditionalDataImplCred : Boolean.FALSE;
+
+			if (logger.isDebugEnabled())
+				logger.logDebug("Registro datos adicionales P2P  Transacción: " + movType + " Tipo: Crédito"
+						+ " Codigo alterno des: " + request.readValueParam("@o_cod_alt_des")
+						+ " Datos adicionales des: " + dataCredit
+						+ " Resultado: " + (respSaveAdditionalDataImplCred ? "Exitoso" : "Fallido"));
+		}
+
+		return movType.equals("DEBIT")
+				? respSaveAdditionalDataImplDebt
+				: movType.equals("CREDIT")
+				? respSaveAdditionalDataImplCred
+				: (respSaveAdditionalDataImplDebt && respSaveAdditionalDataImplCred
+				? Boolean.TRUE
+				: Boolean.FALSE);
+	}
+
 }
