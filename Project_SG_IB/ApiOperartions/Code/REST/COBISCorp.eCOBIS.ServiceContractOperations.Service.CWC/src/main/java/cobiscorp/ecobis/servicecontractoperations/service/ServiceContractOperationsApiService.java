@@ -3856,10 +3856,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             ResponseGetMovementsDetail dto = new ResponseGetMovementsDetail();
 
                             dto.setNumberOfResults(resultSetMapper.getInteger(1));
+                            dto.setTotalNumberOfResults(resultSetMapper.getInteger(1));
                             return dto;
                         }
                     }, false);
 
+            outResponseGetMovementsDetail.setTotalNumberOfResults(returnResponseGetMovementsDetail.getTotalNumberOfResults());
             outResponseGetMovementsDetail.setNumberOfResults(returnResponseGetMovementsDetail.getNumberOfResults());
             // break;
 

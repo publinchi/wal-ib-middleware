@@ -66,5 +66,11 @@
       </columns>
       <queryText></queryText>
     </query>
+    <query>
+      <columns>
+        <column name="totalNumberOfResults" />
+      </columns>
+      <queryText></queryText>
+    </query>
   </queries>
 </procedure>

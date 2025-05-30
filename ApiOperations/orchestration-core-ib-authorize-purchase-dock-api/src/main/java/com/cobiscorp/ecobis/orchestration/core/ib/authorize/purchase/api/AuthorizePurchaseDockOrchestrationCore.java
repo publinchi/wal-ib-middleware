@@ -304,6 +304,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
 		aBagSPJavaOrchestration.put("tipo_tarjeta", wProductsQueryResp.readValueParam("@o_tipo_tarjeta"));
 		aBagSPJavaOrchestration.put("tarjeta_mascara", wProductsQueryResp.readValueParam("@o_tarjeta_mascara"));
+		aBagSPJavaOrchestration.put("i_movement_type","VIRTUAL".equals(wProductsQueryResp.readValueParam("@o_tipo_tarjeta"))?Constants.REVERSAL_ONLINE:Constants.REVERSAL_PHYSICAL);
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
 			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
@@ -909,14 +910,13 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
     	 aBagSPJavaOrchestration.put("i_login", null );
     	 aBagSPJavaOrchestration.put("i_cta_des",null);
     	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_id") );
-    	 aBagSPJavaOrchestration.put("i_concepto", null);
+    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_p_type"));
     	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_val_source_value"));
     	 aBagSPJavaOrchestration.put("i_mon", null );
-    	 aBagSPJavaOrchestration.put("i_movement_type", null ); //al actualizar
     	 aBagSPJavaOrchestration.put("i_card_id", aRequest.readValueParam("@i_card_id"));
-    	 aBagSPJavaOrchestration.put("i_pin", aRequest.readValueParam("@i_pin"));
-    	 aBagSPJavaOrchestration.put("i_code", aRequest.readValueParam("@i_card_entry_code"));
-    	 aBagSPJavaOrchestration.put("i_mode", aRequest.readValueParam("@i_mode"));
+    	 aBagSPJavaOrchestration.put("i_pin", aRequest.readValueParam("@i_crd_pin"));
+    	 aBagSPJavaOrchestration.put("i_code", aRequest.readValueParam("@i_crd_code"));
+    	 aBagSPJavaOrchestration.put("i_mode", aRequest.readValueParam("@i_crd_mode"));
     	 aBagSPJavaOrchestration.put("i_establishmentName", aRequest.readValueParam("@i_establishment"));
     	 aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction"));
     	 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@x_uuid"));

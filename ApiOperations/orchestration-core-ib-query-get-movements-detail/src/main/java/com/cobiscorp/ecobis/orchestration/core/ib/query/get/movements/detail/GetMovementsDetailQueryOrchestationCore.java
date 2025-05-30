@@ -1426,7 +1426,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			movementDetails.setCommission( getBigDecimalValue(columns[5].getValue()));
 			movementDetails.setDescription( columns[7].getValue());
 			movementDetails.setTransactionId(columns[8].getValue()); //falta movementId
-			movementDetails.setOwnerNameSA( columns[16].getValue());
+			movementDetails.setOwnerNameSA( columns[18].getValue());
 			movementDetails.setAccountNumberSA( columns[19].getValue());
 			movementDetails.setOwnerNameDA( columns[21].getValue());
 			movementDetails.setAccountNumberDA( columns[22].getValue());
@@ -1441,8 +1441,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			movementDetails.setAuthorizationCode( columns[9].getValue());
 			movementDetails.setEstablishmentNameSD( columns[33].getValue());
 			movementDetails.setEstablishmentNameMD( columns[31].getValue());
-			movementDetails.setLocationId( columns[27].getValue());
-			movementDetails.setBankBranchCode( columns[28].getValue());
+			movementDetails.setLocationId( columns[28].getValue());
+			movementDetails.setBankBranchCode( columns[30].getValue());
 			movementDetails.setReason( columns[35].getValue());
 			movementDetails.setCardEntryPin( columns[16].getValue());
 			movementDetails.setCardEntryCode( columns[15].getValue());
