@@ -707,7 +707,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				
 				executionStatus = "CORRECT";
 				authorizationCode = aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0";
-				
+				aBagSPJavaOrchestration.put("i_auth_code",authorizationCode);
 				notifyWithdrawalDock(aRequest, aBagSPJavaOrchestration);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
@@ -893,4 +893,52 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
+    }
+
+    @Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+    protected ICoreService coreService;
+
+    public void bindCoreService(ICoreService service) {
+        coreService = service;
+    }
+
+    public void unbindCoreService(ICoreService service) {
+        coreService = null;
+    }
+
+    @Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
+
+    public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+    	 aBagSPJavaOrchestration.put("i_prod", null);
+    	 aBagSPJavaOrchestration.put("i_prod_des", null );
+    	 aBagSPJavaOrchestration.put("i_login", null );
+    	 aBagSPJavaOrchestration.put("i_cta_des",null);
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_id") );
+    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
+    	 aBagSPJavaOrchestration.put("i_mon", null );
+		 aBagSPJavaOrchestration.put("i_movement_type", Constants.DEBIT_AT_STORE );
+		 aBagSPJavaOrchestration.put("i_card_id", aRequest.readValueParam("@i_card_id"));
+		 aBagSPJavaOrchestration.put("i_pin", aRequest.readValueParam("@i_pin"));
+		 aBagSPJavaOrchestration.put("i_code", aRequest.readValueParam("@i_card_entry_code"));
+		 aBagSPJavaOrchestration.put("i_mode", aRequest.readValueParam("@i_mode"));
+		 aBagSPJavaOrchestration.put("i_establishmentName", aRequest.readValueParam("@i_establishment"));
+		 aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction"));
+		 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@x_uuid"));
+    }
+
 }

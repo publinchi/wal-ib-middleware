@@ -1407,7 +1407,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
 		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
-		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1); //APA debo obtener los otros 3 resultsets?
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1);
 		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
 		List<MovementDetails> movementDetailsList = new ArrayList<>();
 		for (IResultSetRow iResultSetRow : rowsTemp) {
@@ -1416,42 +1416,40 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			BigDecimal amount = getBigDecimalValue(columns[2].getValue());
 			BigDecimal iva = getBigDecimalValue(columns[6].getValue());
 			amount = amount.add(iva);
-			movementDetails.setOperationType(columns[4].getValue());
-			movementDetails.setMovementType(columns[26].getValue());
-			movementDetails.setAccountingBalance(getBigDecimalValue(columns[0].getValue()));
-			movementDetails.setAvailableBalance(getBigDecimalValue(columns[1].getValue()));
-			movementDetails.setAmount(amount);
-			movementDetails.setIva(getBigDecimalValue(columns[6].getValue()));
-			movementDetails.setTransactionDate(columns[3].getValue());
-			movementDetails.setCommission(getBigDecimalValue(columns[5].getValue()));
-			movementDetails.setDescription(columns[7].getValue());
-			movementDetails.setTransactionId(columns[8].getValue());
-			movementDetails.setOwnerNameSA(columns[17].getValue());
-			movementDetails.setAccountNumberSA(columns[18].getValue());
-			movementDetails.setOwnerNameDA(columns[20].getValue());
-			movementDetails.setAccountNumberDA(columns[21].getValue());
-			movementDetails.setUuid(columns[10].getValue());
-			movementDetails.setReferenceCode(columns[25].getValue());
-			movementDetails.setTransactionId(columns[8].getValue());
-			movementDetails.setTransactionReferenceNumber(columns[25].getValue() != null ? Integer.parseInt(columns[25].getValue()):null);
-			movementDetails.setBankNameDA(columns[22].getValue());
-			movementDetails.setBankNameSA(columns[19].getValue());
-			movementDetails.setTrackingId(columns[24].getValue());
-			movementDetails.setMaskedCardNumber(columns[12].getValue());
-			movementDetails.setCardId(columns[13].getValue());
-			movementDetails.setAuthorizationCode(columns[9].getValue());
-			movementDetails.setEstablishmentNameSD(columns[32].getValue());
-			movementDetails.setPurchaseAmount(amount);
-			movementDetails.setWithdrawalAmount(amount);
-			movementDetails.setLocationId(columns[27].getValue());
-			movementDetails.setBankBranchCode(columns[28].getValue());
-			movementDetails.setReason(columns[35].getValue());
-			movementDetails.setPin(columns[14].getValue());
-			movementDetails.setCode(columns[15].getValue());
-			movementDetails.setMode(columns[16].getValue());
-			movementDetails.setErrorCode(columns[35].getValue());
-			movementDetails.setErrorMessage(columns[36].getValue());
-			movementDetails.setTransactionStatus(columns[11].getValue());
+			movementDetails.setOperationType( columns[4].getValue());
+			movementDetails.setMovementType( columns[12].getValue());
+			movementDetails.setAccountingBalance( getBigDecimalValue(columns[0].getValue()));
+			movementDetails.setAvailableBalance( getBigDecimalValue(columns[1].getValue()));
+			movementDetails.setAmount( amount);
+			movementDetails.setIva( getBigDecimalValue(columns[6].getValue()));
+			movementDetails.setTransactionDate( columns[3].getValue());
+			movementDetails.setCommission( getBigDecimalValue(columns[5].getValue()));
+			movementDetails.setDescription( columns[7].getValue());
+			movementDetails.setTransactionId(columns[8].getValue()); //falta movementId
+			movementDetails.setOwnerNameSA( columns[16].getValue());
+			movementDetails.setAccountNumberSA( columns[19].getValue());
+			movementDetails.setOwnerNameDA( columns[21].getValue());
+			movementDetails.setAccountNumberDA( columns[22].getValue());
+			movementDetails.setUuid( columns[10].getValue());
+			movementDetails.setReferenceCode( columns[24].getValue());
+			movementDetails.setTransactionReferenceNumber( columns[26].getValue() != null ? Integer.parseInt(columns[26].getValue()):null);
+			movementDetails.setBankNameDA( columns[23].getValue());
+			movementDetails.setBankNameSA( columns[20].getValue());
+			movementDetails.setTrackingId( columns[25].getValue());
+			movementDetails.setMaskedCardNumber( columns[13].getValue());
+			movementDetails.setCardId( columns[14].getValue());
+			movementDetails.setAuthorizationCode( columns[9].getValue());
+			movementDetails.setEstablishmentNameSD( columns[33].getValue());
+			movementDetails.setEstablishmentNameMD( columns[31].getValue());
+			movementDetails.setLocationId( columns[27].getValue());
+			movementDetails.setBankBranchCode( columns[28].getValue());
+			movementDetails.setReason( columns[35].getValue());
+			movementDetails.setCardEntryPin( columns[16].getValue());
+			movementDetails.setCardEntryCode( columns[15].getValue());
+			movementDetails.setCardEntryMode( columns[17].getValue());
+			movementDetails.setErrorCode( columns[36].getValue());
+			movementDetails.setErrorMessage( columns[37].getValue());
+			movementDetails.setTransactionStatus( columns[11].getValue());
 			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
 			movementDetailsList.add(movementDetails);
 		}
