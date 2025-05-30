@@ -3777,8 +3777,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 String.valueOf(inRequestGetMovementsDetail.getSequential()));
         procedureRequestAS.addInputParam("@i_mov_id", ICTSTypes.SQLINT4,
                 String.valueOf(inRequestGetMovementsDetail.getMovementId()));
-        procedureRequestAS.addInputParam("@i_mov_id", ICTSTypes.SQLINT4,
-                String.valueOf(inRequestGetMovementsDetail.getMovementId()));
+        procedureRequestAS.addInputParam("@i_ordenamiento", ICTSTypes.SQLVARCHAR,
+                String.valueOf(inRequestGetMovementsDetail.getOrder()));
 
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -8606,7 +8606,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	 */
 	@Override
 	// Have DTO
-	public ResponseRegisterAccount registerAccountForTransfer(String xrequestid, String xenduserrequestdatetime,
+	pu ResponseRegisterAccount registerAccountForTransfer(String xrequestid, String xenduserrequestdatetime,
 			String xenduserip, String xchannel, RequestRegisterAccount inRequestRegisterAccount)
 			throws CTSRestException {
 		LOGGER.logDebug("Start service execution: registerAccountForTransfer");
