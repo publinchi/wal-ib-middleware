@@ -287,11 +287,20 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 anOriginalRequest.addInputParam("@i_refer_transaction", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber"));
 
                 anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+                anOriginalRequest.addOutputParam("@o_referencia",    ICTSTypes.SQLINTN, "0");
+                anOriginalRequest.addOutputParam("@o_ssn"          , ICTSTypes.SQLINTN, "0");
+                anOriginalRequest.addOutputParam("@o_benef_cta_org", ICTSTypes.SQLVARCHAR, "XX");
+                anOriginalRequest.addOutputParam("@o_benef_cta_des", ICTSTypes.SQLVARCHAR, "XX");
+                anOriginalRequest.addOutputParam("@o_cod_alt_org"  , ICTSTypes.SQLINTN, "0");
+                anOriginalRequest.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
 
                 if (logger.isDebugEnabled())
                     logger.logDebug("Data enviada a ejecutar api:" + anOriginalRequest.getProcedureRequestAsString());
 
                 IProcedureResponse response = executeCoreBanking(anOriginalRequest);
+
+                // Almacenamiento Response
+                aBagSPJavaOrchestration.put("anProcedureResponse", response);
 
                 if (logger.isInfoEnabled())
                     logger.logInfo("Respuesta Devuelta del Core api:" + response.getProcedureResponseAsString());
@@ -359,11 +368,18 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originReferenceNumber"));
         }
         reqTMPCentral.addOutputParam("@o_causa", ICTSTypes.SQLVARCHAR, "X");
+        reqTMPCentral.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
+        reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
+        reqTMPCentral.addOutputParam("@o_benef_cta_org" , ICTSTypes.SQLVARCHAR, "X");
+        reqTMPCentral.addOutputParam("@o_cod_alt_org"   , ICTSTypes.SQLINTN, "0");
 
         aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
         aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
         IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+        // Almacenamiento Response
+        aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
 
         aBagSPJavaOrchestration.put("causa", wProcedureResponseCentral.readValueParam("@o_causa"));
 
@@ -457,6 +473,14 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             row.addRowData(3, new ResultSetRowColumnData(false, columnsToReturn[2].getValue()));
             row.addRowData(4, new ResultSetRowColumnData(false, columnsToReturn[3].getValue()));
             data.addRow(row);
+
+            /*Datos adicionales*/
+            registerMovementsP2PAdditionalData(
+                    "DEBIT",
+                    Boolean.parseBoolean(aBagSPJavaOrchestration.get(IS_ONLINE).toString()),
+                    anOriginalRequest,
+                    (IProcedureResponse)aBagSPJavaOrchestration.get("anProcedureResponse"),
+                    aBagSPJavaOrchestration);
 
             registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa").toString(), aBagSPJavaOrchestration);
         } else {

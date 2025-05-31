@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -59,6 +60,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String AUTHORIZE_PURCHASE= "AUTHORIZE_REVERSAL";
 	protected static final String MODE_OPERATION = "PYS";
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -70,7 +72,7 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		serverStatus = null;
 
 		try {
 			serverStatus = getServerStatus();
@@ -719,6 +721,10 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(7, new ResultSetRowColumnData(false, authorizationCode));
 				
 				data6.addRow(row6);
+
+				String codAlt = serverStatus ? "0" : "200";
+				registerMovementsAuthAdditionalData(serverStatus,"IDC", Constants.REVERSAL_PHYSICAL,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt,authorizationCode, null, aRequest);
 				
 			} else {
 				

@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -58,6 +59,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 	private static final String CLASS_NAME = "AuthorizeWithdrawalDockOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String MODE_OPERATION = "PYS";
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -70,7 +72,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		}
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		serverStatus = null;
 
 		try {
 			serverStatus = getServerStatus();
@@ -354,6 +356,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -734,7 +737,13 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 										aBagSPJavaOrchestration.get("ente").toString()
 										);
 				
-				data.addRow(row);	
+				data.addRow(row);
+
+				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
+				String codAlt = serverStatus ? "0" : "1";
+				registerMovementsAuthAdditionalData(serverStatus,"DOCK",Constants.DEBIT_AT_STORE,
+						(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt,authorizationCode, tarjetaMascara, aRequest);
 			}
 			
 		} else {
