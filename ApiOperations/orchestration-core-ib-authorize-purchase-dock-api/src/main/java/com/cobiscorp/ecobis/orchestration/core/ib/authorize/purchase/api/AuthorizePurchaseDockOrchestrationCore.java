@@ -10,9 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
@@ -39,6 +42,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
@@ -58,6 +63,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 	private static final String CLASS_NAME = "AuthorizePurchaseDockOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String MODE_OPERATION = "PYS";
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -70,7 +76,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		if (logger.isDebugEnabled()){logger.logDebug("Begin flow, AuthorizePurchaseDock starts...");}		
 		
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		serverStatus = null;
 
 		try {
 			serverStatus = getServerStatus();
@@ -285,6 +291,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tipo_tarjeta", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -304,7 +312,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
 		aBagSPJavaOrchestration.put("tipo_tarjeta", wProductsQueryResp.readValueParam("@o_tipo_tarjeta"));
 		aBagSPJavaOrchestration.put("tarjeta_mascara", wProductsQueryResp.readValueParam("@o_tarjeta_mascara"));
-		aBagSPJavaOrchestration.put("i_movement_type","VIRTUAL".equals(wProductsQueryResp.readValueParam("@o_tipo_tarjeta"))?Constants.REVERSAL_ONLINE:Constants.REVERSAL_PHYSICAL);
+		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
 			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
@@ -729,6 +737,14 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 											aBagSPJavaOrchestration.get("ente").toString());
 				
 				data.addRow(row);
+
+				String tipoTarjeta = aBagSPJavaOrchestration.containsKey("tipo_tarjeta")?(String)aBagSPJavaOrchestration.get("tipo_tarjeta"):"0";
+				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
+				String codAlt = serverStatus ? "0" : "1";
+				String movementType = "VIRTUAL".equals(tipoTarjeta) ? Constants.PURCHASE_ONLINE: Constants.PURCHASE_AT_STORE;
+				registerMovementsAuthAdditionalData(serverStatus,"DOCK", movementType,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt, authorizationCode, tarjetaMascara, aRequest);
+
 			}
 			
 		} else {

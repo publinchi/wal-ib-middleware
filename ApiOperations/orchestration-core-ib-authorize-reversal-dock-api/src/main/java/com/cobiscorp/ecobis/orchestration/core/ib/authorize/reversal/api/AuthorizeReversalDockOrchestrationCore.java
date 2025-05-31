@@ -10,9 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
@@ -39,6 +42,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,6 +66,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 	private ILogger logger = (ILogger) this.getLogger();
 	private static final String CLASS_NAME = "AuthorizeReversalDockOrchestrationCore";
 	private String jsonComplete ;
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -71,7 +77,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		logger.logDebug("Begin flow, AuthorizeReversal starts...");		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;		
+		serverStatus = null;
 		this.jsonComplete=anOriginalRequest.readValueParam("@i_json_req");
 		logger.logDebug("JCOS REQUEST JSON "+this.jsonComplete);	
 
@@ -355,6 +361,8 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_prod", ICTSTypes.SQLINTN, "0");
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tipo_tarjeta", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -655,9 +663,17 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(7, new ResultSetRowColumnData(false, "0"));
 				if(aBagSPJavaOrchestration.containsKey("@o_seq_tran"))
 					row.addRowData(8, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("@o_seq_tran").toString()));
-		
-				
-				data.addRow(row);	
+				data.addRow(row);
+
+				String tipoTarjeta = aBagSPJavaOrchestration.containsKey("tipo_tarjeta")?(String)aBagSPJavaOrchestration.get("tipo_tarjeta"):"0";
+				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
+				String authorizationCode =   aRequest.readValueParam("@i_authorization_code");
+				String ssnBranch = serverStatus ? aRequest.readValueParam("@s_ssn_branch") : aBagSPJavaOrchestration.get("@o_ssn_branch").toString();
+				String codAlt = serverStatus ? "0" : "200";
+				String movementType = tipoTarjeta.equals("VIRTUAL") ? Constants.REVERSAL_ONLINE:Constants.REVERSAL_PHYSICAL;
+				aBagSPJavaOrchestration.put("i_movement_type",movementType);
+				registerMovementsAuthAdditionalData(serverStatus,"DOCK",movementType,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						ssnBranch,codAlt,authorizationCode, tarjetaMascara, aRequest);
 			}
 			
 		} else {

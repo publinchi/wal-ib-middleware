@@ -18,9 +18,6 @@ public class MovementDetails {
 
     // Card details
     private String maskedCardNumber;
-    private String code;
-    private String pin;
-    private String mode;
 
     // Source account
     private String ownerNameSA;
@@ -63,6 +60,11 @@ public class MovementDetails {
 
     // Commission details
     private String reason;
+
+    // Card Entry
+    private String cardEntryCode;
+    private String cardEntryPin;
+    private String cardEntryMode;
 
     public BigDecimal getAccountingBalance() {
         return accountingBalance;
@@ -336,17 +338,29 @@ public class MovementDetails {
         this.reason = reason;
     }
 
-    public String getCode() { return code; }
+    public String getCardEntryCode() {
+        return cardEntryCode;
+    }
 
-    public void setCode(String code) { this.code = code; }
+    public void setCardEntryCode( String cardEntryCode ) {
+        this.cardEntryCode = cardEntryCode;
+    }
 
-    public String getPin() { return pin; }
+    public String getCardEntryPin() {
+        return cardEntryPin;
+    }
 
-    public void setPin(String pin) { this.pin = pin; }
+    public void setCardEntryPin( String cardEntryPin ) {
+        this.cardEntryPin = cardEntryPin;
+    }
 
-    public String getMode() { return mode; }
+    public String getCardEntryMode() {
+        return cardEntryMode;
+    }
 
-    public void setMode(String mode) { this.mode = mode; }
+    public void setCardEntryMode( String cardEntryMode ) {
+        this.cardEntryMode = cardEntryMode;
+    }
 
     public String getErrorCode() { return errorCode; }
 
@@ -375,9 +389,6 @@ public class MovementDetails {
                 ", description='" + description + '\'' +
                 ", transactionStatus='" + transactionStatus + '\'' +
                 ", maskedCardNumber='" + maskedCardNumber + '\'' +
-                ", code='" + code + '\'' +
-                ", pin='" + pin + '\'' +
-                ", mode='" + mode + '\'' +
                 ", ownerNameSA='" + ownerNameSA + '\'' +
                 ", accountNumberSA='" + accountNumberSA + '\'' +
                 ", bankNameSA='" + bankNameSA + '\'' +
@@ -403,6 +414,9 @@ public class MovementDetails {
                 ", uuid='" + uuid + '\'' +
                 ", cardId='" + cardId + '\'' +
                 ", reason='" + reason + '\'' +
+                ", cardEntryCode='" + cardEntryCode + '\'' +
+                ", cardEntryPin='" + cardEntryPin + '\'' +
+                ", cardEntryMode='" + cardEntryMode + '\'' +
                 '}';
     }
 }
