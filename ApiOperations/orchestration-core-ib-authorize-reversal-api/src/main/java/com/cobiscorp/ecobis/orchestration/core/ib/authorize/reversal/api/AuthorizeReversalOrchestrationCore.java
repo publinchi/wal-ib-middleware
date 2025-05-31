@@ -372,6 +372,9 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("@o_ssn_host", wProductsQueryResp.readValueParam("@o_ssn_host"));
 		aBagSPJavaOrchestration.put("authorizationCode",wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
+		aBagSPJavaOrchestration.put("ssn_branch", wProductsQueryResp.readValueFieldInHeader("ssn_branch"));
+
+
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
@@ -727,9 +730,9 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 				data6.addRow(row6);
 
 				String codAlt = serverStatus ? "0" : "200";
+				String ssnBranch = serverStatus ? (String) aBagSPJavaOrchestration.get("ssn_branch") : (String) aBagSPJavaOrchestration.get("@o_ssn_branch");
 				registerMovementsAuthAdditionalData(serverStatus,"IDC", Constants.REVERSAL_PHYSICAL,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
-						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt,authorizationCode, null, aRequest);
-				
+						ssnBranch,codAlt,authorizationCode, null, aRequest);
 			} else {
 				
 				logger.logDebug("Ending flow, processResponse error");
