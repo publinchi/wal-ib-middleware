@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <procedure>
   <database>cob_procesador</database>
   <name>sp_tr04_cons_mov_ah_api</name>

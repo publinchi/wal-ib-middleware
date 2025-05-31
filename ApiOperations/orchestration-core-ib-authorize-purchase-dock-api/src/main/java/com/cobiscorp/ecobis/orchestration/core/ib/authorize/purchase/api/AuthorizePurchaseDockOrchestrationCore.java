@@ -107,8 +107,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 					anProcedureResponseVal = getValAccount(anOriginalRequest, aBagSPJavaOrchestration);
 					if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 						logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
-						aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
-						aBagSPJavaOrchestration.put("message_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
+						aBagSPJavaOrchestration.put("s_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
+						aBagSPJavaOrchestration.put("s_msg", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
 						return processResponseApi(anOriginalRequest, anProcedureResponseVal,aBagSPJavaOrchestration);
 					}
 					
@@ -314,9 +314,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("tarjeta_mascara", wProductsQueryResp.readValueParam("@o_tarjeta_mascara"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("code_error"));}
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -397,9 +397,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}else {
 			aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		}
@@ -458,10 +458,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		wProductsQueryResp.setReturnCode(0);
 		
 		if (!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 			
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 				
 		if (logger.isDebugEnabled()) {
@@ -544,10 +544,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			}
 		}
 		else{
-			aBagSPJavaOrchestration.put("code_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", response.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", response.getResultSetRowColumnData(2, 1, 2).getValue());
 				
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 		
 		return response;
@@ -621,7 +621,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
-		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString():null);
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString():null);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
 		
@@ -635,8 +635,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -681,9 +681,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		
 		if (codeReturn == 0) {		
 			
-			if(aBagSPJavaOrchestration.containsKey("code_error")){
+			if(aBagSPJavaOrchestration.containsKey("s_error")){
 
-				if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));}
+				if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("s_error"));}
 				
 				executionStatus = "ERROR";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
@@ -693,8 +693,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
-				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_msg")));
+				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_error")));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(7, new ResultSetRowColumnData(false, null));
 				row.addRowData(8, new ResultSetRowColumnData(false, null));
@@ -754,8 +754,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
-			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
-			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			String codeError = aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString(): codeReturn.toString();
+			String mesageError = aBagSPJavaOrchestration.containsKey("s_msg")?aBagSPJavaOrchestration.get("s_msg").toString():"SYSTEM_ERROR";
 			
 			registerTransactionFailed("Authorize Purchase Dock", "DOCK", aRequest, aBagSPJavaOrchestration);
 
@@ -778,6 +778,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 	
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
+
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
 		
 		return wProcedureResponse;		
 	}
