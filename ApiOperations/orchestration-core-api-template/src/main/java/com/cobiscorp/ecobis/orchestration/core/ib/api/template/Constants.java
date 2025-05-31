@@ -8,6 +8,8 @@ public class Constants {
     public static final String DEBIT_AT_STORE = "DEBIT_AT_STORE";
     public static final String PURCHASE_AT_STORE = "PURCHASE_AT_STORE";
     public static final String PURCHASE_ONLINE = "PURCHASE_ONLINE";
+    public static final String REVERSAL_PHYSICAL = "REVERSAL PHYSICAL";
+    public static final String REVERSAL_ONLINE = "REVERSAL ONLINE";
     public static final String TRANSACTION_SUCCESS = "TRANSACTION_SUCCESS";
     public static final String P2P_CREDIT = "P2P_CREDIT";
     public static final String P2P_DEBIT = "P2P_DEBIT";

@@ -1005,62 +1005,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			return false;
 			
 	}
-
-	public boolean registerMovementsAuthAdditionalData(boolean isOnline, String provider, String movementType, String sequential, String secBranch, String codAlter,
-													   String authorizationCode, String maskedCardNumber, IProcedureRequest aRequest){
-		try{
-			String transaction  = aRequest.readValueParam("@t_trn");
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(" Entrando en registerMovementsAdditionalData");
-			}
-			String externalCustomerId = aRequest.readValueParam("@i_external_customer_id");
-			SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
-			Map<String, String> additionalData = new HashMap<String, String>();
-
-			String cardId = aRequest.readValueParam("@i_card_id");
-			String typeAuth = aRequest.readValueParam("@i_type");
-			String locationId = aRequest.readValueParam("@i_terminal_code");
-			String bankBranchCode = aRequest.readValueParam("@i_bank_branch_number");
-			String transactionID = aRequest.readValueParam("@i_retrieval_reference_number");
-			String establishmentName = aRequest.readValueParam("@i_establishment");
-			String institutionName = aRequest.readValueParam("@i_institution_name");
-			String requestID = aRequest.readValueParam("@i_uuid") == null ? aRequest.readValueParam("@x_uuid") :
-					aRequest.readValueParam("@i_uuid");
-			String cardEntryCode =  aRequest.readValueParam("@i_card_entry_code");
-			String cardEntryPin =  aRequest.readValueParam("@i_pin");
-			String cardEntryMode =  aRequest.readValueParam("@i_mode");
-			String data = String.join("|", provider, cardId, typeAuth, locationId,
-					bankBranchCode,transactionID,establishmentName,institutionName,
-					authorizationCode,externalCustomerId,requestID,maskedCardNumber,
-					cardEntryCode, cardEntryPin, cardEntryMode,"N");
-			additionalData.put("secuential", sequential);
-			additionalData.put("secBranch", secBranch);
-			additionalData.put("alternateCod", codAlter);
-			additionalData.put("transaction", transaction);
-			additionalData.put("movementType", movementType);
-			additionalData.put("provider", provider);
-			additionalData.put("data",data);
-
-
-
-			Boolean res = saveAdditional.saveData(movementType, isOnline, additionalData );
-
-			if(Boolean.TRUE.equals(res) && logger.isInfoEnabled()) {
-				logger.logInfo("saveAditionalData: " + res);
-			}
-
-			return res;
-
-		}catch(Exception e){
-			if (logger.isErrorEnabled()){logger.logError("Fallo  registerMovementsAdditionalData", e);}
-		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(" Saliendo de registerMovementsAdditionalData");
-			}
-		}
-		return false;
-	}
-
+	
 	protected IProcedureResponse updateLocalExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
 		if (logger.isDebugEnabled())
 			logger.logDebug("Ejecutando metodo updateLocalExecution: " + anOriginalRequest.toString());
@@ -1547,5 +1492,60 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		}catch(Exception e){
 			if (logger.isErrorEnabled()){logger.logError("Fallo catastrofico registerTransactionFailed:", e);}
 		}
+	}
+
+	public boolean registerMovementsAuthAdditionalData(boolean isOnline, String provider, String movementType, String sequential, String secBranch, String codAlter,
+													   String authorizationCode, String maskedCardNumber, IProcedureRequest aRequest){
+		try{
+			String transaction  = aRequest.readValueParam("@t_trn");
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Entrando en registerMovementsAdditionalData");
+			}
+			String externalCustomerId = aRequest.readValueParam("@i_external_customer_id");
+			SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
+			Map<String, String> additionalData = new HashMap<String, String>();
+
+			String cardId = aRequest.readValueParam("@i_card_id");
+			String typeAuth = aRequest.readValueParam("@i_type");
+			String locationId = aRequest.readValueParam("@i_terminal_code");
+			String bankBranchCode = aRequest.readValueParam("@i_bank_branch_number");
+			String transactionID = aRequest.readValueParam("@i_retrieval_reference_number");
+			String establishmentName = aRequest.readValueParam("@i_establishment");
+			String institutionName = aRequest.readValueParam("@i_institution_name");
+			String requestID = aRequest.readValueParam("@i_uuid") == null ? aRequest.readValueParam("@x_uuid") :
+					aRequest.readValueParam("@i_uuid");
+			String cardEntryCode =  aRequest.readValueParam("@i_card_entry_code");
+			String cardEntryPin =  aRequest.readValueParam("@i_pin");
+			String cardEntryMode =  aRequest.readValueParam("@i_mode");
+			String data = String.join("|", provider, cardId, typeAuth, locationId,
+					bankBranchCode,transactionID,establishmentName,institutionName,
+					authorizationCode,externalCustomerId,requestID,maskedCardNumber,
+					cardEntryCode, cardEntryPin, cardEntryMode,"N");
+			additionalData.put("secuential", sequential);
+			additionalData.put("secBranch", secBranch);
+			additionalData.put("alternateCod", codAlter);
+			additionalData.put("transaction", transaction);
+			additionalData.put("movementType", movementType);
+			additionalData.put("provider", provider);
+			additionalData.put("data",data);
+
+
+
+			Boolean res = saveAdditional.saveData(movementType, isOnline, additionalData );
+
+			if(Boolean.TRUE.equals(res) && logger.isInfoEnabled()) {
+				logger.logInfo("saveAditionalData: " + res);
+			}
+
+			return res;
+
+		}catch(Exception e){
+			if (logger.isErrorEnabled()){logger.logError("Fallo  registerMovementsAdditionalData", e);}
+		} finally {
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerMovementsAdditionalData");
+			}
+		}
+		return false;
 	}
 }
