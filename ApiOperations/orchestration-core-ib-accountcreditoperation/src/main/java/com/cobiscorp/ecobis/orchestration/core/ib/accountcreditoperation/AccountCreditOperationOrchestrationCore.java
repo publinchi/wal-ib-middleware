@@ -798,9 +798,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			aBagSPJavaOrchestration.put("originCode", anOriginalRequest.readValueParam("@i_originCode"));
 		}
 
-		if (keyList.get(0).equals("0")) {
+		if ("0".equals(aBagSPJavaOrchestration.get("code"))) {
 			if(logger.isDebugEnabled()) {
-			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+				logger.logDebug("Ending flow, processResponse success with code: " + aBagSPJavaOrchestration.get("code"));
 			}
 			row.addRowData(1, new ResultSetRowColumnData(false, this.columnsToReturn[0].getValue()));
 			row.addRowData(2, new ResultSetRowColumnData(false, this.columnsToReturn[1].getValue()));
@@ -819,7 +819,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	    	registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050", aBagSPJavaOrchestration);
 		} else {
 			if(logger.isDebugEnabled()) {
-			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+				logger.logDebug("Ending flow, processResponse failed with code: " + aBagSPJavaOrchestration.get("code"));
 			}
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String)aBagSPJavaOrchestration.get("code")));
