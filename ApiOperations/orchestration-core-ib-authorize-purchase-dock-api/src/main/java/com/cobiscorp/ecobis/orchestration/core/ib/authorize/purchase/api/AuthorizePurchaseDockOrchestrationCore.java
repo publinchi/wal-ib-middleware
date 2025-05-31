@@ -86,6 +86,17 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			logger.logError(e.toString());
 		}
 		
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		
+		/* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus)) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
+		}
+
+		dataTrn(anOriginalRequest,aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
