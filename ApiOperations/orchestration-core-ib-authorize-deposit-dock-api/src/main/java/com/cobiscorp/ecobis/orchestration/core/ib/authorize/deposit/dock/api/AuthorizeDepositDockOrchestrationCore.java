@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -63,6 +64,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 	private static final String CLASS_NAME = "AuthorizeDepositDockOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String MODE_OPERATION = "PYS";
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -76,7 +78,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		serverStatus = null;
 
 		try {
 			serverStatus = getServerStatus();
@@ -308,6 +310,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 			
@@ -326,6 +329,7 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
+		aBagSPJavaOrchestration.put("tarjeta_mascara", wProductsQueryResp.readValueParam("@o_tarjeta_mascara"));
 		
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
@@ -780,6 +784,16 @@ public class AuthorizeDepositDockOrchestrationCore extends OfflineApiTemplate {
 									);
 				
 				data.addRow(row);
+
+				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
+				String codAlt = serverStatus ? "0" : "200";
+				registerTransactionSuccess("Authorize Deposit Dock", "DOCK", aRequest,
+						(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String)aBagSPJavaOrchestration.get("@o_causal"),
+						aBagSPJavaOrchestration.get("ente").toString()
+				);
+				registerMovementsAuthAdditionalData(serverStatus,"DOCK", Constants.CREDIT_AT_STORE,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt,authorizationCode, tarjetaMascara, aRequest);
 			}
 			
 		} else {

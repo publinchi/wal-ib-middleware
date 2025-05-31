@@ -94,7 +94,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	private IAdminTokenUser tokenService;
 	private String codBlockHigh;
 	private String prefixPhone;
-	private String isReentry = "N"; 
+	private String isReentry = "N";
+	ServerResponse responseServer;
 
 	public void setTokenService(IAdminTokenUser tokenService) {
 		this.tokenService = tokenService;
@@ -199,7 +200,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
-		ServerResponse responseServer = null;
+		responseServer = null;
 		try {
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e) {
@@ -788,7 +789,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N11");
 				// Notificacion credito
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N146");
-				
+				// Registro Datos Adicionales
+				registerMovementsP2PAdditionalData(
+						"TRANSFER",
+						responseServer.getOnLine(),
+						aRequest,
+						anOriginalProcedureRes,
+						aBagSPJavaOrchestration);
+
 				int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
 				int lengthCtaOrig = aRequest.readValueParam("@i_cta").length();
 				String identificationType = null;
@@ -1693,13 +1701,22 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		anOriginalRequest.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_ssn"          , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_benef_cta_org", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_benef_cta_des", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_cod_alt_org"  , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Data enviada a ejecutar api:" + anOriginalRequest.toString());
 		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("ssn branch es " +  response.readValueParam("@o_ssn_branch"));
+			logger.logDebug("ssn branch es "        +  response.readValueParam("@o_ssn_branch"));
+			logger.logDebug("beneficiario cta org " +  response.readValueParam("@o_benef_cta_org"));
+			logger.logDebug("beneficiario cta des " +  response.readValueParam("@o_benef_cta_des"));
+			logger.logDebug("codigo alterno org "   +  response.readValueParam("@o_cod_alt_org"));
+			logger.logDebug("codigo alterno des "   +  response.readValueParam("@o_cod_alt_des"));
 		}
 
 		if (logger.isInfoEnabled())
@@ -1770,9 +1787,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
 		anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
-		
-		
-		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_fecha_tran",    ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_referencia",    ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_ssn"          , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_benef_cta_org", ICTSTypes.SQLVARCHAR, "XX");
+		anOriginalRequest.addOutputParam("@o_benef_cta_des", ICTSTypes.SQLVARCHAR, "XX");
+		anOriginalRequest.addOutputParam("@o_cod_alt_org"  , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Data enviada a ejecutar api:" + anOriginalRequest);

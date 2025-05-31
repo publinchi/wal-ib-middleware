@@ -71,6 +71,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
 	private String transaccionDate = null;
+	ServerResponse responseServer;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -103,7 +104,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
-		ServerResponse responseServer = null;
+		responseServer = null;
 		try {
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e) {
@@ -416,12 +417,20 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	    
 	    aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", wQueryRequest.readValueFieldInHeader("ssn_branch"));
+
+		reqTMPCentral.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_benef_cta_des" , ICTSTypes.SQLVARCHAR, "X");
+		reqTMPCentral.addOutputParam("@o_cod_alt_des"   , ICTSTypes.SQLINTN, "0");
 	    
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isInfoEnabled()) {
 			logger.logDebug("Ending flow, queryAccountCreditOperation with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
 		}
+
+		// Almacenamiento Response
+		aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
 		
 		IProcedureResponse wProcedureResponseLocal;
 		if (!wProcedureResponseCentral.hasError()) {			
@@ -641,6 +650,12 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 				
 				
 				anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+				anOriginalRequest.addOutputParam("@o_referencia",    ICTSTypes.SQLINTN, "0");
+				anOriginalRequest.addOutputParam("@o_ssn"          , ICTSTypes.SQLINTN, "0");
+				anOriginalRequest.addOutputParam("@o_benef_cta_org", ICTSTypes.SQLVARCHAR, "XX");
+				anOriginalRequest.addOutputParam("@o_benef_cta_des", ICTSTypes.SQLVARCHAR, "XX");
+				anOriginalRequest.addOutputParam("@o_cod_alt_org"  , ICTSTypes.SQLINTN, "0");
+				anOriginalRequest.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
 
 				if (logger.isDebugEnabled())
 					logger.logDebug("Data enviada a ejecutar api:" + anOriginalRequest);
@@ -657,6 +672,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 					logger.logInfo("Parametro @ssn: " + response.readValueFieldInHeader("ssn"));
 				if(response.readValueFieldInHeader("ssn")!=null)
 				aBagSPJavaOrchestration.put("ssn", response.readValueFieldInHeader("ssn"));
+
+				// Almacenamiento Response
+				aBagSPJavaOrchestration.put("anProcedureResponse", response);
 				
 				//return response;
 
@@ -731,6 +749,14 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
 			row.addRowData(4, new ResultSetRowColumnData(false, this.columnsToReturn[3].getValue()));
 			data.addRow(row);
+
+			/*Datos adicionales*/
+			registerMovementsP2PAdditionalData(
+					"CREDIT",
+					responseServer.getOnLine(),
+					anOriginalRequest,
+					(IProcedureResponse)aBagSPJavaOrchestration.get("anProcedureResponse"),
+					aBagSPJavaOrchestration);
 
 	    	registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050", aBagSPJavaOrchestration);
 		} else {
