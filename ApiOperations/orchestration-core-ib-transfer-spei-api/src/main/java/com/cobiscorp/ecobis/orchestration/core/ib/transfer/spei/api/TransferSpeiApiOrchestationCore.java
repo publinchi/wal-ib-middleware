@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.TimeZone;
+import java.util.Objects;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonArray;
@@ -47,6 +48,7 @@ import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
+import com.cobiscorp.cobis.cts.domains.IMessageBlock;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
@@ -72,6 +74,7 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.AESCrypt;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.JKeyStore;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Client;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.Message;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Notification;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.NotificationDetail;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
@@ -299,22 +302,26 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             Map<String, Object> aBagSPJavaOrchestration) {
     	aBagSPJavaOrchestration.put(RETURN_CODE, 0);
     	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
-        aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+        aBagSPJavaOrchestration.put(AN_ORIGINAL_REQUEST, anOriginalRequest);
         
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-        
-        anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
+
+        anProcedureResponse = validateLocalExecution(aBagSPJavaOrchestration);
+
         if(anProcedureResponse.getReturnCode()==0)
         {
-        anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
-        
-        if(anProcedureResponse.getReturnCode()==0)
-        {
-        	anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
-        }
+            anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
+            if(anProcedureResponse.getReturnCode()==0)
+            {
+                anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+                
+                if(anProcedureResponse.getReturnCode()==0)
+                {
+                    anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
+                }
+            }
         }
         return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
-
     }
 
     private IProcedureResponse transferSpei(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -990,8 +997,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "1870013");
         request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
-
-        logger.logInfo(request);
+        if(logger.isDebugEnabled()) {
+            logger.logDebug("Request: " + request);
+        }
 
         //IProcedureResponse responseTransferSpei = executeCoreBanking(request);
         
@@ -1045,7 +1053,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_referencia"));
         }
 
-        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
         IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
         String code = null, message, success, referenceCode = null, trackingKey = null, movementId = null, 
         executionStatus = null;
@@ -1254,7 +1262,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private void registerWebhook(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String tipoTrans, 
     String causal, int lengthCtaOrig, int lengthCtaDest){
 
-        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
         String identificationTypeOrig;
         String identificationTypeDest = null;
         String typeTrnWH = "S";
@@ -1346,6 +1354,25 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
         }
 
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
+
+        ArrayList a = (ArrayList) aResponse.getMessages();
+        Integer errorNumber = 0;
+        String errorMessage = null;
+
+		for (int i = 0; i < a.size(); i++) {
+			IMessageBlock msg = (IMessageBlock) a.get(i);
+            if(msg.getMessageNumber() != 0) {
+                errorNumber = msg.getMessageNumber();
+                errorMessage = msg.getMessageText();
+            }
+		}
+        Object errorNumberObj = aBagSPJavaOrchestration.get("@i_codigo_acc");
+        if((Objects.isNull(errorNumber) || errorNumber == 0) && Objects.nonNull(errorNumberObj)) {
+            errorNumber = Integer.parseInt((String)errorNumberObj);
+            errorMessage = (String)aBagSPJavaOrchestration.get("@i_mensaje_acc");
+        }
+
         request.setSpName("cob_bvirtual..sp_update_transfer_status");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -1356,7 +1383,19 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("movementId")); 
-		
+
+        request.addInputParam("@i_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
+        request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn_branch"));
+
+        if(Objects.nonNull(errorNumber) && errorNumber != 0) {
+            request.addInputParam("@i_error_number", ICTSTypes.SQLINT4, errorNumber+"");
+            request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, errorMessage);
+        } 
+
+        Object claveRastreo = aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+        if(Objects.nonNull(claveRastreo)) {
+            request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, (String) claveRastreo);
+        } 
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		

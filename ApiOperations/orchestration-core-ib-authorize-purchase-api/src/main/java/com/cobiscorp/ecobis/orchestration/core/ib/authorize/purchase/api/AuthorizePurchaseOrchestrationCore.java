@@ -33,6 +33,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -85,6 +86,11 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		} catch (CTSInfrastructureException e) {
 			logger.logError(e.toString());
 		}
+		
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;
@@ -145,8 +151,19 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			}
 			anProcedureResponse = authorizePurchase(anOriginalRequest, aBagSPJavaOrchestration);
 		}
+
+		IProcedureResponse finalProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+
+		IResultSetRowColumnData resultSetRowColumnDataError = finalProcedureResponse.getResultSetRowColumnData(2, 1, 1);
+		if(resultSetRowColumnDataError != null && !"0".equals(resultSetRowColumnDataError.getValue())) {
+			aBagSPJavaOrchestration.put("s_error", resultSetRowColumnDataError.getValue());
+			IResultSetRowColumnData resultSetRowColumnDataMsg = finalProcedureResponse.getResultSetRowColumnData(2, 1, 2);
+			aBagSPJavaOrchestration.put("s_msg", resultSetRowColumnDataMsg != null ? resultSetRowColumnDataMsg.getValue() : "");
+		}
+
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		return processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+		return finalProcedureResponse;
 	}
 	
 	private IProcedureResponse authorizePurchase(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -983,17 +1000,21 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
     public ICoreServer getCoreServer() {
         return coreServer;
     }
-    
+
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
     	
     	 aBagSPJavaOrchestration.put("i_prod", null);
     	 aBagSPJavaOrchestration.put("i_prod_des", null );
     	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
-    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
-    	 aBagSPJavaOrchestration.put("i_mon", null );
-    }
-
+		aBagSPJavaOrchestration.put("i_cta_des", null);  
+		aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_number") ); 
+		aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
+		aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
+		aBagSPJavaOrchestration.put("i_mon", null );
+		
+		aBagSPJavaOrchestration.put("i_movement_type", Constants.PURCHASE_AT_STORE); 
+		aBagSPJavaOrchestration.put("i_establishmentName",  aRequest.readValueParam("@i_institution_name")); 
+		aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction")); 
+		aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@i_uuid")); 
+   }
 }
