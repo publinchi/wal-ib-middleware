@@ -48,6 +48,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -92,7 +94,8 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	private IAdminTokenUser tokenService;
 	private String codBlockHigh;
 	private String prefixPhone;
-	private String isReentry = "N"; 
+	private String isReentry = "N";
+	ServerResponse responseServer;
 
 	public void setTokenService(IAdminTokenUser tokenService) {
 		this.tokenService = tokenService;
@@ -131,8 +134,47 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");		
-
+		//registro re tran monent al inicio de la transaccion no meter mas codigo aqui
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE, anOriginalRequest.readValueParam("@x_channel") );
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		
+		IProcedureResponse response = executeJavaOrchestrationP2P(anOriginalRequest ,aBagSPJavaOrchestration);
+		
+		// actualiza el estado de la trn 
+		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration,response);
+				
+		return response;
+	}
+	
+	public void  updateStatusTrn(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse response)
+	{
+		String code = "0";
+		String message ="";
+		if (response.getResultSetListSize() > 1) {
+			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				if(columns.length > 1)
+				{
+					code= columns[0].getValue();
+					message =columns[1].getValue();
+				}
+			} 
+		} 			
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+	}
+	public IProcedureResponse executeJavaOrchestrationP2P(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration)
+	{
+		if(logger.isDebugEnabled())
+			logger.logDebug("Begin flow, TransferThirdParty [INI]: "+anOriginalRequest);
+		
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		
@@ -197,7 +239,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
-		ServerResponse responseServer = null;
+		responseServer = null;
 		try {
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e) {
@@ -625,7 +667,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 	}
-		
 	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
 		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
 			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
@@ -786,7 +827,14 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N11");
 				// Notificacion credito
 				notifyThirdPartyTransfer(aRequest, aBagSPJavaOrchestration, "N146");
-				
+				// Registro Datos Adicionales
+				registerMovementsP2PAdditionalData(
+						"TRANSFER",
+						responseServer.getOnLine(),
+						aRequest,
+						anOriginalProcedureRes,
+						aBagSPJavaOrchestration);
+
 				int lengthCtades = aRequest.readValueParam("@i_cta_des").length();
 				int lengthCtaOrig = aRequest.readValueParam("@i_cta").length();
 				String identificationType = null;
@@ -933,6 +981,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 		
 		logger.logInfo(" saliendo de processResponseTransfer --->");
+		//inicio actualiza el estado de la trn 
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
+		//fin actualiza el estado de la trn
+		
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
@@ -1691,13 +1745,22 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		
 		anOriginalRequest.addOutputParam("@o_ssn_branch", ICTSTypes.SQLINTN, "0");
 		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_ssn"          , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_benef_cta_org", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_benef_cta_des", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_cod_alt_org"  , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Data enviada a ejecutar api:" + anOriginalRequest.toString());
 		IProcedureResponse response = executeCoreBanking(anOriginalRequest);
 		
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("ssn branch es " +  response.readValueParam("@o_ssn_branch"));
+			logger.logDebug("ssn branch es "        +  response.readValueParam("@o_ssn_branch"));
+			logger.logDebug("beneficiario cta org " +  response.readValueParam("@o_benef_cta_org"));
+			logger.logDebug("beneficiario cta des " +  response.readValueParam("@o_benef_cta_des"));
+			logger.logDebug("codigo alterno org "   +  response.readValueParam("@o_cod_alt_org"));
+			logger.logDebug("codigo alterno des "   +  response.readValueParam("@o_cod_alt_des"));
 		}
 
 		if (logger.isInfoEnabled())
@@ -1768,9 +1831,13 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Se envia Comission:" + anOriginalRequest.readValueParam("@i_comision"));
 		anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_comision"));
-		
-		
-		anOriginalRequest.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_fecha_tran",    ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
+		anOriginalRequest.addOutputParam("@o_referencia",    ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_ssn"          , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_benef_cta_org", ICTSTypes.SQLVARCHAR, "XX");
+		anOriginalRequest.addOutputParam("@o_benef_cta_des", ICTSTypes.SQLVARCHAR, "XX");
+		anOriginalRequest.addOutputParam("@o_cod_alt_org"  , ICTSTypes.SQLINTN, "0");
+		anOriginalRequest.addOutputParam("@o_cod_alt_des"  , ICTSTypes.SQLINTN, "0");
 
 		if (logger.isDebugEnabled())
 			logger.logDebug(CLASS_NAME + "Data enviada a ejecutar api:" + anOriginalRequest);
@@ -2636,5 +2703,40 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 		return anProcedureResponse;
 	}
-
+    
+    @Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+ 
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+ 
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
+    }
+ 
+    @Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+    protected ICoreService coreService;
+ 
+    public void bindCoreService(ICoreService service) {
+        coreService = service;
+    }
+ 
+    public void unbindCoreService(ICoreService service) {
+        coreService = null;
+    }
+    
+    @Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
+    
+    public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_cta_des"));  
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_cta") ); 
+    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_concepto"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_val"));
+    	 aBagSPJavaOrchestration.put("i_movement_type", "P2P_DEBIT");  
+		 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@x_request_id")); 
+    }
 }

@@ -41,6 +41,7 @@ import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 
@@ -530,4 +531,8 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		}
 
 	}
+	@Override
+    public ICoreServer getCoreServer() {
+        return null;
+    }
 }
