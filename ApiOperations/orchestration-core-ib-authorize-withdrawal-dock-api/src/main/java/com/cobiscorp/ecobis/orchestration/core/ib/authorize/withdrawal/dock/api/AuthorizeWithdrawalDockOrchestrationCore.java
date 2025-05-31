@@ -745,6 +745,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 				data.addRow(row);
 
 				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
+				aBagSPJavaOrchestration.put("i_tarjeta_mascara",aBagSPJavaOrchestration.get("tarjeta_mascara"));
 				String codAlt = serverStatus ? "0" : "1";
 				registerMovementsAuthAdditionalData(serverStatus,"DOCK",Constants.DEBIT_AT_STORE,
 						(String)aBagSPJavaOrchestration.get("@o_ssn_host"),

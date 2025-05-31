@@ -668,6 +668,7 @@ public class AuthorizeReversalDockOrchestrationCore extends OfflineApiTemplate {
 				String tipoTarjeta = aBagSPJavaOrchestration.containsKey("tipo_tarjeta")?(String)aBagSPJavaOrchestration.get("tipo_tarjeta"):"0";
 				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
 				String authorizationCode =   aRequest.readValueParam("@i_authorization_code");
+				aBagSPJavaOrchestration.put("i_tarjeta_mascara",aBagSPJavaOrchestration.get("tarjeta_mascara"));
 				String ssnBranch = serverStatus ? aRequest.readValueParam("@s_ssn_branch") : aBagSPJavaOrchestration.get("@o_ssn_branch").toString();
 				String codAlt = serverStatus ? "0" : "200";
 				String movementType = tipoTarjeta.equals("VIRTUAL") ? Constants.REVERSAL_ONLINE:Constants.REVERSAL_PHYSICAL;

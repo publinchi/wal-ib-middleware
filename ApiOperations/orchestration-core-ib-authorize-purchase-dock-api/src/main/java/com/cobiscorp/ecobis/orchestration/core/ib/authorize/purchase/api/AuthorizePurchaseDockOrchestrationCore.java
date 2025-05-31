@@ -744,6 +744,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				String movementType = "VIRTUAL".equals(tipoTarjeta) ? Constants.PURCHASE_ONLINE: Constants.PURCHASE_AT_STORE;
 				registerMovementsAuthAdditionalData(serverStatus,"DOCK", movementType,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
 						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt, authorizationCode, tarjetaMascara, aRequest);
+				aBagSPJavaOrchestration.put("i_tarjeta_mascara",aBagSPJavaOrchestration.get("tarjeta_mascara"));
+				aBagSPJavaOrchestration.put("i_movement_type",movementType);
 
 			}
 			
