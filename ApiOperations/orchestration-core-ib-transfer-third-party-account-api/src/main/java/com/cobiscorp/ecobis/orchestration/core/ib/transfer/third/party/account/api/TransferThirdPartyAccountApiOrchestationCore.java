@@ -48,6 +48,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -2636,5 +2638,44 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 
 		return anProcedureResponse;
 	}
+    
+    @Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+ 
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+ 
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
+    }
+ 
+    @Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+    protected ICoreService coreService;
+ 
+    public void bindCoreService(ICoreService service) {
+        coreService = service;
+    }
+ 
+    public void unbindCoreService(ICoreService service) {
+        coreService = null;
+    }
+    
+    @Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
+    
+    public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    	
+    	 aBagSPJavaOrchestration.put("i_prod", null);
+    	 aBagSPJavaOrchestration.put("i_prod_des", null );
+    	 aBagSPJavaOrchestration.put("i_login", null );
+    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
+    	 aBagSPJavaOrchestration.put("i_cta", null ); 
+    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
+    	 aBagSPJavaOrchestration.put("i_mon", null );
+    }
 
 }
