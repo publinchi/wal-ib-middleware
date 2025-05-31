@@ -134,8 +134,47 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, TransferThirdParty [INI]: ");		
-
+		//registro re tran monent al inicio de la transaccion no meter mas codigo aqui
+		anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE, anOriginalRequest.readValueParam("@x_channel") );
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		
+		IProcedureResponse response = executeJavaOrchestrationP2P(anOriginalRequest ,aBagSPJavaOrchestration);
+		
+		// actualiza el estado de la trn 
+		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration,response);
+				
+		return response;
+	}
+	
+	public void  updateStatusTrn(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration, IProcedureResponse response)
+	{
+		String code = "0";
+		String message ="";
+		if (response.getResultSetListSize() > 1) {
+			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				if(columns.length > 1)
+				{
+					code= columns[0].getValue();
+					message =columns[1].getValue();
+				}
+			} 
+		} 			
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
+	}
+	public IProcedureResponse executeJavaOrchestrationP2P(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration)
+	{
+		if(logger.isDebugEnabled())
+			logger.logDebug("Begin flow, TransferThirdParty [INI]: "+anOriginalRequest);
+		
 		Boolean flowRty = evaluateExecuteReentry(anOriginalRequest);
 		aBagSPJavaOrchestration.put("flowRty", flowRty);
 		
@@ -628,7 +667,6 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
         
 		return processResponseTransfer(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
 	}
-		
 	public boolean evaluateExecuteReentry(IProcedureRequest anOriginalRequest){		
 		if (!Utils.isNull(anOriginalRequest.readValueFieldInHeader("reentryExecution"))){
 			if (anOriginalRequest.readValueFieldInHeader("reentryExecution").equals("Y")){
@@ -943,6 +981,12 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		}
 		
 		logger.logInfo(" saliendo de processResponseTransfer --->");
+		//inicio actualiza el estado de la trn 
+		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_msg", message);
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
+		//fin actualiza el estado de la trn
+		
 		anOriginalProcedureResponse.setReturnCode(200);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
@@ -2688,15 +2732,11 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
     }
     
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-    	
-    	 aBagSPJavaOrchestration.put("i_prod", null);
-    	 aBagSPJavaOrchestration.put("i_prod_des", null );
-    	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
-    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
-    	 aBagSPJavaOrchestration.put("i_mon", null );
+    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_cta_des"));  
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_cta") ); 
+    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_concepto"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_val"));
+    	 aBagSPJavaOrchestration.put("i_movement_type", "P2P_DEBIT");  
+		 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@x_request_id")); 
     }
-
 }
