@@ -2,9 +2,9 @@ package com.cobiscorp.ecobis.orchestration.core.ib.accountdebitoperation;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Objects;
 
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
-import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -34,10 +34,6 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeader;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
-import com.cobiscorp.cts.reentry.api.IReentryPersister;
-import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
-import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
-import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
@@ -50,11 +46,6 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplat
         @Property(name = "service.spName", value = "cob_procesador..sp_debit_operation_api")
 })
 public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {// SPJavaOrchestrationBase
-
-    @Override
-    public ICoreServer getCoreServer() {
-        return coreServer;
-    }
 
     private ILogger logger = (ILogger) this.getLogger();
     private static final String CLASS_NAME = "AccountDebitOperationOrchestrationCore --->";
@@ -111,8 +102,8 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
         IProcedureResponse wProcedureResponse = processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
 
-        aBagSPJavaOrchestration.put("s_error", aBagSPJavaOrchestration.get(ERROR_CODE));
-        aBagSPJavaOrchestration.put("s_msg", aBagSPJavaOrchestration.get(ERROR_MESSAGE));
+        aBagSPJavaOrchestration.put("s_error", aBagSPJavaOrchestration.get("error_code"));
+        aBagSPJavaOrchestration.put("s_msg", aBagSPJavaOrchestration.get("error_message"));
 
         updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 
