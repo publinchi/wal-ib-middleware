@@ -347,10 +347,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		return response;
 	}
 	
-	
-	
-	
-	
 	private void queryAccountCreditOperation(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		String reentryCode = (String)aBagSPJavaOrchestration.get("REENTRY_SSN");
@@ -401,7 +397,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		}
 		
 		if(creditConcept.equals("REFUND")) {
-		
 			if(originMovementId.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40126");
 				aBagSPJavaOrchestration.put("msg","The originMovementId must not be empty");
@@ -542,7 +537,10 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
+		if(logger.isDebugEnabled()) {
 		logger.logDebug("execute executeOfflineTransacction: ");
+		}
+		
 		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
@@ -781,16 +779,29 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		IResultSetRow row = new ResultSetRow();
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		String messageError = "";
+		String creditConcept = anOriginalRequest.readValueParam("@i_creditConcept");
 		
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SYBVARCHAR, 255));
 		
+		//Agregamos los valores necesarios para el registro de webhook
 		aBagSPJavaOrchestration.put("transaccionDate", transaccionDate);
+		aBagSPJavaOrchestration.put("creditConcept", creditConcept);
+		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 		
-		if ("0".equals(aBagSPJavaOrchestration.get("code"))) {
-			logger.logDebug("Ending flow, processResponse success with code: " + aBagSPJavaOrchestration.get("code"));
+		if (creditConcept.equals("REFUND")) {
+	        aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
+			aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
+			aBagSPJavaOrchestration.put("originCode", anOriginalRequest.readValueParam("@i_originCode"));
+		}
+		
+		if (keyList.get(0).equals("0")) {
+			if(logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, processResponse success with code: " + keyList.get(0));
+			}
 			row.addRowData(1, new ResultSetRowColumnData(false, this.columnsToReturn[0].getValue()));
 			row.addRowData(2, new ResultSetRowColumnData(false, this.columnsToReturn[1].getValue()));
 			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
@@ -807,7 +818,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 
 	    	registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050", aBagSPJavaOrchestration);
 		} else {
-			logger.logDebug("Ending flow, processResponse failed with code: " + aBagSPJavaOrchestration.get("code"));
+			if(logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, processResponse failed with code: " + keyList.get(0));
+			}
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String)aBagSPJavaOrchestration.get("code")));
 			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("msg")));
