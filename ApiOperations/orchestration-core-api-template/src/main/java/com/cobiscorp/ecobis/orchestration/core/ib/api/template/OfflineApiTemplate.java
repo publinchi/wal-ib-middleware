@@ -913,9 +913,9 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		request.addInputParam("@i_card_id", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_card_id"));
 		request.addInputParam("@i_pin", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_pin")); 
 		request.addInputParam("@i_code", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_code")); 
-		request.addInputParam("@i_mode", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_mode"));
-
-		request.addInputParam("@i_campo8", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_campo8")); 
+		request.addInputParam("@i_mode", ICTSTypes.SYBVARCHAR, (String)aBagSPJavaOrchestration.get("i_mode")); 
+		
+		
 		request.addInputParam("@i_valida_des", ICTSTypes.SYBVARCHAR,"N");
 		request.addInputParam("@i_origen", ICTSTypes.SYBVARCHAR, "API");
 		
@@ -1232,8 +1232,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put(IS_ERRORS, true);
 		aBagSPJavaOrchestration.put("error_code", errorCode);
 		aBagSPJavaOrchestration.put("error_message", errorMessage);
+		aBagSPJavaOrchestration.put("code",errorCode);
+		aBagSPJavaOrchestration.put("msg",errorMessage);
 	}
-	
+
+
 	public void registerTransactionFailed(String tipoTran, String canal, IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) 
 	{
 		if (logger.isInfoEnabled()) {logger.logInfo(" Entrando en registerTransactionFailed");}
