@@ -74,6 +74,9 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if(logger.isDebugEnabled()){
 			logger.logDebug("Begin flow, AuthorizeWithdrawal starts...");
+			
+			anOriginalRequest.addFieldInHeader("servicio",ICOBISTS.HEADER_STRING_TYPE,"8" );
+			aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
 		}
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
@@ -86,6 +89,18 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 		} catch (CTSInfrastructureException e) {
 			logger.logError(e.toString());
 		}
+		
+		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		
+		/* Validar comportamiento transaccion */
+		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus)) {
+			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+			return Utils.returnException(this.MESSAGE_RESPONSE);
+		}
+		
+		dataTrn(anOriginalRequest,aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
+		
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;
@@ -109,7 +124,7 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				anProcedureResponseVal = getValAccount(anOriginalRequest, aBagSPJavaOrchestration);
 				if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 					logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
-					aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
+					aBagSPJavaOrchestration.put("cod_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
 					aBagSPJavaOrchestration.put("message_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
 					return processResponseApi(anOriginalRequest, anProcedureResponseVal,aBagSPJavaOrchestration);
 				}
@@ -436,11 +451,11 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 		wProductsQueryResp.setReturnCode(0);
 		
 		if (!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 
 			if(logger.isDebugEnabled()){
-				logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
+				logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));
 			}
 		}
 				
@@ -522,11 +537,11 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 			}
 		}
 		else{
-			aBagSPJavaOrchestration.put("code_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", response.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", response.getResultSetRowColumnData(2, 1, 2).getValue());
 
 			if(logger.isDebugEnabled()){
-				logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));
+				logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));
 			}
 		}
 		
@@ -621,8 +636,8 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 		
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -808,8 +823,8 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 				row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
-				row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
-				row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+				row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_msg")));
+				row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_error")));
 				row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row6.addRowData(7, new ResultSetRowColumnData(false, null));
 				
@@ -865,8 +880,8 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 			row6.addRowData(1, new ResultSetRowColumnData(false, "0"));
 			row6.addRowData(2, new ResultSetRowColumnData(false, "0"));
 			row6.addRowData(3, new ResultSetRowColumnData(false, "0"));
-			row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
-			row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+			row6.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_msg")));
+			row6.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_error")));
 			row6.addRowData(6, new ResultSetRowColumnData(false, "0"));
 			row6.addRowData(7, new ResultSetRowColumnData(false, null));
 			
@@ -886,6 +901,10 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
 		wProcedureResponse.addResponseBlock(resultsetBlock4);
 		wProcedureResponse.addResponseBlock(resultsetBlock5);
 		wProcedureResponse.addResponseBlock(resultsetBlock6);
+		
+		//inicio actualiza el estado de la trn 
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
+		//fin actualiza el estado de la trn
 		
 		return wProcedureResponse;		
 	}
@@ -1018,14 +1037,22 @@ public class AuthorizeWithdrawalOrchestrationCore extends OfflineApiTemplate {
     
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
     	
+    	
+    	
     	 aBagSPJavaOrchestration.put("i_prod", null);
     	 aBagSPJavaOrchestration.put("i_prod_des", null );
     	 aBagSPJavaOrchestration.put("i_login", null );
-    	 aBagSPJavaOrchestration.put("i_cta_des", aRequest.readValueParam("@i_account_id"));  
-    	 aBagSPJavaOrchestration.put("i_cta", null ); 
+    	 aBagSPJavaOrchestration.put("i_cta_des", null);  
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_number")); 
     	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_source_value"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
     	 aBagSPJavaOrchestration.put("i_mon", null );
+    	 
+    	 aBagSPJavaOrchestration.put("i_movement_type", "DEBIT_AT_STORE"); 
+    	 aBagSPJavaOrchestration.put("i_establishmentName",  aRequest.readValueParam("@i_institution_name")); 
+    	 aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction")); 
+    	 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@i_uuid")); 
+    	 
     }
 
 }

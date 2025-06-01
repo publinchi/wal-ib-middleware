@@ -176,7 +176,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         }
 
         if (xChannel==null || xChannel.equals("null") || xChannel.isEmpty()) {
-            xChannel = "E";
+            xChannel = "8";
         }
 
         // create procedure
@@ -7403,7 +7403,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         }
 
         if (xChannel == null || xChannel.equals("null") || xChannel.trim().isEmpty()) {
-            xChannel = "E";
+            xChannel = "8";
         }
 
         //create procedure
@@ -9057,7 +9057,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         }
 
         if (xChannel == null || xChannel.equals("null") || xChannel.trim().isEmpty()) {
-            xChannel = "E";
+            xChannel = "8";
         }
 
         //create procedure

@@ -86,7 +86,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
 		validateLocalExecution(aBagSPJavaOrchestration);
 		IProcedureResponse procedureResponse = executeJavaOrchestrationCredit(anOriginalRequest, aBagSPJavaOrchestration);
-		// actualiza el estado de la trn 
+		// actualiza el estado de la trn
 		updateStatusTrn(anOriginalRequest,aBagSPJavaOrchestration, procedureResponse);
 		return procedureResponse;
 	}
@@ -97,7 +97,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		String message ="";
 		if (response.getResultSetListSize() > 1) {
 			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
-			
+
 			if (resultSetRows.length > 0) {
 				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
 				if(columns.length > 1)
@@ -105,17 +105,17 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 					code= columns[0].getValue();
 					message =columns[1].getValue();
 				}
-			} 
-		} 			
+			}
+		}
 		aBagSPJavaOrchestration.put("s_error", code);
 		aBagSPJavaOrchestration.put("s_msg", message);
 		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 	}
-	
+
 	public IProcedureResponse executeJavaOrchestrationCredit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, AccountCreditOperation start. RTY " + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));		
+		logger.logDebug("Begin flow, AccountCreditOperation start. RTY " + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-		
+
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		if(logger.isDebugEnabled())
 			logger.logDebug("Inicia credit operation Orquestation");
@@ -152,7 +152,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		   logger.logDebug("Response Online: " + responseServer.getOnLine() + " Response flowRty" + flowRty);
 		
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
-        	
+
 		/* Validar comportamiento transaccion */
 		
 		/*if(!validateContextTransacction(aBagSPJavaOrchestration,responseServer.getOnLine() )) {
@@ -346,11 +346,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		
 		return response;
 	}
-	
-	
-	
-	
-	
+
 	private void queryAccountCreditOperation(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		
 		String reentryCode = (String)aBagSPJavaOrchestration.get("REENTRY_SSN");
@@ -363,7 +359,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));		
 		String originMovementId =  (wQueryRequest.readValueParam("@i_originMovementId"));
 		String originReferenceNumber =  (wQueryRequest.readValueParam("@i_originReferenceNumber"));
-			
+
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("code","40107");
 			aBagSPJavaOrchestration.put("msg","amount must be greater than 0");
@@ -401,7 +397,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		}
 		
 		if(creditConcept.equals("REFUND")) {
-		
 			if(originMovementId.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40126");
 				aBagSPJavaOrchestration.put("msg","The originMovementId must not be empty");
@@ -458,7 +453,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
 		reqTMPCentral.addOutputParam("@o_benef_cta_des" , ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_cod_alt_des"   , ICTSTypes.SQLINTN, "0");
-	    
+
 	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
 		
 		if (logger.isInfoEnabled()) {
@@ -467,7 +462,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 
 		// Almacenamiento Response
 		aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
-		
+
 		IProcedureResponse wProcedureResponseLocal;
 		if (!wProcedureResponseCentral.hasError()) {			
 			IResultSetRow resultSetRow = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray()[0];
@@ -542,7 +537,10 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	}
 
 	private void executeOfflineTransacction(Map<String, Object> aBagSPJavaOrchestration) {
+		if(logger.isDebugEnabled()) {
 		logger.logDebug("execute executeOfflineTransacction: ");
+		}
+
 		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		String idCustomer = anOriginalRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = anOriginalRequest.readValueParam("@i_accountNumber");
@@ -722,7 +720,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 
 				// Almacenamiento Response
 				aBagSPJavaOrchestration.put("anProcedureResponse", response);
-				
+
 				//return response;
 
 				if (!response.hasError()) {
@@ -781,16 +779,29 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		IResultSetRow row = new ResultSetRow();
 		IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
 		String messageError = "";
-		
+		String creditConcept = anOriginalRequest.readValueParam("@i_creditConcept");
+
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SYBVARCHAR, 255));
 		
+		//Agregamos los valores necesarios para el registro de webhook
 		aBagSPJavaOrchestration.put("transaccionDate", transaccionDate);
-		
+		aBagSPJavaOrchestration.put("creditConcept", creditConcept);
+		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
+
+		if (creditConcept.equals("REFUND")) {
+	        aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
+			aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
+			aBagSPJavaOrchestration.put("originCode", anOriginalRequest.readValueParam("@i_originCode"));
+		}
+
 		if ("0".equals(aBagSPJavaOrchestration.get("code"))) {
-			logger.logDebug("Ending flow, processResponse success with code: " + aBagSPJavaOrchestration.get("code"));
+			if(logger.isDebugEnabled()) {
+				logger.logDebug("Ending flow, processResponse success with code: " + aBagSPJavaOrchestration.get("code"));
+			}
 			row.addRowData(1, new ResultSetRowColumnData(false, this.columnsToReturn[0].getValue()));
 			row.addRowData(2, new ResultSetRowColumnData(false, this.columnsToReturn[1].getValue()));
 			row.addRowData(3, new ResultSetRowColumnData(false, this.columnsToReturn[2].getValue()));
@@ -807,7 +818,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 
 	    	registerAllTransactionSuccess("AccountCreditOperationOrchestrationCore", anOriginalRequest,"4050", aBagSPJavaOrchestration);
 		} else {
-			logger.logDebug("Ending flow, processResponse failed with code: " + aBagSPJavaOrchestration.get("code"));
+			if(logger.isDebugEnabled()) {
+				logger.logDebug("Ending flow, processResponse failed with code: " + aBagSPJavaOrchestration.get("code"));
+			}
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String)aBagSPJavaOrchestration.get("code")));
 			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("msg")));
@@ -948,38 +961,38 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	
 	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
     protected ICoreServer coreServer;
- 
+
     protected void bindCoreServer(ICoreServer service) {
         coreServer = service;
     }
- 
+
     protected void unbindCoreServer(ICoreServer service) {
         coreServer = null;
     }
- 
+
     @Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
     protected ICoreService coreService;
- 
+
     public void bindCoreService(ICoreService service) {
         coreService = service;
     }
- 
+
     public void unbindCoreService(ICoreService service) {
         coreService = null;
     }
-    
+
     @Override
     public ICoreServer getCoreServer() {
         return coreServer;
     }
-    
+
     public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
-    	
-    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_accountNumber") ); 
+
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_accountNumber") );
     	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_creditConcept"));
-    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));   	 
-    	 aBagSPJavaOrchestration.put("i_movement_type", "P2P_CREDIT");   	 
-    	 
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
+    	 aBagSPJavaOrchestration.put("i_movement_type", "P2P_CREDIT");
+
     }
 
 }
