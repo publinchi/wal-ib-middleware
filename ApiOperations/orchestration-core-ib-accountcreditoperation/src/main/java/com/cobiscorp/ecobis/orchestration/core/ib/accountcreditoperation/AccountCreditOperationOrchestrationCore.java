@@ -95,19 +95,19 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	{
 		String code = "0";
 		String message ="";
-		if (response.getResultSetListSize() > 1) {
-			IResultSetRow[] resultSetRows = response.getResultSet(2).getData().getRowsAsArray();
+		if (response.getResultSetListSize() > 0) {
+			IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
 
 			if (resultSetRows.length > 0) {
 				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-				if(columns.length > 1)
+				if(columns.length > 0)
 				{
-					code= columns[0].getValue();
-					message =columns[1].getValue();
+					code = columns[1].getValue();
+					message = columns[2].getValue();
 				}
 			}
 		}
-		aBagSPJavaOrchestration.put("s_error", code);
+		aBagSPJavaOrchestration.put("s_error", code); 
 		aBagSPJavaOrchestration.put("s_msg", message);
 		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 	}
