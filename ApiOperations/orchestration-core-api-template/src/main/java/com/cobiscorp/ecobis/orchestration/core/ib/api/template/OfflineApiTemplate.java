@@ -1232,8 +1232,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		aBagSPJavaOrchestration.put(IS_ERRORS, true);
 		aBagSPJavaOrchestration.put("error_code", errorCode);
 		aBagSPJavaOrchestration.put("error_message", errorMessage);
+		aBagSPJavaOrchestration.put("code",errorCode);
+		aBagSPJavaOrchestration.put("msg",errorMessage);
 	}
-	
+
+
 	public void registerTransactionFailed(String tipoTran, String canal, IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) 
 	{
 		if (logger.isInfoEnabled()) {logger.logInfo(" Entrando en registerTransactionFailed");}
