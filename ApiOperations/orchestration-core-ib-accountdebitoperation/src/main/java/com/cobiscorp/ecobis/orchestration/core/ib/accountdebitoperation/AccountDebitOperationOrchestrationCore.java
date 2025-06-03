@@ -38,6 +38,8 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
+import static com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ConstantsUtil.*;
+
 @Component(name = "AccountDebitOperationOrchestrationCore", immediate = false)
 @Service(value = {ICISSPBaseOrchestration.class, IOrchestrator.class})
 @Properties(value = {@Property(name = "service.description", value = "AccountDebitOperationOrchestrationCore"),
@@ -49,7 +51,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
     private ILogger logger = (ILogger) this.getLogger();
     private static final String CLASS_NAME = "AccountDebitOperationOrchestrationCore --->";
-    protected static final String COLUMNS_RETURN = "columnsToReturn";
 
     @Override
     public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
