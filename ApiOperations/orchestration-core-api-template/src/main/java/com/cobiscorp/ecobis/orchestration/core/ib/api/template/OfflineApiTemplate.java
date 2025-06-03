@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
@@ -19,41 +18,32 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeaderColumn;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
+import com.cobiscorp.cobisv.commons.exceptions.BusinessException;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ApplicationException;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ConstantsErrorsException;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ParameterValidationUtil;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
+
+
 public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
-
 	private static ILogger logger = LogFactory.getLogger(OfflineApiTemplate.class);
-	private static final int ERROR40004 = 40004;
-	private static final int ERROR40003 = 40003;
-	private static final int ERROR40002 = 40002;
-
-	protected static final String CLASS_NAME = " >-----> ";
-	protected static final String COBIS_CONTEXT = "COBIS";
-	protected static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
-	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
-	protected static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION"; 
+	protected static final String CLASS_NAME = "OfflineApiTemplate >-----> ";
+	public String MESSAGE_RESPONSE =  "SUCCESS";
+	public static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
+	public static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	protected static final String REENTRY_EXE = "reentryExecution";
 	protected static final String RESPONSE_SERVER = "RESPONSE_SERVER";
 	protected static final String RESPONSE_LOCAL_VALIDATION = "RESPONSE_LOCAL_VALIDATION";
 	protected static final String RESPONSE_BALANCE = "RESPONSE_BALANCE";
-	public String MESSAGE_RESPONSE =  "SUCCESS";
 	public String transaccionDate;
 	public abstract ICoreServer getCoreServer();
-
-	protected static final String IS_ONLINE = "isOnline";
-	protected static final String IS_REENTRY = "flowRty";
-	protected static final String IS_ERRORS = "isErrors";
-	protected static final String PROCESS_DATE = "transaccionDate";
 
 	public ServerResponse serverStatus() throws CTSServiceException, CTSInfrastructureException{
 		ServerRequest serverRequest = new ServerRequest();
@@ -64,7 +54,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
 		aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
 		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
-		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 
 		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
 		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
@@ -98,10 +88,10 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 					e.printStackTrace();
 				}
 			}
-		} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003
-				|| wServerStatusResp.getReturnCode() == ERROR40004) {
+		} else if (wServerStatusResp.getReturnCode() == ConstantsErrorsException.ERROR_40002_CODE || wServerStatusResp.getReturnCode() == ConstantsErrorsException.ERROR_40003_CODE
+				|| wServerStatusResp.getReturnCode() == ConstantsErrorsException.ERROR_40004_CODE) {
 			serverResponse.setOnLine(false);
-			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
+			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ConstantsErrorsException.ERROR_40002_CODE ? false : true);
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -254,7 +244,6 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 				if(tipoTran.equals(Constants.AUTHORIZE_DEPOSIT)) {
 					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
 					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 					request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
@@ -542,8 +531,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 						movementType = Constants.ACCOUNT_CREDIT;
 					}
 
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
-
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.BONUS);
 				}
 
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
@@ -686,12 +674,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		 Map<String, Object> mapResponse = new  HashMap<String, Object>();
 
 		//valida la parametria de la tabla bv_transaccion
-		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(Constants.ORIGINAL_REQUEST);
 		IProcedureRequest request = initProcedureRequest(originalRequest);
 
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800090");
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setSpName("cob_bvirtual..sp_bv_transaction_context");
 
@@ -729,11 +717,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		mapResponse.put("@o_tipo_costo",tResponse.readValueParam("@o_tipo_costo"));
 		mapResponse.put("@o_habilitado",tResponse.readValueParam("@o_habilitado"));
 
-		aBagSPJavaOrchestration.put(RESPONSE_BV_TRANSACTION, tResponse);
+		aBagSPJavaOrchestration.put(Constants.RESPONSE_BV_TRANSACTION, tResponse);
 
 		// Valida si ocurrio un error en la ejecucion
 		if (Utils.flowError("validateBvTransaction", tResponse)) {
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, tResponse);
+			aBagSPJavaOrchestration.put(Constants.RESPONSE_TRANSACTION, tResponse);
 		}
 
 		return mapResponse;
@@ -801,6 +789,48 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 				return true;
 
+	}
+
+	public void validateContextTransacction(Map<String, Object> aBagSPJavaOrchestration) {
+		boolean SUPPORT_OFFLINE;
+		boolean SUPPORT_HABILITA;
+
+		Map<String, Object> responseContextTrans = validateBvTransaction(aBagSPJavaOrchestration);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response responseContextTrans: " + responseContextTrans);
+		}
+
+		String responseHabilitado = responseContextTrans.get("@o_habilitado").toString();
+		String responseSupportOffline = responseContextTrans.get("@o_fuera_de_linea").toString();
+
+		if(responseContextTrans == null || responseSupportOffline.isEmpty()) {
+			throw new ApplicationException(-1, "Ha ocurrido un error intentando validar si la transferencia permite fuera de línea");
+		}
+
+		if(responseHabilitado == null || responseHabilitado.isEmpty()) {
+			throw new ApplicationException(-1, "Ha ocurrido un error intentando validar si la transferencia esta habilitada");
+		}
+
+		if(responseSupportOffline.equals("S")) {
+			SUPPORT_OFFLINE = true;
+		}else {
+			SUPPORT_OFFLINE = false;
+		}
+
+		if(responseHabilitado.equals("S")) {
+			SUPPORT_HABILITA = true;
+		}else {
+			SUPPORT_HABILITA = false;
+		}
+
+		if (!SUPPORT_OFFLINE && !(Boolean)aBagSPJavaOrchestration.get(Constants.IS_ONLINE)) {
+			throw new BusinessException(-2, "Transferencia no permite ejecución mientras el servidor este fuera de linea");
+		}
+
+		if (!SUPPORT_HABILITA) {
+			throw new BusinessException(-2, "Transaccion no habilitada, revise la parametrizacion");
+		}
 	}
 
 	public IProcedureResponse getValAccount(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -873,7 +903,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800048");
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setSpName("cob_bvirtual..sp_bv_validacion");
 
@@ -1020,7 +1050,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	
 			request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, anOriginalRequest.readValueParam("@t_trn"));
 			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 			request.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH));
 			request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 			request.addInputParam("@t_trn", ICTSTypes.SYBINTN, anOriginalRequest.readValueParam("@t_trn"));
@@ -1200,13 +1230,13 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip");
 		String xChannel = aRequest.readValueParam("@x_channel");
 		String xProcess = (String)aBagSPJavaOrchestration.get("process");
-		aBagSPJavaOrchestration.put(PROCESS_DATE, xEndUserRequestDateTime);
+		aBagSPJavaOrchestration.put(Constants.PROCESS_DATE, xEndUserRequestDateTime);
 
 		IProcedureRequest idempotenceRequest = new ProcedureRequestAS();
 
 		idempotenceRequest.setSpName("cob_bvirtual..sp_idempotency_ope_reg");
 		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ICOBISTS.HEADER_STRING_TYPE, COBIS_CONTEXT);
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ICOBISTS.HEADER_STRING_TYPE, Constants.COBIS_CONTEXT);
 		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, "18500111");
 		idempotenceRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		idempotenceRequest.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
@@ -1229,7 +1259,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("Begin [" + CLASS_NAME + "][setError]");
 		}
-		aBagSPJavaOrchestration.put(IS_ERRORS, true);
+		aBagSPJavaOrchestration.put(Constants.IS_ERRORS, true);
 		aBagSPJavaOrchestration.put("error_code", errorCode);
 		aBagSPJavaOrchestration.put("error_message", errorMessage);
 		aBagSPJavaOrchestration.put("code",errorCode);
@@ -1357,14 +1387,14 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		
 			if(canal.equals("DOCK")) 
 			{
-				if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK) || tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK)) 
+				if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK) || tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK))
 				{		
 					request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_source_value"));
 			    	request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client_id"));
 			    	request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gmt"));
 			    	request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
 			    			
-					if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK)) 
+					if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK))
 					{					
 						request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "C");
 			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.CREDIT_AT_STORE);
@@ -1383,7 +1413,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				
 					} else if (tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK)) {
 						request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "D");
-			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.DEBIT_AT_STORE);	                
+			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.DEBIT_AT_STORE);
 			          
 			        }
 				}
@@ -1553,5 +1583,36 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			}
 		}
 		return false;
+	}
+
+	protected void validateParameters(Map<String, Object> aBagSPJavaOrchestration){
+		Object[] validations = (Object[]) aBagSPJavaOrchestration.get(Constants.PARAMETERS_VALIDATE);
+
+		for (Object validation : validations) {
+			if (validation instanceof ParameterValidationUtil) {
+				ParameterValidationUtil v = (ParameterValidationUtil) validation;
+				String paramValue = (String) aBagSPJavaOrchestration.get(v.getParamName());
+
+				// Realiza las validaciones según el tipo especificado
+				switch (v.getType()) {
+					case "notEmpty":
+						if (paramValue == null || paramValue.isEmpty()) {
+							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
+						}
+						break;
+					case "length":
+						Integer expectedLength = (Integer) v.getAdditionalParam("expectedLength");
+						if (paramValue.length() != expectedLength) {
+							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
+						}
+						break;
+					case "greaterThanZero":
+						if (Integer.parseInt(paramValue) <= 0) {
+							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
+						}
+						break;
+				}
+			}
+		}
 	}
 }
