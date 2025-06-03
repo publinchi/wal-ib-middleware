@@ -344,7 +344,15 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	private void concatenateRecords(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		StringBuilder groupBuilder = new StringBuilder();
-		int numRegistros = (int) aBagSPJavaOrchestration.get("numRegistros");
+		int numRegistros;
+        Object numRegistrosObj = aBagSPJavaOrchestration.get("numRegistros");
+        if (numRegistrosObj instanceof String) {
+            numRegistros = Integer.parseInt((String) numRegistrosObj);
+        } else {
+
+            logger.logError("El valor de 'numRegistros' no es un String válido.");
+            numRegistros = 0; 
+        }
 		@SuppressWarnings("unchecked")
 		List<TransactionContent> contents = (List<TransactionContent>) aBagSPJavaOrchestration.get("contents");
 		int count = 0;
