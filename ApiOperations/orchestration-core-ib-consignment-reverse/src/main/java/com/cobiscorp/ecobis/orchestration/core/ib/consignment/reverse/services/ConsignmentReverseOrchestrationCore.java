@@ -19,7 +19,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.Busine
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ErrorHandler;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.FlowTerminatedException;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ParameterValidationUtil;
-import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ConstantsUtil;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -62,20 +62,20 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
             logger.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
         }
 
-        aBagSPJavaOrchestration.put(ConstantsUtil.IS_ONLINE, false);
+        aBagSPJavaOrchestration.put(Constants.IS_ONLINE, false);
 
         try {
             initializeValidationParameters(aBagSPJavaOrchestration);
             validateParameters(aBagSPJavaOrchestration);
 
-            aBagSPJavaOrchestration.put(ConstantsUtil.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
+            aBagSPJavaOrchestration.put(Constants.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
             if (logger.isDebugEnabled()) {
-                logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(ConstantsUtil.IS_REENTRY));
+                logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(Constants.IS_REENTRY));
             }
 
-            if (!(Boolean)aBagSPJavaOrchestration.get(ConstantsUtil.IS_REENTRY)) {
-                aBagSPJavaOrchestration.put(ConstantsUtil.PROCESS_OPERATION, "CONSIGNMENT_REVERSE");
+            if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
+                aBagSPJavaOrchestration.put(Constants.PROCESS_OPERATION, "CONSIGNMENT_REVERSE");
                 IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
                 IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
                 IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
@@ -85,11 +85,11 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
             }
 
             ServerResponse serverResponse = serverStatus();
-            aBagSPJavaOrchestration.put(ConstantsUtil.IS_ONLINE, serverResponse.getOnLine());
-            aBagSPJavaOrchestration.put(ConstantsUtil.PROCESS_DATE, serverResponse.getProcessDate());
+            aBagSPJavaOrchestration.put(Constants.IS_ONLINE, serverResponse.getOnLine());
+            aBagSPJavaOrchestration.put(Constants.PROCESS_DATE, serverResponse.getProcessDate());
 
             if (logger.isDebugEnabled()) {
-                logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(ConstantsUtil.IS_ONLINE));
+                logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(Constants.IS_ONLINE));
             }
 
             validateContextTransacction(aBagSPJavaOrchestration);
@@ -133,15 +133,15 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil("@i_reversalReason_ori", "notEmpty", 40134, "originalTransactionData.reversalReason must not be empty.")
         };
 
-        aBagSPJavaOrchestration.put(ConstantsUtil.PARAMETERS_VALIDATE, validations);
+        aBagSPJavaOrchestration.put(Constants.PARAMETERS_VALIDATE, validations);
     }
 
     private IProcedureResponse processTransaction(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
         if (logger.isInfoEnabled()) {
             logger.logInfo("Begin [" + CLASS_NAME_CONSIGNMENT_REVERSE + "][processTransaction]");
         }
-        if (!(Boolean)aBagSPJavaOrchestration.get(ConstantsUtil.IS_ONLINE)) {
-            if (!(Boolean)aBagSPJavaOrchestration.get(ConstantsUtil.IS_REENTRY)) {
+        if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_ONLINE)) {
+            if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
                 processOffline(aBagSPJavaOrchestration, anOriginalRequest);
             } else {
                 throw new FlowTerminatedException(50041, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
@@ -180,7 +180,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
         IProcedureRequest localTransactionRequest = (initProcedureRequest(anOriginalRequest));
 
         localTransactionRequest.setSpName("cob_bvirtual..sp_consignment_reverse_local_api");
-        localTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ConstantsUtil.COBIS_CONTEXT);
+        localTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
         localTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
         localTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
         localTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(TRN_CONSIGNMENT_REVERSE));
@@ -198,7 +198,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
 
         procedureResponse = executeCoreBanking(localTransactionRequest);
 
-        aBagSPJavaOrchestration.put(ConstantsUtil.CAUSA, procedureResponse.readValueParam("@o_causa"));
+        aBagSPJavaOrchestration.put(Constants.CAUSA, procedureResponse.readValueParam("@o_causa"));
 
         if (logger.isDebugEnabled()) {
             logger.logDebug("[cob_bvirtual..sp_consignment_reverse_local_api][procedureResponse]: " + procedureResponse.getProcedureResponseAsString());
@@ -209,7 +209,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
             IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 
             if (columns[0].getValue().equals("true")) {
-                aBagSPJavaOrchestration.put(ConstantsUtil.COLUMNS_RETURN, columns);
+                aBagSPJavaOrchestration.put(Constants.COLUMNS_RETURN, columns);
                 aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
             } else {
                 throw new BusinessException(Integer.parseInt(columns[1].getValue()), columns[2].getValue());
@@ -231,7 +231,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
         IProcedureRequest centralTransactionRequest = (initProcedureRequest(anOriginalRequest));
 
         centralTransactionRequest.setSpName("cob_bvirtual..sp_consignment_reverse_central_api");
-        centralTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ConstantsUtil.COBIS_CONTEXT);
+        centralTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
         centralTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
         centralTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
         centralTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(TRN_CONSIGNMENT_REVERSE));
@@ -249,7 +249,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
 
         IProcedureResponse procedureResponse = executeCoreBanking(centralTransactionRequest);
 
-        aBagSPJavaOrchestration.put(ConstantsUtil.CAUSA, procedureResponse.readValueParam("@o_causa"));
+        aBagSPJavaOrchestration.put(Constants.CAUSA, procedureResponse.readValueParam("@o_causa"));
 
         if (logger.isDebugEnabled()) {
             logger.logDebug("[cob_bvirtual..sp_consignment_reverse_central_api][procedureResponse]: " + procedureResponse.getProcedureResponseAsString());
@@ -260,7 +260,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
             IResultSetRowColumnData[] columns = resultSetRow.getColumnsAsArray();
 
             if (columns[0].getValue().equals("true")) {
-                aBagSPJavaOrchestration.put(ConstantsUtil.COLUMNS_RETURN, columns);
+                aBagSPJavaOrchestration.put(Constants.COLUMNS_RETURN, columns);
                 aBagSPJavaOrchestration.put(columns[1].getValue(), columns[2].getValue());
             } else {
                 throw new BusinessException(Integer.parseInt(columns[1].getValue()), columns[2].getValue());
@@ -285,7 +285,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
         metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
         metaData.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SYBVARCHAR, 255));
 
-        IProcedureResponse errorResponse = (IProcedureResponse) aBagSPJavaOrchestration.get(ConstantsUtil.RESPONSE_ERROR_HANDLER);
+        IProcedureResponse errorResponse = (IProcedureResponse) aBagSPJavaOrchestration.get(Constants.RESPONSE_ERROR_HANDLER);
 
         // Verifica si hay un error en el response
         if (errorResponse != null) {
@@ -309,7 +309,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
             }
         } else {
             // No hay errores, proceder con el flujo exitoso
-            IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(ConstantsUtil.COLUMNS_RETURN);
+            IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(Constants.COLUMNS_RETURN);
             if (logger.isDebugEnabled()) {
                 logger.logDebug("Ending flow, processResponse success.");
                 logger.logDebug("success: " + columnsToReturn[0].getValue());
@@ -324,10 +324,10 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
             row.addRowData(4, new ResultSetRowColumnData(false, columnsToReturn[3].getValue()));
             data.addRow(row);
 
-            registerAllTransactionSuccess(CLASS_NAME_CONSIGNMENT_REVERSE, anOriginalRequest, aBagSPJavaOrchestration.get(ConstantsUtil.CAUSA).toString(), aBagSPJavaOrchestration);
+            registerAllTransactionSuccess(CLASS_NAME_CONSIGNMENT_REVERSE, anOriginalRequest, aBagSPJavaOrchestration.get(Constants.CAUSA).toString(), aBagSPJavaOrchestration);
         }
 
-        aBagSPJavaOrchestration.replace(ConstantsUtil.PROCESS_OPERATION, ConstantsUtil.FINISH_OPERATION);
+        aBagSPJavaOrchestration.replace(Constants.PROCESS_OPERATION, Constants.FINISH_OPERATION);
         logIdempotence(anOriginalRequest, aBagSPJavaOrchestration);
 
         IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);

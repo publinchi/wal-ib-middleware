@@ -6,7 +6,7 @@ import com.cobiscorp.cobis.csp.domains.ICSP;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseWSAS;
-import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.*;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 
 import java.util.Map;
 
@@ -28,6 +28,6 @@ public class ErrorHandler {
         response.addFieldInHeader(ICSP.SERVICE_ERROR_CODE, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(e.getErrorCode()));
         response.addFieldInHeader(ICSP.MESSAGE_ERROR, ICOBISTS.HEADER_STRING_TYPE, e.getMessage());
 
-        aBagSPJavaOrchestration.put(ConstantsUtil.RESPONSE_ERROR_HANDLER, response);
+        aBagSPJavaOrchestration.put(Constants.RESPONSE_ERROR_HANDLER, response);
     }
 }

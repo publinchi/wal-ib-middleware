@@ -49,6 +49,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
@@ -120,10 +121,10 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		if(logger.isDebugEnabled())
 			logger.logDebug("Inicia credit operation Orquestation");
 
-		aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
+		aBagSPJavaOrchestration.put(Constants.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
 
-		if (!(Boolean)aBagSPJavaOrchestration.get(IS_REENTRY)) {
+		if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
 			aBagSPJavaOrchestration.put("process", "CREDIT_OPERATION");
 			IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
 			IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];

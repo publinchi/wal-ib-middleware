@@ -1,13 +1,9 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.api.template;
 
-import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.*;
-import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.*;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
@@ -22,14 +18,15 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeaderColumn;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
+import com.cobiscorp.cobisv.commons.exceptions.BusinessException;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ApplicationException;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ConstantsErrorsException;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ParameterValidationUtil;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
@@ -57,7 +54,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
 		aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
 		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
-		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ConstantsUtil.COBIS_CONTEXT);
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 
 		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
 		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
@@ -205,51 +202,51 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_external_customer_id"));
 				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE) || tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE) || tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL)) {
 					request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gtm"));
 				}else{
 					request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gmt"));
 				}
 
-				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , ConstantsUtil.MXN);
+				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , Constants.MXN);
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE) || tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE) || tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL)) {
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
-				} else if(tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT)) {
+				} else if(tipoTran.equals(Constants.AUTHORIZE_DEPOSIT)) {
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
 				}
 				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , null);
 				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , null);
 				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , movementId);
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE)) {
 					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , null);
-				} else if(tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL)) {
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , ConstantsUtil.DEBIT_AT_STORE);
-				}else if(tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT)) {
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , ConstantsUtil.CREDIT_AT_STORE);
+				} else if(tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL)) {
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , Constants.DEBIT_AT_STORE);
+				}else if(tipoTran.equals(Constants.AUTHORIZE_DEPOSIT)) {
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , Constants.CREDIT_AT_STORE);
 				}
 
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, tipoTran);
 				request.addInputParam("@i_transactionText", ICTSTypes.SQLVARCHAR, null);
 
-				if (tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL)) {			        
+				if (tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL)) {			        
 			        request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
 			    }
 
-				if(!tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT)) {
+				if(!tipoTran.equals(Constants.AUTHORIZE_DEPOSIT)) {
 					request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 				}
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_DEPOSIT)) {
 					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 					request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 					
 					request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
 				}
@@ -294,19 +291,19 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 			} else if(canal.equals("DOCK")) {
 				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, externalCustomerId);
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE_DOCK)){
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE_DOCK)){
 					request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val_source_value"));
 				}else{
 					request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_source_value"));
 				}
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE_DOCK)){
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE_DOCK)){
 					request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gtm"));
 				}else{
 					request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gmt"));
 				}
-				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , ConstantsUtil.MXN);
+				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , Constants.MXN);
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE_DOCK) || tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL_DOCK)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE_DOCK) || tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK)) {
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
 				}
 
@@ -314,13 +311,13 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , null);
 				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , movementId);
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE_DOCK)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE_DOCK)) {
 					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , null);
-				} else if(tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL_DOCK)) {
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , ConstantsUtil.DEBIT_AT_STORE);
+				} else if(tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK)) {
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , Constants.DEBIT_AT_STORE);
 				}
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE_DOCK)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE_DOCK)) {
 					request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client-id"));
 					//Entrymode
 					request.addInputParam("@i_entryCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_crd_code"));
@@ -332,14 +329,14 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, tipoTran);
 				request.addInputParam("@i_transactionText", ICTSTypes.SQLVARCHAR, null);
 
-				if(!tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT_DOCK)) {
+				if(!tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK)) {
 					request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_account_number"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 				 }
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT_DOCK)) {
+				if(tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK)) {
 					if (aRequest.readValueParam("@i_bank_account_number") != null && !"null".equals(aRequest.readValueParam("@i_bank_account_number"))) {
 						bank_account_number = aRequest.readValueParam("@i_bank_account_number");
 					}else {
@@ -347,11 +344,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 					}
 
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , ConstantsUtil.CREDIT_AT_STORE);
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR , Constants.CREDIT_AT_STORE);
 					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, bank_account_number);
 					request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 				}
 
 				request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, null);
@@ -467,11 +464,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 			if(tipoTran.equals("transferThirdPartyAccount")) {
 				if (causal.equals("1010")) {
-					movementType = ConstantsUtil.P2P_CREDIT;
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.P2P_CREDIT);
+					movementType = Constants.P2P_CREDIT;
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.P2P_CREDIT);
 				} else if(causal.equals("1020")) {
-					movementType = ConstantsUtil.P2P_DEBIT;
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.P2P_DEBIT);
+					movementType = Constants.P2P_DEBIT;
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.P2P_DEBIT);
 				}else {
 					movementType = "";
 				}
@@ -479,34 +476,34 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 
-				if(movementType.equals(ConstantsUtil.P2P_CREDIT)) {
+				if(movementType.equals(Constants.P2P_CREDIT)) {
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
-				} else if(movementType.equals(ConstantsUtil.P2P_DEBIT)) {
+				} else if(movementType.equals(Constants.P2P_DEBIT)) {
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
 				}
 
 				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
 				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@x_end_user_request_date"));
 
-				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , ConstantsUtil.MXN);
+				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , Constants.MXN);
 				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
 				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
 				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, movementId);
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 
-				if(movementType.equals(ConstantsUtil.P2P_DEBIT)){
+				if(movementType.equals(Constants.P2P_DEBIT)){
 					request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
 					//cuenta origen
-					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
 					//cuenta destino
 					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
 					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_cta_des"));
 					request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
-				}else if(movementType.equals(ConstantsUtil.P2P_CREDIT)){
+				}else if(movementType.equals(Constants.P2P_CREDIT)){
 					//cuenta origen
-					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 					//cuenta destino
@@ -523,18 +520,18 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_externalCustomerId"));
 				request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , null);
 				request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , null);
-				request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+				request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 				request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
 				request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_accountNumber"));
 
 				if(causal.equals("4050")) {
-					movementType = ConstantsUtil.BONUS;
+					movementType = Constants.BONUS;
 
 					if(aBagSPJavaOrchestration.get("creditConcept").equals("REFUND")) {
 						movementType = Constants.ACCOUNT_CREDIT;
 					}
 
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.BONUS);
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.BONUS);
 				}
 
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
@@ -545,7 +542,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_latitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_latitude"));
 				request.addInputParam("@i_longitude",ICTSTypes.SQLFLT8i, aRequest.readValueParam("@i_longitude"));
 				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR , movementId);
-				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , ConstantsUtil.MXN);
+				request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , Constants.MXN);
 				request.addInputParam("@i_beginningBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_accountingBalance", ICTSTypes.SQLMONEY, null);
 				request.addInputParam("@i_availableBalance", ICTSTypes.SQLMONEY, null);
@@ -677,12 +674,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		 Map<String, Object> mapResponse = new  HashMap<String, Object>();
 
 		//valida la parametria de la tabla bv_transaccion
-		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ConstantsUtil.ORIGINAL_REQUEST);
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(Constants.ORIGINAL_REQUEST);
 		IProcedureRequest request = initProcedureRequest(originalRequest);
 
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800090");
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ConstantsUtil.COBIS_CONTEXT);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setSpName("cob_bvirtual..sp_bv_transaction_context");
 
@@ -720,11 +717,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		mapResponse.put("@o_tipo_costo",tResponse.readValueParam("@o_tipo_costo"));
 		mapResponse.put("@o_habilitado",tResponse.readValueParam("@o_habilitado"));
 
-		aBagSPJavaOrchestration.put(ConstantsUtil.RESPONSE_BV_TRANSACTION, tResponse);
+		aBagSPJavaOrchestration.put(Constants.RESPONSE_BV_TRANSACTION, tResponse);
 
 		// Valida si ocurrio un error en la ejecucion
 		if (Utils.flowError("validateBvTransaction", tResponse)) {
-			aBagSPJavaOrchestration.put(ConstantsUtil.RESPONSE_TRANSACTION, tResponse);
+			aBagSPJavaOrchestration.put(Constants.RESPONSE_TRANSACTION, tResponse);
 		}
 
 		return mapResponse;
@@ -827,7 +824,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			SUPPORT_HABILITA = false;
 		}
 
-		if (!SUPPORT_OFFLINE && !(Boolean)aBagSPJavaOrchestration.get(ConstantsUtil.IS_ONLINE)) {
+		if (!SUPPORT_OFFLINE && !(Boolean)aBagSPJavaOrchestration.get(Constants.IS_ONLINE)) {
 			throw new BusinessException(-2, "Transferencia no permite ejecución mientras el servidor este fuera de linea");
 		}
 
@@ -906,7 +903,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				
 		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800048");
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 		request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		request.setSpName("cob_bvirtual..sp_bv_validacion");
 
@@ -1053,7 +1050,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	
 			request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, anOriginalRequest.readValueParam("@t_trn"));
 			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 			request.addFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH, ICOBISTS.HEADER_NUMBER_TYPE, anOriginalRequest.readValueFieldInHeader(ICOBISTS.HEADER_SSN_BRANCH));
 			request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 			request.addInputParam("@t_trn", ICTSTypes.SYBINTN, anOriginalRequest.readValueParam("@t_trn"));
@@ -1233,13 +1230,13 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		String xEndUserIp = aRequest.readValueParam("@x_end_user_ip");
 		String xChannel = aRequest.readValueParam("@x_channel");
 		String xProcess = (String)aBagSPJavaOrchestration.get("process");
-		aBagSPJavaOrchestration.put(ConstantsUtil.PROCESS_DATE, xEndUserRequestDateTime);
+		aBagSPJavaOrchestration.put(Constants.PROCESS_DATE, xEndUserRequestDateTime);
 
 		IProcedureRequest idempotenceRequest = new ProcedureRequestAS();
 
 		idempotenceRequest.setSpName("cob_bvirtual..sp_idempotency_ope_reg");
 		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ICOBISTS.HEADER_STRING_TYPE, ConstantsUtil.COBIS_CONTEXT);
+		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, ICOBISTS.HEADER_STRING_TYPE, Constants.COBIS_CONTEXT);
 		idempotenceRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, "18500111");
 		idempotenceRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		idempotenceRequest.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
@@ -1262,7 +1259,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("Begin [" + CLASS_NAME + "][setError]");
 		}
-		aBagSPJavaOrchestration.put(ConstantsUtil.IS_ERRORS, true);
+		aBagSPJavaOrchestration.put(Constants.IS_ERRORS, true);
 		aBagSPJavaOrchestration.put("error_code", errorCode);
 		aBagSPJavaOrchestration.put("error_message", errorMessage);
 		aBagSPJavaOrchestration.put("code",errorCode);
@@ -1330,8 +1327,8 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR, movementId);     
 				
 		        if ("1010".equals(causal)) {
-					description = ConstantsUtil.P2P_CREDIT;
-		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.P2P_CREDIT);
+					description = Constants.P2P_CREDIT;
+		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.P2P_CREDIT);
 		            request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "C");
 		            request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
 		            request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
@@ -1339,15 +1336,15 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		            request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("originAccountType"));
 					request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 		        
-		         	request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+		         	request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 					
 		        
 		        } else if ("1020".equals(causal)) {
-					description = ConstantsUtil.P2P_DEBIT;
+					description = Constants.P2P_DEBIT;
 					request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
-		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.P2P_DEBIT);
+		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.P2P_DEBIT);
 		            request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "D");
 		            request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 		            request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
@@ -1366,9 +1363,9 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		        request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 		        request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_transmission_date_time_gmt"));
 		      
-		        if (tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT)) {
+		        if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT)) {
 		            request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "C");
-		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.CREDIT_AT_STORE);
+		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.CREDIT_AT_STORE);
 		            String safeCausal = (causal != null && !causal.isEmpty()) ? causal : "4010";
 		            request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, safeCausal);	                
 		                          
@@ -1378,9 +1375,9 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		            request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_number"));
 		            request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, null);
 		            
-		        } else if (tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL)) {
+		        } else if (tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL)) {
 		            request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "D");
-		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.DEBIT_AT_STORE);
+		            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.DEBIT_AT_STORE);
 		            request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gtm"));
 		            
 		            String safeCausal = (causal != null && !causal.isEmpty()) ? causal : "4020"; 
@@ -1390,17 +1387,17 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		
 			if(canal.equals("DOCK")) 
 			{
-				if (tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT_DOCK) || tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL_DOCK))
+				if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK) || tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK))
 				{		
 					request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_source_value"));
 			    	request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client_id"));
 			    	request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gmt"));
 			    	request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.get("ente").toString());
 			    			
-					if (tipoTran.equals(ConstantsUtil.AUTHORIZE_DEPOSIT_DOCK))
+					if (tipoTran.equals(Constants.AUTHORIZE_DEPOSIT_DOCK))
 					{					
 						request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "C");
-			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.CREDIT_AT_STORE);
+			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.CREDIT_AT_STORE);
 			            request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_bank_account_number"));
 			            
 			        	if (aRequest.readValueParam("@i_bank_account_number") != null ) {
@@ -1414,21 +1411,21 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 						request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,bankAccountNumber);
 						request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destiny_account_type"));
 				
-					} else if (tipoTran.equals(ConstantsUtil.AUTHORIZE_WITHDRAWAL_DOCK)) {
+					} else if (tipoTran.equals(Constants.AUTHORIZE_WITHDRAWAL_DOCK)) {
 						request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR, "D");
-			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, ConstantsUtil.DEBIT_AT_STORE);
+			            request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.DEBIT_AT_STORE);
 			          
 			        }
 				}
 
-				if(tipoTran.equals(ConstantsUtil.AUTHORIZE_PURCHASE_DOCK)){
+				if(tipoTran.equals(Constants.AUTHORIZE_PURCHASE_DOCK)){
 					request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
 					request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_client-id"));
 					request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val_source_value"));
 					request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_transmission_date_time_gtm"));
 					//Objeto destination
 					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_account_id"));
-					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, ConstantsUtil.CASHI);
+					request.addInputParam("@i_destinationBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
 					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
 				}
 			}else if(tipoTran.equals("AccountCreditOperationOrchestrationCore") || tipoTran.equals("AccountDebitOperationOrchestrationCore")) 
@@ -1465,20 +1462,20 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				
 				if(tipoTran.equals("AccountDebitOperationOrchestrationCore")) 
 				{
-					movementType = ConstantsUtil.COMMISSION;
+					movementType = Constants.COMMISSION;
 					
 					switch (debitReason) {
 			            case "Card delivery fee":
-			            	description = ConstantsUtil.CARD_DELIVERY_FEE;
+			            	description = Constants.CARD_DELIVERY_FEE;
 			                break;
 			            case "False chargeback claim":
-			            	description = ConstantsUtil.FALSE_CHARGEBACK_PENALTY;
+			            	description = Constants.FALSE_CHARGEBACK_PENALTY;
 			            	break;
 			            case "FALSE_CHARGEBACK":
-			            	description = ConstantsUtil.FALSE_CHARGEBACK;
+			            	description = Constants.FALSE_CHARGEBACK;
 			                break;
 			            default:
-			            	description = ConstantsUtil.FALSE_CHARGEBACK_PENALTY;
+			            	description = Constants.FALSE_CHARGEBACK_PENALTY;
 					}
 
 					if (description.equals(Constants.FALSE_CHARGEBACK)) {
@@ -1589,7 +1586,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 	}
 
 	protected void validateParameters(Map<String, Object> aBagSPJavaOrchestration){
-		Object[] validations = (Object[]) aBagSPJavaOrchestration.get(ConstantsUtil.PARAMETERS_VALIDATE);
+		Object[] validations = (Object[]) aBagSPJavaOrchestration.get(Constants.PARAMETERS_VALIDATE);
 
 		for (Object validation : validations) {
 			if (validation instanceof ParameterValidationUtil) {

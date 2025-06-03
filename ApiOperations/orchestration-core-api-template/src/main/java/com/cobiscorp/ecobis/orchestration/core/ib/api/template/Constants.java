@@ -2,6 +2,20 @@ package com.cobiscorp.ecobis.orchestration.core.ib.api.template;
 
 public class Constants {
     public static final String CASHI = "CASHI";
+    public static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
+    public static final String RESPONSE_ERROR_HANDLER = "responseErrorHandler";
+    public static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
+    public static final String RESPONSE_BV_TRANSACTION = "RESPONSE_BV_TRANSACTION";
+    public static final String IS_ONLINE = "isOnline";
+    public static final String IS_REENTRY = "flowRty";
+    public static final String IS_ERRORS = "isErrors";
+    public static final String PROCESS_OPERATION = "processOperation";
+    public static final String FINISH_OPERATION = "FINISH_OPERATION";
+    public static final String COLUMNS_RETURN = "columnsToReturn";
+    public static final String PROCESS_DATE = "transaccionDate";
+    public static final String PARAMETERS_VALIDATE = "parametersValidate";
+    public static final String COBIS_CONTEXT = "COBIS";
+    public static final String CAUSA = "causa";
     public static final String MXN = "MXN";
     public static final String CREDIT_AT_STORE = "CREDIT_AT_STORE";
     public static final String ATM_DEBIT = "ATM_DEBIT";
