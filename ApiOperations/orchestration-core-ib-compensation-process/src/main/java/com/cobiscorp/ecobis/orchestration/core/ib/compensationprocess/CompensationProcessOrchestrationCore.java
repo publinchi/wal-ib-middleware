@@ -82,10 +82,11 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		ServerRequest serverRequest = new ServerRequest();
 		try {
 			responseServer = getServerStatus(serverRequest);
-		} catch (CTSServiceException | CTSInfrastructureException e) {
-			logger.logError(e.toString());
+		} catch (CTSServiceException e) {
+		    logger.logError(e.toString());
+		} catch (CTSInfrastructureException e) {
+		    logger.logError(e.toString());
 		}
-
 		if (responseServer != null && responseServer.getOnLine()) {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("server is online");
