@@ -37,6 +37,8 @@
     <parameter name="@i_operacion" dataType="varchar" direction="in" />
     <parameter name="@i_precision" dataType="decimal" direction="" />
     <parameter name="@i_riesgo_id" dataType="varchar" direction="" />
+    <parameter name="@i_data_browser" dataType="varchar" direction="in" />
+    <parameter name="@i_typeBrowser" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
