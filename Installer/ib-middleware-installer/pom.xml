@@ -1252,6 +1252,16 @@
 			<artifactId>orchestration-core-ib-account-reversal-operation</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-compensation-process,</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-compensation-download</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1499,7 +1509,10 @@
 											orchestration-core-ib-activate-card,
 											orchestration-ib-expenses-accounts-template,
 											orchestration-ib-expenses-accounts,
-											orchestration-core-ib-dispacher-spei
+											orchestration-core-ib-dispacher-spei,
+											orchestration-core-ib-compensation-process,
+		                                    orchestration-core-ib-compensation-download
+  
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
