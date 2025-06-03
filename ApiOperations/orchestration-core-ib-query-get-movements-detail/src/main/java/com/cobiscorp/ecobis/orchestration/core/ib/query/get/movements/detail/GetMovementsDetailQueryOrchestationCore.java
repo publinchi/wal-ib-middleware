@@ -2047,8 +2047,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setAccountNumberDA(cuenta);
 					break;
 				default:
-					logger.logDebug("Unexpected value: " + typeMovement);
-					continue;
+					logger.logDebug("Unexpected typeMovement: " + typeMovement);
 
 			}
 			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
