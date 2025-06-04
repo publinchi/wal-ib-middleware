@@ -146,7 +146,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		String referenceNumberComOri = anOriginalRequest.readValueParam("@i_referenceNumber_com_ori");
 
 		aBagSPJavaOrchestration.put("@i_originMovementId", movementIdOrigin);
-		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberComOri);
+		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberOrigin);
 
 		if (reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
@@ -278,6 +278,8 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 
 		wProcedureResponseVal = executeCoreBanking(reqTMPOffline);
 
+		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 		aBagSPJavaOrchestration.put("causa_rev", wProcedureResponseVal.readValueParam("@o_causa_rev"));
 		aBagSPJavaOrchestration.put("causa_com", wProcedureResponseVal.readValueParam("@o_causa_com"));
 		aBagSPJavaOrchestration.put("amount_ori", wProcedureResponseVal.readValueParam("@o_amount_ori"));

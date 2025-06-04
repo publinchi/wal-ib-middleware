@@ -138,6 +138,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = null;
+		ServerResponse serverResponse = null;
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("SpeiInTransferOrchestrationCore: executeJavaOrchestration");
@@ -152,6 +153,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		Utils.validateComponentInstance(mapInterfaces);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA SPEI IN");
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);	
+		serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+		
 		try 
 		{
 			response = executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
@@ -161,15 +164,16 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			e.printStackTrace();
 		}
 
-		if (response != null && !response.hasError() && response.getReturnCode() == 0) {
-			String idDevolucion = response.readValueParam("@o_id_causa_devolucion");
-			if(null == idDevolucion || "0".equals(idDevolucion)){
-				notifySpei(anOriginalRequest, aBagSPJavaOrchestration);
-				registerWebhook(anOriginalRequest, aBagSPJavaOrchestration);
+		if (response != null && !response.hasError()) {
+				if (response.getReturnCode() == 0 || (response.getReturnCode() == CODE_OFFLINE && !serverResponse.getOnLine())) {
+				String idDevolucion = response.readValueParam("@o_id_causa_devolucion");
+				if(null == idDevolucion || "0".equals(idDevolucion)){
+					notifySpei(anOriginalRequest, aBagSPJavaOrchestration);
+					registerWebhook(anOriginalRequest, aBagSPJavaOrchestration);
+				}
 			}
-	
 		}
-
+		
 		/*Datos adicionales*/
 		 registerMovementsSpeiInAdditionalData(
 				((ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER)).getOnLine(),
@@ -247,13 +251,20 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 																							// CTSInfrastructureException
 		IProcedureResponse response = null;
 		String codeError = "";
+		ServerResponse serverResponse = null;
+		String codOffLine = String.valueOf(CODE_OFFLINE);
 		
 		try {
 			IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
+			serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 			response = mappingResponse(executeTransferSpeiIn(anOriginalRequest, aBagSPJavaOrchestration), aBagSPJavaOrchestration);
 						
 			//Validamos la respuesta para ingresar la transacción fallida en Webhook
 			if (aBagSPJavaOrchestration.get("@s_error") != null) {
+				
+				if (aBagSPJavaOrchestration.get("@s_error").toString().equals(codOffLine) && !serverResponse.getOnLine()) {
+					return response;
+				}
 				
 				codeError = aBagSPJavaOrchestration.get("@s_error").toString();
 				
