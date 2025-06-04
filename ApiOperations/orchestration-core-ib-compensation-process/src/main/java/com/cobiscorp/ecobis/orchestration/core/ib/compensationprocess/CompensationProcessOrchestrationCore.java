@@ -87,6 +87,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		} catch (CTSInfrastructureException e) {
 		    logger.logError(e.toString());
 		}
+
 		if (responseServer != null && responseServer.getOnLine()) {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("server is online");
@@ -121,12 +122,14 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				if (file.isFile()) {
 					aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
 					aBagSPJavaOrchestration.put("FileName", "/" + file.getName());
+					anOriginalRequest.addInputParam("@i_fileName", ICTSTypes.SQLVARCHAR, file.getName());
 					jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
 
 					if ("true".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
-						aBagSPJavaOrchestration.put("tipo", "C");
+						anOriginalRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "C"); // COMPLETADO
+																								// CORRECTAMENTE
 					} else {
-						aBagSPJavaOrchestration.put("tipo", "E");
+						anOriginalRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "E"); // ERROR
 					}
 					execUpDownloadFile(anOriginalRequest, aBagSPJavaOrchestration);
 					logger.logInfo(CLASS_NAME + " [Archivo] " + file.getName());
@@ -261,8 +264,8 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	private IProcedureResponse execUpDownloadFile(IProcedureRequest anOriginalReq,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		IProcedureResponse connectorCardResponse = new ProcedureResponseAS();
 
+		IProcedureResponse connectorCardResponse = new ProcedureResponseAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 
 		if (logger.isInfoEnabled()) {
@@ -271,7 +274,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		try {
 
 			anOriginalReq.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator",
-					ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CompensationDownloadOrchestrationCore)");
+					ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CompensationProcessOrchestrationCore)");
 			anOriginalReq.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 			anOriginalReq.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
 			anOriginalReq.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
@@ -297,11 +300,11 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
-			this.logger.logInfo("CompensationDownloadOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
+			this.logger.logInfo("CompensationProcessOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
 
 		} finally {
 			if (logger.isInfoEnabled()) {
-				logger.logInfo("CompensationDownloadOrchestrationCore --> Saliendo de execUpDownloadFile");
+				logger.logInfo("CompensationProcessOrchestrationCore --> Saliendo de execUpDownloadFile");
 			}
 		}
 
@@ -351,7 +354,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
         } else {
 
             logger.logError("El valor de 'numRegistros' no es un String válido.");
-            numRegistros = 0; 
+			numRegistros = 0;
         }
 		@SuppressWarnings("unchecked")
 		List<TransactionContent> contents = (List<TransactionContent>) aBagSPJavaOrchestration.get("contents");

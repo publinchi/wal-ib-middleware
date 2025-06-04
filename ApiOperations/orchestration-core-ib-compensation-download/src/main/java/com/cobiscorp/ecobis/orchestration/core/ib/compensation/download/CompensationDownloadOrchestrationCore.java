@@ -3,7 +3,6 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.compensation.download;
 
-import java.io.File;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -20,7 +19,6 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 
 /**
