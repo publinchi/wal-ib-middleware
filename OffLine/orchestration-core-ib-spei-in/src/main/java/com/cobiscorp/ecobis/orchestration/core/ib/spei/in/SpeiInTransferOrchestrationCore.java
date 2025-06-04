@@ -153,7 +153,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		Utils.validateComponentInstance(mapInterfaces);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "TRANFERENCIA SPEI IN");
 		aBagSPJavaOrchestration.put(CORESERVICEMONETARYTRANSACTION, coreServiceMonetaryTransaction);	
-		serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+		
+		if (aBagSPJavaOrchestration.get(RESPONSE_SERVER) != null) {
+			serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+		}
 		
 		try 
 		{
