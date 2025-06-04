@@ -1603,20 +1603,21 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			String reversalConcept = request.readValueParam("@i_reversalConcept");
 			String originMovementId = request.readValueParam("@i_movementId_ori");
 			String originReferenceNumber = request.readValueParam("@i_referenceNumber_ori");
-			String commissionOriginMovementId = request.readValueParam("@i_movementId_com_ori");
-			String commissionOriginReferenceNumber = request.readValueParam("@i_referenceNumber_com_ori");
+			//String commissionOriginMovementId = request.readValueParam("@i_movementId_com_ori");
+			//String commissionOriginReferenceNumber = request.readValueParam("@i_referenceNumber_com_ori");
 			additionalData.put("alternateCod", alternateCod);
-			data = data + '|' + String.join("|", reversalConcept,originMovementId,originReferenceNumber,
-					commissionOriginMovementId, commissionOriginReferenceNumber);
+			data = data + '|' + String.join("|", reversalConcept,originMovementId,originReferenceNumber);
 			additionalData.put("data", data);
 			isSaved = saveAdditionalData.saveData(movementType,isOnline,additionalData);
 			if (alternateCodCom != null) {
 				IProcedureRequest debitRequest = request.clone();
 				Map<String, Object> debitBag = new HashMap<>(aBagSPJavaOrchestration);
+				String commissionOriginMovementId = request.readValueParam("@i_movementId_com_ori");
+				String commissionOriginReferenceNumber = request.readValueParam("@i_referenceNumber_com_ori");
 				debitRequest.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
-				debitRequest.addInputParam("@i_debitConcept", ICTSTypes.SQLVARCHAR, Constants.FALSE_CHARGEBACK);
-				debitRequest.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR, originMovementId);
-				debitRequest.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR, originReferenceNumber);
+				debitRequest.addInputParam("@i_debitConcept", ICTSTypes.SQLVARCHAR, reversalConcept);
+				debitRequest.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR, commissionOriginMovementId);
+				debitRequest.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR, commissionOriginReferenceNumber);
 				debitBag.put("@o_cod_alt_org", alternateCodCom);
 				return registerMovementsCreditDebitAdditionalData("DEBIT", isOnline, debitRequest, debitBag);
 			}

@@ -902,6 +902,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			//commissionDetails
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLVARCHAR, 50));
 
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originMovementId", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("commissionOriginMovementId", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("commissionOriginReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("creditConcept", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originCode", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reversalConcept", ICTSTypes.SQLVARCHAR, 50));
+
 			if(showFailed){
 				metaData0.addColumnMetaData(new ResultSetHeaderColumn("pin", ICTSTypes.SQLVARCHAR, 50));
 				metaData0.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLVARCHAR, 50));
@@ -999,13 +1007,22 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(33, new ResultSetRowColumnData(false, movementDetails.getCardId()));
 				rowDat.addRowData(34, new ResultSetRowColumnData(false, movementDetails.getReason()));
 
+				//refound
+				rowDat.addRowData(35, new ResultSetRowColumnData(false, movementDetails.getOriginMovementId()));
+				rowDat.addRowData(36, new ResultSetRowColumnData(false, movementDetails.getOriginReferenceNumber()));
+				rowDat.addRowData(37, new ResultSetRowColumnData(false, movementDetails.getCommissionOriginMovementId()));
+				rowDat.addRowData(38, new ResultSetRowColumnData(false, movementDetails.getCommissionOriginReferenceNumber()));
+				rowDat.addRowData(39, new ResultSetRowColumnData(false, movementDetails.getCreditConcept()));
+				rowDat.addRowData(40, new ResultSetRowColumnData(false, movementDetails.getOriginCode()));
+				rowDat.addRowData(41, new ResultSetRowColumnData(false, movementDetails.getReversalConcept()));
+
 				if(showFailed){
-					rowDat.addRowData(35, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
-					rowDat.addRowData(36, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
-					rowDat.addRowData(37, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
-					rowDat.addRowData(38, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
-					rowDat.addRowData(39, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
-					rowDat.addRowData(40, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()));
+					rowDat.addRowData(42, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
+					rowDat.addRowData(43, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
+					rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
+					rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
+					rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
+					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()));
 				}
 				data0.addRow(rowDat);
 			}
@@ -2039,8 +2056,34 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					if(causa.equals("8110")){
 						movementDetails.setReason("CARD_DELIVERY");
 					}else if(causa.equals("3101")) {
-						movementDetails.setReason("FALSE_CHARGEBACK");
+						String reversalConcept = getAdditionalValue(additionalDataArray,2);
+						if("REFUND_REVERSAL".equals(reversalConcept)){
+							movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,3));
+							movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						}else{
+							movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+							movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						}
+						movementDetails.setReason(reversalConcept);
 					}
+					break;
+				case Constants.ACCOUNT_CREDIT:
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setCreditConcept(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+					break;
+				case Constants.CREDIT_REVERSAL:
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					//movementDetails.setReason(getAdditionalValue(additionalDataArray,2));
+					//movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,5));
+					//movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,6));
 					break;
 				case Constants.BONUS:
 					movementDetails.setOwnerNameDA(columns[18].getValue());

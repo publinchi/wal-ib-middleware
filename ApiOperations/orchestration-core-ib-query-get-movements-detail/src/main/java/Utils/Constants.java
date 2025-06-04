@@ -21,4 +21,6 @@ public class Constants {
     public static final String SPEI_RETURN = "SPEI_RETURN";
     public static final String SPEI_PENDING = "SPEI_PENDING";
     public static final String PURCHASE_WITH_CASHBACK = "PURCHASE_WITH_CASHBACK";
+    public static final String ACCOUNT_CREDIT = "ACCOUNT_CREDIT";
+    public static final String CREDIT_REVERSAL = "CREDIT_REVERSAL";
 }
