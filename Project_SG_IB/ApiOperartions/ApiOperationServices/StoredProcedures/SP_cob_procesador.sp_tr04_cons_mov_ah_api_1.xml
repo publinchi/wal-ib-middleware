@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <procedure>
   <database>cob_procesador</database>
   <name>sp_tr04_cons_mov_ah_api</name>
@@ -12,6 +12,8 @@
     <parameter name="@i_cliente" dataType="int" direction="in" />
     <parameter name="@i_nro_registros" dataType="int" direction="in" />
     <parameter name="@i_mov_id" dataType="int" direction="in" />
+    <parameter name="@i_order" dataType="varchar" direction="in" />
+    <parameter name="@i_show_failed" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
@@ -61,6 +63,12 @@
         <column name="transactionId" />
         <column name=" establishmentName" />
         <column name="transactionId" />
+      </columns>
+      <queryText></queryText>
+    </query>
+    <query>
+      <columns>
+        <column name="totalNumberOfResults" />
       </columns>
       <queryText></queryText>
     </query>

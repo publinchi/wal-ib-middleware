@@ -3,9 +3,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.query.get.movements.detail;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.felix.scr.annotations.Component;
@@ -46,7 +44,7 @@ import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 
-import Utils.ResponseMovements;
+import Utils.*;
 import cobiscorp.ecobis.cts.integration.services.ICTSServiceIntegration;
 
 /**
@@ -71,6 +69,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	private static final int ERROR40004 = 40004;
 	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
+	private String cuenta;
 
 	CISResponseManagmentHelper cisResponseHelper = new CISResponseManagmentHelper();
 
@@ -103,19 +102,26 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	public void loadConfiguration(IConfigurationReader arg0) {
 	}
 
+	/*
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 													   Map<String, Object> aBagSPJavaOrchestration) {
 
+		String cuenta = anOriginalRequest.readValueParam("@i_cta");
+		if(getOperation(cuenta).equals("X")){
+			return executeNewJavaOrchestration(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+		//String showFailed = anOriginalRequest.readValueParam("@i_show_failed") != null ? anOriginalRequest.readValueParam("@i_show_failed") : "N";
+
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-		IProcedureResponse anProcedureResponseCentral = new ProcedureResponseAS();
+		IProcedureResponse anProcedureResponseCentral;
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-		
+
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
 		int numRegistros = 10;
-		try 
+		try
 		{
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e)
@@ -124,7 +130,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			{
 				logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
 			}
-			
+
 		} catch (CTSInfrastructureException e)
 		{
 			if(logger.isErrorEnabled())
@@ -132,40 +138,40 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
 			}
 		}
-		
-		if (responseServer == null) 
+
+		if (responseServer == null)
 		{
 			if(logger.isErrorEnabled())
 			{
 				logger.logError("ResponseServer is null validate is online server code:"+responseServer.getReturnCode());
 			}
 			return processResponseError(anProcedureResponse);
-		} else 
+		} else
 		{
 			if(logger.isDebugEnabled())
 			{
 				logger.logDebug("ResponseServer is not null");
 			}
-			if (responseServer.getOnLine()) 
+			if (responseServer.getOnLine())
 			{
 				if(logger.isDebugEnabled())
 				{
 					logger.logDebug("server is online");
 				}
-				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);				
+				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
 			} else {
 				if(logger.isDebugEnabled())
 				{
 					logger.logDebug("server is offline");
 				}
-				
+
 				if(anOriginalRequest.readValueParam(INRO_REGISTRO)!= null && anOriginalRequest.readValueParam(INRO_REGISTRO).matches("\\d+")){
 					numRegistros = Integer.parseInt(anOriginalRequest.readValueParam(INRO_REGISTRO));
 					logger.logDebug("numRegistros" + numRegistros);
 				}
-			
+
 				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
-				
+
 				int numberOfRecordsLocal = 0;
 				int numberOfRecords = 0;
 
@@ -175,23 +181,23 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				if (numberOfRecordsLocal < numRegistros) {
 					numberOfRecords = numRegistros - numberOfRecordsLocal;
 
-					
-					anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords)); 
+
+					anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords));
 					anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
 
 					llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
 				}
-				
+
 			}
 		}
-		
+
 		if (anProcedureResponse.getResultSets().size()>2) {
 
 			proccessResponseCentralToObject(anProcedureResponse, aBagSPJavaOrchestration);
 
 			if (!(Boolean) aBagSPJavaOrchestration.get("dataComrobanteExist")) {
 
-				IProcedureResponse anProcedureResponseLocal = new ProcedureResponseAS();
+				IProcedureResponse anProcedureResponseLocal;
 				anProcedureResponseLocal = getMovementsDetailLocal(anOriginalRequest, aBagSPJavaOrchestration);
 
 				return processTransformationResponse(anProcedureResponseLocal, aBagSPJavaOrchestration);
@@ -201,52 +207,153 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		} else {
 			return processResponseError(anProcedureResponse);
 		}
-	}
-	public ServerResponse getServerStatus(ServerRequest serverRequest) throws CTSServiceException, CTSInfrastructureException {
-			IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
-			aServerStatusRequest.setSpName("cobis..sp_server_status");
-			aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
-			aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
-			aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
-			aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-			aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
-			aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
-			aServerStatusRequest.addOutputParam("@o_en_linea", ICTSTypes.SYBCHAR, "S");
-			aServerStatusRequest.addOutputParam("@o_fecha_proceso", ICTSTypes.SYBVARCHAR, "XXXX");
-			if (logger.isDebugEnabled())
-				logger.logDebug("Request Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
-			IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
-			if (logger.isDebugEnabled())
-				logger.logDebug("Response Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
-			ServerResponse serverResponse = new ServerResponse();
-			
-			serverResponse.setSuccess(true);
-			Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
-			serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
-			if (wServerStatusResp.getReturnCode() == 0) {
-				serverResponse.setOfflineWithBalances(true);
-				if (wServerStatusResp.readValueParam("@o_en_linea") != null)
-					serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
-				if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
-					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-					try {
-						serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-				}
-			} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003 || wServerStatusResp.getReturnCode() == ERROR40004) {
-				serverResponse.setOnLine(false);
-				serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
-			}
-			if (logger.isDebugEnabled())
-				logger.logDebug("Respuesta Devuelta: " + serverResponse);
-			if (logger.isInfoEnabled())
-				logger.logInfo("TERMINANDO SERVICIO");
-			return serverResponse;
-		}
-	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest, String targetServer) {
+	} */
+	@Override
+	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
+													   Map<String, Object> aBagSPJavaOrchestration) {
 
+		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+		IProcedureResponse anProcedureResponseCentral;
+		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
+
+
+		String showFailed = anOriginalRequest.readValueParam("@i_show_failed") != null ? anOriginalRequest.readValueParam("@i_show_failed") : "N";
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setChannelId("8");
+		ServerResponse responseServer = null;
+		int numRegistros = 10;
+		try
+		{
+			responseServer = getServerStatus(serverRequest);
+		} catch (CTSServiceException e)
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
+			}
+
+		} catch (CTSInfrastructureException e)
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.logError("ResponseServer is null validate is online server code:"+e.getMessage());
+			}
+		}
+
+		if (responseServer == null)
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.logError("ResponseServer is null validate is online server code:"+responseServer.getReturnCode());
+			}
+			return processResponseError(anProcedureResponse);
+		} else
+		{
+			if(logger.isDebugEnabled())
+			{
+				logger.logDebug("ResponseServer is not null");
+			}
+			if (responseServer.getOnLine())
+			{
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("server is online");
+				}
+				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
+
+			} else {
+				if(logger.isDebugEnabled())
+				{
+					logger.logDebug("server is offline");
+				}
+
+				if(anOriginalRequest.readValueParam(INRO_REGISTRO)!= null && anOriginalRequest.readValueParam(INRO_REGISTRO).matches("\\d+")){
+					numRegistros = Integer.parseInt(anOriginalRequest.readValueParam(INRO_REGISTRO));
+					logger.logDebug("numRegistros" + numRegistros);
+				}
+
+				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
+
+				int numberOfRecordsLocal = 0;
+				int numberOfRecords = 0;
+
+				if (anProcedureResponse != null && !anProcedureResponse.getResultSets().isEmpty()) {
+					numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
+				}
+				if (numberOfRecordsLocal < numRegistros) {
+					numberOfRecords = numRegistros - numberOfRecordsLocal;
+
+
+					anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords));
+					anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
+
+					llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
+				}
+
+			}
+			aBagSPJavaOrchestration.put("RESPONSE_MOVEMENTS",anProcedureResponse);
+			if( "S".equals(showFailed)){
+				IProcedureResponse failedMovementDetails = getFailedMovementsDetail(anOriginalRequest);
+				aBagSPJavaOrchestration.put("RESPONSE_FAILED_MOVEMENTS",failedMovementDetails);
+			}
+			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamieto"));
+		}
+
+		if (anProcedureResponse.getResultSets().size()>2) {
+
+			return processNewTransformationResponse(aBagSPJavaOrchestration);
+		} else {
+			return processResponseError(anProcedureResponse);
+		}
+	}
+
+	public ServerResponse getServerStatus(ServerRequest serverRequest) throws CTSServiceException, CTSInfrastructureException {
+		IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
+		aServerStatusRequest.setSpName("cobis..sp_server_status");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
+		aServerStatusRequest.addInputParam("@t_trn", ICTSTypes.SYBINTN, "1800039");
+		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
+		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
+		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_en_linea", ICTSTypes.SYBCHAR, "S");
+		aServerStatusRequest.addOutputParam("@o_fecha_proceso", ICTSTypes.SYBVARCHAR, "XXXX");
+		if (logger.isDebugEnabled())
+			logger.logDebug("Request Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
+		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
+		if (logger.isDebugEnabled())
+			logger.logDebug("Response Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
+		ServerResponse serverResponse = new ServerResponse();
+
+		serverResponse.setSuccess(true);
+		Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
+		serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
+		if (wServerStatusResp.getReturnCode() == 0) {
+			serverResponse.setOfflineWithBalances(true);
+			if (wServerStatusResp.readValueParam("@o_en_linea") != null)
+				serverResponse.setOnLine(wServerStatusResp.readValueParam("@o_en_linea").equals("S") ? true : false);
+			if (wServerStatusResp.readValueParam("@o_fecha_proceso") != null) {
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam("@o_fecha_proceso")));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003 || wServerStatusResp.getReturnCode() == ERROR40004) {
+			serverResponse.setOnLine(false);
+			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
+		}
+		if (logger.isDebugEnabled())
+			logger.logDebug("Respuesta Devuelta: " + serverResponse);
+		if (logger.isInfoEnabled())
+			logger.logInfo("TERMINANDO SERVICIO");
+		return serverResponse;
+	}
+	private IProcedureResponse getMovementsDetail(IProcedureRequest aRequest, String targetServer) {
+		cuenta = aRequest.readValueParam("@i_cta");
+		String operacion = getOperation(cuenta);
+		cuenta = cuenta.replace("*","");
 		IProcedureRequest request = new ProcedureRequestAS();
 
 		if (logger.isDebugEnabled()) {
@@ -273,7 +380,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, targetServer);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
-		
+
 		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
@@ -284,7 +391,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_tipo", ICTSTypes.SQLCHAR, "T");
 
 		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
-		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, cuenta);
 		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
 		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, minDate);
 		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
@@ -296,6 +403,76 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+
+
+		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Corebanking DCO: " + wProductsQueryResp.getProcedureResponseAsString());
+		}
+
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(CLASS_NAME + " Saliendo de getMovementsDetail");
+		}
+
+		return wProductsQueryResp;
+	}
+
+	private IProcedureResponse getFailedMovementsDetail(IProcedureRequest aRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug(CLASS_NAME + " Entrando en getMovementsDetail : LOCAL" );
+		}
+
+		cuenta = aRequest.readValueParam("@i_cta");
+		cuenta = cuenta.replace("*","");
+
+		String minDate = aRequest.readValueParam("@i_fecha_ini");
+		String maxDate = aRequest.readValueParam("@i_fecha_fin");
+
+		if(minDate.equals("null")){
+			minDate  = "";
+		} else if (minDate != null && !minDate.isEmpty() && !isDate(minDate)) {
+			minDate = "01/01/1910";
+		}
+
+		if(maxDate.equals("null")){
+			maxDate  = "";
+		} else if (maxDate != null && !maxDate.isEmpty() && !isDate(maxDate)) {
+			maxDate = "01/01/1910";
+		}
+
+
+		request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_api");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+
+		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
+		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
+		request.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_channel"));
+
+		request.addInputParam("@t_online", ICTSTypes.SYBCHAR, "S");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLCHAR, "F");
+		request.addInputParam("@i_tipo", ICTSTypes.SQLCHAR, "T");
+
+		request.addInputParam("@i_ente", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_cliente"));
+		request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, cuenta);
+		request.addInputParam("@i_nro_registros", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_nro_registros"));
+		request.addInputParam("@i_fecha_ini", ICTSTypes.SQLVARCHAR, minDate);
+		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
+		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
+		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
+		request.addInputParam("@i_ordenamiento", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ordenamiento")!= null?aRequest.readValueParam("@i_ordenamiento"):"DESC");
+
+		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
+		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
+		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
+		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
+		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addOutputParam("@o_total_registros", ICTSTypes.SQLINT4,"0");
 
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -575,6 +752,289 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return null;
 	}
 
+	public IProcedureResponse processNewTransformationResponse(Map<String, Object> aBagSPJavaOrchestration) {
+		if (logger.isInfoEnabled()) {
+			logger.logInfo(" start processTransformationResponse--->");
+		}
+		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
+		IProcedureResponse anOriginalProcedureRes = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_MOVEMENTS");
+		IProcedureResponse anOriginalProcedureResF = null;
+		boolean showFailed = false;
+
+		int numberOfResults = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
+		int totalNumberOfResults = 0;
+
+
+		if(aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null){
+			showFailed = true;
+			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
+			numberOfResults += anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
+			totalNumberOfResults = Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+		}
+
+
+		if (anOriginalProcedureRes != null) {
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(CLASS_NAME + " ProcessResponse original anOriginalProcedureRes:"
+						+ anOriginalProcedureRes.getProcedureResponseAsString());
+			}
+
+		}
+
+		// Agregar Header 1
+		IResultSetHeader metaData = new ResultSetHeader();
+		IResultSetData data = new ResultSetData();
+
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLINT4, 8));
+		metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SQLVARCHAR, 100));
+
+		// Agregar Header 2
+		IResultSetHeader metaData2 = new ResultSetHeader();
+		IResultSetData data2 = new ResultSetData();
+
+		metaData2.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SQLBIT, 5));
+
+		// Agregar Header 3
+		IResultSetHeader metaData3 = new ResultSetHeader();
+		IResultSetData data3 = new ResultSetData();
+
+		metaData3.addColumnMetaData(new ResultSetHeaderColumn("numberOfResults", ICTSTypes.SQLINT4, 5));
+		if(showFailed){
+			metaData3.addColumnMetaData(new ResultSetHeaderColumn("totalNumberOfResults", ICTSTypes.SQLINT4, 5));
+		}
+
+		// Agregar Data
+		IResultSetRow row = new ResultSetRow();
+
+		row.addRowData(1, new ResultSetRowColumnData(false, "0"));
+		row.addRowData(2, new ResultSetRowColumnData(false, "Success"));
+		data.addRow(row);
+
+		IResultSetRow row2 = new ResultSetRow();
+
+		row2.addRowData(1, new ResultSetRowColumnData(false, "true"));
+		data2.addRow(row2);
+
+		IResultSetRow row3 = new ResultSetRow();
+
+		row3.addRowData(1, new ResultSetRowColumnData(false, String.valueOf(numberOfResults)));
+		if(showFailed){
+			row3.addRowData(2, new ResultSetRowColumnData(false, String.valueOf(totalNumberOfResults)));
+		}
+		data3.addRow(row3);
+
+		//Result Blocks
+		IResultSetBlock resultsetBlock = new ResultSetBlock(metaData, data);
+		IResultSetBlock resultsetBlock2 = new ResultSetBlock(metaData2, data2);
+		IResultSetBlock resultsetBlock3 = new ResultSetBlock(metaData3, data3);
+
+		anOriginalProcedureResponse.setReturnCode(200);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock2);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock);
+		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
+
+		//AccountStatementArray
+		if (anOriginalProcedureRes != null
+				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(
+						CLASS_NAME + " Response final: " + anOriginalProcedureResponse.getProcedureResponseAsString());
+			}
+
+			IResultSetHeader metaData0 = new ResultSetHeader();
+
+			//response
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("accountingBalance", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("availableBalance", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("movementType", ICTSTypes.SQLVARCHAR, 24));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("amount", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionDate", ICTSTypes.SQLVARCHAR, 12));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("operationType", ICTSTypes.SQLVARCHAR, 5));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("commission", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("iva", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionReferenceNumber", ICTSTypes.SQLINT4, 64));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("description", ICTSTypes.SQLVARCHAR, 64));
+
+			//cardDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("maskedCardNumber", ICTSTypes.SQLVARCHAR, 20));
+
+			//sourceAccount
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("ownerNameSA", ICTSTypes.SQLVARCHAR, 64));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("accountNumberSA", ICTSTypes.SQLVARCHAR, 24));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankNameSA", ICTSTypes.SQLVARCHAR, 32));
+
+			//destinationAccount
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("ownerNameDA", ICTSTypes.SQLVARCHAR, 64));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("accountNumberDA", ICTSTypes.SQLVARCHAR, 24));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankNameDA", ICTSTypes.SQLVARCHAR, 32));
+
+			//speiDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("referenceCode", ICTSTypes.SQLVARCHAR, 18));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("trackingId", ICTSTypes.SQLVARCHAR, 30));
+
+			//atmDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankNameATM", ICTSTypes.SQLVARCHAR, 32));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("locationId", ICTSTypes.SQLVARCHAR, 18));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdATM", ICTSTypes.SQLVARCHAR, 30));
+
+			//merchantDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("establishmentNameMD", ICTSTypes.SQLVARCHAR, 32));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdMD", ICTSTypes.SQLVARCHAR, 30));
+
+			//storeDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("establishmentNameSD", ICTSTypes.SQLVARCHAR, 32));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionIdSD", ICTSTypes.SQLVARCHAR, 30));
+
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionId", ICTSTypes.SQLVARCHAR, 30));
+
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("authorizationCode", ICTSTypes.SQLVARCHAR, 30));
+
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("bankBranchCode", ICTSTypes.SQLVARCHAR, 30));
+
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("purchaseAmount", ICTSTypes.SQLMONEY, 25));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("withdrawalAmount", ICTSTypes.SQLMONEY, 25));
+
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("uuid", ICTSTypes.SQLVARCHAR, 32));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SQLVARCHAR, 32));
+
+			//commissionDetails
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reason", ICTSTypes.SQLVARCHAR, 50));
+
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originMovementId", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("commissionOriginMovementId", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("commissionOriginReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("creditConcept", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originCode", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reversalConcept", ICTSTypes.SQLVARCHAR, 50));
+
+			if(showFailed){
+				metaData0.addColumnMetaData(new ResultSetHeaderColumn("pin", ICTSTypes.SQLVARCHAR, 50));
+				metaData0.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SQLVARCHAR, 50));
+				metaData0.addColumnMetaData(new ResultSetHeaderColumn("mode", ICTSTypes.SQLVARCHAR, 50));
+				metaData0.addColumnMetaData(new ResultSetHeaderColumn("errorCode", ICTSTypes.SQLVARCHAR, 50));
+				metaData0.addColumnMetaData(new ResultSetHeaderColumn("errorMessage", ICTSTypes.SQLVARCHAR, 50));
+				metaData0.addColumnMetaData(new ResultSetHeaderColumn("transactionStatus", ICTSTypes.SQLVARCHAR, 50));
+			}
+
+
+			IResultSetData data0 = new ResultSetData();
+
+			List<MovementDetails> movementDetailsList = getMovementsDetails(anOriginalProcedureRes);
+			List<MovementDetails> failedMovementDetailsList = new ArrayList<MovementDetails>();
+			logger.logDebug("APA success res: " + movementDetailsList.toString());
+			if(showFailed){
+				failedMovementDetailsList = getFailedMovementsDetails(anOriginalProcedureResF);
+				logger.logDebug("APA failed res: " + failedMovementDetailsList.toString());
+				movementDetailsList.addAll(failedMovementDetailsList);
+				if("DESC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
+					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
+						public int compare(MovementDetails m1, MovementDetails m2) {
+							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
+						}
+					});
+				}
+				else{
+					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
+						public int compare(MovementDetails m1, MovementDetails m2) {
+							return m1.getTransactionDate().compareTo(m2.getTransactionDate());
+						}
+					});
+				}
+				logger.logDebug("APA all res: " + movementDetailsList.toString());
+			}
+
+			for(MovementDetails movementDetails : movementDetailsList){
+				BigDecimal purchaseAmount = movementDetails.getPurchaseAmount();
+				BigDecimal withdrawalAmount = movementDetails.getWithdrawalAmount();
+				Integer transactionReferenceNumber = movementDetails.getTransactionReferenceNumber();
+
+				String puchaseAmountString = null;
+				String withdrawalAmountString = null;
+				String transactionReferenceNumberString = null;
+				if(purchaseAmount != null){
+					puchaseAmountString = purchaseAmount.toString();
+				}
+				if(withdrawalAmount != null){
+					withdrawalAmountString = withdrawalAmount.toString();
+				}
+				if(transactionReferenceNumber != null){
+					transactionReferenceNumberString = transactionReferenceNumber.toString();
+				}
+				IResultSetRow rowDat = new ResultSetRow();
+				rowDat.addRowData(1, new ResultSetRowColumnData(false, movementDetails.getAccountingBalance().toString()));
+				rowDat.addRowData(2, new ResultSetRowColumnData(false, movementDetails.getAvailableBalance().toString()));
+				rowDat.addRowData(3, new ResultSetRowColumnData(false, movementDetails.getMovementType()));
+				rowDat.addRowData(4, new ResultSetRowColumnData(false, movementDetails.getAmount().toString()));
+				rowDat.addRowData(5, new ResultSetRowColumnData(false, movementDetails.getTransactionDate()));
+				rowDat.addRowData(6, new ResultSetRowColumnData(false, movementDetails.getOperationType()));
+				if(movementDetails.getCommission().compareTo(BigDecimal.ZERO) != 0){
+					rowDat.addRowData(7, new ResultSetRowColumnData(false, movementDetails.getCommission().toString()));
+				}else{
+					rowDat.addRowData(7, new ResultSetRowColumnData(false, null));
+				}
+				if(movementDetails.getIva().compareTo(BigDecimal.ZERO) != 0){
+					rowDat.addRowData(8, new ResultSetRowColumnData(false, movementDetails.getIva().toString()));
+				}else{
+					rowDat.addRowData(8, new ResultSetRowColumnData(false, null));
+				}
+				rowDat.addRowData(9, new ResultSetRowColumnData(false, transactionReferenceNumberString));
+				rowDat.addRowData(10, new ResultSetRowColumnData(false, movementDetails.getDescription()));
+				rowDat.addRowData(11, new ResultSetRowColumnData(false, movementDetails.getMaskedCardNumber()));
+				rowDat.addRowData(12, new ResultSetRowColumnData(false, movementDetails.getOwnerNameSA()));
+				rowDat.addRowData(13, new ResultSetRowColumnData(false, movementDetails.getAccountNumberSA()));
+				rowDat.addRowData(14, new ResultSetRowColumnData(false, movementDetails.getBankNameSA()));
+				rowDat.addRowData(15, new ResultSetRowColumnData(false, movementDetails.getOwnerNameDA()));
+				rowDat.addRowData(16, new ResultSetRowColumnData(false, movementDetails.getAccountNumberDA()));
+				rowDat.addRowData(17, new ResultSetRowColumnData(false, movementDetails.getBankNameDA()));
+				rowDat.addRowData(18, new ResultSetRowColumnData(false, movementDetails.getReferenceCode()));
+				rowDat.addRowData(19, new ResultSetRowColumnData(false, movementDetails.getTrackingId()));
+				rowDat.addRowData(20, new ResultSetRowColumnData(false, movementDetails.getBankNameATM()));
+				rowDat.addRowData(21, new ResultSetRowColumnData(false, movementDetails.getLocationId()));
+				rowDat.addRowData(22, new ResultSetRowColumnData(false, movementDetails.getTransactionIdATM()));
+				rowDat.addRowData(23, new ResultSetRowColumnData(false, movementDetails.getEstablishmentNameMD()));
+				rowDat.addRowData(24, new ResultSetRowColumnData(false, movementDetails.getTransactionIdMD()));
+				rowDat.addRowData(25, new ResultSetRowColumnData(false, movementDetails.getEstablishmentNameSD()));
+				rowDat.addRowData(26, new ResultSetRowColumnData(false, movementDetails.getTransactionIdSD()));
+				rowDat.addRowData(27, new ResultSetRowColumnData(false, movementDetails.getTransactionId()));
+				rowDat.addRowData(28, new ResultSetRowColumnData(false, movementDetails.getAuthorizationCode()));
+				rowDat.addRowData(29, new ResultSetRowColumnData(false, movementDetails.getBankBranchCode()));
+				rowDat.addRowData(30, new ResultSetRowColumnData(false, puchaseAmountString));
+				rowDat.addRowData(31, new ResultSetRowColumnData(false, withdrawalAmountString));
+				rowDat.addRowData(32, new ResultSetRowColumnData(false, movementDetails.getUuid()));
+				rowDat.addRowData(33, new ResultSetRowColumnData(false, movementDetails.getCardId()));
+				rowDat.addRowData(34, new ResultSetRowColumnData(false, movementDetails.getReason()));
+
+				//refound
+				rowDat.addRowData(35, new ResultSetRowColumnData(false, movementDetails.getOriginMovementId()));
+				rowDat.addRowData(36, new ResultSetRowColumnData(false, movementDetails.getOriginReferenceNumber()));
+				rowDat.addRowData(37, new ResultSetRowColumnData(false, movementDetails.getCommissionOriginMovementId()));
+				rowDat.addRowData(38, new ResultSetRowColumnData(false, movementDetails.getCommissionOriginReferenceNumber()));
+				rowDat.addRowData(39, new ResultSetRowColumnData(false, movementDetails.getCreditConcept()));
+				rowDat.addRowData(40, new ResultSetRowColumnData(false, movementDetails.getOriginCode()));
+				rowDat.addRowData(41, new ResultSetRowColumnData(false, movementDetails.getReversalConcept()));
+
+				if(showFailed){
+					rowDat.addRowData(42, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
+					rowDat.addRowData(43, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
+					rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
+					rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
+					rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
+					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()));
+				}
+				data0.addRow(rowDat);
+			}
+			IResultSetBlock resultsetBlock0 = new ResultSetBlock(metaData0, data0);
+			anOriginalProcedureResponse.addResponseBlock(resultsetBlock0);
+		}
+
+		logger.logInfo(CLASS_NAME + "processTransformationResponse final dco" + anOriginalProcedureResponse.getProcedureResponseAsString());
+		return anOriginalProcedureResponse;
+	}
+
+
 	public IProcedureResponse processTransformationResponse(IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(" start processTransformationResponse--->");
@@ -698,7 +1158,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("purchaseAmount", ICTSTypes.SQLMONEY, 25));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("withdrawalAmount", ICTSTypes.SQLMONEY, 25));
-			
+
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("uuid", ICTSTypes.SQLVARCHAR, 32));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("cardId", ICTSTypes.SQLVARCHAR, 32));
 
@@ -711,7 +1171,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			IResultSetData data0 = new ResultSetData();
 
 			for (IResultSetRow iResultSetRow : rowsTemp) {
-				
+
 				IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
 				IResultSetRow rowDat = new ResultSetRow();
 
@@ -757,10 +1217,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				String sourceOwnerName = columns[18].getValue();
 				String sourceAccountNumber = columns[19].getValue();
 
+
 				if (sourceOwnerName != null) {
 					sourceOwnerName = sourceOwnerName.trim();
 				}
-			
+
 				String type_movement = columns[35].getValue();
 				String des_type = columns[1].getValue();
 				String is_dock_idc = columns[36].getValue();
@@ -897,11 +1358,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 					/*
 					 * if (type_auth.equals("REVERSAL")) {
-					 * 
+					 *
 					 * if (is_dock_idc.equals("DOCK")) {
 					 * movementType = "REVERSAL";
 					 * }
-					 * 
+					 *
 					 * if (is_dock_idc.equals("IDC")) {
 					 * movementType = "REVERSAL";
 					 * }
@@ -980,9 +1441,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						movementType = type_auth;
 					}
 				}
-				
-				  if (operationType.equals("C")) {
-					  
+
+				if (operationType.equals("C")) {
+
 					String copysourceOwnerName = sourceOwnerName;
 					String copydestinyOwnerName = destinyOwnerName;
 					String copysourceAccountNumber = sourceAccountNumber;
@@ -994,20 +1455,20 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					sourceOwnerName = copydestinyOwnerName;
 					sourceAccountNumber = copydestinyAccountNumber;
 				}
-				
+
 				String amount = columns[5].getValue();
 				String iva_val = columns[33].getValue();
 				String purchaseVal = null, withdrawalVal = null;
-				
+
 				if (movementType.equals("PURCHASE_WITH_CASHBACK")) {
 					BigDecimal bigDecimalAmount = new BigDecimal(amount);
 					BigDecimal bigDecimalIva = new BigDecimal(iva_val);
-					
+
 					amount = bigDecimalAmount.add(bigDecimalIva).toString();
 					iva_val = null;
 					purchaseVal = bigDecimalAmount.toString();
 					withdrawalVal = bigDecimalIva.toString();
-					
+
 				}
 
 				String reason_commission = columns[44].getValue();
@@ -1085,7 +1546,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 							rowDat.addRowData(23, new ResultSetRowColumnData(false, columns[29].getValue()));
 							rowDat.addRowData(24, new ResultSetRowColumnData(false, columns[30].getValue()));
 							rowDat.addRowData(25, new ResultSetRowColumnData(false, establisment_name_store));
-							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));					
+							rowDat.addRowData(26, new ResultSetRowColumnData(false, transaction_id_store));
 
 						} else if (is_dock_idc.equals("DOCK") || is_dock_idc.equals("IDC")) {
 							rowDat.addRowData(21, new ResultSetRowColumnData(false, null));
@@ -1216,7 +1677,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				}else {
 					rowDat.addRowData(33, new ResultSetRowColumnData(false, columns[43].getValue()));
 				}
-				
+
 				rowDat.addRowData(34, new ResultSetRowColumnData(false, reason_commission));
 
 				data0.addRow(rowDat);
@@ -1313,29 +1774,349 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		}
 		return pattern.matcher(strNum).matches();
 	}
-	
+
 	private void llenarRegistrosLocal(IProcedureResponse anProcedureResponse, IProcedureResponse anProcedureResponseLocalOff) {
 
 		if (anProcedureResponse.getResultSets().size() >= 4) {
-		    IResultSetBlock resultSetBlock = anProcedureResponse.getResultSet(4);
-		    IResultSetData data = resultSetBlock.getData();
+			IResultSetBlock resultSetBlock = anProcedureResponse.getResultSet(4);
+			IResultSetData data = resultSetBlock.getData();
 
-		    if (anProcedureResponseLocalOff.getResultSets().size() >= 4) {
+			if (anProcedureResponseLocalOff.getResultSets().size() >= 4) {
 
-		        IResultSetBlock sourceResultSetBlock = anProcedureResponseLocalOff.getResultSet(4); 
-		        IResultSetData sourceData = sourceResultSetBlock.getData();
-		        IResultSetRow[] sourceRows = sourceData.getRowsAsArray();
-		        for (IResultSetRow sourceRow : sourceRows) {
-		            IResultSetRow newRow = new ResultSetRow();
-		            IResultSetRowColumnData[] columns = sourceRow.getColumnsAsArray();
-		            for (int i = 0; i < columns.length; i++) {
-		                newRow.addRowData(i + 1, new ResultSetRowColumnData(false, columns[i].getValue()));
-		            }
+				IResultSetBlock sourceResultSetBlock = anProcedureResponseLocalOff.getResultSet(4);
+				IResultSetData sourceData = sourceResultSetBlock.getData();
+				IResultSetRow[] sourceRows = sourceData.getRowsAsArray();
+				for (IResultSetRow sourceRow : sourceRows) {
+					IResultSetRow newRow = new ResultSetRow();
+					IResultSetRowColumnData[] columns = sourceRow.getColumnsAsArray();
+					for (int i = 0; i < columns.length; i++) {
+						newRow.addRowData(i + 1, new ResultSetRowColumnData(false, columns[i].getValue()));
+					}
 
-		            data.addRow(newRow);
-		        }
-		    }
-		} 
-		
+					data.addRow(newRow);
+				}
+			}
+		}
+
 	}
+
+	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
+		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1);
+		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
+		List<MovementDetails> movementDetailsList = new ArrayList<>();
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			MovementDetails movementDetails = new MovementDetails();
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			BigDecimal amount = getBigDecimalValue(columns[2].getValue());
+			BigDecimal iva = getBigDecimalValue(columns[6].getValue());
+			amount = amount.add(iva);
+			movementDetails.setOperationType( columns[4].getValue());
+			movementDetails.setMovementType( columns[12].getValue());
+			movementDetails.setAccountingBalance( getBigDecimalValue(columns[0].getValue()));
+			movementDetails.setAvailableBalance( getBigDecimalValue(columns[1].getValue()));
+			movementDetails.setAmount( amount);
+			movementDetails.setIva( getBigDecimalValue(columns[6].getValue()));
+			movementDetails.setTransactionDate( columns[3].getValue());
+			movementDetails.setCommission( getBigDecimalValue(columns[5].getValue()));
+			movementDetails.setDescription( columns[7].getValue());
+			movementDetails.setTransactionId(columns[8].getValue()); //falta movementId
+			movementDetails.setOwnerNameSA( columns[18].getValue());
+			movementDetails.setAccountNumberSA( columns[19].getValue());
+			movementDetails.setOwnerNameDA( columns[21].getValue());
+			movementDetails.setAccountNumberDA( columns[22].getValue());
+			movementDetails.setUuid( columns[10].getValue());
+			movementDetails.setReferenceCode( columns[24].getValue());
+			movementDetails.setTransactionReferenceNumber( columns[26].getValue() != null ? Integer.parseInt(columns[26].getValue()):null);
+			movementDetails.setBankNameDA( columns[23].getValue());
+			movementDetails.setBankNameSA( columns[20].getValue());
+			movementDetails.setTrackingId( columns[25].getValue());
+			movementDetails.setMaskedCardNumber( columns[13].getValue());
+			movementDetails.setCardId( columns[14].getValue());
+			movementDetails.setAuthorizationCode( columns[9].getValue());
+			movementDetails.setEstablishmentNameSD( columns[33].getValue());
+			movementDetails.setEstablishmentNameMD( columns[31].getValue());
+			movementDetails.setLocationId( columns[28].getValue());
+			movementDetails.setBankBranchCode( columns[30].getValue());
+			movementDetails.setReason( columns[35].getValue());
+			movementDetails.setCardEntryPin( columns[16].getValue());
+			movementDetails.setCardEntryCode( columns[15].getValue());
+			movementDetails.setCardEntryMode( columns[17].getValue());
+			movementDetails.setErrorCode( columns[36].getValue());
+			movementDetails.setErrorMessage( columns[37].getValue());
+			movementDetails.setTransactionStatus( columns[11].getValue());
+			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
+			movementDetailsList.add(movementDetails);
+		}
+		return movementDetailsList;
+	}
+	public List<MovementDetails> getMovementsDetails(IProcedureResponse anProcedureResponse) {
+		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(4);
+		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
+		List<MovementDetails> movementDetailsList = new ArrayList<>();
+		String isISO;
+
+		for (IResultSetRow iResultSetRow : rowsTemp) {
+			MovementDetails movementDetails = new MovementDetails();
+			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
+			String[] additionalDataArray = columns[32].getValue().split("\\|");
+			String typeMovement = columns[33].getValue();
+			BigDecimal amount = getBigDecimalValue(columns[5].getValue());
+			BigDecimal iva = getBigDecimalValue(columns[28].getValue());
+			amount = amount.add(iva);
+			String establishmentName;
+			movementDetails.setOperationType(columns[4].getValue());
+			movementDetails.setMovementType(typeMovement);
+			movementDetails.setAccountingBalance(getBigDecimalValue(columns[6].getValue()));
+			movementDetails.setAvailableBalance(getBigDecimalValue(columns[7].getValue()));
+			movementDetails.setAmount(amount);
+			movementDetails.setIva(getBigDecimalValue(columns[28].getValue()));
+			movementDetails.setTransactionDate(columns[10].getValue());
+			movementDetails.setCommission(getBigDecimalValue(columns[29].getValue()));
+			movementDetails.setDescription(columns[12].getValue());
+			movementDetails.setTransactionId(columns[8].getValue());
+			switch (typeMovement){
+				case Constants.P2P_DEBIT:
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					break;
+				case Constants.P2P_CREDIT:
+					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					break;
+				case Constants.SPEI_DEBIT :
+				case Constants.SPEI_PENDING:
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					break;
+
+				case Constants.SPEI_CREDIT:
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,2)));
+					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setBankNameSA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(columns[19].getValue());
+					break;
+				case Constants.SPEI_RETURN:
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					break;
+				case Constants.CREDIT_AT_STORE:
+					establishmentName = getAdditionalValue(additionalDataArray, 6);
+					establishmentName = establishmentName == null
+							? getAdditionalValue(additionalDataArray,7)
+							: establishmentName;
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(establishmentName);
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					break;
+				case Constants.DEBIT_AT_STORE:
+				case Constants.PURCHASE_AT_STORE:
+					establishmentName = getAdditionalValue(additionalDataArray, 6);
+					establishmentName = establishmentName == null
+							? getAdditionalValue(additionalDataArray,7)
+							: establishmentName;
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(establishmentName);
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					break;
+				case Constants.PURCHASE_ONLINE: //ISO y API
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					if(!isISO.equals("N")){
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+						movementDetails.setAccountNumberSA(cuenta);
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameMD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+						movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					}else{
+						establishmentName = getAdditionalValue(additionalDataArray, 6);
+						establishmentName = establishmentName == null
+								? getAdditionalValue(additionalDataArray,7)
+								: establishmentName;
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+						movementDetails.setAccountNumberSA(cuenta);
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setEstablishmentNameMD(establishmentName);
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+						movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+						movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+						movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					}
+					break;
+				case Constants.PURCHASE_WITH_CASHBACK: //ISO
+					movementDetails.setPurchaseAmount(getBigDecimalValue(columns[5].getValue()));
+					movementDetails.setWithdrawalAmount(getBigDecimalValue(columns[5].getValue()));
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.REVERSAL_PURCHASE_WITH_CASHBACK: //ISO
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdATM(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.REVERSAL: //ISO
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setEstablishmentNameMD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.REVERSAL_ONLINE:
+				case Constants.REVERSAL_PHYSICAL:
+					establishmentName = getAdditionalValue(additionalDataArray, 6);
+					establishmentName = establishmentName == null
+							? getAdditionalValue(additionalDataArray,7)
+							: establishmentName;
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(establishmentName);
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					movementDetails.setMovementType(Constants.REVERSAL);
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					break;
+				case Constants.ATM_DEBIT: //ISO
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setBankNameATM(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdATM(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setLocationId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setBankBranchCode("");
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.COMMISSION:
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					String causa = columns[27].getValue();
+					if(causa.equals("8110")){
+						movementDetails.setReason("CARD_DELIVERY");
+					}else if(causa.equals("3101")) {
+						String reversalConcept = getAdditionalValue(additionalDataArray,2);
+						if("REFUND_REVERSAL".equals(reversalConcept)){
+							movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,3));
+							movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						}else{
+							movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+							movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						}
+						movementDetails.setReason(reversalConcept);
+					}
+					break;
+				case Constants.ACCOUNT_CREDIT:
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setCreditConcept(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+					break;
+				case Constants.CREDIT_REVERSAL:
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					//movementDetails.setReason(getAdditionalValue(additionalDataArray,2));
+					//movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,5));
+					//movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,6));
+					break;
+				case Constants.BONUS:
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					break;
+				default:
+					logger.logDebug("Unexpected typeMovement: " + typeMovement);
+
+			}
+			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
+			movementDetailsList.add(movementDetails);
+		}
+		return movementDetailsList;
+	}
+
+	public String getAdditionalValue(String [] additionalData, int index){
+		if(additionalData.length > index){
+			String data = additionalData[index];
+			return data.equals("null") ? null : data;
+		}
+		return null;
+	}
+
+	public BigDecimal getBigDecimalValue(String value){
+		if(value != null && !value.isEmpty()){
+			return new BigDecimal(value);
+		}
+		return new BigDecimal(0);
+
+	}
+
+	public String getOperation(String cuenta) {
+		return cuenta.contains("*") ? "X":"A";
+	}
+
 }

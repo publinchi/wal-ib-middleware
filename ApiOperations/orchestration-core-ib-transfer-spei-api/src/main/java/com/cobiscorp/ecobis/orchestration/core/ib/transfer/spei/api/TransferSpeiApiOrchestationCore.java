@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.TimeZone;
+import java.util.Objects;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonArray;
@@ -47,6 +48,7 @@ import com.cobiscorp.cobis.cts.commons.exceptions.CTSServiceException;
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
+import com.cobiscorp.cobis.cts.domains.IMessageBlock;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
@@ -72,6 +74,7 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.AESCrypt;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.JKeyStore;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Client;
+import com.cobiscorp.ecobis.ib.orchestration.dtos.Message;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Notification;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.NotificationDetail;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Product;
@@ -87,6 +90,7 @@ import com.google.gson.JsonObject;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.admintoken.interfaces.IAdminTokenUser;
 import com.cobiscorp.cobis.csp.domains.ICSP;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 
 /**
  * Register Account
@@ -299,22 +303,26 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             Map<String, Object> aBagSPJavaOrchestration) {
     	aBagSPJavaOrchestration.put(RETURN_CODE, 0);
     	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
-        aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
+        aBagSPJavaOrchestration.put(AN_ORIGINAL_REQUEST, anOriginalRequest);
         
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-        
-        anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
+
+        anProcedureResponse = validateLocalExecution(aBagSPJavaOrchestration);
+
         if(anProcedureResponse.getReturnCode()==0)
         {
-        anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
-        
-        if(anProcedureResponse.getReturnCode()==0)
-        {
-        	anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
-        }
+            anProcedureResponse = validateDestinyAccount(anOriginalRequest, aBagSPJavaOrchestration);
+            if(anProcedureResponse.getReturnCode()==0)
+            {
+                anProcedureResponse = validateCardAccount(anOriginalRequest, aBagSPJavaOrchestration);
+                
+                if(anProcedureResponse.getReturnCode()==0)
+                {
+                    anProcedureResponse = transferSpei(anOriginalRequest, aBagSPJavaOrchestration);
+                }
+            }
         }
         return processResponseTransfer(anOriginalRequest, anProcedureResponse, aBagSPJavaOrchestration);
-
     }
 
     private IProcedureResponse transferSpei(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -990,8 +998,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         request.addFieldInHeader("trn_virtual", ICOBISTS.HEADER_STRING_TYPE, "1870013");
         request.addFieldInHeader("trn_origen", ICOBISTS.HEADER_STRING_TYPE, "API_IN");
-
-        logger.logInfo(request);
+        if(logger.isDebugEnabled()) {
+            logger.logDebug("Request: " + request);
+        }
 
         //IProcedureResponse responseTransferSpei = executeCoreBanking(request);
         
@@ -1013,11 +1022,36 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         try {
             executeStepsTransactionsBase(request, aBagSPJavaOrchestration);
+            ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+            
+            String codeAcc = (String) aBagSPJavaOrchestration.getOrDefault(Constants.I_CODIGO_ACC, "0");
+            String reverse = (String) aBagSPJavaOrchestration.getOrDefault(Constants.REVERSE, "N");
+            String secuential =  (String) aBagSPJavaOrchestration.get(Constants.TRANSACCION_SPEI);
+            String secBranch = request.readValueParam("@s_ssn_branch");
+            String referenceNumber = request.readValueParam("@i_reference_number");
+            String cuentaDestino = request.readValueParam(Constants.I_CUENTA_DESTINO);
+            String bancoDestino = (String) aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO);
+            String status = "S".equals(reverse) ? "F" : "P";
+            String requestId = aRequest.readValueParam("@x_request_id");
+            SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
+
+            Map<String, String> additionalData = createAdditionalData(aBagSPJavaOrchestration, codeAcc, secuential, secBranch, referenceNumber, cuentaDestino, bancoDestino, status, requestId);
+
+            logger.logInfo("FHU additionalData --->" + additionalData);
+
+            if ("S".equals(reverse)) {
+            	handleReverseTransaction(saveAdditional, additionalData, aBagSPJavaOrchestration, serverResponse.getOnLine());
+            } else {
+                savePendingTransaction(saveAdditional, additionalData,serverResponse.getOnLine());
+            }
+
+  
+
         } catch (CTSServiceException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         } catch (CTSInfrastructureException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
         
@@ -1038,6 +1072,45 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         return responseTransferSpei;*/
     }
 
+    private Map<String, String> createAdditionalData( Map<String, Object> aBagSPJavaOrchestration, String codeAcc, String secuential, String secBranch, String referenceNumber, String cuentaDestino, String bancoDestino, String status, String clientRequestId) {
+        Map<String, String> additionalData = new HashMap<String, String>();
+        additionalData.put(Constants.SECUENTIAL, secuential);
+        additionalData.put("codeAcc", codeAcc);
+        additionalData.put("referenceNumber", referenceNumber);
+        additionalData.put("secBranch", secBranch);
+        additionalData.put("alternateCod", "1");
+        additionalData.put("cuentaDestino", cuentaDestino);
+        additionalData.put("bancoDestino", bancoDestino);
+        additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
+        additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
+        additionalData.put("data", String.join("|", status, codeAcc, 
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, aBagSPJavaOrchestration.get("o_nom_beneficiary").toString().trim(), secuential, bancoDestino, clientRequestId));
+
+        return additionalData;
+    }
+
+    private void handleReverseTransaction(SaveAdditionalDataImpl saveAdditional, Map<String, String> additionalData, Map<String, Object> aBagSPJavaOrchestration, Boolean isOnline) {
+        additionalData.put(Constants.TRANSACTION, "18500069");
+        additionalData.put(Constants.MOVEMENT_TYPE, Constants.SPEI_RETURN);
+        saveAdditional.saveData(Constants.SPEI_RETURN, isOnline, additionalData);
+        
+        additionalData.put(Constants.SECUENTIAL, (String) aBagSPJavaOrchestration.getOrDefault(Constants.TRANSACCION_SPEI, "0"));
+        additionalData.put(Constants.MOVEMENT_TYPE, Constants.SPEI_DEBIT);
+        additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
+        additionalData.put("data", String.join("|", "F", additionalData.get("codeAcc"), 
+            (String)aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), 
+            additionalData.get("referenceNumber"), 
+            additionalData.get("cuentaDestino"), 
+            additionalData.get(Constants.SECUENTIAL), 
+            additionalData.get("bancoDestino")));
+        
+        saveAdditional.saveData(Constants.SPEI_DEBIT, isOnline, additionalData);
+    }
+
+    private void savePendingTransaction(SaveAdditionalDataImpl saveAdditional, Map<String, String> additionalData,Boolean isOnline) {
+        saveAdditional.saveData("SPEI_PENDING", isOnline, additionalData);
+    }
+
     public IProcedureResponse processResponseTransfer(IProcedureRequest aRequest, IProcedureResponse anOriginalProcedureRes, Map<String, Object> aBagSPJavaOrchestration) {
         
         if (logger.isInfoEnabled()) {
@@ -1045,11 +1118,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo("xdcxv --->" + anOriginalProcedureRes.readValueParam("@o_referencia"));
         }
 
-        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
         IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
         String code = null, message, success, referenceCode = null, trackingKey = null, movementId = null, 
         executionStatus = null;
         Integer codeReturn = anOriginalProcedureRes.getReturnCode();
+        int lengthCtaDest = 0;
+        int lengthCtaOrig = 0;
+        
+        if (aRequest != null) {
+        	lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
+            lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
+        }
         
         if (logger.isInfoEnabled()) {
             logger.logInfo("Mensaje NJ_912006");
@@ -1093,12 +1173,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					message = "Success";
 					success = "true";
 					referenceCode = (String) aBagSPJavaOrchestration.get(Constants.I_CODIGO_ACC);
-					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
-					
-                    int lengthCtaDest = aRequest.readValueParam("@i_destination_account_number").length();
-                    int lengthCtaOrig = aRequest.readValueParam("@i_origin_account_number").length();
+					trackingKey = (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);					
                    
-                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, "SPEI_DEBIT", "2040", lengthCtaOrig, lengthCtaDest);					
+                    aBagSPJavaOrchestration.put("movementId", movementId);
+                    aBagSPJavaOrchestration.put("typeTrnWH", "P");
+                    registerWebhook(anOriginalRequest, aBagSPJavaOrchestration, Constants.SPEI_DEBIT, "2010", lengthCtaOrig, lengthCtaDest);
+					
 					logger.logInfo("bnbn true--->" + movementId);
 					
 				} else {
@@ -1233,15 +1313,28 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
         anOriginalProcedureResponse.addResponseBlock(resultsetBlock4);
 
+        if (success.equals("false")) {
+        	aBagSPJavaOrchestration.put("code_error", code);
+        	aBagSPJavaOrchestration.put("message_error", message);
+        	aBagSPJavaOrchestration.put("typeTrnWH", "F");
+        	
+        	registerWebhook(aRequest, aBagSPJavaOrchestration, Constants.SPEI_DEBIT, "2010", lengthCtaOrig, lengthCtaDest);
+        }
+        
         return anOriginalProcedureResponse;
     }
 
     private void registerWebhook(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration, String tipoTrans, 
     String causal, int lengthCtaOrig, int lengthCtaDest){
 
-        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
+        String identificationTypeOrig;
+        String identificationTypeDest = null;
+        String typeTrnWH = "S";
         
-        String identificationTypeOrig, identificationTypeDest = null;
+        if (aBagSPJavaOrchestration.get("typeTrnWH") != null) {
+        	typeTrnWH = (String) aBagSPJavaOrchestration.get("typeTrnWH");
+        }
         
         if (lengthCtaDest == 18) {
             identificationTypeDest = "clabe";
@@ -1256,8 +1349,19 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         aBagSPJavaOrchestration.put("destinationAccountType", identificationTypeDest);
+        
+        if (typeTrnWH.equals("P") || typeTrnWH.equals("S")) {
+        	//Registramos la transacción exitosa o pendiente
         aBagSPJavaOrchestration.put("originAccountType", identificationTypeOrig);
+			aBagSPJavaOrchestration.put("ssn_branch", aRequest.readValueParam("@s_ssn_branch"));
+			
         registerAllTransactionSuccess(tipoTrans, anOriginalRequest, causal, aBagSPJavaOrchestration);
+        }else {
+        	//Registramos la transacción fallida
+        	aBagSPJavaOrchestration.put("causal", causal);
+        	
+        	registerTransactionFailed(tipoTrans, aRequest, aBagSPJavaOrchestration);
+        }
     }
     
     private void trnRegistration(IProcedureRequest aRequest, IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration) {
@@ -1277,7 +1381,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_date"));
         request.addInputParam("@s_culture", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_culture"));
         request.addInputParam("@s_servicio", ICTSTypes.SQLINT4, ("DESKTOP_BROWSER".equals(aRequest.readValueParam("@i_channel"))? "1":"8"));
-        request.addInputParam("@i_trn", ICTSTypes.SQLINTN, "18500115");
+        request.addInputParam("@i_trn", ICTSTypes.SQLINTN, Constants.TRN_18500115);
         request.addInputParam("@i_ente", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("o_ente_bv"));
         request.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
         request.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_destination_account_number"));
@@ -1315,6 +1419,25 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
         }
 
+        IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(AN_ORIGINAL_REQUEST);
+
+        ArrayList a = (ArrayList) aResponse.getMessages();
+        Integer errorNumber = 0;
+        String errorMessage = null;
+
+		for (int i = 0; i < a.size(); i++) {
+			IMessageBlock msg = (IMessageBlock) a.get(i);
+            if(msg.getMessageNumber() != 0) {
+                errorNumber = msg.getMessageNumber();
+                errorMessage = msg.getMessageText();
+            }
+		}
+        Object errorNumberObj = aBagSPJavaOrchestration.get("@i_codigo_acc");
+        if((Objects.isNull(errorNumber) || errorNumber == 0) && Objects.nonNull(errorNumberObj)) {
+            errorNumber = Integer.parseInt((String)errorNumberObj);
+            errorMessage = (String)aBagSPJavaOrchestration.get("@i_mensaje_acc");
+        }
+
         request.setSpName("cob_bvirtual..sp_update_transfer_status");
 
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
@@ -1325,7 +1448,19 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("o_reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("movementId")); 
-		
+
+        request.addInputParam("@i_ssn", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn"));
+        request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@s_ssn_branch"));
+
+        if(Objects.nonNull(errorNumber) && errorNumber != 0) {
+            request.addInputParam("@i_error_number", ICTSTypes.SQLINT4, errorNumber+"");
+            request.addInputParam("@i_error_message", ICTSTypes.SQLVARCHAR, errorMessage);
+        } 
+
+        Object claveRastreo = aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO);
+        if(Objects.nonNull(claveRastreo)) {
+            request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, (String) claveRastreo);
+        } 
 		
 		logger.logDebug("Request Corebanking registerLog: " + request.toString());
 		
@@ -1389,9 +1524,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         String idTransaccion = "";
         String idMovement = "";
         String refBranch = "";
-        try {
+        int lengthCtaDest = 0;
+        int lengthCtaOrig = 0;
+
             IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
             
+        try {
             if (originalRequest != null) {
                 logger.logDebug("Inicia originalRequest no es null" +originalRequest.toString());
                 
@@ -1430,6 +1568,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 if (originalRequest.readValueParam(T_RTY) != null) {
                     logger.logDebug(T_RTY + " no es null");
                 }
+                
+                lengthCtaDest = originalRequest.readValueParam("@i_cta").length();
+                lengthCtaOrig = originalRequest.readValueParam("@i_cta_des").length();
             }
             
             ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
@@ -1514,10 +1655,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                         if (transacctionApplied > 0) {
 
                         	
-                            originalRequestClone.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR,
+                            originalRequestClone.addInputParam(Constants.TRANSACCION_SPEI, ICTSTypes.SQLVARCHAR,
                                     String.valueOf(transacctionApplied));
-                            aBagSPJavaOrchestration.put("@i_transaccion_spei", String.valueOf(transacctionApplied));
-                            logger.logDebug("@i_transaccion_spei: " + aBagSPJavaOrchestration.get("@i_transaccion_spei").toString()); //quitar
+                            aBagSPJavaOrchestration.put(Constants.TRANSACCION_SPEI, String.valueOf(transacctionApplied));
+                            logger.logDebug("@i_transaccion_spei: " + aBagSPJavaOrchestration.get(Constants.TRANSACCION_SPEI).toString()); //quitar
                         	
                             if (logger.isDebugEnabled()) {
                                 logger.logDebug("Spei Armed");
@@ -1551,14 +1692,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                                         JsonObject resultado = jsonObject.getAsJsonObject("resultado");
 
                                         if(resultado.has("descripcionError")){
-                                            aBagSPJavaOrchestration.put("@i_clave_rastreo", responseSpei.getClaveRastreo());
-                                            aBagSPJavaOrchestration.put("@i_codigo_acc", responseSpei.getCodigoAcc());
-
-                                            int lengthCtaDest = originalRequest.readValueParam("@i_cta").length();
-                                            int lengthCtaOrig = originalRequest.readValueParam("@i_cta_des").length();
-                                            
+                                            aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, responseSpei.getClaveRastreo());
+                                            aBagSPJavaOrchestration.put(Constants.I_CODIGO_ACC, responseSpei.getCodigoAcc());
                                             aBagSPJavaOrchestration.put("movementId", idTransaccion);
-                                            registerWebhook(originalRequest, aBagSPJavaOrchestration, "SPEI_RETURN", "2010", lengthCtaOrig, lengthCtaDest);
+                                            aBagSPJavaOrchestration.put("typeTrnWH", "S");
+
+                                            registerWebhook(originalRequest, aBagSPJavaOrchestration, Constants.SPEI_RETURN, "2010", lengthCtaOrig, lengthCtaDest);
                                         }
                                     }
 	                            } 
@@ -1664,6 +1803,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 logger.logDebug("Almacenadox !!! " + idTransaccion);
             }
             responseTransfer.addParam("@o_idTransaccion", ICTSTypes.SQLVARCHAR, idTransaccion.length(), idTransaccion);
+        }else {
+        	//Registramos la transaccion fallida
+        	aBagSPJavaOrchestration.put("code_error", responseTransfer.getReturnCode());
+        	aBagSPJavaOrchestration.put("message_error", responseTransfer.getMessages());
+        	aBagSPJavaOrchestration.put("typeTrnWH", "F");
+        	
+        	registerWebhook(originalRequest, aBagSPJavaOrchestration, "SPEI_RETURN", "2010", lengthCtaOrig, lengthCtaDest);
+        	
         }
 
         logger.logDebug("Responde devuelto a TransferOfflineTemplate " + responseTransfer);
@@ -1827,7 +1974,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, responseLocalValidation);
 
             requestTransfer.addInputParam("@i_nom_banco_des", ICTSTypes.SYBVARCHAR, columns[0].getValue());
-            aBagSPJavaOrchestration.put("@i_banco_dest", columns[0].getValue());
+            aBagSPJavaOrchestration.put(Constants.I_BANCO_DESTINO, columns[0].getValue());
             requestTransfer.addInputParam("@i_ruta_trans", ICTSTypes.SYBVARCHAR, columns[2].getValue());
             requestTransfer.addOutputParam("@o_fecha_tran", ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
             if (aBagSPJavaOrchestration.containsKey("origin_spei") && aBagSPJavaOrchestration.get("origin_spei") != null
@@ -2089,7 +2236,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         logger.logInfo(wInfo + Constants.INIT_TASK);
         logger.logInfo(wInfo + " "+response.getErrorCode()+ " "+"response de entrada: " + response.toString());
 
-        aBagSPJavaOrchestration.put("@i_transaccion_spei", response.getCodigoAcc());
+        aBagSPJavaOrchestration.put(Constants.TRANSACCION_SPEI, response.getCodigoAcc());
 
         if (response.getErrorCode() != null) {
             responseTransfer.addParam(Constants.I_FAIL_PROVIDER, ICTSTypes.SQLVARCHAR, 1, "S");
@@ -2165,7 +2312,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.setServicio(anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
 
 //TRANSACCIONALIDAD
-        String transaccionSpei = anOriginalRequest.readValueParam("@i_transaccion_spei");
+        String transaccionSpei = anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI);
         if (null == transaccionSpei) { // Si esta en offline no hay ssn de debito
             transaccionSpei = anOriginalRequest.readValueParam("@s_ssn"); // se obtiene ssn de CTS
         }
@@ -2306,6 +2453,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
         // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
         List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
+        aBagSPJavaOrchestration.put(Constants.REVERSE, "N");
         // SE ACTUALIZA TABLA DE SECUENCIAL SPEI
         speiSec(originalRequest, aBagSPJavaOrchestration);
         // SE HACE LA VALIDACION DE LA RESPUESTA
@@ -2313,6 +2461,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         {
             if (!respuesta.get(0).equals("00"))
             {
+            	aBagSPJavaOrchestration.put(Constants.REVERSE, "S");
                 // SE CAMBIA ESTADO DE REGISTRO
                 speiGetDataRB(originalRequest, aBagSPJavaOrchestration);
                 // SE HACELA REVERSA DE LA NOTA DE DEBITO
@@ -2353,6 +2502,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             {
                 logger.logDebug("List<String> respuesta error o null");
             }
+            aBagSPJavaOrchestration.put(Constants.REVERSE, "S");
             // SE CAMBIA ESTADO DE REGISTRO
             speiGetDataRB(originalRequest, aBagSPJavaOrchestration);
             // SE HACELA REVERSA DE LA NOTA DE DEBITO
@@ -2449,10 +2599,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
             String claveRastreo = loadded.getTrackingKeyPrefix()+Methods.getActualDateYyyymmdd()+bag.get("@o_referencia");
             anOriginalRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR,claveRastreo) ;
-            bag.put("@i_clave_rastreo", claveRastreo);
+            bag.put(Constants.I_CLAVE_RASTREO, claveRastreo);
             bag.put("clave_rastreo",  claveRastreo);
 
-            anOriginalRequest.addInputParam("@i_transaccion_spei", ICTSTypes.SQLVARCHAR, (String) bag.get("@o_referencia"));
+            anOriginalRequest.addInputParam(Constants.TRANSACCION_SPEI, ICTSTypes.SQLVARCHAR, (String) bag.get("@o_referencia"));
             anOriginalRequest.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_ssn_branch"));
             
             //idenficador de operacion se deberia
@@ -2469,8 +2619,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             // SE HACE LA LLAMADA AL CONECTOR
             // SE HACE LA LLAMADA AL CONECTOR
  			bag.put(CONNECTOR_TYPE, "(service.identifier=CISConnectorSpei)");
- 			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "18500115");
- 			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500115");
+ 			anOriginalRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, Constants.TRN_18500115);
+ 			anOriginalRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, Constants.TRN_18500115);
             // SE EJECUTA
             IProcedureResponse connectorSpeiResponse = executeProvider(anOriginalRequest, bag);
 
@@ -2499,8 +2649,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
                 response.add(connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
                 response.add(connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
-                response.add(connectorSpeiResponse.readValueParam("@i_codigo_acc"));
-                response.add(anOriginalRequest.readValueParam("@i_transaccion_spei"));
+                response.add(connectorSpeiResponse.readValueParam(Constants.I_CODIGO_ACC));
+                response.add(anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
 
                 response.add(connectorSpeiResponse.readValueParam("@o_spei_request"));
                 response.add(connectorSpeiResponse.readValueParam("@o_spei_response")); 
@@ -2516,7 +2666,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 if(null == rastreo){
                     rastreo = anOriginalRequest.readValueParam("i_clave_rastreo_connection");
                 }
-                bag.put("@i_clave_rastreo", rastreo);
+                bag.put(Constants.I_CLAVE_RASTREO, rastreo);
                 bag.put("@i_msj_respuesta", connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
                 bag.put("@i_cod_respuesta", connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
                 bag.put("@i_id", connectorSpeiResponse.readValueParam("@o_id"));
@@ -2524,9 +2674,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
                 bag.put("@i_mensaje_acc", connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
                 bag.put("@i_id_spei_acc", connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
-                bag.put("@i_codigo_acc", connectorSpeiResponse.readValueParam("@i_codigo_acc"));
-                logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam("@i_transaccion_spei"));
-                bag.put("@i_transaccion_spei", anOriginalRequest.readValueParam("@i_transaccion_spei"));
+                bag.put(Constants.I_CODIGO_ACC, connectorSpeiResponse.readValueParam(Constants.I_CODIGO_ACC));
+                logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
+                bag.put(Constants.TRANSACCION_SPEI, anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
                 
                 if (logger.isDebugEnabled()) {                  
                     logger.logDebug("i_ssn_branch origin" + anOriginalRequest.readValueParam("@i_ssn_branch"));
@@ -2536,7 +2686,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 bag.put("@o_spei_request", connectorSpeiResponse.readValueParam("@o_spei_request"));
                 bag.put("@o_spei_response", connectorSpeiResponse.readValueParam("@o_spei_response"));
 
-                bag.put("@o_transaccion_spei",anOriginalRequest.readValueParam("@i_transaccion_spei"));
+                bag.put("@o_transaccion_spei",anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
                  
                 data = null;
             } else {
@@ -2842,8 +2992,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18011");
             request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "C");
 
-            logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
-            request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
+            logger.logInfo("@i_clave_rastreo bag: " + bag.get(Constants.I_CLAVE_RASTREO));
+            request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, bag.get(Constants.I_CLAVE_RASTREO).toString());
 
             request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
 
@@ -2919,8 +3069,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             request.addInputParam("@i_cuenta_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
 
 
-            request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
-            logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
+            request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, bag.get(Constants.I_CLAVE_RASTREO).toString());
+            logger.logInfo("@i_clave_rastreo bag: " + bag.get(Constants.I_CLAVE_RASTREO));
 
             // SE EJECUTA Y SE OBTIENE LA RESPUESTA
             IProcedureResponse pResponse = executeCoreBanking(request);
@@ -2964,8 +3114,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             request.addInputParam("@i_mon", ICTSTypes.SQLINT1, bag.get("@o_mon").toString());
             request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, anOriginalRequest.readValueParam(S_SERVICIO_LOCAL));
             request.addInputParam("@i_tipo_error", ICTSTypes.SQLINTN, "7");
-            logger.logInfo("Reversando transaccion::: "+ anOriginalRequest.readValueParam("@i_transaccion_spei"));
-            request.addInputParam("@t_ssn_corr", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+            logger.logInfo("Reversando transaccion::: "+ anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
+            request.addInputParam("@t_ssn_corr", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
             //VALIDA COMISION
             if (bag.get("@o_comision") != null) {
                 request.addInputParam("@i_comision", ICTSTypes.SQLMONEY, bag.get("@o_comision").toString());
@@ -2974,10 +3124,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             }
             request.addInputParam("@s_ssn_branch", ICTSTypes.SQLINTN, bag.get("@o_ssn_branch").toString());
             // CLAVE DE RASTREO
-            request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo").toString());
-            logger.logInfo("@i_clave_rastreo bag: " + bag.get("@i_clave_rastreo"));
+            request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, bag.get(Constants.I_CLAVE_RASTREO).toString());
+            logger.logInfo("@i_clave_rastreo bag: " + bag.get(Constants.I_CLAVE_RASTREO));
             request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT4, "1");
-            request.addInputParam("@i_transaccion_core", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+            request.addInputParam("@i_transaccion_core", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
 
             //VARIABLES DE CTS
             request.addInputParam("@s_ssn", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_ssn"));
@@ -2987,7 +3137,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             request.addInputParam("@s_rol", ICTSTypes.SQLINTN, anOriginalRequest.readValueParam("@s_rol"));
             request.addInputParam("@s_date", ICTSTypes.SQLDATETIME, anOriginalRequest.readValueParam("@s_date"));
             //reversa nuevo campo envio de transaccion para reversa
-            request.addInputParam("@i_transaction_core", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_clave_rastreo"));
+            request.addInputParam("@i_transaction_core", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam(Constants.I_CLAVE_RASTREO));
 
 
             // SE EJECUTA Y SE OBTIENE LA RESPUESTA
@@ -3029,14 +3179,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         request.addInputParam("@i_monto", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_val"));
         request.addInputParam("@i_moneda", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_mon"));
         request.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_concepto"));
-        request.addInputParam("@i_banco_dest", ICTSTypes.SQLVARCHAR,bag.get("@i_banco_dest") != null ? bag.get("@i_banco_dest").toString() : "");
+        request.addInputParam(Constants.I_BANCO_DESTINO, ICTSTypes.SQLVARCHAR,bag.get(Constants.I_BANCO_DESTINO) != null ? bag.get(Constants.I_BANCO_DESTINO).toString() : "");
         request.addInputParam("@i_cuenta_clabe_dest", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_cta_des"));
         request.addInputParam("@i_estado", ICTSTypes.SQLVARCHAR,"F");
-        request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, bag.get("@i_clave_rastreo") != null ? bag.get("@i_clave_rastreo").toString() : "");
+        request.addInputParam(Constants.I_CLAVE_RASTREO, ICTSTypes.SQLVARCHAR, bag.get(Constants.I_CLAVE_RASTREO) != null ? bag.get(Constants.I_CLAVE_RASTREO).toString() : "");
         request.addInputParam("@i_proceso_origen", ICTSTypes.SQLINT1, "1");
         request.addInputParam("@i_mensaje_acc", ICTSTypes.SQLVARCHAR,bag.get("@i_mensaje_acc") != null ? bag.get("@i_mensaje_acc").toString() : "");
-        request.addInputParam("@i_codigo_acc", ICTSTypes.SQLVARCHAR, bag.get("@i_codigo_acc") != null ? bag.get("@i_codigo_acc").toString() : "");
-        request.addInputParam("@i_transaccion_spei", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_transaccion_spei"));
+        request.addInputParam(Constants.I_CODIGO_ACC, ICTSTypes.SQLVARCHAR, bag.get(Constants.I_CODIGO_ACC) != null ? bag.get(Constants.I_CODIGO_ACC).toString() : "");
+        request.addInputParam(Constants.TRANSACCION_SPEI, ICTSTypes.SQLINT4, anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
         request.addInputParam("@i_spei_request", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_request") != null ? bag.get("@o_spei_request").toString() : "");
         request.addInputParam("@i_spei_response", ICTSTypes.SQLVARCHAR, bag.get("@o_spei_response") != null ? bag.get("@o_spei_response").toString(): "");      
         request.addInputParam("@i_reference_number", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_reference_number"));
@@ -3378,11 +3528,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		procedureRequest.addFieldInHeader("idzone", ICOBISTS.HEADER_STRING_TYPE, "routingOrchestrator");
 		
 		procedureRequest.addInputParam("@i_customerDetails_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
-		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, "SPEI_DEBIT");
+		procedureRequest.addInputParam("@i_operation", ICTSTypes.SQLVARCHAR, Constants.SPEI_DEBIT);
 		
-		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel").toString());//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_channel"));//se obtiene con el response del f1
 		
-		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent").toString());//se obtiene con el response del f1
+		procedureRequest.addInputParam("@i_channelDetails_userAgent", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userAgent"));//se obtiene con el response del f1
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_userSessionId"));//se obtiene del session id de cashi web
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_riskEvaluationId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_riskEvaluationId"));//se obtiene del metodo f5
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_authenticationMethod", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_authenticationMethod"));//preguntar, en la doc dice los posibles valores
@@ -3634,8 +3784,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonRequestStringClean);            
                 
                 if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
-                    && !jsonObject.has("contactLimit")){                   
-                    resp = Utils.returnException(50205, "Error al obtener el limite del contacto");
+                    && contactId.length() < 36){
+					resp = Utils.returnException(50205, "Error al obtener el límite del contacto");
                     return resp;
                 }
 
@@ -3663,17 +3813,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 					return resp;
 				}
 			} else {
-                logger.logError(CLASS_NAME + "Error en conexión hacia obtención de limites");
-                resp = Utils.returnException(50202, "Error obtención de limites");
+                logger.logError(CLASS_NAME + "Error en conexión hacia obtención de límites");
+                resp = Utils.returnException(50202, "Error obtención de límites");
 
                 if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null")) 
-                    && contactId.length() < 32){                   
-                    resp = Utils.returnException(50204, "Error al obtener el limite del contacto");
+                    && contactId.length() < 36){                   
+                    resp = Utils.returnException(50204, "Error al obtener el límite del contacto");
                 }                								
 			}
 		} catch (Exception e) {
-			logger.logError(CLASS_NAME + " Error Catastrofico en validacion Limites", e);
-			resp = Utils.returnException(50203, "Error obtención de limites");
+			logger.logError(CLASS_NAME + " Error Catastrofico en validacion límites", e);
+			resp = Utils.returnException(50203, "Error obtención de límites");
 		}
 		return resp;
 	}
@@ -3687,7 +3837,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			IProcedureRequest anOriginalRequestLimits = new ProcedureRequestAS();
 
 			anOriginalRequestLimits.addInputParam("@i_transactionType", ICTSTypes.SQLVARCHAR, "DEBIT");
-			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, "SPEI_DEBIT");
+			anOriginalRequestLimits.addInputParam("@i_transactionSubType", ICTSTypes.SQLVARCHAR, Constants.SPEI_DEBIT);
 			anOriginalRequestLimits.addInputParam("@i_externalCustomerId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_external_customer_id"));
             String contactId = aRequest.readValueParam("@i_contactId");
             if((contactId != null && !contactId.trim().isEmpty() && !contactId.equals("null"))){

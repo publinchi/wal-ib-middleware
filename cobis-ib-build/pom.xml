@@ -7,8 +7,9 @@
   <name>${project.artifactId}</name>
   <url>http://www.cobiscorp.com/</url>
   <properties>
-    <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <profiles>
@@ -214,6 +215,8 @@
     	<module>../ApiOperations/orchestration-core-ib-get-client-limit-api</module>
     	<module>../ApiOperations/orchestration-core-ib-unlock-credit-operation-api</module>
         <module>../ApiOperations/orchestration-core-ib-account-reversal-operation</module>
+        <module>../ApiOperations/orchestration-core-ib-compensation-process</module>
+		<module>../ApiOperations/orchestration-core-ib-compensation-download</module>
         <!--INSTALADOR -->
         <module>../Installer/ib-middleware-installer</module>
         <module>../Installer/ib-middleware-checksum-validator</module>
@@ -223,6 +226,16 @@
       <id>Purge</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version> <!-- Esta versión sí es compatible con Maven 3.2.5 -->
+            <configuration>
+              <source>${maven.compiler.source}</source>
+              <target>${maven.compiler.target}</target>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+          </plugin>
           <plugin>
             <artifactId>maven-dependency-plugin</artifactId>
             <version>2.10</version>

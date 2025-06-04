@@ -184,17 +184,17 @@ public class InstallJarsJob extends AbstractProcessJob {
 					logger.info("Paso 27");
 					backupCobisSessionManager = updateConfigurations.getBackupFilePath(new File(cobisSessionManager), XML_EXTENSION);
 					logger.info("Paso 28");
-					backupCobisSsnUnique = updateConfigurations.getBackupFilePath(new File(cobisSsnUnique), XML_EXTENSION);
+					//backupCobisSsnUnique = updateConfigurations.getBackupFilePath(new File(cobisSsnUnique), XML_EXTENSION);
 					logger.info("Paso 27");
-					bkCobisBvSsnUnique = updateConfigurations.getBackupFilePath(new File(cobisBvSsnUnique), XML_EXTENSION);
+					//bkCobisBvSsnUnique = updateConfigurations.getBackupFilePath(new File(cobisBvSsnUnique), XML_EXTENSION);
 					logger.info("Paso 29");
-					bkBusinessServExecutor = updateConfigurations.getBackupFilePath(new File(businessServExecutor), XML_EXTENSION);
+					//bkBusinessServExecutor = updateConfigurations.getBackupFilePath(new File(businessServExecutor), XML_EXTENSION);
 					logger.info("Paso 30");
-					bkServExecutor = updateConfigurations.getBackupFilePath(new File(servExecutor), XML_EXTENSION);
+					//bkServExecutor = updateConfigurations.getBackupFilePath(new File(servExecutor), XML_EXTENSION);
 					logger.info("Paso 31");
 					bkConfigChannelAdmin = updateConfigurations.getBackupFilePath(new File(configChannelAdmin), XML_EXTENSION);
 					logger.info("Paso 32");
-					bkMasterCts = updateConfigurations.getBackupFilePath(new File(MasterCts), XML_EXTENSION);
+					//bkMasterCts = updateConfigurations.getBackupFilePath(new File(MasterCts), XML_EXTENSION);
 					logger.info("======= FINISH Backup Files =======");
 
 					//**********************************************************************
@@ -221,12 +221,12 @@ public class InstallJarsJob extends AbstractProcessJob {
 					updateConfigurations.verifySocketSsnConfig(socketSsnConfig);					
 					
 					updateConfigurations.verifyReentryConfig(reentryConf);
-					updateConfigurations.editDbmsName(cobisSessionManager, SQLCTS);
-					updateConfigurations.editDbmsName(cobisSsnUnique, SYBCTS);
-					updateConfigurations.editDbmsName(cobisBvSsnUnique, SQLCTS);
-					updateConfigurations.editDbmsName(businessServExecutor, SYBCTS);
-					updateConfigurations.editDualMode(businessServExecutor);
-					updateConfigurations.editDualMode(servExecutor);
+					//updateConfigurations.editDbmsName(cobisSessionManager, SQLCTS);
+					//updateConfigurations.editDbmsName(cobisSsnUnique, SYBCTS);
+					//updateConfigurations.editDbmsName(cobisBvSsnUnique, SQLCTS);
+					//updateConfigurations.editDbmsName(businessServExecutor, SYBCTS);
+					//updateConfigurations.editDualMode(businessServExecutor);
+					//updateConfigurations.editDualMode(servExecutor);
 					
 					logger.info("Antes de editServices");
 					updateConfigurations.editServices(services,"IB-services.xml");

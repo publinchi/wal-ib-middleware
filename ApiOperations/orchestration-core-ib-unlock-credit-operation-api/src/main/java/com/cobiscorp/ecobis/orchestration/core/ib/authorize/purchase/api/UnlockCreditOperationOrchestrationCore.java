@@ -39,6 +39,7 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
@@ -51,7 +52,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplat
 @Properties(value = { @Property(name = "service.description", value = "UnlockCreditOperationOrchestrationCore"),
 		@Property(name = "service.vendor", value = "COBISCORP"), @Property(name = "service.version", value = "1.0.0"),
 		@Property(name = "service.identifier", value = "UnlockCreditOperationOrchestrationCore"),
-		@Property(name = "service.spName", value = "cob_procesador..sp_auth_purchase_dock_api")})
+		@Property(name = "service.spName", value = "cob_procesador..sp_desbloquea_remesas")})
 public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 	
 	private ILogger logger = (ILogger) this.getLogger();
@@ -155,6 +156,7 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 			wAuthTrnDataCentral = executeUnlockCreditOperation(aRequest, aBagSPJavaOrchestration);
 			
 			return wAuthTrnDataCentral;
+			
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -681,4 +683,8 @@ public class UnlockCreditOperationOrchestrationCore extends OfflineApiTemplate {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+    public ICoreServer getCoreServer() {
+        return null;
+    }
 }

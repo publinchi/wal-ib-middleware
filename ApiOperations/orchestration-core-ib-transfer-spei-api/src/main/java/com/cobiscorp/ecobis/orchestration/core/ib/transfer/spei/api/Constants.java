@@ -32,6 +32,14 @@ public class Constants {
 
     public static final String COMPANY_ID = "COMPID";
     public static final String TRACKING_KEY_PREFIX = "BANKPREFIX";
+    
+    public static final String REVERSE = "reverse";
+    public static final String SECUENTIAL = "secuential";
+    public static final String MOVEMENT_TYPE = "movementType";
+    public static final String SPEI_RETURN = "SPEI_RETURN";
+    public static final String SPEI_DEBIT=  "SPEI_DEBIT";
+    public static final String TRN_18500115=  "18500115";
+    public static final String TRANSACTION=  "transaction";
 
     /*------------------ SPEI -----------------------------------*/
     //ENTRADAS
@@ -48,6 +56,9 @@ public class Constants {
     public static final String I_VALOR = "@i_val";
     public static final String I_PROD_DES = "@i_prod_des";
     public static final String I_FAIL_PROVIDER = "@i_fail_provider";
+    
+    public static final String TRANSACCION_SPEI = "@i_transaccion_spei";
+
 
     //SALIDAS
     public static final String O_SPEI_REQUEST = "@o_spei_request";

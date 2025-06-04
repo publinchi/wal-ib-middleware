@@ -100,15 +100,17 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
         return responseTransfer;
     }
-
-    public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {
-        try {
-            IProcedureRequest request = new ProcedureRequestAS();
+    
+    public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {	
+        String movementType = "SPEI_CREDIT";
 
             if (logger.isDebugEnabled()) {
                 logger.logDebug(" Entrando en registerAllTransactionSuccess");
             }
-            String movementType = "SPEI_CREDIT";
+        
+    	try {
+            IProcedureRequest request = new ProcedureRequestAS();
+            
             request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
             request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
 
@@ -116,34 +118,36 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
             request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
             if(tipoTran.equals("SPEI_CREDIT")) {
-                request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION SUCCESS");
-
                 request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, (String)aBagSPJavaOrchestration.get("externalCustId"));
                 request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
-                request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@i_fechaOperacion"));
+                request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aBagSPJavaOrchestration.get("fechaTrn"));
                 request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
                 request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
                 request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
                 request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
                 request.addInputParam("@i_commission", ICTSTypes.SQLMONEY , "0");
                 request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
-                request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aRequest.readValueParam("@s_ssn"));
-                request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@x_request_id"));
+                request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn"));
+                request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
                 request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
-
-                request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@i_institucionOrdenante"));
+                
+                request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_institucionOrdenante"));
                 request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
-                request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, (String)aRequest.readValueParam("@i_cuentaOrdenante"));
-                request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreOrdenante")); //consultar
-
-                request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreBeneficiario")); //consultar
+                request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cuentaOrdenante"));
+                request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreOrdenante")); 
+                
+                request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreBeneficiario")); 
                 request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cuentaBeneficiario"));
                 request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
                 request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("externalCustId"));
 
                 request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_idSpei"));
                 request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_claveRastreo"));
-
+                
+             	if (aRequest.readValueParam("@x_end_user_ip") != null) {
+    				request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
+    	        }
+    			
                 request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR, "{}");
                 request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
                 IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -158,6 +162,80 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
         }
     }
 
+    public void registerTransactionFailed(String tipoTran, IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) 
+	{
+		IProcedureRequest request = new ProcedureRequestAS();
+		String movementType = tipoTran;
+		String movementId = "0";
+		String codeError = "0";
+		String messageError = "";
+		String causal = "";
+		
+		try{
+			
+			if (aBagSPJavaOrchestration.get("movementId")!= null) {
+				movementId = aBagSPJavaOrchestration.get("movementId").toString();
+			}
+
+			if (aBagSPJavaOrchestration.get("code_error")!= null) {
+				codeError = aBagSPJavaOrchestration.get("code_error").toString();
+			}
+			
+			if (aBagSPJavaOrchestration.get("message_error")!= null) {
+				messageError = aBagSPJavaOrchestration.get("message_error").toString();
+			}
+			
+			if (aBagSPJavaOrchestration.get("causal")!= null) {
+				causal = aBagSPJavaOrchestration.get("causal").toString();
+			}
+			
+			request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "local");
+			request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+			request.setSpName("cob_bvirtual..sp_bv_transacciones_exitosas");
+			
+			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , movementId);
+			request.addInputParam("@i_eventType", ICTSTypes.SQLVARCHAR, "TRANSACCION FAILED");
+
+			request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, (String) aBagSPJavaOrchestration.get("externalCustId"));
+			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
+			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
+			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
+			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
+			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aBagSPJavaOrchestration.get("fechaTrn"));
+			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+			
+			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cuentaOrdenante"));
+			request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreOrdenante"));
+			
+			request.addInputParam("@i_destinationExternalCustomerId", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("externalCustId"));
+			request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreBeneficiario")); 
+			request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cuentaBeneficiario"));
+			request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("destinationAccountType"));
+			
+			request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_idSpei"));
+            request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_claveRastreo"));
+			
+			request.addInputParam("@i_errorDetailsCode", ICTSTypes.SQLVARCHAR, codeError);
+			request.addInputParam("@i_errorDetailsMessage", ICTSTypes.SQLVARCHAR, messageError);
+			
+			request.addInputParam("@i_request_trans_success", ICTSTypes.SQLVARCHAR, "{}");
+			request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");
+			
+			IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
+				
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response Corebanking registerAllTransactionFailed: " + wProductsQueryResp.getProcedureResponseAsString());
+			}
+
+			if (logger.isInfoEnabled()) {
+				logger.logInfo(" Saliendo de registerAllTransactionFailed");
+			}
+		}catch(Exception e){
+			logger.logError("Error Catastrofico en registerAllTransactionFailed SPEI_CREDIT");	
+		}
+	}
+    
     protected IProcedureResponse saveReentry(IProcedureRequest anOriginalRequest,
                                              Map<String, Object> aBagSPJavaOrchestration) {
 

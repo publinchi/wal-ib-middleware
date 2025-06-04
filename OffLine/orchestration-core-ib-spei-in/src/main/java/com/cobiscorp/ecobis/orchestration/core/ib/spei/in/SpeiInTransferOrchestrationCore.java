@@ -49,6 +49,7 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceMonetaryTran
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceReexecutionComponent;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSelfAccountTransfers;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 
 /**
  * Plugin of between accounts transfers
@@ -84,6 +85,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	 */
 	private static ILogger logger = LogFactory.getLogger(SpeiInTransferOrchestrationCore.class);
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
+	private static final String SPEI_CREDIT = "SPEI_CREDIT";
 	private String validaRiesgo = "";
 
 
@@ -168,6 +170,13 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	
 		}
 
+		/*Datos adicionales*/
+		 registerMovementsSpeiInAdditionalData(
+				((ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER)).getOnLine(),
+				anOriginalRequest,
+				(IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION),
+				(IProcedureResponse)aBagSPJavaOrchestration.get(RESPONSE_LOCAL_TRANMONET));
+
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
@@ -208,12 +217,14 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String clientCode = ccProcedureResponse.getResultSetRowColumnData(1, 1, 1).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 1).getValue();
 		String cuentaOrig = ccProcedureResponse.getResultSetRowColumnData(1, 1, 2).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 2).getValue();
 		String cuentaDest = ccProcedureResponse.getResultSetRowColumnData(1, 1, 3).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 3).getValue();
+		String sl_fecha = ccProcedureResponse.getResultSetRowColumnData(1, 1, 4).isNull()?"":ccProcedureResponse.getResultSetRowColumnData(1, 1, 4).getValue();
 
 		aBagSPJavaOrchestration.put("destinationAccountType", cuentaDest);
 		aBagSPJavaOrchestration.put("originAccountType", cuentaOrig);
 		aBagSPJavaOrchestration.put("externalCustId", clientCode);
+		aBagSPJavaOrchestration.put("fechaTrn", sl_fecha);
 				
-		registerAllTransactionSuccess("SPEI_CREDIT", anOriginalRequest,"2010", aBagSPJavaOrchestration);
+		registerAllTransactionSuccess("SPEI_CREDIT", anOriginalRequest,"2040", aBagSPJavaOrchestration);	
 	}
 
 	@Override
@@ -235,9 +246,38 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 																							// CTSServiceException,
 																							// CTSInfrastructureException
 		IProcedureResponse response = null;
+		String codeError = "";
+		
 		try {
 			IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			response = mappingResponse(executeTransferSpeiIn(anOriginalRequest, aBagSPJavaOrchestration), aBagSPJavaOrchestration);
+						
+			//Validamos la respuesta para ingresar la transacción fallida en Webhook
+			if (aBagSPJavaOrchestration.get("@s_error") != null) {
+				
+				codeError = aBagSPJavaOrchestration.get("@s_error").toString();
+				
+				if (!codeError.equals("0")) {
+					if (logger.isDebugEnabled()) {
+						logger.logDebug("ERROR SPEI IN: "+ aBagSPJavaOrchestration.get("@s_error").toString());															
+					}
+					IProcedureResponse consulClienteRes = this.consultaCliente(anOriginalRequest);
+					
+					aBagSPJavaOrchestration.put("code_error", codeError);
+					if(aBagSPJavaOrchestration.containsKey("@s_message") && aBagSPJavaOrchestration.get("@s_message") != null){
+						aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("@s_message").toString());
+					}else{
+						aBagSPJavaOrchestration.put("message_error", response.readValueParam("@o_descripcion"));
+					}
+		        	aBagSPJavaOrchestration.put("destinationAccountType", consulClienteRes.readValueParam("@o_tipo_cuenta_dest"));
+					aBagSPJavaOrchestration.put("originAccountType", consulClienteRes.readValueParam("@o_tipo_cuenta_orig"));
+					aBagSPJavaOrchestration.put("externalCustId", consulClienteRes.readValueParam("@o_client_code"));
+					aBagSPJavaOrchestration.put("causal", "2040");
+					
+		        	registerTransactionFailed("SPEI_CREDIT", anOriginalRequest, aBagSPJavaOrchestration);
+				}
+			}
+			
 		} catch (Exception e){
 			logger.logError("AN ERROR OCURRED: ", e);
 		}
@@ -251,6 +291,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		if (aResponse != null && aResponse.getMessageListSize() != 0 && aResponse.readValueParam("@o_descripcion_error") != null) {
 			aBagSPJavaOrchestration.put("@s_error", String.valueOf(aResponse.getReturnCode()));
+			aBagSPJavaOrchestration.put("@s_message", aResponse.readValueFieldInHeader("messageError").split(":")[1]);
+			
 			String causaDevolucion = aResponse.readValueParam("@o_id_causa_devolucion");
 
 			if (null != causaDevolucion && !"0".equals(causaDevolucion)) {
@@ -348,7 +390,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					logger.logDebug("Flujo, Valida Resgo");					
 				}
 				
-				executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+				response = executeRiskEvaluation(anOriginalRequest, aBagSPJavaOrchestration);
+				if(response.getReturnCode() != 0 && !aBagSPJavaOrchestration.containsKey("success_risk")) {
+					return response;
+				}
 
 				if (aBagSPJavaOrchestration.get("success_risk") != null && !aBagSPJavaOrchestration.get("success_risk").equals("false")) {
 					valorRiesgo = aBagSPJavaOrchestration.get("success_risk").toString();
@@ -589,10 +634,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			
 			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		}
-
-			
-		
-
 		
 		Integer code = 0;
         String message = "success";
@@ -644,6 +685,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
 		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "V");
+		procedureRequest.addInputParam("@i_tipo_cuenta_dest", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
+		procedureRequest.addInputParam("@i_tipo_cuenta_orig", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_tipoCuentaOrdenante"));
 
 		procedureRequest.addOutputParam("@o_id_interno", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_client_code", ICTSTypes.SQLINT4, "");
@@ -652,6 +695,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
 		procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
+		procedureRequest.addOutputParam("@o_tipo_cuenta_dest", ICTSTypes.SQLVARCHAR, "");
+		procedureRequest.addOutputParam("@o_tipo_cuenta_orig", ICTSTypes.SQLVARCHAR, "");
 
 			
 		IProcedureResponse ccProcedureResponse =  executeCoreBanking(procedureRequest);
@@ -664,8 +709,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			ccProcedureResponse.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
 			ccProcedureResponse.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
 			
-			logger.logDebug("Code Error local" + code);
-			logger.logDebug("Message Error local" + message);
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Code Error consultaCliente" + code);
+				logger.logDebug("Message Error consultaCliente" + message);
+			}
 		}
 	
 		ccProcedureResponse.setReturnCode(code);
@@ -738,6 +785,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addOutputParam("@o_resultado_error", ICTSTypes.SQLINT4, "");
 		procedureRequest.addOutputParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, "");
 		procedureRequest.addOutputParam("@o_descripcion", ICTSTypes.SQLVARCHAR, "");
+		procedureRequest.addOutputParam("@o_nom_institucion_ordenante", ICTSTypes.SQLVARCHAR, "");
 
 
 		logger.logInfo(wInfo + END_TASK);
@@ -1289,6 +1337,45 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	 */
 	public void unbindCoreServiceNotification(ICoreServiceSendNotification service) {
 		coreServiceNotification = null;
+	}
+
+	public Boolean registerMovementsSpeiInAdditionalData (boolean isOnline, IProcedureRequest request, IProcedureResponse response, IProcedureResponse responseTm){
+
+		Map<String, String> aditionalData = new HashMap<>();
+
+		Boolean respSaveAdditionalDataImplSpeiIn = Boolean.FALSE;
+		SaveAdditionalDataImpl aditionalDataProcSpeiIn = new SaveAdditionalDataImpl();
+
+		String idSpei = request.readValueParam("@i_idSpei");
+		String claveRastreo = request.readValueParam("@i_claveRastreo");
+		String referenciaNumerica = request.readValueParam("@i_referenciaNumerica");
+		String nombreOrdenante = request.readValueParam("@i_nombreOrdenante");
+		String cuentaOrdenante = request.readValueParam("@i_cuentaOrdenante");
+		String institucionOrdenante = request.readValueParam("@i_institucionOrdenante");
+		String institucionBeneficiaria = request.readValueParam("@i_institucionBeneficiaria");
+		String nombInstitucionOrdenante = response.readValueParam("@o_nom_institucion_ordenante");
+
+		String aditionalDataConcat = idSpei + '|' + claveRastreo + '|' + referenciaNumerica + '|' + nombreOrdenante + '|'
+				+ cuentaOrdenante + '|' + institucionOrdenante + '|' + institucionBeneficiaria + '|' + nombInstitucionOrdenante;
+
+		aditionalData.put("secuential", request.readValueParam("@s_ssn"));
+		aditionalData.put("secBranch" , request.readValueParam("@s_ssn_branch"));
+		aditionalData.put("transaction", request.readValueParam("@t_trn")); // response.readValueFieldInHeader(ICOBISTS.HEADER_TRN)
+		aditionalData.put("alternateCod", isOnline ? "0" :responseTm.readValueParam("@o_cod_alt_des").toString());
+		aditionalData.put("movementType", SPEI_CREDIT);
+		aditionalData.put("data", aditionalDataConcat);
+
+		respSaveAdditionalDataImplSpeiIn = aditionalDataProcSpeiIn.saveData(SPEI_CREDIT, isOnline, aditionalData);
+
+		if (logger.isDebugEnabled())
+			logger.logDebug("Registro datos adicionales SPEI IN:"
+					+ " Secuencial" + request.readValueParam("@s_ssn")
+					+ " Transacción: " + request.readValueParam("@t_trn")
+					+ " Tipo movimiento: " + SPEI_CREDIT
+					+ " Resultado: " + (respSaveAdditionalDataImplSpeiIn ? "Exitoso" : "Fallido"));
+
+		return respSaveAdditionalDataImplSpeiIn;
+
 	}
 
 }

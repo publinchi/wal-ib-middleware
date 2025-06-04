@@ -10,9 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
@@ -39,6 +42,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
@@ -58,6 +63,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 	private static final String CLASS_NAME = "AuthorizePurchaseDockOrchestrationCore";
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String MODE_OPERATION = "PYS";
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -70,7 +76,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		if (logger.isDebugEnabled()){logger.logDebug("Begin flow, AuthorizePurchaseDock starts...");}		
 		
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		serverStatus = null;
 
 		try {
 			serverStatus = getServerStatus();
@@ -87,6 +93,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
 			return Utils.returnException(this.MESSAGE_RESPONSE);
 		}
+
+		dataTrn(anOriginalRequest,aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;
@@ -109,8 +118,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 					anProcedureResponseVal = getValAccount(anOriginalRequest, aBagSPJavaOrchestration);
 					if (anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1)!= null && !anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {
 						logger.logInfo(CLASS_NAME + " anProcedureResponse FHU " + anProcedureResponseVal);
-						aBagSPJavaOrchestration.put("code_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
-						aBagSPJavaOrchestration.put("message_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
+						aBagSPJavaOrchestration.put("s_error", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 1).getValue());
+						aBagSPJavaOrchestration.put("s_msg", anProcedureResponseVal.getResultSetRowColumnData(2, 1, 2).getValue());
 						return processResponseApi(anOriginalRequest, anProcedureResponseVal,aBagSPJavaOrchestration);
 					}
 					
@@ -293,6 +302,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addOutputParam("@o_seq", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_reentry", ICTSTypes.SQLVARCHAR, "X");
 		request.addOutputParam("@o_type_transaction", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tipo_tarjeta", ICTSTypes.SQLVARCHAR, "X");
+		request.addOutputParam("@o_tarjeta_mascara", ICTSTypes.SQLVARCHAR, "X");
 		
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
 		
@@ -310,11 +321,13 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("seq", wProductsQueryResp.readValueParam("@o_seq"));
 		aBagSPJavaOrchestration.put("reentry", wProductsQueryResp.readValueParam("@o_reentry"));
 		aBagSPJavaOrchestration.put("o_type_transaction", wProductsQueryResp.readValueParam("@o_type_transaction"));
-		
+		aBagSPJavaOrchestration.put("tipo_tarjeta", wProductsQueryResp.readValueParam("@o_tipo_tarjeta"));
+		aBagSPJavaOrchestration.put("tarjeta_mascara", wProductsQueryResp.readValueParam("@o_tarjeta_mascara"));
+		aBagSPJavaOrchestration.put("i_movement_type","VIRTUAL".equals(wProductsQueryResp.readValueParam("@o_tipo_tarjeta"))?Constants.REVERSAL_ONLINE:Constants.REVERSAL_PHYSICAL);
 		if(!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("code_error"));}
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error local" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -395,9 +408,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		aBagSPJavaOrchestration.put("@o_ssn_branch", wProductsQueryResp.readValueParam("@o_ssn_branch"));
 		
 		if(wProductsQueryResp.readValueParam("@o_ssn_host").equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}else {
 			aBagSPJavaOrchestration.put("authorizationCode", wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).isNull()?"0":wProductsQueryResp.getResultSetRowColumnData(3, 1, 1).getValue());
 		}
@@ -456,10 +469,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		wProductsQueryResp.setReturnCode(0);
 		
 		if (!wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.getResultSetRowColumnData(2, 1, 2).getValue());
 			
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 				
 		if (logger.isDebugEnabled()) {
@@ -542,10 +555,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			}
 		}
 		else{
-			aBagSPJavaOrchestration.put("code_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("message_error", response.getResultSetRowColumnData(2, 1, 2).getValue());
+			aBagSPJavaOrchestration.put("s_error", response.getResultSetRowColumnData(2, 1, 1).getValue());
+			aBagSPJavaOrchestration.put("s_msg", response.getResultSetRowColumnData(2, 1, 2).getValue());
 				
-			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("code_error"));}
+			if (logger.isDebugEnabled()){logger.logDebug("Code Error" +aBagSPJavaOrchestration.get("s_error"));}
 		}
 		
 		return response;
@@ -619,7 +632,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 		
-		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString():null);
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString():null);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
 		
@@ -633,8 +646,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
-			aBagSPJavaOrchestration.put("code_error", wProductsQueryResp.readValueParam("@o_codigo"));
-			aBagSPJavaOrchestration.put("message_error", wProductsQueryResp.readValueParam("@o_mensaje"));
+			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
+			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}
 		
 		if (logger.isInfoEnabled()) {
@@ -679,9 +692,9 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		
 		if (codeReturn == 0) {		
 			
-			if(aBagSPJavaOrchestration.containsKey("code_error")){
+			if(aBagSPJavaOrchestration.containsKey("s_error")){
 
-				if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("code_error"));}
+				if (logger.isDebugEnabled()){logger.logDebug("Ending flow, processResponse error with code: " + aBagSPJavaOrchestration.get("s_error"));}
 				
 				executionStatus = "ERROR";
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false))
@@ -691,11 +704,13 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				row.addRowData(1, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(2, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(3, new ResultSetRowColumnData(false, "0"));
-				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("message_error")));
-				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("code_error")));
+				row.addRowData(4, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_msg")));
+				row.addRowData(5, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("s_error")));
 				row.addRowData(6, new ResultSetRowColumnData(false, "0"));
 				row.addRowData(7, new ResultSetRowColumnData(false, null));
 				row.addRowData(8, new ResultSetRowColumnData(false, null));
+				
+				registerTransactionFailed("Authorize Purchase Dock", "DOCK", aRequest, aBagSPJavaOrchestration);
 				
 				data.addRow(row);
 
@@ -705,7 +720,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 				
 				executionStatus = "CORRECT";
 				authorizationCode = aBagSPJavaOrchestration.containsKey("authorizationCode")?(String)aBagSPJavaOrchestration.get("authorizationCode"):"0";
-				
+				aBagSPJavaOrchestration.put("i_auth_code",authorizationCode);
 				notifyPurchaseDock(aRequest, aBagSPJavaOrchestration);
 				
 				if(aBagSPJavaOrchestration.get("flowRty").equals(false)){
@@ -733,6 +748,16 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 											aBagSPJavaOrchestration.get("ente").toString());
 				
 				data.addRow(row);
+
+				String tipoTarjeta = aBagSPJavaOrchestration.containsKey("tipo_tarjeta")?(String)aBagSPJavaOrchestration.get("tipo_tarjeta"):"0";
+				String tarjetaMascara = aBagSPJavaOrchestration.containsKey("tarjeta_mascara")?(String)aBagSPJavaOrchestration.get("tarjeta_mascara"):null;
+				String codAlt = serverStatus ? "0" : "1";
+				String movementType = "VIRTUAL".equals(tipoTarjeta) ? Constants.PURCHASE_ONLINE: Constants.PURCHASE_AT_STORE;
+				registerMovementsAuthAdditionalData(serverStatus,"DOCK", movementType,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt, authorizationCode, tarjetaMascara, aRequest);
+				aBagSPJavaOrchestration.put("i_tarjeta_mascara",aBagSPJavaOrchestration.get("tarjeta_mascara"));
+				aBagSPJavaOrchestration.put("i_movement_type",movementType);
+
 			}
 			
 		} else {
@@ -742,9 +767,11 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 			if(aBagSPJavaOrchestration.get("flowRty").equals(false))
 				updateTrnStatus(anOriginalProcedureRes, aBagSPJavaOrchestration, executionStatus);
 			
-			String codeError = aBagSPJavaOrchestration.containsKey("code_error")?aBagSPJavaOrchestration.get("code_error").toString(): codeReturn.toString();
-			String mesageError = aBagSPJavaOrchestration.containsKey("message_error")?aBagSPJavaOrchestration.get("message_error").toString():"SYSTEM_ERROR";
+			String codeError = aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString(): codeReturn.toString();
+			String mesageError = aBagSPJavaOrchestration.containsKey("s_msg")?aBagSPJavaOrchestration.get("s_msg").toString():"SYSTEM_ERROR";
 			
+			registerTransactionFailed("Authorize Purchase Dock", "DOCK", aRequest, aBagSPJavaOrchestration);
+
 			IResultSetRow row = new ResultSetRow();
 			
 			row.addRowData(1, new ResultSetRowColumnData(false, "0"));
@@ -764,6 +791,8 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 	
 		wProcedureResponse.addResponseBlock(resultsetBlock);
 		wProcedureResponse.addResponseBlock(resultsetBlock2);
+
+		updateLocalExecution(aRequest, aBagSPJavaOrchestration);
 		
 		return wProcedureResponse;		
 	}
@@ -877,4 +906,51 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+ 
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+ 
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
+    }
+ 
+    @Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+    protected ICoreService coreService;
+ 
+    public void bindCoreService(ICoreService service) {
+        coreService = service;
+    }
+ 
+    public void unbindCoreService(ICoreService service) {
+        coreService = null;
+    }
+    
+    @Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
+    
+    public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    	
+    	 aBagSPJavaOrchestration.put("i_prod", null);
+    	 aBagSPJavaOrchestration.put("i_prod_des", null );
+    	 aBagSPJavaOrchestration.put("i_login", null );
+    	 aBagSPJavaOrchestration.put("i_cta_des",null);
+    	 aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_id") );
+    	 aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_p_type"));
+    	 aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_val_source_value"));
+    	 aBagSPJavaOrchestration.put("i_mon", null );
+    	 aBagSPJavaOrchestration.put("i_card_id", aRequest.readValueParam("@i_card_id"));
+    	 aBagSPJavaOrchestration.put("i_pin", aRequest.readValueParam("@i_crd_pin"));
+    	 aBagSPJavaOrchestration.put("i_code", aRequest.readValueParam("@i_crd_code"));
+    	 aBagSPJavaOrchestration.put("i_mode", aRequest.readValueParam("@i_crd_mode"));
+    	 aBagSPJavaOrchestration.put("i_establishmentName", aRequest.readValueParam("@i_establishment"));
+    	 aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction"));
+    	 aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@x_uuid"));
+    }
+
 }

@@ -67,6 +67,16 @@
 
     <build>
         <plugins>
+		  
+      <plugin>
+	    <groupId>org.codehaus.mojo</groupId>
+	    <artifactId>findbugs-maven-plugin</artifactId>
+	    <version>3.0.5</version> <!-- Actualiza a la última versión -->
+	    <configuration>
+	        <!-- Tu configuración aquí -->
+	    </configuration>
+	  </plugin>
+  
             <!-- plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>

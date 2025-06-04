@@ -10,9 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
@@ -30,6 +33,7 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetBlock;
@@ -39,6 +43,8 @@ import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRow;
 import com.cobiscorp.cobis.cts.dtos.sp.ResultSetRowColumnData;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreService;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 
 /**
@@ -59,6 +65,7 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 	protected static final String CHANNEL_REQUEST = "8";
 	protected static final String AUTHORIZE_PURCHASE= "AUTHORIZE_PURCHASE";
 	protected static final String MODE_OPERATION = "PYS";
+	Boolean serverStatus;
 
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
@@ -70,7 +77,7 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
-		Boolean serverStatus = null;
+		serverStatus = null;
 
 		try {
 			serverStatus = getServerStatus();
@@ -81,12 +88,9 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		}
 		
 		aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
-		
-		/* Validar comportamiento transaccion */
-		if(!validateContextTransacction(aBagSPJavaOrchestration,serverStatus)) {
-			aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
-			return Utils.returnException(this.MESSAGE_RESPONSE);
-		}
+
+		dataTrn(anOriginalRequest, aBagSPJavaOrchestration);
+		validateLocalExecution(aBagSPJavaOrchestration);
 		
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anProcedureResponseVal;
@@ -147,8 +151,19 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 			}
 			anProcedureResponse = authorizePurchase(anOriginalRequest, aBagSPJavaOrchestration);
 		}
+
+		IProcedureResponse finalProcedureResponse = processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+
+		IResultSetRowColumnData resultSetRowColumnDataError = finalProcedureResponse.getResultSetRowColumnData(2, 1, 1);
+		if(resultSetRowColumnDataError != null && !"0".equals(resultSetRowColumnDataError.getValue())) {
+			aBagSPJavaOrchestration.put("s_error", resultSetRowColumnDataError.getValue());
+			IResultSetRowColumnData resultSetRowColumnDataMsg = finalProcedureResponse.getResultSetRowColumnData(2, 1, 2);
+			aBagSPJavaOrchestration.put("s_msg", resultSetRowColumnDataMsg != null ? resultSetRowColumnDataMsg.getValue() : "");
+		}
+
+		updateLocalExecution(anOriginalRequest, aBagSPJavaOrchestration);
 		
-		return processResponseApi(anOriginalRequest, anProcedureResponse,aBagSPJavaOrchestration);
+		return finalProcedureResponse;
 	}
 	
 	private IProcedureResponse authorizePurchase(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
@@ -767,6 +782,10 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 											(String)aBagSPJavaOrchestration.get("@o_causal"), null);
 
 				data6.addRow(row6);
+
+				String codAlt = serverStatus ? "0" : "1";
+				registerMovementsAuthAdditionalData(serverStatus,"IDC", Constants.PURCHASE_AT_STORE,(String)aBagSPJavaOrchestration.get("@o_ssn_host"),
+						(String) aBagSPJavaOrchestration.get("@o_ssn_branch"),codAlt,authorizationCode, null, aRequest);
 				
 			} else {
 				if(logger.isDebugEnabled()){
@@ -954,4 +973,48 @@ public class AuthorizePurchaseOrchestrationCore extends OfflineApiTemplate {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Reference(referenceInterface = ICoreServer.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServer", unbind = "unbindCoreServer")
+    protected ICoreServer coreServer;
+ 
+    protected void bindCoreServer(ICoreServer service) {
+        coreServer = service;
+    }
+ 
+    protected void unbindCoreServer(ICoreServer service) {
+        coreServer = null;
+    }
+ 
+    @Reference(referenceInterface = ICoreService.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreService", unbind = "unbindCoreService")
+    protected ICoreService coreService;
+ 
+    public void bindCoreService(ICoreService service) {
+        coreService = service;
+    }
+ 
+    public void unbindCoreService(ICoreService service) {
+        coreService = null;
+    }
+    
+    @Override
+    public ICoreServer getCoreServer() {
+        return coreServer;
+    }
+
+    public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    	
+    	 aBagSPJavaOrchestration.put("i_prod", null);
+    	 aBagSPJavaOrchestration.put("i_prod_des", null );
+    	 aBagSPJavaOrchestration.put("i_login", null );
+		aBagSPJavaOrchestration.put("i_cta_des", null);  
+		aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_account_number") ); 
+		aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_type"));
+		aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
+		aBagSPJavaOrchestration.put("i_mon", null );
+		
+		aBagSPJavaOrchestration.put("i_movement_type", Constants.PURCHASE_AT_STORE); 
+		aBagSPJavaOrchestration.put("i_establishmentName",  aRequest.readValueParam("@i_institution_name")); 
+		aBagSPJavaOrchestration.put("i_transactionId", aRequest.readValueParam("@i_transaction")); 
+		aBagSPJavaOrchestration.put("i_uuid", aRequest.readValueParam("@i_uuid")); 
+   }
 }
