@@ -209,6 +209,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	}
     private Map<String, String> createAdditionalData( Map<String, Object> aBagSPJavaOrchestration, String codeAcc, String secuential, String secBranch, String referenceNumber, String cuentaDestino, String bancoDestino, String status, String clientRequestId) {
         Map<String, String> additionalData = new HashMap<String, String>();
+        Object value = aBagSPJavaOrchestration.get("o_nom_beneficiary");
+        String beneficiary = (value != null) ? value.toString().trim() : "";
         additionalData.put(Constants.SECUENTIAL, secuential);
         additionalData.put("codeAcc", codeAcc);
         additionalData.put("referenceNumber", referenceNumber);
@@ -219,7 +221,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, aBagSPJavaOrchestration.get("o_nom_beneficiary").toString().trim(), secuential, bancoDestino, clientRequestId));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, beneficiary, secuential, bancoDestino, clientRequestId));
 
         return additionalData;
     }
