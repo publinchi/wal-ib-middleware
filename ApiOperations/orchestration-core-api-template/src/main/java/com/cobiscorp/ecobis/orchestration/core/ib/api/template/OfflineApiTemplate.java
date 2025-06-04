@@ -1554,4 +1554,75 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		}
 		return false;
 	}
+
+	public Boolean registerMovementsCreditDebitAdditionalData (String operation, boolean isOnline, IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration){
+		logger.logDebug("KCZ REFOUND: "+aBagSPJavaOrchestration.toString());
+		SaveAdditionalDataImpl saveAdditionalData = new SaveAdditionalDataImpl();
+		String movementType = "";
+		Map<String, String> additionalData = new HashMap<String, String>();
+		String transaction = request.readValueFieldInHeader("trn");
+		String accountNumber = "CREDIT_REVERSAL".equals(operation) ? request.readValueParam("@i_accountNumber_ori")
+				: request.readValueParam("@i_accountNumber");
+		String xRequestId = request.readValueParam("@x_request_id");
+		String sequential = (String) aBagSPJavaOrchestration.get("@o_ssn");
+		String secBranch = (String) aBagSPJavaOrchestration.get("@o_ssn_branch");
+		String data = String.join("|",  accountNumber, xRequestId);
+		boolean isSaved = false;
+
+		additionalData.put("secuential", sequential);
+		additionalData.put("secBranch" , secBranch);
+		additionalData.put("transaction",transaction);
+
+		if("DEBIT".equals(operation)){
+			movementType = "COMMISSION";
+			String alternateCod = (String) aBagSPJavaOrchestration.get("@o_cod_alt_org");
+			String debitConcept = request.readValueParam("@i_debitConcept");
+			String originMovementId = request.readValueParam("@i_originMovementId");
+			String originReferenceNumber = request.readValueParam("@i_originReferenceNumber");
+			additionalData.put("alternateCod", alternateCod);
+			data = data + '|' +  String.join("|", debitConcept,originMovementId,originReferenceNumber);
+			additionalData.put("data", data);
+			isSaved = saveAdditionalData.saveData(movementType,isOnline,additionalData);
+
+		}else if("CREDIT".equals(operation)){
+			movementType = "ACCOUNT_CREDIT";
+			String alternateCod = (String) aBagSPJavaOrchestration.get("@o_cod_alt_des");
+			String creditConcept = request.readValueParam("@i_creditConcept");
+			String originMovementId = request.readValueParam("@i_originMovementId");
+			String originReferenceNumber = request.readValueParam("@i_originReferenceNumber");
+			String originCode = request.readValueParam("@i_originCode");
+			additionalData.put("alternateCod", alternateCod);
+			data = data + '|' + String.join("|",creditConcept,originMovementId,originReferenceNumber, originCode);
+			additionalData.put("data", data);
+			isSaved = saveAdditionalData.saveData(movementType,isOnline,additionalData);
+
+		} else if("CREDIT_REVERSAL".equals(operation)){
+			movementType = "CREDIT_REVERSAL";
+			String alternateCod = (String) aBagSPJavaOrchestration.get("@o_cod_alt_org");
+			String alternateCodCom = (String) aBagSPJavaOrchestration.get("@o_cod_alt_com");
+			String reversalConcept = request.readValueParam("@i_reversalConcept");
+			String originMovementId = request.readValueParam("@i_movementId_ori");
+			String originReferenceNumber = request.readValueParam("@i_referenceNumber_ori");
+			//String commissionOriginMovementId = request.readValueParam("@i_movementId_com_ori");
+			//String commissionOriginReferenceNumber = request.readValueParam("@i_referenceNumber_com_ori");
+			additionalData.put("alternateCod", alternateCod);
+			data = data + '|' + String.join("|", reversalConcept,originMovementId,originReferenceNumber);
+			additionalData.put("data", data);
+			isSaved = saveAdditionalData.saveData(movementType,isOnline,additionalData);
+			if (alternateCodCom != null) {
+				IProcedureRequest debitRequest = request.clone();
+				Map<String, Object> debitBag = new HashMap<>(aBagSPJavaOrchestration);
+				String commissionOriginMovementId = request.readValueParam("@i_movementId_com_ori");
+				String commissionOriginReferenceNumber = request.readValueParam("@i_referenceNumber_com_ori");
+				debitRequest.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, accountNumber);
+				debitRequest.addInputParam("@i_debitConcept", ICTSTypes.SQLVARCHAR, reversalConcept);
+				debitRequest.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR, commissionOriginMovementId);
+				debitRequest.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR, commissionOriginReferenceNumber);
+				debitBag.put("@o_cod_alt_org", alternateCodCom);
+				return registerMovementsCreditDebitAdditionalData("DEBIT", isOnline, debitRequest, debitBag);
+			}
+		}
+		return isSaved;
+	}
+
 }
