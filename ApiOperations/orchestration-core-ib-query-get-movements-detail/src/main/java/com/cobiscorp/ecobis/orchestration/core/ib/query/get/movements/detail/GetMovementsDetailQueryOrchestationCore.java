@@ -1802,7 +1802,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
 		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
-		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1);
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(5);
 		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
 		List<MovementDetails> movementDetailsList = new ArrayList<>();
 		for (IResultSetRow iResultSetRow : rowsTemp) {
