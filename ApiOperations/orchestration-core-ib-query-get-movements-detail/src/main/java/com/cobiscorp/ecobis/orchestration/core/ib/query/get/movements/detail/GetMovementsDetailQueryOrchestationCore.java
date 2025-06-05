@@ -273,23 +273,23 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				}
 
 				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
+				if(anProcedureResponse.getResultSets().size()>2){
+					int numberOfRecordsLocal = 0;
+					int numberOfRecords = 0;
 
-				int numberOfRecordsLocal = 0;
-				int numberOfRecords = 0;
+					if (anProcedureResponse != null && !anProcedureResponse.getResultSets().isEmpty()) {
+						numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
+					}
+					if (numberOfRecordsLocal < numRegistros) {
+						numberOfRecords = numRegistros - numberOfRecordsLocal;
 
-				if (anProcedureResponse != null && !anProcedureResponse.getResultSets().isEmpty()) {
-					numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
+
+						anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords));
+						anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
+
+						llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
+					}
 				}
-				if (numberOfRecordsLocal < numRegistros) {
-					numberOfRecords = numRegistros - numberOfRecordsLocal;
-
-
-					anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords));
-					anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
-
-					llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
-				}
-
 			}
 			aBagSPJavaOrchestration.put("RESPONSE_MOVEMENTS",anProcedureResponse);
 			if( "S".equals(showFailed)){
