@@ -66,6 +66,21 @@ public class MovementDetails {
     private String cardEntryPin;
     private String cardEntryMode;
 
+    //Refound
+
+    private String originMovementId;
+    private String originReferenceNumber;
+    private String commissionOriginMovementId;
+    private String commissionOriginReferenceNumber;
+
+    // Account credit details
+    private String creditConcept;
+    private String originCode;
+
+    //Reversal details
+    private String reversalConcept;
+
+
     public BigDecimal getAccountingBalance() {
         return accountingBalance;
     }
@@ -417,6 +432,70 @@ public class MovementDetails {
                 ", cardEntryCode='" + cardEntryCode + '\'' +
                 ", cardEntryPin='" + cardEntryPin + '\'' +
                 ", cardEntryMode='" + cardEntryMode + '\'' +
+                ", originMovementId='" + originMovementId + '\'' +
+                ", originReferenceNumber='" + originReferenceNumber + '\'' +
+                ", commissionOriginMovementId='" + commissionOriginMovementId + '\'' +
+                ", commissionOriginReferenceNumber='" + commissionOriginReferenceNumber + '\'' +
+                ", creditConcept='" + creditConcept + '\'' +
+                ", originCode='" + originCode + '\'' +
+                ", reversalConcept='" + reversalConcept + '\'' +
                 '}';
     }
+
+    public String getOriginMovementId() {
+        return originMovementId;
+    }
+
+    public void setOriginMovementId(String originMovementId) {
+        this.originMovementId = originMovementId;
+    }
+
+    public String getOriginReferenceNumber() {
+        return originReferenceNumber;
+    }
+
+    public void setOriginReferenceNumber(String originReferenceNumber) {
+        this.originReferenceNumber = originReferenceNumber;
+    }
+
+    public String getCommissionOriginMovementId() {
+        return commissionOriginMovementId;
+    }
+
+    public void setCommissionOriginMovementId(String commissionOriginMovementId) {
+        this.commissionOriginMovementId = commissionOriginMovementId;
+    }
+
+    public String getCommissionOriginReferenceNumber() {
+        return commissionOriginReferenceNumber;
+    }
+
+    public void setCommissionOriginReferenceNumber(String commissionOriginReferenceNumber) {
+        this.commissionOriginReferenceNumber = commissionOriginReferenceNumber;
+    }
+
+    public String getCreditConcept() {
+        return creditConcept;
+    }
+
+    public void setCreditConcept(String creditConcept) {
+        this.creditConcept = creditConcept;
+    }
+
+    public String getOriginCode() {
+        return originCode;
+    }
+
+    public void setOriginCode(String originCode) {
+        this.originCode = originCode;
+    }
+
+    public String getReversalConcept() {
+        return reversalConcept;
+    }
+
+    public void setReversalConcept(String reversalConcept) {
+        this.reversalConcept = reversalConcept;
+    }
+
 }
