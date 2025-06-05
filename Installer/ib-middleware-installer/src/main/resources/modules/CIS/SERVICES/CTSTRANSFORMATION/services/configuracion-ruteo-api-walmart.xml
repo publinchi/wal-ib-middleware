@@ -591,6 +591,36 @@
 		</indicators>
 		<mappings keepMode="1"/>
 	</config>
+	<!-- 18700146 APICompensationDownload-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo APICompensationDownload">
+		<conditions>
+			<condition param="trn">
+				<value>18700146</value>
+			</condition>
+		</conditions>
+		<indicators>
+			<indicator name="externalProvider" value="0"/>
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=CompensationDownloadOrchestrationCore)"/>
+			<indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
+	<!-- 18700147 APICompensationDownload-->
+	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo APICompensationProcess">
+		<conditions>
+			<condition param="trn">
+				<value>18700147</value>
+			</condition>
+		</conditions>
+		<indicators>
+			<indicator name="externalProvider" value="0"/>
+			<indicator name="serviceMethodName" value="executeTransaction"/>
+			<indicator name="com.cobiscorp.cobis.csp.services.IOrchestrator" value="(service.identifier=CompensationProcessOrchestrationCore)"/>
+			<indicator name="t_corr" value=""/>
+		</indicators>
+		<mappings keepMode="1"/>
+	</config>
 	<!-- 18701001 ConsignmentOrchestrationCore-->
 	<config priority="1" idzone="routingOrchestrator" id="configuracion ruteo ConsignmentOrchestrationCore">
 		<conditions>

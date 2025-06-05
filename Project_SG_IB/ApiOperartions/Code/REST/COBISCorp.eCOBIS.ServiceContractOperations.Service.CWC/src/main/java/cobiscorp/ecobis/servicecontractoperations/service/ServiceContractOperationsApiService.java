@@ -3696,6 +3696,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
                             dto.commissionDetailsInstance().setReason(resultSetMapper.getString(34));
 
+                            dto.setOriginMovementId(resultSetMapper.getString(35));
+                            dto.setOriginReferenceNumber(resultSetMapper.getString(36));
+                            dto.commissionDetailsInstance().setOriginMovementId(resultSetMapper.getString(37));
+                            dto.commissionDetailsInstance().setOriginReferenceNumber(resultSetMapper.getString(38));
+                            dto.accountCreditDetailsInstance().setCreditConcept(resultSetMapper.getString(39));
+                            dto.accountCreditDetailsInstance().setOriginCode(resultSetMapper.getString(40));
+                            dto.reversalDetailsInstance().setReversalConcept(resultSetMapper.getString(41));
+
                             return dto;
                         }
                     }, false);
@@ -3914,12 +3922,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.storeDetailsInstance().setEstablishmentName(resultSetMapper.getString(25));
                             dto.storeDetailsInstance().setTransactionId(resultSetMapper.getString(26));
                             dto.commissionDetailsInstance().setReason(resultSetMapper.getString(34));
-                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(35));
-                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(36));
-                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(37));
-                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(38));
-                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(39));
-                            dto.setTransactionStatus(resultSetMapper.getString(40));
+                            //Refound CCA
+                            dto.setOriginMovementId(resultSetMapper.getString(35));
+                            dto.setOriginReferenceNumber(resultSetMapper.getString(36));
+                            dto.commissionDetailsInstance().setOriginMovementId(resultSetMapper.getString(37));
+                            dto.commissionDetailsInstance().setOriginReferenceNumber(resultSetMapper.getString(38));
+                            dto.accountCreditDetailsInstance().setCreditConcept(resultSetMapper.getString(39));
+                            dto.accountCreditDetailsInstance().setOriginCode(resultSetMapper.getString(40));
+                            dto.reversalDetailsInstance().setReversalConcept(resultSetMapper.getString(41));
+
+                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(42));
+                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(43));
+                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(44));
+                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(45));
+                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(46));
+                            dto.setTransactionStatus(resultSetMapper.getString(47));
                             return dto;
                         }
                     }, false);

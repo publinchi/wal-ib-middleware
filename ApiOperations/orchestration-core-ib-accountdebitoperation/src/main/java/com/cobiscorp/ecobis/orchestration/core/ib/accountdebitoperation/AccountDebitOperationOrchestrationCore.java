@@ -317,6 +317,11 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 // Almacenamiento Response
                 aBagSPJavaOrchestration.put("anProcedureResponse", response);
 
+                aBagSPJavaOrchestration.put("@o_ssn_branch", wProcedureResponseVal.readValueParam("@o_referencia"));
+                aBagSPJavaOrchestration.put("@o_ssn", wProcedureResponseVal.readValueParam("@o_ssn"));
+                aBagSPJavaOrchestration.put("@o_benef_cta_org", wProcedureResponseVal.readValueParam("@o_benef_cta_org"));
+                aBagSPJavaOrchestration.put("@o_cod_alt_org", wProcedureResponseVal.readValueParam("@o_cod_alt_org"));
+
                 if (logger.isInfoEnabled())
                     logger.logInfo("Respuesta Devuelta del Core api:" + response.getProcedureResponseAsString());
 
@@ -395,6 +400,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
         // Almacenamiento Response
         aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
+        aBagSPJavaOrchestration.put("@o_ssn_branch", wProcedureResponseCentral.readValueParam("@o_ssn_branch"));
+        aBagSPJavaOrchestration.put("@o_ssn", wProcedureResponseCentral.readValueParam("@o_ssn"));
+        aBagSPJavaOrchestration.put("@o_benef_cta_org", wProcedureResponseCentral.readValueParam("@o_benef_cta_org"));
+        aBagSPJavaOrchestration.put("@o_cod_alt_org", wProcedureResponseCentral.readValueParam("@o_cod_alt_org"));
 
         aBagSPJavaOrchestration.put("causa", wProcedureResponseCentral.readValueParam("@o_causa"));
 
@@ -490,11 +499,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             data.addRow(row);
 
             /*Datos adicionales*/
-            registerMovementsP2PAdditionalData(
+            registerMovementsCreditDebitAdditionalData(
                     "DEBIT",
                     Boolean.parseBoolean(aBagSPJavaOrchestration.get(Constants.IS_ONLINE).toString()),
                     anOriginalRequest,
-                    (IProcedureResponse)aBagSPJavaOrchestration.get("anProcedureResponse"),
                     aBagSPJavaOrchestration);
 
             registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa").toString(), aBagSPJavaOrchestration);

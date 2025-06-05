@@ -185,6 +185,17 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
             String bancoDestino = (String) aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO);
             String status = "S".equals(reverse) ? "F" : "P";
             String requestId = anOriginalRequest.readValueParam("@x_request_id");
+            if (codeAcc == null) {logger.logInfo("codeAcc es nulo--->");}  else {logger.logInfo("codeAcc --->" + codeAcc);};
+            if (reverse == null) {logger.logInfo("reverse es nulo--->");}  else {logger.logInfo("reverse --->" + reverse);};
+            if (secuential == null) {logger.logInfo("secuential es nulo--->");}  else {logger.logInfo("secuential --->" + secuential);};
+            if (secBranch == null) {logger.logInfo("secBranch es nulo--->");}  else {logger.logInfo("secBranch --->" + secBranch);};
+            if (referenceNumber == null) {logger.logInfo("referenceNumber es nulo--->");}  else {logger.logInfo("referenceNumber --->" + referenceNumber);};
+            if (cuentaDestino == null) {logger.logInfo("cuentaDestino es nulo--->");}  else {logger.logInfo("cuentaDestino --->" + cuentaDestino);};
+            if (bancoDestino == null) {logger.logInfo("bancoDestino es nulo--->");}  else {logger.logInfo("bancoDestino --->" + bancoDestino);};
+            if (status == null) {logger.logInfo("status es nulo--->");}  else {logger.logInfo("status --->" + status);};
+            if (requestId == null) {logger.logInfo("requestId es nulo--->");}  else {logger.logInfo("requestId --->" + requestId);};
+            
+            
             SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
 
             Map<String, String> additionalData = createAdditionalData(aBagSPJavaOrchestration, codeAcc, secuential, secBranch, referenceNumber, cuentaDestino, bancoDestino, status, requestId);
@@ -209,6 +220,8 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
 	}
     private Map<String, String> createAdditionalData( Map<String, Object> aBagSPJavaOrchestration, String codeAcc, String secuential, String secBranch, String referenceNumber, String cuentaDestino, String bancoDestino, String status, String clientRequestId) {
         Map<String, String> additionalData = new HashMap<String, String>();
+        Object value = aBagSPJavaOrchestration.get("o_nom_beneficiary");
+        String beneficiary = (value != null) ? value.toString().trim() : "";
         additionalData.put(Constants.SECUENTIAL, secuential);
         additionalData.put("codeAcc", codeAcc);
         additionalData.put("referenceNumber", referenceNumber);
@@ -219,7 +232,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, aBagSPJavaOrchestration.get("o_nom_beneficiary").toString().trim(), secuential, bancoDestino, clientRequestId));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, beneficiary, secuential, bancoDestino, clientRequestId));
 
         return additionalData;
     }
