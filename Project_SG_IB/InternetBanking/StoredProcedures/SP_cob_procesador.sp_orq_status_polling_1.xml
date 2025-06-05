@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<procedure>
+  <database>cob_procesador</database>
+  <name>sp_orq_status_polling</name>
+  <type>SYBASE</type>
+  <version>1</version>
+  <parameters>
+    <parameter name="@i_processId" dataType="varchar" direction="in" />
+    <parameter name="@i_authToken" dataType="varchar" direction="in" />
+    <parameter name="@i_loginSessionId" dataType="varchar" direction="in" />
+  </parameters>
+  <queries>
+    <query>
+      <columns>
+        <column name="STATUS" />
+        <column name=" METADATA" />
+      </columns>
+      <queryText></queryText>
+    </query>
+  </queries>
+</procedure>
