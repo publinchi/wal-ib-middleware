@@ -45,4 +45,13 @@ public class Constants {
     public static final String AUTHORIZE_PURCHASE_DOCK = "Authorize Purchase Dock";
     public static final String AUTHORIZE_WITHDRAWAL_DOCK = "Authorize Withdrawal Dock";
     public static final String AUTHORIZE_DEPOSIT_DOCK = "Authorize Deposit Dock";
+    
+    public static final String T_TRN = "@t_trn";
+    public static final String CONSIGNMENT_CREDIT = "credit";
+    public static final String CONSIGNMENT_UNLOCK = "unlock";
+    public static final String CONSIGNMENT_REFUND = "refund";
+    public static final String CENTRAL_RESPONSE_OP = "centralResponseOp";
+    public static final String LOCAL_RESPONSE = "localResponse";
+    public static final String DEFAULT_CURRENCY = "0";
+    public static final String DEFAULT_CANAL= "0";
 }
