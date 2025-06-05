@@ -1252,6 +1252,11 @@
 			<artifactId>orchestration-core-ib-account-reversal-operation</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
+			<artifactId>orchestration-core-ib-consignment</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -1647,7 +1652,8 @@
 							orchestration-core-ib-get-client-limit-api,
 							orchestration-core-ib-registcontactlimit-api,
 							orchestration-core-ib-unlock-credit-operation-api,
-							orchestration-core-ib-account-reversal-operation
+							orchestration-core-ib-account-reversal-operation,
+							orchestration-core-ib-consignment
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
