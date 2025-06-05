@@ -51,43 +51,53 @@
       </collection>
     </class>
   </collection>
-  <collection type="List" length="0" id="15" name="properties">
+  <collection type="List" length="1" id="15" name="properties">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProperty" id="16" index="0">
+      <field type="String" name="name" value="MavenGroupId" />
+      <field type="String" name="value" value="com.cobiscorp.channels.ib" />
+      <field type="char" name="type" value="\u0000" />
+    </class>
   </collection>
   <field type="String" name="documentation" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service" />
   <field type="boolean" name="autoSelectDTO" value="false" />
   <field type="boolean" name="autoBuild" value="true" />
   <field type="boolean" name="autoCleanXml" value="false" />
   <field type="boolean" name="autoCleanSource" value="false" />
-  <collection type="List" length="1" id="16" name="references">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="17" index="0">
+  <collection type="List" length="1" id="17" name="references">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProductBase" id="18" index="0">
       <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO" />
       <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO" />
       <field type="String" name="documentationLanguage" value="Español" />
       <field type="String" name="typeName" value="DTO" />
-      <field type="String" name="version" value="1.0.0.0" />
+      <field type="String" name="version" value="4.6.1.0" />
     </class>
   </collection>
-  <collection type="List" length="0" id="18" name="externalReferences">
+  <collection type="List" length="0" id="19" name="externalReferences">
   </collection>
-  <collection type="List" length="1" id="19" name="packagers">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="20" index="0">
+  <collection type="List" length="1" id="20" name="packagers">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.packager.SGPackageJava" id="21" index="0">
       <field type="String" name="antTask" value="sign-archive" />
       <field type="String" name="keyAlias" value="cobisBV" />
       <field type="String" name="keyPassword" value="cobisbvadminadmin" />
       <field type="String" name="keyCertificatePassword" value="cobisbvadmin" />
       <field type="String" name="keyFileName" value="cobisBV.KEYSTORE" />
       <field type="boolean" name="relativeFolder" value="true" />
-      <field type="String" name="buildFile" value="build.xml" />
       <field type="String" name="templateId" value="ServiceCTS302" />
-      <field type="String" name="jDKVersion" value="1.8" />
-      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_202" />
+      <field type="String" name="jDKVersion" value="1.6" />
+      <field type="String" name="jDKPath" value="C:\Program Files\Java\jdk1.8.0_432" />
     </class>
   </collection>
-  <collection type="List" length="0" id="21" name="templateCommands">
+  <collection type="List" length="6" id="22" name="templateCommands">
+    <field type="String" index="0" value="cmd_Maven install in local repository" />
+    <field type="String" index="1" value="cmd_Maven deploy in remote repository" />
+    <field type="String" index="2" value="cmd_Nuget install in local repository" />
+    <field type="String" index="3" value="cmd_Nuget install in remote repository" />
+    <field type="String" index="4" value="cmd_Net prebuild tasks" />
+    <field type="String" index="5" value="cmd_Java prebuild tasks" />
   </collection>
   <field type="String" name="name" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service" />
   <field type="String" name="displayName" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service" />
   <field type="String" name="documentationLanguage" value="Español" />
   <field type="String" name="typeName" value="SERVICE" />
-  <field type="String" name="version" value="1.0.0.0" />
+  <field type="String" name="version" value="4.6.1.0" />
 </class>
