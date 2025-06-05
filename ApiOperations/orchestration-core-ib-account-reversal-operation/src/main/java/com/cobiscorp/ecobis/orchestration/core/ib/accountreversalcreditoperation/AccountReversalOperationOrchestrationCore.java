@@ -426,6 +426,10 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		//Consulta datos de la transaccion original
 		searchDataTransactionOrigin(anOriginalRequest, aBagSPJavaOrchestration);
 
+		if(aBagSPJavaOrchestration.get("amount") != null && (String)aBagSPJavaOrchestration.get("amount") != "0") {			
+			searchLocalDataTransactionOrigin(anOriginalRequest, aBagSPJavaOrchestration);
+		}
+
 		if (!(Boolean)aBagSPJavaOrchestration.get(IS_ERRORS)) {
 			IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(COLUMNS_RETURN);
 			if (logger.isDebugEnabled()) {
@@ -533,8 +537,41 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		}
 
 	}
+	
 	@Override
     public ICoreServer getCoreServer() {
         return null;
     }
+
+	private void searchLocalDataTransactionOrigin(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin [" + CLASS_NAME + "][searchLocalDataTransactionOrigin]");
+		}
+
+		try{
+			IProcedureRequest reqTMPCentral = new ProcedureRequestAS();
+
+			reqTMPCentral.setSpName("cob_bvirtual..sp_bv_cons_val_webhook");
+			reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
+			reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+			reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+			reqTMPCentral.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
+
+			reqTMPCentral.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
+
+			IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+			aBagSPJavaOrchestration.put("amount", wProcedureResponseCentral.readValueParam("@o_amount"));
+
+		} catch (Exception e) {
+			logger.logError(CLASS_NAME + " Error al obtener datos de transaccion de origen: " + e.getMessage(), e);
+		} finally{
+			if (logger.isDebugEnabled()) {
+				logger.logDebug(CLASS_NAME + " Saliendo de searchLocalDataTransactionOrigin");
+			}
+		}
+
+	}
+
 }
