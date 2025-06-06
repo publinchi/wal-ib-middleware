@@ -50,6 +50,12 @@ public class AccountStatementArray implements Serializable {
   private java.math.BigDecimal withdrawalAmount;
   private String clientRequestId;
   private CommissionDetails commissionDetails;
+  private String transactionStatus;
+  private ErrorResponse errorDetails;
+  private String originMovementId;
+  private String originReferenceNumber;
+  private AccountCreditDetails accountCreditDetails;
+  private ReversalDetails reversalDetails;
   public java.math.BigDecimal getAccountingBalance(){
     return this.accountingBalance;
   }
@@ -229,5 +235,41 @@ public class AccountStatementArray implements Serializable {
   }
   public void setCommissionDetails(CommissionDetails commissionDetails ){
     this.commissionDetails=commissionDetails;
+
+  public String getOriginMovementId(){
+    return this.originMovementId;
+  }
+  public void setOriginMovementId(String originMovementId ){
+    this.originMovementId=originMovementId;
+  }
+  public String getOriginReferenceNumber(){
+    return this.originReferenceNumber;
+  }
+  public void setOriginReferenceNumber(String originReferenceNumber ){
+    this.originReferenceNumber=originReferenceNumber;
+  }
+  public AccountCreditDetails accountCreditDetailsInstance(){
+	if(this.accountCreditDetails==null){
+	this.accountCreditDetails=new AccountCreditDetails();
+	}
+	return this.accountCreditDetails;
+  }
+  public AccountCreditDetails getAccountCreditDetails(){
+    return this.accountCreditDetails;
+  }
+  public void setAccountCreditDetails(AccountCreditDetails accountCreditDetails ){
+    this.accountCreditDetails=accountCreditDetails;
+  }
+  public ReversalDetails reversalDetailsInstance(){
+	if(this.reversalDetails==null){
+	this.reversalDetails=new ReversalDetails();
+	}
+	return this.reversalDetails;
+  }
+  public ReversalDetails getReversalDetails(){
+    return this.reversalDetails;
+  }
+  public void setReversalDetails(ReversalDetails reversalDetails ){
+    this.reversalDetails=reversalDetails;
   }
 }
