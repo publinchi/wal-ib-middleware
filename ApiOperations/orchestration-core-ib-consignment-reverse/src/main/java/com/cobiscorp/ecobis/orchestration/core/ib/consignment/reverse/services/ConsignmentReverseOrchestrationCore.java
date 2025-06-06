@@ -13,6 +13,7 @@ import com.cobiscorp.cobis.cts.domains.sp.*;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 import com.cobiscorp.cobis.cts.dtos.sp.*;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.OfflineApiTemplate;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ApplicationException;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.BusinessException;
@@ -339,5 +340,10 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
         }
 
         return wProcedureResponse;
+    }
+
+    @Override
+    public ICoreServer getCoreServer() {
+        return null;
     }
 }
