@@ -3,7 +3,6 @@
  */
 package com.cobiscorp.ecobis.orchestration.core.ib.compensation.download;
 
-import java.io.File;
 import java.util.Map;
 
 import org.apache.felix.scr.annotations.Component;
@@ -20,7 +19,6 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 
 /**
@@ -44,7 +42,7 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
 		if (logger.isInfoEnabled()) {
-			logger.logInfo(" loadConfiguration INI CompensationProcessOrchestrationCore");
+			logger.logInfo(" loadConfiguration INI " + CLASS_NAME);
 		}
 		properties = arg0.getProperties("//property");
 	}
@@ -52,7 +50,7 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, CompensationDownloadOrchestrationCore start.");
+		logger.logDebug("Begin flow, " + CLASS_NAME + " start.");
 
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
@@ -120,11 +118,11 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
-			this.logger.logInfo("CompensationDownloadOrchestrationCore Error Catastrofico de execDownloadFile", e);
+			this.logger.logInfo( CLASS_NAME + " Error Catastrofico de execDownloadFile", e);
 
 		} finally {
 			if (logger.isInfoEnabled()) {
-				logger.logInfo("CompensationDownloadOrchestrationCore --> Saliendo de execDownloadFile");
+				logger.logInfo(CLASS_NAME + " --> Saliendo de execDownloadFile");
 			}
 		}
 
