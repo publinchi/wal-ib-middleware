@@ -20,6 +20,13 @@
     <parameter name="@x_channel" dataType="varchar" direction="in" />
     <parameter name="@i_originMovementId" dataType="varchar" direction="in" />
     <parameter name="@i_originReferenceNumber" dataType="varchar" direction="in" />
+    <parameter name="@i_senderName" dataType="varchar" direction="in" />
+    <parameter name="@i_moneyTransmitter" dataType="varchar" direction="in" />
+    <parameter name="@i_originCountry" dataType="varchar" direction="in" />
+    <parameter name="@i_currency" dataType="varchar" direction="in" />
+    <parameter name="@i_originCurrency" dataType="varchar" direction="in" />
+    <parameter name="@i_exchangeRate" dataType="varchar" direction="in" />
+    <parameter name="@i_servicio" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

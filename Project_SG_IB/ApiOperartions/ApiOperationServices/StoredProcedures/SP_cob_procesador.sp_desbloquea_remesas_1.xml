@@ -26,6 +26,7 @@
     <parameter name="@x_client-id" dataType="varchar" direction="in" />
     <parameter name="@x_uuid" dataType="varchar" direction="in" />
     <parameter name="@x_apigw-api-id" dataType="varchar" direction="in" />
+    <parameter name="@i_servicio" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
