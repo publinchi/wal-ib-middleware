@@ -75,17 +75,31 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: creditOperation");
 		CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
 
-		if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
-				new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
-				new Data("amount", inCreditAccountRequest.getAmount()),
-				new Data("commission", inCreditAccountRequest.getCommission()),
-				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
-				new Data("latitude", inCreditAccountRequest.getLatitude()),
-				new Data("longitude", inCreditAccountRequest.getLongitude()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
-		}
+		// Validacion trn es de remesas
+        boolean trnRequest = inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero");
+        if(trnRequest) {
+        	if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
+					new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
+					new Data("amount", inCreditAccountRequest.getAmount()),
+					new Data("commission", inCreditAccountRequest.getCommission()),
+					new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+        }else {
+			if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
+					new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
+					new Data("amount", inCreditAccountRequest.getAmount()),
+					new Data("commission", inCreditAccountRequest.getCommission()),
+					new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
+					new Data("latitude", inCreditAccountRequest.getLatitude()),
+					new Data("longitude", inCreditAccountRequest.getLongitude()))) {
+				LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+						.build();
+			}
+        }
 
 		try {
 			outSingleCreditAccountResponse = iServiceContractOperationsApiService
@@ -1557,7 +1571,7 @@ public class ServiceContractOperationsApiRest {
     * It allows the unlocking of account values, which were credited by remittances.
     */
 	@POST
-	@Path("/apiOperations/accounts/unlockCreditOperationTSDeposit")
+	@Path("/apiOperations/accounts/unlockCreditOperation")
 	@Consumes({"application/json"})
 	@Produces({"application/json"})
 	 public Response  unlockCreditOperation(@Null @HeaderParam("legacy-id") String legacyid,
@@ -2992,17 +3006,31 @@ public class ServiceContractOperationsApiRest {
 
 			// Lista de parámetros obligatorios del cuerpo de la solicitud
 			List<Data> mandatoryFields = new ArrayList<>();
-			mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
-			mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
-			mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
-			mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
-			mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
-			mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
-			mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
-			mandatoryFields.add(new Data("commission.amount", inReverseOperationRequest.getCommission().getAmount()));
-			mandatoryFields.add(new Data("commission.reason", inReverseOperationRequest.getCommission().getReason()));
-			mandatoryFields.add(new Data("commission.originalTransactionData.movementId", inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId()));
-			mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));
+			
+			// Validacion trn es de remesas
+	        boolean trnRequest = inReverseOperationRequest.getReversalConcept().contains("REMITTANCE_REVERSAL");
+	        if(trnRequest) {
+				mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
+				mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
+				mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+				mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
+				mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
+				mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
+				mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
+	        }else {
+				mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
+				mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
+				mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+				mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
+				mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
+				mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
+				mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
+				mandatoryFields.add(new Data("commission.amount", inReverseOperationRequest.getCommission().getAmount()));
+				mandatoryFields.add(new Data("commission.reason", inReverseOperationRequest.getCommission().getReason()));
+				mandatoryFields.add(new Data("commission.originalTransactionData.movementId", inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId()));
+				mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));	        	
+	        }
+
 
 			// Validar los parámetros del cuerpo
 			mandatoryHeaders.addAll(mandatoryFields);
