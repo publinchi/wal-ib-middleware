@@ -1254,7 +1254,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cobiscorp.ecobis.ib.orchestrationcore</groupId>
-			<artifactId>orchestration-core-ib-compensation-process,</artifactId>
+			<artifactId>orchestration-core-ib-compensation-process</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
 		<dependency>
