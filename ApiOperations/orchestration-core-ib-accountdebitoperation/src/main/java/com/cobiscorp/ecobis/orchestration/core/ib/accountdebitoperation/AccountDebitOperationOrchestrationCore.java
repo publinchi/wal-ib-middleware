@@ -467,13 +467,14 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
         aBagSPJavaOrchestration.put("@i_debitReason", anOriginalRequest.readValueParam("@i_debitReason").trim());
         aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa"));
-
+                
         if(aBagSPJavaOrchestration.get("debitConcept").toString().equals("FALSE_CHARGEBACK")) {
             aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
             aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
         }
 
         if (!(Boolean)aBagSPJavaOrchestration.get(IS_ERRORS)) {
+        	String causa = "";
             IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(COLUMNS_RETURN);
             if (logger.isDebugEnabled()) {
                 logger.logDebug("Ending flow, processResponse success.");
@@ -497,7 +498,11 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                     (IProcedureResponse)aBagSPJavaOrchestration.get("anProcedureResponse"),
                     aBagSPJavaOrchestration);
 
-            registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa").toString(), aBagSPJavaOrchestration);
+            if (aBagSPJavaOrchestration.get("causa") != null) {
+            	causa = aBagSPJavaOrchestration.get("causa").toString();
+            }
+            
+            registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, causa, aBagSPJavaOrchestration);
         } else {
             if (logger.isDebugEnabled()) {
                 logger.logDebug("Ending flow, processResponse failed.");
