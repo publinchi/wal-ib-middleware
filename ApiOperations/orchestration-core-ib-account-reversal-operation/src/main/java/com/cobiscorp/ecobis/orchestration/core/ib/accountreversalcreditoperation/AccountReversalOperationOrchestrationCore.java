@@ -146,7 +146,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		String referenceNumberComOri = anOriginalRequest.readValueParam("@i_referenceNumber_com_ori");
 
 		aBagSPJavaOrchestration.put("@i_originMovementId", movementIdOrigin);
-		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberComOri);
+		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberOrigin);
 
 		if (reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
@@ -276,20 +276,10 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPOffline.addOutputParam("@o_causa_com", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPOffline.addOutputParam("@o_amount_ori", ICTSTypes.SQLMONEY, "0");
 
-		reqTMPOffline.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
-		reqTMPOffline.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
-		reqTMPOffline.addOutputParam("@o_benef_cta_org" , ICTSTypes.SQLVARCHAR, "X");
-		reqTMPOffline.addOutputParam("@o_cod_alt_org"   , ICTSTypes.SQLINTN, "0");
-		reqTMPOffline.addOutputParam("@o_cod_alt_com"   , ICTSTypes.SQLINTN, "0");
-
 		wProcedureResponseVal = executeCoreBanking(reqTMPOffline);
 
-		aBagSPJavaOrchestration.put("@o_ssn_branch", wProcedureResponseVal.readValueParam("@o_ssn_branch"));
-		aBagSPJavaOrchestration.put("@o_ssn", wProcedureResponseVal.readValueParam("@o_ssn"));
-		aBagSPJavaOrchestration.put("@o_benef_cta_org", wProcedureResponseVal.readValueParam("@o_benef_cta_org"));
-		aBagSPJavaOrchestration.put("@o_cod_alt_org", wProcedureResponseVal.readValueParam("@o_cod_alt_org"));
-		aBagSPJavaOrchestration.put("@o_cod_alt_com", wProcedureResponseVal.readValueParam("@o_cod_alt_com"));
-
+		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
+		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 		aBagSPJavaOrchestration.put("causa_rev", wProcedureResponseVal.readValueParam("@o_causa_rev"));
 		aBagSPJavaOrchestration.put("causa_com", wProcedureResponseVal.readValueParam("@o_causa_com"));
 		aBagSPJavaOrchestration.put("amount_ori", wProcedureResponseVal.readValueParam("@o_amount_ori"));
@@ -355,24 +345,10 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPCentral.addOutputParam("@o_causa_com", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_amount_ori", ICTSTypes.SQLMONEY, "0");
 
-		reqTMPCentral.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
-		reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
-		reqTMPCentral.addOutputParam("@o_benef_cta_org" , ICTSTypes.SQLVARCHAR, "X");
-		reqTMPCentral.addOutputParam("@o_cod_alt_org"   , ICTSTypes.SQLINTN, "0");
-		reqTMPCentral.addOutputParam("@o_cod_alt_com"   , ICTSTypes.SQLINTN, "0");
-
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-
-		// Almacenamiento Response
-		aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
-		aBagSPJavaOrchestration.put("@o_ssn_branch", wProcedureResponseCentral.readValueParam("@o_ssn_branch"));
-		aBagSPJavaOrchestration.put("@o_ssn", wProcedureResponseCentral.readValueParam("@o_ssn"));
-		aBagSPJavaOrchestration.put("@o_benef_cta_org", wProcedureResponseCentral.readValueParam("@o_benef_cta_org"));
-		aBagSPJavaOrchestration.put("@o_cod_alt_org", wProcedureResponseCentral.readValueParam("@o_cod_alt_org"));
-		aBagSPJavaOrchestration.put("@o_cod_alt_com", wProcedureResponseCentral.readValueParam("@o_cod_alt_com"));
 
 		aBagSPJavaOrchestration.put("causa_rev", wProcedureResponseCentral.readValueParam("@o_causa_rev"));
 		aBagSPJavaOrchestration.put("causa_com", wProcedureResponseCentral.readValueParam("@o_causa_com"));
@@ -470,12 +446,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			row.addRowData(6, new ResultSetRowColumnData(false, columnsToReturn[5].getValue()));
 			data.addRow(row);
 
-			/*Datos adicionales*/
-			registerMovementsCreditDebitAdditionalData(
-					"CREDIT_REVERSAL",
-					Boolean.parseBoolean(aBagSPJavaOrchestration.get(IS_ONLINE).toString()),
-					anOriginalRequest,
-					aBagSPJavaOrchestration);
 			registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_rev").toString(), aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
 			registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_com").toString(), aBagSPJavaOrchestration);

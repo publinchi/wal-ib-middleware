@@ -273,23 +273,23 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				}
 
 				anProcedureResponse = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_LOCAL);
+				if(anProcedureResponse.getResultSets().size()>2){
+					int numberOfRecordsLocal = 0;
+					int numberOfRecords = 0;
 
-				int numberOfRecordsLocal = 0;
-				int numberOfRecords = 0;
+					if (anProcedureResponse != null && !anProcedureResponse.getResultSets().isEmpty()) {
+						numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
+					}
+					if (numberOfRecordsLocal < numRegistros) {
+						numberOfRecords = numRegistros - numberOfRecordsLocal;
 
-				if (anProcedureResponse != null && !anProcedureResponse.getResultSets().isEmpty()) {
-					numberOfRecordsLocal = anProcedureResponse.getResultSet(4).getData().getRowsAsArray().length;
+
+						anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords));
+						anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
+
+						llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
+					}
 				}
-				if (numberOfRecordsLocal < numRegistros) {
-					numberOfRecords = numRegistros - numberOfRecordsLocal;
-
-
-					anOriginalRequest.setValueParam(INRO_REGISTRO, String.valueOf(numberOfRecords));
-					anProcedureResponseCentral = getMovementsDetail(anOriginalRequest, IMultiBackEndResolverService.TARGET_CENTRAL);
-
-					llenarRegistrosLocal(anProcedureResponse,anProcedureResponseCentral);
-				}
-
 			}
 			aBagSPJavaOrchestration.put("RESPONSE_MOVEMENTS",anProcedureResponse);
 			if( "S".equals(showFailed)){
@@ -1802,7 +1802,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
 		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
-		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1);
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(5);
 		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
 		List<MovementDetails> movementDetailsList = new ArrayList<>();
 		for (IResultSetRow iResultSetRow : rowsTemp) {
