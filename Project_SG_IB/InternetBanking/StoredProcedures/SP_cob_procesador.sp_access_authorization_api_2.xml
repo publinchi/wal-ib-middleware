@@ -49,6 +49,8 @@
         <column name="sessionId" />
         <column name="errorType" />
         <column name="authToken" />
+        <column name="encryptedIV" />
+        <column name="encryptedSessionKey" />
       </columns>
       <queryText>SELECT "code"=0,"message"="Success"</queryText>
     </query>
