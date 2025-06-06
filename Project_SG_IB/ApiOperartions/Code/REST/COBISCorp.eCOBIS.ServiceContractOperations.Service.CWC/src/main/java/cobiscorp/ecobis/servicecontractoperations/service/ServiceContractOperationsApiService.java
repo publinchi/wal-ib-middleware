@@ -20,10 +20,27 @@
 
 package cobiscorp.ecobis.servicecontractoperations.service;
 
-import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.ReferencePolicy;
+import org.apache.felix.scr.annotations.Service;
+
 import com.cobiscorp.cobis.commons.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
 import com.cobiscorp.cobis.cts.rest.client.api.RowMapper;
+import com.cobiscorp.cobis.cts.rest.client.api.exception.CTSRestException;
 import com.cobiscorp.cobis.cts.rest.client.dto.MessageBlock;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseAS;
@@ -31,23 +48,12 @@ import com.cobiscorp.cobis.cts.rest.client.dto.ProcedureResponseParam;
 import com.cobiscorp.cobis.cts.rest.client.dto.ResultSetRow;
 import com.cobiscorp.cobis.cts.rest.client.mapper.MapperResultUtil;
 import com.cobiscorp.cobis.cts.rest.client.mapper.ResultSetMapper;
+import com.cobiscorp.cobis.cts.rest.client.util.ConverterUtil;
 import com.cobiscorp.cobis.cts.rest.client.util.ErrorUtil;
+import com.cobiscorp.cobis.cts.rest.client.util.ICTSTypes;
 import com.cobiscorp.cobis.cwc.cts.rest.ICTSRestIntegrationService;
 import com.cobiscorp.cobis.jaxrs.publisher.SessionManager;
 import com.google.gson.Gson;
-
-import org.apache.felix.scr.annotations.*;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.Arrays;
-
-import com.cobiscorp.cobis.cts.rest.client.util.ConverterUtil;
-import com.cobiscorp.cobis.cts.rest.client.util.ICTSTypes;
 
 import cobiscorp.ecobis.datacontractoperations.dto.*;
 
@@ -179,15 +185,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
             xChannel = "8";
         }
 
+        // Validacion si transaccion es de remesas
+        String procedureRequest = inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero") ? "cob_procesador..sp_consignment_operations" : "cob_procesador..sp_credit_operation_api" ;
+        
         // create procedure
-        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_credit_operation_api");
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(procedureRequest);
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
         procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
         procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
-        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
+        // Validacion trn es de remesas
+        String trnRequest = inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero") ? "18701001" : "18500111" ;
+        
+        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
         procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
                 String.valueOf(inCreditAccountRequest.getExternalCustomerId()));
         procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
@@ -211,12 +223,27 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inCreditAccountRequest.getOriginReferenceNumber()));
         
-        
+        //Campos del SuplementaryData
+        SupplementaryData[] supplementaryData = inCreditAccountRequest.getSupplementaryData();
+        Set<String> importantKeys = new HashSet<String>(Arrays.asList("originCode", "senderName", "moneyTransmitter", "originCountry", "currency", "originCurrency", "exchangeRate"));
+
+        if (supplementaryData != null) {
+        	for (SupplementaryData data : supplementaryData) {
+        	    if (data != null && importantKeys.contains(data.getKey())) {
+        	    	procedureRequestAS.addInputParam("@i_" + data.getKey() , ICTSTypes.SQLVARCHAR, String.valueOf(data.getValue()));
+        	    }
+        	}
+        	procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "credit");
+        }    
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
         procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
-		
+        
+        if (LOGGER.isDebugEnabled()) {
+                LOGGER.logDebug("creditOperation orchestratorname: " + procedureRequestAS.getSpName());
+        }
+        
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
                 procedureRequestAS);
@@ -4964,11 +4991,11 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
             													String uuid, RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException{
 		LOGGER.logDebug("Start service execution: unlockCreditOperation");
 		ResponseUnlockCreditOperation outResponseUnlockCreditOperation  = new ResponseUnlockCreditOperation();
-		    
-		//create procedure
-		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_desbloquea_remesas");
 		
-		  procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18700137");
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_consignment_operations");
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18701001");
 		procedureRequestAS.addInputParam("@i_external_customer_id",ICTSTypes.SQLINT4,String.valueOf(inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()));
 		procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber());
 		procedureRequestAS.addInputParam("@i_reference_number",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber());
@@ -4977,7 +5004,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		procedureRequestAS.addInputParam("@x_apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 		procedureRequestAS.addInputParam("@x_client-id", ICTSTypes.SQLVARCHAR, clientid);
 		procedureRequestAS.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, uuid);
-		
+		procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "unlock");
 		//execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
 		
@@ -9060,16 +9087,21 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
             xChannel = "8";
         }
 
-        //create procedure
-        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_reverse_operation");
+        // Validacion si transaccion es de remesas
+        String procedureRequest = inReverseOperationRequest.getReversalConcept().contains("REMITTANCE_REVERSAL") ? "cob_procesador..sp_consignment_operations" : "cob_procesador..sp_reverse_operation" ;
+        
+        // create procedure
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(procedureRequest);
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
         procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
         procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
-        procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18700138");
-
+        // Validacion trn es de remesas
+        String trnRequest = inReverseOperationRequest.getReversalConcept().contains("REMITTANCE_REVERSAL") ? "18701001" : "18700138" ;
+        
+        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
         procedureRequestAS.addInputParam("@i_reversalConcept",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReversalConcept());
         procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReferenceNumber());
         procedureRequestAS.addInputParam("@i_externalCustomerId_ori",ICTSTypes.SQLINT4,String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
@@ -9077,10 +9109,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_referenceNumber_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
         procedureRequestAS.addInputParam("@i_movementId_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getMovementId());
         procedureRequestAS.addInputParam("@i_reversalReason_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
-        procedureRequestAS.addInputParam("@i_amount_com",ICTSTypes.SQLMONEY,String.valueOf(inReverseOperationRequest.getCommission().getAmount()));
-        procedureRequestAS.addInputParam("@i_reason_com",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getReason());
-        procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
-        procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "refund");
+        //Validacion campos por Remesas
+        if (inReverseOperationRequest.getCommission() != null) {
+        	 procedureRequestAS.addInputParam("@i_amount_com",ICTSTypes.SQLMONEY,String.valueOf(inReverseOperationRequest.getCommission().getAmount()));
+             procedureRequestAS.addInputParam("@i_reason_com",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getReason());
+             procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
+             procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
+        }    
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inReverseOperationRequest);
