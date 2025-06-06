@@ -75,10 +75,12 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             logger.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
         }
 
+        aBagSPJavaOrchestration.put(Constants.ORIGINAL_REQUEST, anOriginalRequest);
+
         aBagSPJavaOrchestration.put(Constants.IS_ONLINE, false);
 
         try {
-            String servicio = anOriginalRequest.readValueFieldInHeader("@i_servicio");
+            String servicio = anOriginalRequest.readValueParam("@i_servicio");
             initializeValidationParameters(aBagSPJavaOrchestration, servicio);
             validateParameters(aBagSPJavaOrchestration);
 
@@ -111,16 +113,27 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             return processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
 
         } catch (BusinessException e) {
+            if (logger.isErrorEnabled()) {
+                logger.logError("BusinessException in consignment credit operation: " + e.getMessage(), e);
+            }
             ErrorHandler.handleException(e, aBagSPJavaOrchestration);
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
         } catch (FlowTerminatedException e) {
+            if (logger.isErrorEnabled()) {
+                logger.logError("Flow terminated: " + e.getMessage(), e);
+            }
             ErrorHandler.handleException(e, aBagSPJavaOrchestration);
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
         } catch (ApplicationException e) {
+            if (logger.isErrorEnabled()) {
+                logger.logError("ApplicationException in consignment credit operation: " + e.getMessage(), e);
+            }
             ErrorHandler.handleException(e, aBagSPJavaOrchestration);
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (logger.isErrorEnabled()) {
+                logger.logError("Exception Error in consignment credit operation: " + e.getMessage(), e);
+            }   
             ApplicationException appEx = new ApplicationException(50061, "Error in consignment credit operation.");
             ErrorHandler.handleException(appEx, aBagSPJavaOrchestration);
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -140,38 +153,38 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 
         if(Constants.CONSIGNMENT_CREDIT.equals(servicio)) {
             validations = new ParameterValidationUtil[]{
-                new ParameterValidationUtil("@i_ente", "notEmpty", 40128, "externalCustomerId must not be empty."),
-                new ParameterValidationUtil("@i_cta", "notEmpty", 40092, "accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_reference_number", "notEmpty", 40129, "amount must be greater than 0."),
-                new ParameterValidationUtil("@i_concepto", "notEmpty", 40130, "commission must be greater than 0."),
-                new ParameterValidationUtil("@i_val", "greaterThanZero", 40131, "referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_comision", "greaterThanZero", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_originCode", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_senderName", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_moneyTransmitter", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_originCountry", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_currency", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_originCurrency", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_exchangeRate", "notEmpty", 40133, "creditConcept must not be empty.")
+                new ParameterValidationUtil("@i_externalCustomerId", "notEmpty", 40128, "externalCustomerId must not be empty."),
+                new ParameterValidationUtil("@i_accountNumber", "notEmpty", 40092, "accountNumber must not be empty."),
+                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40129, "referenceNumber must not be empty."),
+                new ParameterValidationUtil("@i_creditConcept", "notEmpty", 40130, "creditConcept must not be empty."),
+                new ParameterValidationUtil("@i_amount", "greaterThanZero", 40131, "amount must be greater than 0."),
+                new ParameterValidationUtil("@i_commission", "greaterThanZero", 40133, "commission must be greater than 0."),
+                new ParameterValidationUtil("@i_originCode", "notEmpty", 40133, "originCode must not be empty."),
+                new ParameterValidationUtil("@i_senderName", "notEmpty", 40133, "senderName must not be empty."),
+                new ParameterValidationUtil("@i_moneyTransmitter", "notEmpty", 40133, "moneyTransmitter must not be empty."),
+                new ParameterValidationUtil("@i_originCountry", "notEmpty", 40133, "originCountry must not be empty."),
+                new ParameterValidationUtil("@i_currency", "notEmpty", 40133, "currency must not be empty."),
+                new ParameterValidationUtil("@i_originCurrency", "notEmpty", 40133, "originCurrency must not be empty."),
+                new ParameterValidationUtil("@i_exchangeRate", "notEmpty", 40133, "exchangeRate must not be empty.")
             };
         } 
         else if(Constants.CONSIGNMENT_UNLOCK.equals(servicio)) {
             validations = new ParameterValidationUtil[]{
-                new ParameterValidationUtil("@i_ente", "notEmpty", 40128, "externalCustomerId must not be empty."),
-                new ParameterValidationUtil("@i_cta", "notEmpty", 40092, "accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_reference_number", "notEmpty", 40129, "amount must be greater than 0."),
-                new ParameterValidationUtil("@i_movement_id", "notEmpty", 40130, "commission must be greater than 0.")
+                new ParameterValidationUtil("@i_externalCustomerId", "notEmpty", 40128, "externalCustomerId must not be empty."),
+                new ParameterValidationUtil("@i_accountNumber", "notEmpty", 40092, "accountNumber must not be empty."),
+                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40129, "referenceNumber must not be empty."),
+                new ParameterValidationUtil("@i_movementId", "notEmpty", 40130, "movementId must not be empty.")
             };
         } 
         else if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
             validations = new ParameterValidationUtil[]{
-                new ParameterValidationUtil("@i_ente", "notEmpty", 40128, "externalCustomerId must not be empty."),
-                new ParameterValidationUtil("@i_cta", "notEmpty", 40092, "accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_reference_number", "notEmpty", 40129, "amount must be greater than 0."),
-                new ParameterValidationUtil("@i_reversal_concept", "notEmpty", 40130, "commission must be greater than 0."),
-                new ParameterValidationUtil("@i_reference_number_original", "notEmpty", 40131, "referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_reversal_reason", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_movement_id", "notEmpty", 40130, "commission must be greater than 0.")
+                new ParameterValidationUtil("@i_externalCustomerId", "notEmpty", 40128, "externalCustomerId must not be empty."),
+                new ParameterValidationUtil("@i_accountNumber", "notEmpty", 40092, "accountNumber must not be empty."),
+                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40129, "referenceNumber must not be empty."),
+                new ParameterValidationUtil("@i_reversalConcept", "notEmpty", 40130, "reversalConcept must not be empty."),
+                //new ParameterValidationUtil("@i_reference_number_original", "notEmpty", 40131, "originalTransactionData.referenceNumber must not be empty."),
+                new ParameterValidationUtil("@i_creditConcept", "notEmpty", 40133, "creditConcept must not be empty."),
+                new ParameterValidationUtil("@i_movementId", "notEmpty", 40130, "movementId must not be empty.")
             };
         } 
         else {

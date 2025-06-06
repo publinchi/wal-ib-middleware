@@ -1654,13 +1654,20 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		return isSaved;
 	}
 
-	protected void validateParameters(Map<String, Object> aBagSPJavaOrchestration){
+	protected void validateParameters(Map<String, Object> aBagSPJavaOrchestration ){
 		Object[] validations = (Object[]) aBagSPJavaOrchestration.get(Constants.PARAMETERS_VALIDATE);
+
+		IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(Constants.ORIGINAL_REQUEST);
+
+		if (logger.isInfoEnabled()) {
+            logger.logInfo("Begin [" + CLASS_NAME + "][validateParameters]");
+        }
 
 		for (Object validation : validations) {
 			if (validation instanceof ParameterValidationUtil) {
 				ParameterValidationUtil v = (ParameterValidationUtil) validation;
-				String paramValue = (String) aBagSPJavaOrchestration.get(v.getParamName());
+				//String paramValue = (String) aBagSPJavaOrchestration.get(v.getParamName());
+				String paramValue = originalRequest.readValueParam(v.getParamName());
 
 				// Realiza las validaciones según el tipo especificado
 				switch (v.getType()) {
