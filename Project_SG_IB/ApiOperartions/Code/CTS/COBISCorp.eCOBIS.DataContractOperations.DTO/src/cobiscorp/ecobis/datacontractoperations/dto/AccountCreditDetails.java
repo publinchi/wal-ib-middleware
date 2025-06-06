@@ -27,26 +27,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class CommissionDetails implements Serializable {
-  private String reason;
-  private String originMovementId;
-  private String originReferenceNumber;
-  public String getReason(){
-    return this.reason;
+public class AccountCreditDetails implements Serializable {
+  private String creditConcept;
+  private String originCode;
+  public String getCreditConcept(){
+    return this.creditConcept;
   }
-  public void setReason(String reason ){
-    this.reason=reason;
+  public void setCreditConcept(String creditConcept ){
+    this.creditConcept=creditConcept;
   }
-  public String getOriginMovementId(){
-    return this.originMovementId;
+  public String getOriginCode(){
+    return this.originCode;
   }
-  public void setOriginMovementId(String originMovementId ){
-    this.originMovementId=originMovementId;
-  }
-  public String getOriginReferenceNumber(){
-    return this.originReferenceNumber;
-  }
-  public void setOriginReferenceNumber(String originReferenceNumber ){
-    this.originReferenceNumber=originReferenceNumber;
+  public void setOriginCode(String originCode ){
+    this.originCode=originCode;
   }
 }
