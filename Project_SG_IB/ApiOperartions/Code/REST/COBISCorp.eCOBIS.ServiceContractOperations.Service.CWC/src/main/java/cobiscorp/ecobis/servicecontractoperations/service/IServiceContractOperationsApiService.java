@@ -474,5 +474,4 @@ public interface IServiceContractOperationsApiService {
 
 	
 	public  ReverseOperationResponse reverseCreditOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, ReverseOperationRequest inReverseOperationRequest  )throws CTSRestException;
-	public  ConsignmentReverseResponse consignmentReverse(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, ConsignmentReverseRequest inReverseOperationRequest  )throws CTSRestException;
 }
