@@ -769,7 +769,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			showFailed = true;
 			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
 			numberOfResults += anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
-			totalNumberOfResults = Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+			totalNumberOfResults = numberOfResults + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
 		}
 
 
@@ -1802,7 +1802,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
 		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
-		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(5);
+		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1);
 		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
 		List<MovementDetails> movementDetailsList = new ArrayList<>();
 		for (IResultSetRow iResultSetRow : rowsTemp) {
