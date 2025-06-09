@@ -345,10 +345,25 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPCentral.addOutputParam("@o_causa_com", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_amount_ori", ICTSTypes.SQLMONEY, "0");
 
+		reqTMPCentral.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_benef_cta_org" , ICTSTypes.SQLVARCHAR, "X");
+		reqTMPCentral.addOutputParam("@o_cod_alt_org"   , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_cod_alt_com"   , ICTSTypes.SQLINTN, "0");
+
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+		// Almacenamiento Response
+		aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
+		aBagSPJavaOrchestration.put("@o_ssn_branch", wProcedureResponseCentral.readValueParam("@o_ssn_branch"));
+		aBagSPJavaOrchestration.put("@o_ssn", wProcedureResponseCentral.readValueParam("@o_ssn"));
+		aBagSPJavaOrchestration.put("@o_benef_cta_org", wProcedureResponseCentral.readValueParam("@o_benef_cta_org"));
+		aBagSPJavaOrchestration.put("@o_cod_alt_org", wProcedureResponseCentral.readValueParam("@o_cod_alt_org"));
+		aBagSPJavaOrchestration.put("@o_cod_alt_com", wProcedureResponseCentral.readValueParam("@o_cod_alt_com"));
+
 
 		aBagSPJavaOrchestration.put("causa_rev", wProcedureResponseCentral.readValueParam("@o_causa_rev"));
 		aBagSPJavaOrchestration.put("causa_com", wProcedureResponseCentral.readValueParam("@o_causa_com"));
@@ -455,6 +470,11 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 				causa_com = aBagSPJavaOrchestration.get("causa_com").toString();
 			}
 
+			registerMovementsCreditDebitAdditionalData(
+					"CREDIT_REVERSAL",
+					Boolean.parseBoolean(aBagSPJavaOrchestration.get(Constants.IS_ONLINE).toString()),
+					anOriginalRequest,
+					aBagSPJavaOrchestration);
 			registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, causa_rev, aBagSPJavaOrchestration);
 			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
 			registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, causa_com, aBagSPJavaOrchestration);
