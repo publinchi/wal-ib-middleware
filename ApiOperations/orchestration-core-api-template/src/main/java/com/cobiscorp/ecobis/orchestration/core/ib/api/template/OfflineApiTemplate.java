@@ -19,7 +19,6 @@ import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
-import com.cobiscorp.cobisv.commons.exceptions.BusinessException;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
@@ -27,6 +26,7 @@ import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ApplicationException;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ConstantsErrorsException;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ParameterValidationUtil;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.BusinessException;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServer;
 
@@ -1678,19 +1678,29 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 
 				// Realiza las validaciones según el tipo especificado
 				switch (v.getType()) {
-					case "notEmpty":
+					case NOT_EMPTY:
 						if (paramValue == null || paramValue.isEmpty()) {
 							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
 						}
 						break;
-					case "length":
+					case LENGTH:
 						Integer expectedLength = (Integer) v.getAdditionalParam("expectedLength");
 						if (paramValue.length() != expectedLength) {
 							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
 						}
 						break;
-					case "greaterThanZero":
+					case GREATER_THAN_ZERO_INTEGER:
 						if (Integer.parseInt(paramValue) <= 0) {
+							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
+						}
+						break;
+					case IS_DOUBLE:
+						if (!isValidDouble(paramValue)) {
+							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
+						}
+						break;
+					case GREATER_THAN_ZERO_DOUBLE:
+						if (Double.parseDouble(paramValue) <= 0) {
 							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
 						}
 						break;
@@ -1698,5 +1708,17 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			}
 		}
 	}
+
+	private boolean isValidDouble(String str) {
+        if (str == null || str.isEmpty()) {
+            return false; // Null or empty strings are not valid doubles
+        }
+        try {
+            Double.parseDouble(str);
+            return true; // If parsing succeeds, it's a valid double
+        } catch (NumberFormatException e) {
+            return false; // If parsing fails, it's not a valid double
+        }
+    }
 
 }
