@@ -5,18 +5,18 @@ import java.util.Map;
 
 public class ParameterValidationUtil {
     private String paramName; // Nombre del parámetro a validar
-    private String type; // Tipo de validación
+    private ValidationType type; // Tipo de validación
     private int errorCode; // Código de error
     private String errorMessage; // Mensaje de error
     private Map<String, Object> additionalParams; // Parámetros adicionales para validaciones
 
     // Constructor para validaciones generales
-    public ParameterValidationUtil(String paramName, String type, int errorCode, String errorMessage) {
-        this(paramName, type, errorCode, errorMessage, new HashMap<>());
+    public ParameterValidationUtil(String paramName, ValidationType type, ErrorCode error) {
+        this(paramName, type, error.getCode(), error.getMessage(), new HashMap<>());
     }
 
     // Constructor que permite parámetros adicionales
-    public ParameterValidationUtil(String paramName, String type, int errorCode, String errorMessage, Map<String, Object> additionalParams) {
+    public ParameterValidationUtil(String paramName, ValidationType type, int errorCode, String errorMessage, Map<String, Object> additionalParams) {
         this.paramName = paramName;
         this.type = type;
         this.errorCode = errorCode;
@@ -28,7 +28,7 @@ public class ParameterValidationUtil {
         return paramName;
     }
 
-    public String getType() {
+    public ValidationType getType() {
         return type;
     }
 

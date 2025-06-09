@@ -29,7 +29,9 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.Applic
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.BusinessException;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ErrorHandler;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.FlowTerminatedException;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ErrorCode;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ParameterValidationUtil;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ValidationType;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -76,7 +78,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         }
 
         aBagSPJavaOrchestration.put(Constants.ORIGINAL_REQUEST, anOriginalRequest);
-
+        aBagSPJavaOrchestration.put(Constants.CAUSA, "10"); // TODO validar causa
         aBagSPJavaOrchestration.put(Constants.IS_ONLINE, false);
 
         try {
@@ -153,38 +155,42 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 
         if(Constants.CONSIGNMENT_CREDIT.equals(servicio)) {
             validations = new ParameterValidationUtil[]{
-                new ParameterValidationUtil("@i_externalCustomerId", "notEmpty", 40128, "externalCustomerId must not be empty."),
-                new ParameterValidationUtil("@i_accountNumber", "notEmpty", 40092, "accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40129, "referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_creditConcept", "notEmpty", 40130, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_amount", "greaterThanZero", 40131, "amount must be greater than 0."),
-                new ParameterValidationUtil("@i_commission", "greaterThanZero", 40133, "commission must be greater than 0."),
-                new ParameterValidationUtil("@i_originCode", "notEmpty", 40133, "originCode must not be empty."),
-                new ParameterValidationUtil("@i_senderName", "notEmpty", 40133, "senderName must not be empty."),
-                new ParameterValidationUtil("@i_moneyTransmitter", "notEmpty", 40133, "moneyTransmitter must not be empty."),
-                new ParameterValidationUtil("@i_originCountry", "notEmpty", 40133, "originCountry must not be empty."),
-                new ParameterValidationUtil("@i_currency", "notEmpty", 40133, "currency must not be empty."),
-                new ParameterValidationUtil("@i_originCurrency", "notEmpty", 40133, "originCurrency must not be empty."),
-                new ParameterValidationUtil("@i_exchangeRate", "notEmpty", 40133, "exchangeRate must not be empty.")
+                new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY, ErrorCode.E40030),
+                new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40082),
+                new ParameterValidationUtil("@i_referenceNumber", ValidationType.NOT_EMPTY, ErrorCode.E40092),
+                new ParameterValidationUtil("@i_creditConcept", ValidationType.NOT_EMPTY, ErrorCode.E40093),
+                new ParameterValidationUtil("@i_amount", ValidationType.NOT_EMPTY, ErrorCode.E40300),
+                new ParameterValidationUtil("@i_amount", ValidationType.IS_DOUBLE, ErrorCode.E40300),
+                new ParameterValidationUtil("@i_amount", ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40107), 
+                new ParameterValidationUtil("@i_commission", ValidationType.NOT_EMPTY, ErrorCode.E40301),
+                new ParameterValidationUtil("@i_commission", ValidationType.IS_DOUBLE, ErrorCode.E40301),
+                new ParameterValidationUtil("@i_commission", ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40108),
+                new ParameterValidationUtil("@i_originCode", ValidationType.NOT_EMPTY, ErrorCode.E40302),
+                new ParameterValidationUtil("@i_senderName", ValidationType.NOT_EMPTY, ErrorCode.E40303),
+                new ParameterValidationUtil("@i_moneyTransmitter", ValidationType.NOT_EMPTY, ErrorCode.E40304),
+                new ParameterValidationUtil("@i_originCountry", ValidationType.NOT_EMPTY, ErrorCode.E40305),
+                new ParameterValidationUtil("@i_currency", ValidationType.NOT_EMPTY, ErrorCode.E40306),
+                new ParameterValidationUtil("@i_originCurrency", ValidationType.NOT_EMPTY, ErrorCode.E40307),
+                new ParameterValidationUtil("@i_exchangeRate", ValidationType.NOT_EMPTY, ErrorCode.E40308)
             };
         } 
         else if(Constants.CONSIGNMENT_UNLOCK.equals(servicio)) {
             validations = new ParameterValidationUtil[]{
-                new ParameterValidationUtil("@i_externalCustomerId", "notEmpty", 40128, "externalCustomerId must not be empty."),
-                new ParameterValidationUtil("@i_accountNumber", "notEmpty", 40092, "accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40129, "referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_movementId", "notEmpty", 40130, "movementId must not be empty.")
+                new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
+                new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY,  ErrorCode.E40130),
+                new ParameterValidationUtil("@i_referenceNumber", ValidationType.NOT_EMPTY, ErrorCode.E40131),
+                new ParameterValidationUtil("@i_movementId", ValidationType.NOT_EMPTY,  ErrorCode.E40133)
             };
         } 
         else if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
             validations = new ParameterValidationUtil[]{
-                new ParameterValidationUtil("@i_externalCustomerId", "notEmpty", 40128, "externalCustomerId must not be empty."),
-                new ParameterValidationUtil("@i_accountNumber", "notEmpty", 40092, "accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40129, "referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_reversalConcept", "notEmpty", 40130, "reversalConcept must not be empty."),
-                //new ParameterValidationUtil("@i_reference_number_original", "notEmpty", 40131, "originalTransactionData.referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_creditConcept", "notEmpty", 40133, "creditConcept must not be empty."),
-                new ParameterValidationUtil("@i_movementId", "notEmpty", 40130, "movementId must not be empty.")
+                new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
+                new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40130),
+                new ParameterValidationUtil("@i_referenceNumber", ValidationType.NOT_EMPTY, ErrorCode.E40092),
+                new ParameterValidationUtil("@i_reversal_concept", ValidationType.NOT_EMPTY, ErrorCode.E40311),
+                new ParameterValidationUtil("@i_referenceNumber_trn", ValidationType.NOT_EMPTY, ErrorCode.E40131),
+                new ParameterValidationUtil("@i_reversal_reason", ValidationType.NOT_EMPTY, ErrorCode.E40134),
+                new ParameterValidationUtil("@i_movementId", ValidationType.NOT_EMPTY,  ErrorCode.E40133)
             };
         } 
         else {
@@ -206,6 +212,23 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 
         //Ejecución Central operación 2
         centralExecutionConsignment(aBagSPJavaOrchestration, anOriginalRequest);
+
+        //Validar errores en ejecucion central y local
+        if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "1")) {
+            int errorCode = Integer.parseInt((String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
+            String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_MSG_OP + "1");
+            throw new ApplicationException(errorCode, errorMessage);
+        }
+        else if (aBagSPJavaOrchestration.containsKey(Constants.LOCAL_ERROR_CODE)) {
+            int errorCode = Integer.parseInt((String) aBagSPJavaOrchestration.get(Constants.LOCAL_ERROR_CODE));
+            String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.LOCAL_ERROR_MSG);
+            throw new ApplicationException(errorCode, errorMessage);
+        }
+        else if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "2")) {
+            int errorCode = Integer.parseInt((String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "2"));
+            String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_MSG_OP + "2");
+            throw new ApplicationException(errorCode, errorMessage);
+        }
 
         return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
     }
@@ -255,19 +278,33 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addInputParam("@i_mon", ICTSTypes.SQLINT4, Constants.DEFAULT_CURRENCY);
         centralTransactionRequest.addInputParam("@i_canal", ICTSTypes.SQLINT4, Constants.DEFAULT_CANAL);
 
-        centralTransactionRequest.addInputParam("@i_error_local", ICTSTypes.SQLINT4,"0" ); //TODO revisar si se envía error en operacion 1 //Confirmado
+        String errorOp1 = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1");
+        centralTransactionRequest.addInputParam("@i_error_local", ICTSTypes.SQLINT4, errorOp1);
         
         //parametros de salida
         centralTransactionRequest.addOutputParam("@o_saldo_disponible", ICTSTypes.SQLMONEY, "0");
         centralTransactionRequest.addOutputParam("@o_saldo_girar", ICTSTypes.SQLMONEY, "0");
         centralTransactionRequest.addOutputParam("@o_saldo_contable", ICTSTypes.SQLMONEY, "0");
-        centralTransactionRequest.addOutputParam("@@o_monto_bloq", ICTSTypes.SQLMONEY, "0");
-        centralTransactionRequest.addOutputParam("@o_ssn", ICTSTypes.SQLINT4, "0");
+        centralTransactionRequest.addOutputParam("@o_monto_bloq", ICTSTypes.SQLMONEY, "0");
+        centralTransactionRequest.addOutputParam("@o_ssn_host", ICTSTypes.SQLINT4, "0");
         centralTransactionRequest.addOutputParam("@o_error", ICTSTypes.SQLINT4, "0");
-        centralTransactionRequest.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "0");
+        centralTransactionRequest.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
-        
+        String error = centralProcedureResponse.readValueParam("@o_error");
+        if(error != null && !error.isEmpty() && !"0".equals(error)) {
+            String mensaje = centralProcedureResponse.readValueParam("@o_mensaje");
+            if (logger.isErrorEnabled()) {
+                logger.logError("Error in central execution Op" + operacion + ": " + error + "-" + mensaje);
+            }
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, error);
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, mensaje);
+        }
+        else if("1".equals(operacion)) {
+            String ssnHost = centralProcedureResponse.readValueParam("@o_ssn_host");
+            aBagSPJavaOrchestration.put(Constants.SSN_HOST, ssnHost);
+        }
+
         aBagSPJavaOrchestration.put(Constants.CENTRAL_RESPONSE_OP + operacion, centralProcedureResponse);
 
     }   
@@ -325,6 +362,16 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         localTransactionRequest.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "0");
 
         IProcedureResponse localProcedureResponse = executeCoreBanking(localTransactionRequest);
+
+        String error = localProcedureResponse.readValueParam("@o_error");
+        if(error != null && !error.isEmpty() && !"0".equals(error)) {
+            String mensaje = localProcedureResponse.readValueParam("@o_mensaje");
+            if (logger.isErrorEnabled()) {
+                logger.logError("Error in local execution: " + error + "-" + mensaje);
+            }
+            aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_CODE, error);
+            aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_MSG, mensaje);
+        }
         
         aBagSPJavaOrchestration.put(Constants.LOCAL_RESPONSE, localProcedureResponse);
 
@@ -370,19 +417,16 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             }
         } else {
             // No hay errores, proceder con el flujo exitoso
-            IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(Constants.COLUMNS_RETURN);
+            String movementId = (String)aBagSPJavaOrchestration.get(Constants.SSN_HOST);
             if (logger.isDebugEnabled()) {
                 logger.logDebug("Ending flow, processResponse success.");
-                logger.logDebug("success: " + columnsToReturn[0].getValue());
-                logger.logDebug("code: " + columnsToReturn[1].getValue());
-                logger.logDebug("message: " + columnsToReturn[2].getValue());
-                logger.logDebug("movementId: " + columnsToReturn[3].getValue());
+                logger.logDebug("movementId: " + movementId);
             }
 
-            row.addRowData(1, new ResultSetRowColumnData(false, columnsToReturn[0].getValue()));
-            row.addRowData(2, new ResultSetRowColumnData(false, columnsToReturn[1].getValue()));
-            row.addRowData(3, new ResultSetRowColumnData(false, columnsToReturn[2].getValue()));
-            row.addRowData(4, new ResultSetRowColumnData(false, columnsToReturn[3].getValue()));
+            row.addRowData(1, new ResultSetRowColumnData(false, "true"));
+            row.addRowData(2, new ResultSetRowColumnData(false, "0"));
+            row.addRowData(3, new ResultSetRowColumnData(false, "success"));
+            row.addRowData(4, new ResultSetRowColumnData(false, movementId));
             data.addRow(row);
 
             registerAllTransactionSuccess(CLASS_NAME_CONSIGNMENT_CREDIT, anOriginalRequest, aBagSPJavaOrchestration.get(Constants.CAUSA).toString(), aBagSPJavaOrchestration);

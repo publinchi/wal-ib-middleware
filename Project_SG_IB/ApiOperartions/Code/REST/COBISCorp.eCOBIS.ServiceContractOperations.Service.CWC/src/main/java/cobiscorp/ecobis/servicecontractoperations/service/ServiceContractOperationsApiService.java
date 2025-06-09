@@ -196,8 +196,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
+        boolean isRemittance =  inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero");
+
         // Validacion trn es de remesas
-        String trnRequest = inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero") ? "18701001" : "18500111" ;
+        String trnRequest = isRemittance ? "18701001" : "18500111" ;
         
         procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
         procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
@@ -216,8 +218,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 inCreditAccountRequest.getReferenceNumber());
         procedureRequestAS.addInputParam("@i_creditConcept", ICTSTypes.SQLVARCHAR,
                 inCreditAccountRequest.getCreditConcept());
-        procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
-                String.valueOf(inCreditAccountRequest.getOriginCode()));        
+        
+        if(!isRemittance){
+            procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
+                String.valueOf(inCreditAccountRequest.getOriginCode()));  
+        }
+
         procedureRequestAS.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inCreditAccountRequest.getOriginMovementId()));
         procedureRequestAS.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR,
@@ -5013,10 +5019,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_consignment_operations");
 		
 		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18701001");
-		procedureRequestAS.addInputParam("@i_external_customer_id",ICTSTypes.SQLINT4,String.valueOf(inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()));
-		procedureRequestAS.addInputParam("@i_account_number",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber());
-		procedureRequestAS.addInputParam("@i_reference_number",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber());
-		procedureRequestAS.addInputParam("@i_movement_id",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getMovementId());
+		procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber());
+		procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber());
+		procedureRequestAS.addInputParam("@i_movementId",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getMovementId());
 		procedureRequestAS.addInputParam("@x_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
 		procedureRequestAS.addInputParam("@x_apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
 		procedureRequestAS.addInputParam("@x_client-id", ICTSTypes.SQLVARCHAR, clientid);
@@ -9087,7 +9093,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 	}
 
     @Override
-	public  ReverseOperationResponse reverseCreditOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, ReverseOperationRequest inReverseOperationRequest  )throws CTSRestException{
+	public  ReverseOperationResponse reverseCreditOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, 
+                                                            ReverseOperationRequest inReverseOperationRequest  ) throws CTSRestException {
         if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: reverseCreditOperation");
 
         ReverseOperationResponse outSingleReverseOperationResponse = new ReverseOperationResponse();
@@ -9105,7 +9112,9 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         }
 
         // Validacion si transaccion es de remesas
-        String procedureRequest = inReverseOperationRequest.getReversalConcept().contains("REMITTANCE_REVERSAL") ? "cob_procesador..sp_consignment_operations" : "cob_procesador..sp_reverse_operation" ;
+        String reversalConcept = inReverseOperationRequest.getReversalConcept();
+        boolean isRemittance = reversalConcept != null ? reversalConcept.contains("REMITTANCE_REVERSAL") : false;
+        String procedureRequest = isRemittance ? "cob_procesador..sp_consignment_operations" : "cob_procesador..sp_reverse_operation" ;
         
         // create procedure
         ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(procedureRequest);
@@ -9116,23 +9125,35 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 
         // Validacion trn es de remesas
-        String trnRequest = inReverseOperationRequest.getReversalConcept().contains("REMITTANCE_REVERSAL") ? "18701001" : "18700138" ;
+        String trnRequest = isRemittance ? "18701001" : "18700138" ;
         
         procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
-        procedureRequestAS.addInputParam("@i_reversalConcept",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReversalConcept());
         procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReferenceNumber());
-        procedureRequestAS.addInputParam("@i_externalCustomerId_ori",ICTSTypes.SQLINT4,String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
-        procedureRequestAS.addInputParam("@i_accountNumber_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getAccountNumber());
-        procedureRequestAS.addInputParam("@i_referenceNumber_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
-        procedureRequestAS.addInputParam("@i_movementId_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getMovementId());
-        procedureRequestAS.addInputParam("@i_reversalReason_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
+
+        String reversalConceptName = isRemittance    ? "@i_reversal_concept"    : "@i_reversalConcept";
+        String externalCustomerIdName = isRemittance ? "@i_externalCustomerId"  : "@i_externalCustomerId_ori";
+        String accountNumberName = isRemittance      ? "@i_accountNumber"       : "@i_accountNumber_ori";
+        String referenceNumberName = isRemittance    ? "@i_referenceNumber_trn" : "@i_referenceNumber_ori";
+        String movementIdName = isRemittance         ? "@i_movementId"          : "@i_movementId_ori";
+        String reversalReasonName = isRemittance     ? "@i_reversal_reason"     : "@i_reversalReason_ori";
+
+        procedureRequestAS.addInputParam(reversalConceptName, ICTSTypes.SQLVARCHAR, reversalConcept);
+        procedureRequestAS.addInputParam(externalCustomerIdName, ICTSTypes.SQLINT4,
+                                         String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+        procedureRequestAS.addInputParam(accountNumberName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getAccountNumber());
+        procedureRequestAS.addInputParam(referenceNumberName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
+        procedureRequestAS.addInputParam(movementIdName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getMovementId());
+        procedureRequestAS.addInputParam(reversalReasonName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
+        
         procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "refund");
         //Validacion campos por Remesas
         if (inReverseOperationRequest.getCommission() != null) {
         	 procedureRequestAS.addInputParam("@i_amount_com",ICTSTypes.SQLMONEY,String.valueOf(inReverseOperationRequest.getCommission().getAmount()));
              procedureRequestAS.addInputParam("@i_reason_com",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getReason());
-             procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
-             procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
+             procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,
+                                              inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
+             procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,
+                                              inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
         }    
 
         Gson gsonTrans = new Gson();
