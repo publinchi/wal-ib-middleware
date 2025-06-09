@@ -532,7 +532,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 						movementType = Constants.ACCOUNT_CREDIT;
 					}
 
-					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, Constants.BONUS);
+					request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
 				}
 
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
