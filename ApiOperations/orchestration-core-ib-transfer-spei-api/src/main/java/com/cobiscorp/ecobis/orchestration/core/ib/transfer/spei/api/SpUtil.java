@@ -29,7 +29,6 @@ import com.cobiscorp.cobis.cts.services.orchestrator.ISPOrchestrator;
 import com.cobiscorp.cobisv.commons.context.ContextManager;
 import com.cobiscorp.cobisv.commons.context.Context;
 import com.cobiscorp.cobisv.commons.context.CobisSession;
-import com.cobiscorp.cobisv.commons.exceptions.BusinessException;
 import com.cobiscorp.cobis.cts.domains.IMessageBlock;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 

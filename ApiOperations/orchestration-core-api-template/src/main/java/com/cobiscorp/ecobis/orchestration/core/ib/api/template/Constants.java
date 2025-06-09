@@ -54,4 +54,9 @@ public class Constants {
     public static final String LOCAL_RESPONSE = "localResponse";
     public static final String DEFAULT_CURRENCY = "0";
     public static final String DEFAULT_CANAL= "0";
+    public static final String SSN_HOST = "SSN_HOST";
+    public static final String CENTRAL_ERROR_CODE_OP = "centralErrorCodeOp";
+    public static final String CENTRAL_ERROR_MSG_OP = "centralErrorMsgOp";
+    public static final String LOCAL_ERROR_CODE = "localErrorCode";
+    public static final String LOCAL_ERROR_MSG = "localErrorMsg";
 }
