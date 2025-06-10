@@ -868,6 +868,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             Map<String, Object> aBagSPJavaOrchestration) {
 
         IProcedureRequest request = initProcedureRequest(aRequest);
+        request.addInputParam("@x_request_id",ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@x_request_id"));
+        request.addInputParam("@i_bank_name",ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_bank_name"));
         final String METHOD_NAME = "[executeTransferSpei]";
 
         if (logger.isInfoEnabled()) {
@@ -1025,8 +1027,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
             
             String codeAcc = (String) aBagSPJavaOrchestration.getOrDefault(Constants.I_CODIGO_ACC, "0");
+            codeAcc = codeAcc != null ? codeAcc : "0";
             String reverse = (String) aBagSPJavaOrchestration.getOrDefault(Constants.REVERSE, "N");
-            String secuential =  (String) aBagSPJavaOrchestration.get(Constants.TRANSACCION_SPEI);
+            aBagSPJavaOrchestration.put("@i_nombre_beneficiario", request.readValueParam("@i_nombre_beneficiario")); 
+            String secuential = request.readValueParam("@s_ssn");
             String secBranch = request.readValueParam("@s_ssn_branch");
             String referenceNumber = request.readValueParam("@i_reference_number");
             String cuentaDestino = request.readValueParam(Constants.I_CUENTA_DESTINO);
@@ -1036,8 +1040,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
 
             Map<String, String> additionalData = createAdditionalData(aBagSPJavaOrchestration, codeAcc, secuential, secBranch, referenceNumber, cuentaDestino, bancoDestino, status, requestId);
-
-            logger.logInfo("FHU additionalData --->" + additionalData);
 
             if ("S".equals(reverse)) {
             	handleReverseTransaction(saveAdditional, additionalData, aBagSPJavaOrchestration, serverResponse.getOnLine());
@@ -1084,7 +1086,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, aBagSPJavaOrchestration.get("o_nom_beneficiary").toString().trim(), secuential, bancoDestino, clientRequestId));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId));
 
         return additionalData;
     }
