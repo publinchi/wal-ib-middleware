@@ -54,7 +54,7 @@
       </collection>
     </class>
   </collection>
-  <collection type="List" length="7" id="11" name="parameters">
+  <collection type="List" length="5" id="11" name="parameters">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="12" index="0">
       <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="13" name="parameter">
         <field type="String" name="name" value="@i_eventName" />
@@ -120,38 +120,12 @@
       <field type="String" name="cTSDataType" value="SQLVARCHAR" />
       <field type="boolean" name="allowNull" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="22" index="5">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="23" name="parameter">
-        <field type="String" name="name" value="@i_encryptedIV" />
-        <field type="String" name="dataType" value="varchar" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inSoftTokenRequest" />
-      <field type="String" name="dTOPropertyName" value="encryptedIV" />
-      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingParameter" id="24" index="6">
-      <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureParameter" id="25" name="parameter">
-        <field type="String" name="name" value="@i_encryptedSessionKey" />
-        <field type="String" name="dataType" value="varchar" />
-        <field type="String" name="direction" value="in" />
-      </class>
-      <field type="String" name="mappingTypeName" value="DTO" />
-      <field type="String" name="mappingDirection" value="in" />
-      <field type="String" name="dTOAlias" value="inSoftTokenRequest" />
-      <field type="String" name="dTOPropertyName" value="encryptedSessionKey" />
-      <field type="String" name="cTSDataType" value="SQLVARCHAR" />
-      <field type="boolean" name="allowNull" value="false" />
-    </class>
   </collection>
-  <collection type="List" length="0" id="26" name="parametersOpenApi">
+  <collection type="List" length="0" id="22" name="parametersOpenApi">
   </collection>
   <field type="String" name="trnCode" value="18700143" />
-  <collection type="List" length="2" id="27" name="dTOs">
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="28" index="0">
+  <collection type="List" length="2" id="23" name="dTOs">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="24" index="0">
       <field type="String" name="dTOName" value="SoftTokenRequest" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -161,7 +135,7 @@
       <field type="boolean" name="required" value="true" />
       <field type="String" name="stateDTO" value="" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="29" index="1">
+    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGProcedureMappingDTO" id="25" index="1">
       <field type="String" name="dTOName" value="SoftTokenResponse" />
       <field type="String" name="dTONamespace" value="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO" />
       <field type="String" name="dTOVersion" value="1" />
@@ -172,7 +146,7 @@
       <field type="String" name="stateDTO" value="" />
     </class>
   </collection>
-  <collection type="Map" length="2" id="30" name="mappingProperties">
+  <collection type="Map" length="2" id="26" name="mappingProperties">
     <entry>
       <key type="String" value="singleResult1" />
       <value type="String" value="true" />

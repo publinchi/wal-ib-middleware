@@ -8,8 +8,6 @@
     <parameter name="@i_processId" dataType="varchar" direction="in" />
     <parameter name="@i_authToken" dataType="varchar" direction="in" />
     <parameter name="@i_loginSessionId" dataType="varchar" direction="in" />
-    <parameter name="@i_encryptedIV" dataType="varchar" direction="in" />
-    <parameter name="@i_encryptedSessionKey" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
