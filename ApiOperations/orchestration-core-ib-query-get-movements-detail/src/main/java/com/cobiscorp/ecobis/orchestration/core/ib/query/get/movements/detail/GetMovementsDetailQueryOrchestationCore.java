@@ -217,7 +217,22 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 
 
+		String minDate = anOriginalRequest.readValueParam("@i_fecha_ini");
+		String maxDate = anOriginalRequest.readValueParam("@i_fecha_fin");
+
+
+		if(minDate == null || minDate.equals("null")){
+			minDate  = null;
+		} else if (!minDate.isEmpty() && !isDate(minDate)) {
+			minDate = null;
+		}
+		if(maxDate == null || maxDate.equals("null")){
+			maxDate  = null;
+		} else if (!maxDate.isEmpty() && !isDate(maxDate)) {
+			maxDate = null;
+		}
 		String showFailed = anOriginalRequest.readValueParam("@i_show_failed") != null ? anOriginalRequest.readValueParam("@i_show_failed") : "N";
+		aBagSPJavaOrchestration.put("DATE_FILTER", ( minDate == null ||  maxDate  == null) ? "N" : "S");
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
@@ -763,15 +778,15 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		boolean showFailed = false;
 
 		int numberOfResults = 0;
+		int totalNumberOfResults = 0;
 		int numberOfResultsSuccess = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
 		int numberOfResultsShow;
-		Integer totalNumberOfResults = null;
 
-		if(aBagSPJavaOrchestration.get(INRO_REGISTRO)==null){
+		if(aBagSPJavaOrchestration.get(INRO_REGISTRO)==null || aBagSPJavaOrchestration.get(INRO_REGISTRO).toString().trim().isEmpty()){
 			numberOfResultsShow = 10;
 		}
 		else{
-			numberOfResultsShow = (Integer) aBagSPJavaOrchestration.get(INRO_REGISTRO);
+			numberOfResultsShow = Integer.parseInt((String) aBagSPJavaOrchestration.get(INRO_REGISTRO));
 			numberOfResultsShow = Math.min(numberOfResultsShow, 50);
 		}
 
@@ -943,19 +958,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				failedMovementDetailsList = getFailedMovementsDetails(anOriginalProcedureResF);
 				logger.logDebug("APA failed res: " + failedMovementDetailsList.toString());
 				movementDetailsList.addAll(failedMovementDetailsList);
-				if("DESC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
-					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
-						public int compare(MovementDetails m1, MovementDetails m2) {
-							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
-						}
-					});
-				}
-				else{
-					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
-						public int compare(MovementDetails m1, MovementDetails m2) {
-							return m1.getTransactionDate().compareTo(m2.getTransactionDate());
-						}
-					});
+				if ("DESC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
+					movementDetailsList.sort((m1, m2) -> m2.getTransactionDate().compareTo(m1.getTransactionDate()));
+				} else {
+					movementDetailsList.sort((m1, m2) -> m1.getTransactionDate().compareTo(m2.getTransactionDate()));
 				}
 
 				cutList(movementDetailsList, numberOfResultsShow);
@@ -1038,7 +1044,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
 					rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
 					rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
-					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()));
+					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
 				}
 				data0.addRow(rowDat);
 			}
