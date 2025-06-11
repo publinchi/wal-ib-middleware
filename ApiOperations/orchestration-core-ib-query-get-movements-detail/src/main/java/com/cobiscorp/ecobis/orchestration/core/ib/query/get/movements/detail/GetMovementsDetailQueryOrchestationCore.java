@@ -297,6 +297,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				aBagSPJavaOrchestration.put("RESPONSE_FAILED_MOVEMENTS",failedMovementDetails);
 			}
 			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamieto"));
+			aBagSPJavaOrchestration.put(INRO_REGISTRO,anOriginalRequest.readValueParam(INRO_REGISTRO));
 		}
 
 		if (anProcedureResponse.getResultSets().size()>2) {
@@ -761,15 +762,28 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anOriginalProcedureResF = null;
 		boolean showFailed = false;
 
-		int numberOfResults = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
-		int totalNumberOfResults = 0;
+		int numberOfResults = 0;
+		int numberOfResultsSuccess = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
+		int numberOfResultsShow;
+		Integer totalNumberOfResults = null;
+
+		if(aBagSPJavaOrchestration.get(INRO_REGISTRO)==null){
+			numberOfResultsShow = 10;
+		}
+		else{
+			numberOfResultsShow = (Integer) aBagSPJavaOrchestration.get(INRO_REGISTRO);
+			numberOfResultsShow = Math.min(numberOfResultsShow, 50);
+		}
 
 
 		if(aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null){
 			showFailed = true;
 			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
-			numberOfResults += anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
-			totalNumberOfResults = numberOfResults + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+			numberOfResults =  numberOfResultsSuccess + anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
+			numberOfResultsShow = Math.min(numberOfResultsShow, numberOfResults);
+			if (Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros")) > 0){
+				totalNumberOfResults = numberOfResultsSuccess + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+			}
 		}
 
 
@@ -943,6 +957,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						}
 					});
 				}
+
+				cutList(movementDetailsList, numberOfResultsShow);
 				logger.logDebug("APA all res: " + movementDetailsList.toString());
 			}
 
@@ -2117,6 +2133,15 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	public String getOperation(String cuenta) {
 		return cuenta.contains("*") ? "X":"A";
+	}
+
+
+	public static void cutList(List<MovementDetails> list, int maxIndex) {
+		if (list.size() > maxIndex + 1) {
+			List<MovementDetails> subList = list.subList(0, maxIndex + 1);
+			list.clear();
+			list.addAll(subList);
+		}
 	}
 
 }
