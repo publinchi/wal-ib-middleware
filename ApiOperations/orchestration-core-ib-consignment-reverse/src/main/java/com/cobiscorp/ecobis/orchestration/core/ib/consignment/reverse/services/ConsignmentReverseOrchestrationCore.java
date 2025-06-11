@@ -19,7 +19,9 @@ import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.Applic
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.BusinessException;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.ErrorHandler;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.exceptions.FlowTerminatedException;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ErrorCode;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ParameterValidationUtil;
+import com.cobiscorp.ecobis.orchestration.core.ib.api.template.utils.ValidationType;
 import com.cobiscorp.ecobis.orchestration.core.ib.api.template.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -124,14 +126,7 @@ public class ConsignmentReverseOrchestrationCore extends OfflineApiTemplate {
         }
 
         ParameterValidationUtil[] validations = {
-                new ParameterValidationUtil("@i_reversalConcept", "notEmpty", 40128, "reversalConcept must not be empty."),
-                new ParameterValidationUtil("@i_referenceNumber", "notEmpty", 40092, "referenceNumber must not be empty."),
-                //new ParameterValidationUtil("@i_referenceNumber", "length", 40104, "referenceNumber must have 6 digits.", new HashMap<String, Object>() {{ put("expectedLength", 6); }}),
-                new ParameterValidationUtil("@i_externalCustomerId_ori", "greaterThanZero", 40129, "externalCustomerId must be greater than 0."),
-                new ParameterValidationUtil("@i_accountNumber_ori", "notEmpty", 40130, "originalTransactionData.accountNumber must not be empty."),
-                new ParameterValidationUtil("@i_referenceNumber_ori", "notEmpty", 40131, "originalTransactionData.referenceNumber must not be empty."),
-                new ParameterValidationUtil("@i_movementId_ori", "notEmpty", 40133, "originalTransactionData.movementId must not be empty."),
-                new ParameterValidationUtil("@i_reversalReason_ori", "notEmpty", 40134, "originalTransactionData.reversalReason must not be empty.")
+                new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY, ErrorCode.E40030)
         };
 
         aBagSPJavaOrchestration.put(Constants.PARAMETERS_VALIDATE, validations);
