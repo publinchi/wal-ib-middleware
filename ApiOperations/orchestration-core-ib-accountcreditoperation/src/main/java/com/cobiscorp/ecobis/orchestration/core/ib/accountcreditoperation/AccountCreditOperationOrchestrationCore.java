@@ -116,7 +116,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	public IProcedureResponse executeJavaOrchestrationCredit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		logger.logDebug("Begin flow, AccountCreditOperation start. RTY " + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
-
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		if(logger.isDebugEnabled())
 			logger.logDebug("Inicia credit operation Orquestation");
@@ -191,8 +190,27 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			anProcedureResponse = Utils.returnException(40004, "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!! JC");
 			if(logger.isDebugEnabled())
 				logger.logDebug("Respose Exeption:: " + anProcedureResponse.toString());
-			aBagSPJavaOrchestration.put("code",anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue());
-			aBagSPJavaOrchestration.put("msg",anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue());
+			// Verificación de nulos para anProcedureResponse
+			if (anProcedureResponse != null) {
+			    // Verificación de que el ResultSet y las columnas no son nulos
+			    IResultSetRowColumnData columnData1 = anProcedureResponse.getResultSetRowColumnData(2, 1, 1);
+			    IResultSetRowColumnData columnData2 = anProcedureResponse.getResultSetRowColumnData(2, 1, 2);
+			    
+			    if (columnData1 != null && columnData1.getValue() != null) {
+			        aBagSPJavaOrchestration.put("code", columnData1.getValue());
+			    } else {
+			        aBagSPJavaOrchestration.put("code", "default_code"); 
+			    }
+
+			    if (columnData2 != null && columnData2.getValue() != null) {
+			        aBagSPJavaOrchestration.put("msg", columnData2.getValue());
+			    } else {
+			        aBagSPJavaOrchestration.put("msg", "default_message"); 
+			    }
+			} else {
+			    aBagSPJavaOrchestration.put("code", "40000"); 
+			    aBagSPJavaOrchestration.put("msg", "Procedure response is null");
+			}
 			return anProcedureResponse;
 		}
 		else if ((responseServer.getOnLine()&& flowRty) || responseServer.getOnLine() ){
@@ -225,7 +243,6 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		componentLocator = ComponentLocator.getInstance(this);
 
 		aBagSPJavaOrchestration.put("rty_ssn",request.readValueFieldInHeader("ssn"));
-
 		reentryPersister = (IReentryPersister) componentLocator.find(IReentryPersister.class, REENTRY_FILTER);
 		if (reentryPersister == null)
 			throw new COBISInfrastructureRuntimeException("Service IReentryPersister was not found");
@@ -349,9 +366,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	}
 
 	private void queryAccountCreditOperation(IProcedureRequest wQueryRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
 		String reentryCode = (String)aBagSPJavaOrchestration.get("REENTRY_SSN");
-
 		String idCustomer = wQueryRequest.readValueParam("@i_externalCustomerId");
 		String accountNumber = wQueryRequest.readValueParam("@i_accountNumber");
 		String referenceNumber = wQueryRequest.readValueParam("@i_referenceNumber");
