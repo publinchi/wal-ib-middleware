@@ -2,6 +2,8 @@ package com.cobiscorp.ecobis.orchestration.core.ib.spei.in;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
@@ -336,6 +338,22 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 													 Map<String, Object> aBagSPJavaOrchestration){
 		String wInfo = CLASS_NAME+"[executeTransferSpeiIn] ";
 		logger.logInfo(wInfo+INIT_TASK);
+		
+		//Obtiene fecha y hora del Spei In
+		String transactionDate = getDate();
+		String newDateFormat = unifyDateFormat(transactionDate);
+		
+		aBagSPJavaOrchestration.put("transactionDate", transactionDate);
+		aBagSPJavaOrchestration.put("newDateFormat", newDateFormat);
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo("Fecha y hora del Spei In es: "+transactionDate);
+		}
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo("Fecha y hora del Spei In para el anáslis de riesgos es: "+newDateFormat);
+		}
+		
 		IProcedureResponse response = new ProcedureResponseAS();
 		String valorRiesgo = "";
 		String codigoRiesgo = "";
@@ -373,7 +391,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			{
 				logger.logInfo("Ejecución en reentry - ONLINE");
 			}
-			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+			//IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, aBagSPJavaOrchestration);
 			response = executeCoreBanking(requestTransfer);
 
 			if(logger.isInfoEnabled())
@@ -440,7 +459,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 							return response;
 						}
 
-						IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+						//IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+						IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, aBagSPJavaOrchestration);
 
 						if (logger.isDebugEnabled()) {
 							logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
@@ -492,8 +512,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					return response;
 				}
 
-				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);			
-
+				//IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);			
+				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, aBagSPJavaOrchestration);	
 
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
@@ -570,8 +590,9 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, "SYSTEM");
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, userSessionId);
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
-		String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_fechaOperacion"));
-		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
+		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("newDateFormat"));
+		//String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_fechaOperacion"));
+		//procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, "MXN");
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_monto"));
 		
@@ -751,7 +772,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return ccProcedureResponse;	
 	}
 	
-	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest) {
+	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest,
+			 									 Map<String, Object> aBagSPJavaOrchestration) {
 
 		String wInfo = CLASS_NAME+" [getRequestTransfer] ";
 
@@ -783,6 +805,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_causa_comi", ICTSTypes.SYBVARCHAR, "2011");
 		procedureRequest.addInputParam("@i_mon", ICTSTypes.SYBINT4, "0");
 		procedureRequest.addInputParam("@i_fecha", ICTSTypes.SYBDATETIME, anOriginalRequest.readValueParam("@i_fechaOperacion"));
+		procedureRequest.addInputParam("@i_fecha_spei_in", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("transactionDate"));
 		procedureRequest.addInputParam("@i_canal", ICTSTypes.SYBINT4, "9");
 		if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
 			procedureRequest.addInputParam("@s_ssn", ICTSTypes.SYBINT4, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
@@ -818,7 +841,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		return procedureRequest;
 	}
-
+	
 	private void notifySpei (IProcedureRequest anOriginalRequest, java.util.Map map) {
 
 		try {
@@ -1222,12 +1245,24 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return anProcedureResponse;
 	}
 	
+	private static String getDate() {
+        
+	  LocalDateTime requestDate = LocalDateTime.now();
+	  DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+	  
+	  String newDate = requestDate.format(format);
+	    
+	  return newDate;
+	}
+	
 	private String unifyDateFormat(String dateString) {
 		Date date = null;
 		String horMinSeg = "";
 		String newDate = "";
 		
         String[] formats = {
+			"yyyy-MM-dd HH:mm:ss.SSS",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
             "yyyy-MM-dd HH:mm:ssZ",
 			"yyyy/MM/dd HH:mm:ssZ",
 			"yyyy-MM-dd HH:mm:ss.SSSZ", 
@@ -1238,6 +1273,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
             "yyyy/MM/dd HH:mm:ss",
             "yyyy-MM-dd HH:mm:ss",
 			"yyyy/MM/dd HH:mm:ss",
+			"yyyy-MM-dd HH:mm",
+			"yyyy-MM-dd",
             "yyyy-MM-dd HH:mm:ss.SSSXXX",
 			"yyyy/MM/dd HH:mm:ss.SSSXXX",
             "yyyy-MM-dd HH:mm:ssXXX",
