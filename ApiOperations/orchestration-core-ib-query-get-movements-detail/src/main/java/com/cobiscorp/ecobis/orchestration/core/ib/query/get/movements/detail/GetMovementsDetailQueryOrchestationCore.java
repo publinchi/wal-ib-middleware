@@ -311,7 +311,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				IProcedureResponse failedMovementDetails = getFailedMovementsDetail(anOriginalRequest);
 				aBagSPJavaOrchestration.put("RESPONSE_FAILED_MOVEMENTS",failedMovementDetails);
 			}
-			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamieto"));
+			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamiento"));
 			aBagSPJavaOrchestration.put(INRO_REGISTRO,anOriginalRequest.readValueParam(INRO_REGISTRO));
 		}
 
