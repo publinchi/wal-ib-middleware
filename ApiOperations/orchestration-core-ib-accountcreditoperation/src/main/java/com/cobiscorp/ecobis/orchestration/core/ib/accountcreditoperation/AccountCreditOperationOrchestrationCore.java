@@ -388,13 +388,13 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return;
 		}
 
-		if (accountNumber.isEmpty()) {
+		if (Objects.isNull(accountNumber) ||  accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("code","40082");
 			aBagSPJavaOrchestration.put("msg","accountNumber must not be empty");
 			return;
 		}
 
-		if (referenceNumber.isEmpty()) {
+	/*	if (Objects.isNull(referenceNumber) ||  referenceNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("code","40092");
 			aBagSPJavaOrchestration.put("msg","referenceNumber must not be empty");
 			return;
@@ -404,22 +404,22 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			aBagSPJavaOrchestration.put("code","40104");
 			aBagSPJavaOrchestration.put("msg","referenceNumber must have 6 digits");
 			return;
-		}
+		}*/
 
-		if (creditConcept.isEmpty()) {
+		if (Objects.isNull(creditConcept)  || creditConcept.isEmpty()) {
 			aBagSPJavaOrchestration.put("code","40093");
 			aBagSPJavaOrchestration.put("msg","creditConcept must not be empty");
 			return;
 		}
 
 		if(creditConcept.equals("REFUND")) {
-			if(originMovementId.isEmpty()) {
+			if( Objects.isNull(originMovementId)  || originMovementId.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40126");
 				aBagSPJavaOrchestration.put("msg","The originMovementId must not be empty");
 				return;
 			}
 
-			if(originReferenceNumber.isEmpty()) {
+			if(Objects.isNull(originReferenceNumber)  || originReferenceNumber.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40127");
 				aBagSPJavaOrchestration.put("msg","The originReferenceNumber must not be empty");
 				return;
@@ -582,13 +582,13 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return;
 		}
 
-		if (accountNumber.isEmpty()) {
+		if (Objects.isNull(accountNumber) ||accountNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("code","40082");
 			aBagSPJavaOrchestration.put("msg","accountNumber must not be empty");
 			return;
 		}
 
-		if (referenceNumber.isEmpty()) {
+	/*	if (referenceNumber.isEmpty()) {
 			aBagSPJavaOrchestration.put("code","40092");
 			aBagSPJavaOrchestration.put("msg","referenceNumber must not be empty");
 			return;
@@ -598,9 +598,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			aBagSPJavaOrchestration.put("code","40104");
 			aBagSPJavaOrchestration.put("msg","referenceNumber must have 6 digits");
 			return;
-		}
+		}*/
 
-		if (creditConcept.isEmpty()) {
+		if (Objects.isNull(creditConcept) || creditConcept.isEmpty()) {
 			aBagSPJavaOrchestration.put("code","40093");
 			aBagSPJavaOrchestration.put("msg","creditConcept must not be empty");
 			return;
@@ -817,7 +817,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
-		if (creditConcept.equals("REFUND")) {
+		if (Objects.nonNull(creditConcept) && creditConcept.equals("REFUND")) {
 			aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
 			aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
 			aBagSPJavaOrchestration.put("originCode", anOriginalRequest.readValueParam("@i_originCode"));
@@ -939,7 +939,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			if (externalCustomerId == null) {
 				throw new IllegalArgumentException("El ID del cliente externo no puede ser nulo.");
 			}
-			if (accountNumber == null || accountNumber.isEmpty()) {
+			if (Objects.isNull(accountNumber) || accountNumber.isEmpty()) {
 				throw new IllegalArgumentException("El número de cuenta no puede ser nulo o vacío.");
 			}
 
