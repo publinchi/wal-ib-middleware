@@ -817,7 +817,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
-		if (creditConcept.equals("REFUND")) {
+		if (Objects.nonNull(creditConcept) && creditConcept.equals("REFUND")) {
 			aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
 			aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
 			aBagSPJavaOrchestration.put("originCode", anOriginalRequest.readValueParam("@i_originCode"));
