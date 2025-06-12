@@ -10,6 +10,7 @@ import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequestParam;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.IProcedureResponseParam;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetBlock;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetData;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
@@ -136,7 +137,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             if (logger.isErrorEnabled()) {
                 logger.logError("Exception Error in consignment credit operation: " + e.getMessage(), e);
             }   
-            ApplicationException appEx = new ApplicationException(50061, "Error in consignment credit operation.");
+            ApplicationException appEx = new ApplicationException(Constants.DEAULT_ERROR, Constants.DEAULT_ERROR_MSG);
             ErrorHandler.handleException(appEx, aBagSPJavaOrchestration);
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
         } finally {
@@ -154,6 +155,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         ParameterValidationUtil[] validations;
 
         if(Constants.CONSIGNMENT_CREDIT.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY, ErrorCode.E40030),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40082),
@@ -175,6 +178,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             };
         } 
         else if(Constants.CONSIGNMENT_UNLOCK.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "UNLOCK_CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY,  ErrorCode.E40130),
@@ -183,6 +188,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             };
         } 
         else if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "REVERSAL_CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40130),
@@ -215,17 +222,17 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 
         //Validar errores en ejecucion central y local
         if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "1")) {
-            int errorCode = Integer.parseInt((String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
+            int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
             String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_MSG_OP + "1");
             throw new ApplicationException(errorCode, errorMessage);
         }
         else if (aBagSPJavaOrchestration.containsKey(Constants.LOCAL_ERROR_CODE)) {
-            int errorCode = Integer.parseInt((String) aBagSPJavaOrchestration.get(Constants.LOCAL_ERROR_CODE));
+            int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.LOCAL_ERROR_CODE));
             String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.LOCAL_ERROR_MSG);
             throw new ApplicationException(errorCode, errorMessage);
         }
         else if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "2")) {
-            int errorCode = Integer.parseInt((String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "2"));
+            int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "2"));
             String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_MSG_OP + "2");
             throw new ApplicationException(errorCode, errorMessage);
         }
@@ -242,7 +249,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.setSpName("cob_ahorros..sp_ahconsignment");
         centralTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
         centralTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
-        centralTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.NO);
+        centralTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
         centralTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(TRN_CONSIGNMENT_CREDIT));
         
         String rty = "N"; // N = Normal, S = Reentry
@@ -278,8 +285,11 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addInputParam("@i_mon", ICTSTypes.SQLINT4, Constants.DEFAULT_CURRENCY);
         centralTransactionRequest.addInputParam("@i_canal", ICTSTypes.SQLINT4, Constants.DEFAULT_CANAL);
 
-        String errorOp1 = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1");
-        centralTransactionRequest.addInputParam("@i_error_local", ICTSTypes.SQLINT4, errorOp1);
+        String errorLocal = (String) aBagSPJavaOrchestration.get(Constants.LOCAL_ERROR_CODE);
+        if(errorLocal == null || errorLocal.isEmpty() || "0".equals(errorLocal)) {
+            errorLocal = "0"; // Si no hay error, se asigna 0
+        }
+        centralTransactionRequest.addInputParam("@i_error_local", ICTSTypes.SQLINT4, errorLocal);
         
         //parametros de salida
         centralTransactionRequest.addOutputParam("@o_saldo_disponible", ICTSTypes.SQLMONEY, "0");
@@ -291,14 +301,19 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
+
         String error = centralProcedureResponse.readValueParam("@o_error");
-        if(error != null && !error.isEmpty() && !"0".equals(error)) {
+        int returnCode = centralProcedureResponse.getReturnCode();
+        if(returnCode != 0 && error != null && !error.isEmpty() && !"0".equals(error)) {
             String mensaje = centralProcedureResponse.readValueParam("@o_mensaje");
             if (logger.isErrorEnabled()) {
                 logger.logError("Error in central execution Op" + operacion + ": " + error + "-" + mensaje);
             }
             aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, error);
             aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, mensaje);
+        }else if(returnCode != 0 && (error == null || error.isEmpty() || "0".equals(error))) {//Posible error SQL
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, Constants.DEAULT_ERROR);
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, Constants.DEAULT_ERROR_MSG);
         }
         else if("1".equals(operacion)) {
             String ssnHost = centralProcedureResponse.readValueParam("@o_ssn_host");
@@ -318,7 +333,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         localTransactionRequest.setSpName("cob_ahorros..sp_ahconsignment_local");
         localTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
         localTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-        localTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.NO);
+        localTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
         localTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(TRN_CONSIGNMENT_CREDIT));
         
         String rty = "N"; // N = Normal, S = Reentry
@@ -347,16 +362,18 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         //Copiar outpus de ejecución central a inputs de ejecución local
         copyOutputParamsAsInputParams(centralTransactionResponseOp1, localTransactionRequest);
 
+        String errorCentralop1 = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1");
+        if( errorCentralop1 == null || errorCentralop1.isEmpty() || "0".equals(errorCentralop1)) {
+            errorCentralop1 = "0"; // Si no hay error, se asigna 0
+        }
+        localTransactionRequest.addInputParam("@i_error_central", ICTSTypes.SQLINT4, errorCentralop1);
+
         localTransactionRequest.addInputParam("@i_mon", ICTSTypes.SQLINT4, Constants.DEFAULT_CURRENCY); 
         localTransactionRequest.addInputParam("@i_canal", ICTSTypes.SQLINT4, Constants.DEFAULT_CANAL);
         localTransactionRequest.addInputParam("@i_latitud", ICTSTypes.SQLDECIMAL, "0.0"); 
         localTransactionRequest.addInputParam("@i_longitud", ICTSTypes.SQLDECIMAL, "0.0"); 
         
         //parametros de salida
-        localTransactionRequest.addOutputParam("@o_saldo_disponible", ICTSTypes.SQLMONEY, "0");
-        localTransactionRequest.addOutputParam("@o_saldo_girar", ICTSTypes.SQLMONEY, "0");
-        localTransactionRequest.addOutputParam("@o_saldo_contable", ICTSTypes.SQLMONEY, "0");
-        localTransactionRequest.addOutputParam("@@o_monto_bloq", ICTSTypes.SQLMONEY, "0");
         localTransactionRequest.addOutputParam("@o_ssn", ICTSTypes.SQLINT4, "0");
         localTransactionRequest.addOutputParam("@o_error", ICTSTypes.SQLINT4, "0");
         localTransactionRequest.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "0");
@@ -364,13 +381,18 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         IProcedureResponse localProcedureResponse = executeCoreBanking(localTransactionRequest);
 
         String error = localProcedureResponse.readValueParam("@o_error");
-        if(error != null && !error.isEmpty() && !"0".equals(error)) {
+        int returnCode = localProcedureResponse.getReturnCode();
+        if(returnCode != 0 && error != null && !error.isEmpty() && !"0".equals(error)) {
             String mensaje = localProcedureResponse.readValueParam("@o_mensaje");
             if (logger.isErrorEnabled()) {
                 logger.logError("Error in local execution: " + error + "-" + mensaje);
             }
             aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_CODE, error);
             aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_MSG, mensaje);
+        }
+        else if(returnCode != 0 && (error == null || error.isEmpty() || "0".equals(error))) {//Posible error SQL
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, Constants.DEAULT_ERROR);
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, Constants.DEAULT_ERROR_MSG);
         }
         
         aBagSPJavaOrchestration.put(Constants.LOCAL_RESPONSE, localProcedureResponse);
@@ -388,11 +410,17 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         IResultSetData data = new ResultSetData();
         IResultSetRow row = new ResultSetRow();
 
+        String servicio = anOriginalRequest.readValueParam("@i_servicio");
+
         metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
         metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
         metaData.addColumnMetaData(new ResultSetHeaderColumn("message", ICTSTypes.SYBVARCHAR, 255));
         metaData.addColumnMetaData(new ResultSetHeaderColumn("movementId", ICTSTypes.SYBVARCHAR, 255));
-
+        if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
+            metaData.addColumnMetaData(new ResultSetHeaderColumn("key", ICTSTypes.SYBVARCHAR, 255));
+		    metaData.addColumnMetaData(new ResultSetHeaderColumn("value", ICTSTypes.SYBVARCHAR, 255));
+        }
+        
         IProcedureResponse errorResponse = (IProcedureResponse) aBagSPJavaOrchestration.get(Constants.RESPONSE_ERROR_HANDLER);
 
         // Verifica si hay un error en el response
@@ -411,6 +439,12 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 row.addRowData(2, new ResultSetRowColumnData(false, errorResponse.readValueFieldInHeader(ICSP.SERVICE_ERROR_CODE)));
                 row.addRowData(3, new ResultSetRowColumnData(false, errorResponse.readValueFieldInHeader(ICSP.MESSAGE_ERROR)));
                 row.addRowData(4, new ResultSetRowColumnData(false, null));
+               
+                if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
+                    row.addRowData(5, new ResultSetRowColumnData(false, null));
+                    row.addRowData(6, new ResultSetRowColumnData(false, null));
+                }
+                
                 data.addRow(row);
 
                 registerTransactionFailed(CLASS_NAME_CONSIGNMENT_CREDIT, "", anOriginalRequest, aBagSPJavaOrchestration);
@@ -427,6 +461,12 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             row.addRowData(2, new ResultSetRowColumnData(false, "0"));
             row.addRowData(3, new ResultSetRowColumnData(false, "success"));
             row.addRowData(4, new ResultSetRowColumnData(false, movementId));
+            
+            if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
+                row.addRowData(5, new ResultSetRowColumnData(false, null));
+                row.addRowData(6, new ResultSetRowColumnData(false, null));
+            }
+
             data.addRow(row);
 
             registerAllTransactionSuccess(CLASS_NAME_CONSIGNMENT_CREDIT, anOriginalRequest, aBagSPJavaOrchestration.get(Constants.CAUSA).toString(), aBagSPJavaOrchestration);
@@ -457,16 +497,15 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 		}
     }
 
-    private void copyOutputParamsAsInputParams(IProcedureResponse requestFrom, IProcedureRequest requestTo) {
-        Object[] params = requestFrom.getParams().toArray();
+    private void copyOutputParamsAsInputParams(IProcedureResponse responseFrom, IProcedureRequest requestTo) {
+        Object[] params = responseFrom.getParams().toArray();
 		for (int i = params.length - 1; i >= 0; i--) {
-			if (params[i] instanceof IProcedureRequestParam) {
-				IProcedureRequestParam param = (IProcedureRequestParam) params[i];
+			if (params[i] instanceof IProcedureResponseParam) {
+				IProcedureResponseParam param = (IProcedureResponseParam) params[i];
                 String paramName = param.getName();
                 if (paramName.startsWith("@o_")) {
                     paramName = paramName.replaceFirst("@o_", "@i_");
-                    requestTo.addParam(paramName, param.getDataType(), param.getIOType(),
-					param.getLen(), param.getValue());
+                    requestTo.addInputParam(paramName, param.getDataType(), param.getValue());
                 }
 			}
 		}
@@ -475,6 +514,22 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
     @Override
     public ICoreServer getCoreServer() {
         return null;
+    }
+
+    public static int convertObjectToInt(Object obj) {
+        if (obj == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        } else if (obj instanceof Integer) {
+            return (Integer) obj;
+        } else if (obj instanceof String) {
+            try {
+                return Integer.parseInt((String) obj);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("String does not represent a valid integer: " + obj);
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported Object type: " + obj.getClass().getName());
+        }
     }
     
 }

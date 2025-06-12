@@ -1,14 +1,10 @@
 package com.cobiscorp.ecobis.orchestration.core.ib.spei.in;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 
 import com.cobiscorp.cobis.cts.commons.services.IMultiBackEndResolverService;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.TransferInOfflineTemplate;
@@ -87,7 +83,10 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
 	private static final String SPEI_CREDIT = "SPEI_CREDIT";
 	private String validaRiesgo = "";
-
+	private static final String I_CONCEPTOPAGO = "@i_conceptoPago";
+	private static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
+	private static final String I_IDTIPOPAGO = "@i_idTipoPago";
+	private static final String CONCEPT_PREFIX = "Remesa Entrante ";
 
 	@Reference(referenceInterface = ICoreServiceMonetaryTransaction.class, cardinality = ReferenceCardinality.OPTIONAL_UNARY, bind = "bindCoreServiceMonetaryTransaction", unbind = "unbindCoreServiceMonetaryTransaction")
 	protected ICoreServiceMonetaryTransaction coreServiceMonetaryTransaction;
@@ -142,6 +141,15 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		
 		if (logger.isInfoEnabled())
 			logger.logInfo("SpeiInTransferOrchestrationCore: executeJavaOrchestration");
+
+		String tipoPago = anOriginalRequest.readValueParam(I_IDTIPOPAGO);
+		String concepto = anOriginalRequest.readValueParam(I_CONCEPTOPAGO);
+		concepto = concepto != null ? concepto : "";
+		if ("36".equals(tipoPago) && !concepto.startsWith(CONCEPT_PREFIX)) 
+		{
+			anOriginalRequest.setValueParam(I_CONCEPTOPAGO, CONCEPT_PREFIX + concepto);
+			aBagSPJavaOrchestration.put(ORIGINAL_REQUEST, anOriginalRequest);
+		} 
 
 		Map<String, Object> mapInterfaces = new HashMap<String, Object>();
 
@@ -330,6 +338,22 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 													 Map<String, Object> aBagSPJavaOrchestration){
 		String wInfo = CLASS_NAME+"[executeTransferSpeiIn] ";
 		logger.logInfo(wInfo+INIT_TASK);
+		
+		//Obtiene fecha y hora del Spei In
+		String transactionDate = getDate();
+		String newDateFormat = unifyDateFormat(transactionDate);
+		
+		aBagSPJavaOrchestration.put("transactionDate", transactionDate);
+		aBagSPJavaOrchestration.put("newDateFormat", newDateFormat);
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo("Fecha y hora del Spei In es: "+transactionDate);
+		}
+		
+		if(logger.isInfoEnabled()) {
+			logger.logInfo("Fecha y hora del Spei In para el anáslis de riesgos es: "+newDateFormat);
+		}
+		
 		IProcedureResponse response = new ProcedureResponseAS();
 		String valorRiesgo = "";
 		String codigoRiesgo = "";
@@ -367,7 +391,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			{
 				logger.logInfo("Ejecución en reentry - ONLINE");
 			}
-			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+			//IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+			IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, aBagSPJavaOrchestration);
 			response = executeCoreBanking(requestTransfer);
 
 			if(logger.isInfoEnabled())
@@ -434,7 +459,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 							return response;
 						}
 
-						IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+						//IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);
+						IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, aBagSPJavaOrchestration);
 
 						if (logger.isDebugEnabled()) {
 							logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
@@ -486,8 +512,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 					return response;
 				}
 
-				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);			
-
+				//IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest);			
+				IProcedureRequest requestTransfer = this.getRequestTransfer(anOriginalRequest, aBagSPJavaOrchestration);	
 
 				if (logger.isDebugEnabled()) {
 					logger.logDebug(wInfo + "Request accountTransfer: " + requestTransfer.getProcedureRequestAsString());
@@ -564,8 +590,9 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_channelDetails_channel", ICTSTypes.SQLVARCHAR, "SYSTEM");
 		procedureRequest.addInputParam("@i_channelDetails_userSessionDetails_userSessionId", ICTSTypes.SQLVARCHAR, userSessionId);
 		procedureRequest.addInputParam("@i_transaction_transactionId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@s_ssn"));
-		String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_fechaOperacion"));
-		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
+		procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("newDateFormat"));
+		//String transactionDate = unifyDateFormat(aRequest.readValueParam("@i_fechaOperacion"));
+		//procedureRequest.addInputParam("@i_transaction_transactionDate", ICTSTypes.SQLVARCHAR, transactionDate);
 		procedureRequest.addInputParam("@i_transaction_transaction_currency", ICTSTypes.SQLVARCHAR, "MXN");
 		procedureRequest.addInputParam("@i_transaction_transaction_amount", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_monto"));
 		
@@ -630,25 +657,31 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		Integer tipoCuentaBeneficiario  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		String tipoCuentaBeneficiarioS = String.format("%02d", tipoCuentaBeneficiario);
 		String cuentaBeneficiario = anOriginalRequest.readValueParam("@i_cuentaBeneficiario");
-		String codTarDeb = (String)aBagSPJavaOrchestration.get("codTarDeb");
+
+		//S1166247 Obtener causal remesas
+		String tipoPago = anOriginalRequest.readValueParam(I_IDTIPOPAGO);
+		if(tipoPago != null && tipoPago.equals("36")) {
+			String causalRemesas = getParam(anOriginalRequest, "CARESI", "AHO");
+			if(causalRemesas == null || causalRemesas.isEmpty()) {
+				causalRemesas = "2100";
+			}
+			procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, causalRemesas);
+		} else {
+			procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
+		}
 
 		procedureRequest.setSpName("cob_bvirtual..sp_bv_valida_limites");
 		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18500069");
 		procedureRequest.addInputParam("@i_tipo_trn", ICTSTypes.SQLINT4, "253");
-		procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
 		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, anOriginalRequest.readValueParam("@i_monto"));		
 		
-		/*if ("10".equals(tipoCuentaBeneficiarioS)) {
-			procedureRequest.addInputParam("@i_telefono", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
-		}
-		else {*/
 		if ("40".equals(tipoCuentaBeneficiarioS)) {
 			procedureRequest.addInputParam("@i_clabe", ICTSTypes.SQLVARCHAR, cuentaBeneficiario);
 		}else if("03".equals(tipoCuentaBeneficiarioS) || "10".equals(tipoCuentaBeneficiarioS)){
 			
 			procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		}
-		
+
 		Integer code = 0;
         String message = "success";
 		IProcedureResponse anProcedureResponse =  executeCoreBanking(procedureRequest);
@@ -739,7 +772,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return ccProcedureResponse;	
 	}
 	
-	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest) {
+	private IProcedureRequest getRequestTransfer(IProcedureRequest anOriginalRequest,
+			 									 Map<String, Object> aBagSPJavaOrchestration) {
 
 		String wInfo = CLASS_NAME+" [getRequestTransfer] ";
 
@@ -771,13 +805,14 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_causa_comi", ICTSTypes.SYBVARCHAR, "2011");
 		procedureRequest.addInputParam("@i_mon", ICTSTypes.SYBINT4, "0");
 		procedureRequest.addInputParam("@i_fecha", ICTSTypes.SYBDATETIME, anOriginalRequest.readValueParam("@i_fechaOperacion"));
+		procedureRequest.addInputParam("@i_fecha_spei_in", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("transactionDate"));
 		procedureRequest.addInputParam("@i_canal", ICTSTypes.SYBINT4, "9");
 		if(anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX")!=null)
 			procedureRequest.addInputParam("@s_ssn", ICTSTypes.SYBINT4, anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 
 		procedureRequest.addInputParam("@i_cuenta_beneficiario", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_cuenta_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
-		procedureRequest.addInputParam("@i_concepto_pago", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_conceptoPago"));
+		procedureRequest.addInputParam("@i_concepto_pago", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam(I_CONCEPTOPAGO));
 		procedureRequest.addInputParam("@i_monto", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_monto"));
 		procedureRequest.addInputParam("@i_institucion_ordenante", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_institucionOrdenante"));
 		procedureRequest.addInputParam("@i_institucion_beneficiaria", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_institucionBeneficiaria"));
@@ -786,7 +821,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_nombre_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombreOrdenante"));
 		procedureRequest.addInputParam("@i_rfc_curp_ordenante", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_rfcCurpOrdenante"));
 		procedureRequest.addInputParam("@i_referencia_numerica", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenciaNumerica"));
-		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam("@i_idTipoPago"));
+		procedureRequest.addInputParam("@i_tipo", ICTSTypes.SYBINT4, anOriginalRequest.readValueParam(I_IDTIPOPAGO));
 		procedureRequest.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBCHAR, "I");
 		procedureRequest.addInputParam("@i_xml_request", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_string_request"));
@@ -806,7 +841,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		return procedureRequest;
 	}
-
+	
 	private void notifySpei (IProcedureRequest anOriginalRequest, java.util.Map map) {
 
 		try {
@@ -841,7 +876,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 			procedureRequest.addInputParam("@i_c1", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cuentaOrdenante"));
 			procedureRequest.addInputParam("@i_c2", ICTSTypes.SQLVARCHAR, cuentaClabe);
 			procedureRequest.addInputParam("@i_v2", ICTSTypes.SQLVARCHAR, String.valueOf(  anOriginalRequest.readValueParam("@i_monto")));
-			procedureRequest.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_conceptoPago"));
+			procedureRequest.addInputParam("@i_r", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam(I_CONCEPTOPAGO));
 			procedureRequest.addInputParam("@i_aux9", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_claveRastreo"));
 			procedureRequest.addInputParam("@i_aux8", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_nombreOrdenante"));
 
@@ -1210,12 +1245,24 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		return anProcedureResponse;
 	}
 	
+	private static String getDate() {
+        
+	  LocalDateTime requestDate = LocalDateTime.now();
+	  DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+	  
+	  String newDate = requestDate.format(format);
+	    
+	  return newDate;
+	}
+	
 	private String unifyDateFormat(String dateString) {
 		Date date = null;
 		String horMinSeg = "";
 		String newDate = "";
 		
         String[] formats = {
+			"yyyy-MM-dd HH:mm:ss.SSS",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
             "yyyy-MM-dd HH:mm:ssZ",
 			"yyyy/MM/dd HH:mm:ssZ",
 			"yyyy-MM-dd HH:mm:ss.SSSZ", 
@@ -1226,6 +1273,8 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
             "yyyy/MM/dd HH:mm:ss",
             "yyyy-MM-dd HH:mm:ss",
 			"yyyy/MM/dd HH:mm:ss",
+			"yyyy-MM-dd HH:mm",
+			"yyyy-MM-dd",
             "yyyy-MM-dd HH:mm:ss.SSSXXX",
 			"yyyy/MM/dd HH:mm:ss.SSSXXX",
             "yyyy-MM-dd HH:mm:ssXXX",

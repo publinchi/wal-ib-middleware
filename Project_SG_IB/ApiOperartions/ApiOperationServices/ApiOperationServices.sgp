@@ -61,5 +61,5 @@
     <field type="String" index="0" value="Español" />
     <field type="String" index="1" value="English" />
   </collection>
-  <field type="String" name="sGVersion" value="4.3.2.0" />
+  <field type="String" name="sGVersion" value="4.2.8.0" />
 </class>

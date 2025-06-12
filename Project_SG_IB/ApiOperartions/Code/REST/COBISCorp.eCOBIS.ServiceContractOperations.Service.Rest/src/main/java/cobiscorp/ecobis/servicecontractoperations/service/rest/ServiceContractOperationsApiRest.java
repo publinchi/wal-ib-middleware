@@ -1574,10 +1574,11 @@ public class ServiceContractOperationsApiRest {
 	@Path("/apiOperations/accounts/unlockCreditOperation")
 	@Consumes({"application/json"})
 	@Produces({"application/json"})
-	 public Response  unlockCreditOperation(@Null @HeaderParam("legacy-id") String legacyid,
-				@NotNull(message = "client-id may not be null") @HeaderParam("client-id") String clientid,
-				@NotNull(message = "uuid may not be null") @HeaderParam("uuid") String uuid,
-				@Null @HeaderParam("x-apigw-api-id") String xapigwapiid,
+	 public Response  unlockCreditOperation(
+		     @NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			 @NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			 @NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			 @NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
 			 RequestUnlockCreditOperation inRequestUnlockCreditOperation ){
 	LOGGER.logDebug("Start service execution REST: unlockCreditOperation");
 	ResponseUnlockCreditOperation outResponseUnlockCreditOperation  = new ResponseUnlockCreditOperation();
@@ -1592,7 +1593,8 @@ public class ServiceContractOperationsApiRest {
 	}
 	  
 	try {
-	outResponseUnlockCreditOperation=iServiceContractOperationsApiService.unlockCreditOperation(xapigwapiid,legacyid,clientid,uuid, inRequestUnlockCreditOperation );
+	outResponseUnlockCreditOperation=iServiceContractOperationsApiService
+				.unlockCreditOperation(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestUnlockCreditOperation );
 	} catch (CTSRestException e) {
 	LOGGER.logError("CTSRestException",e);
 	if ("404".equals(e.getMessage())) {
@@ -3041,7 +3043,8 @@ public class ServiceContractOperationsApiRest {
 			ReverseOperationResponse outSingleReverseOperationResponse;
 
 	      	try {
-	      		outSingleReverseOperationResponse=iServiceContractOperationsApiService.reverseCreditOperation(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inReverseOperationRequest );
+	      		outSingleReverseOperationResponse=iServiceContractOperationsApiService
+									.reverseCreditOperation(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inReverseOperationRequest );
 			} catch (CTSRestException e) {
 				if (LOGGER.isErrorEnabled()) LOGGER.logError("CTSRestException", e);
 				if ("404".equals(e.getMessage())) {

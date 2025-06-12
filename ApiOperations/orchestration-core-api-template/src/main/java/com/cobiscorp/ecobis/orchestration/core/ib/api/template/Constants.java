@@ -59,4 +59,9 @@ public class Constants {
     public static final String CENTRAL_ERROR_MSG_OP = "centralErrorMsgOp";
     public static final String LOCAL_ERROR_CODE = "localErrorCode";
     public static final String LOCAL_ERROR_MSG = "localErrorMsg";
+
+    public static final int DEAULT_ERROR = 50061;
+    public static final String DEAULT_ERROR_MSG = "Error in consignment credit operation.";
+    public static final String PULL_ORIGIN_CODE = "PULL";
+    public static final String PUSH_ORIGIN_CODE = "PUSH";
 }

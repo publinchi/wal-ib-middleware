@@ -5010,23 +5010,39 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
     */
     @Override
 	//Have DTO
-	public ResponseUnlockCreditOperation unlockCreditOperation(	String xapigwapiid, String legacyid, String clientid,
-            													String uuid, RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException{
+	public ResponseUnlockCreditOperation unlockCreditOperation(	String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+                                                                RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException{
 		LOGGER.logDebug("Start service execution: unlockCreditOperation");
 		ResponseUnlockCreditOperation outResponseUnlockCreditOperation  = new ResponseUnlockCreditOperation();
 		
 		//create procedure
 		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_consignment_operations");
+
+        if (xRequestId==null || xRequestId.equals("null") || xRequestId.isEmpty()) {
+            xRequestId = "E";
+        }
+
+        if (xEndUserRequestDateTime==null || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (xEndUserIp==null ||xEndUserIp.equals("null") || xEndUserIp.isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (xChannel==null || xChannel.equals("null") || xChannel.isEmpty()) {
+            xChannel = "8";
+        }
 		
 		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18701001");
 		procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()));
 		procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber());
 		procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber());
 		procedureRequestAS.addInputParam("@i_movementId",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getMovementId());
-		procedureRequestAS.addInputParam("@x_legacy-id", ICTSTypes.SQLVARCHAR, legacyid);
-		procedureRequestAS.addInputParam("@x_apigw-api-id", ICTSTypes.SQLVARCHAR, xapigwapiid);
-		procedureRequestAS.addInputParam("@x_client-id", ICTSTypes.SQLVARCHAR, clientid);
-		procedureRequestAS.addInputParam("@x_uuid", ICTSTypes.SQLVARCHAR, uuid);
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
 		procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "unlock");
 		//execute procedure
 		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
@@ -5046,73 +5062,38 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		//Init map returns
 		int mapTotal=0;
 		int mapBlank=0;
-		
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(0).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUnlockCreditOperation>() { 
-		              @Override
-		              public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
-		              
-		                    dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseUnlockCreditOperation.setSuccess(returnResponseUnlockCreditOperation.isSuccess());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(1).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(1), new RowMapper<ResponseUnlockCreditOperation>() { 
-		              @Override
-		              public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
-		              
-		                    dto.setMovementId(resultSetMapper.getInteger(1));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseUnlockCreditOperation.setMovementId(returnResponseUnlockCreditOperation.getMovementId());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
-		    
-		      mapTotal++;
-		      if (response.getResultSets()!=null&&response.getResultSets().get(2).getData().getRows().size()>0) {	
-									//---------NO Array
-									ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(2), new RowMapper<ResponseUnlockCreditOperation>() { 
-		              @Override
-		              public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
-		              ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
-		              
-								dto.responseInstance().setCode(resultSetMapper.getInteger(1));
-								dto.responseInstance().setMessage(resultSetMapper.getString(2));
-		              return dto;
-		              }
-		              },false);
-		
-		              outResponseUnlockCreditOperation.setResponse(returnResponseUnlockCreditOperation.getResponse());
-		                  // break;
-		                
-		      }else {
-		      mapBlank++;
-		
-		      }
+        
+        mapTotal++;
+        if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+            // ----------------Assume Array return
+            ResponseUnlockCreditOperation returnResponseUnlockCreditOperation = MapperResultUtil
+                    .mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ResponseUnlockCreditOperation>() {
+                        @Override
+                        public ResponseUnlockCreditOperation mapRow(ResultSetMapper resultSetMapper, int index) {
+                            ResponseUnlockCreditOperation dto = new ResponseUnlockCreditOperation();
+
+                            String movementIdS = resultSetMapper.getString(4);
+                            Integer movementId = null;
+                            if(movementIdS != null){
+                                movementId = Integer.parseInt(movementIdS);
+                            }
+
+                            dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                            dto.setMovementId(movementId);
+                            dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+                            dto.responseInstance().setMessage(resultSetMapper.getString(3));
+                            return dto;
+                        }
+                    }, false);
+            outResponseUnlockCreditOperation = returnResponseUnlockCreditOperation;
+
+        } else {
+            mapBlank++;
+
+        }
 		    
 		//End map returns
-		if(mapBlank!=0&&mapBlank==mapTotal){
+		if(mapBlank!=0 && mapBlank==mapTotal){
 		LOGGER.logDebug("No data found");
 		throw new CTSRestException("404",null);
 		}
@@ -9191,8 +9172,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 dto.setMovementId(resultSetMapper.getString(4));
                 dto.responseInstance().setCode(resultSetMapper.getInteger(2));
                 dto.responseInstance().setMessage(resultSetMapper.getString(3));
-                dto.supplementaryDataInstance().setKey(resultSetMapper.getString(5));
-                dto.supplementaryDataInstance().setValue(resultSetMapper.getString(6));
+
+                if (resultSetMapper.getString(5) != null && resultSetMapper.getString(6) != null) {
+                    SupplementaryDataResponse supplementaryDataResponse = new SupplementaryDataResponse();
+                    supplementaryDataResponse.setKey(resultSetMapper.getString(5));
+                    supplementaryDataResponse.setValue(resultSetMapper.getString(6));
+                    dto.setSupplementaryData(new SupplementaryDataResponse[] { supplementaryDataResponse });
+                }
+
                 return dto;
             });
             outSingleReverseOperationResponse = returnReverseOperationResponse ;
