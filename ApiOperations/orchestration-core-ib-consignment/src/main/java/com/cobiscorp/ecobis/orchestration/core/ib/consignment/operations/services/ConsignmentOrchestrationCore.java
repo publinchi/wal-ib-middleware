@@ -155,6 +155,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         ParameterValidationUtil[] validations;
 
         if(Constants.CONSIGNMENT_CREDIT.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY, ErrorCode.E40030),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40082),
@@ -176,6 +178,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             };
         } 
         else if(Constants.CONSIGNMENT_UNLOCK.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "UNLOCK_CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY,  ErrorCode.E40130),
@@ -184,6 +188,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             };
         } 
         else if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "REVERSAL_CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40130),
@@ -243,7 +249,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.setSpName("cob_ahorros..sp_ahconsignment");
         centralTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
         centralTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_CENTRAL);
-        centralTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.NO);
+        centralTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
         centralTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(TRN_CONSIGNMENT_CREDIT));
         
         String rty = "N"; // N = Normal, S = Reentry
@@ -327,7 +333,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         localTransactionRequest.setSpName("cob_ahorros..sp_ahconsignment_local");
         localTransactionRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
         localTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
-        localTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.NO);
+        localTransactionRequest.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, ICOBISTS.YES);
         localTransactionRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, String.valueOf(TRN_CONSIGNMENT_CREDIT));
         
         String rty = "N"; // N = Normal, S = Reentry
