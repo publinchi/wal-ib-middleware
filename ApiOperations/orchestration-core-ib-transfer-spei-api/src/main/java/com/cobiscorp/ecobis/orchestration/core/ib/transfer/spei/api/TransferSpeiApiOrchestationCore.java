@@ -1024,35 +1024,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         try {
             executeStepsTransactionsBase(request, aBagSPJavaOrchestration);
-            ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
-            String secuential= "";
-            String codeAcc = (String) aBagSPJavaOrchestration.getOrDefault(Constants.I_CODIGO_ACC, "0");
-            codeAcc = codeAcc != null ? codeAcc : "0";
-            String reverse = (String) aBagSPJavaOrchestration.getOrDefault(Constants.REVERSE, "N");
-            aBagSPJavaOrchestration.put("@i_nombre_beneficiario", request.readValueParam("@i_nombre_beneficiario")); 
-			
-            if (serverResponse.getOnLine()) {
-				secuential = aRequest.readValueParam("@o_referencia");
-			} else {
-				request.readValueParam("@s_ssn");
-			}
-            String secBranch = request.readValueParam("@s_ssn_branch");
-            String referenceNumber = request.readValueParam("@i_reference_number");
-            String cuentaDestino = request.readValueParam(Constants.I_CUENTA_DESTINO);
-            String bancoDestino = (String) aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO);
-            String status = "S".equals(reverse) ? "F" : "P";
-            String requestId = aRequest.readValueParam("@x_request_id");
-            SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
-
-            Map<String, String> additionalData = createAdditionalData(aBagSPJavaOrchestration, codeAcc, secuential, secBranch, referenceNumber, cuentaDestino, bancoDestino, status, requestId);
-
-            if ("S".equals(reverse)) {
-            	handleReverseTransaction(saveAdditional, additionalData, aBagSPJavaOrchestration, serverResponse.getOnLine());
-            } else {
-                savePendingTransaction(saveAdditional, additionalData,serverResponse.getOnLine());
-            }
-
-  
+            aBagSPJavaOrchestration.put("codigoAcc", aBagSPJavaOrchestration.getOrDefault(Constants.I_CODIGO_ACC, "0"));
+            aBagSPJavaOrchestration.put("@i_nombre_beneficiario", request.readValueParam("@i_nombre_beneficiario"));
+            aBagSPJavaOrchestration.put("cuentaDestino", request.readValueParam(Constants.I_CUENTA_DESTINO));
 
         } catch (CTSServiceException e) {
 
@@ -1079,8 +1053,37 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         return responseTransferSpei;*/
     }
 
+    private void datosAdicionales(IProcedureResponse anOriginalProcedureRes, IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+    	 ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+    	   	 
+         String secuential= "";
+         String codeAcc = (String) aBagSPJavaOrchestration.getOrDefault("codigoAcc", "0");
+         codeAcc = codeAcc != null ? codeAcc : "0";
+         String reverse = (String) aBagSPJavaOrchestration.getOrDefault(Constants.REVERSE, "N");
+			
+         if (serverResponse.getOnLine()) {
+				secuential = anOriginalProcedureRes.readValueParam("@o_referencia");
+			} else {
+				secuential = aRequest.readValueParam("@s_ssn");
+			}
+         String secBranch = aRequest.readValueParam("@s_ssn_branch");
+         String referenceNumber = aRequest.readValueParam("@i_reference_number");
+         String cuentaDestino = (String)aBagSPJavaOrchestration.get("cuentaDestino");
+         String bancoDestino = (String) aBagSPJavaOrchestration.get(Constants.I_BANCO_DESTINO);
+         String status = "S".equals(reverse) ? "F" : "P";
+         String requestId = aRequest.readValueParam("@x_request_id");
+         SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
+
+         Map<String, String> additionalData = createAdditionalData(aBagSPJavaOrchestration, codeAcc, secuential, secBranch, referenceNumber, cuentaDestino, bancoDestino, status, requestId);
+
+         if ("S".equals(reverse)) {
+         	handleReverseTransaction(saveAdditional, additionalData, aBagSPJavaOrchestration, serverResponse.getOnLine());
+         } else {
+             savePendingTransaction(saveAdditional, additionalData,serverResponse.getOnLine());
+         }
+    }
     private Map<String, String> createAdditionalData( Map<String, Object> aBagSPJavaOrchestration, String codeAcc, String secuential, String secBranch, String referenceNumber, String cuentaDestino, String bancoDestino, String status, String clientRequestId) {
-        Map<String, String> additionalData = new HashMap<String, String>();
+        Map<String, String> additionalData = new HashMap<>();
         additionalData.put(Constants.SECUENTIAL, secuential);
         additionalData.put("codeAcc", codeAcc);
         additionalData.put("referenceNumber", referenceNumber);
@@ -1091,7 +1094,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId, "TRANSACTION_PENDING"));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId));
 
         return additionalData;
     }
@@ -1168,7 +1171,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 		if (codeReturn == 0 || codeReturn == 50000 || codeReturn == 1) {
 			if (null != movementId) {
 				IProcedureResponse responseDataSpei = getDataSpei(movementId, aBagSPJavaOrchestration);
-				
+				datosAdicionales(anOriginalProcedureRes, anOriginalRequest, aBagSPJavaOrchestration);
 				Boolean successConnector = (Boolean)aBagSPJavaOrchestration.get(SUCCESS_CONNECTOR);
 				if (successConnector) {
 					
