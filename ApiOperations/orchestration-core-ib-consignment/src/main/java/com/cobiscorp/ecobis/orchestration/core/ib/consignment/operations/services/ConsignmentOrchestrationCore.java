@@ -155,6 +155,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         ParameterValidationUtil[] validations;
 
         if(Constants.CONSIGNMENT_CREDIT.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY, ErrorCode.E40030),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40082),
@@ -176,6 +178,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             };
         } 
         else if(Constants.CONSIGNMENT_UNLOCK.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "UNLOCK_CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY,  ErrorCode.E40130),
@@ -184,6 +188,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             };
         } 
         else if(Constants.CONSIGNMENT_REFUND.equals(servicio)) {
+            aBagSPJavaOrchestration.put("process", "REVERSAL_CREDIT_OPERATION");
+
             validations = new ParameterValidationUtil[]{
                 new ParameterValidationUtil("@i_externalCustomerId", ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil("@i_accountNumber", ValidationType.NOT_EMPTY, ErrorCode.E40130),
