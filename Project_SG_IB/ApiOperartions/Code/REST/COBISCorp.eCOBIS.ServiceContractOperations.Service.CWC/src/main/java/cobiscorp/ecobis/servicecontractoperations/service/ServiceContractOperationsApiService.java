@@ -9191,8 +9191,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 dto.setMovementId(resultSetMapper.getString(4));
                 dto.responseInstance().setCode(resultSetMapper.getInteger(2));
                 dto.responseInstance().setMessage(resultSetMapper.getString(3));
-                dto.supplementaryDataInstance().setKey(resultSetMapper.getString(5));
-                dto.supplementaryDataInstance().setValue(resultSetMapper.getString(6));
+
+                if (resultSetMapper.getString(5) != null && resultSetMapper.getString(6) != null) {
+                    SupplementaryDataResponse supplementaryDataResponse = new SupplementaryDataResponse();
+                    supplementaryDataResponse.setKey(resultSetMapper.getString(5));
+                    supplementaryDataResponse.setValue(resultSetMapper.getString(6));
+                    dto.setSupplementaryData(new SupplementaryDataResponse[] { supplementaryDataResponse });
+                }
+
                 return dto;
             });
             outSingleReverseOperationResponse = returnReverseOperationResponse ;
