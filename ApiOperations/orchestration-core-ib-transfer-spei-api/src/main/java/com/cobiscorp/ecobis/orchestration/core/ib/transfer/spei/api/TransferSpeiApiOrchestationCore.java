@@ -1025,12 +1025,17 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         try {
             executeStepsTransactionsBase(request, aBagSPJavaOrchestration);
             ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
-            
+            String secuential= "";
             String codeAcc = (String) aBagSPJavaOrchestration.getOrDefault(Constants.I_CODIGO_ACC, "0");
             codeAcc = codeAcc != null ? codeAcc : "0";
             String reverse = (String) aBagSPJavaOrchestration.getOrDefault(Constants.REVERSE, "N");
             aBagSPJavaOrchestration.put("@i_nombre_beneficiario", request.readValueParam("@i_nombre_beneficiario")); 
-            String secuential = request.readValueParam("@s_ssn");
+			
+            if (serverResponse.getOnLine()) {
+				secuential = aRequest.readValueParam("@o_referencia");
+			} else {
+				request.readValueParam("@s_ssn");
+			}
             String secBranch = request.readValueParam("@s_ssn_branch");
             String referenceNumber = request.readValueParam("@i_reference_number");
             String cuentaDestino = request.readValueParam(Constants.I_CUENTA_DESTINO);
@@ -1086,7 +1091,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId, "TRANSACTION_PENDING"));
 
         return additionalData;
     }
