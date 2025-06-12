@@ -233,6 +233,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		}
 		String showFailed = anOriginalRequest.readValueParam("@i_show_failed") != null ? anOriginalRequest.readValueParam("@i_show_failed") : "N";
 		aBagSPJavaOrchestration.put("DATE_FILTER", ( minDate == null ||  maxDate  == null) ? "N" : "S");
+		aBagSPJavaOrchestration.put(INRO_REGISTRO+"_ORG", anOriginalRequest.readValueParam(INRO_REGISTRO));
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
@@ -780,13 +781,18 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		int numberOfResults = 0;
 		int totalNumberOfResults = 0;
 		int numberOfResultsSuccess = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
-		int numberOfResultsShow;
+		int numberOfResultsShow = 0 ;
 
-		if(aBagSPJavaOrchestration.get(INRO_REGISTRO)==null || aBagSPJavaOrchestration.get(INRO_REGISTRO).toString().trim().isEmpty()){
-			numberOfResultsShow = 10;
+		if((aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG")==null ||
+				aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG").equals("null"))
+		){
+			if(aBagSPJavaOrchestration.get("DATE_FILTER")=="S")
+				numberOfResultsShow = 100;
+			else
+				numberOfResultsShow = 10;
 		}
 		else{
-			numberOfResultsShow = Integer.parseInt((String) aBagSPJavaOrchestration.get(INRO_REGISTRO));
+			numberOfResultsShow = Integer.parseInt((String) aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG"));
 			numberOfResultsShow = Math.min(numberOfResultsShow, 50);
 		}
 
@@ -796,9 +802,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
 			numberOfResults =  numberOfResultsSuccess + anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
 			numberOfResultsShow = Math.min(numberOfResultsShow, numberOfResults);
-			if (Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros")) > 0){
+			numberOfResults = numberOfResultsShow;
+			totalNumberOfResults = numberOfResults;
+			if (aBagSPJavaOrchestration.get("DATE_FILTER")=="S"){
 				totalNumberOfResults = numberOfResultsSuccess + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
 			}
+		}
+		else{
+			numberOfResults =  numberOfResultsSuccess;
 		}
 
 
@@ -953,19 +964,34 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 			List<MovementDetails> movementDetailsList = getMovementsDetails(anOriginalProcedureRes);
 			List<MovementDetails> failedMovementDetailsList = new ArrayList<MovementDetails>();
-			logger.logDebug("APA success res: " + movementDetailsList.toString());
+			logger.logDebug("Query success movement response: " + movementDetailsList.toString());
 			if(showFailed){
 				failedMovementDetailsList = getFailedMovementsDetails(anOriginalProcedureResF);
-				logger.logDebug("APA failed res: " + failedMovementDetailsList.toString());
-				movementDetailsList.addAll(failedMovementDetailsList);
-				if ("DESC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
-					movementDetailsList.sort((m1, m2) -> m2.getTransactionDate().compareTo(m1.getTransactionDate()));
-				} else {
-					movementDetailsList.sort((m1, m2) -> m1.getTransactionDate().compareTo(m2.getTransactionDate()));
+				logger.logDebug("Query failed movement response: " + failedMovementDetailsList.toString());
+				if (movementDetailsList.size()>0)
+					movementDetailsList.addAll(failedMovementDetailsList);
+				else
+					movementDetailsList = failedMovementDetailsList;
+				if("ASC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
+					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
+						public int compare(MovementDetails m1, MovementDetails m2) {
+							return m1.getTransactionDate().compareTo(m2.getTransactionDate());
+						}
+					});
+				}
+				else{
+					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
+						public int compare(MovementDetails m1, MovementDetails m2) {
+							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
+						}
+					});
 				}
 
-				cutList(movementDetailsList, numberOfResultsShow);
-				logger.logDebug("APA all res: " + movementDetailsList.toString());
+				if (movementDetailsList.size() > numberOfResultsShow) {
+					movementDetailsList.subList(numberOfResultsShow, movementDetailsList.size()).clear();
+				}
+
+				logger.logDebug("Query all movement response: " + movementDetailsList.toString());
 			}
 
 			for(MovementDetails movementDetails : movementDetailsList){
@@ -2143,12 +2169,6 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	}
 
 
-	public static void cutList(List<MovementDetails> list, int maxIndex) {
-		if (list.size() > maxIndex + 1) {
-			List<MovementDetails> subList = list.subList(0, maxIndex + 1);
-			list.clear();
-			list.addAll(subList);
-		}
-	}
+
 
 }
