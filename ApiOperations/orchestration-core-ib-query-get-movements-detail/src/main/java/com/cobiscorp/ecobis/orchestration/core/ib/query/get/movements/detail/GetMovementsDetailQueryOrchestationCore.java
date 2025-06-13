@@ -875,8 +875,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
 		//AccountStatementArray
-		if (anOriginalProcedureRes != null
-				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
+		if ((anOriginalProcedureRes != null &&anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0 )||
+				anOriginalProcedureResF != null && anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length > 0) {
 
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(
@@ -968,10 +968,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			if(showFailed){
 				failedMovementDetailsList = getFailedMovementsDetails(anOriginalProcedureResF);
 				logger.logDebug("Query failed movement response: " + failedMovementDetailsList.toString());
-				if (movementDetailsList.size()>0)
+				if (!movementDetailsList.isEmpty()) {
 					movementDetailsList.addAll(failedMovementDetailsList);
-				else
+				}
+				else {
 					movementDetailsList = failedMovementDetailsList;
+				}
 				if("ASC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
 					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
 						public int compare(MovementDetails m1, MovementDetails m2) {
