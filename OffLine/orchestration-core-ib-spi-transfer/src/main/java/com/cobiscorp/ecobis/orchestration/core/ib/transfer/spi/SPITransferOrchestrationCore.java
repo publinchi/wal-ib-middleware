@@ -180,7 +180,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
             
             String codeAcc = (String) aBagSPJavaOrchestration.getOrDefault(Constants.I_CODIGO_ACC, "0");
             String reverse = (String) aBagSPJavaOrchestration.getOrDefault(Constants.REVERSE, "N");
-            String secuential =  (String) anOriginalRequest.readValueParam("@i_id");
+            String secuential = anOriginalRequest.readValueParam("@i_id");
             String secBranch = anOriginalRequest.readValueParam("@s_ssn_branch");
             String referenceNumber = anOriginalRequest.readValueParam("@i_reference_number");
             String cuentaDestino = anOriginalRequest.readValueParam(Constants.I_CUENTA_DESTINO);
@@ -189,22 +189,10 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
             String requestId = anOriginalRequest.readValueParam("@x_request_id");
             aBagSPJavaOrchestration.put(Constants.I_CLAVE_RASTREO, anOriginalRequest.readValueParam("@i_clave_rastreo_connection")); 
             aBagSPJavaOrchestration.put("@i_nombre_beneficiario", anOriginalRequest.readValueParam("@i_nombre_beneficiario")); 
-            if (codeAcc == null) {logger.logInfo("codeAcc es nulo--->");}  else {logger.logInfo("codeAcc --->" + codeAcc);};
-            if (reverse == null) {logger.logInfo("reverse es nulo--->");}  else {logger.logInfo("reverse --->" + reverse);};
-            if (secuential == null) {logger.logInfo("secuential es nulo--->");}  else {logger.logInfo("secuential --->" + secuential);};
-            if (secBranch == null) {logger.logInfo("secBranch es nulo--->");}  else {logger.logInfo("secBranch --->" + secBranch);};
-            if (referenceNumber == null) {logger.logInfo("referenceNumber es nulo--->");}  else {logger.logInfo("referenceNumber --->" + referenceNumber);};
-            if (cuentaDestino == null) {logger.logInfo("cuentaDestino es nulo--->");}  else {logger.logInfo("cuentaDestino --->" + cuentaDestino);};
-            if (bancoDestino == null) {logger.logInfo("bancoDestino es nulo--->");}  else {logger.logInfo("bancoDestino --->" + bancoDestino);};
-            if (status == null) {logger.logInfo("status es nulo--->");}  else {logger.logInfo("status --->" + status);};
-            if (requestId == null) {logger.logInfo("requestId es nulo--->");}  else {logger.logInfo("requestId --->" + requestId);};
-            
-            
+       
             SaveAdditionalDataImpl saveAdditional = new SaveAdditionalDataImpl();
 
             Map<String, String> additionalData = createAdditionalData(aBagSPJavaOrchestration, codeAcc, secuential, secBranch, referenceNumber, cuentaDestino, bancoDestino, status, requestId);
-
-            logger.logInfo("FHU additionalData --->" + additionalData);
 
             if ("S".equals(reverse)) {
             	handleReverseTransaction(saveAdditional, additionalData, aBagSPJavaOrchestration, serverResponse.getOnLine());
@@ -237,7 +225,7 @@ public class SPITransferOrchestrationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, beneficiary, secuential, bancoDestino, clientRequestId));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino, beneficiary, secuential, bancoDestino, clientRequestId, "TRANSACTION_PENDING"));
 
         return additionalData;
     }

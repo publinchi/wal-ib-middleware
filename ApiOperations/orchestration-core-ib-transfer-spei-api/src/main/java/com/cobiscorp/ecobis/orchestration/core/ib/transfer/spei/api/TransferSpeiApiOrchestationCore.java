@@ -1094,7 +1094,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         additionalData.put(Constants.TRANSACTION, Constants.TRN_18500115);
         additionalData.put(Constants.MOVEMENT_TYPE, "SPEI_PENDING");
         additionalData.put("data", String.join("|", status, codeAcc, 
-           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId));
+           (String) aBagSPJavaOrchestration.get(Constants.I_CLAVE_RASTREO), referenceNumber, cuentaDestino,(String) aBagSPJavaOrchestration.get("@i_nombre_beneficiario"), secuential, bancoDestino, clientRequestId, "TRANSACTION_PENDING"));
 
         return additionalData;
     }

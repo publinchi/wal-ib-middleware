@@ -217,7 +217,23 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 
 
+		String minDate = anOriginalRequest.readValueParam("@i_fecha_ini");
+		String maxDate = anOriginalRequest.readValueParam("@i_fecha_fin");
+
+
+		if(minDate == null || minDate.equals("null")){
+			minDate  = null;
+		} else if (!minDate.isEmpty() && !isDate(minDate)) {
+			minDate = null;
+		}
+		if(maxDate == null || maxDate.equals("null")){
+			maxDate  = null;
+		} else if (!maxDate.isEmpty() && !isDate(maxDate)) {
+			maxDate = null;
+		}
 		String showFailed = anOriginalRequest.readValueParam("@i_show_failed") != null ? anOriginalRequest.readValueParam("@i_show_failed") : "N";
+		aBagSPJavaOrchestration.put("DATE_FILTER", ( minDate == null ||  maxDate  == null) ? "N" : "S");
+		aBagSPJavaOrchestration.put(INRO_REGISTRO+"_ORG", anOriginalRequest.readValueParam(INRO_REGISTRO));
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
@@ -296,7 +312,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				IProcedureResponse failedMovementDetails = getFailedMovementsDetail(anOriginalRequest);
 				aBagSPJavaOrchestration.put("RESPONSE_FAILED_MOVEMENTS",failedMovementDetails);
 			}
-			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamieto"));
+			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamiento"));
+			aBagSPJavaOrchestration.put(INRO_REGISTRO,anOriginalRequest.readValueParam(INRO_REGISTRO));
 		}
 
 		if (anProcedureResponse.getResultSets().size()>2) {
@@ -465,7 +482,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
 		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
 		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
-		request.addInputParam("@i_ordenamiento", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ordenamiento")!= null?aRequest.readValueParam("@i_ordenamiento"):"DESC");
+		request.addInputParam("@i_ordenamiento", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ordenamiento")!= null ? aRequest.readValueParam("@i_ordenamiento"):"DESC");
 
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
 		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
@@ -761,15 +778,38 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anOriginalProcedureResF = null;
 		boolean showFailed = false;
 
-		int numberOfResults = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
+		int numberOfResults = 0;
 		int totalNumberOfResults = 0;
+		int numberOfResultsSuccess = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
+		int numberOfResultsShow = 0 ;
+
+		if((aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG")==null ||
+				aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG").equals("null"))
+		){
+			if(aBagSPJavaOrchestration.get("DATE_FILTER")=="S")
+				numberOfResultsShow = 100;
+			else
+				numberOfResultsShow = 10;
+		}
+		else{
+			numberOfResultsShow = Integer.parseInt((String) aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG"));
+			numberOfResultsShow = Math.min(numberOfResultsShow, 50);
+		}
 
 
 		if(aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null){
 			showFailed = true;
 			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
-			numberOfResults += anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
-			totalNumberOfResults = numberOfResults + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+			numberOfResults =  numberOfResultsSuccess + anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
+			numberOfResultsShow = Math.min(numberOfResultsShow, numberOfResults);
+			numberOfResults = numberOfResultsShow;
+			totalNumberOfResults = numberOfResults;
+			if (aBagSPJavaOrchestration.get("DATE_FILTER")=="S"){
+				totalNumberOfResults = numberOfResultsSuccess + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+			}
+		}
+		else{
+			numberOfResults =  numberOfResultsSuccess;
 		}
 
 
@@ -835,8 +875,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
 		//AccountStatementArray
-		if (anOriginalProcedureRes != null
-				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
+		if ((anOriginalProcedureRes != null &&anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0 )||
+				anOriginalProcedureResF != null && anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length > 0) {
 
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(
@@ -924,26 +964,36 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 			List<MovementDetails> movementDetailsList = getMovementsDetails(anOriginalProcedureRes);
 			List<MovementDetails> failedMovementDetailsList = new ArrayList<MovementDetails>();
-			logger.logDebug("APA success res: " + movementDetailsList.toString());
+			logger.logDebug("Query success movement response: " + movementDetailsList.toString());
 			if(showFailed){
 				failedMovementDetailsList = getFailedMovementsDetails(anOriginalProcedureResF);
-				logger.logDebug("APA failed res: " + failedMovementDetailsList.toString());
-				movementDetailsList.addAll(failedMovementDetailsList);
-				if("DESC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
-					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
-						public int compare(MovementDetails m1, MovementDetails m2) {
-							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
-						}
-					});
+				logger.logDebug("Query failed movement response: " + failedMovementDetailsList.toString());
+				if (!movementDetailsList.isEmpty()) {
+					movementDetailsList.addAll(failedMovementDetailsList);
 				}
-				else{
+				else {
+					movementDetailsList = failedMovementDetailsList;
+				}
+				if("ASC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
 					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
 						public int compare(MovementDetails m1, MovementDetails m2) {
 							return m1.getTransactionDate().compareTo(m2.getTransactionDate());
 						}
 					});
 				}
-				logger.logDebug("APA all res: " + movementDetailsList.toString());
+				else{
+					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
+						public int compare(MovementDetails m1, MovementDetails m2) {
+							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
+						}
+					});
+				}
+
+				if (movementDetailsList.size() > numberOfResultsShow) {
+					movementDetailsList.subList(numberOfResultsShow, movementDetailsList.size()).clear();
+				}
+
+				logger.logDebug("Query all movement response: " + movementDetailsList.toString());
 			}
 
 			for(MovementDetails movementDetails : movementDetailsList){
@@ -1022,7 +1072,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
 					rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
 					rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
-					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()));
+					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
 				}
 				data0.addRow(rowDat);
 			}
@@ -1902,6 +1952,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
 					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
 					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setTransactionStatus(getAdditionalValue(additionalDataArray,9));
 					break;
 
 				case Constants.SPEI_CREDIT:
@@ -2118,5 +2169,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	public String getOperation(String cuenta) {
 		return cuenta.contains("*") ? "X":"A";
 	}
+
+
+
 
 }
