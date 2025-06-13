@@ -79,7 +79,6 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         }
 
         aBagSPJavaOrchestration.put(Constants.ORIGINAL_REQUEST, anOriginalRequest);
-        aBagSPJavaOrchestration.put(Constants.CAUSA, "10"); // TODO validar causa
         aBagSPJavaOrchestration.put(Constants.IS_ONLINE, false);
 
         try {
@@ -237,6 +236,25 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             throw new ApplicationException(errorCode, errorMessage);
         }
 
+        String rty = "N"; // N = Normal, S = Reentry
+        if ((boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
+            rty = "S";
+        }
+
+        String tipoEject = "F"; // F = Offline, L = Online
+        if ((boolean)aBagSPJavaOrchestration.get(Constants.IS_ONLINE)) {
+            tipoEject = "L";
+        }
+
+        if("F".equals(tipoEject) && "N".equals(rty)) {
+            IProcedureResponse procedureResponse;
+
+            procedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
+            if (logger.isDebugEnabled()) {
+                logger.logDebug("Response [saveReentry]: " + procedureResponse.getProcedureResponseAsString());
+            }
+        }
+
         return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
     }
 
@@ -299,6 +317,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addOutputParam("@o_ssn_host", ICTSTypes.SQLINT4, "0");
         centralTransactionRequest.addOutputParam("@o_error", ICTSTypes.SQLINT4, "0");
         centralTransactionRequest.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
+        centralTransactionRequest.addOutputParam("@o_causa", ICTSTypes.SQLVARCHAR, "0");
+        centralTransactionRequest.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
 
@@ -317,7 +337,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         }
         else if("1".equals(operacion)) {
             String ssnHost = centralProcedureResponse.readValueParam("@o_ssn_host");
+            String causa = centralProcedureResponse.readValueParam("@o_causa");
             aBagSPJavaOrchestration.put(Constants.SSN_HOST, ssnHost);
+            aBagSPJavaOrchestration.put(Constants.CAUSA, causa);
         }
 
         aBagSPJavaOrchestration.put(Constants.CENTRAL_RESPONSE_OP + operacion, centralProcedureResponse);

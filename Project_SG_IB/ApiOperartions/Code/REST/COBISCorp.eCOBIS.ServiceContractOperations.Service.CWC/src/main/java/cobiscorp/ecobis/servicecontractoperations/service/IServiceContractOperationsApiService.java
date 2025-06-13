@@ -388,8 +388,8 @@ public interface IServiceContractOperationsApiService {
      */
    
 	//Have DTO
-	public ResponseUnlockCreditOperation unlockCreditOperation(String xapigwapiid, String legacyid, String clientid,
-				String uuid, RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException;
+	public ResponseUnlockCreditOperation unlockCreditOperation(	String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+                                                                RequestUnlockCreditOperation inRequestUnlockCreditOperation  )throws CTSRestException;
 		
 	/**
 	 * Update Account Status
@@ -474,4 +474,27 @@ public interface IServiceContractOperationsApiService {
 
 	
 	public  ReverseOperationResponse reverseCreditOperation(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, ReverseOperationRequest inReverseOperationRequest  )throws CTSRestException;
+
+	/**
+	 * Service to apply credit account only for remittances
+	 */
+
+	// Return list
+	public ConsignmentCreditResponse consignmentCredit(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+                                                   ConsignmentCreditRequest inCreditAccountRequest) throws CTSRestException;
+
+	/**
+     * It allows the unlocking of account values, which were credited by remittances.
+     */
+   
+	//Have DTO
+	public ConsignmentUnlockResponse consignmentUnlock(	String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+                                                        ConsignmentUnlockRequest inRequestUnlockCreditOperation  )throws CTSRestException;
+    
+	/**
+	 * Service to reverse credit account only for remittances
+	 */
+	public  ConsignmentReverseResponse consignmentReverse(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+												          ConsignmentReverseRequest inReverseOperationRequest  )throws CTSRestException;
+
 }
