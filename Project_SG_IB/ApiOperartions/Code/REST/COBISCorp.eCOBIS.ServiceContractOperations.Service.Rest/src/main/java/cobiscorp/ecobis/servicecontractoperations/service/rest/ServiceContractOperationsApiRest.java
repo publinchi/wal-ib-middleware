@@ -75,31 +75,17 @@ public class ServiceContractOperationsApiRest {
 		LOGGER.logDebug("Start service execution REST: creditOperation");
 		CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
 
-		// Validacion trn es de remesas
-        boolean trnRequest = inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero");
-        if(trnRequest) {
-        	if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
-					new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
-					new Data("amount", inCreditAccountRequest.getAmount()),
-					new Data("commission", inCreditAccountRequest.getCommission()),
-					new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()))) {
-				LOGGER.logDebug("400 is returned - Required fields are missing");
-				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-						.build();
-			}
-        }else {
-			if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
-					new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
-					new Data("amount", inCreditAccountRequest.getAmount()),
-					new Data("commission", inCreditAccountRequest.getCommission()),
-					new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
-					new Data("latitude", inCreditAccountRequest.getLatitude()),
-					new Data("longitude", inCreditAccountRequest.getLongitude()))) {
-				LOGGER.logDebug("400 is returned - Required fields are missing");
-				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-						.build();
-			}
-        }
+		if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
+				new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
+				new Data("amount", inCreditAccountRequest.getAmount()),
+				new Data("commission", inCreditAccountRequest.getCommission()),
+				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
+				new Data("latitude", inCreditAccountRequest.getLatitude()),
+				new Data("longitude", inCreditAccountRequest.getLongitude()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
 
 		try {
 			outSingleCreditAccountResponse = iServiceContractOperationsApiService
@@ -3008,30 +2994,17 @@ public class ServiceContractOperationsApiRest {
 			// Lista de parámetros obligatorios del cuerpo de la solicitud
 			List<Data> mandatoryFields = new ArrayList<>();
 			
-			// Validacion trn es de remesas
-	        boolean trnRequest = inReverseOperationRequest.getReversalConcept().contains("REMITTANCE_REVERSAL");
-	        if(trnRequest) {
-				mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
-				mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
-				mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
-				mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
-				mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
-				mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
-				mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
-	        }else {
-				mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
-				mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
-				mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
-				mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
-				mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
-				mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
-				mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
-				mandatoryFields.add(new Data("commission.amount", inReverseOperationRequest.getCommission().getAmount()));
-				mandatoryFields.add(new Data("commission.reason", inReverseOperationRequest.getCommission().getReason()));
-				mandatoryFields.add(new Data("commission.originalTransactionData.movementId", inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId()));
-				mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));	        	
-	        }
-
+			mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
+			mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+			mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
+			mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
+			mandatoryFields.add(new Data("commission.amount", inReverseOperationRequest.getCommission().getAmount()));
+			mandatoryFields.add(new Data("commission.reason", inReverseOperationRequest.getCommission().getReason()));
+			mandatoryFields.add(new Data("commission.originalTransactionData.movementId", inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId()));
+			mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));	        	
 
 			// Validar los parámetros del cuerpo
 			mandatoryHeaders.addAll(mandatoryFields);
@@ -3061,6 +3034,172 @@ public class ServiceContractOperationsApiRest {
 			}
 
 			if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution REST: reverseCreditOperation");
+			return Response.ok(outSingleReverseOperationResponse).build();
+		}
+
+	/**
+	 * Service to apply credit account only for remmitances.
+	 */
+	@POST
+	@Path("/apiOperations/accounts/consignmentCredit")
+	@Consumes({ "application/json" })
+	@Produces({ "application/json" })
+	public Response consignmentCredit(
+			@NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+		ConsignmentCreditRequest inCreditAccountRequest) {
+		LOGGER.logInfo("Start service execution REST: consignmentCredit");
+		ConsignmentCreditResponse outSingleCreditAccountResponse;
+
+		if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
+				new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
+				new Data("amount", inCreditAccountRequest.getAmount()),
+				new Data("commission", inCreditAccountRequest.getCommission()),
+				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
+				new Data("originCode", inCreditAccountRequest.getOriginCode()))) {
+			LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
+					.build();
+		}
+
+		try {
+			outSingleCreditAccountResponse = iServiceContractOperationsApiService
+					.consignmentCredit(xRequestId,xEndUserRequestDateTime, xEndUserIp, xChannel, inCreditAccountRequest);
+		} catch (CTSRestException e) {
+			LOGGER.logError("CTSRestException", e);
+			if ("404".equals(e.getMessage())) {
+				LOGGER.logDebug("404 is returned - No data found");
+				return Response.status(404).entity("No data found").build();
+			}
+
+			LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+			return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e) {
+			LOGGER.logDebug("500 is returned - Code exception");
+			LOGGER.logError("Exception", e);
+			return Response.status(500).entity(e.getMessage()).build();
+		}
+
+		LOGGER.logInfo("Ends service execution REST: consignmentCredit");
+		return Response.ok(outSingleCreditAccountResponse).build();
+
+	}
+
+	/**
+    * It allows the unlocking of account values, which were credited by remittances.
+    */
+	@POST
+	@Path("/apiOperations/accounts/consignmentUnlock")
+	@Consumes({"application/json"})
+	@Produces({"application/json"})
+	 public Response  consignmentUnlock(
+		     @NotNull(message = "x-request-id may not be null") @HeaderParam("x-request-id") String xRequestId,
+			 @NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+			 @NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
+			 @NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
+			 ConsignmentUnlockRequest inRequestUnlockCreditOperation ){
+		LOGGER.logInfo("Start service execution REST: consignmentUnlock");
+		ConsignmentUnlockResponse outResponseUnlockCreditOperation;
+
+		if(!validateMandatory(
+				new Data("originalTransactionData.externalCustomerId", inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()), 
+				new Data("originalTransactionData.accountNumber", inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber()), 
+				new Data("originalTransactionData.referenceNumber", inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber()), 
+				new Data("originalTransactionData.movementId", inRequestUnlockCreditOperation.getOriginalTransactionData().getMovementId()))) {
+		LOGGER.logDebug("400 is returned - Required fields are missing");
+		return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado").build();
+		}
+		
+		try {
+			outResponseUnlockCreditOperation=iServiceContractOperationsApiService
+					.consignmentUnlock(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inRequestUnlockCreditOperation);
+		} catch (CTSRestException e) {
+		LOGGER.logError("CTSRestException",e);
+		if ("404".equals(e.getMessage())) {
+		LOGGER.logDebug("404 is returned - No data found");
+		return Response.status(404).entity("No data found").build();
+		}
+		
+		LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+		return Response.status(409).entity(e.getMessageBlockList()).build();
+		} catch (Exception e){
+		LOGGER.logDebug("500 is returned - Code exception");
+		LOGGER.logError("Exception",e);
+		return Response.status(500).entity(e.getMessage()).build();
+		}
+	
+	    LOGGER.logInfo("Ends service execution REST: consignmentUnlock");
+	    return Response.ok(outResponseUnlockCreditOperation).build();
+	  
+	}	
+
+
+	/**
+	 * Service to apply reverse credit account only for remittances.
+	 */
+	@POST
+		@Path("/apiOperations/accounts/consignmentReverse")
+		@Consumes({"application/json"})
+		@Produces({"application/json"})
+		public Response  consignmentReverse(
+				   @Null @HeaderParam("x-request-id") String xRequestId,
+				   @Null @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
+				   @Null @HeaderParam("x-end-user-ip") String xEndUserIp,
+				   @Null @HeaderParam("x-channel") String xChannel,
+				   ConsignmentReverseRequest inReverseOperationRequest ){
+			if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: consignmentReverse");
+
+			// Lista de parámetros obligatorios del encabezado de la solicitud
+			List<Data> mandatoryHeaders = new ArrayList<>();
+			mandatoryHeaders.add(new Data("x-request-id", xRequestId));
+
+			// Validar los parámetros del encabezado
+			if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El encabezado de la solicitud no se encuentra debidamente formateado.").build();
+			}
+
+			// Lista de parámetros obligatorios del cuerpo de la solicitud
+			List<Data> mandatoryFields = new ArrayList<>();
+			
+			mandatoryFields.add(new Data("reversalConcept", inReverseOperationRequest.getReversalConcept()));
+			mandatoryFields.add(new Data("referenceNumber", inReverseOperationRequest.getReferenceNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.externalCustomerId", inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+			mandatoryFields.add(new Data("originalTransactionData.accountNumber", inReverseOperationRequest.getOriginalTransactionData().getAccountNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.referenceNumber", inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber()));
+			mandatoryFields.add(new Data("originalTransactionData.movementId", inReverseOperationRequest.getOriginalTransactionData().getMovementId()));
+			mandatoryFields.add(new Data("originalTransactionData.reversalReason", inReverseOperationRequest.getOriginalTransactionData().getReversalReason()));
+
+			// Validar los parámetros del cuerpo
+			mandatoryHeaders.addAll(mandatoryFields);
+			if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+				return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado.").build();
+			}
+
+			ConsignmentReverseResponse outSingleReverseOperationResponse;
+
+	      	try {
+	      		outSingleReverseOperationResponse=iServiceContractOperationsApiService
+									.consignmentReverse(xRequestId, xEndUserRequestDateTime, xEndUserIp, xChannel, inReverseOperationRequest );
+			} catch (CTSRestException e) {
+				if (LOGGER.isErrorEnabled()) LOGGER.logError("CTSRestException", e);
+				if ("404".equals(e.getMessage())) {
+					if (LOGGER.isDebugEnabled()) LOGGER.logDebug("404 is returned - No data found");
+					return Response.status(404).entity("No data found").build();
+				}
+
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("409 is returned - The stored procedure raise an error");
+				return Response.status(409).entity(e.getMessageBlockList()).build();
+			} catch (Exception e) {
+				if (LOGGER.isDebugEnabled()) LOGGER.logDebug("500 is returned - Code exception");
+				if (LOGGER.isErrorEnabled()) LOGGER.logError("Exception", e);
+				return Response.status(500).entity(e.getMessage()).build();
+			}
+
+			if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution REST: consignmentReverse");
 			return Response.ok(outSingleReverseOperationResponse).build();
 		}
 }
