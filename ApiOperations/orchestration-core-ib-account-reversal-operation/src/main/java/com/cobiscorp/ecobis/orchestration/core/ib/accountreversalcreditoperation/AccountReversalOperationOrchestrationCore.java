@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -81,9 +82,31 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		aBagSPJavaOrchestration.put(Constants.IS_ONLINE, false);
 		aBagSPJavaOrchestration.put(Constants.IS_ERRORS, false);
 		aBagSPJavaOrchestration.put(Constants.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
+        aBagSPJavaOrchestration.put(Constants.ORIGINAL_REQUEST,anOriginalRequest);
 
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(Constants.IS_REENTRY));
+		}
+
+		try {
+			ServerResponse serverResponse = serverStatus();
+			aBagSPJavaOrchestration.put(Constants.IS_ONLINE, serverResponse.getOnLine());
+			aBagSPJavaOrchestration.put(Constants.PROCESS_DATE, serverResponse.getProcessDate());
+
+			if(!validateContextTransacction(aBagSPJavaOrchestration,serverResponse.getOnLine() )) {
+				aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+				return Utils.returnException(this.MESSAGE_RESPONSE);
+			}
+		} catch (CTSServiceException | CTSInfrastructureException e) {
+			if (logger.isErrorEnabled()){
+				logger.logError("Error getting server status: " + e.toString());
+			}
+		}
+
+
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(Constants.IS_ONLINE));
 		}
 
 		if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
@@ -100,18 +123,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		if (validateParameters(aBagSPJavaOrchestration, anOriginalRequest))
 			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 
-		try {
-			ServerResponse serverResponse = serverStatus();
-			aBagSPJavaOrchestration.put(Constants.IS_ONLINE, serverResponse.getOnLine());
-			aBagSPJavaOrchestration.put(Constants.PROCESS_DATE, serverResponse.getProcessDate());
-		} catch (CTSServiceException | CTSInfrastructureException e) {
-			if (logger.isErrorEnabled()){
-				logger.logError("Error getting server status: " + e.toString());
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(Constants.IS_ONLINE));
-		}
+
 
 		aBagSPJavaOrchestration.put(Constants.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
@@ -148,62 +160,62 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		aBagSPJavaOrchestration.put("@i_originMovementId", movementIdOrigin);
 		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberOrigin);
 
-		if (reversalConcept.isEmpty()) {
+		if (Objects.isNull(reversalConcept) ||  reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
 			return true;
 		}
 
-		if (referenceNumber.isEmpty()) {
+	/*	if (referenceNumber.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40092", "referenceNumber must not be empty.");
 			return true;
-		}
+		}*/
 
-		if (externalCustomerIdOrigin <= 0) {
+		if (Objects.isNull(externalCustomerIdOrigin) || externalCustomerIdOrigin <= 0) {
 			setError(aBagSPJavaOrchestration, "40129", "originalTransactionData.externalCustomerId must be greater than 0.");
 			return true;
 		}
 
-		if (accountNumberOrigin.isEmpty()) {
+		if (Objects.isNull(accountNumberOrigin) || accountNumberOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40130", "originalTransactionData.accountNumber must not be empty.");
 			return true;
 		}
 
-		if (referenceNumberOrigin.isEmpty()) {
+		if (Objects.isNull(referenceNumberOrigin)  ||  referenceNumberOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40131", "originalTransactionData.referenceNumber must not be empty.");
 			return true;
 		}
 
-		if (referenceNumberOrigin.length() != 6) {
+		/*if (referenceNumberOrigin.length() != 6) {
 			setError(aBagSPJavaOrchestration, "40132", "originalTransactionData.referenceNumber must have 6 digits.");
 			return true;
-		}
+		}*/
 
-		if (movementIdOrigin.isEmpty()) {
+		if (Objects.isNull(movementIdOrigin) || movementIdOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40133", "originalTransactionData.movementId must not be empty.");
 			return true;
 		}
 
-		if (reversalReasonOrigin.isEmpty()) {
+		if (Objects.isNull(reversalReasonOrigin) || reversalReasonOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40134", "originalTransactionData.reversalReason must not be empty.");
 			return true;
 		}
 
-		if (amountCommission.compareTo(BigDecimal.ZERO) <= 0) {
+		if (Objects.isNull(amountCommission) || amountCommission.compareTo(BigDecimal.ZERO) <= 0) {
 			setError(aBagSPJavaOrchestration, "40135", "commission.amount must not be empty.");
 			return true;
 		}
 
-		if (reasonCommision.isEmpty()) {
+		if (Objects.isNull(reasonCommision) ||  reasonCommision.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40136", "commission.reason must not be empty.");
 			return true;
 		}
 
-		if (movementIdComOri.isEmpty()) {
+		if (Objects.isNull(movementIdComOri)  || movementIdComOri.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40137", "commission.originalTransactionData.movementId must not be empty.");
 			return true;
 		}
 
-		if (referenceNumberComOri.isEmpty()) {
+		if (Objects.isNull(referenceNumberComOri)  ||  referenceNumberComOri.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40138", "commission.originalTransactionData.referenceNumber must not be empty.");
 			return true;
 		}
