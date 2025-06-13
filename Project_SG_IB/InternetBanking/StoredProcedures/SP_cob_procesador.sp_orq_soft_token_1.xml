@@ -10,6 +10,8 @@
     <parameter name="@i_externalCustomerId" dataType="varchar" direction="in" />
     <parameter name="@i_authToken" dataType="varchar" direction="in" />
     <parameter name="@i_loginSessionId" dataType="varchar" direction="in" />
+    <parameter name="@i_data_browser" dataType="varchar" direction="in" />
+    <parameter name="@i_typeBrowser" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>
