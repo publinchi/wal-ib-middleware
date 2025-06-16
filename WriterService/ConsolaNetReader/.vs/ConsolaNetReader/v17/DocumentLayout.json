@@ -1,54 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\cobis\\ConsolaNetReader\\",
+  "WorkspaceRootPath": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\cobis\\consolanetreader\\consolanetreader\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\procesamientocontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\procesamientocontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\contractsend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\contractsend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\servicesdocuments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\servicesdocuments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\descargacontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\descargacontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\contrato.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\contrato.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\requeridos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\requeridos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|C:\\cobis\\ConsolaNetReader\\menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\beneficiario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\beneficiario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\cobis\\ConsolaNetReader\\consolanetreader\\valores.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\valores.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,161 +26,62 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ServicesDocuments.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ServicesDocuments.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\ServicesDocuments.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ServicesDocuments.cs",
-              "RelativeToolTip": "ConsolaNetReader\\ServicesDocuments.cs",
-              "ViewState": "AQIAADUAAAAAAAAAAAAgwEEAAAAbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T22:18:13.885Z",
-              "IsPinned": true
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "packages.config",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\packages.config",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\packages.config",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\packages.config",
-              "RelativeToolTip": "ConsolaNetReader\\packages.config",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\packages.config",
+              "RelativeDocumentMoniker": "Menu\\packages.config",
+              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\packages.config",
+              "RelativeToolTip": "Menu\\packages.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2024-12-21T03:29:10.58Z"
+              "WhenOpened": "2025-06-14T00:27:53.834Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ContractSend.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ContractSend.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\ContractSend.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ContractSend.cs",
-              "RelativeToolTip": "ConsolaNetReader\\ContractSend.cs",
-              "ViewState": "AQIAABQAAAAAAAAAAAD4vx8AAAArAAAA",
+              "Title": "DocumentServices.cs",
+              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
+              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeToolTip": "Menu\\DocumentServices.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAowGIAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-04T16:04:12.608Z"
+              "WhenOpened": "2025-06-13T23:14:18.481Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ProcesamientoContratos.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ProcesamientoContratos.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\ProcesamientoContratos.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\ProcesamientoContratos.cs",
-              "RelativeToolTip": "ConsolaNetReader\\ProcesamientoContratos.cs",
-              "ViewState": "AQIAAPkBAAAAAAAAAAAMwAMCAABbAAAA",
+              "DocumentIndex": 3,
+              "Title": "DocumentServices.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
+              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs [Dise\u00F1o]",
+              "RelativeToolTip": "Menu\\DocumentServices.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T22:17:32.121Z"
+              "WhenOpened": "2025-06-13T23:14:01.861Z",
+              "EditorCaption": " [Dise\u00F1o]"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Program.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\Program.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Program.cs",
-              "RelativeToolTip": "ConsolaNetReader\\Program.cs",
-              "ViewState": "AQIAAB8AAAAAAAAAAAAAACUAAAAqAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T22:43:58.942Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{269a02dc-6af8-11d3-bdc4-00c04f688e50}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
               "Title": "App.config",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\Menu\\App.config",
+              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\App.config",
               "RelativeDocumentMoniker": "Menu\\App.config",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\Menu\\App.config",
+              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\App.config",
               "RelativeToolTip": "Menu\\App.config",
-              "ViewState": "AQIAAD8AAAAAAAAAAAAAAEwAAAAZAAAA",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2024-11-28T15:15:15.197Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Requeridos.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Requeridos.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\Requeridos.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Requeridos.cs",
-              "RelativeToolTip": "ConsolaNetReader\\Requeridos.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAkwA4AAABgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T22:17:21.173Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "App.config",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\App.config",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\App.config",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\App.config",
-              "RelativeToolTip": "ConsolaNetReader\\App.config",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAABMAAAAuAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2024-09-02T19:58:05.796Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Valores.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Valores.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\Valores.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Valores.cs",
-              "RelativeToolTip": "ConsolaNetReader\\Valores.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-07T07:34:31.874Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Beneficiario.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Beneficiario.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\Beneficiario.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Beneficiario.cs",
-              "RelativeToolTip": "ConsolaNetReader\\Beneficiario.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-29T18:32:59.413Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "DescargaContratos.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\DescargaContratos.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\DescargaContratos.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\DescargaContratos.cs",
-              "RelativeToolTip": "ConsolaNetReader\\DescargaContratos.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAdAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T23:27:40.073Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Contrato.cs",
-              "DocumentMoniker": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Contrato.cs",
-              "RelativeDocumentMoniker": "ConsolaNetReader\\Contrato.cs",
-              "ToolTip": "C:\\cobis\\ConsolaNetReader\\ConsolaNetReader\\Contrato.cs",
-              "RelativeToolTip": "ConsolaNetReader\\Contrato.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAAwAgAAAAZAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-07T06:57:33.69Z"
+              "WhenOpened": "2025-06-13T23:13:20.137Z",
+              "EditorCaption": ""
             }
           ]
         }
