@@ -182,9 +182,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_EXTERNALCUSTOMERID, ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil(Inputs.I_ACCOUNTNUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40130),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40092),
-                new ParameterValidationUtil(Inputs.I_REVERSALCONCEPT, ValidationType.NOT_EMPTY, ErrorCode.E40311),
+                new ParameterValidationUtil(Inputs.I_REVERSAL_CONCEPT, ValidationType.NOT_EMPTY, ErrorCode.E40311),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER_TRN, ValidationType.NOT_EMPTY, ErrorCode.E40131),
-                new ParameterValidationUtil(Inputs.I_REVERSALREASON, ValidationType.NOT_EMPTY, ErrorCode.E40134),
+                new ParameterValidationUtil(Inputs.I_REVERSAL_REASON, ValidationType.NOT_EMPTY, ErrorCode.E40134),
                 new ParameterValidationUtil(Inputs.I_MOVEMENTID, ValidationType.NOT_EMPTY,  ErrorCode.E40133)
             };
         } 
