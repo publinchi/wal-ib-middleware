@@ -195,10 +195,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logDebug("JCOS DispacherSpeiOrchestrationCore: executeJavaOrchestration");
 			logger.logDebug(anOriginalRequest);
 		}
-		String xmls = anOriginalRequest.readValueParam("@i_pay_order");
+		
 		aBagSPJavaOrchestration.putAll( mapDataSigns);
 		aBagSPJavaOrchestration.put(TRANSFER_NAME, "SPEI DISPACHER");
 		mensaje message = null;
+		String xmls = anOriginalRequest.readValueParam("@i_pay_order");
 		Integer idLog = 0;
 		try {
 			// METODO GUARDAR XML
@@ -208,23 +209,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if (message != null) {
 				aBagSPJavaOrchestration.put("speiTransaction", message);
 				//llamada a log entrante
-				
-				if(!Constans.ENSESION.equals(message.getCategoria()))
-				{
-					CardPAN card= new CardPAN();
-					//ofuscacion tipo de cuentas 3
-					if( message.getOrdenpago().getOpTcClaveBen()==3)
-					{
-						xmls = xmls.replace(message.getOrdenpago().getOpCuentaBen(), card.maskNumber(message.getOrdenpago().getOpCuentaBen()));
-					}
-			        if( message.getOrdenpago().getOpTcClaveOrd()==3)
-			        {
-			        	xmls = xmls.replace(message.getOrdenpago().getOpCuentaOrd(), card.maskNumber(message.getOrdenpago().getOpCuentaOrd()));
-			        }
-				}
-		        
-		        anOriginalRequest.setValueParam("@i_pay_order", xmls);
-				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null, xmls);
+				idLog =	logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "I", "Dispacher in", null, null, null, null,  xmls);
 				executeStepsTransactionsBase(anOriginalRequest, aBagSPJavaOrchestration);
 			}
 			
@@ -235,7 +220,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		logEntryApi(anOriginalRequest, aBagSPJavaOrchestration, "U", "Dispacher in", null, null, aBagSPJavaOrchestration.get("result").toString(), idLog, xmls);
 	
 		IProcedureResponse valuesOutput = new ProcedureResponseAS();
-		valuesOutput.addParam("@o_result", 39, 1, aBagSPJavaOrchestration.get("result").toString());
+		valuesOutput.addParam("@o_result", 39, 1, (String)aBagSPJavaOrchestration.get("result"));
 
 		return valuesOutput;
 	}
@@ -325,7 +310,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		msg.setCategoria(Constans.ODPS_LIQUIDADAS_CARGOS_RESPUESTA);
 		msg.setRespuesta(responseXml);
 		
-		response = toStringXmlObject( msg);  
+		response = toStringXmlObject(msg);  
 		aBagSPJavaOrchestration.put("result", response);
 		return response;
 	}
@@ -1273,7 +1258,8 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				   (Constans.ODPS_LIQUIDADAS_CARGOS.equals( msjIn.getCategoria() )   || 
 					Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria() )||
 					Constans.ODPS_LIQUIDADAS_ABONOS.equals( msjIn.getCategoria() )   ||
-					Constans.ODPS_CANCELADAS_LOCAL.equals( msjIn.getCategoria() )  
+					Constans.ODPS_CANCELADAS_LOCAL.equals( msjIn.getCategoria() )    ||
+					Constans.ODPS_CANCELADAS_X_BANXICO.equals( msjIn.getCategoria() )    
 					))
 			{
 				DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -1282,23 +1268,26 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		        //enmascara las tarjetas
 		        String opCuentaBen="";
 				String opCuentaOrd="";
-				
 		        // Convierte la fecha de String a LocalDate
-  
 				date = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
-				if( msjIn.getOrdenpago().getOpTcClaveBen()==3)
+				if( msjIn.getOrdenpago().getOpTcClaveBen()==3){
 					opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
+					request = request.replace(msjIn.getOrdenpago().getOpCuentaBen(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen()));
+				}
 				else
 					opCuentaBen = msjIn.getOrdenpago().getOpCuentaBen();
 	        
-    	 		if( msjIn.getOrdenpago().getOpTcClaveOrd()==3)
+    	 		if( msjIn.getOrdenpago().getOpTcClaveOrd()==3){
     	 			opCuentaOrd = card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd());
+    	 			request = request.replace(msjIn.getOrdenpago().getOpCuentaOrd(), card.maskNumber(msjIn.getOrdenpago().getOpCuentaOrd()));
+    	 		}
     	 		else
     	 			opCuentaOrd = msjIn.getOrdenpago().getOpCuentaOrd();
   
 		        // Formatea la fecha a MM/dd/yyyy
 		        String processDate = date.format(outputFormatter);
 	
+		        requestProcedureLocal.setValueParam("@i_lc_request", request);	
 		        requestProcedureLocal.addInputParam("@i_lc_clave_rastreo",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 				requestProcedureLocal.addInputParam("@i_lc_tipo_pago",ICTSTypes.SQLINT4, String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
 				requestProcedureLocal.addInputParam("@i_lc_cuenta_ordenante",ICTSTypes.SQLVARCHAR, opCuentaOrd);
@@ -1321,7 +1310,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
 			
 			if (logger.isDebugEnabled()) {
-				logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
+				logger.logDebug("Ending flow, logEntryApi: " + wProcedureResponseLocal.getProcedureResponseAsString());
 			}
 			
 			if (wProcedureResponseLocal.getReturnCode()==0) {
@@ -1335,6 +1324,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return logId;
 		
 	}
+
 	
 	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state, String clave, String fechaLiq)
 	{
@@ -1616,5 +1606,31 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
         }catch(Exception e){
             logger.logError(" Error Catastrofico en registerTransactionWebHook SPEI_RETURN");
         }	
-    }	
+    }
+
+	@Override
+	protected Object categoryNotImplemented(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
+	{
+		if (logger.isDebugEnabled()){
+			logger.logDebug("Inicio CategoryNotImplemented");
+		}
+		Mensaje msg = new Mensaje();
+		Respuesta responseXml = new Respuesta();
+		String response="";
+		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+		responseXml.setErrCodigo(-1);
+		responseXml.setErrDescripcion("Categoria no implementada en el core");
+	
+		responseXml.setId("0");
+		msg.setCategoria(msjIn.getCategoria()+Constans.RESPUESTA);
+		msg.setRespuesta(responseXml);
+		
+		response = toStringXmlObject(msg);  
+		aBagSPJavaOrchestration.put("result", response);
+		
+		if (logger.isDebugEnabled()){
+			logger.logDebug("Fin CategoryNotImplemented:"+response);
+		}
+		return response;
+	}	
 }
