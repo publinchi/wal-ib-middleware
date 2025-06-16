@@ -238,7 +238,7 @@ public class RegistContactLimitOrchestrationCore extends SPJavaOrchestrationBase
     }
 
     // Validamos si el error fue de otp invalido
-    if (!otpReturnCode.equals("0")) {
+    if (otpReturnCode != null && !otpReturnCode.isEmpty() && !"0".equals(otpReturnCode)) {
       if (otpReturnCode.equals("1890000")) {
         try {
           // Ejecutamos el servicio de generación de token
