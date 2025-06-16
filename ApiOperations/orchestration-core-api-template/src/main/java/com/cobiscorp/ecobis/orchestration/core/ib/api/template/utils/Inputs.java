@@ -18,9 +18,9 @@ public class Inputs {
     public static final String I_ORIGINCURRENCY = "@i_originCurrency";
     public static final String I_EXCHANGERATE = "@i_exchangeRate";
     public static final String I_MOVEMENTID = "@i_movementId";
-    public static final String I_REVERSALCONCEPT = "@i_reversalConcept";
+    public static final String I_REVERSAL_CONCEPT = "@i_reversal_concept";
     public static final String I_REFERENCENUMBER_TRN = "@i_referenceNumber_trn";
-    public static final String I_REVERSALREASON = "@i_reversalReason";
+    public static final String I_REVERSAL_REASON = "@i_reversal_reason";
     public static final String T_RTY = "@t_rty";
     public static final String I_TIPO_EJEC = "@i_tipo_ejec";
     public static final String I_OPERACION = "@i_operacion";
