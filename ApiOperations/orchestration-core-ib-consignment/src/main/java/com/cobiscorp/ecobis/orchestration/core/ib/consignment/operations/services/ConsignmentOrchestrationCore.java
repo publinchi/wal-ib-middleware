@@ -309,6 +309,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addOutputParam(Outputs.O_AMOUNT, ICTSTypes.SQLMONEY, "0");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
+        
+        String ssnHost = centralProcedureResponse.readValueParam(Outputs.O_SSN_HOST);
+        aBagSPJavaOrchestration.put("ssn", ssnHost);
 
         String error = centralProcedureResponse.readValueParam(Outputs.O_ERROR);
         int returnCode = centralProcedureResponse.getReturnCode();
