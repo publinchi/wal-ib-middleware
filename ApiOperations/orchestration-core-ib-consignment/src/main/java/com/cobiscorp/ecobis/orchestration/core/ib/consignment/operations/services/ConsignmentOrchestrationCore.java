@@ -46,6 +46,7 @@ import static com.cobiscorp.ecobis.orchestration.core.ib.consignment.operations.
 import static com.cobiscorp.ecobis.orchestration.core.ib.consignment.operations.utils.ConstantsUtil.TRN_CREDIT;
 
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -483,10 +484,14 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
     private void copyParams(IProcedureRequest requestFrom, IProcedureRequest requestTo) {
         Object[] params = requestFrom.getParams().toArray();
 		for (int i = params.length - 1; i >= 0; i--) {
-			if (params[i] instanceof IProcedureRequestParam) {
+			if (params[i] instanceof IProcedureRequestParam ) {
 				IProcedureRequestParam param = (IProcedureRequestParam) params[i];
-                requestTo.addParam(param.getName(), param.getDataType(), param.getIOType(),
-					param.getLen(), param.getValue());
+                String paramValue = param.getValue();
+                if(Objects.nonNull(paramValue)){
+                    requestTo.addParam(param.getName(), param.getDataType(), param.getIOType(),
+					param.getLen(), paramValue);
+                }
+                
 			}
 		}
     }
@@ -497,9 +502,10 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 			if (params[i] instanceof IProcedureResponseParam) {
 				IProcedureResponseParam param = (IProcedureResponseParam) params[i];
                 String paramName = param.getName();
-                if (paramName.startsWith("@o_")) {
+                String paramValue = param.getValue();
+                if(Objects.nonNull(paramValue) && paramName.startsWith("@o_")){
                     paramName = paramName.replaceFirst("@o_", "@i_");
-                    requestTo.addInputParam(paramName, param.getDataType(), param.getValue());
+                    requestTo.addInputParam(paramName, param.getDataType(), paramValue);
                 }
 			}
 		}
