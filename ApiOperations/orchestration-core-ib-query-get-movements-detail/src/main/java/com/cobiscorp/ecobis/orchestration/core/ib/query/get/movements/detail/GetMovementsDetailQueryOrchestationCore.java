@@ -1947,7 +1947,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setOwnerNameSA(columns[18].getValue());
 					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
 					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,3)));
 					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
 					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
 					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
@@ -1958,7 +1958,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				case Constants.SPEI_CREDIT:
 					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,0));
 					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,2)));
+					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,2)));
 					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,3));
 					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,4));
 					movementDetails.setBankNameSA(getAdditionalValue(additionalDataArray,7));
@@ -2114,8 +2114,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						}else{
 							movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
 							movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+							movementDetails.setReason(reversalConcept);
 						}
-						movementDetails.setReason(reversalConcept);
 					}
 					break;
 				case Constants.ACCOUNT_CREDIT:
@@ -2158,6 +2158,13 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return null;
 	}
 
+	public Integer getIntegerValue(String value){
+		if(value != null && !value.isEmpty()){
+			return Integer.parseInt(value);
+		}
+		return null;
+	}
+
 	public BigDecimal getBigDecimalValue(String value){
 		if(value != null && !value.isEmpty()){
 			return new BigDecimal(value);
@@ -2165,6 +2172,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return new BigDecimal(0);
 
 	}
+
 
 	public String getOperation(String cuenta) {
 		return cuenta.contains("*") ? "X":"A";
