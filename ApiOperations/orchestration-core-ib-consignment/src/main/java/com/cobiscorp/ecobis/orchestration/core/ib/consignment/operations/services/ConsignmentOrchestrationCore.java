@@ -309,7 +309,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addOutputParam(Outputs.O_AMOUNT, ICTSTypes.SQLMONEY, "0");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
-        
+
         String ssnHost = centralProcedureResponse.readValueParam(Outputs.O_SSN_HOST);
         aBagSPJavaOrchestration.put("ssn", ssnHost);
 
@@ -327,7 +327,6 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, Constants.DEAULT_ERROR_MSG);
         }
         else if("1".equals(operacion)) {
-            String ssnHost = centralProcedureResponse.readValueParam(Outputs.O_SSN_HOST);
             String causa = centralProcedureResponse.readValueParam(Outputs.O_CAUSA);
             aBagSPJavaOrchestration.put(Constants.SSN_HOST, ssnHost);
             aBagSPJavaOrchestration.put(Constants.CAUSA, causa);
