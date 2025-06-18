@@ -22,6 +22,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
     protected static String TRANSFER_RESPONSE = "TRANSFER_RESPONSE";
     protected static final String TRANSFER_NAME = "TRANSFER_NAME";
     protected static final int CODE_OFFLINE = 40004;
+    private static final String CONCEPTO_TRN = "@i_conceptoPago";
 
     protected abstract IProcedureResponse executeTransfer(Map<String, Object> aBagSPJavaOrchestration);
 
@@ -103,6 +104,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
     
     public void registerAllTransactionSuccess(String tipoTran, IProcedureRequest aRequest,String causal , Map<String, Object> aBagSPJavaOrchestration) {	
         String movementType = "SPEI_CREDIT";
+        String description = null;
 
             if (logger.isDebugEnabled()) {
                 logger.logDebug(" Entrando en registerAllTransactionSuccess");
@@ -129,7 +131,13 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
                 request.addInputParam("@i_iva", ICTSTypes.SQLMONEY , "0");
                 request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn"));
                 request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-                request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+
+                if(aRequest.readValueParam(CONCEPTO_TRN) != null) {
+                    description = aRequest.readValueParam(CONCEPTO_TRN);
+                } else {
+                    description = movementType;
+                }
+                request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
                 
                 request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_institucionOrdenante"));
                 request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
@@ -171,6 +179,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 		String codeError = "0";
 		String messageError = "";
 		String causal = "";
+        String description = null;
 		
 		try{
 			
@@ -204,7 +213,13 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_monto"));
 			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , (String)aBagSPJavaOrchestration.get("fechaTrn"));
 			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "C");
-			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+
+            if(aRequest.readValueParam(CONCEPTO_TRN) != null) {
+                description = aRequest.readValueParam(CONCEPTO_TRN);
+            } else {
+                description = movementType;
+            }
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
 			
 			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cuentaOrdenante"));
 			request.addInputParam("@i_sourceAccountName", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_nombreOrdenante"));
