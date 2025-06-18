@@ -813,6 +813,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			totalNumberOfResults = numberOfResults;
 			if (aBagSPJavaOrchestration.get("DATE_FILTER")=="S"){
 				totalNumberOfResults = numberOfResultsSuccess + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+				numberOfResultsShow = totalNumberOfResults;
+				numberOfResults = numberOfResultsShow;
 			}
 		}
 		else{
