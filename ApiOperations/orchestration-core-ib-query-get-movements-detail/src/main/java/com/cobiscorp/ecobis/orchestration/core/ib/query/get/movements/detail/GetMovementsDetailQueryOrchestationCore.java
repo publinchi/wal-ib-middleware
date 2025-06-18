@@ -398,6 +398,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, targetServer);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
+		String showFailed = aRequest.readValueParam("@i_show_failed") != null ? aRequest.readValueParam("@i_show_failed") : "N";
+
+
 		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
@@ -420,6 +423,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, Objects.equals(showFailed, "S") ?"APICHANGE":"MOVEMENTS");
 
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -489,6 +493,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "APICHANGE");
 		request.addOutputParam("@o_total_registros", ICTSTypes.SQLINT4,"0");
 
 
