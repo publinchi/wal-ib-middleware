@@ -143,6 +143,7 @@ public abstract class TransferInOfflineTemplate extends TransferInBaseTemplate {
 
                 request.addInputParam("@i_speiReferenceCode", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_idSpei"));
                 request.addInputParam("@i_speiTranckingId", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_claveRastreo"));
+                request.addInputParam("@i_paymentType", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_idTipoPago"));
                 
              	if (aRequest.readValueParam("@x_end_user_ip") != null) {
     				request.addInputParam("@i_deviceIp", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));

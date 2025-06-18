@@ -157,9 +157,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		String movementIdComOri = anOriginalRequest.readValueParam("@i_movementId_com_ori");
 		String referenceNumberComOri = anOriginalRequest.readValueParam("@i_referenceNumber_com_ori");
 
-		aBagSPJavaOrchestration.put("@i_originMovementId", movementIdOrigin);
-		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberOrigin);
-
 		if (Objects.isNull(reversalConcept) ||  reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
 			return true;
@@ -487,9 +484,12 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 					Boolean.parseBoolean(aBagSPJavaOrchestration.get(Constants.IS_ONLINE).toString()),
 					anOriginalRequest,
 					aBagSPJavaOrchestration);
+			
 			registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, causa_rev, aBagSPJavaOrchestration);
+			
 			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
 			registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, causa_com, aBagSPJavaOrchestration);
+			
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Ending flow, processResponse failed.");
@@ -511,9 +511,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 
 			//Validamos que el error no se un mensaje de reentry
 			if (aBagSPJavaOrchestration.get("error_message") != null && !aBagSPJavaOrchestration.get("error_message").equals("NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!")) {
-				//Consulta datos de la transaccion original
-				searchDataTransactionOrigin(anOriginalRequest, aBagSPJavaOrchestration);
-
 				aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message"));
 				aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code"));
 
@@ -538,78 +535,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
 
 		return wProcedureResponse;
-	}
-
-	public void searchDataTransactionOrigin(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-		String amountOri = "";
-		Double valOrigin = 0.00;
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Begin [" + CLASS_NAME + "][searchDataTransactionOrigin]");
-		}
-
-		try{
-			IProcedureRequest reqTMPCentral = new ProcedureRequestAS();
-
-			reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-			reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
-			reqTMPCentral.setSpName("cob_bvirtual..sp_bv_cons_val_webhook_central");
-			reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-			reqTMPCentral.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
-			reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId_ori"));
-			reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_accountNumber_ori"));
-			reqTMPCentral.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
-
-			IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("Response executeCoreBanking cob_bvirtual..sp_bv_cons_val_webhook_central: " + wProcedureResponseCentral.getProcedureResponseAsString());
-			}
-
-			amountOri =  wProcedureResponseCentral.readValueParam("@o_amount");
-
-			if (amountOri != null) {
-				valOrigin = Double.parseDouble(amountOri);
-			}
-
-			if (valOrigin.equals(0.00) || valOrigin < 0.00) {
-				IProcedureRequest reqTMPLocal = new ProcedureRequestAS();
-
-				reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "local");
-				reqTMPLocal.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
-				reqTMPLocal.setSpName("cob_bvirtual..sp_bv_cons_val_webhook_local");
-				reqTMPLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-				reqTMPLocal.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
-				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId_ori"));
-				reqTMPLocal.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_accountNumber_ori"));
-				reqTMPLocal.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
-
-				IProcedureResponse wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
-
-				if (logger.isDebugEnabled()) {
-					logger.logDebug("Response executeCoreBanking cob_bvirtual..sp_bv_cons_val_webhook_local: " + wProcedureResponseLocal.getProcedureResponseAsString());
-				}
-
-				amountOri =  wProcedureResponseLocal.readValueParam("@o_amount");
-			}
-
-			aBagSPJavaOrchestration.put("amount_ori", amountOri);
-
-		} catch (NumberFormatException e) {
-			if (logger.isErrorEnabled()) {
-				logger.logError(CLASS_NAME + " Numero no es valido: " + e.getMessage(), e);
-			}
-		} catch (Exception e) {
-			if (logger.isErrorEnabled()) {
-				logger.logError(CLASS_NAME + " Error al obtener datos de transaccion de origen: " + e.getMessage(), e);
-			}
-			throw new RuntimeException("Error al obtener datos:", e);
-		} finally{
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " Saliendo de searchDataTransactionOrigin");
-			}
-		}
-
 	}
 
 	@Override
