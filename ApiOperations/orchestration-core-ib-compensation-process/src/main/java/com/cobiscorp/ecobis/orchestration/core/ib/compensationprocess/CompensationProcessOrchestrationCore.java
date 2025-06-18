@@ -97,9 +97,13 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		try {
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e) {
-			loggerProcess.logError(e.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError(e.toString());
+			}
 		} catch (CTSInfrastructureException e) {
-			loggerProcess.logError(e.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError(e.toString());
+			}
 		}
 
 		if (responseServer != null && responseServer.getOnLine()) {
@@ -117,7 +121,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				aBagSPJavaOrchestration.put("directory", directory);
 				processFilesInDirectory(anOriginalRequest, aBagSPJavaOrchestration);
 			} else {
-				loggerProcess.logInfo(CLASS_NAME + ": La ruta especificada no es un directorio.");
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logInfo(CLASS_NAME + ": La ruta especificada no es un directorio.");
+				}
 			}
 
 			if (loggerProcess.isDebugEnabled()) {
@@ -151,25 +157,33 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						generateReportCompensation(anOriginalRequest, aBagSPJavaOrchestration);
 
 					} else {
-						loggerProcess.logInfo(
-								CLASS_NAME + " [Archivo Ignorado] " + file.getName() + " no es un archivo JSON.");
+						if (loggerProcess.isInfoEnabled()) {
+							loggerProcess.logInfo(
+									CLASS_NAME + " [Archivo Ignorado] " + file.getName() + " no es un archivo JSON.");
+						}
 					}
 				} else if (file.isDirectory()) {
-					loggerProcess.logInfo(CLASS_NAME + " [Directorio] " + file.getName());
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logInfo(CLASS_NAME + " [Directorio] " + file.getName());
+					}
 				}
 			}
 			// se sube el reporte al S3 si existe el archivo
 			if (aBagSPJavaOrchestration.get(NOMBRE_REPORTE) != null) {
 				File file = new File((String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE));
 				if (file.exists()) {
-					loggerProcess.logInfo(CLASS_NAME + " [Directorio] "
-							+ (String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logInfo(CLASS_NAME + " [Directorio] "
+								+ (String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
+					}
 					execUploapDownloadFile(anOriginalRequest, aBagSPJavaOrchestration, "S",
 							(String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
 				}
 			}
 		} else {
-			loggerProcess.logInfo(CLASS_NAME + ": El directorio está vacío o no se puede acceder.");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": El directorio está vacío o no se puede acceder.");
+			}
 		}
 	}
 
@@ -178,15 +192,15 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		TransactionFile transactionFile = null;
-
-		loggerProcess.logInfo(CLASS_NAME + ": jsonLoad: " + aBagSPJavaOrchestration.toString());
-
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo(CLASS_NAME + ": jsonLoad: " + aBagSPJavaOrchestration.toString());
+		}
 		aBagSPJavaOrchestration.put(REGISTROS, "");
 		try {
 			transactionFile = objectMapper.readValue(file, TransactionFile.class);
-
-			loggerProcess.logInfo(CLASS_NAME + ": aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
-
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
+			}
 			fillingVariables(transactionFile, aBagSPJavaOrchestration);
 
 			List<TransactionContent> contents = transactionFile.getContent();
@@ -201,7 +215,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			}
 		} catch (IOException e) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, VALIDAR_ARCHIVO);
-			loggerProcess.logError("Error en jsonLoad", e);
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError("Error en jsonLoad", e);
+			}
 		}
 		return transactionFile;
 	}
@@ -302,9 +318,10 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
-			this.loggerProcess.logInfo("CompensationProcessOrchestrationCore Error Catastrofico de execUpDownloadFile",
-					e);
-
+			if (loggerProcess.isInfoEnabled()) {
+				this.loggerProcess
+						.logInfo("CompensationProcessOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
+			}
 		} finally {
 			if (loggerProcess.isInfoEnabled()) {
 				loggerProcess.logInfo("CompensationProcessOrchestrationCore --> Saliendo de execUpDownloadFile");
@@ -474,7 +491,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			try {
 				serverResponse.setProcessDate(formatter.parse(processDateStr));
 			} catch (ParseException e) {
-				loggerProcess.logDebug("Error parsing process date: ", e);
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logDebug("Error parsing process date: ", e);
+				}
 			}
 		}
 	}
@@ -516,8 +535,10 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						createReportCsv(responseData, aBagSPJavaOrchestration); // Crea el reporte
 					}
 				} catch (NumberFormatException e) {
-					loggerProcess.logError("Error al analizar el número de filas: " + numFilasParam, e);
-					hasMoreRecords = false; // Detener el bucle en caso de error
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logError("Error al analizar el número de filas: " + numFilasParam, e);
+						hasMoreRecords = false; // Detener el bucle en caso de error
+					}
 				}
 			} else {
 				hasMoreRecords = false; // No hay más registros
@@ -551,69 +572,74 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	}
 
 	public boolean createReportCsv(IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration) {
-	    String csvFile = (String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE);
-	    FileWriter writer = null;
+		String csvFile = (String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE);
+		FileWriter writer = null;
 
-	    try {
-	        writer = new FileWriter(csvFile, new File(csvFile).exists());
+		try {
+			writer = new FileWriter(csvFile, new File(csvFile).exists());
 
-	        if (response.getResultSetListSize() > 0) {
+			if (response.getResultSetListSize() > 0) {
 				writeHeader(writer, response, csvFile);
-	            writeData(writer, response, aBagSPJavaOrchestration);
-	        }
-	        return true;
-	    } catch (IOException e) {
-	        loggerProcess.logError("Error en la creación de archivo CSV:", e);
-	        return false;
-	    } finally {
-	        if (writer != null) {
-	            try {
-	                writer.close();
-	            } catch (IOException e) {
-	                loggerProcess.logError("Error al cerrar el archivo CSV:", e);
-	            }
-	        }
-	    }
+				writeData(writer, response, aBagSPJavaOrchestration);
+			}
+			return true;
+		} catch (IOException e) {
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError("Error en la creación de archivo CSV:", e);
+			}
+			return false;
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logError("Error al cerrar el archivo CSV:", e);
+					}
+				}
+			}
+		}
 	}
 
 	private void writeHeader(FileWriter writer, IProcedureResponse response, String csvFile) throws IOException {
-	    File file = new File(csvFile);
-	    if (file.exists() && file.length() > 0) {
-	        return;
-	    }
+		File file = new File(csvFile);
+		if (file.exists() && file.length() > 0) {
+			return;
+		}
 
-	    IResultSetHeader rsHeader = response.getResultSetMetaData(1);
+		IResultSetHeader rsHeader = response.getResultSetMetaData(1);
 
-	    StringBuilder header = new StringBuilder();
-	    for (int i = 2; i <= rsHeader.getColumnsNumber(); i++) {
-	        ResultSetHeaderColumn col = (ResultSetHeaderColumn) rsHeader.getColumnMetaData(i);
-	        if (i > 2) {
-	            header.append(";");
-	        }
-	        header.append(col.getName());
-	    }
-	    writer.append(header.toString()).append("\n"); 
+		StringBuilder header = new StringBuilder();
+		for (int i = 2; i <= rsHeader.getColumnsNumber(); i++) {
+			ResultSetHeaderColumn col = (ResultSetHeaderColumn) rsHeader.getColumnMetaData(i);
+			if (i > 2) {
+				header.append(";");
+			}
+			header.append(col.getName());
+		}
+		writer.append(header.toString()).append("\n");
 	}
 
-	private void writeData(FileWriter writer, IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration) throws IOException {
-	    IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
-	    
-	    for (IResultSetRow row : resultSetRows) {
-	        IResultSetRowColumnData[] columns = row.getColumnsAsArray();
-	        StringBuilder data = new StringBuilder();
+	private void writeData(FileWriter writer, IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration)
+			throws IOException {
+		IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
 
-	        for (int j = 1; j < columns.length; j++) {
-	            if (j > 1) {
-	                data.append(";");
-	            }
-	            data.append(columns[j].getValue());
-	        }
+		for (IResultSetRow row : resultSetRows) {
+			IResultSetRowColumnData[] columns = row.getColumnsAsArray();
+			StringBuilder data = new StringBuilder();
 
-	        writer.append(data.toString()).append("\n");
+			for (int j = 1; j < columns.length; j++) {
+				if (j > 1) {
+					data.append(";");
+				}
+				data.append(columns[j].getValue());
+			}
 
-	        if (row == resultSetRows[resultSetRows.length - 1]) {
-	            aBagSPJavaOrchestration.put(SIGUIENTE, columns[0].getValue());
-	        }
-	    }
+			writer.append(data.toString()).append("\n");
+
+			if (row == resultSetRows[resultSetRows.length - 1]) {
+				aBagSPJavaOrchestration.put(SIGUIENTE, columns[0].getValue());
+			}
+		}
 	}
 }

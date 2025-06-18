@@ -50,8 +50,9 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		loggerOrchestration.logDebug("Begin flow, " + CLASS_NAME + " start.");
-
+		if (loggerOrchestration.isDebugEnabled()) {
+			loggerOrchestration.logDebug("Begin flow, " + CLASS_NAME + " start.");
+		}
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
 		return executeCompensation(anOriginalRequest, aBagSPJavaOrchestration);
@@ -114,7 +115,9 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
+			if (loggerOrchestration.isDebugEnabled()) {
 			this.loggerOrchestration.logInfo( CLASS_NAME + " Error Catastrofico de execDownloadFile", e);
+			}
 
 		} finally {
 			if (loggerOrchestration.isInfoEnabled()) {
