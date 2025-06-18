@@ -781,8 +781,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anOriginalProcedureRes = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_MOVEMENTS");
 		IProcedureResponse anOriginalProcedureResF = null;
-		boolean showFailed = (aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null?
-                        aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS"):"N")=="S";
+		boolean showFailed = aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null;
+
+
 
 		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		int numberOfResults = 0;
