@@ -543,6 +543,13 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 	public void searchDataTransactionOrigin(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		String amountOri = "";
 		Double valOrigin = 0.00;
+		String originMovementId = "";
+
+		if(aBagSPJavaOrchestration.containsKey("@i_originMovementId") && aBagSPJavaOrchestration.get("@i_originMovementId") != null) {
+			originMovementId = aBagSPJavaOrchestration.get("@i_originMovementId").toString();
+		} else {
+			originMovementId = anOriginalRequest.readValueParam("@i_movementId_ori");
+		}
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("Begin [" + CLASS_NAME + "][searchDataTransactionOrigin]");
@@ -555,7 +562,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 			reqTMPCentral.setSpName("cob_bvirtual..sp_bv_cons_val_webhook_central");
 			reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-			reqTMPCentral.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
+			reqTMPCentral.addInputParam("@i_movementId", ICTSTypes.SQLINT4, originMovementId);
 			reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId_ori"));
 			reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_accountNumber_ori"));
 			reqTMPCentral.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
@@ -579,7 +586,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 				reqTMPLocal.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 				reqTMPLocal.setSpName("cob_bvirtual..sp_bv_cons_val_webhook_local");
 				reqTMPLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-				reqTMPLocal.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
+				reqTMPLocal.addInputParam("@i_movementId", ICTSTypes.SQLINT4, originMovementId);
 				reqTMPLocal.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId_ori"));
 				reqTMPLocal.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,anOriginalRequest.readValueParam("@i_accountNumber_ori"));
 				reqTMPLocal.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
