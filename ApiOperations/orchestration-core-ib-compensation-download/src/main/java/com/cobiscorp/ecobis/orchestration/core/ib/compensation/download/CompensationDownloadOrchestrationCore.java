@@ -34,15 +34,15 @@ import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
 		@Property(name = "service.spName", value = "cob_procesador..sp_compensation_download") })
 public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBase {
 
-	private ILogger logger = (ILogger) this.getLogger();
+	private ILogger loggerOrchestration = (ILogger) this.getLogger();
 	private static final String CLASS_NAME = "CompensationDownloadOrchestrationCore";
 	private java.util.Properties properties;
 	protected static final String TRN_18500144 = "18500144";
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(" loadConfiguration INI " + CLASS_NAME);
+		if (loggerOrchestration.isInfoEnabled()) {
+			loggerOrchestration.logInfo(" loadConfiguration INI " + CLASS_NAME);
 		}
 		properties = arg0.getProperties("//property");
 	}
@@ -50,31 +50,27 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 	@Override
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		logger.logDebug("Begin flow, " + CLASS_NAME + " start.");
+		loggerOrchestration.logDebug("Begin flow, " + CLASS_NAME + " start.");
 
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 
-		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
-
-		anProcedureResponse = executeCompensation(anOriginalRequest, aBagSPJavaOrchestration);
-
-		return anProcedureResponse;
+		return executeCompensation(anOriginalRequest, aBagSPJavaOrchestration);
 	}
 
 	private IProcedureResponse executeCompensation(IProcedureRequest aRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en executeCompensation: ");
+		if (loggerOrchestration.isInfoEnabled()) {
+			loggerOrchestration.logInfo(CLASS_NAME + " Entrando en executeCompensation: ");
 		}
 
 		IProcedureResponse wAccountsResp = new ProcedureResponseAS();
 
 		execDownloadFile(aRequest, aBagSPJavaOrchestration);
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
-			logger.logInfo(CLASS_NAME + " Saliendo de executeCompensation");
+		if (loggerOrchestration.isInfoEnabled()) {
+			loggerOrchestration.logInfo(CLASS_NAME + " Response " + wAccountsResp.toString());
+			loggerOrchestration.logInfo(CLASS_NAME + " Saliendo de executeCompensation");
 		}
 
 		return wAccountsResp;
@@ -86,8 +82,8 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 
 		aBagSPJavaOrchestration.remove("trn_virtual");
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en execDownloadFile");
+		if (loggerOrchestration.isInfoEnabled()) {
+			loggerOrchestration.logInfo(CLASS_NAME + " Entrando en execDownloadFile");
 		}
 		try {
 
@@ -112,17 +108,17 @@ public class CompensationDownloadOrchestrationCore extends SPJavaOrchestrationBa
 			anOriginalReq.addInputParam("@t_trn", ICTSTypes.SYBINT4, TRN_18500144);
 			anOriginalReq.addInputParam("@i_accion", ICTSTypes.SYBINT4, "U");
 
-			if (logger.isDebugEnabled())
-				logger.logDebug("Compensation--> request execDownloadFile app: " + anOriginalReq.toString());
+			if (loggerOrchestration.isDebugEnabled())
+				loggerOrchestration.logDebug("Compensation--> request execDownloadFile app: " + anOriginalReq.toString());
 			// SE EJECUTA CONECTOR
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
-			this.logger.logInfo( CLASS_NAME + " Error Catastrofico de execDownloadFile", e);
+			this.loggerOrchestration.logInfo( CLASS_NAME + " Error Catastrofico de execDownloadFile", e);
 
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " --> Saliendo de execDownloadFile");
+			if (loggerOrchestration.isInfoEnabled()) {
+				loggerOrchestration.logInfo(CLASS_NAME + " --> Saliendo de execDownloadFile");
 			}
 		}
 
