@@ -536,7 +536,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 
 		return wProcedureResponse;
 	}
-
+	
 	@Override
 	public ICoreServer getCoreServer() {
 		return null;
