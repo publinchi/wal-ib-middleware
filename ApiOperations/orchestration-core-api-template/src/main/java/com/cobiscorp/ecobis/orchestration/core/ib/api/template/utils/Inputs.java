@@ -30,4 +30,5 @@ public class Inputs {
     public static final String I_ERROR_CENTRAL = "@i_error_central";
     public static final String I_LATITUD = "@i_latitud";
     public static final String I_SERVICIO = "@i_servicio";
+    public static final String I_SSN = "@i_ssn";
 }
