@@ -279,6 +279,12 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             operacion = "2";
         }
 
+        String reentrySSN = anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX");
+
+        if (Objects.nonNull(reentrySSN) && !reentrySSN.isEmpty()) {
+            centralTransactionRequest.addInputParam(Inputs.I_SSN, ICTSTypes.SQLINT4, reentrySSN);
+        }
+
         centralTransactionRequest.addInputParam(Constants.T_TRN, ICTSTypes.SQLINT4, String.valueOf(TRN_CREDIT));
         centralTransactionRequest.addInputParam(Inputs.T_RTY, ICTSTypes.SQLVARCHAR, rty);
         centralTransactionRequest.addInputParam(Inputs.I_TIPO_EJEC, ICTSTypes.SQLVARCHAR, tipoEject);
