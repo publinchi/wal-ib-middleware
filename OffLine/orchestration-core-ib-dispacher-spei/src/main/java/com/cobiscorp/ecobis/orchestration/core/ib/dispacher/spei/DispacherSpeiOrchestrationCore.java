@@ -1307,6 +1307,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
 				requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
 				requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
+				requestProcedureLocal.addInputParam("@i_lc_hora_bm",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpHoraLiqBm());
 			}else
 				if("U".equals(operacion) )
 				{

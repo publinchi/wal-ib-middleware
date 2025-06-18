@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -20,7 +19,7 @@ public class ordenpago implements Serializable{
 			int opMeClave, String opUsuClave, String opNomOrd, int opTcClaveOrd, String opCuentaOrd,
 			String opRfcCurpOrd, String opNomBen, int opTcClaveBen, String opCuentaBen, String opNomBen2,
 			int opTcClaveBen2, String opCuentaBen2, String opConceptoPago, int opRefNumerica, String opFirmaDig,
-			int opToClave, String opConceptoPag2, String Id, int paqFolio) {
+			int opToClave, String opConceptoPag2, String Id, int paqFolio,String opHoraLiqBm) {
 		super();
 		this.OpFechaOper = opFechaOper;
 		this.OpFolio = opFolio;
@@ -51,6 +50,7 @@ public class ordenpago implements Serializable{
 		this.OpConceptoPag2 = opConceptoPag2;
 		this.Id = Id;
 		this.paqFolio = paqFolio;
+		this.OpHoraLiqBm=opHoraLiqBm;
 	}
 	@XmlAttribute(name="Id")
 	private String Id;
@@ -195,6 +195,9 @@ public class ordenpago implements Serializable{
 	
 	@XmlElement
 	private int paqFolio;
+
+	@XmlAttribute
+	private String OpHoraLiqBm;
 	
 	/**
 	 * @return the opRastreoOri
@@ -734,7 +737,16 @@ public class ordenpago implements Serializable{
 	public void setPaqFolio(int paqFolio) {
 		this.paqFolio = paqFolio;
 	}
-	
-	
-    
+
+	public synchronized void setOpHoraLiqBm(String opHoraLiqBm)
+	{
+		this.OpHoraLiqBm = opHoraLiqBm;
+	}
+
+
+	public String getOpHoraLiqBm() {
+		return OpHoraLiqBm;
+	}
+
+
 }
