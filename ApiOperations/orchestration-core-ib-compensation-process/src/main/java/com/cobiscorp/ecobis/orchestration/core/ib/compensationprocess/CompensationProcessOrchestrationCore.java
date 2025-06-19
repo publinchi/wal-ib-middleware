@@ -142,11 +142,18 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			for (File file : files) {
 				if (file.isFile()) {
 					if (file.getName().toLowerCase().endsWith(".json")) {
+						if (file.exists() && file.length() > 0) {
+							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
+							aBagSPJavaOrchestration.put(FILENAME, "/" + file.getName());
+							anOriginalRequest.addInputParam("@i_fileName", ICTSTypes.SQLVARCHAR, file.getName());
+							jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
+						} else {
+							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
+							if (loggerProcess.isInfoEnabled()) {
+								loggerProcess.logInfo(CLASS_NAME + " Archivo vacio " + file.getName());
+							}
+						}
 
-						aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
-						aBagSPJavaOrchestration.put(FILENAME, "/" + file.getName());
-						anOriginalRequest.addInputParam("@i_fileName", ICTSTypes.SQLVARCHAR, file.getName());
-						jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
 						if ("true".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
 							anOriginalRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "C"); // COMPLETADO
 																									// CORRECTAMENTE
@@ -214,7 +221,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				}
 			}
 		} catch (IOException e) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, VALIDAR_ARCHIVO);
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
 			if (loggerProcess.isInfoEnabled()) {
 				loggerProcess.logError("Error en jsonLoad", e);
 			}
@@ -241,11 +248,6 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 		IProcedureResponse response = executeCoreBanking(request);
 
-		if (response.getReturnCode() != 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
-			response = Utils.returnException(Utils.returnArrayMessage(response));
-
-		}
 		if (response.getReturnCode() == 0 && response.readValueParam(O_COMPENSACION_FIN) != null) {
 			aBagSPJavaOrchestration.put("o_compensacion_fin", response.readValueParam(O_COMPENSACION_FIN));
 			compensacionCentral(request, aBagSPJavaOrchestration);
@@ -274,10 +276,6 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		IProcedureResponse response = executeCoreBanking(request);
 		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
-		if (response.getReturnCode() != 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
-			response = Utils.returnException(Utils.returnArrayMessage(response));
-		}
 		if (response.getReturnCode() == 0) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
 		}
