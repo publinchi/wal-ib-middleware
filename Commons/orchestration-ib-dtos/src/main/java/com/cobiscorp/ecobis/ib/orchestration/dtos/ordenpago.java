@@ -196,7 +196,7 @@ public class ordenpago implements Serializable{
 	@XmlElement
 	private int paqFolio;
 
-	@XmlAttribute
+	@XmlElement
 	private String OpHoraLiqBm;
 	
 	/**
@@ -403,6 +403,18 @@ public class ordenpago implements Serializable{
 	public synchronized void setOpInsClave(int opInsClave) {
 		this.OpInsClave = opInsClave;
 	}
+
+	public synchronized void setOpHoraLiqBm(String opHoraLiqBm)
+	{
+		this.OpHoraLiqBm = opHoraLiqBm;
+	}
+
+
+	public String getOpHoraLiqBm() {
+		return OpHoraLiqBm;
+	}
+
+
 	/**
 	 * @return the opMonto
 	 */
@@ -738,15 +750,6 @@ public class ordenpago implements Serializable{
 		this.paqFolio = paqFolio;
 	}
 
-	public synchronized void setOpHoraLiqBm(String opHoraLiqBm)
-	{
-		this.OpHoraLiqBm = opHoraLiqBm;
-	}
-
-
-	public String getOpHoraLiqBm() {
-		return OpHoraLiqBm;
-	}
 
 
 }
