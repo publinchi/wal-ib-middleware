@@ -398,6 +398,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, targetServer);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
+		String showFailed = aRequest.readValueParam("@i_show_failed") != null ? aRequest.readValueParam("@i_show_failed") : "N";
+
+
 		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
@@ -420,6 +423,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, Objects.equals(showFailed, "S") ?"APICHANGE":"MOVEMENTS");
 
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -489,6 +493,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "APICHANGE");
 		request.addOutputParam("@o_total_registros", ICTSTypes.SQLINT4,"0");
 
 
@@ -776,29 +781,31 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anOriginalProcedureRes = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_MOVEMENTS");
 		IProcedureResponse anOriginalProcedureResF = null;
-		boolean showFailed = false;
+		boolean showFailed = aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null;
 
+
+
+		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
 		int numberOfResults = 0;
 		int totalNumberOfResults = 0;
 		int numberOfResultsSuccess = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
 		int numberOfResultsShow = 0 ;
+		int maxRegistros = Integer.parseInt(getParam(anOriginalRequest, showFailed ? "NMOVAP":"NMMOV","AHO"));
+		int defaultRegistros = Integer.parseInt(getParam(anOriginalRequest, showFailed ? "NMOVAP":"NDMOV","AHO"));
+
 
 		if((aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG")==null ||
 				aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG").equals("null"))
 		){
-			if(aBagSPJavaOrchestration.get("DATE_FILTER")=="S")
-				numberOfResultsShow = 100;
-			else
-				numberOfResultsShow = 10;
+			numberOfResultsShow = defaultRegistros;
 		}
 		else{
 			numberOfResultsShow = Integer.parseInt((String) aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG"));
-			numberOfResultsShow = Math.min(numberOfResultsShow, 50);
+			numberOfResultsShow = Math.min(numberOfResultsShow, maxRegistros);
 		}
 
 
-		if(aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null){
-			showFailed = true;
+		if(showFailed){
 			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
 			numberOfResults =  numberOfResultsSuccess + anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
 			numberOfResultsShow = Math.min(numberOfResultsShow, numberOfResults);
@@ -806,6 +813,12 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			totalNumberOfResults = numberOfResults;
 			if (aBagSPJavaOrchestration.get("DATE_FILTER")=="S"){
 				totalNumberOfResults = numberOfResultsSuccess + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+				if((aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG")==null ||
+						aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG").equals("null"))
+				){
+					numberOfResultsShow = totalNumberOfResults;
+					numberOfResults = totalNumberOfResults;
+				}
 			}
 		}
 		else{
@@ -2179,6 +2192,37 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	}
 
 
+	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
+		logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
+
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);
+		reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+
+		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+
+		if (!wProcedureResponseCentral.hasError()) {
+
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					return columns[2].getValue();
+				}
+			}
+		}
+
+		return "";
+	}
 
 
 }
