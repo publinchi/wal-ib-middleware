@@ -126,7 +126,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             if (loggerL.isErrorEnabled()) {
                 loggerL.logError("Exception Error in consignment credit operation: " + e.getMessage(), e);
             }   
-            ApplicationException appEx = new ApplicationException(Constants.DEAULT_ERROR, Constants.DEAULT_ERROR_MSG);
+            ApplicationException appEx = new ApplicationException(Constants.DEFAULT_ERROR, Constants.DEFAULT_ERROR_MSG);
             ErrorHandler.handleException(appEx, aBagSPJavaOrchestration);
             return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
         } finally {
@@ -329,8 +329,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, error);
             aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, mensaje);
         }else if(returnCode != 0 && (error == null || error.isEmpty() || "0".equals(error))) {//Posible error SQL
-            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, Constants.DEAULT_ERROR);
-            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, Constants.DEAULT_ERROR_MSG);
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, Constants.DEFAULT_ERROR);
+            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, Constants.DEFAULT_ERROR_MSG);
         }
         else if("1".equals(operacion)) {
             String causa = centralProcedureResponse.readValueParam(Outputs.O_CAUSA);
@@ -404,8 +404,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_MSG, mensaje);
         }
         else if(returnCode != 0 && (error == null || error.isEmpty() || "0".equals(error))) {//Posible error SQL
-            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_CODE_OP + operacion, Constants.DEAULT_ERROR);
-            aBagSPJavaOrchestration.put(Constants.CENTRAL_ERROR_MSG_OP + operacion, Constants.DEAULT_ERROR_MSG);
+            aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_CODE, Constants.DEFAULT_ERROR);
+            aBagSPJavaOrchestration.put(Constants.LOCAL_ERROR_MSG, Constants.DEFAULT_ERROR_MSG);
         }
         
         aBagSPJavaOrchestration.put(Constants.LOCAL_RESPONSE, localProcedureResponse);
