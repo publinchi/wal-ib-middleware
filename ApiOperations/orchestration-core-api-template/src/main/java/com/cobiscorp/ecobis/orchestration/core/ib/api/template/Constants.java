@@ -38,6 +38,9 @@ public class Constants {
     public static final String SPEI_RETURN = "SPEI_RETURN";
     public static final String ACCOUNT_CREDIT = "ACCOUNT_CREDIT";
     public static final String CREDIT_REVERSAL = "CREDIT_REVERSAL";
+    public static final String REMITTANCE_CREDIT = "REMITTANCE_CREDIT";
+    public static final String REMITTANCE_REVERSAL = "REMITTANCE_REVERSAL";
+    public static final String REFUND = "REFUND";
     
     public static final String AUTHORIZE_PURCHASE = "Authorize Purchase";
     public static final String AUTHORIZE_WITHDRAWAL = "Authorize Withdrawal";

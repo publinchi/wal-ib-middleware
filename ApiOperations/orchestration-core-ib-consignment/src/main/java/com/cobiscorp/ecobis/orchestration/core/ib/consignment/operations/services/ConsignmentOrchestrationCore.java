@@ -447,6 +447,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 
                 data.addRow(row);
 
+                aBagSPJavaOrchestration.put("code_error", errorResponse.readValueFieldInHeader(ICSP.SERVICE_ERROR_CODE));
+                aBagSPJavaOrchestration.put("message_error", errorResponse.readValueFieldInHeader(ICSP.MESSAGE_ERROR));
+                
                 registerTransactionFailed(CLASS_NAME_CONSIGNMENT_CREDIT, "", anOriginalRequest, aBagSPJavaOrchestration);
             }
         } else {
