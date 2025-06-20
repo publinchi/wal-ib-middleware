@@ -498,7 +498,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 					movementType = "";
 				}
 
-				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+				if(aRequest.readValueParam(Constants.CONCEPTO_TRN) != null) {
+					description = aRequest.readValueParam(Constants.CONCEPTO_TRN);
+				} else {
+					description = movementType;
+				}
+				request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
 				request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
 
 				if(movementType.equals(Constants.P2P_CREDIT)) {
@@ -516,24 +521,19 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, movementId);
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 
+				//cuenta origen
+				request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
+				request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
+				//cuenta destino
+				request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
+				request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_cta_des"));
+
 				if(movementType.equals(Constants.P2P_DEBIT)){
-					request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));
-					//cuenta origen
-					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
-					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
-					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
-					//cuenta destino
-					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR,aRequest.readValueParam("@i_cta_des"));
+					request.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINTN, aRequest.readValueParam("@i_ente"));					
+					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));					
 					request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 				}else if(movementType.equals(Constants.P2P_CREDIT)){
-					//cuenta origen
-					request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, Constants.CASHI);
-					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
-					//cuenta destino
-					request.addInputParam("@i_destinationAccountName", ICTSTypes.SQLVARCHAR, null);
-					request.addInputParam("@i_destinationAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta"));
 					request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
 				}			
 				
@@ -1407,7 +1407,7 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 				request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_val"));
 				request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
-				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR, movementId);     
+				request.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR, movementId);
 				
 		        if ("1010".equals(causal)) {
 					description = Constants.P2P_CREDIT;
@@ -1423,7 +1423,6 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 					request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_cta_des"));
 					request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("destinationAccountType"));
 					
-		        
 		        } else if ("1020".equals(causal)) {
 					description = Constants.P2P_DEBIT;
 					movementType = Constants.P2P_DEBIT;
@@ -1435,8 +1434,11 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 		            request.addInputParam("@i_destinationAccountType", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("destinationAccountType"));
 		        	request.addInputParam("@i_sourceAccountType", ICTSTypes.SQLVARCHAR, (String)aBagSPJavaOrchestration.get("originAccountType"));
 					request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, causal);
-		        }	            
-	    
+		        }
+
+				if(aRequest.readValueParam(Constants.CONCEPTO_TRN) != null) {
+					description = aRequest.readValueParam(Constants.CONCEPTO_TRN);
+				}
 			}	        	               
 
 			//Credi at store -- Debi at store

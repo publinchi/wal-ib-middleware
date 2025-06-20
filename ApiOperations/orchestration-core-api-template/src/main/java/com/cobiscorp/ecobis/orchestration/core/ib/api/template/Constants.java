@@ -71,4 +71,5 @@ public class Constants {
 
     public static final String PROCESS = "process";
     public static final String BEGIN = "Begin [";
+    public static final String CONCEPTO_TRN = "@i_concepto";
 }
