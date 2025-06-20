@@ -63,8 +63,12 @@ public class Constants {
     public static final String LOCAL_ERROR_CODE = "localErrorCode";
     public static final String LOCAL_ERROR_MSG = "localErrorMsg";
 
-    public static final int DEAULT_ERROR = 50061;
-    public static final String DEAULT_ERROR_MSG = "Error in consignment credit operation.";
+    public static final int DEFAULT_ERROR = 50061;
+    public static final int REENTRY_ERROR = 40004;
+    public static final String DEFAULT_ERROR_MSG = "Error in consignment credit operation.";
     public static final String PULL_ORIGIN_CODE = "PULL";
     public static final String PUSH_ORIGIN_CODE = "PUSH";
+
+    public static final String PROCESS = "process";
+    public static final String BEGIN = "Begin [";
 }
