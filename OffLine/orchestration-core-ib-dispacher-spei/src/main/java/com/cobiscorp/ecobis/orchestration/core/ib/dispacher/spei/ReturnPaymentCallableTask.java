@@ -293,6 +293,7 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
         String codeError = "0";
 		String messageError = "";
 		String logKarpay = "0";
+		String description = null;
 
         if (logger.isDebugEnabled()) {
             logger.logDebug(" Entrando en registerTransactionWebHook");
@@ -329,7 +330,12 @@ public class ReturnPaymentCallableTask extends SPJavaOrchestrationBase implement
 			request.addInputParam("@i_movementType", ICTSTypes.SQLVARCHAR, movementType);
 			request.addInputParam("@i_causal", ICTSTypes.SQLVARCHAR, "2040");
 			request.addInputParam("@i_logKarpay", ICTSTypes.SQLINT4, logKarpay);
-			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+			if(msjSPEI_In.getOrdenpago().getOpConceptoPag2() != null){
+				description = msjSPEI_In.getOrdenpago().getOpConceptoPag2();
+			} else {
+				description = movementType;
+			}
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
 			request.addInputParam("@i_currency", ICTSTypes.SQLVARCHAR , "MXN");
 			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , aRequest.readValueParam("@s_ssn"));
 			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));

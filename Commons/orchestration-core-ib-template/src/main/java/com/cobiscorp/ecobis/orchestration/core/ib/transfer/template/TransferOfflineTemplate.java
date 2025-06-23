@@ -28,6 +28,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 	protected static String TRANSFER_RESPONSE = "TRANSFER_RESPONSE";
 	protected static final String TRANSFER_NAME = "TRANSFER_NAME";
 	protected static final int CODE_OFFLINE = 40004;
+	private static final String CONCEPTO_TRN = "@i_detail";
 
 	protected abstract IProcedureResponse executeTransfer(Map<String, Object> aBagSPJavaOrchestration);
 
@@ -136,6 +137,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			String eventType = "TRANSACCION PENDING";
 			Integer longSsnBranch = 0;
 	        String authorizationCode = null;
+			String description = null;
 	        
 	        if (aBagSPJavaOrchestration.get("ssn_branch") !=null) {
 	        	authorizationCode = aBagSPJavaOrchestration.get("ssn_branch").toString();
@@ -166,7 +168,13 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , (String)aBagSPJavaOrchestration.get("movementId"));
 			
 			request.addInputParam("@i_clientRequestId", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
-			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+			
+			if(aRequest.readValueParam(CONCEPTO_TRN) != null) {
+				description = aRequest.readValueParam(CONCEPTO_TRN);
+			} else {
+				description = movementType;
+			}
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
 			
 			request.addInputParam("@i_sourceBankName", ICTSTypes.SQLVARCHAR, "CASHI");
 			request.addInputParam("@i_sourceAccountNumber", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_origin_account_number"));
@@ -298,6 +306,7 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 		String codeError = "0";
 		String messageError = "";
 		String causal = "";
+		String description = null;
 		
 		try{
 			
@@ -330,7 +339,13 @@ public abstract class TransferOfflineTemplate extends TransferBaseTemplate {
 			request.addInputParam("@i_transactionAmount", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_amount"));
 			request.addInputParam("@i_transactionDate", ICTSTypes.SQLVARCHAR , aRequest.readValueParam("@x_end_user_request_date"));
 			request.addInputParam("@i_operationType", ICTSTypes.SQLVARCHAR , "D");
-			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, movementType);
+
+			if(aRequest.readValueParam(CONCEPTO_TRN) != null) {
+				description = aRequest.readValueParam(CONCEPTO_TRN);
+			} else {
+				description = movementType;
+			}
+			request.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, description);
 			
 			request.addInputParam("@i_movementId", ICTSTypes.SQLINTN , movementId);
 			

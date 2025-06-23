@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -185,23 +186,15 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
             xChannel = "8";
         }
 
-        // Validacion si transaccion es de remesas
-        String procedureRequest = inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero") ? "cob_procesador..sp_consignment_operations" : "cob_procesador..sp_credit_operation_api" ;
-        
         // create procedure
-        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(procedureRequest);
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_credit_operation_api");
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
         procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
         procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-        boolean isRemittance =  inCreditAccountRequest.getCreditConcept().contains("Transmisión de Dinero");
-
-        // Validacion trn es de remesas
-        String trnRequest = isRemittance ? "18701001" : "18500111" ;
         
-        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
+        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18500111");
         procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
                 String.valueOf(inCreditAccountRequest.getExternalCustomerId()));
         procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
@@ -218,37 +211,17 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 inCreditAccountRequest.getReferenceNumber());
         procedureRequestAS.addInputParam("@i_creditConcept", ICTSTypes.SQLVARCHAR,
                 inCreditAccountRequest.getCreditConcept());
-        
-        if(!isRemittance){
-            procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
-                String.valueOf(inCreditAccountRequest.getOriginCode()));  
-        }
+        procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
+                String.valueOf(inCreditAccountRequest.getOriginCode()));
 
         procedureRequestAS.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inCreditAccountRequest.getOriginMovementId()));
         procedureRequestAS.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inCreditAccountRequest.getOriginReferenceNumber()));
-        
-        //Campos del SuplementaryData
-        SupplementaryData[] supplementaryData = inCreditAccountRequest.getSupplementaryData();
-        Set<String> importantKeys = new HashSet<String>(Arrays.asList("originCode", "senderName", "moneyTransmitter", "originCountry", "currency", "originCurrency", "exchangeRate"));
-
-        if (supplementaryData != null) {
-        	for (SupplementaryData data : supplementaryData) {
-        	    if (data != null && importantKeys.contains(data.getKey())) {
-        	    	procedureRequestAS.addInputParam("@i_" + data.getKey() , ICTSTypes.SQLVARCHAR, String.valueOf(data.getValue()));
-        	    }
-        	}
-        	procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "credit");
-        }    
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
         procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
-        
-        if (LOGGER.isDebugEnabled()) {
-                LOGGER.logDebug("creditOperation orchestratorname: " + procedureRequestAS.getSpName());
-        }
         
         // execute procedure
         ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
@@ -5098,10 +5071,10 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
 		throw new CTSRestException("404",null);
 		}
 		
-		  LOGGER.logDebug("Ends service execution: unlockCreditOperation");
-		  //returns data
-		  return outResponseUnlockCreditOperation;
-		} 
+        LOGGER.logDebug("Ends service execution: unlockCreditOperation");
+        //returns data
+        return outResponseUnlockCreditOperation;
+	} 
 
     /**
      * Update customer address
@@ -9091,51 +9064,29 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         if (xChannel == null || xChannel.equals("null") || xChannel.trim().isEmpty()) {
             xChannel = "8";
         }
-
-        // Validacion si transaccion es de remesas
-        String reversalConcept = inReverseOperationRequest.getReversalConcept();
-        boolean isRemittance = reversalConcept != null ? reversalConcept.contains("REMITTANCE_REVERSAL") : false;
-        String procedureRequest = isRemittance ? "cob_procesador..sp_consignment_operations" : "cob_procesador..sp_reverse_operation" ;
         
         // create procedure
-        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS(procedureRequest);
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_reverse_operation");
 
         procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
         procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
         procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
         procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
-
-        // Validacion trn es de remesas
-        String trnRequest = isRemittance ? "18701001" : "18700138" ;
         
-        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
+        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18700138");
         procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReferenceNumber());
-
-        String reversalConceptName = isRemittance    ? "@i_reversal_concept"    : "@i_reversalConcept";
-        String externalCustomerIdName = isRemittance ? "@i_externalCustomerId"  : "@i_externalCustomerId_ori";
-        String accountNumberName = isRemittance      ? "@i_accountNumber"       : "@i_accountNumber_ori";
-        String referenceNumberName = isRemittance    ? "@i_referenceNumber_trn" : "@i_referenceNumber_ori";
-        String movementIdName = isRemittance         ? "@i_movementId"          : "@i_movementId_ori";
-        String reversalReasonName = isRemittance     ? "@i_reversal_reason"     : "@i_reversalReason_ori";
-
-        procedureRequestAS.addInputParam(reversalConceptName, ICTSTypes.SQLVARCHAR, reversalConcept);
-        procedureRequestAS.addInputParam(externalCustomerIdName, ICTSTypes.SQLINT4,
-                                         String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
-        procedureRequestAS.addInputParam(accountNumberName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getAccountNumber());
-        procedureRequestAS.addInputParam(referenceNumberName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
-        procedureRequestAS.addInputParam(movementIdName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getMovementId());
-        procedureRequestAS.addInputParam(reversalReasonName, ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
-        
-        procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "refund");
-        //Validacion campos por Remesas
-        if (inReverseOperationRequest.getCommission() != null) {
-        	 procedureRequestAS.addInputParam("@i_amount_com",ICTSTypes.SQLMONEY,String.valueOf(inReverseOperationRequest.getCommission().getAmount()));
-             procedureRequestAS.addInputParam("@i_reason_com",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getReason());
-             procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,
-                                              inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
-             procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,
+        procedureRequestAS.addInputParam("@i_reversalConcept", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getReversalConcept());
+        procedureRequestAS.addInputParam("@i_externalCustomerId_ori", ICTSTypes.SQLINT4, String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+        procedureRequestAS.addInputParam("@i_accountNumber_ori", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getAccountNumber());
+        procedureRequestAS.addInputParam("@i_referenceNumber_ori", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_movementId_ori", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getMovementId());
+        procedureRequestAS.addInputParam("@i_reversalReason_ori", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
+        procedureRequestAS.addInputParam("@i_amount_com",ICTSTypes.SQLMONEY,String.valueOf(inReverseOperationRequest.getCommission().getAmount()));
+        procedureRequestAS.addInputParam("@i_reason_com",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getCommission().getReason());
+        procedureRequestAS.addInputParam("@i_movementId_com_ori",ICTSTypes.SQLVARCHAR,
+                                        inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
+        procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,
                                               inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
-        }    
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inReverseOperationRequest);
@@ -9208,4 +9159,352 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         //returns data
         return outSingleReverseOperationResponse;
     }
+
+    /**
+     * Service to apply credit account only for remittances
+     */
+    @Override
+    // Return DTO
+    public ConsignmentCreditResponse consignmentCredit(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+                                                   ConsignmentCreditRequest inCreditAccountRequest) throws CTSRestException {
+        LOGGER.logInfo("Start service execution: consignmentCredit");
+        ConsignmentCreditResponse outSingleCreditAccountResponse = new ConsignmentCreditResponse();
+
+
+        if (Objects.isNull(xRequestId) || xRequestId.equals("null") || xRequestId.isEmpty()) {
+            xRequestId = "E";
+        }
+
+        if (Objects.isNull(xEndUserRequestDateTime) || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (Objects.isNull(xEndUserIp) || xEndUserIp.equals("null") || xEndUserIp.isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (Objects.isNull(xChannel) || xChannel.equals("null") || xChannel.isEmpty()) {
+            xChannel = "8";
+        }
+
+        // create procedure
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_consignment_operations");
+
+        procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+
+        // Transaction request number remittances
+        String trnRequest = "18701001";
+        
+        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, trnRequest);
+
+        procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
+                                         String.valueOf(inCreditAccountRequest.getExternalCustomerId()));
+
+        procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR,
+                                         inCreditAccountRequest.getAccountNumber());
+
+        procedureRequestAS.addInputParam("@i_amount", ICTSTypes.SQLMONEY,
+                                         String.valueOf(inCreditAccountRequest.getAmount()));
+
+        procedureRequestAS.addInputParam("@i_commission", ICTSTypes.SQLMONEY,
+                                         String.valueOf(inCreditAccountRequest.getCommission()));
+
+        procedureRequestAS.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR,
+                                         inCreditAccountRequest.getReferenceNumber());
+
+        procedureRequestAS.addInputParam("@i_creditConcept", ICTSTypes.SQLVARCHAR,
+                                         inCreditAccountRequest.getCreditConcept());
+        
+        procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
+                                         String.valueOf(inCreditAccountRequest.getOriginCode()));  
+
+        procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "credit");    
+        
+        //SuplementaryData 
+        SupplementaryData[] supplementaryData = inCreditAccountRequest.getSupplementaryData();
+
+        if (Objects.nonNull(supplementaryData)) {
+        	for (SupplementaryData data : supplementaryData) {
+        	    if (Objects.nonNull(data) && Objects.nonNull(data.getKey())) {
+        	    	procedureRequestAS.addInputParam("@i_" + data.getKey() , ICTSTypes.SQLVARCHAR, data.getValue());
+        	    }
+        	}
+        }    
+
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans); 
+        
+        if (LOGGER.isDebugEnabled()) {
+                LOGGER.logDebug("creditOperation orchestratorname: " + procedureRequestAS.getSpName());
+        }
+        
+        // execute procedure
+        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,
+                procedureRequestAS);
+
+        List<MessageBlock> errors = ErrorUtil.getErrors(response);
+        // throw error
+        if (errors != null && errors.size() > 0) {
+            LOGGER.logDebug("Procedure execution returns error");
+            if (LOGGER.isDebugEnabled()) {
+                for (int i = 0; i < errors.size(); i++) {
+                    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+                }
+            }
+            throw new CTSRestException("Procedure Response has errors", null, errors);
+        }
+        LOGGER.logDebug("Procedure ok");
+        // Init map returns
+        int mapTotal = 0;
+        int mapBlank = 0;
+
+        mapTotal++;
+        if (Objects.nonNull(response.getResultSets()) && response.getResultSets().get(0).getData().getRows().size() > 0) {
+            // ----------------Assume Array return
+            ConsignmentCreditResponse returnCreditAccountResponse = MapperResultUtil
+                    .mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ConsignmentCreditResponse>() {
+                        @Override
+                        public ConsignmentCreditResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                            ConsignmentCreditResponse dto = new ConsignmentCreditResponse();
+
+                            dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                            dto.setMovementId(resultSetMapper.getString(4));
+                            dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+                            dto.responseInstance().setMessage(resultSetMapper.getString(3));
+                            return dto;
+                        }
+                    }, false);
+            outSingleCreditAccountResponse = returnCreditAccountResponse;
+
+        } else {
+            mapBlank++;
+        }
+
+        // End map returns
+        if (mapBlank != 0 && mapBlank == mapTotal) {
+            LOGGER.logDebug("No data found");
+            throw new CTSRestException("404", null);
+        }
+
+        String trn = "Account Credit Operation";
+
+         
+        Gson gson = new Gson();
+        String jsonReq = gson.toJson(inCreditAccountRequest);
+
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleCreditAccountResponse);
+
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+        LOGGER.logInfo("Ends service execution: creditOperation");
+        // returns data
+        return outSingleCreditAccountResponse;
+    }
+
+    /**
+    * It allows the unlocking of account values, which were credited by remittances.
+    */
+    @Override
+	//Have DTO
+	public ConsignmentUnlockResponse consignmentUnlock(	String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel,
+                                                        ConsignmentUnlockRequest inRequestUnlockCreditOperation  )throws CTSRestException{
+		LOGGER.logDebug("Start service execution: unlockCreditOperation");
+		ConsignmentUnlockResponse outResponseUnlockCreditOperation  = new ConsignmentUnlockResponse();
+		
+		//create procedure
+		ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_consignment_operations");
+
+        if (Objects.isNull(xRequestId) || xRequestId.equals("null") || xRequestId.isEmpty()) {
+            xRequestId = "E";
+        }
+
+        if (Objects.isNull(xEndUserRequestDateTime) || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (Objects.isNull(xEndUserIp) || xEndUserIp.equals("null") || xEndUserIp.isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (Objects.isNull(xChannel) || xChannel.equals("null") || xChannel.isEmpty()) {
+            xChannel = "8";
+        }
+		
+		procedureRequestAS.addInputParam("@t_trn",ICTSTypes.SQLINT4,"18701001");
+		procedureRequestAS.addInputParam("@i_externalCustomerId",ICTSTypes.SQLINT4,String.valueOf(inRequestUnlockCreditOperation.getOriginalTransactionData().getExternalCustomerId()));
+		procedureRequestAS.addInputParam("@i_accountNumber",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getAccountNumber());
+		procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getReferenceNumber());
+		procedureRequestAS.addInputParam("@i_movementId",ICTSTypes.SQLVARCHAR,inRequestUnlockCreditOperation.getOriginalTransactionData().getMovementId());
+		procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+		procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "unlock");
+		//execute procedure
+		ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+		
+		List<MessageBlock> errors = ErrorUtil.getErrors(response);
+		//throw error
+		if(errors!= null && errors.size()> 0){
+		LOGGER.logDebug("Procedure execution returns error");
+		if ( LOGGER.isDebugEnabled() ) {
+		for (int i = 0; i < errors.size(); i++) {
+		LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+		}
+		}
+		throw new CTSRestException("Procedure Response has errors", null, errors);
+		}
+		LOGGER.logDebug("Procedure ok");
+		//Init map returns
+		int mapTotal=0;
+		int mapBlank=0;
+        
+        mapTotal++;
+        if (response.getResultSets() != null && response.getResultSets().get(0).getData().getRows().size() > 0) {
+            // ----------------Assume Array return
+            ConsignmentUnlockResponse returnResponseUnlockCreditOperation = MapperResultUtil
+                    .mapOneRowToObject(response.getResultSets().get(0), new RowMapper<ConsignmentUnlockResponse>() {
+                        @Override
+                        public ConsignmentUnlockResponse mapRow(ResultSetMapper resultSetMapper, int index) {
+                            ConsignmentUnlockResponse dto = new ConsignmentUnlockResponse();
+
+                            String movementIdS = resultSetMapper.getString(4);
+                            Integer movementId = null;
+                            if(movementIdS != null){
+                                movementId = Integer.parseInt(movementIdS);
+                            }
+
+                            dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                            dto.setMovementId(movementId);
+                            dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+                            dto.responseInstance().setMessage(resultSetMapper.getString(3));
+                            return dto;
+                        }
+                    }, false);
+            outResponseUnlockCreditOperation = returnResponseUnlockCreditOperation;
+
+        } else {
+            mapBlank++;
+
+        }
+		    
+		//End map returns
+		if(mapBlank!=0 && mapBlank==mapTotal){
+		LOGGER.logDebug("No data found");
+		throw new CTSRestException("404",null);
+		}
+		
+        LOGGER.logDebug("Ends service execution: unlockCreditOperation");
+        //returns data
+        return outResponseUnlockCreditOperation;
+	} 
+
+    @Override
+	public  ConsignmentReverseResponse consignmentReverse(String xRequestId, String xEndUserRequestDateTime, String xEndUserIp, String xChannel, 
+                                                            ConsignmentReverseRequest inReverseOperationRequest  ) throws CTSRestException {
+        if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: consignmentReverse");
+
+        ConsignmentReverseResponse outSingleReverseOperationResponse = new ConsignmentReverseResponse();
+
+        if (Objects.isNull(xEndUserRequestDateTime) || xEndUserRequestDateTime.equals("null") || xEndUserRequestDateTime.trim().isEmpty()) {
+            xEndUserRequestDateTime = "E";
+        }
+
+        if (Objects.isNull(xEndUserIp) || xEndUserIp.equals("null") || xEndUserIp.trim().isEmpty()) {
+            xEndUserIp = "E";
+        }
+
+        if (Objects.isNull(xChannel) || xChannel.equals("null") || xChannel.trim().isEmpty()) {
+            xChannel = "8";
+        }
+        
+        // create procedure
+        ProcedureRequestAS procedureRequestAS = new ProcedureRequestAS("cob_procesador..sp_consignment_operations");
+
+        procedureRequestAS.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, xRequestId);
+        procedureRequestAS.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, xEndUserRequestDateTime);
+        procedureRequestAS.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, xEndUserIp);
+        procedureRequestAS.addInputParam("@x_channel", ICTSTypes.SQLVARCHAR, xChannel);
+        
+        procedureRequestAS.addInputParam("@t_trn", ICTSTypes.SQLINT4, "18701001");
+        procedureRequestAS.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4,
+                                         String.valueOf(inReverseOperationRequest.getOriginalTransactionData().getExternalCustomerId()));
+        procedureRequestAS.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getAccountNumber());
+        procedureRequestAS.addInputParam("@i_referenceNumber",ICTSTypes.SQLVARCHAR,inReverseOperationRequest.getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_reversal_concept" , ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getReversalConcept());
+        procedureRequestAS.addInputParam("@i_referenceNumber_trn", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_movementId", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getMovementId());
+        procedureRequestAS.addInputParam("@i_reversal_reason" , ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getOriginalTransactionData().getReversalReason());
+        
+        procedureRequestAS.addInputParam("@i_servicio", ICTSTypes.SQLVARCHAR, "refund");
+
+        Gson gsonTrans = new Gson();
+        String jsonReqTrans = gsonTrans.toJson(inReverseOperationRequest);
+        procedureRequestAS.addInputParam("@i_json_req", ICTSTypes.SQLVARCHAR, jsonReqTrans);
+     
+        //execute procedure
+        ProcedureResponseAS response = ctsRestIntegrationService.execute(SessionManager.getSessionId(), null,procedureRequestAS);
+
+        List<MessageBlock> errors = ErrorUtil.getErrors(response);
+        //throw error
+        if (errors != null && !errors.isEmpty()) {
+            if ( LOGGER.isDebugEnabled() ) {
+                LOGGER.logDebug("Procedure execution returns error");
+                for (int i = 0; i < errors.size(); i++) {
+                    LOGGER.logDebug("CTSErrorMessage: " + errors.get(i));
+                }
+            }
+            throw new CTSRestException("Procedure Response has errors", null, errors);
+        }
+
+        if (LOGGER.isDebugEnabled())LOGGER.logDebug("Procedure ok");
+
+        //Init map returns
+        int mapTotal=0;
+        int mapBlank=0;
+
+        mapTotal++;
+        if (response.getResultSets() != null && !response.getResultSets().isEmpty() && response.getResultSets().get(0).getData() != null && !response.getResultSets().get(0).getData().getRows().isEmpty()) {
+            //----------------Assume Array return
+            ConsignmentReverseResponse returnReverseOperationResponse = MapperResultUtil.mapOneRowToObject(response.getResultSets().get(0), (resultSetMapper, index) -> {
+                ConsignmentReverseResponse dto = new ConsignmentReverseResponse();
+
+                dto.setSuccess(resultSetMapper.getBooleanWrapper(1));
+                dto.setMovementId(resultSetMapper.getString(4));
+                dto.responseInstance().setCode(resultSetMapper.getInteger(2));
+                dto.responseInstance().setMessage(resultSetMapper.getString(3));
+                return dto;
+            });
+            outSingleReverseOperationResponse = returnReverseOperationResponse ;
+
+        }else {
+            mapBlank++;
+        }
+        //End map returns
+        if(mapBlank != 0 && mapBlank == mapTotal){
+            if (LOGGER.isDebugEnabled()) LOGGER.logDebug("No data found");
+            throw new CTSRestException("404",null);
+        }
+
+        String trn = "Reversal Credit Operation";
+
+        Gson gson = new Gson();
+        String jsonReq = gson.toJson(inReverseOperationRequest);
+
+        Gson gson2 = new Gson();
+        String jsonRes = gson2.toJson(outSingleReverseOperationResponse);
+
+        saveCobisTrnReqRes(trn, jsonReq, jsonRes, jsonHead);
+
+        if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Ends service execution: consignmentReverse");
+
+        //returns data
+        return outSingleReverseOperationResponse;
+    }
+
 }

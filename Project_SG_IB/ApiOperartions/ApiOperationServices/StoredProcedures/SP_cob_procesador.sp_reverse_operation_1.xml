@@ -21,7 +21,6 @@
     <parameter name="@i_reason_com" dataType="varchar" direction="in" />
     <parameter name="@i_movementId_com_orin" dataType="varchar" direction="in" />
     <parameter name="@i_referenceNumber_com_origin" dataType="varchar" direction="in" />
-    <parameter name="@i_servicio" dataType="varchar" direction="in" />
   </parameters>
   <queries>
     <query>

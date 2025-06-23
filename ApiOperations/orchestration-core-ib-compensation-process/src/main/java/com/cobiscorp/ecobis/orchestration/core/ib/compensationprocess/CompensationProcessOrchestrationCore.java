@@ -29,11 +29,13 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
@@ -51,7 +53,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 		@Property(name = "service.spName", value = "cob_procesador..sp_compensation_process") })
 public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBase {
 
-	private ILogger logger = LogFactory.getLogger(CompensationProcessOrchestrationCore.class);
+	private ILogger loggerProcess = LogFactory.getLogger(CompensationProcessOrchestrationCore.class);
 	private static final String CLASS_NAME = "CompensationProcessOrchestrationCore";
 	private java.util.Properties properties;
 	private static final String VALIDAR_ARCHIVO = "validarArchivo";
@@ -75,8 +77,8 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + ": loadConfiguration INI");
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo(CLASS_NAME + ": loadConfiguration INI");
 		}
 		properties = arg0.getProperties("//property");
 	}
@@ -95,31 +97,38 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		try {
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e) {
-			logger.logError(e.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError(e.toString());
+			}
 		} catch (CTSInfrastructureException e) {
-			logger.logError(e.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError(e.toString());
+			}
 		}
 
 		if (responseServer != null && responseServer.getOnLine()) {
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("server is online");
+			if (loggerProcess.isDebugEnabled()) {
+				loggerProcess.logDebug("server is online");
 			}
 			File directory = new File(localDirectory);
 			aBagSPJavaOrchestration.put("numRegistros", properties.get("NUMBER"));
 
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + ": Begin executeJavaOrchestration");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": Begin executeJavaOrchestration");
 			}
 
 			if (directory.isDirectory()) {
 				aBagSPJavaOrchestration.put("directory", directory);
 				processFilesInDirectory(anOriginalRequest, aBagSPJavaOrchestration);
 			} else {
-				logger.logInfo(CLASS_NAME + ": La ruta especificada no es un directorio.");
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logInfo(CLASS_NAME + ": La ruta especificada no es un directorio.");
+				}
 			}
 
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
+			if (loggerProcess.isDebugEnabled()) {
+				loggerProcess
+						.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
 			}
 		}
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -133,11 +142,18 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			for (File file : files) {
 				if (file.isFile()) {
 					if (file.getName().toLowerCase().endsWith(".json")) {
+						if (file.exists() && file.length() > 0) {
+							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
+							aBagSPJavaOrchestration.put(FILENAME, "/" + file.getName());
+							anOriginalRequest.addInputParam("@i_fileName", ICTSTypes.SQLVARCHAR, file.getName());
+							jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
+						} else {
+							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
+							if (loggerProcess.isInfoEnabled()) {
+								loggerProcess.logInfo(CLASS_NAME + " Archivo vacio " + file.getName());
+							}
+						}
 
-						aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
-						aBagSPJavaOrchestration.put(FILENAME, "/" + file.getName());
-						anOriginalRequest.addInputParam("@i_fileName", ICTSTypes.SQLVARCHAR, file.getName());
-						jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
 						if ("true".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
 							anOriginalRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "C"); // COMPLETADO
 																									// CORRECTAMENTE
@@ -148,25 +164,33 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						generateReportCompensation(anOriginalRequest, aBagSPJavaOrchestration);
 
 					} else {
-						logger.logInfo(
-								CLASS_NAME + " [Archivo Ignorado] " + file.getName() + " no es un archivo JSON.");
+						if (loggerProcess.isInfoEnabled()) {
+							loggerProcess.logInfo(
+									CLASS_NAME + " [Archivo Ignorado] " + file.getName() + " no es un archivo JSON.");
+						}
 					}
 				} else if (file.isDirectory()) {
-					logger.logInfo(CLASS_NAME + " [Directorio] " + file.getName());
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logInfo(CLASS_NAME + " [Directorio] " + file.getName());
+					}
 				}
 			}
 			// se sube el reporte al S3 si existe el archivo
 			if (aBagSPJavaOrchestration.get(NOMBRE_REPORTE) != null) {
 				File file = new File((String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE));
 				if (file.exists()) {
-					logger.logInfo(CLASS_NAME + " [Directorio] "
-							+ (String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logInfo(CLASS_NAME + " [Directorio] "
+								+ (String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
+					}
 					execUploapDownloadFile(anOriginalRequest, aBagSPJavaOrchestration, "S",
 							(String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
 				}
 			}
 		} else {
-			logger.logInfo(CLASS_NAME + ": El directorio está vacío o no se puede acceder.");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": El directorio está vacío o no se puede acceder.");
+			}
 		}
 	}
 
@@ -175,15 +199,15 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		TransactionFile transactionFile = null;
-
-		logger.logInfo(CLASS_NAME + ": jsonLoad: " + aBagSPJavaOrchestration.toString());
-
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo(CLASS_NAME + ": jsonLoad: " + aBagSPJavaOrchestration.toString());
+		}
 		aBagSPJavaOrchestration.put(REGISTROS, "");
 		try {
 			transactionFile = objectMapper.readValue(file, TransactionFile.class);
-
-			logger.logInfo(CLASS_NAME + ": aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
-
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
+			}
 			fillingVariables(transactionFile, aBagSPJavaOrchestration);
 
 			List<TransactionContent> contents = transactionFile.getContent();
@@ -192,13 +216,15 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				aBagSPJavaOrchestration.put("contents", contents);
 				concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
 
-				if (logger.isInfoEnabled()) {
-					logger.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
 				}
 			}
 		} catch (IOException e) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, VALIDAR_ARCHIVO);
-			logger.logError("Error en jsonLoad", e);
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError("Error en jsonLoad", e);
+			}
 		}
 		return transactionFile;
 	}
@@ -216,17 +242,12 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				aBagSPJavaOrchestration.get(REGISTROS).toString());
 		request.addOutputParam(O_COMPENSACION_FIN, ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
-		if (logger.isInfoEnabled()) {
-			logger.logDebug("Request Corebanking consCarId: " + request.toString());
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logDebug("Request Corebanking consCarId: " + request.toString());
 		}
 
 		IProcedureResponse response = executeCoreBanking(request);
 
-		if (response.getReturnCode() != 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
-			response = Utils.returnException(Utils.returnArrayMessage(response));
-
-		}
 		if (response.getReturnCode() == 0 && response.readValueParam(O_COMPENSACION_FIN) != null) {
 			aBagSPJavaOrchestration.put("o_compensacion_fin", response.readValueParam(O_COMPENSACION_FIN));
 			compensacionCentral(request, aBagSPJavaOrchestration);
@@ -255,10 +276,6 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		IProcedureResponse response = executeCoreBanking(request);
 		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
-		if (response.getReturnCode() != 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
-			response = Utils.returnException(Utils.returnArrayMessage(response));
-		}
 		if (response.getReturnCode() == 0) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
 		}
@@ -299,11 +316,13 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
-			this.logger.logInfo("CompensationProcessOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
-
+			if (loggerProcess.isInfoEnabled()) {
+				this.loggerProcess
+						.logInfo("CompensationProcessOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
+			}
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo("CompensationProcessOrchestrationCore --> Saliendo de execUpDownloadFile");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo("CompensationProcessOrchestrationCore --> Saliendo de execUpDownloadFile");
 			}
 		}
 
@@ -315,8 +334,8 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = new ProcedureResponseAS();
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Begin [" + CLASS_NAME + "][processResponse]");
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo("Begin [" + CLASS_NAME + "][processResponse]");
 		}
 		if (aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION) == null) {
 
@@ -365,7 +384,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				int actionCode = clearing.getActionCode();
 
 				if (actionCode == 2 || actionCode == 3) {
-					String concatenated = String.join("*", content.getTransaction().getPan(),
+					String concatenated = String.join(";", content.getTransaction().getPan(),
 							content.getTransaction().getCardId(),
 							content.getTransaction().getTransactionTypeIndicator(),
 							content.getTransaction().getAuthorization(),
@@ -410,25 +429,25 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			throws CTSServiceException, CTSInfrastructureException {
 		IProcedureRequest aServerStatusRequest = createServerStatusRequest(serverRequest);
 
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Request to Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
+		if (loggerProcess.isDebugEnabled()) {
+			loggerProcess.logDebug("Request to Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
 		}
 
 		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
 
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response from Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
+		if (loggerProcess.isDebugEnabled()) {
+			loggerProcess.logDebug("Response from Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
 		}
 
 		ServerResponse serverResponse = new ServerResponse();
 		populateServerResponse(serverResponse, wServerStatusResp);
 
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Returned Response: " + serverResponse);
+		if (loggerProcess.isDebugEnabled()) {
+			loggerProcess.logDebug("Returned Response: " + serverResponse);
 		}
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("TERMINATING SERVICE");
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo("TERMINATING SERVICE");
 		}
 
 		return serverResponse;
@@ -470,7 +489,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			try {
 				serverResponse.setProcessDate(formatter.parse(processDateStr));
 			} catch (ParseException e) {
-				logger.logDebug("Error parsing process date: ", e);
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logDebug("Error parsing process date: ", e);
+				}
 			}
 		}
 	}
@@ -483,8 +504,8 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	private void generateReportCompensation(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Inicia generateReportCompensation");
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo("Inicia generateReportCompensation");
 		}
 
 		aBagSPJavaOrchestration.put(SIGUIENTE, "0");
@@ -512,8 +533,10 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						createReportCsv(responseData, aBagSPJavaOrchestration); // Crea el reporte
 					}
 				} catch (NumberFormatException e) {
-					logger.logError("Error al analizar el número de filas: " + numFilasParam, e);
-					hasMoreRecords = false; // Detener el bucle en caso de error
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logError("Error al analizar el número de filas: " + numFilasParam, e);
+						hasMoreRecords = false; // Detener el bucle en caso de error
+					}
 				}
 			} else {
 				hasMoreRecords = false; // No hay más registros
@@ -554,36 +577,66 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			writer = new FileWriter(csvFile, new File(csvFile).exists());
 
 			if (response.getResultSetListSize() > 0) {
-				IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
-				for (IResultSetRow row : resultSetRows) {
-					IResultSetRowColumnData[] columns = row.getColumnsAsArray();
-
-					StringBuilder data = new StringBuilder();
-					for (int j = 1; j < columns.length; j++) {
-						if (j > 1) {
-							data.append(";");
-						}
-						data.append(columns[j].getValue());
-					}
-
-					writer.append(data.toString()).append("\n");
-
-					if (row == resultSetRows[resultSetRows.length - 1]) {
-						aBagSPJavaOrchestration.put(SIGUIENTE, columns[0].getValue());
-					}
-				}
+				writeHeader(writer, response, csvFile);
+				writeData(writer, response, aBagSPJavaOrchestration);
 			}
 			return true;
 		} catch (IOException e) {
-			logger.logError("Error en la creación de archivo CSV:", e);
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError("Error en la creación de archivo CSV:", e);
+			}
 			return false;
 		} finally {
 			if (writer != null) {
 				try {
 					writer.close();
 				} catch (IOException e) {
-					logger.logError("Error al cerrar el archivo CSV:", e);
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logError("Error al cerrar el archivo CSV:", e);
+					}
 				}
+			}
+		}
+	}
+
+	private void writeHeader(FileWriter writer, IProcedureResponse response, String csvFile) throws IOException {
+		File file = new File(csvFile);
+		if (file.exists() && file.length() > 0) {
+			return;
+		}
+
+		IResultSetHeader rsHeader = response.getResultSetMetaData(1);
+
+		StringBuilder header = new StringBuilder();
+		for (int i = 2; i <= rsHeader.getColumnsNumber(); i++) {
+			ResultSetHeaderColumn col = (ResultSetHeaderColumn) rsHeader.getColumnMetaData(i);
+			if (i > 2) {
+				header.append(";");
+			}
+			header.append(col.getName());
+		}
+		writer.append(header.toString()).append("\n");
+	}
+
+	private void writeData(FileWriter writer, IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration)
+			throws IOException {
+		IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
+
+		for (IResultSetRow row : resultSetRows) {
+			IResultSetRowColumnData[] columns = row.getColumnsAsArray();
+			StringBuilder data = new StringBuilder();
+
+			for (int j = 1; j < columns.length; j++) {
+				if (j > 1) {
+					data.append(";");
+				}
+				data.append(columns[j].getValue());
+			}
+
+			writer.append(data.toString()).append("\n");
+
+			if (row == resultSetRows[resultSetRows.length - 1]) {
+				aBagSPJavaOrchestration.put(SIGUIENTE, columns[0].getValue());
 			}
 		}
 	}
