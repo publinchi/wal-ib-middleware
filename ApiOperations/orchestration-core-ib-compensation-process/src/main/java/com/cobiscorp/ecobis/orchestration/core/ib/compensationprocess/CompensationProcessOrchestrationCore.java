@@ -74,6 +74,8 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	private static final String T_TRN = "@t_trn";
 	private static final int ERROR40002 = 40002;
 	private static final String FILENAME = "filename";
+	private static final String I_TIPO = "@i_tipo";
+	private static final String I_FILENAME= "@i_fileName";
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
@@ -145,7 +147,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						if (file.exists() && file.length() > 0) {
 							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
 							aBagSPJavaOrchestration.put(FILENAME, "/" + file.getName());
-							anOriginalRequest.addInputParam("@i_fileName", ICTSTypes.SQLVARCHAR, file.getName());
+							anOriginalRequest.addInputParam(I_FILENAME, ICTSTypes.SQLVARCHAR, file.getName());
+							anOriginalRequest.addInputParam("fileNameSinJson", ICTSTypes.SQLVARCHAR,
+									getFileNameWithoutExtension(file.getName()));
 							jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
 						} else {
 							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
@@ -155,14 +159,15 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						}
 
 						if ("true".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
-							anOriginalRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "C"); // COMPLETADO
-																									// CORRECTAMENTE
+							anOriginalRequest.addInputParam(I_TIPO, ICTSTypes.SQLVARCHAR, "C"); // COMPLETADO
+																								// CORRECTAMENTE
 						} else {
-							anOriginalRequest.addInputParam("@i_tipo", ICTSTypes.SQLVARCHAR, "E"); // ERROR
+							anOriginalRequest.addInputParam(I_TIPO, ICTSTypes.SQLVARCHAR, "E"); // ERROR
 						}
 						execUploapDownloadFile(anOriginalRequest, aBagSPJavaOrchestration, "D", "");
-						generateReportCompensation(anOriginalRequest, aBagSPJavaOrchestration);
-
+						if ("C".equals(anOriginalRequest.readValueParam(I_TIPO))) {
+							generateReportCompensation(anOriginalRequest, aBagSPJavaOrchestration);
+						}
 					} else {
 						if (loggerProcess.isInfoEnabled()) {
 							loggerProcess.logInfo(
@@ -210,15 +215,25 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			}
 			fillingVariables(transactionFile, aBagSPJavaOrchestration);
 
-			List<TransactionContent> contents = transactionFile.getContent();
+			String originalFileName = anOriginalRequest.readValueParam("fileNameSinJson");
+			String transactionFileName = transactionFile.getFilename();
+			if (originalFileName != null && transactionFileName != null
+					&& originalFileName.equals(transactionFileName)) {
 
-			if (contents != null) {
-				aBagSPJavaOrchestration.put("contents", contents);
-				concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
+				List<TransactionContent> contents = transactionFile.getContent();
 
-				if (loggerProcess.isInfoEnabled()) {
-					loggerProcess.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
+				if (contents != null) {
+					aBagSPJavaOrchestration.put("contents", contents);
+					concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
+					if (FALSE.equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
+						return null;
+					}
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
+					}
 				}
+			} else {
+				aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
 			}
 		} catch (IOException e) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
@@ -278,8 +293,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 		if (response.getReturnCode() == 0) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
+		} else {
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
 		}
-
 	}
 
 	private IProcedureResponse execUploapDownloadFile(IProcedureRequest anOriginalReq,
@@ -415,6 +431,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						aBagSPJavaOrchestration.put(REGISTROS, groupBuilder.toString());
 						consCarId(anOriginalRequest, aBagSPJavaOrchestration);
 						groupBuilder.setLength(0);
+						if ("false".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
+							return;
+						}
 					}
 				}
 			}
@@ -638,6 +657,15 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			if (row == resultSetRows[resultSetRows.length - 1]) {
 				aBagSPJavaOrchestration.put(SIGUIENTE, columns[0].getValue());
 			}
+		}
+	}
+
+	private static String getFileNameWithoutExtension(String fileName) {
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex > 0) {
+			return fileName.substring(0, dotIndex);
+		} else {
+			return fileName;
 		}
 	}
 }
