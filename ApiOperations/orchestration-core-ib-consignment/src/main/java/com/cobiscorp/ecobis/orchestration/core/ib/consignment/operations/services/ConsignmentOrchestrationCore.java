@@ -156,7 +156,6 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40107),
                 new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.NOT_EMPTY, ErrorCode.E40301),
                 new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.IS_DOUBLE, ErrorCode.E40301),
-                new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40108),
                 new ParameterValidationUtil(Inputs.I_ORIGINCODE, ValidationType.NOT_EMPTY, ErrorCode.E40302),
                 new ParameterValidationUtil(Inputs.I_SENDERNAME, ValidationType.NOT_EMPTY, ErrorCode.E40303),
                 new ParameterValidationUtil(Inputs.I_MONEYTRANSMITTER, ValidationType.NOT_EMPTY, ErrorCode.E40304),
