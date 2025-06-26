@@ -29,10 +29,24 @@ import java.util.HashMap;
 
 public class CommissionDetails implements Serializable {
   private String reason;
+  private String originMovementId;
+  private String originReferenceNumber;
   public String getReason(){
     return this.reason;
   }
   public void setReason(String reason ){
     this.reason=reason;
+  }
+  public String getOriginMovementId(){
+    return this.originMovementId;
+  }
+  public void setOriginMovementId(String originMovementId ){
+    this.originMovementId=originMovementId;
+  }
+  public String getOriginReferenceNumber(){
+    return this.originReferenceNumber;
+  }
+  public void setOriginReferenceNumber(String originReferenceNumber ){
+    this.originReferenceNumber=originReferenceNumber;
   }
 }

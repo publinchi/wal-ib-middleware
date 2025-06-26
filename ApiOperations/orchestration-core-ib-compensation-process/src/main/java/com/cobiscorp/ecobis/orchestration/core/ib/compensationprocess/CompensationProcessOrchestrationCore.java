@@ -3,8 +3,10 @@ package com.cobiscorp.ecobis.orchestration.core.ib.compensationprocess;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.File;
-
+import java.io.FileWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +29,13 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetHeader;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
+import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ErrorBlock;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.cobis.cts.dtos.sp.ResultSetHeaderColumn;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Utils;
@@ -47,7 +53,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 		@Property(name = "service.spName", value = "cob_procesador..sp_compensation_process") })
 public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBase {
 
-	private ILogger logger = LogFactory.getLogger(CompensationProcessOrchestrationCore.class);
+	private ILogger loggerProcess = LogFactory.getLogger(CompensationProcessOrchestrationCore.class);
 	private static final String CLASS_NAME = "CompensationProcessOrchestrationCore";
 	private java.util.Properties properties;
 	private static final String VALIDAR_ARCHIVO = "validarArchivo";
@@ -57,17 +63,24 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	private static final String O_FECHA_PROCESO = "@o_fecha_proceso";
 	static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 	static final String REGISTROS = "registros";
+	private static final String NOMBRE_ARCHIVO_REPORTE = "nombre_archivo_reporte";
+	private static final String NOMBRE_REPORTE = "nombre_reporte";
+	private static final String FILAS = "filas";
+	private static final String SIGUIENTE = "siguiente";
+	private static final String NUM_RESULSET_REPORT = "NUM_RESULSET_REPORT";
 	protected static final String TRN_18500144 = "18500144";
 	private static final String O_COMPENSACION_FIN = "@o_compensacion_fin";
+	private static final String O_NUM_FILAS = "@o_num_filas";
 	private static final String T_TRN = "@t_trn";
-	private static final int ERROR40004 = 40004;
-	private static final int ERROR40003 = 40003;
 	private static final int ERROR40002 = 40002;
+	private static final String FILENAME = "filename";
+	private static final String I_TIPO = "@i_tipo";
+	private static final String I_FILENAME= "@i_fileName";
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + ": loadConfiguration INI");
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo(CLASS_NAME + ": loadConfiguration INI");
 		}
 		properties = arg0.getProperties("//property");
 	}
@@ -76,37 +89,48 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 
-		String algnPath = CTSGeneralConfiguration.getEnvironmentVariable("COBIS_HOME", 0);
-		String localDirectory = algnPath + properties.get("PATH").toString();
+		String cobisHomePath = CTSGeneralConfiguration.getEnvironmentVariable("COBIS_HOME", 0);
+		String localDirectory = cobisHomePath + File.separator + properties.get("PATH").toString();
+		String reportPath = cobisHomePath + (String) properties.get("PATH_REPORT");
+		aBagSPJavaOrchestration.put("reportPath", reportPath);
+
 		ServerResponse responseServer = null;
 		ServerRequest serverRequest = new ServerRequest();
 		try {
 			responseServer = getServerStatus(serverRequest);
 		} catch (CTSServiceException e) {
-		    logger.logError(e.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError(e.toString());
+			}
 		} catch (CTSInfrastructureException e) {
-		    logger.logError(e.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError(e.toString());
+			}
 		}
+
 		if (responseServer != null && responseServer.getOnLine()) {
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("server is online");
+			if (loggerProcess.isDebugEnabled()) {
+				loggerProcess.logDebug("server is online");
 			}
 			File directory = new File(localDirectory);
 			aBagSPJavaOrchestration.put("numRegistros", properties.get("NUMBER"));
 
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + ": Begin executeJavaOrchestration");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": Begin executeJavaOrchestration");
 			}
 
 			if (directory.isDirectory()) {
 				aBagSPJavaOrchestration.put("directory", directory);
 				processFilesInDirectory(anOriginalRequest, aBagSPJavaOrchestration);
 			} else {
-				logger.logInfo(CLASS_NAME + ": La ruta especificada no es un directorio.");
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logInfo(CLASS_NAME + ": La ruta especificada no es un directorio.");
+				}
 			}
 
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
+			if (loggerProcess.isDebugEnabled()) {
+				loggerProcess
+						.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
 			}
 		}
 		return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
@@ -114,28 +138,64 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	private void processFilesInDirectory(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
-		File[] files = ((File) aBagSPJavaOrchestration.get("directory")).listFiles();
 
+		File[] files = ((File) aBagSPJavaOrchestration.get("directory")).listFiles();
 		if (files != null) {
 			for (File file : files) {
 				if (file.isFile()) {
-					aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
-					aBagSPJavaOrchestration.put("FileName", "/" + file.getName());
-					jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
+					if (file.getName().toLowerCase().endsWith(".json")) {
+						if (file.exists() && file.length() > 0) {
+							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
+							aBagSPJavaOrchestration.put(FILENAME, "/" + file.getName());
+							anOriginalRequest.addInputParam(I_FILENAME, ICTSTypes.SQLVARCHAR, file.getName());
+							anOriginalRequest.addInputParam("fileNameSinJson", ICTSTypes.SQLVARCHAR,
+									getFileNameWithoutExtension(file.getName()));
+							jsonLoad(anOriginalRequest, aBagSPJavaOrchestration, file);
+						} else {
+							aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
+							if (loggerProcess.isInfoEnabled()) {
+								loggerProcess.logInfo(CLASS_NAME + " Archivo vacio " + file.getName());
+							}
+						}
 
-					if ("true".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
-						aBagSPJavaOrchestration.put("tipo", "C");
+						if ("true".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
+							anOriginalRequest.addInputParam(I_TIPO, ICTSTypes.SQLVARCHAR, "C"); // COMPLETADO
+																								// CORRECTAMENTE
+						} else {
+							anOriginalRequest.addInputParam(I_TIPO, ICTSTypes.SQLVARCHAR, "E"); // ERROR
+						}
+						execUploapDownloadFile(anOriginalRequest, aBagSPJavaOrchestration, "D", "");
+						if ("C".equals(anOriginalRequest.readValueParam(I_TIPO))) {
+							generateReportCompensation(anOriginalRequest, aBagSPJavaOrchestration);
+						}
 					} else {
-						aBagSPJavaOrchestration.put("tipo", "E");
+						if (loggerProcess.isInfoEnabled()) {
+							loggerProcess.logInfo(
+									CLASS_NAME + " [Archivo Ignorado] " + file.getName() + " no es un archivo JSON.");
+						}
 					}
-					execUpDownloadFile(anOriginalRequest, aBagSPJavaOrchestration);
-					logger.logInfo(CLASS_NAME + " [Archivo] " + file.getName());
 				} else if (file.isDirectory()) {
-					logger.logInfo(CLASS_NAME + " [Directorio] " + file.getName());
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logInfo(CLASS_NAME + " [Directorio] " + file.getName());
+					}
+				}
+			}
+			// se sube el reporte al S3 si existe el archivo
+			if (aBagSPJavaOrchestration.get(NOMBRE_REPORTE) != null) {
+				File file = new File((String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE));
+				if (file.exists()) {
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logInfo(CLASS_NAME + " [Directorio] "
+								+ (String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
+					}
+					execUploapDownloadFile(anOriginalRequest, aBagSPJavaOrchestration, "S",
+							(String) aBagSPJavaOrchestration.get(NOMBRE_ARCHIVO_REPORTE));
 				}
 			}
 		} else {
-			logger.logInfo(CLASS_NAME + ": El directorio está vacío o no se puede acceder.");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": El directorio está vacío o no se puede acceder.");
+			}
 		}
 	}
 
@@ -144,38 +204,47 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		TransactionFile transactionFile = null;
-
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo(CLASS_NAME + ": jsonLoad: " + aBagSPJavaOrchestration.toString());
+		}
 		aBagSPJavaOrchestration.put(REGISTROS, "");
 		try {
 			transactionFile = objectMapper.readValue(file, TransactionFile.class);
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + ": aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(CLASS_NAME + ": aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
 			}
 			fillingVariables(transactionFile, aBagSPJavaOrchestration);
 
-			List<TransactionContent> contents = transactionFile.getContent();
+			String originalFileName = anOriginalRequest.readValueParam("fileNameSinJson");
+			String transactionFileName = transactionFile.getFilename();
+			if (originalFileName != null && transactionFileName != null
+					&& originalFileName.equals(transactionFileName)) {
 
-			if (contents != null) {
-				aBagSPJavaOrchestration.put("contents", contents);
-				concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
+				List<TransactionContent> contents = transactionFile.getContent();
 
-				if (logger.isInfoEnabled()) {
-					logger.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
+				if (contents != null) {
+					aBagSPJavaOrchestration.put("contents", contents);
+					concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
+					if (FALSE.equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
+						return null;
+					}
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
+					}
 				}
+			} else {
+				aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
 			}
 		} catch (IOException e) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, VALIDAR_ARCHIVO);
-			logger.logError("Error en jsonLoad", e);
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError("Error en jsonLoad", e);
+			}
 		}
 		return transactionFile;
 	}
 
 	private void consCarId(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en consCarId");
-			logger.logInfo(CLASS_NAME + " consCarId registros:\n" + aBagSPJavaOrchestration.get(REGISTROS));
-		}
 
 		request.setSpName("cob_atm..sp_cons_card_id");
 
@@ -188,39 +257,20 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				aBagSPJavaOrchestration.get(REGISTROS).toString());
 		request.addOutputParam(O_COMPENSACION_FIN, ICTSTypes.SQLVARCHAR, "XXXXXXXXXXXXXXXXXXXXXX");
 
-		if (logger.isInfoEnabled()) {
-			logger.logDebug("Request Corebanking consCarId: " + request.toString());
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logDebug("Request Corebanking consCarId: " + request.toString());
 		}
 
 		IProcedureResponse response = executeCoreBanking(request);
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + "Respuesta Devuelta del Core api:" + response.getProcedureResponseAsString());
 
-			logger.logInfo(
-					CLASS_NAME + "Parametro @o_compensacion_fin: " + response.readValueParam(O_COMPENSACION_FIN));
-		}
-		if (response.getReturnCode() != 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
-			response = Utils.returnException(Utils.returnArrayMessage(response));
-
-		}
 		if (response.getReturnCode() == 0 && response.readValueParam(O_COMPENSACION_FIN) != null) {
 			aBagSPJavaOrchestration.put("o_compensacion_fin", response.readValueParam(O_COMPENSACION_FIN));
 			compensacionCentral(request, aBagSPJavaOrchestration);
 		}
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de consCarId");
-		}
-
 	}
 
 	private void compensacionCentral(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en compensacionCentral");
-			logger.logInfo(CLASS_NAME + "compensacionCentral registros:\n" + aBagSPJavaOrchestration.get(REGISTROS));
-		}
 
 		request.setSpName("cob_atm..sp_atm_trn_data_compensation");
 
@@ -232,7 +282,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam("@i_file_id", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("fileId").toString());
 		request.addInputParam("@i_issuer_id", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("issuerId").toString());
 		request.addInputParam("@i_brand", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("brand").toString());
-		request.addInputParam("@i_filename", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("filename").toString());
+		request.addInputParam("@i_filename", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(FILENAME).toString());
 		request.addInputParam("@i_reference_date", ICTSTypes.SQLVARCHAR,
 				aBagSPJavaOrchestration.get("referenceDate").toString());
 		request.addInputParam("@i_compensacion", ICTSTypes.SQLVARCHAR,
@@ -240,38 +290,24 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 		IProcedureResponse response = executeCoreBanking(request);
 		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " CompensacionCentral Respuesta Devuelta del Core api: "
-					+ response.getProcedureResponseAsString());
-		}
 
-		if (response.getReturnCode() != 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
-			response = Utils.returnException(Utils.returnArrayMessage(response));
-		}
 		if (response.getReturnCode() == 0) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
+		} else {
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
 		}
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Saliendo de compensacionCentral");
-		}
-
 	}
 
-	private IProcedureResponse execUpDownloadFile(IProcedureRequest anOriginalReq,
-			Map<String, Object> aBagSPJavaOrchestration) {
-		IProcedureResponse connectorCardResponse = new ProcedureResponseAS();
+	private IProcedureResponse execUploapDownloadFile(IProcedureRequest anOriginalReq,
+			Map<String, Object> aBagSPJavaOrchestration, String action, String fileName) {
 
+		IProcedureResponse connectorCardResponse = new ProcedureResponseAS();
 		aBagSPJavaOrchestration.remove("trn_virtual");
 
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(CLASS_NAME + " Entrando en execUpDownloadFile");
-		}
 		try {
 
 			anOriginalReq.addFieldInHeader("com.cobiscorp.cobis.csp.services.IOrchestrator",
-					ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CompensationDownloadOrchestrationCore)");
+					ICOBISTS.HEADER_STRING_TYPE, "(service.identifier=CompensationProcessOrchestrationCore)");
 			anOriginalReq.addFieldInHeader("serviceMethodName", ICOBISTS.HEADER_STRING_TYPE, "executeTransaction");
 			anOriginalReq.addFieldInHeader("t_corr", ICOBISTS.HEADER_STRING_TYPE, "");
 			anOriginalReq.addFieldInHeader("executionResult", ICOBISTS.HEADER_STRING_TYPE, "0");
@@ -289,19 +325,20 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 			anOriginalReq.addInputParam("@trn_virtual", ICTSTypes.SYBINT4, TRN_18500144);
 			anOriginalReq.addInputParam(T_TRN, ICTSTypes.SYBINT4, TRN_18500144);
-			anOriginalReq.addInputParam("@i_accion", ICTSTypes.SYBINT4, "D");
+			anOriginalReq.addInputParam("@i_accion", ICTSTypes.SYBINT4, action);
+			anOriginalReq.addInputParam("@i_fileNameCSV", ICTSTypes.SQLVARCHAR, fileName);
 
-			if (logger.isDebugEnabled())
-				logger.logDebug("Compensation--> request execUpDownloadFile app: " + anOriginalReq.toString());
 			// SE EJECUTA CONECTOR
 			connectorCardResponse = executeProvider(anOriginalReq, aBagSPJavaOrchestration);
 
 		} catch (Exception e) {
-			this.logger.logInfo("CompensationDownloadOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
-
+			if (loggerProcess.isInfoEnabled()) {
+				this.loggerProcess
+						.logInfo("CompensationProcessOrchestrationCore Error Catastrofico de execUpDownloadFile", e);
+			}
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.logInfo("CompensationDownloadOrchestrationCore --> Saliendo de execUpDownloadFile");
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo("CompensationProcessOrchestrationCore --> Saliendo de execUpDownloadFile");
 			}
 		}
 
@@ -313,8 +350,8 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	public IProcedureResponse processResponse(IProcedureRequest anOriginalRequest,
 			Map<String, Object> aBagSPJavaOrchestration) {
 		IProcedureResponse response = new ProcedureResponseAS();
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Begin [" + CLASS_NAME + "][processResponse]");
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo("Begin [" + CLASS_NAME + "][processResponse]");
 		}
 		if (aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION) == null) {
 
@@ -333,7 +370,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put("clientId", transactionFile.getClientId());
 		aBagSPJavaOrchestration.put("idSubemissor", transactionFile.getIdSubemissor());
 		aBagSPJavaOrchestration.put("brand", transactionFile.getBrand());
-		aBagSPJavaOrchestration.put("filename", transactionFile.getFilename());
+		aBagSPJavaOrchestration.put(FILENAME, transactionFile.getFilename());
 		aBagSPJavaOrchestration.put("sequence", transactionFile.getSequence());
 		aBagSPJavaOrchestration.put("fileNumber", transactionFile.getFileNumber());
 		aBagSPJavaOrchestration.put("totalFiles", transactionFile.getTotalFiles());
@@ -345,14 +382,13 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	private void concatenateRecords(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		StringBuilder groupBuilder = new StringBuilder();
 		int numRegistros;
-        Object numRegistrosObj = aBagSPJavaOrchestration.get("numRegistros");
-        if (numRegistrosObj instanceof String) {
-            numRegistros = Integer.parseInt((String) numRegistrosObj);
-        } else {
+		Object numRegistrosObj = aBagSPJavaOrchestration.get("numRegistros");
+		if (numRegistrosObj instanceof String) {
+			numRegistros = Integer.parseInt((String) numRegistrosObj);
+		} else {
 
-            logger.logError("El valor de 'numRegistros' no es un String válido.");
-            numRegistros = 0; 
-        }
+			numRegistros = 5;
+		}
 		@SuppressWarnings("unchecked")
 		List<TransactionContent> contents = (List<TransactionContent>) aBagSPJavaOrchestration.get("contents");
 		int count = 0;
@@ -364,7 +400,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				int actionCode = clearing.getActionCode();
 
 				if (actionCode == 2 || actionCode == 3) {
-					String concatenated = String.join("*", content.getTransaction().getPan(),
+					String concatenated = String.join(";", content.getTransaction().getPan(),
 							content.getTransaction().getCardId(),
 							content.getTransaction().getTransactionTypeIndicator(),
 							content.getTransaction().getAuthorization(),
@@ -395,6 +431,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						aBagSPJavaOrchestration.put(REGISTROS, groupBuilder.toString());
 						consCarId(anOriginalRequest, aBagSPJavaOrchestration);
 						groupBuilder.setLength(0);
+						if ("false".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
+							return;
+						}
 					}
 				}
 			}
@@ -407,47 +446,226 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	public ServerResponse getServerStatus(ServerRequest serverRequest)
 			throws CTSServiceException, CTSInfrastructureException {
-		IProcedureRequest aServerStatusRequest = new ProcedureRequestAS();
-		aServerStatusRequest.setSpName("cobis..sp_server_status");
-		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
-		aServerStatusRequest.addInputParam(T_TRN, ICTSTypes.SYBINTN, "1800039");
-		aServerStatusRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
-		aServerStatusRequest.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS);
-		aServerStatusRequest.setValueParam("@s_servicio", serverRequest.getChannelId());
-		aServerStatusRequest.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
-		aServerStatusRequest.addOutputParam(O_EN_LINEA, ICTSTypes.SYBCHAR, "S");
-		aServerStatusRequest.addOutputParam(O_FECHA_PROCESO, ICTSTypes.SYBVARCHAR, "XXXX");
-		if (logger.isDebugEnabled())
-			logger.logDebug("Request Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
-		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
-		if (logger.isDebugEnabled())
-			logger.logDebug("Response Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
-		ServerResponse serverResponse = new ServerResponse();
+		IProcedureRequest aServerStatusRequest = createServerStatusRequest(serverRequest);
 
+		if (loggerProcess.isDebugEnabled()) {
+			loggerProcess.logDebug("Request to Corebanking: " + aServerStatusRequest.getProcedureRequestAsString());
+		}
+
+		IProcedureResponse wServerStatusResp = executeCoreBanking(aServerStatusRequest);
+
+		if (loggerProcess.isDebugEnabled()) {
+			loggerProcess.logDebug("Response from Corebanking: " + wServerStatusResp.getProcedureResponseAsString());
+		}
+
+		ServerResponse serverResponse = new ServerResponse();
+		populateServerResponse(serverResponse, wServerStatusResp);
+
+		if (loggerProcess.isDebugEnabled()) {
+			loggerProcess.logDebug("Returned Response: " + serverResponse);
+		}
+
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo("TERMINATING SERVICE");
+		}
+
+		return serverResponse;
+	}
+
+	private IProcedureRequest createServerStatusRequest(ServerRequest serverRequest) {
+		IProcedureRequest request = new ProcedureRequestAS();
+		request.setSpName("cobis..sp_server_status");
+		request.setValueFieldInHeader(ICOBISTS.HEADER_TRN, "1800039");
+		request.addInputParam(T_TRN, ICTSTypes.SYBINTN, "1800039");
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, "central");
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS);
+		request.setValueParam("@s_servicio", serverRequest.getChannelId());
+		request.addInputParam("@i_cis", ICTSTypes.SYBCHAR, "S");
+		request.addOutputParam(O_EN_LINEA, ICTSTypes.SYBCHAR, "S");
+		request.addOutputParam(O_FECHA_PROCESO, ICTSTypes.SYBVARCHAR, "XXXX");
+		return request;
+	}
+
+	private void populateServerResponse(ServerResponse serverResponse, IProcedureResponse wServerStatusResp) {
 		serverResponse.setSuccess(true);
 		Utils.transformIprocedureResponseToBaseResponse(serverResponse, wServerStatusResp);
 		serverResponse.setReturnCode(wServerStatusResp.getReturnCode());
+
 		if (wServerStatusResp.getReturnCode() == 0) {
 			serverResponse.setOfflineWithBalances(true);
-			if (wServerStatusResp.readValueParam(O_EN_LINEA) != null)
-				serverResponse.setOnLine(wServerStatusResp.readValueParam(O_EN_LINEA).equals("S") ? true : false);
-			if (wServerStatusResp.readValueParam(O_FECHA_PROCESO) != null) {
-				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-				try {
-					serverResponse.setProcessDate(formatter.parse(wServerStatusResp.readValueParam(O_FECHA_PROCESO)));
-				} catch (ParseException e) {
-					logger.logDebug("Error Devuelto: ", e);
+			String enLineaParam = wServerStatusResp.readValueParam(O_EN_LINEA);
+			serverResponse.setOnLine(enLineaParam != null && enLineaParam.equals("S"));
+			setProcessDate(serverResponse, wServerStatusResp);
+		} else {
+			handleErrorCodes(serverResponse, wServerStatusResp);
+		}
+	}
+
+	private void setProcessDate(ServerResponse serverResponse, IProcedureResponse wServerStatusResp) {
+		String processDateStr = wServerStatusResp.readValueParam(O_FECHA_PROCESO);
+		if (processDateStr != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				serverResponse.setProcessDate(formatter.parse(processDateStr));
+			} catch (ParseException e) {
+				if (loggerProcess.isInfoEnabled()) {
+					loggerProcess.logDebug("Error parsing process date: ", e);
 				}
 			}
-		} else if (wServerStatusResp.getReturnCode() == ERROR40002 || wServerStatusResp.getReturnCode() == ERROR40003
-				|| wServerStatusResp.getReturnCode() == ERROR40004) {
-			serverResponse.setOnLine(false);
-			serverResponse.setOfflineWithBalances(wServerStatusResp.getReturnCode() == ERROR40002 ? false : true);
 		}
-		if (logger.isDebugEnabled())
-			logger.logDebug("Respuesta Devuelta: " + serverResponse);
-		if (logger.isInfoEnabled())
-			logger.logInfo("TERMINANDO SERVICIO");
-		return serverResponse;
+	}
+
+	private void handleErrorCodes(ServerResponse serverResponse, IProcedureResponse wServerStatusResp) {
+		int returnCode = wServerStatusResp.getReturnCode();
+		serverResponse.setOnLine(false);
+		serverResponse.setOfflineWithBalances(returnCode != ERROR40002);
+	}
+
+	private void generateReportCompensation(IProcedureRequest anOriginalRequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logInfo("Inicia generateReportCompensation");
+		}
+
+		aBagSPJavaOrchestration.put(SIGUIENTE, "0");
+		aBagSPJavaOrchestration.put(FILAS, properties.get(NUM_RESULSET_REPORT));
+
+		String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		String nombreArchivoCsv = "compensacion_" + fechaFormateada + ".csv";
+
+		aBagSPJavaOrchestration.put(NOMBRE_ARCHIVO_REPORTE, nombreArchivoCsv);
+		String reportPath = (String) aBagSPJavaOrchestration.get("reportPath");
+		aBagSPJavaOrchestration.put(NOMBRE_REPORTE, reportPath + nombreArchivoCsv);
+
+		boolean hasMoreRecords = true;
+
+		while (hasMoreRecords) {
+			IProcedureResponse responseData = dataCompensation(anOriginalRequest, aBagSPJavaOrchestration);
+
+			String numFilasParam = responseData.readValueParam(O_NUM_FILAS);
+			if (numFilasParam != null) {
+				try {
+					int numRegistros = Integer.parseInt(numFilasParam);
+					hasMoreRecords = numRegistros > 0;
+
+					if (hasMoreRecords) {
+						createReportCsv(responseData, aBagSPJavaOrchestration); // Crea el reporte
+					}
+				} catch (NumberFormatException e) {
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logError("Error al analizar el número de filas: " + numFilasParam, e);
+						hasMoreRecords = false; // Detener el bucle en caso de error
+					}
+				}
+			} else {
+				hasMoreRecords = false; // No hay más registros
+			}
+		}
+	}
+
+	private IProcedureResponse dataCompensation(IProcedureRequest anOriginalrequest,
+			Map<String, Object> aBagSPJavaOrchestration) {
+
+		IProcedureRequest request = initProcedureRequest(anOriginalrequest);
+		request.setSpName("cob_atm..sp_atm_reporte_compesacion");
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS);
+
+		request.addInputParam(T_TRN, ICTSTypes.SQLINTN, "18700148");
+		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		request.addInputParam("@i_nombre_archivo", ICTSTypes.SQLVARCHAR,
+				(String) aBagSPJavaOrchestration.get(FILENAME));
+		request.addInputParam("@i_siguiente", ICTSTypes.SQLINT4, (String) aBagSPJavaOrchestration.get(SIGUIENTE));
+		request.addInputParam("@i_filas", ICTSTypes.SQLINT4, (String) aBagSPJavaOrchestration.get(FILAS));
+		request.addOutputParam(O_NUM_FILAS, ICTSTypes.SQLINT4, "0");
+
+		IProcedureResponse response = executeCoreBanking(request);
+
+		if (response.getReturnCode() != 0) {
+			response = Utils.returnException(Utils.returnArrayMessage(response));
+		}
+		return response;
+	}
+
+	public boolean createReportCsv(IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration) {
+		String csvFile = (String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE);
+		FileWriter writer = null;
+
+		try {
+			writer = new FileWriter(csvFile, new File(csvFile).exists());
+
+			if (response.getResultSetListSize() > 0) {
+				writeHeader(writer, response, csvFile);
+				writeData(writer, response, aBagSPJavaOrchestration);
+			}
+			return true;
+		} catch (IOException e) {
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logError("Error en la creación de archivo CSV:", e);
+			}
+			return false;
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					if (loggerProcess.isInfoEnabled()) {
+						loggerProcess.logError("Error al cerrar el archivo CSV:", e);
+					}
+				}
+			}
+		}
+	}
+
+	private void writeHeader(FileWriter writer, IProcedureResponse response, String csvFile) throws IOException {
+		File file = new File(csvFile);
+		if (file.exists() && file.length() > 0) {
+			return;
+		}
+
+		IResultSetHeader rsHeader = response.getResultSetMetaData(1);
+
+		StringBuilder header = new StringBuilder();
+		for (int i = 2; i <= rsHeader.getColumnsNumber(); i++) {
+			ResultSetHeaderColumn col = (ResultSetHeaderColumn) rsHeader.getColumnMetaData(i);
+			if (i > 2) {
+				header.append(";");
+			}
+			header.append(col.getName());
+		}
+		writer.append(header.toString()).append("\n");
+	}
+
+	private void writeData(FileWriter writer, IProcedureResponse response, Map<String, Object> aBagSPJavaOrchestration)
+			throws IOException {
+		IResultSetRow[] resultSetRows = response.getResultSet(1).getData().getRowsAsArray();
+
+		for (IResultSetRow row : resultSetRows) {
+			IResultSetRowColumnData[] columns = row.getColumnsAsArray();
+			StringBuilder data = new StringBuilder();
+
+			for (int j = 1; j < columns.length; j++) {
+				if (j > 1) {
+					data.append(";");
+				}
+				data.append(columns[j].getValue());
+			}
+
+			writer.append(data.toString()).append("\n");
+
+			if (row == resultSetRows[resultSetRows.length - 1]) {
+				aBagSPJavaOrchestration.put(SIGUIENTE, columns[0].getValue());
+			}
+		}
+	}
+
+	private static String getFileNameWithoutExtension(String fileName) {
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex > 0) {
+			return fileName.substring(0, dotIndex);
+		} else {
+			return fileName;
+		}
 	}
 }

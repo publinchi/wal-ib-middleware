@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -78,15 +79,37 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			logger.logDebug("REQUEST [anOriginalRequest] " + anOriginalRequest.getProcedureRequestAsString());
 		}
 
-		aBagSPJavaOrchestration.put(IS_ONLINE, false);
-		aBagSPJavaOrchestration.put(IS_ERRORS, false);
-		aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
+		aBagSPJavaOrchestration.put(Constants.IS_ONLINE, false);
+		aBagSPJavaOrchestration.put(Constants.IS_ERRORS, false);
+		aBagSPJavaOrchestration.put(Constants.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
+        aBagSPJavaOrchestration.put(Constants.ORIGINAL_REQUEST,anOriginalRequest);
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
+			logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(Constants.IS_REENTRY));
 		}
 
-		if (!(Boolean)aBagSPJavaOrchestration.get(IS_REENTRY)) {
+		try {
+			ServerResponse serverResponse = serverStatus();
+			aBagSPJavaOrchestration.put(Constants.IS_ONLINE, serverResponse.getOnLine());
+			aBagSPJavaOrchestration.put(Constants.PROCESS_DATE, serverResponse.getProcessDate());
+
+			if(!validateContextTransacction(aBagSPJavaOrchestration,serverResponse.getOnLine() )) {
+				aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, Utils.returnException(this.MESSAGE_RESPONSE));
+				return Utils.returnException(this.MESSAGE_RESPONSE);
+			}
+		} catch (CTSServiceException | CTSInfrastructureException e) {
+			if (logger.isErrorEnabled()){
+				logger.logError("Error getting server status: " + e.toString());
+			}
+		}
+
+
+
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(Constants.IS_ONLINE));
+		}
+
+		if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
 			aBagSPJavaOrchestration.put("process", "REVERSAL_CREDIT_OPERATION");
 			IProcedureResponse potency = logIdempotence(anOriginalRequest,aBagSPJavaOrchestration);
 			IResultSetRow resultSetRow = potency.getResultSet(1).getData().getRowsAsArray()[0];
@@ -100,23 +123,12 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		if (validateParameters(aBagSPJavaOrchestration, anOriginalRequest))
 			return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 
-		try {
-			ServerResponse serverResponse = serverStatus();
-			aBagSPJavaOrchestration.put(IS_ONLINE, serverResponse.getOnLine());
-			aBagSPJavaOrchestration.put(PROCESS_DATE, serverResponse.getProcessDate());
-		} catch (CTSServiceException | CTSInfrastructureException e) {
-			if (logger.isErrorEnabled()){
-				logger.logError("Error getting server status: " + e.toString());
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response Online: " + aBagSPJavaOrchestration.get(IS_ONLINE));
-		}
 
-		aBagSPJavaOrchestration.put(IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
+
+		aBagSPJavaOrchestration.put(Constants.IS_REENTRY, evaluateExecuteReentry(anOriginalRequest));
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(IS_REENTRY));
+			logger.logDebug("Response flowRty: " + aBagSPJavaOrchestration.get(Constants.IS_REENTRY));
 		}
 
 		return processTransaction(aBagSPJavaOrchestration, anOriginalRequest);
@@ -145,65 +157,62 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		String movementIdComOri = anOriginalRequest.readValueParam("@i_movementId_com_ori");
 		String referenceNumberComOri = anOriginalRequest.readValueParam("@i_referenceNumber_com_ori");
 
-		aBagSPJavaOrchestration.put("@i_originMovementId", movementIdOrigin);
-		aBagSPJavaOrchestration.put("@i_originReferenceNumber", referenceNumberOrigin);
-
-		if (reversalConcept.isEmpty()) {
+		if (Objects.isNull(reversalConcept) ||  reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
 			return true;
 		}
 
-		if (referenceNumber.isEmpty()) {
+	/*	if (referenceNumber.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40092", "referenceNumber must not be empty.");
 			return true;
-		}
+		}*/
 
-		if (externalCustomerIdOrigin <= 0) {
+		if (Objects.isNull(externalCustomerIdOrigin) || externalCustomerIdOrigin <= 0) {
 			setError(aBagSPJavaOrchestration, "40129", "originalTransactionData.externalCustomerId must be greater than 0.");
 			return true;
 		}
 
-		if (accountNumberOrigin.isEmpty()) {
+		if (Objects.isNull(accountNumberOrigin) || accountNumberOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40130", "originalTransactionData.accountNumber must not be empty.");
 			return true;
 		}
 
-		if (referenceNumberOrigin.isEmpty()) {
+		if (Objects.isNull(referenceNumberOrigin)  ||  referenceNumberOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40131", "originalTransactionData.referenceNumber must not be empty.");
 			return true;
 		}
 
-		if (referenceNumberOrigin.length() != 6) {
+		/*if (referenceNumberOrigin.length() != 6) {
 			setError(aBagSPJavaOrchestration, "40132", "originalTransactionData.referenceNumber must have 6 digits.");
 			return true;
-		}
+		}*/
 
-		if (movementIdOrigin.isEmpty()) {
+		if (Objects.isNull(movementIdOrigin) || movementIdOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40133", "originalTransactionData.movementId must not be empty.");
 			return true;
 		}
 
-		if (reversalReasonOrigin.isEmpty()) {
+		if (Objects.isNull(reversalReasonOrigin) || reversalReasonOrigin.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40134", "originalTransactionData.reversalReason must not be empty.");
 			return true;
 		}
 
-		if (amountCommission.compareTo(BigDecimal.ZERO) <= 0) {
+		if (Objects.isNull(amountCommission) || amountCommission.compareTo(BigDecimal.ZERO) <= 0) {
 			setError(aBagSPJavaOrchestration, "40135", "commission.amount must not be empty.");
 			return true;
 		}
 
-		if (reasonCommision.isEmpty()) {
+		if (Objects.isNull(reasonCommision) ||  reasonCommision.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40136", "commission.reason must not be empty.");
 			return true;
 		}
 
-		if (movementIdComOri.isEmpty()) {
+		if (Objects.isNull(movementIdComOri)  || movementIdComOri.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40137", "commission.originalTransactionData.movementId must not be empty.");
 			return true;
 		}
 
-		if (referenceNumberComOri.isEmpty()) {
+		if (Objects.isNull(referenceNumberComOri)  ||  referenceNumberComOri.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40138", "commission.originalTransactionData.referenceNumber must not be empty.");
 			return true;
 		}
@@ -215,8 +224,8 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		if (logger.isInfoEnabled()) {
 			logger.logInfo("Begin [" + CLASS_NAME + "][processTransaction]");
 		}
-		if (!(Boolean)aBagSPJavaOrchestration.get(IS_ONLINE)) {
-			if (!(Boolean)aBagSPJavaOrchestration.get(IS_REENTRY)) {
+		if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_ONLINE)) {
+			if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_REENTRY)) {
 				processOffline(aBagSPJavaOrchestration, anOriginalRequest);
 			} else {
 				setError(aBagSPJavaOrchestration, "50041", "NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!");
@@ -327,7 +336,7 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 
 		reqTMPCentral.setSpName("cob_bvirtual..sp_reversal_credit_operation_central_api");
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
+		reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, Constants.COBIS_CONTEXT);
 		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18700138");
 		reqTMPCentral.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
 		reqTMPCentral.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber"));
@@ -345,10 +354,25 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPCentral.addOutputParam("@o_causa_com", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_amount_ori", ICTSTypes.SQLMONEY, "0");
 
+		reqTMPCentral.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_benef_cta_org" , ICTSTypes.SQLVARCHAR, "X");
+		reqTMPCentral.addOutputParam("@o_cod_alt_org"   , ICTSTypes.SQLINTN, "0");
+		reqTMPCentral.addOutputParam("@o_cod_alt_com"   , ICTSTypes.SQLINTN, "0");
+
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
 		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+		// Almacenamiento Response
+		aBagSPJavaOrchestration.put("anProcedureResponse", wProcedureResponseCentral);
+		aBagSPJavaOrchestration.put("@o_ssn_branch", wProcedureResponseCentral.readValueParam("@o_ssn_branch"));
+		aBagSPJavaOrchestration.put("@o_ssn", wProcedureResponseCentral.readValueParam("@o_ssn"));
+		aBagSPJavaOrchestration.put("@o_benef_cta_org", wProcedureResponseCentral.readValueParam("@o_benef_cta_org"));
+		aBagSPJavaOrchestration.put("@o_cod_alt_org", wProcedureResponseCentral.readValueParam("@o_cod_alt_org"));
+		aBagSPJavaOrchestration.put("@o_cod_alt_com", wProcedureResponseCentral.readValueParam("@o_cod_alt_com"));
+
 
 		aBagSPJavaOrchestration.put("causa_rev", wProcedureResponseCentral.readValueParam("@o_causa_rev"));
 		aBagSPJavaOrchestration.put("causa_com", wProcedureResponseCentral.readValueParam("@o_causa_com"));
@@ -421,12 +445,13 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("value", ICTSTypes.SYBVARCHAR, 255));
 
 		if (logger.isDebugEnabled()) {
-			logger.logDebug("Valida errores [isErrors]: " + aBagSPJavaOrchestration.get(IS_ERRORS).toString());
+			logger.logDebug("Valida errores [isErrors]: " + aBagSPJavaOrchestration.get(Constants.IS_ERRORS).toString());
 		}
-		//Consulta datos de la transaccion original
-		searchDataTransactionOrigin(anOriginalRequest, aBagSPJavaOrchestration);
 
-		if (!(Boolean)aBagSPJavaOrchestration.get(IS_ERRORS)) {
+		if (!(Boolean)aBagSPJavaOrchestration.get(Constants.IS_ERRORS)) {
+			String causa_rev = "";
+			String causa_com = "";
+
 			IResultSetRowColumnData[] columnsToReturn = (IResultSetRowColumnData[]) aBagSPJavaOrchestration.get(COLUMNS_RETURN);
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Ending flow, processResponse success.");
@@ -446,9 +471,25 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			row.addRowData(6, new ResultSetRowColumnData(false, columnsToReturn[5].getValue()));
 			data.addRow(row);
 
-			registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_rev").toString(), aBagSPJavaOrchestration);
+			if ( aBagSPJavaOrchestration.get("causa_rev") != null) {
+				causa_rev = aBagSPJavaOrchestration.get("causa_rev").toString();
+			}
+
+			if ( aBagSPJavaOrchestration.get("causa_com") != null) {
+				causa_com = aBagSPJavaOrchestration.get("causa_com").toString();
+			}
+
+			registerMovementsCreditDebitAdditionalData(
+					"CREDIT_REVERSAL",
+					Boolean.parseBoolean(aBagSPJavaOrchestration.get(Constants.IS_ONLINE).toString()),
+					anOriginalRequest,
+					aBagSPJavaOrchestration);
+			
+			registerAllTransactionSuccess("AccountReversalOperationOrchestrationCore", anOriginalRequest, causa_rev, aBagSPJavaOrchestration);
+			
 			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
-			registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, aBagSPJavaOrchestration.get("causa_com").toString(), aBagSPJavaOrchestration);
+			registerAllTransactionSuccess("AccountDebitOperationOrchestrationCore", anOriginalRequest, causa_com, aBagSPJavaOrchestration);
+			
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Ending flow, processResponse failed.");
@@ -460,16 +501,6 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 				logger.logDebug("value: null");
 			}
 
-			aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message"));
-			aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code"));
-			
-			aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa_rev"));
-			registerTransactionFailed("AccountReversalOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
-
-			aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
-			aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa_com"));
-			registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
-			
 			row.addRowData(1, new ResultSetRowColumnData(false, "false"));
 			row.addRowData(2, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_code")));
 			row.addRowData(3, new ResultSetRowColumnData(false, (String) aBagSPJavaOrchestration.get("error_message")));
@@ -477,6 +508,20 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			row.addRowData(5, new ResultSetRowColumnData(false, null));
 			row.addRowData(6, new ResultSetRowColumnData(false, null));
 			data.addRow(row);
+
+			//Validamos que el error no se un mensaje de reentry
+			if (aBagSPJavaOrchestration.get("error_message") != null && !aBagSPJavaOrchestration.get("error_message").equals("NO EJECUTA REENTRY POR ESTAR EN OFFLINE!!!")) {
+				aBagSPJavaOrchestration.put("message_error", aBagSPJavaOrchestration.get("error_message"));
+				aBagSPJavaOrchestration.put("code_error", aBagSPJavaOrchestration.get("error_code"));
+
+				aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa_rev"));
+				registerTransactionFailed("AccountReversalOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
+
+				aBagSPJavaOrchestration.put("@i_debitReason", Constants.FALSE_CHARGEBACK);
+				aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa_com"));
+				registerTransactionFailed("AccountDebitOperationOrchestrationCore", "", anOriginalRequest, aBagSPJavaOrchestration);
+			}
+
 		}
 
 		IResultSetBlock resultBlock = new ResultSetBlock(metaData, data);
@@ -491,50 +536,11 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 
 		return wProcedureResponse;
 	}
-
-	public void searchDataTransactionOrigin(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo("Begin [" + CLASS_NAME + "][searchDataTransactionOrigin]");
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
-		}
-
-		try{
-			IProcedureRequest reqTMPCentral = new ProcedureRequestAS();
-
-			reqTMPCentral.setSpName("cob_bvirtual..sp_bv_consulta_request");
-			reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-			reqTMPCentral.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS_CONTEXT);
-			reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-			reqTMPCentral.addInputParam("@i_nombreTrn", ICTSTypes.SQLVARCHAR, "Account Credit Operation");
-			reqTMPCentral.addInputParam("@i_movementId", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("@i_originMovementId").toString());
-
-			reqTMPCentral.addOutputParam("@o_amount", ICTSTypes.SQLMONEY, "0");
-			reqTMPCentral.addOutputParam("@o_originCode", ICTSTypes.SQLVARCHAR, "X");
-
-			IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-
-			aBagSPJavaOrchestration.put("amount", wProcedureResponseCentral.readValueParam("@o_amount"));
-			aBagSPJavaOrchestration.put("origin_code", wProcedureResponseCentral.readValueParam("@o_originCode"));
-
-			if (logger.isDebugEnabled()) {
-				logger.logDebug("Response executeCoreBanking cob_bvirtual..sp_bv_consulta_request: " + wProcedureResponseCentral.getProcedureResponseAsString());
-			}
-		} catch (Exception e) {
-			logger.logError(CLASS_NAME + " Error al obtener datos de transaccion de origen: " + e.getMessage(), e);
-			throw new RuntimeException("Error al obtener datos:", e);
-		} finally{
-			if (logger.isInfoEnabled()) {
-				logger.logInfo(CLASS_NAME + " Saliendo de searchDataTransactionOrigin");
-			}
-		}
-
-	}
+	
 	@Override
-    public ICoreServer getCoreServer() {
-        return null;
-    }
+	public ICoreServer getCoreServer() {
+		return null;
+	}
+
+
 }

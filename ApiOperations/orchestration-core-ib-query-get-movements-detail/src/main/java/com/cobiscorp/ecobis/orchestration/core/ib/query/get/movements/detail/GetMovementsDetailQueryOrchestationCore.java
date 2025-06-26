@@ -217,7 +217,23 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 
 
+		String minDate = anOriginalRequest.readValueParam("@i_fecha_ini");
+		String maxDate = anOriginalRequest.readValueParam("@i_fecha_fin");
+
+
+		if(minDate == null || minDate.equals("null")){
+			minDate  = null;
+		} else if (!minDate.isEmpty() && !isDate(minDate)) {
+			minDate = null;
+		}
+		if(maxDate == null || maxDate.equals("null")){
+			maxDate  = null;
+		} else if (!maxDate.isEmpty() && !isDate(maxDate)) {
+			maxDate = null;
+		}
 		String showFailed = anOriginalRequest.readValueParam("@i_show_failed") != null ? anOriginalRequest.readValueParam("@i_show_failed") : "N";
+		aBagSPJavaOrchestration.put("DATE_FILTER", ( minDate == null ||  maxDate  == null) ? "N" : "S");
+		aBagSPJavaOrchestration.put(INRO_REGISTRO+"_ORG", anOriginalRequest.readValueParam(INRO_REGISTRO));
 		ServerRequest serverRequest = new ServerRequest();
 		serverRequest.setChannelId("8");
 		ServerResponse responseServer = null;
@@ -296,7 +312,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				IProcedureResponse failedMovementDetails = getFailedMovementsDetail(anOriginalRequest);
 				aBagSPJavaOrchestration.put("RESPONSE_FAILED_MOVEMENTS",failedMovementDetails);
 			}
-			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamieto"));
+			aBagSPJavaOrchestration.put("ORDER",anOriginalRequest.readValueParam("@i_ordenamiento"));
+			aBagSPJavaOrchestration.put(INRO_REGISTRO,anOriginalRequest.readValueParam(INRO_REGISTRO));
 		}
 
 		if (anProcedureResponse.getResultSets().size()>2) {
@@ -381,6 +398,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, targetServer);
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
 
+		String showFailed = aRequest.readValueParam("@i_show_failed") != null ? aRequest.readValueParam("@i_show_failed") : "N";
+
+
 		request.addInputParam("@x_request_id", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_request_id"));
 		request.addInputParam("@x_end_user_request_date", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_request_date"));
 		request.addInputParam("@x_end_user_ip", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@x_end_user_ip"));
@@ -403,6 +423,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, Objects.equals(showFailed, "S") ?"APICHANGE":"MOVEMENTS");
 
 
 		IProcedureResponse wProductsQueryResp = executeCoreBanking(request);
@@ -465,13 +486,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		request.addInputParam("@i_fecha_fin", ICTSTypes.SQLVARCHAR, maxDate);
 		request.addInputParam("@i_sec_unico", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_sec_unico"));
 		request.addInputParam("@i_mov_id", ICTSTypes.SQLINT4, aRequest.readValueParam("@i_mov_id"));
-		request.addInputParam("@i_ordenamiento", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ordenamiento")!= null?aRequest.readValueParam("@i_ordenamiento"):"DESC");
+		request.addInputParam("@i_ordenamiento", ICTSTypes.SQLVARCHAR, aRequest.readValueParam("@i_ordenamiento")!= null ? aRequest.readValueParam("@i_ordenamiento"):"DESC");
 
 		request.addInputParam("@i_servicio", ICTSTypes.SQLINT1, "8");
 		request.addInputParam("@i_comision", ICTSTypes.SYBMONEYN, "0");
 		request.addInputParam("@i_mon", ICTSTypes.SQLINT1, "0");
 		request.addInputParam("@i_prod", ICTSTypes.SQLINT1, "4");
 		request.addInputParam("@i_formato_fecha", ICTSTypes.SQLINT4, "101");
+		request.addInputParam("@i_origen", ICTSTypes.SQLVARCHAR, "APICHANGE");
 		request.addOutputParam("@o_total_registros", ICTSTypes.SQLINT4,"0");
 
 
@@ -759,17 +781,48 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IProcedureResponse anOriginalProcedureResponse = new ProcedureResponseAS();
 		IProcedureResponse anOriginalProcedureRes = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_MOVEMENTS");
 		IProcedureResponse anOriginalProcedureResF = null;
-		boolean showFailed = false;
+		boolean showFailed = aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null;
 
-		int numberOfResults = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
+
+
+		IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get("anOriginalRequest");
+		int numberOfResults = 0;
 		int totalNumberOfResults = 0;
+		int numberOfResultsSuccess = anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length;
+		int numberOfResultsShow = 0 ;
+		int maxRegistros = Integer.parseInt(getParam(anOriginalRequest, showFailed ? "NMOVAP":"NMMOV","AHO"));
+		int defaultRegistros = Integer.parseInt(getParam(anOriginalRequest, showFailed ? "NMOVAP":"NDMOV","AHO"));
 
 
-		if(aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS")!=null){
-			showFailed = true;
+		if((aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG")==null ||
+				aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG").equals("null"))
+		){
+			numberOfResultsShow = defaultRegistros;
+		}
+		else{
+			numberOfResultsShow = Integer.parseInt((String) aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG"));
+			numberOfResultsShow = Math.min(numberOfResultsShow, maxRegistros);
+		}
+
+
+		if(showFailed){
 			anOriginalProcedureResF = (IProcedureResponse) aBagSPJavaOrchestration.get("RESPONSE_FAILED_MOVEMENTS");
-			numberOfResults += anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
-			totalNumberOfResults = Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+			numberOfResults =  numberOfResultsSuccess + anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length;
+			numberOfResultsShow = Math.min(numberOfResultsShow, numberOfResults);
+			numberOfResults = numberOfResultsShow;
+			totalNumberOfResults = numberOfResults;
+			if (aBagSPJavaOrchestration.get("DATE_FILTER")=="S"){
+				totalNumberOfResults = numberOfResultsSuccess + Integer.parseInt(anOriginalProcedureResF.readValueParam("@o_total_registros"));
+				if((aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG")==null ||
+						aBagSPJavaOrchestration.get(INRO_REGISTRO+"_ORG").equals("null"))
+				){
+					numberOfResultsShow = totalNumberOfResults;
+					numberOfResults = totalNumberOfResults;
+				}
+			}
+		}
+		else{
+			numberOfResults =  numberOfResultsSuccess;
 		}
 
 
@@ -835,8 +888,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		anOriginalProcedureResponse.addResponseBlock(resultsetBlock3);
 
 		//AccountStatementArray
-		if (anOriginalProcedureRes != null
-				&& anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0) {
+		if ((anOriginalProcedureRes != null &&anOriginalProcedureRes.getResultSet(4).getData().getRowsAsArray().length > 0 )||
+				anOriginalProcedureResF != null && anOriginalProcedureResF.getResultSet(1).getData().getRowsAsArray().length > 0) {
 
 			if (logger.isInfoEnabled()) {
 				logger.logInfo(
@@ -924,26 +977,36 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 			List<MovementDetails> movementDetailsList = getMovementsDetails(anOriginalProcedureRes);
 			List<MovementDetails> failedMovementDetailsList = new ArrayList<MovementDetails>();
-			logger.logDebug("APA success res: " + movementDetailsList.toString());
+			logger.logDebug("Query success movement response: " + movementDetailsList.toString());
 			if(showFailed){
 				failedMovementDetailsList = getFailedMovementsDetails(anOriginalProcedureResF);
-				logger.logDebug("APA failed res: " + failedMovementDetailsList.toString());
-				movementDetailsList.addAll(failedMovementDetailsList);
-				if("DESC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
-					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
-						public int compare(MovementDetails m1, MovementDetails m2) {
-							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
-						}
-					});
+				logger.logDebug("Query failed movement response: " + failedMovementDetailsList.toString());
+				if (!movementDetailsList.isEmpty()) {
+					movementDetailsList.addAll(failedMovementDetailsList);
 				}
-				else{
+				else {
+					movementDetailsList = failedMovementDetailsList;
+				}
+				if("ASC".equals(aBagSPJavaOrchestration.get("ORDER"))) {
 					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
 						public int compare(MovementDetails m1, MovementDetails m2) {
 							return m1.getTransactionDate().compareTo(m2.getTransactionDate());
 						}
 					});
 				}
-				logger.logDebug("APA all res: " + movementDetailsList.toString());
+				else{
+					Collections.sort(movementDetailsList, new Comparator<MovementDetails>() {
+						public int compare(MovementDetails m1, MovementDetails m2) {
+							return m2.getTransactionDate().compareTo(m1.getTransactionDate());
+						}
+					});
+				}
+
+				if (movementDetailsList.size() > numberOfResultsShow) {
+					movementDetailsList.subList(numberOfResultsShow, movementDetailsList.size()).clear();
+				}
+
+				logger.logDebug("Query all movement response: " + movementDetailsList.toString());
 			}
 
 			for(MovementDetails movementDetails : movementDetailsList){
@@ -1022,7 +1085,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
 					rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
 					rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
-					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()));
+					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
 				}
 				data0.addRow(rowDat);
 			}
@@ -1897,17 +1960,18 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setOwnerNameSA(columns[18].getValue());
 					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
 					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,3)));
 					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
 					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
 					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
 					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setTransactionStatus(getAdditionalValue(additionalDataArray,9));
 					break;
 
 				case Constants.SPEI_CREDIT:
 					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,0));
 					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTransactionReferenceNumber(Integer.parseInt(getAdditionalValue(additionalDataArray,2)));
+					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,2)));
 					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,3));
 					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,4));
 					movementDetails.setBankNameSA(getAdditionalValue(additionalDataArray,7));
@@ -2063,8 +2127,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 						}else{
 							movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
 							movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+							movementDetails.setReason(reversalConcept);
 						}
-						movementDetails.setReason(reversalConcept);
 					}
 					break;
 				case Constants.ACCOUNT_CREDIT:
@@ -2107,6 +2171,13 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return null;
 	}
 
+	public Integer getIntegerValue(String value){
+		if(value != null && !value.isEmpty()){
+			return Integer.parseInt(value);
+		}
+		return null;
+	}
+
 	public BigDecimal getBigDecimalValue(String value){
 		if(value != null && !value.isEmpty()){
 			return new BigDecimal(value);
@@ -2115,8 +2186,43 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 
 	}
 
+
 	public String getOperation(String cuenta) {
 		return cuenta.contains("*") ? "X":"A";
 	}
+
+
+	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
+		logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
+
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);
+		reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+
+		IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+
+		if (logger.isInfoEnabled()) {
+			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
+		}
+
+		if (!wProcedureResponseCentral.hasError()) {
+
+			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
+				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+
+				if (resultSetRows.length > 0) {
+					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+					return columns[2].getValue();
+				}
+			}
+		}
+
+		return "";
+	}
+
 
 }
