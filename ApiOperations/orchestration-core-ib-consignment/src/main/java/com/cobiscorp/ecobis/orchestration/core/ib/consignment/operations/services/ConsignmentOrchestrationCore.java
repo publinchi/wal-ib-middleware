@@ -635,4 +635,39 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             loggerL.logInfo(Constants.END + CLASS_NAME_CONSIGNMENT_CREDIT + "][validateLimits]");
         }
 	}
+
+    private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
+    	if (loggerL.isInfoEnabled()) {
+			loggerL.logInfo(Constants.BEGIN + CLASS_NAME + "][getParam]");
+		}
+
+		String result = "";
+		
+		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
+		reqTMPCentral.setSpName("cobis..sp_parametro");
+		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
+		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
+		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
+	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
+
+	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
+		
+		if (!wProcedureResponseCentral.hasError() && wProcedureResponseCentral.getResultSetListSize() > 0) {
+			
+			IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
+			
+			if (resultSetRows.length > 0) {
+				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
+				result = columns[2].getValue();
+				return result;
+			} 
+		} 
+
+		if (loggerL.isInfoEnabled()) {
+			loggerL.logInfo(Constants.END + CLASS_NAME + "][getParam]");
+		}
+		
+		return result;
+	}
 }

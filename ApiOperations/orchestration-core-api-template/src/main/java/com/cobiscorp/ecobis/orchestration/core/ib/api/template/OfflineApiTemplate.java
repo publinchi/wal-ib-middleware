@@ -18,8 +18,6 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cts.reentry.api.IReentryPersister;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
@@ -1921,40 +1919,5 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			}
 		}
 
-	}
-
-	public String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
-    	if (logger.isInfoEnabled()) {
-			logger.logInfo(Constants.BEGIN + CLASS_NAME + "][getParam]");
-		}
-
-		String result = "";
-		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
-		reqTMPCentral.setSpName("cobis..sp_parametro");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
-		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
-	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
-
-	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-		
-		if (!wProcedureResponseCentral.hasError() && wProcedureResponseCentral.getResultSetListSize() > 0) {
-			
-			IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
-			
-			if (resultSetRows.length > 0) {
-				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-				result = columns[2].getValue();
-				return result;
-			} 
-		} 
-
-		if (logger.isInfoEnabled()) {
-			logger.logInfo(Constants.END + CLASS_NAME + "][getParam]");
-		}
-		
-		return result;
 	}
 }
