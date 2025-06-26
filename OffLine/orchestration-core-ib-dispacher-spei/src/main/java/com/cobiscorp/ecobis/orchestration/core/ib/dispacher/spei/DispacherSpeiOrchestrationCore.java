@@ -270,6 +270,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
          String fechaLiq = fechaOperacion.format(outputFormatter);
 		if(logger.isDebugEnabled())
 			logger.logDebug("BER Id:"+msjIn.getOrdenpago().getId());
+		    logger.logDebug("JC HORA:"+msjIn.getOrdenpago().getOpHoraLiqBm());
 		if( validateFields(request,aBagSPJavaOrchestration))
 		{
 			IProcedureResponse procedureResponseLocal=null;
@@ -277,7 +278,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if(msjIn.getOrdenpago().getOpTpClave()==0)
 				procedureResponseLocal = updateDevolution(request, aBagSPJavaOrchestration,"U",null, null, fechaLiq);
 			else
-				procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo(), fechaLiq);
+				procedureResponseLocal = updateStatusOperation(request, aBagSPJavaOrchestration, "A", msjIn.getOrdenpago().getOpCveRastreo(), fechaLiq,msjIn.getOrdenpago().getOpHoraLiqBm());
 			
 			
 			
@@ -441,7 +442,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 									}else 
 										if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17)
 										{
-											updateStatusOperation(request, aBagSPJavaOrchestration, "F", msjIn.getOrdenpago().getOpCveRastreo(),"");
+											updateStatusOperation(request, aBagSPJavaOrchestration, "F", msjIn.getOrdenpago().getOpCveRastreo(),"",msjIn.getOrdenpago().getOpHoraLiqBm());
 										}
 									responseXml.setErrCodigo(Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion")));
 									responseXml.setErrDescripcion(procedureResponseLocal.readValueParam("@o_descripcion"));
@@ -597,7 +598,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				{
 					responseXml.setErrCodigo(Integer.valueOf( procedureResponseReverse.readValueParam("@o_id_causa_devolucion")));
 					responseXml.setErrDescripcion(procedureResponseReverse.readValueParam("@o_descripcion"));
-					updateStatusOperation(request, aBagSPJavaOrchestration, "F", msjIn.getOrdenpago().getOpCveRastreo(),"");
+					updateStatusOperation(request, aBagSPJavaOrchestration, "F", msjIn.getOrdenpago().getOpCveRastreo(),"",msjIn.getOrdenpago().getOpHoraLiqBm());
 				}else
 				{
 					responseXml.setErrCodigo(procedureResponseReverse.getReturnCode());
@@ -1269,6 +1270,11 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		        String opCuentaBen="";
 				String opCuentaOrd="";
 		        // Convierte la fecha de String a LocalDate
+
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("jc hour:::::::::" +msjIn.getOrdenpago().getOpHoraLiqBm());
+				}
+  
 				date = LocalDate.parse(msjIn.getOrdenpago().getOpFechaOper(), inputFormatter);
 				if( msjIn.getOrdenpago().getOpTcClaveBen()==3){
 					opCuentaBen = card.maskNumber(msjIn.getOrdenpago().getOpCuentaBen());
@@ -1296,6 +1302,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				requestProcedureLocal.addInputParam("@i_lc_monto",ICTSTypes.SQLMONEY4,  String.valueOf(msjIn.getOrdenpago().getOpMonto()));
 				requestProcedureLocal.addInputParam("@i_lc_firmarequest",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpFirmaDig());
 				requestProcedureLocal.addInputParam("@i_lc_fecha_proceso",ICTSTypes.SQLDATETIME, processDate);
+				requestProcedureLocal.addInputParam("@i_lc_hora_bm",ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpHoraLiqBm());
 			}else
 				if("U".equals(operacion) )
 				{
@@ -1325,6 +1332,30 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 	}
 
+	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state, String clave, String fechaLiq,String hour)
+	{
+		if(logger.isDebugEnabled())
+			logger.logDebug("init updateStatus");
+		IProcedureRequest procedureRequest = initProcedureRequest(request);
+
+		procedureRequest.setSpName("cob_bvirtual..sp_act_transfer_spei");
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_LOCAL);
+		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500161");
+		procedureRequest.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500161");
+		procedureRequest.addInputParam("@i_operacion", ICTSTypes.SYBVARCHAR, "A");
+		procedureRequest.addInputParam("@i_clave_rastreo", ICTSTypes.SYBVARCHAR, clave);
+		procedureRequest.addInputParam("@i_estado", ICTSTypes.SYBVARCHAR, state);
+		procedureRequest.addInputParam("@i_fecha_liq", ICTSTypes.SQLDATETIME, fechaLiq);
+		procedureRequest.addInputParam("@i_lc_hora_bm", ICTSTypes.SQLVARCHAR, hour);
+		//poner fecha de operacion karpay
+
+		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
+		if(logger.isDebugEnabled())
+			logger.logDebug("response updateStatus :"+procedureResponseLocal.getCTSMessageAsString() );
+
+		return procedureResponseLocal;
+	}
 	
 	private IProcedureResponse updateStatusOperation(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, String state, String clave, String fechaLiq)
 	{
