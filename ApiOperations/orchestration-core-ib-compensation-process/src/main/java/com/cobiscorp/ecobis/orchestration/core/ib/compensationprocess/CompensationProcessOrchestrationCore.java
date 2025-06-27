@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -112,7 +113,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			}
 		}
 
-		if (responseServer != null && responseServer.getOnLine()) {
+		if (Objects.nonNull(responseServer) && responseServer.getOnLine()) {
 			if (loggerProcess.isDebugEnabled()) {
 				loggerProcess.logDebug("server is online");
 			}
@@ -144,7 +145,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			Map<String, Object> aBagSPJavaOrchestration) {
 
 		File[] files = ((File) aBagSPJavaOrchestration.get("directory")).listFiles();
-		if (files != null) {
+		if (Objects.nonNull(files)) {
 			for (File file : files) {
 				if (file.isFile()) {
 					if (file.getName().toLowerCase().endsWith(".json")) {
@@ -185,7 +186,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 				}
 			}
 			// se sube el reporte al S3 si existe el archivo
-			if (aBagSPJavaOrchestration.get(NOMBRE_REPORTE) != null) {
+			if (Objects.nonNull(aBagSPJavaOrchestration.get(NOMBRE_REPORTE))) {
 				File file = new File((String) aBagSPJavaOrchestration.get(NOMBRE_REPORTE));
 				if (file.exists()) {
 					if (loggerProcess.isInfoEnabled()) {
@@ -221,26 +222,19 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 			String originalFileName = anOriginalRequest.readValueParam("fileNameSinJson");
 			String transactionFileName = transactionFile.getFilename();
-			if (loggerProcess.isInfoEnabled()) {
-				loggerProcess.logInfo(": antes aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO) ---> FHU " + (String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO));
 
-			}
 			anOriginalRequest.addInputParam(IFILENAME, ICTSTypes.SQLVARCHAR, transactionFile.getFilename());
 			valArchivoCompensacion(anOriginalRequest, aBagSPJavaOrchestration);
-			if (loggerProcess.isInfoEnabled()) {
-				loggerProcess.logInfo(": despues aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO) ---> FHU " + (String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO));
-			}
-			if (originalFileName != null && transactionFileName != null && originalFileName.equals(transactionFileName)
+
+			if (Objects.nonNull(originalFileName) && Objects.nonNull(transactionFileName)
+					&& originalFileName.equals(transactionFileName)
 					&& TRUE.equals((String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO))) {
 
 				List<TransactionContent> contents = transactionFile.getContent();
 
-				if (contents != null) {
+				if (Objects.nonNull(contents)) {
 					aBagSPJavaOrchestration.put("contents", contents);
 					concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
-					if (FALSE.equals((String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO))) {
-						return null;
-					}
 					if (loggerProcess.isInfoEnabled()) {
 						loggerProcess.logDebug("REQUEST [transactionFile] " + transactionFile.toString());
 					}
@@ -276,7 +270,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 		IProcedureResponse response = executeCoreBanking(request);
 
-		if (response.getReturnCode() == 0 && response.readValueParam(O_COMPENSACION_FIN) != null) {
+		if (response.getReturnCode() == 0 && Objects.nonNull(response.readValueParam(O_COMPENSACION_FIN))) {
 			aBagSPJavaOrchestration.put("o_compensacion_fin", response.readValueParam(O_COMPENSACION_FIN));
 			compensacionCentral(request, aBagSPJavaOrchestration);
 		}
@@ -307,7 +301,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 		if (response.getReturnCode() == 0) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, TRUE);
-		} 
+		}
 	}
 
 	private void valArchivoCompensacion(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
@@ -323,10 +317,6 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		request.addInputParam(IFILENAME, ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(FILENAME).toString());
 		IProcedureResponse response = executeCoreBanking(request);
 		aBagSPJavaOrchestration.put(RESPONSE_VALARCHIVO, response);
-
-		if (loggerProcess.isInfoEnabled()) {
-			loggerProcess.logDebug("RESPONSE_VALARCHIVO -- >FHU : " + aBagSPJavaOrchestration.get(RESPONSE_VALARCHIVO).toString());
-		}
 
 		if (response.getReturnCode() == 0) {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, TRUE);
@@ -433,7 +423,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		for (TransactionContent content : contents) {
 			Clearing clearing = content.getClearing();
 
-			if (clearing != null) {
+			if (Objects.nonNull(clearing)) {
 				int actionCode = clearing.getActionCode();
 
 				if (actionCode == 2 || actionCode == 3) {
@@ -528,7 +518,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		if (wServerStatusResp.getReturnCode() == 0) {
 			serverResponse.setOfflineWithBalances(true);
 			String enLineaParam = wServerStatusResp.readValueParam(O_EN_LINEA);
-			serverResponse.setOnLine(enLineaParam != null && enLineaParam.equals("S"));
+			serverResponse.setOnLine(Objects.nonNull(enLineaParam) && enLineaParam.equals("S"));
 			setProcessDate(serverResponse, wServerStatusResp);
 		} else {
 			handleErrorCodes(serverResponse, wServerStatusResp);
@@ -537,7 +527,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 	private void setProcessDate(ServerResponse serverResponse, IProcedureResponse wServerStatusResp) {
 		String processDateStr = wServerStatusResp.readValueParam(O_FECHA_PROCESO);
-		if (processDateStr != null) {
+		if (Objects.nonNull(processDateStr)) {
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			try {
 				serverResponse.setProcessDate(formatter.parse(processDateStr));
@@ -577,7 +567,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			IProcedureResponse responseData = dataCompensation(anOriginalRequest, aBagSPJavaOrchestration);
 
 			String numFilasParam = responseData.readValueParam(O_NUM_FILAS);
-			if (numFilasParam != null) {
+			if (Objects.nonNull(numFilasParam)) {
 				try {
 					int numRegistros = Integer.parseInt(numFilasParam);
 					hasMoreRecords = numRegistros > 0;
@@ -640,7 +630,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 			}
 			return false;
 		} finally {
-			if (writer != null) {
+			if (Objects.nonNull(writer)) {
 				try {
 					writer.close();
 				} catch (IOException e) {
