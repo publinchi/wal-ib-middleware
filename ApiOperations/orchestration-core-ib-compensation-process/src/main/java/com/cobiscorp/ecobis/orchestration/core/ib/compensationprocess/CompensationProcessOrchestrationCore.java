@@ -58,10 +58,12 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	private java.util.Properties properties;
 	private static final String VALIDAR_ARCHIVO = "validarArchivo";
 	private static final String FALSE = "false";
+	private static final String TRUE = "true";
 	private static final String COBIS = "COBIS";
 	private static final String O_EN_LINEA = "@o_en_linea";
 	private static final String O_FECHA_PROCESO = "@o_fecha_proceso";
 	static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
+	static final String RESPONSE_VALARCHIVO = "RESPONSE_VALARCHIVO";
 	static final String REGISTROS = "registros";
 	private static final String NOMBRE_ARCHIVO_REPORTE = "nombre_archivo_reporte";
 	private static final String NOMBRE_REPORTE = "nombre_reporte";
@@ -75,7 +77,9 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 	private static final int ERROR40002 = 40002;
 	private static final String FILENAME = "filename";
 	private static final String I_TIPO = "@i_tipo";
-	private static final String I_FILENAME= "@i_fileName";
+	private static final String I_FILENAME = "@i_fileName";
+	private static final String IFILENAME = "@i_filename";
+	private static final String I_OPERACION = "@i_operacion";
 
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
@@ -217,15 +221,24 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 
 			String originalFileName = anOriginalRequest.readValueParam("fileNameSinJson");
 			String transactionFileName = transactionFile.getFilename();
-			if (originalFileName != null && transactionFileName != null
-					&& originalFileName.equals(transactionFileName)) {
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(": antes aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO) ---> FHU " + (String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO));
+
+			}
+			anOriginalRequest.addInputParam(IFILENAME, ICTSTypes.SQLVARCHAR, transactionFile.getFilename());
+			valArchivoCompensacion(anOriginalRequest, aBagSPJavaOrchestration);
+			if (loggerProcess.isInfoEnabled()) {
+				loggerProcess.logInfo(": despues aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO) ---> FHU " + (String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO));
+			}
+			if (originalFileName != null && transactionFileName != null && originalFileName.equals(transactionFileName)
+					&& TRUE.equals((String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO))) {
 
 				List<TransactionContent> contents = transactionFile.getContent();
 
 				if (contents != null) {
 					aBagSPJavaOrchestration.put("contents", contents);
 					concatenateRecords(anOriginalRequest, aBagSPJavaOrchestration);
-					if (FALSE.equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
+					if (FALSE.equals((String) aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO))) {
 						return null;
 					}
 					if (loggerProcess.isInfoEnabled()) {
@@ -279,10 +292,11 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS);
 
 		request.addInputParam(T_TRN, ICTSTypes.SQLINTN, "18700150");
+		request.addInputParam(I_OPERACION, ICTSTypes.SQLCHAR, "A");
 		request.addInputParam("@i_file_id", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("fileId").toString());
 		request.addInputParam("@i_issuer_id", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("issuerId").toString());
 		request.addInputParam("@i_brand", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("brand").toString());
-		request.addInputParam("@i_filename", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(FILENAME).toString());
+		request.addInputParam(IFILENAME, ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(FILENAME).toString());
 		request.addInputParam("@i_reference_date", ICTSTypes.SQLVARCHAR,
 				aBagSPJavaOrchestration.get("referenceDate").toString());
 		request.addInputParam("@i_compensacion", ICTSTypes.SQLVARCHAR,
@@ -292,7 +306,30 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
 		if (response.getReturnCode() == 0) {
-			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, "true");
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, TRUE);
+		} 
+	}
+
+	private void valArchivoCompensacion(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
+
+		request.setSpName("cob_atm..sp_atm_trn_data_compensation");
+
+		request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
+				IMultiBackEndResolverService.TARGET_CENTRAL);
+		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS);
+
+		request.addInputParam(T_TRN, ICTSTypes.SQLINTN, "18700150");
+		request.addInputParam(I_OPERACION, ICTSTypes.SQLCHAR, "S");
+		request.addInputParam(IFILENAME, ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get(FILENAME).toString());
+		IProcedureResponse response = executeCoreBanking(request);
+		aBagSPJavaOrchestration.put(RESPONSE_VALARCHIVO, response);
+
+		if (loggerProcess.isInfoEnabled()) {
+			loggerProcess.logDebug("RESPONSE_VALARCHIVO -- >FHU : " + aBagSPJavaOrchestration.get(RESPONSE_VALARCHIVO).toString());
+		}
+
+		if (response.getReturnCode() == 0) {
+			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, TRUE);
 		} else {
 			aBagSPJavaOrchestration.put(VALIDAR_ARCHIVO, FALSE);
 		}
@@ -431,9 +468,6 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 						aBagSPJavaOrchestration.put(REGISTROS, groupBuilder.toString());
 						consCarId(anOriginalRequest, aBagSPJavaOrchestration);
 						groupBuilder.setLength(0);
-						if ("false".equals(aBagSPJavaOrchestration.get(VALIDAR_ARCHIVO).toString())) {
-							return;
-						}
 					}
 				}
 			}
@@ -573,7 +607,7 @@ public class CompensationProcessOrchestrationCore extends SPJavaOrchestrationBas
 		request.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, COBIS);
 
 		request.addInputParam(T_TRN, ICTSTypes.SQLINTN, "18700148");
-		request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+		request.addInputParam(I_OPERACION, ICTSTypes.SQLVARCHAR, "Q");
 		request.addInputParam("@i_nombre_archivo", ICTSTypes.SQLVARCHAR,
 				(String) aBagSPJavaOrchestration.get(FILENAME));
 		request.addInputParam("@i_siguiente", ICTSTypes.SQLINT4, (String) aBagSPJavaOrchestration.get(SIGUIENTE));
