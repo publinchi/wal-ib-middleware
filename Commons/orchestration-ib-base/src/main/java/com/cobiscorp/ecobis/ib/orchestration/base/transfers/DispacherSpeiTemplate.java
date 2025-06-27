@@ -172,8 +172,14 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 								if(message.getCategoria().equals("ENSESION"))
 								{
 									ensesion(anOriginalRequest, aBagSPJavaOrchestration);
+								}else
+								{
+									if (logger.isDebugEnabled())
+									{
+										logger.logDebug("categoryNotImplemented: "+message.getCategoria());
+									}
+									categoryNotImplemented(anOriginalRequest, aBagSPJavaOrchestration);
 								}
-
 			}
 		}
 
@@ -197,5 +203,8 @@ public abstract class DispacherSpeiTemplate extends SPJavaOrchestrationBase {
 			Map<String, Object> aBagSPJavaOrchestration);
 	
 	protected abstract Object ensesion(IProcedureRequest request,
+			Map<String, Object> aBagSPJavaOrchestration);
+	
+	protected abstract Object categoryNotImplemented(IProcedureRequest request,
 			Map<String, Object> aBagSPJavaOrchestration);
 }
