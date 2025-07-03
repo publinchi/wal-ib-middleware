@@ -2159,7 +2159,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setOwnerNameDA(columns[18].getValue());
 					movementDetails.setAccountNumberDA(cuenta);
 					if("REMITTANCE_CREDIT".equals(creditConcept)){
-						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,3));
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,3));
 						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,4));
 						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,5));
 						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,6));
@@ -2179,7 +2179,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setAccountNumberSA(cuenta);
 					if("REMITTANCE_REVERSAL".equals(reversalConcept)){
 						movementDetails.setReversalConcept(reversalConcept);
-						movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,2)));
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,2));
 						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,4));
 						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,5));
 						movementDetails.setReversalOriginCode(getAdditionalValue(additionalDataArray,6));
