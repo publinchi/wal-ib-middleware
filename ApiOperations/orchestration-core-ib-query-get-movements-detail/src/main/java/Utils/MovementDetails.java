@@ -76,9 +76,16 @@ public class MovementDetails {
     // Account credit details
     private String creditConcept;
     private String originCode;
+    private String senderName;
+    private String moneyTransmitter;
+    private String originCountry;
+    private String currency;
+    private String originCurrency;
+    private String exchangeRate;
 
     //Reversal details
     private String reversalConcept;
+    private String reversalOriginCode;
 
 
     public BigDecimal getAccountingBalance() {
@@ -389,59 +396,6 @@ public class MovementDetails {
 
     public void setTransactionStatus(String transactionStatus) { this.transactionStatus = transactionStatus; }
 
-    @Override
-    public String toString() {
-        return "MovementDetails{" +
-                "accountingBalance=" + accountingBalance +
-                ", availableBalance=" + availableBalance +
-                ", movementType='" + movementType + '\'' +
-                ", amount=" + amount +
-                ", transactionDate='" + transactionDate + '\'' +
-                ", operationType='" + operationType + '\'' +
-                ", commission=" + commission +
-                ", iva=" + iva +
-                ", transactionReferenceNumber=" + transactionReferenceNumber +
-                ", description='" + description + '\'' +
-                ", transactionStatus='" + transactionStatus + '\'' +
-                ", maskedCardNumber='" + maskedCardNumber + '\'' +
-                ", ownerNameSA='" + ownerNameSA + '\'' +
-                ", accountNumberSA='" + accountNumberSA + '\'' +
-                ", bankNameSA='" + bankNameSA + '\'' +
-                ", ownerNameDA='" + ownerNameDA + '\'' +
-                ", accountNumberDA='" + accountNumberDA + '\'' +
-                ", bankNameDA='" + bankNameDA + '\'' +
-                ", referenceCode='" + referenceCode + '\'' +
-                ", trackingId='" + trackingId + '\'' +
-                ", bankNameATM='" + bankNameATM + '\'' +
-                ", locationId='" + locationId + '\'' +
-                ", transactionIdATM='" + transactionIdATM + '\'' +
-                ", establishmentNameMD='" + establishmentNameMD + '\'' +
-                ", transactionIdMD='" + transactionIdMD + '\'' +
-                ", establishmentNameSD='" + establishmentNameSD + '\'' +
-                ", transactionIdSD='" + transactionIdSD + '\'' +
-                ", transactionId='" + transactionId + '\'' +
-                ", authorizationCode='" + authorizationCode + '\'' +
-                ", bankBranchCode='" + bankBranchCode + '\'' +
-                ", purchaseAmount=" + purchaseAmount +
-                ", withdrawalAmount=" + withdrawalAmount +
-                ", errorCode='" + errorCode + '\'' +
-                ", errorMessage='" + errorMessage + '\'' +
-                ", uuid='" + uuid + '\'' +
-                ", cardId='" + cardId + '\'' +
-                ", reason='" + reason + '\'' +
-                ", cardEntryCode='" + cardEntryCode + '\'' +
-                ", cardEntryPin='" + cardEntryPin + '\'' +
-                ", cardEntryMode='" + cardEntryMode + '\'' +
-                ", originMovementId='" + originMovementId + '\'' +
-                ", originReferenceNumber='" + originReferenceNumber + '\'' +
-                ", commissionOriginMovementId='" + commissionOriginMovementId + '\'' +
-                ", commissionOriginReferenceNumber='" + commissionOriginReferenceNumber + '\'' +
-                ", creditConcept='" + creditConcept + '\'' +
-                ", originCode='" + originCode + '\'' +
-                ", reversalConcept='" + reversalConcept + '\'' +
-                '}';
-    }
-
     public String getOriginMovementId() {
         return originMovementId;
     }
@@ -498,4 +452,119 @@ public class MovementDetails {
         this.reversalConcept = reversalConcept;
     }
 
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getMoneyTransmitter() {
+        return moneyTransmitter;
+    }
+
+    public void setMoneyTransmitter(String moneyTransmitter) {
+        this.moneyTransmitter = moneyTransmitter;
+    }
+
+    public String getOriginCountry() {
+        return originCountry;
+    }
+
+    public void setOriginCountry(String originCountry) {
+        this.originCountry = originCountry;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getOriginCurrency() {
+        return originCurrency;
+    }
+
+    public void setOriginCurrency(String originCurrency) {
+        this.originCurrency = originCurrency;
+    }
+
+    public String getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(String exchangeRate) {
+        this.exchangeRate = exchangeRate;
+    }
+
+    public String getReversalOriginCode() {
+        return reversalOriginCode;
+    }
+
+    public void setReversalOriginCode(String reversalOriginCode) {
+        this.reversalOriginCode = reversalOriginCode;
+    }
+
+    @Override
+    public String toString() {
+        return "MovementDetails{" +
+                "accountingBalance=" + accountingBalance +
+                ", availableBalance=" + availableBalance +
+                ", movementType='" + movementType + '\'' +
+                ", amount=" + amount +
+                ", transactionDate='" + transactionDate + '\'' +
+                ", operationType='" + operationType + '\'' +
+                ", commission=" + commission +
+                ", iva=" + iva +
+                ", transactionReferenceNumber=" + transactionReferenceNumber +
+                ", description='" + description + '\'' +
+                ", transactionStatus='" + transactionStatus + '\'' +
+                ", maskedCardNumber='" + maskedCardNumber + '\'' +
+                ", ownerNameSA='" + ownerNameSA + '\'' +
+                ", accountNumberSA='" + accountNumberSA + '\'' +
+                ", bankNameSA='" + bankNameSA + '\'' +
+                ", ownerNameDA='" + ownerNameDA + '\'' +
+                ", accountNumberDA='" + accountNumberDA + '\'' +
+                ", bankNameDA='" + bankNameDA + '\'' +
+                ", referenceCode='" + referenceCode + '\'' +
+                ", trackingId='" + trackingId + '\'' +
+                ", bankNameATM='" + bankNameATM + '\'' +
+                ", locationId='" + locationId + '\'' +
+                ", transactionIdATM='" + transactionIdATM + '\'' +
+                ", establishmentNameMD='" + establishmentNameMD + '\'' +
+                ", transactionIdMD='" + transactionIdMD + '\'' +
+                ", establishmentNameSD='" + establishmentNameSD + '\'' +
+                ", transactionIdSD='" + transactionIdSD + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", authorizationCode='" + authorizationCode + '\'' +
+                ", bankBranchCode='" + bankBranchCode + '\'' +
+                ", purchaseAmount=" + purchaseAmount +
+                ", withdrawalAmount=" + withdrawalAmount +
+                ", errorCode='" + errorCode + '\'' +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", cardId='" + cardId + '\'' +
+                ", reason='" + reason + '\'' +
+                ", cardEntryCode='" + cardEntryCode + '\'' +
+                ", cardEntryPin='" + cardEntryPin + '\'' +
+                ", cardEntryMode='" + cardEntryMode + '\'' +
+                ", originMovementId='" + originMovementId + '\'' +
+                ", originReferenceNumber='" + originReferenceNumber + '\'' +
+                ", commissionOriginMovementId='" + commissionOriginMovementId + '\'' +
+                ", commissionOriginReferenceNumber='" + commissionOriginReferenceNumber + '\'' +
+                ", creditConcept='" + creditConcept + '\'' +
+                ", originCode='" + originCode + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", moneyTransmitter='" + moneyTransmitter + '\'' +
+                ", originCountry='" + originCountry + '\'' +
+                ", currency='" + currency + '\'' +
+                ", originCurrency='" + originCurrency + '\'' +
+                ", exchangeRate='" + exchangeRate + '\'' +
+                ", reversalConcept='" + reversalConcept + '\'' +
+                ", reversalOriginCode='" + reversalOriginCode + '\'' +
+                '}';
+    }
 }
