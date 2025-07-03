@@ -962,6 +962,17 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("creditConcept", ICTSTypes.SQLVARCHAR, 50));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originCode", ICTSTypes.SQLVARCHAR, 50));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reversalConcept", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("senderName", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("moneyTransmitter", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originCountry", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("currency", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originCurrency", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("exchangeRate", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reversalOriginCode", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("remittanceTransactionReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originTransactionReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+
+
 
 			if(showFailed){
 				metaData0.addColumnMetaData(new ResultSetHeaderColumn("pin", ICTSTypes.SQLVARCHAR, 50));
@@ -1079,13 +1090,24 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(40, new ResultSetRowColumnData(false, movementDetails.getOriginCode()));
 				rowDat.addRowData(41, new ResultSetRowColumnData(false, movementDetails.getReversalConcept()));
 
+				//remittance
+				rowDat.addRowData(42, new ResultSetRowColumnData(false, movementDetails.getSenderName()));
+				rowDat.addRowData(43, new ResultSetRowColumnData(false, movementDetails.getMoneyTransmitter()));
+				rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getOriginCountry()));
+				rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getCurrency()));
+				rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getOriginCurrency()));
+				rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getExchangeRate()));
+				rowDat.addRowData(48, new ResultSetRowColumnData(false, movementDetails.getReversalOriginCode()));
+				rowDat.addRowData(49, new ResultSetRowColumnData(false, movementDetails.getRemittanceTransactionReferenceNumber()));
+				rowDat.addRowData(50, new ResultSetRowColumnData(false, movementDetails.getOriginTransactionReferenceNumber()));
+
 				if(showFailed){
-					rowDat.addRowData(42, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
-					rowDat.addRowData(43, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
-					rowDat.addRowData(44, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
-					rowDat.addRowData(45, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
-					rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
-					rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
+					rowDat.addRowData(51, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
+					rowDat.addRowData(52, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
+					rowDat.addRowData(53, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
+					rowDat.addRowData(54, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
+					rowDat.addRowData(55, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
+					rowDat.addRowData(56, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
 				}
 				data0.addRow(rowDat);
 			}
@@ -2132,19 +2154,40 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					}
 					break;
 				case Constants.ACCOUNT_CREDIT:
+					String creditConcept = getAdditionalValue(additionalDataArray,2);
+					movementDetails.setCreditConcept(creditConcept);
 					movementDetails.setOwnerNameDA(columns[18].getValue());
 					movementDetails.setAccountNumberDA(cuenta);
-					movementDetails.setCreditConcept(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
-					movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+					if("REMITTANCE_CREDIT".equals(creditConcept)){
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,3));
+						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setOriginCountry(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setCurrency(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setOriginCurrency(getAdditionalValue(additionalDataArray,9));
+						movementDetails.setExchangeRate(getAdditionalValue(additionalDataArray,10));
+					}else {
+						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+					}
 					break;
 				case Constants.CREDIT_REVERSAL:
+					String reversalConcept = getAdditionalValue(additionalDataArray,3);
 					movementDetails.setOwnerNameSA(columns[18].getValue());
 					movementDetails.setAccountNumberSA(cuenta);
-					movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
-					movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					if("REMITTANCE_REVERSAL".equals(reversalConcept)){
+						movementDetails.setReversalConcept(reversalConcept);
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,2));
+						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setReversalOriginCode(getAdditionalValue(additionalDataArray,6));
+					}else {
+						movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
+						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					}
 					//movementDetails.setReason(getAdditionalValue(additionalDataArray,2));
 					//movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,5));
 					//movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,6));
