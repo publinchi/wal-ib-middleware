@@ -3717,6 +3717,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.accountCreditDetailsInstance().setOriginCurrency(resultSetMapper.getString(46));
                             dto.accountCreditDetailsInstance().setExchangeRate(resultSetMapper.getString(47));
                             dto.reversalDetailsInstance().setOriginCode(resultSetMapper.getString(48));
+                            dto.setTransactionReferenceNumber(resultSetMapper.getString(49));
+                            dto.setOriginTransactionReferenceNumber(resultSetMapper.getString(50));
 
                             return dto;
                         }
@@ -3952,12 +3954,14 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.accountCreditDetailsInstance().setOriginCurrency(resultSetMapper.getString(46));
                             dto.accountCreditDetailsInstance().setExchangeRate(resultSetMapper.getString(47));
                             dto.reversalDetailsInstance().setOriginCode(resultSetMapper.getString(48));
+                            dto.setTransactionReferenceNumber(resultSetMapper.getString(49));
+                            dto.setOriginTransactionReferenceNumber(resultSetMapper.getString(50));
 
-                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(49));
-                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(50));
-                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(51));
-                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(52));
-                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(53));
+                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(51));
+                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(52));
+                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(53));
+                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(54));
+                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(55));
                             dto.setTransactionStatus(resultSetMapper.getString(54));
                             return dto;
                         }

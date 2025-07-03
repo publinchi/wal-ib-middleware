@@ -87,6 +87,9 @@ public class MovementDetails {
     private String reversalConcept;
     private String reversalOriginCode;
 
+    private String originTransactionReferenceNumber;
+    private String remittanceTransactionReferenceNumber;
+
 
     public BigDecimal getAccountingBalance() {
         return accountingBalance;
@@ -565,6 +568,25 @@ public class MovementDetails {
                 ", exchangeRate='" + exchangeRate + '\'' +
                 ", reversalConcept='" + reversalConcept + '\'' +
                 ", reversalOriginCode='" + reversalOriginCode + '\'' +
+                ", originTransactionReferenceNumber='" + originTransactionReferenceNumber + '\'' +
+                ", remittanceTransactionReferenceNumber='" + remittanceTransactionReferenceNumber + '\'' +
                 '}';
     }
+
+    public String getRemittanceTransactionReferenceNumber() {
+        return remittanceTransactionReferenceNumber;
+    }
+
+    public void setRemittanceTransactionReferenceNumber(String remittanceTransactionReferenceNumber) {
+        this.remittanceTransactionReferenceNumber = remittanceTransactionReferenceNumber;
+    }
+
+    public String getOriginTransactionReferenceNumber() {
+        return originTransactionReferenceNumber;
+    }
+
+    public void setOriginTransactionReferenceNumber(String originTransactionReferenceNumber) {
+        this.originTransactionReferenceNumber = originTransactionReferenceNumber;
+    }
+
 }

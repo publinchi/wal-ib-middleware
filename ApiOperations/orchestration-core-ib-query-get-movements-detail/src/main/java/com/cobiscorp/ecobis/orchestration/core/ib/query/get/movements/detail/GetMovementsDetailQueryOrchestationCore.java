@@ -969,6 +969,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originCurrency", ICTSTypes.SQLVARCHAR, 50));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("exchangeRate", ICTSTypes.SQLVARCHAR, 50));
 			metaData0.addColumnMetaData(new ResultSetHeaderColumn("reversalOriginCode", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("remittanceTransactionReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+			metaData0.addColumnMetaData(new ResultSetHeaderColumn("originTransactionReferenceNumber", ICTSTypes.SQLVARCHAR, 50));
+
 
 
 			if(showFailed){
@@ -1095,14 +1098,16 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				rowDat.addRowData(46, new ResultSetRowColumnData(false, movementDetails.getOriginCurrency()));
 				rowDat.addRowData(47, new ResultSetRowColumnData(false, movementDetails.getExchangeRate()));
 				rowDat.addRowData(48, new ResultSetRowColumnData(false, movementDetails.getReversalOriginCode()));
+				rowDat.addRowData(49, new ResultSetRowColumnData(false, movementDetails.getRemittanceTransactionReferenceNumber()));
+				rowDat.addRowData(50, new ResultSetRowColumnData(false, movementDetails.getOriginTransactionReferenceNumber()));
 
 				if(showFailed){
-					rowDat.addRowData(49, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
-					rowDat.addRowData(50, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
-					rowDat.addRowData(51, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
-					rowDat.addRowData(52, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
-					rowDat.addRowData(53, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
-					rowDat.addRowData(54, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
+					rowDat.addRowData(51, new ResultSetRowColumnData(false, movementDetails.getCardEntryPin()));
+					rowDat.addRowData(52, new ResultSetRowColumnData(false, movementDetails.getCardEntryCode()));
+					rowDat.addRowData(53, new ResultSetRowColumnData(false, movementDetails.getCardEntryMode()));
+					rowDat.addRowData(54, new ResultSetRowColumnData(false, movementDetails.getErrorCode()));
+					rowDat.addRowData(55, new ResultSetRowColumnData(false, movementDetails.getErrorMessage()));
+					rowDat.addRowData(56, new ResultSetRowColumnData(false, movementDetails.getTransactionStatus()!=null?movementDetails.getTransactionStatus():"TRANSACTION_SUCCESS"));
 				}
 				data0.addRow(rowDat);
 			}
@@ -2154,6 +2159,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setOwnerNameDA(columns[18].getValue());
 					movementDetails.setAccountNumberDA(cuenta);
 					if("REMITTANCE_CREDIT".equals(creditConcept)){
+						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,3));
 						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,4));
 						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,5));
 						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,6));
@@ -2173,8 +2179,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setAccountNumberSA(cuenta);
 					if("REMITTANCE_REVERSAL".equals(reversalConcept)){
 						movementDetails.setReversalConcept(reversalConcept);
+						movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,2)));
 						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,4));
-						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,5));
 						movementDetails.setReversalOriginCode(getAdditionalValue(additionalDataArray,6));
 					}else {
 						movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
