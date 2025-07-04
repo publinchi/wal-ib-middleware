@@ -110,6 +110,8 @@
 		<staff id="37" name="COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service" path="../plugins/IB" version="4.6.1.0" />
 		<staff id="38" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO" path="../plugins/IB" version="4.6.1.0" />
 		<staff id="39" name="COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service" path="../plugins/IB" version="4.6.1.0" />
+		<staff id="40" name="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO" path="../plugins/IB" version="4.6.1.0" />
+		<staff id="41" name="COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service" path="../plugins/IB" version="4.6.1.0" />
 	</plan-config>
 
 	<orchestrationsTemplate>
