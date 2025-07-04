@@ -155,10 +155,10 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_ACCOUNTNUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40082),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40092),
                 new ParameterValidationUtil(Inputs.I_CREDITCONCEPT, ValidationType.NOT_EMPTY, ErrorCode.E40093),
-                new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.NOT_EMPTY, ErrorCode.E40300),
+                new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.NOT_EMPTY, ErrorCode.E40312),
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.IS_DOUBLE, ErrorCode.E40300),
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40107),
-                new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.NOT_EMPTY, ErrorCode.E40301),
+                new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.NOT_EMPTY, ErrorCode.E40313),
                 new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.IS_DOUBLE, ErrorCode.E40301),
                 new ParameterValidationUtil(Inputs.I_ORIGINCODE, ValidationType.NOT_EMPTY, ErrorCode.E40302),
                 new ParameterValidationUtil(Inputs.I_SENDERNAME, ValidationType.NOT_EMPTY, ErrorCode.E40303),
@@ -612,13 +612,13 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         }
 
         if (Objects.isNull(cause) || cause.isEmpty()) {
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_CODE, -1);
+            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_CODE, Constants.DEFAULT_ERROR);
             aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_MSG, "The cause of the transaction could not be obtained.");
         }
 
 		procedureRequest.setSpName("cob_bvirtual..sp_bv_valida_limites");
         procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
-		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18500069");
+		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18701001");
 		procedureRequest.addInputParam("@i_tipo_trn", ICTSTypes.SQLINT4, "253");
 		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, amount);		
         procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, cause);
