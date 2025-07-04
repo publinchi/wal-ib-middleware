@@ -880,6 +880,17 @@
 			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cobiscorp.channels.ib</groupId>
+			<artifactId>COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service</artifactId>
+			<version>4.6.1.0</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>
@@ -1278,6 +1289,7 @@
 			<artifactId>orchestration-core-ib-consignment</artifactId>
 			<version>4.6.1.0</version>
 		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -1367,9 +1379,9 @@
 											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.DTO,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.ExpenseAccount.Service,
 											COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.DTO,
-											COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service
-											COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO,
-											COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service
+											COBISCorp.eCOBIS.InternetBanking.WebApp.Auth.Service.Service,
+								            COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.DTO,
+								            COBISCorp.eCOBIS.InternetBanking.WebApp.SoftToken.Service
 						</includeArtifactIds>
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
