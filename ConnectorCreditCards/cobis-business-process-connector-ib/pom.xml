@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.cobiscorp.cobis</groupId>
-		<artifactId>cobis-app-parent</artifactId>
-		<version>2.0.0</version>
+		<artifactId>cobis-ib-parent</artifactId>
+		<version>1.0.0</version>
 	</parent>
     <artifactId>cobis-business-process-connector-ib</artifactId>
     <version>1.0.0</version>
