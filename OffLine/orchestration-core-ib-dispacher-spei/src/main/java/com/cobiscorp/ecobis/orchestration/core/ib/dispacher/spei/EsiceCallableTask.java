@@ -167,6 +167,16 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 			// SE EJECUTA CONECTOR
 			connectorResponse = executeProvider(anOriginalRequest, aBagSPJavaOrchestration);
 
+			if (connectorResponse.readValueParam("@o_cod_respuesta") != null) {
+				if (logger.isDebugEnabled()) {
+					logger.logDebug(" Respuesta Esice: "+ connectorResponse.readValueParam("@o_cod_respuesta"));
+				}
+				
+				if (!connectorResponse.readValueParam("@o_cod_respuesta").equals("EA00")) {
+					saveRegisterEsice(anOriginalRequest);
+				}
+			}
+			
 			if (logger.isDebugEnabled())
 				logger.logDebug("getWsEsice response: " + connectorResponse);
 
@@ -183,6 +193,91 @@ public class EsiceCallableTask extends SPJavaOrchestrationBase implements Callab
 		}
 		return connectorResponse;
 	}
+    
+    private void saveRegisterEsice(IProcedureRequest anOriginalReq) {    	
+    	if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, saveRegisterEsice");
+		}
+    	
+    	try {
+	    	IProcedureRequest reqTMPLocal = (initProcedureRequest(anOriginalReq));
+	
+			reqTMPLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+			reqTMPLocal.setValueFieldInHeader(ICOBISTS.HEADER_CONTEXT_ID, "COBIS");
+			reqTMPLocal.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+			
+			reqTMPLocal.setSpName("cob_bvirtual..sp_bv_envio_esice_job");
+			reqTMPLocal.addInputParam("@s_ssn", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_ssn"));         
+			reqTMPLocal.addInputParam("@s_ssn_branch", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_ssn_branch"));       
+			reqTMPLocal.addInputParam("@s_srv", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_srv"));
+			reqTMPLocal.addInputParam("@s_lsrv", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_lsrv"));
+			reqTMPLocal.addInputParam("@s_ofi", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_ofi"));
+			reqTMPLocal.addInputParam("@s_date", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_date"));
+			reqTMPLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18700150");
+			reqTMPLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "I");  
+			reqTMPLocal.addInputParam("@i_idCda", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_id_cda"));            
+			reqTMPLocal.addInputParam("@i_fechaOperacion", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_fecha_oper"));
+			reqTMPLocal.addInputParam("@i_folioOrigPaq", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_folio_orig_paq"));	  
+			reqTMPLocal.addInputParam("@i_folioOrigOdp", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_folio_orig_odp"));	  
+			reqTMPLocal.addInputParam("@i_claveEmisor", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_clave_emisor"));	     
+			reqTMPLocal.addInputParam("@i_nombreEmisor", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nombre_emisor"));	  
+			reqTMPLocal.addInputParam("@i_nomOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_ord"));	        
+			reqTMPLocal.addInputParam("@i_tpCtaOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_tp_cta_ord"));	        
+			reqTMPLocal.addInputParam("@i_cuentaOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cuenta_ord"));	     
+			reqTMPLocal.addInputParam("@i_rfcCurpOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_rfc_curp_ord"));	     
+			reqTMPLocal.addInputParam("@i_nombreReceptor", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nombre_receptor"));	  
+			reqTMPLocal.addInputParam("@i_nomBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_ben"));	        
+			reqTMPLocal.addInputParam("@i_tpCtaBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_tp_cta_ben"));	        
+			reqTMPLocal.addInputParam("@i_cuentaBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cuenta_ben"));	     
+			reqTMPLocal.addInputParam("@i_rfcCurpBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_rfc_curp_ben"));	     
+			reqTMPLocal.addInputParam("@i_conceptoPag", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_concepto_pag"));     
+			reqTMPLocal.addInputParam("@i_tipoPag", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_tipo_pag"));	        
+			reqTMPLocal.addInputParam("@i_iva", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_iva"));	           
+			reqTMPLocal.addInputParam("@i_monto", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_monto"));	           
+			reqTMPLocal.addInputParam("@i_nomPartIndOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_part_indirecto_ord"));	  
+			reqTMPLocal.addInputParam("@i_ctaPartIndOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cta_part_indirecto_ord"));  
+			reqTMPLocal.addInputParam("@i_rfcCurpPartIndOrd", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_rfc_curp_part_indirecto_ord"));
+			reqTMPLocal.addInputParam("@i_nomPartIndBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_part_indirecto_ben"));	  
+			reqTMPLocal.addInputParam("@i_ctaPartIndBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cta_part_indirecto_ben"));	  
+			reqTMPLocal.addInputParam("@i_rfcCurpPartIndBen", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_rfc_curp_part_indirecto_ben"));
+			reqTMPLocal.addInputParam("@i_idRemesa", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_id_remesa"));	        
+			reqTMPLocal.addInputParam("@i_pais", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_pais"));	           
+			reqTMPLocal.addInputParam("@i_divisa", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_divisa"));	        
+			reqTMPLocal.addInputParam("@i_nomEmisorRem", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_emisor_rem"));	  
+			reqTMPLocal.addInputParam("@i_ctaEmisorRem", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cta_emisor_rem"));	  
+			reqTMPLocal.addInputParam("@i_rfcCurpEmisorRem", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_rfc_curp_emisor_rem"));	
+			reqTMPLocal.addInputParam("@i_nomBenRem", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_ben_rem"));	     
+			reqTMPLocal.addInputParam("@i_ctaBenRem", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cta_ben_rem"));	     
+			reqTMPLocal.addInputParam("@i_rfcCurpBenRem", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_rfc_curp_ben_rem"));	  
+			reqTMPLocal.addInputParam("@i_nomProvRemExt", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_prov_rem_ext"));	  
+			reqTMPLocal.addInputParam("@i_nomProvRemNac", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_nom_prov_rem_nac"));	  
+			reqTMPLocal.addInputParam("@i_fecha_proceso", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@s_date"));    
+			reqTMPLocal.addInputParam("@i_hora_envio", ICTSTypes.SQLDATETIME4, anOriginalReq.readValueParam("@i_op_hora00"));       
+			reqTMPLocal.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalReq.readValueParam("@i_op_cve_rastreo"));    
+			reqTMPLocal.addInputParam("@i_cta_banco", ICTSTypes.SQLVARCHAR,  anOriginalReq.readValueParam("@i_op_cuenta_ben"));        
+			reqTMPLocal.addInputParam("@i_intento", ICTSTypes.SQLINT1, "0");         
+	
+			IProcedureResponse wProcedureResponseLocal = executeCoreBanking(reqTMPLocal);
+	
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Response executeCoreBanking cob_bvirtual..sp_bv_envio_esice_job: " + wProcedureResponseLocal.getProcedureResponseAsString());
+			}
+    	}catch (Exception e) {
+			if (logger.isErrorEnabled()) {
+				logger.logError("EsiceCallableTask Error al obtener datos de transaccion de origen: " + e.getMessage(), e);
+			}
+			throw new RuntimeException("Error al obtener datos:", e);
+		} finally{
+			if (logger.isInfoEnabled()) {
+				logger.logInfo("EsiceCallableTask Saliendo de saveRegisterEsice");
+			}
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Ending flow, saveRegisterEsice");
+		}
+    }
+    
     private int logEntryApi(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
 			String operacion, String tipoEntrada, String firma, String error, String response, Integer id, String request ) {
 		if (logger.isDebugEnabled()) {

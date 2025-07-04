@@ -9,7 +9,7 @@ public enum ErrorCode {
     E40107(40107, "amount must be greater than 0."),
     E40301(40301, "commission must be a decimal value."),
     E40108(40108, "commission must be greater than 0."),
-    E40302(40302, "supplementaryData.originCode must not be empty."),
+    E40302(40302, "originCode must not be empty."),
     E40303(40303, "supplementaryData.senderName must not be empty."),
     E40304(40304, "supplementaryData.moneyTransmitter must not be empty."),
     E40305(40305, "supplementaryData.originCountry must not be empty."),
