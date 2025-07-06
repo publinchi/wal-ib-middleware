@@ -2159,14 +2159,14 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 					movementDetails.setOwnerNameDA(columns[18].getValue());
 					movementDetails.setAccountNumberDA(cuenta);
 					if("REMITTANCE_CREDIT".equals(creditConcept)){
-						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,3));
-						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,4));
-						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,5));
-						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,6));
-						movementDetails.setOriginCountry(getAdditionalValue(additionalDataArray,7));
-						movementDetails.setCurrency(getAdditionalValue(additionalDataArray,8));
-						movementDetails.setOriginCurrency(getAdditionalValue(additionalDataArray,9));
-						movementDetails.setExchangeRate(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setOriginCountry(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setCurrency(getAdditionalValue(additionalDataArray,9));
+						movementDetails.setOriginCurrency(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setExchangeRate(getAdditionalValue(additionalDataArray,11));
 					}else {
 						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
 						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
