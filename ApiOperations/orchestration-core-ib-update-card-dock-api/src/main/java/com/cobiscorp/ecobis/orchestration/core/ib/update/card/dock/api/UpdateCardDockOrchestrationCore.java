@@ -1583,14 +1583,20 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
         
         if (anOriginalRequest.readValueParam("@i_mode").equals("N")) {
         	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
-        		cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
-        		tittle = "Activación de tarjeta digital realizada exitosamente";
-        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
-        		tittle = "Activación de tarjeta física realizada exitosamente";
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(CLASS_NAME + "Notificación de activación de tarjeta digital desactivada");
+				}
+				return;
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {       		
         		if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
         			tittle = "Cancelación de tarjeta física realizada exitosamente";
         			cardId = aBagSPJavaOrchestration.get("o_assigned_card").toString();
-        		}
+        		} else {
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(CLASS_NAME + "Notificación de activación de tarjeta física desactivada");
+				}
+				return;
+				}
         	}
         } else {
         	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
@@ -1600,13 +1606,19 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
         			tittle = "Bloqueo de tarjeta digital realizado exitosamente";
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
         			tittle = "Cancelación de tarjeta digital realizada exitosamente";
-        		}       		
-        		        		
+        		}
+        		
         	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
         		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
-        			tittle = "Desbloqueo de tarjeta física realizado exitosamente";
+					 if (logger.isInfoEnabled()) {
+           				 logger.logInfo(CLASS_NAME + "Notificación de besbloqueo de tarjeta física desactivada");
+       				 }
+        			return;
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
-        			tittle = "Bloqueo de tarjeta física realizado exitosamente";
+					if (logger.isInfoEnabled()) {
+						logger.logInfo(CLASS_NAME + "Notificación de bloqueo de tarjeta física desactivada");
+       				 }
+        			return;
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
         			tittle = "Cancelación de tarjeta física realizada exitosamente";
         		}
