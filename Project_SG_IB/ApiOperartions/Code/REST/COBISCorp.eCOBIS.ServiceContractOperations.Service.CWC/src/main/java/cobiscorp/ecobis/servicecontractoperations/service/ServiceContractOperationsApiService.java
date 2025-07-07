@@ -3962,7 +3962,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(53));
                             dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(54));
                             dto.errorDetailsInstance().setMessage(resultSetMapper.getString(55));
-                            dto.setTransactionStatus(resultSetMapper.getString(54));
+                            dto.setTransactionStatus(resultSetMapper.getString(56));
                             return dto;
                         }
                     }, false);
