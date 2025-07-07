@@ -3710,16 +3710,6 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.accountCreditDetailsInstance().setOriginCode(resultSetMapper.getString(40));
                             dto.reversalDetailsInstance().setReversalConcept(resultSetMapper.getString(41));
 
-                            dto.accountCreditDetailsInstance().setSenderName(resultSetMapper.getString(42));
-                            dto.accountCreditDetailsInstance().setMoneyTransmitter(resultSetMapper.getString(43));
-                            dto.accountCreditDetailsInstance().setOriginCountry(resultSetMapper.getString(44));
-                            dto.accountCreditDetailsInstance().setCurrency(resultSetMapper.getString(45));
-                            dto.accountCreditDetailsInstance().setOriginCurrency(resultSetMapper.getString(46));
-                            dto.accountCreditDetailsInstance().setExchangeRate(resultSetMapper.getString(47));
-                            dto.reversalDetailsInstance().setOriginCode(resultSetMapper.getString(48));
-                            dto.setTransactionReferenceNumber(resultSetMapper.getString(49));
-                            dto.setOriginTransactionReferenceNumber(resultSetMapper.getString(50));
-
                             return dto;
                         }
                     }, false);
@@ -3947,22 +3937,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.accountCreditDetailsInstance().setOriginCode(resultSetMapper.getString(40));
                             dto.reversalDetailsInstance().setReversalConcept(resultSetMapper.getString(41));
 
-                            dto.accountCreditDetailsInstance().setSenderName(resultSetMapper.getString(42));
-                            dto.accountCreditDetailsInstance().setMoneyTransmitter(resultSetMapper.getString(43));
-                            dto.accountCreditDetailsInstance().setOriginCountry(resultSetMapper.getString(44));
-                            dto.accountCreditDetailsInstance().setCurrency(resultSetMapper.getString(45));
-                            dto.accountCreditDetailsInstance().setOriginCurrency(resultSetMapper.getString(46));
-                            dto.accountCreditDetailsInstance().setExchangeRate(resultSetMapper.getString(47));
-                            dto.reversalDetailsInstance().setOriginCode(resultSetMapper.getString(48));
-                            dto.setTransactionReferenceNumber(resultSetMapper.getString(49));
-                            dto.setOriginTransactionReferenceNumber(resultSetMapper.getString(50));
-
-                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(51));
-                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(52));
-                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(53));
-                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(54));
-                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(55));
-                            dto.setTransactionStatus(resultSetMapper.getString(54));
+                            dto.cardDetailsInstance().entryModeInstance().setPin(resultSetMapper.getString(42));
+                            dto.cardDetailsInstance().entryModeInstance().setCode(resultSetMapper.getString(43));
+                            dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(44));
+                            dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(45));
+                            dto.errorDetailsInstance().setMessage(resultSetMapper.getString(46));
+                            dto.setTransactionStatus(resultSetMapper.getString(47));
                             return dto;
                         }
                     }, false);
