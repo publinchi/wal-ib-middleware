@@ -1778,6 +1778,12 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
 						}
 						break;
+					case MAX_LENGTH:
+						Integer length = (Integer) v.getAdditionalParam("length");
+						if (paramValue.length() > length) {
+							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
+						}
+						break;
 					case GREATER_THAN_ZERO_INTEGER:
 						if (Integer.parseInt(paramValue) <= 0) {
 							throw new BusinessException(v.getErrorCode(), v.getErrorMessage());
