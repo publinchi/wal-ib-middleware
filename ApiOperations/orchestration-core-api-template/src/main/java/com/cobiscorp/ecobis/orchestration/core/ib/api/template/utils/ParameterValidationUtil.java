@@ -12,15 +12,15 @@ public class ParameterValidationUtil {
 
     // Constructor para validaciones generales
     public ParameterValidationUtil(String paramName, ValidationType type, ErrorCode error) {
-        this(paramName, type, error.getCode(), error.getMessage(), new HashMap<>());
+        this(paramName, type, error, new HashMap<>());
     }
 
     // Constructor que permite parámetros adicionales
-    public ParameterValidationUtil(String paramName, ValidationType type, int errorCode, String errorMessage, Map<String, Object> additionalParams) {
+    public ParameterValidationUtil(String paramName, ValidationType type, ErrorCode error , Map<String, Object> additionalParams) {
         this.paramName = paramName;
         this.type = type;
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+        this.errorCode = error.getCode();
+        this.errorMessage = error.getMessage();
         this.additionalParams = additionalParams != null ? additionalParams : new HashMap<>();
     }
 
