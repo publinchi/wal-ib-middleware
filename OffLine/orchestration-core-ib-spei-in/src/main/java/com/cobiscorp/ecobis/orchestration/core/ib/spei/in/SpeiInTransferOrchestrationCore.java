@@ -753,8 +753,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		if(ccProcedureResponse.getReturnCode() != 0){			
 			code = ccProcedureResponse.getReturnCode();
 			message = ccProcedureResponse.getMessage(1).getMessageText();
-			ccProcedureResponse.addParam("@o_descripcion", ICTSTypes.SQLVARCHAR, 50, message);
-			ccProcedureResponse.addParam("@o_id_causa_devolucion", ICTSTypes.SQLVARCHAR, 50, code.toString());	
 			
 			if (logger.isDebugEnabled()) {
 				logger.logDebug("Code Error consultaCliente" + code);
