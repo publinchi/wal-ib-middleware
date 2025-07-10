@@ -1641,9 +1641,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             aBagSPJavaOrchestration.put("@i_ssn_branch", refBranch);
 
             // JCOS VALIDACION PARA FL
-            if (serverResponse.getOnLine()) {
+            if (serverResponse.getOnLine() && responseTransfer.getReturnCode() == 0) {
 
-                IProcedureResponse tran = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
                 idTransaccion = idMovement;
 
                 if (logger.isDebugEnabled()) {
