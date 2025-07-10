@@ -45,6 +45,7 @@ import static com.cobiscorp.ecobis.orchestration.core.ib.consignment.operations.
 import static com.cobiscorp.ecobis.orchestration.core.ib.consignment.operations.utils.ConstantsUtil.TRN_CONSIGNMENT_CREDIT;
 import static com.cobiscorp.ecobis.orchestration.core.ib.consignment.operations.utils.ConstantsUtil.TRN_CREDIT;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -154,6 +155,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_EXTERNALCUSTOMERID, ValidationType.NOT_EMPTY, ErrorCode.E40030),
                 new ParameterValidationUtil(Inputs.I_ACCOUNTNUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40082),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40092),
+                new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.MAX_LENGTH, ErrorCode.E40314, new HashMap<String, Object>() {{
+                    put("length", 34);
+                }}),
                 new ParameterValidationUtil(Inputs.I_CREDITCONCEPT, ValidationType.NOT_EMPTY, ErrorCode.E40093),
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.NOT_EMPTY, ErrorCode.E40312),
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.IS_DOUBLE, ErrorCode.E40300),
@@ -176,6 +180,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_EXTERNALCUSTOMERID, ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil(Inputs.I_ACCOUNTNUMBER, ValidationType.NOT_EMPTY,  ErrorCode.E40130),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40131),
+                new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.MAX_LENGTH, ErrorCode.E40315, new HashMap<String, Object>() {{
+                    put("length", 34);
+                }}),
                 new ParameterValidationUtil(Inputs.I_MOVEMENTID, ValidationType.NOT_EMPTY,  ErrorCode.E40133)
             };
         } 
@@ -186,8 +193,14 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_EXTERNALCUSTOMERID, ValidationType.NOT_EMPTY,  ErrorCode.E40310),
                 new ParameterValidationUtil(Inputs.I_ACCOUNTNUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40130),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40092),
+                new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.MAX_LENGTH, ErrorCode.E40314, new HashMap<String, Object>() {{
+                    put("length", 34);
+                }}),
                 new ParameterValidationUtil(Inputs.I_REVERSAL_CONCEPT, ValidationType.NOT_EMPTY, ErrorCode.E40311),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER_TRN, ValidationType.NOT_EMPTY, ErrorCode.E40131),
+                new ParameterValidationUtil(Inputs.I_REFERENCENUMBER_TRN, ValidationType.MAX_LENGTH, ErrorCode.E40315, new HashMap<String, Object>() {{
+                    put("length", 34);
+                }}),
                 new ParameterValidationUtil(Inputs.I_REVERSAL_REASON, ValidationType.NOT_EMPTY, ErrorCode.E40134),
                 new ParameterValidationUtil(Inputs.I_MOVEMENTID, ValidationType.NOT_EMPTY,  ErrorCode.E40133)
             };
@@ -325,6 +338,9 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addOutputParam(Outputs.O_MENSAJE, ICTSTypes.SQLVARCHAR, "X");
         centralTransactionRequest.addOutputParam(Outputs.O_CAUSA, ICTSTypes.SQLVARCHAR, "0");
         centralTransactionRequest.addOutputParam(Outputs.O_AMOUNT, ICTSTypes.SQLMONEY, "0");
+        centralTransactionRequest.addOutputParam(Outputs.O_CREDITCONCEPT, ICTSTypes.SQLVARCHAR, "");
+        centralTransactionRequest.addOutputParam(Outputs.O_MONEYTRANSMITTER, ICTSTypes.SQLVARCHAR, "");
+        centralTransactionRequest.addOutputParam(Outputs.O_SENDERNAME, ICTSTypes.SQLVARCHAR, "");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
 
@@ -612,8 +628,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         }
 
         if (Objects.isNull(cause) || cause.isEmpty()) {
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_CODE, Constants.DEFAULT_ERROR);
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_MSG, "The cause of the transaction could not be obtained.");
+            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_CODE, ErrorCode.E50062.getCode());
+            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_MSG, ErrorCode.E50062.getMessage());
         }
 
 		procedureRequest.setSpName("cob_bvirtual..sp_bv_valida_limites");

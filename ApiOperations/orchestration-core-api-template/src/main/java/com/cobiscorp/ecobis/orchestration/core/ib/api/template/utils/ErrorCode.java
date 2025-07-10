@@ -23,7 +23,10 @@ public enum ErrorCode {
     E40311(40311, "reversalConcept must not be empty."),
     E40134(40134, "originalTransactionData.reversalReason must not be empty."),
     E40312(40312, "amount must not be empty."),
-    E40313(40313, "commission must not be empty.");
+    E40313(40313, "commission must not be empty."),
+    E40314(40314, "referenceNumber must not have more than 34 characters."),
+    E40315(40315, "originalTransactionData.referenceNumber must not have more than 34 characters."),
+    E50062(50062, "The cause of the transaction could not be obtained.");
 
     private final int code;
     private final String message;
