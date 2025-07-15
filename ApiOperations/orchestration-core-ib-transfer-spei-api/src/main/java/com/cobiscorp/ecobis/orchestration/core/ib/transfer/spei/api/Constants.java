@@ -64,6 +64,7 @@ public class Constants {
     public static final String O_SPEI_REQUEST = "@o_spei_request";
     public static final String O_SPEI_RESPONSE = "@o_spei_response";
     public static final String O_CLAVE_RASTREO = "@o_clave_rastreo";
+    public static final String O_REFERENCIA ="@o_referencia";
 
     //MENSAJES
     public static final String INIT_TASK = "init task ---->";
