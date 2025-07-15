@@ -74,7 +74,6 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 	public IProcedureResponse executeJavaOrchestration(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
 		if (logger.isDebugEnabled()){logger.logDebug("Begin flow, UpdateAccountStatusDock starts executeJavaOrchestration...");}		
 		
-		anProcedureResponse2 = new ProcedureResponseAS();
 		String skipNotification = "";
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
@@ -104,9 +103,9 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		}
 		
 		//  Sub flujo 2: Cambiar el estado de las tarjetas asociadas a la cuenta, si el estado es BM1
-		if(accountStatus.equals("BM") && blokingValue.equals("1") && anProcedureResponse.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")) {			
+		if(accountStatus.equals("BM") && blokingValue.equals("1")) {			
 			if (logger.isDebugEnabled()){logger.logDebug("Begin sub-flow, UpdateAccountStatusDock starts blocking cards...");}		
-			
+			anProcedureResponse2 = new ProcedureResponseAS();
 
 			// Agregar entradas invariables para Bloquear tarjeta(s)
 			// Datos que ya estan en el request: @i_ente AS @i_external_customer_id,  @i_account_number AS @i_account_number
@@ -143,15 +142,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 					//Imprime si bloqueo de tarjeta da algun error
 					if (logger.isDebugEnabled()){logger.logDebug("[executeJavaOrchestration] Ending sub-flow, with error in block card");}
 					
-					try{
-						String success = flag.toString();
-						String code = anProcedureResponse2.getResultSetRowColumnData(2, 1, 1)==null?"400218":anProcedureResponse2.getResultSetRowColumnData(2, 1, 1).getValue();
-						String message = anProcedureResponse2.getResultSetRowColumnData(2, 1, 2)==null?"Service execution error":anProcedureResponse2.getResultSetRowColumnData(2, 1, 2).getValue();
-						
-						logger.logWarning(String.format("[executeJavaOrchestration] processResponse2 to block card ErrorData: success: %s, code: %s, message: %s", success, code, message));
-					}catch (Exception e) {
-						logger.logError("Orquestación UpdateCard Status",e);
-					}
+					String success = anProcedureResponse2.getResultSetRowColumnData(1, 1, 1).isNull()?"false":anProcedureResponse2.getResultSetRowColumnData(1, 1, 1).getValue();
+					String code = anProcedureResponse2.getResultSetRowColumnData(2, 1, 1).isNull()?"400218":anProcedureResponse2.getResultSetRowColumnData(2, 1, 1).getValue();
+					String message = anProcedureResponse2.getResultSetRowColumnData(2, 1, 2).isNull()?"Service execution error":anProcedureResponse2.getResultSetRowColumnData(2, 1, 2).getValue();
+					
+					logger.logWarning(String.format("[executeJavaOrchestration] processResponse2 to block card ErrorData: success: %s, code: %s, message: %s", success, code, message));
 					
 				}
 			}
@@ -692,16 +687,11 @@ public class UpdateAccountStatusDockOrchestrationCore extends SPJavaOrchestratio
 		// Obtine el card id y card type por cada cliente para cada tarjeta
 		wAccountsResp = getCardsByCustomer(aRequest, aBagSPJavaOrchestration);
 		
-		if(aBagSPJavaOrchestration.containsKey("cardsResultSetHeaders")){
-			IResultSetHeaderColumn[]  headers = (IResultSetHeaderColumn[]) aBagSPJavaOrchestration.get("cardsResultSetHeaders");
-			if (logger.isDebugEnabled()){logger.logDebug(CLASS_NAME + "Response headers: updaterCardStatus : headers: " + headers);}	
-		}
+		IResultSetHeaderColumn[]  headers = (IResultSetHeaderColumn[]) aBagSPJavaOrchestration.get("cardsResultSetHeaders");
 		
-		IResultSetRow[] cardsData= new IResultSetRow[0];
-		if(aBagSPJavaOrchestration.containsKey("cardsResultSetsData")){
-			cardsData = (IResultSetRow[]) aBagSPJavaOrchestration.get("cardsResultSetsData");
-		}
-		if (logger.isDebugEnabled()){logger.logDebug(CLASS_NAME + "Size cardsData.length: " + cardsData.length);}
+		if (logger.isDebugEnabled()){logger.logDebug(CLASS_NAME + "Response headers: updaterCardStatus : headers: " + headers);}
+		
+		IResultSetRow[] cardsData = (IResultSetRow[]) aBagSPJavaOrchestration.get("cardsResultSetsData");
 
 		wAccountsRespInsertArray = new ArrayList<IProcedureResponse>();
 			

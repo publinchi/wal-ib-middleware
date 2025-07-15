@@ -12,7 +12,7 @@ public class Constans
 	public static final String ENSESION_RESPUESTA = "ENSESION_RESPUESTA";
 	public static final String ODPS_CANCELADAS_X_BANXICO = "ODPS_CANCELADAS_X_BANXICO";
 	public static final String ODPS_CANCELADAS_X_BANXICO_RESPUESTA = "ODPS_CANCELADAS_X_BANXICO_RESPUESTA";
-	public static final String RESPUESTA = "_RESPUESTA";
+	
 	public static final String MESSAJE_CODE = "messajeCode";
 	public static final String VALIDATE_CODE = "validateCode";
 }

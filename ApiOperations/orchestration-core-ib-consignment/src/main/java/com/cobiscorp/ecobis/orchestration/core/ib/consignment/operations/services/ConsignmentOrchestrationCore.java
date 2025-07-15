@@ -90,10 +90,6 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
 
             aBagSPJavaOrchestration.put(Constants.IS_REENTRY, isReentry);
 
-            if(!isReentry && Constants.CONSIGNMENT_CREDIT.equals(servicio)){
-                validateLimits(anOriginalRequest, aBagSPJavaOrchestration);
-            }
-
             executeIdempotence(isReentry, anOriginalRequest, aBagSPJavaOrchestration);
 
             ServerResponse serverResponse = serverStatus();
@@ -155,11 +151,12 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
                 new ParameterValidationUtil(Inputs.I_ACCOUNTNUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40082),
                 new ParameterValidationUtil(Inputs.I_REFERENCENUMBER, ValidationType.NOT_EMPTY, ErrorCode.E40092),
                 new ParameterValidationUtil(Inputs.I_CREDITCONCEPT, ValidationType.NOT_EMPTY, ErrorCode.E40093),
-                new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.NOT_EMPTY, ErrorCode.E40312),
+                new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.NOT_EMPTY, ErrorCode.E40300),
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.IS_DOUBLE, ErrorCode.E40300),
                 new ParameterValidationUtil(Inputs.I_AMOUNT, ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40107),
-                new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.NOT_EMPTY, ErrorCode.E40313),
+                new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.NOT_EMPTY, ErrorCode.E40301),
                 new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.IS_DOUBLE, ErrorCode.E40301),
+                new ParameterValidationUtil(Inputs.I_COMMISSION, ValidationType.GREATER_THAN_ZERO_DOUBLE, ErrorCode.E40108),
                 new ParameterValidationUtil(Inputs.I_ORIGINCODE, ValidationType.NOT_EMPTY, ErrorCode.E40302),
                 new ParameterValidationUtil(Inputs.I_SENDERNAME, ValidationType.NOT_EMPTY, ErrorCode.E40303),
                 new ParameterValidationUtil(Inputs.I_MONEYTRANSMITTER, ValidationType.NOT_EMPTY, ErrorCode.E40304),
@@ -203,30 +200,21 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             loggerL.logInfo(Constants.BEGIN + CLASS_NAME_CONSIGNMENT_CREDIT + "][processTransaction]");
         }
 
-        if(!aBagSPJavaOrchestration.containsKey(Constants.LIMIT_ERROR_CODE)){
+        //Ejecución Central operación 1
+        centralExecutionConsignment (aBagSPJavaOrchestration, anOriginalRequest);
 
-            //Ejecución Central operación 1
-            centralExecutionConsignment (aBagSPJavaOrchestration, anOriginalRequest);
-
-            if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "1")) {
-                int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
-                if (errorCode == Constants.REENTRY_ERROR) {
-                    return (IProcedureResponse) aBagSPJavaOrchestration.get(Constants.CENTRAL_RESPONSE_OP + "1");
-                }
+        if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "1")) {
+            int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
+            if (errorCode == Constants.REENTRY_ERROR) {
+                return (IProcedureResponse) aBagSPJavaOrchestration.get(Constants.CENTRAL_RESPONSE_OP + "1");
             }
-
         }
 
         //Ejecución Local
         localExecutionConsignment (aBagSPJavaOrchestration, anOriginalRequest);
 
         //Validar errores en ejecucion central y local
-        if (aBagSPJavaOrchestration.containsKey(Constants.LIMIT_ERROR_CODE)) {
-            int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.LIMIT_ERROR_CODE));
-            String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.LIMIT_ERROR_MSG);
-            throw new ApplicationException(errorCode, errorMessage);
-        }
-        else if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "1")) {
+        if (aBagSPJavaOrchestration.containsKey(Constants.CENTRAL_ERROR_CODE_OP + "1")) {
             int errorCode = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
             String errorMessage = (String) aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_MSG_OP + "1");
             throw new ApplicationException(errorCode, errorMessage);
@@ -393,11 +381,8 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         copyOutputParamsAsInputParams(centralTransactionResponseOp1, localTransactionRequest);
 
         int errorCentralop1 = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.CENTRAL_ERROR_CODE_OP + "1"));
-        int errorValidateLimits = convertObjectToInt(aBagSPJavaOrchestration.get(Constants.LIMIT_ERROR_CODE)); 
 
-        int errorCode = errorCentralop1 > 0 ? errorCentralop1 : errorValidateLimits;
-
-        localTransactionRequest.addInputParam(Inputs.I_ERROR_CENTRAL, ICTSTypes.SQLINT4, errorCode + "");
+        localTransactionRequest.addInputParam(Inputs.I_ERROR_CENTRAL, ICTSTypes.SQLINT4, errorCentralop1+"");
         localTransactionRequest.addInputParam(Inputs.I_MON, ICTSTypes.SQLINT4, Constants.DEFAULT_CURRENCY); 
         localTransactionRequest.addInputParam(Inputs.I_CANAL, ICTSTypes.SQLINT4, Constants.DEFAULT_CANAL);
 
@@ -508,10 +493,6 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
     }
 
     private void copyParams(IProcedureRequest requestFrom, IProcedureRequest requestTo) {
-        if(Objects.isNull(requestFrom) || Objects.isNull(requestTo)) {
-            return;
-        }
-
         Object[] params = requestFrom.getParams().toArray();
 		for (int i = params.length - 1; i >= 0; i--) {
 			if (params[i] instanceof IProcedureRequestParam ) {
@@ -527,10 +508,6 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
     }
 
     private void copyOutputParamsAsInputParams(IProcedureResponse responseFrom, IProcedureRequest requestTo) {
-        if(Objects.isNull(responseFrom) || Objects.isNull(requestTo)) {
-            return;
-        }
-
         Object[] params = responseFrom.getParams().toArray();
 		for (int i = params.length - 1; i >= 0; i--) {
 			if (params[i] instanceof IProcedureResponseParam) {
@@ -587,87 +564,5 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
             loggerL.logInfo("Finish [" + CLASS_NAME_CONSIGNMENT_CREDIT + "][executeIdempotence]");
         }
     }
-
-    private void validateLimits(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) 
-                                throws ApplicationException, BusinessException {
-		
-		if (loggerL.isInfoEnabled()) {
-            loggerL.logInfo(Constants.BEGIN + CLASS_NAME_CONSIGNMENT_CREDIT + "][validateLimits]");
-        }
-		
-		IProcedureRequest procedureRequest = initProcedureRequest(anOriginalRequest);
-		procedureRequest.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_LOCAL);
-
-		String account = anOriginalRequest.readValueParam(Inputs.I_ACCOUNTNUMBER);
-        String originCode = anOriginalRequest.readValueParam(Inputs.I_ORIGINCODE);
-        String cause = "";
-        String amount = anOriginalRequest.readValueParam(Inputs.I_AMOUNT);
-
-        if("6010".equals(originCode)){
-            cause = getParam(anOriginalRequest, "NCRREL", "AHO");
-        }
-        else if("6020".equals(originCode)){
-            cause = getParam(anOriginalRequest, "NCRRES", "AHO");
-        }
-
-        if (Objects.isNull(cause) || cause.isEmpty()) {
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_CODE, Constants.DEFAULT_ERROR);
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_MSG, "The cause of the transaction could not be obtained.");
-        }
-
-		procedureRequest.setSpName("cob_bvirtual..sp_bv_valida_limites");
-        procedureRequest.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
-		procedureRequest.addInputParam("@i_trn", ICTSTypes.SQLINT4, "18701001");
-		procedureRequest.addInputParam("@i_tipo_trn", ICTSTypes.SQLINT4, "253");
-		procedureRequest.addInputParam("@i_monto", ICTSTypes.SYBMONEY, amount);		
-        procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, cause);
-        procedureRequest.addInputParam("@i_cuenta", ICTSTypes.SQLVARCHAR, account);
-		
-		IProcedureResponse anProcedureResponse =  executeCoreBanking(procedureRequest);
-		Integer code = anProcedureResponse.getReturnCode();
-		if(code != 0){
-            String message = anProcedureResponse.getMessage(1).getMessageText();
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_CODE, code);
-            aBagSPJavaOrchestration.put(Constants.LIMIT_ERROR_MSG, message);
-		}
-        if (loggerL.isInfoEnabled()) {
-            loggerL.logInfo(Constants.END + CLASS_NAME_CONSIGNMENT_CREDIT + "][validateLimits]");
-        }
-	}
-
-    private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
-    	if (loggerL.isInfoEnabled()) {
-			loggerL.logInfo(Constants.BEGIN + CLASS_NAME + "][getParam]");
-		}
-
-		String result = "";
-		
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
-		reqTMPCentral.setSpName("cobis..sp_parametro");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
-		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
-	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
-
-	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-		
-		if (!wProcedureResponseCentral.hasError() && wProcedureResponseCentral.getResultSetListSize() > 0) {
-			
-			IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
-			
-			if (resultSetRows.length > 0) {
-				IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-				result = columns[2].getValue();
-				return result;
-			} 
-		} 
-
-		if (loggerL.isInfoEnabled()) {
-			loggerL.logInfo(Constants.END + CLASS_NAME + "][getParam]");
-		}
-		
-		return result;
-	}
+    
 }

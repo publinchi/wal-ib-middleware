@@ -39,7 +39,6 @@
     <parameter name="@i_riesgo_id" dataType="varchar" direction="" />
     <parameter name="@i_data_browser" dataType="varchar" direction="in" />
     <parameter name="@i_typeBrowser" dataType="varchar" direction="in" />
-    <parameter name="@o_authToken" dataType="varchar" direction="out" />
   </parameters>
   <queries>
     <query>
@@ -48,7 +47,6 @@
         <column name="description" />
         <column name="sessionId" />
         <column name="errorType" />
-        <column name="authToken" />
       </columns>
       <queryText>SELECT "code"=0,"message"="Success"</queryText>
     </query>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTO" id="1">
-  <collection type="List" length="5" id="2" name="properties">
+  <collection type="List" length="4" id="2" name="properties">
     <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="3" index="0">
       <field type="String" name="name" value="accessGranted" />
       <field type="String" name="type" value="string" />
@@ -41,19 +41,9 @@
       <field type="String" name="stateProperty" value="" />
       <field type="boolean" name="obfuscated" value="false" />
     </class>
-    <class type="cobiscorp.ecobis.censervicegenerator.dto.model.SGDTOProperty" id="7" index="4">
-      <field type="String" name="name" value="authToken" />
-      <field type="String" name="type" value="string" />
-      <field type="boolean" name="isCollection" value="false" />
-      <field type="int" name="maxLength" value="0" />
-      <field type="boolean" name="required" value="false" />
-      <field type="boolean" name="encrypted" value="false" />
-      <field type="String" name="stateProperty" value="" />
-      <field type="boolean" name="obfuscated" value="false" />
-    </class>
   </collection>
   <field type="String" name="name" value="AuthAccessResponse" />
-  <collection type="Map" length="0" id="8" name="templatesProperties">
+  <collection type="Map" length="0" id="7" name="templatesProperties">
   </collection>
   <field type="String" name="version" value="1" />
   <field type="String" name="stateDTO" value="" />
