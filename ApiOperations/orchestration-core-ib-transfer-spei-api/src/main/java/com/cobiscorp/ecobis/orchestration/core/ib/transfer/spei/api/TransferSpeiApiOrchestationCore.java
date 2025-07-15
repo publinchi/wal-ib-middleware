@@ -117,15 +117,12 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     private static final String I_PROD_DES_LOCAL = "@i_prod_des";
     private static final String I_CTA_DES_LOCAL = "@i_cta_des";
     private static final String I_BANCO_BEN = "@i_banco_ben";
-    private static final String I_DOC_BENEF = "@i_doc_benef";
     private static final String I_CONCEPTO_LOCAL = "@i_concepto";
     private static final String I_VAL_LOCAL = "@i_val";
     private static final String I_MON_LOCAL = "@i_mon";
     private static final String I_CTA_LOCAL = "@i_cta";
     private static final String S_SERVICIO_LOCAL = "@s_servicio";
     private static final String I_PROD_LOCAL = "@i_prod";
-    private static final String CANCEL_OPERATION = "0";
-    private static final String OPERATING_INSTITUTION = "90715";
     private static final int ERROR_ACCOUNT_NULL_OR_EMPTY = 400001;
     private static final String SUCCESS_MESSAGE = "success";
     private static final String ERROR_MESSAGE_TEMPLATE = "Transacción rechazada, cuenta CLABE ya no es válida.";
@@ -224,7 +221,14 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	private java.util.Properties properties;
 	private AESCrypt cryptaes;
 	private JKeyStore jks;
-	
+	//variables para reintentos
+	private static String CIRCUIT_BREAK = "circuitBreak";
+	private int circuitBreak = 30;
+	private static String TIMEREETRY = "timeReetry";
+	private int timeReetry = 10000;
+	private static String NUM_REETRY = "numReetry";
+	private int numReetry = 5;
+	private int contCircuitBreak = 0;
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 		properties = aConfigurationReader.getProperties("//property");
@@ -247,6 +251,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 				}
 				cryptaes = new AESCrypt(jkey);
 			}
+			circuitBreak = tryParseToInteger(properties.getProperty(CIRCUIT_BREAK), circuitBreak);
+			timeReetry = tryParseToInteger(properties.getProperty(TIMEREETRY), timeReetry);
+			numReetry = tryParseToInteger(properties.getProperty(NUM_REETRY), numReetry);
+			
 		}
 		if(logger.isDebugEnabled())
 		{
@@ -1835,7 +1843,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
 			logger.logInfo("VALOR @o_referencia: " + responseTransfer.readValueParam("@o_referencia"));
 	        // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
-	        List<String> respuesta = banpayExecution(anOriginalRequest, aBagSPJavaOrchestration);
+	        List<String> respuesta = reetryExecutionProvider(anOriginalRequest, aBagSPJavaOrchestration, 0);
 	        
 	        logger.logInfo("Ver data bag:::  "+ (String) aBagSPJavaOrchestration.get("clave_rastreo"));
 	        mappingResponse.setClaveRastreo((String) aBagSPJavaOrchestration.get("clave_rastreo"));
@@ -2453,7 +2461,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	
     	aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
         // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
-        List<String> respuesta = banpayExecution(originalRequest, aBagSPJavaOrchestration);
+    	
+        List<String> respuesta = reetryExecutionProvider(originalRequest, aBagSPJavaOrchestration, 0);
+        
         aBagSPJavaOrchestration.put(Constants.REVERSE, "N");
         // SE ACTUALIZA TABLA DE SECUENCIAL SPEI
         speiSec(originalRequest, aBagSPJavaOrchestration);
@@ -2518,13 +2528,37 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         return responseTransfer;
     }
+    private List<String> reetryExecutionProvider(IProcedureRequest anOriginalRequest, Map<String, Object> bag, int cont) {
+        List<String> response = karpayExecution(anOriginalRequest, bag);
+        
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Contador reintentos: " + cont);
+        }
+        if( cont >= numReetry) {
+        	return response;
+        }
+        
+        if (response != null && !response.get(0).equals("00") && !response.get(0).equals("30")) {
+            try {
+                // Dormir el hilo por un tiempo controlado
+                Thread.sleep(timeReetry);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); 
+            }
+          
+            //contador circuit break
+            contCircuitBreak++;
+            return reetryExecutionProvider(anOriginalRequest, bag, cont + 1);
+        }
+        return response;
+    }
     
-    protected List<String>  banpayExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+    protected List<String>  karpayExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
         // SE INICIALIZA VARIABLE
         List<String> response = null;
 
         if (logger.isInfoEnabled()) {
-            logger.logInfo("Entrando a banpayExecution");
+            logger.logInfo("Entrando a karpayExecution");
         }
         try {
         	 String ctaDestino = "";
@@ -2637,11 +2671,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 }
                 // SE MAPEAN LAS VARIABLES DE SALIDA
                 response = new ArrayList<String>();
-                String codRespuesta=connectorSpeiResponse.readValueParam("@o_cod_respuesta");
 
                 response.add(connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
-                logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
-                logger.logDebug("readValueParam @o_msj_respuesta: " + connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
                 response.add(connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
 
                 response.add(connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
@@ -2658,8 +2689,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 
                 
                 if (logger.isDebugEnabled()) {
-                    logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
-                    logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
+                	 logger.logDebug("readValueParam @o_cod_respuesta: " + connectorSpeiResponse.readValueParam("@o_cod_respuesta"));
+                	 logger.logDebug("readValueParam @o_msj_respuesta: " + connectorSpeiResponse.readValueParam("@o_msj_respuesta"));
+                     logger.logDebug("CODIGO RASTREO DX"+connectorSpeiResponse.readValueParam("@o_clave_rastreo"));
+                     logger.logDebug("connectorSpeiResponse: " + connectorSpeiResponse.getParams());
                 }
 
                 // SE ALMACENA EL DATO DE CLAVE DE RASTREO
@@ -2676,10 +2709,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
                 bag.put("@i_mensaje_acc", connectorSpeiResponse.readValueParam("@i_mensaje_acc"));
                 bag.put("@i_id_spei_acc", connectorSpeiResponse.readValueParam("@i_id_spei_acc"));
                 bag.put(Constants.I_CODIGO_ACC, connectorSpeiResponse.readValueParam(Constants.I_CODIGO_ACC));
-                logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
+               
                 bag.put(Constants.TRANSACCION_SPEI, anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
                 
-                if (logger.isDebugEnabled()) {                  
+                if (logger.isDebugEnabled()) { 
+                	logger.logDebug("transaccion Spei " +  anOriginalRequest.readValueParam(Constants.TRANSACCION_SPEI));
                     logger.logDebug("i_ssn_branch origin" + anOriginalRequest.readValueParam("@i_ssn_branch"));
                 }               
                 bag.put("@i_ssn_branch", anOriginalRequest.readValueParam("@i_ssn_branch"));
@@ -2693,20 +2727,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             } else {
 
                 if (logger.isDebugEnabled()) {
-                    logger.logDebug("Error Catastrifico respuesta de BANPAY");
+                    logger.logDebug("Error Catastrifico respuesta de karpayExecution");
                     logger.logDebug("Error connectorSpeiResponse Catastrifico: " + connectorSpeiResponse);
                 }
             }
         } catch (Exception e) {
-            logger.logError(e);
-            logger.logInfo("Error Catastrofico de banpayExecution");
+            logger.logError("Error Catastrofico de karpayExecutions",e);
             e.printStackTrace();
             response = null;
-            logger.logInfo("Error Catastrofico de banpayExecution");
-
+          
         } finally {
-            if (logger.isInfoEnabled()) {
-                logger.logInfo("Saliendo de banpayExecution");
+            if (logger.isDebugEnabled()) {
+                logger.logDebug("Saliendo de karpayExecutions");
             }
         }
         // SE REGRESA RESPUESTA
@@ -4088,5 +4120,53 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         anProcedureResponse.addMessage(code, message);
 
         return anProcedureResponse;
+    }
+    
+    protected boolean validateReetry(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+        // SE INICIALIZA VARIABLE
+        boolean response = false;
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Entrando a validateReetry");
+        }
+        try {
+            IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+            request.removeFieldInHeader("ssn_branch");
+            // SE SETEAN DATOS
+            request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+            request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+            request.setSpName("cob_bvirtual..sp_bv_valida_reintentos_spei");
+            request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18500191");
+            	
+            // DATOS CUENTA ORIGEN
+            request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+            request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
+            request.addOutputParam("@o_fecha_liquidacion", ICTSTypes.SQLVARCHAR, "");
+            
+            // SE EJECUTA Y SE OBTIENE LA RESPUESTA
+            IProcedureResponse pResponse = executeCoreBanking(request);
+            
+            if(pResponse.hasError())
+            {
+            	response = pResponse.readValueParam("@o_fecha_liquidacion")!=null?false:true;
+            }
+            if (logger.isDebugEnabled()) {
+                logger.logDebug("IProcedureResponse de validateReetry:"+pResponse.getCTSMessageAsString());
+            }
+        } catch (Exception e) {
+            logger.logError("Error de validateReetry",e);
+            response = false;
+        } finally {
+            if (logger.isDebugEnabled()) {
+                logger.logDebug("Saliendo de validateReetry");
+            }
+        }
+        return response;
+    }
+    private int tryParseToInteger(String stringValue, int defaultValue) {
+        try {
+            return Integer.parseInt(stringValue);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
     }
 }
