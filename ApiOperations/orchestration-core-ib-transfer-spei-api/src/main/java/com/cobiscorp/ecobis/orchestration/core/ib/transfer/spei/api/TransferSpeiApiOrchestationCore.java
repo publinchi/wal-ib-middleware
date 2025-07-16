@@ -233,6 +233,9 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	private static String ERROR_GENRRAL = "-1";
 	private static String ERROR_CUIRCUIT_BREAKER = "Se identifica error en el sistema Karpay(Se aplica circuit breaker)";
 	private static String ID_SEC_SPEI = "idSecSpei";
+	private static String CODE_RESPONSE_00 = "00";
+	private static String CODE_RESPONSE_30 ="30";
+	private static String MGS_RESPONSE = "Transferencia Exitosa";
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 		properties = aConfigurationReader.getProperties("//property");
@@ -1867,7 +1870,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             
 	        if (respuesta != null)
 	        {
-	            if (!respuesta.get(0).equals("00"))
+	            if (!respuesta.get(0).equals(CODE_RESPONSE_00))
 	            {
 	            	mappingResponse.setErrorCode(Integer.parseInt(respuesta.get(0)));
 					mappingResponse.setErrorMessage(respuesta.get(1));
@@ -2480,7 +2483,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         // SE HACE LA VALIDACION DE LA RESPUESTA
         if (respuesta != null)
         {
-            if (!respuesta.get(0).equals("00"))
+            if (!respuesta.get(0).equals(CODE_RESPONSE_00))
             {
             	aBagSPJavaOrchestration.put(Constants.REVERSE, "S");
                 // SE CAMBIA ESTADO DE REGISTRO
@@ -2583,7 +2586,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         	return response;
         }
         
-        if (response != null && !response.get(0).equals("00") && !response.get(0).equals("30")) {
+        if (response != null && !response.get(0).equals(CODE_RESPONSE_00) && !response.get(0).equals(CODE_RESPONSE_30)) {
             try {
                 // Dormir el hilo por un tiempo controlado
                 Thread.sleep(timeReetry);
@@ -2601,9 +2604,11 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         	endTime = 0;
         	if(response.get(0).equals("30"))
 			{
-        		response.add(0, "00");
-        		bag.put("@i_msj_respuesta", "00");
-        		bag.put("@i_cod_respuesta", "Transferencia Exitosa");
+        		response.add(0, CODE_RESPONSE_00);
+        		bag.put("@i_msj_respuesta", CODE_RESPONSE_00);
+        		bag.put("@i_cod_respuesta", MGS_RESPONSE);
+        		bag.put(Constants.I_CODIGO_ACC, ERROR_GENRRAL);
+        		bag.put(Constants.I_MENSAJE_ACC, ERROR_CUIRCUIT_BREAKER);
         		
 			}
         }
