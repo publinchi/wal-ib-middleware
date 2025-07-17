@@ -15,4 +15,7 @@ public class Outputs {
    public static final String O_CAUSA = "@o_causa";
    public static final String O_AMOUNT = "@o_amount";
    public static final String O_SSN = "@o_ssn";
+   public static final String O_CREDITCONCEPT = "@o_creditConcept";
+   public static final String O_MONEYTRANSMITTER = "@o_moneyTransmitter";
+   public static final String O_SENDERNAME = "@o_senderName";
 }

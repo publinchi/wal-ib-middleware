@@ -229,6 +229,13 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 	private static String NUM_REETRY = "numReetry";
 	private int numReetry = 5;
 	private int contCircuitBreak = 0;
+	private long endTime = 0;
+	private static String ERROR_GENRRAL = "-1";
+	private static String ERROR_CUIRCUIT_BREAKER = "Se identifica error en el sistema Karpay(Se aplica circuit breaker)";
+	private static String ID_SEC_SPEI = "idSecSpei";
+	private static String CODE_RESPONSE_00 = "00";
+	private static String CODE_RESPONSE_30 ="30";
+	private static String MGS_RESPONSE = "Transferencia Exitosa";
 	@Override
 	public void loadConfiguration(IConfigurationReader aConfigurationReader) {
 		properties = aConfigurationReader.getProperties("//property");
@@ -309,7 +316,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	aBagSPJavaOrchestration.put(RETURN_CODE, 0);
     	aBagSPJavaOrchestration.put(SUCCESS_CONNECTOR, false);
         aBagSPJavaOrchestration.put(AN_ORIGINAL_REQUEST, anOriginalRequest);
-        
+
         IProcedureResponse anProcedureResponse = new ProcedureResponseAS();
 
         anProcedureResponse = validateLocalExecution(aBagSPJavaOrchestration);
@@ -1641,9 +1648,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             aBagSPJavaOrchestration.put("@i_ssn_branch", refBranch);
 
             // JCOS VALIDACION PARA FL
-            if (serverResponse.getOnLine()) {
+            if (serverResponse.getOnLine() && responseTransfer.getReturnCode() == 0) {
 
-                IProcedureResponse tran = (IProcedureResponse) aBagSPJavaOrchestration.get(RESPONSE_TRANSACTION);
                 idTransaccion = idMovement;
 
                 if (logger.isDebugEnabled()) {
@@ -1849,7 +1855,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 			aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
 			logger.logInfo("VALOR @o_referencia: " + responseTransfer.readValueParam("@o_referencia"));
 	        // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
-	        List<String> respuesta = reetryExecutionProvider(anOriginalRequest, aBagSPJavaOrchestration, 0);
+	        List<String> respuesta = executionProvider(anOriginalRequest, aBagSPJavaOrchestration);
 	        
 	        logger.logInfo("Ver data bag:::  "+ (String) aBagSPJavaOrchestration.get("clave_rastreo"));
 	        mappingResponse.setClaveRastreo((String) aBagSPJavaOrchestration.get("clave_rastreo"));
@@ -1863,7 +1869,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             
 	        if (respuesta != null)
 	        {
-	            if (!respuesta.get(0).equals("00"))
+	            if (!respuesta.get(0).equals(CODE_RESPONSE_00))
 	            {
 	            	mappingResponse.setErrorCode(Integer.parseInt(respuesta.get(0)));
 					mappingResponse.setErrorMessage(respuesta.get(1));
@@ -2468,7 +2474,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
     	aBagSPJavaOrchestration.put("@o_referencia", responseTransfer.readValueParam("@o_referencia"));
         // SE LLAMA LA SERVICIO DE BANPAY REVERSA DE REVERSA
     	
-        List<String> respuesta = reetryExecutionProvider(originalRequest, aBagSPJavaOrchestration, 0);
+        List<String> respuesta = executionProvider(originalRequest, aBagSPJavaOrchestration);
         
         aBagSPJavaOrchestration.put(Constants.REVERSE, "N");
         // SE ACTUALIZA TABLA DE SECUENCIAL SPEI
@@ -2476,7 +2482,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         // SE HACE LA VALIDACION DE LA RESPUESTA
         if (respuesta != null)
         {
-            if (!respuesta.get(0).equals("00"))
+            if (!respuesta.get(0).equals(CODE_RESPONSE_00))
             {
             	aBagSPJavaOrchestration.put(Constants.REVERSE, "S");
                 // SE CAMBIA ESTADO DE REGISTRO
@@ -2534,31 +2540,93 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         
         return responseTransfer;
     }
+    private List<String>  executionProvider(IProcedureRequest anOriginalRequest, Map<String, Object> bag)
+    {
+    	//armamos clave de rastreo
+    	AccendoConnectionData loadded = retrieveAccendoConnectionData();
+    	String claveRastreo = loadded.getTrackingKeyPrefix()+Methods.getActualDateYyyymmdd()+bag.get("@o_referencia");
+    	bag.put(Constants.I_CLAVE_RASTREO, claveRastreo);
+        bag.put("clave_rastreo",  claveRastreo);
+        bag.put("CBCCDK", getParam(anOriginalRequest, "CBCCDK", "AHO"));
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("clave_rastreo: " + claveRastreo);
+        }
+        return reetryExecutionProvider(anOriginalRequest, bag, 0);
+    }
     private List<String> reetryExecutionProvider(IProcedureRequest anOriginalRequest, Map<String, Object> bag, int cont) {
+    
+
         List<String> response = karpayExecution(anOriginalRequest, bag);
         
         if (logger.isDebugEnabled()) {
             logger.logDebug("Contador reintentos: " + cont);
+            logger.logDebug("contCircuitBreak: " + contCircuitBreak+" circuitBreak:"+circuitBreak);
+            logger.logDebug("endTime: "+ endTime);
         }
+        //inicio control de circuit breaker
+        if(contCircuitBreak >= circuitBreak ){
+        	if(endTime == 0 ) {
+        		endTime = System.currentTimeMillis()+(timeReetry*circuitBreak); // Tiempo fin de trnasacciones
+        		if (logger.isDebugEnabled()) {
+    	            logger.logDebug("endTime validacion 0: "+ endTime);
+    	        }
+        	}
+        	if(System.currentTimeMillis() < endTime){
+        		contCircuitBreak = 0;
+        		endTime = 0;
+        		if (logger.isDebugEnabled()) {
+    	            logger.logDebug("Encera tiempo y circuit breaker"+ endTime);
+    	        }
+        	}
+        	return errorCircuitBreaker(anOriginalRequest, bag);
+        }
+        
         if( cont >= numReetry) {
         	return response;
         }
         
-        if (response != null && !response.get(0).equals("00") && !response.get(0).equals("30")) {
+        if (response != null && !response.get(0).equals(CODE_RESPONSE_00) && !response.get(0).equals(CODE_RESPONSE_30)) {
             try {
                 // Dormir el hilo por un tiempo controlado
                 Thread.sleep(timeReetry);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); 
             }
-          
             //contador circuit break
+
             contCircuitBreak++;
+            
             return reetryExecutionProvider(anOriginalRequest, bag, cont + 1);
+        }else
+        {
+        	contCircuitBreak = 0;
+        	endTime = 0;
+        	if(response.get(0).equals("30"))
+			{
+        		response.add(0, CODE_RESPONSE_00);
+        		bag.put("@i_msj_respuesta", CODE_RESPONSE_00);
+        		bag.put("@i_cod_respuesta", MGS_RESPONSE);
+        		bag.put(Constants.I_CODIGO_ACC, ERROR_GENRRAL);
+        		bag.put(Constants.I_MENSAJE_ACC, ERROR_CUIRCUIT_BREAKER);
+        		
+			}
         }
         return response;
     }
-    
+    private ArrayList<String> errorCircuitBreaker(IProcedureRequest anOriginalRequest, Map<String, Object> bag)
+    {
+    	ArrayList<String> response = new ArrayList<String>();
+
+         response.add(ERROR_GENRRAL);
+         response.add(ERROR_CUIRCUIT_BREAKER);
+         response.add("");
+         bag.put("@i_msj_respuesta", ERROR_GENRRAL);
+         bag.put("@i_cod_respuesta", ERROR_CUIRCUIT_BREAKER);
+         bag.put(Constants.I_CODIGO_ACC, ERROR_GENRRAL);
+         bag.put(Constants.I_MENSAJE_ACC, ERROR_CUIRCUIT_BREAKER);
+         
+         return response;
+    }
     protected List<String>  karpayExecution(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
         // SE INICIALIZA VARIABLE
         List<String> response = null;
@@ -2631,18 +2699,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addOutputParam("@o_id", ICTSTypes.SQLINT1, "0");
             anOriginalRequest.addOutputParam("@o_descripcion_error", ICTSTypes.SQLVARCHAR, "X");
 
-            AccendoConnectionData loadded= retrieveAccendoConnectionData();
-
-            anOriginalRequest.addInputParam("@i_empresa", ICTSTypes.SQLVARCHAR, loadded.getCompanyId());
-            anOriginalRequest.addInputParam("@i_algotih", ICTSTypes.SQLVARCHAR, "SHA256withRSA");
-            anOriginalRequest.addInputParam("@i_prefijo_rastreo", ICTSTypes.SQLVARCHAR, loadded.getTrackingKeyPrefix());
-            anOriginalRequest.addInputParam("@i_base_url", ICTSTypes.SQLVARCHAR, loadded.getBaseUrl());
-
-            String claveRastreo = loadded.getTrackingKeyPrefix()+Methods.getActualDateYyyymmdd()+bag.get("@o_referencia");
-            anOriginalRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR,claveRastreo) ;
-            bag.put(Constants.I_CLAVE_RASTREO, claveRastreo);
-            bag.put("clave_rastreo",  claveRastreo);
-
+            anOriginalRequest.addInputParam("@i_clave_rastreo_connection", ICTSTypes.SQLVARCHAR,(String) bag.get(Constants.I_CLAVE_RASTREO)) ;
+            
             anOriginalRequest.addInputParam(Constants.TRANSACCION_SPEI, ICTSTypes.SQLVARCHAR, (String) bag.get("@o_referencia"));
             anOriginalRequest.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_ssn_branch"));
             
@@ -2655,7 +2713,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             anOriginalRequest.addInputParam("@i_op_topologia", ICTSTypes.SQLVARCHAR, "V");
             anOriginalRequest.addInputParam("@i_op_me_clave", ICTSTypes.SQLVARCHAR, "9");
             
-            anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, getParam(anOriginalRequest, "CBCCDK", "AHO"));
+            anOriginalRequest.addInputParam("@i_operatingInstitution", ICTSTypes.SQLVARCHAR, (String) bag.get("CBCCDK"));
             
             // SE HACE LA LLAMADA AL CONECTOR
             // SE HACE LA LLAMADA AL CONECTOR
@@ -4160,6 +4218,48 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
             }
         }
         return response;
+    }
+    
+    protected Integer saveTrnBvTransfer(IProcedureRequest anOriginalRequest, Map<String, Object> bag) {
+        // SE INICIALIZA VARIABLE
+        int idSecSpei = 0;
+        if (logger.isDebugEnabled()) {
+            logger.logDebug("Entrando a saveTrnBvTransfer");
+        }
+        try {
+            IProcedureRequest request = initProcedureRequest(anOriginalRequest.clone());
+            request.removeFieldInHeader("ssn_branch");
+            // SE SETEAN DATOS
+            request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, IMultiBackEndResolverService.TARGET_LOCAL);
+            request.addFieldInHeader(KEEP_SSN, ICOBISTS.HEADER_STRING_TYPE, "Y");
+            request.setSpName("cob_bvirtual..sp_registra_spei");
+            request.addInputParam("@t_trn", ICTSTypes.SQLINTN, "18010");
+            	
+            // DATOS CUENTA ORIGEN
+            request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_cta"));
+            request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "O");
+            request.addOutputParam("@o_id_sec_pei", ICTSTypes.SQLINT4, "0");
+            
+            // SE EJECUTA Y SE OBTIENE LA RESPUESTA
+            IProcedureResponse pResponse = executeCoreBanking(request);
+            
+            if(pResponse.hasError())
+            {
+            	idSecSpei = pResponse.readValueParam("@o_id_sec_pei")!=null?Integer.parseInt(pResponse.readValueParam("@o_id_sec_pei")):0;
+            	bag.put(ID_SEC_SPEI, idSecSpei);
+            }
+            if (logger.isDebugEnabled()) {
+                logger.logDebug("IProcedureResponse de saveTrnBvTransfer:"+pResponse.getCTSMessageAsString());
+            }
+        } catch (Exception e) {
+            logger.logError("Error de saveTrnBvTransfer",e);
+            idSecSpei = 0;
+        } finally {
+            if (logger.isDebugEnabled()) {
+                logger.logDebug("Saliendo de saveTrnBvTransfer");
+            }
+        }
+        return idSecSpei;
     }
     private int tryParseToInteger(String stringValue, int defaultValue) {
         try {
