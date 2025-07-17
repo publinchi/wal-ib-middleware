@@ -156,6 +156,8 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		String reasonCommision = anOriginalRequest.readValueParam("@i_reason_com");
 		String movementIdComOri = anOriginalRequest.readValueParam("@i_movementId_com_ori");
 		String referenceNumberComOri = anOriginalRequest.readValueParam("@i_referenceNumber_com_ori");
+		String description = anOriginalRequest.readValueParam("@i_description");
+		String descriptionCom = anOriginalRequest.readValueParam("@i_description_com");
 
 		if (Objects.isNull(reversalConcept) ||  reversalConcept.isEmpty()) {
 			setError(aBagSPJavaOrchestration, "40128", "reversalConcept must not be empty.");
@@ -217,6 +219,26 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 			return true;
 		}
 
+		if (description.length() > 100) {
+			setError(aBagSPJavaOrchestration, "40143", "the description must have a maximum of 100 characters.");
+			return true;
+		}
+		
+		if (descriptionCom.length() > 100) {
+			setError(aBagSPJavaOrchestration, "40144", "the description of commission must have a maximum of 100 characters.");
+			return true;
+		}
+
+		if (description.isEmpty()) {
+			setError(aBagSPJavaOrchestration, "40145", "the description must not be empty.");
+			return true;
+		}
+		
+		if (descriptionCom.isEmpty()) {
+			setError(aBagSPJavaOrchestration, "40146", "the description of commission must not be empty.");
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -276,10 +298,12 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPOffline.addInputParam("@i_referenceNumber_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber_ori"));
 		reqTMPOffline.addInputParam("@i_movementId_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_movementId_ori"));
 		reqTMPOffline.addInputParam("@i_reversalReason_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_reversalReason_ori"));
+		reqTMPOffline.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description"));
 		reqTMPOffline.addInputParam("@i_amount_com", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount_com"));
 		reqTMPOffline.addInputParam("@i_reason_com", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_reason_com"));
 		reqTMPOffline.addInputParam("@i_movementId_com_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_movementId_com_ori"));
 		reqTMPOffline.addInputParam("@i_referenceNumber_com_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber_com_ori"));
+		reqTMPOffline.addInputParam("@i_description_com", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description_com"));
 
 		reqTMPOffline.addOutputParam("@o_causa_rev", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPOffline.addOutputParam("@o_causa_com", ICTSTypes.SQLVARCHAR, "X");
@@ -345,10 +369,12 @@ public class AccountReversalOperationOrchestrationCore extends OfflineApiTemplat
 		reqTMPCentral.addInputParam("@i_referenceNumber_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber_ori"));
 		reqTMPCentral.addInputParam("@i_movementId_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_movementId_ori"));
 		reqTMPCentral.addInputParam("@i_reversalReason_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_reversalReason_ori"));
+		reqTMPCentral.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description"));
 		reqTMPCentral.addInputParam("@i_amount_com", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount_com"));
 		reqTMPCentral.addInputParam("@i_reason_com", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_reason_com"));
 		reqTMPCentral.addInputParam("@i_movementId_com_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_movementId_com_ori"));
 		reqTMPCentral.addInputParam("@i_referenceNumber_com_ori", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber_com_ori"));
+		reqTMPCentral.addInputParam("@i_description_com", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description_com"));
 
 		reqTMPCentral.addOutputParam("@o_causa_rev", ICTSTypes.SQLVARCHAR, "X");
 		reqTMPCentral.addOutputParam("@o_causa_com", ICTSTypes.SQLVARCHAR, "X");

@@ -129,6 +129,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         String originCodeStr = anOriginalRequest.readValueParam("@i_originCode");
         String originMovementId = anOriginalRequest.readValueParam("@i_originMovementId");
         String originReferenceNumber = anOriginalRequest.readValueParam("@i_originReferenceNumber");
+        String description = anOriginalRequest.readValueParam("@i_description");
 
         if (originCodeStr != null && !originCodeStr.isEmpty() && !originCodeStr.equals("null")) {
             originCode = Integer.parseInt(originCodeStr);
@@ -155,10 +156,12 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
 
         switch (debitReason) {
             case "Card delivery fee":
-                aBagSPJavaOrchestration.put("debitConcept", "CARD_DELIVERY_FEE");
+                aBagSPJavaOrchestration.put("debitConcept", Constants.CARD_DELIVERY_FEE);
                 break;
             case "False chargeback claim":
-            case "FALSE_CHARGEBACK":
+            case Constants.FALSE_CHARGEBACK:
+            	aBagSPJavaOrchestration.put("debitConcept", Constants.FALSE_CHARGEBACK);
+            	
                 if (originMovementId.isEmpty()) {
                     setError(aBagSPJavaOrchestration, "40126", "The originMovementId must not be empty.");
                     return true;
@@ -168,7 +171,16 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                     setError(aBagSPJavaOrchestration, "40127", "The originReferenceNumber must not be empty.");
                     return true;
                 }
-                aBagSPJavaOrchestration.put("debitConcept", "FALSE_CHARGEBACK");
+                
+        		if (description.length() > 100) {
+        			setError(aBagSPJavaOrchestration, "40143", "The description must have a maximum of 100 characters.");
+        			return true;
+        		}
+        		
+        		if( description.isEmpty()) {
+        			setError(aBagSPJavaOrchestration, "40145", "The description must not be empty.");
+    				return true;
+    			}
                 break;
             default:
                 setError(aBagSPJavaOrchestration, "40124", "debit reason not found.");
@@ -202,6 +214,9 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
     }
 
     private void processOffline(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
+    	IProcedureResponse wProcedureResponseVal;
+    	String debitConcept = Objects.nonNull(aBagSPJavaOrchestration.get("debitConcept")) ? aBagSPJavaOrchestration.get("debitConcept").toString(): "";
+    	
         if (logger.isInfoEnabled()) {
             logger.logInfo("Begin [" + CLASS_NAME + "][processOffline]");
         }
@@ -210,7 +225,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logDebug("aBagSPJavaOrchestration: " + aBagSPJavaOrchestration.toString());
         }
 
-        IProcedureResponse wProcedureResponseVal;
 
         wProcedureResponseVal = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
         if (logger.isDebugEnabled()) {
@@ -234,11 +248,13 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         reqTMPCentral.addInputParam("@i_externalCustomerId", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId"));
         reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
         reqTMPCentral.addInputParam("@i_amount", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
-        reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("debitConcept").toString());
-        if(aBagSPJavaOrchestration.get("debitConcept").toString().equals("FALSE_CHARGEBACK")) {
+        reqTMPCentral.addInputParam("@i_debitConcept",ICTSTypes.SQLVARCHAR, debitConcept);
+        
+        if(debitConcept.equals(Constants.FALSE_CHARGEBACK)) {
             reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originMovementId"));
             reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originReferenceNumber"));
         }
+        
         reqTMPCentral.addOutputParam("@o_ente_bv", ICTSTypes.SQLINT4, "0");
         reqTMPCentral.addOutputParam("@o_login", ICTSTypes.SQLVARCHAR, "X");
         reqTMPCentral.addOutputParam("@o_prod", ICTSTypes.SQLINT4, "0");
@@ -289,7 +305,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 anOriginalRequest.addInputParam("@i_ente", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_externalCustomerId"));
                 anOriginalRequest.addInputParam("@i_cta", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
                 anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_amount"));
-                anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_debitReason"));
+                anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description"));
                 anOriginalRequest.addInputParam("@i_mon", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon").toString());
                 anOriginalRequest.addInputParam("@i_prod", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
                 anOriginalRequest.addInputParam("@t_rty", ICTSTypes.SYBCHAR, "S");
@@ -356,6 +372,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
     }
 
     private void processOnline(Map<String, Object> aBagSPJavaOrchestration, IProcedureRequest anOriginalRequest) {
+    	String reentryCode = anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX");
+        IProcedureRequest reqTMPCentral = anOriginalRequest;
+        String debitConcept = Objects.nonNull(aBagSPJavaOrchestration.get("debitConcept")) ? aBagSPJavaOrchestration.get("debitConcept").toString(): "";
+        
         if (logger.isInfoEnabled()) {
             logger.logInfo("Begin [" + CLASS_NAME + "][processOnline]");
         }
@@ -364,8 +384,6 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
             logger.logDebug("Request param @i_externalCustomerId: " + anOriginalRequest.readValueParam("@i_externalCustomerId"));
         }
 
-        String reentryCode = anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX");
-        IProcedureRequest reqTMPCentral = anOriginalRequest;
 
         if (reentryCode != null) {
             logger.logDebug("Flow: " + reentryCode);
@@ -381,12 +399,16 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         reqTMPCentral.addInputParam("@i_accountNumber", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
         reqTMPCentral.addInputParam("@i_amount", ICTSTypes.SQLMONEY, anOriginalRequest.readValueParam("@i_amount"));
         reqTMPCentral.addInputParam("@i_originCode", ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_originCode"));
-        reqTMPCentral.addInputParam("@i_debitConcept", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("debitConcept").toString());
+        reqTMPCentral.addInputParam("@i_debitConcept", ICTSTypes.SQLVARCHAR, debitConcept);
         reqTMPCentral.addInputParam("@i_referenceNumber", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_referenceNumber"));
-        if(aBagSPJavaOrchestration.get("debitConcept").toString().equals("FALSE_CHARGEBACK")) {
+        
+        if(debitConcept.equals(Constants.FALSE_CHARGEBACK)) {
             reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originMovementId"));
             reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originReferenceNumber"));
         }
+        
+        reqTMPCentral.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description"));
+        
         reqTMPCentral.addOutputParam("@o_causa", ICTSTypes.SQLVARCHAR, "X");
         reqTMPCentral.addOutputParam("@o_ssn_branch"    , ICTSTypes.SQLINTN, "0");
         reqTMPCentral.addOutputParam("@o_ssn"           , ICTSTypes.SQLINTN, "0");
@@ -464,6 +486,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         IResultSetData data = new ResultSetData();
         IResultSetRow row = new ResultSetRow();
         IProcedureResponse wProcedureResponse = new ProcedureResponseAS();
+        String debitConcept = Objects.nonNull(aBagSPJavaOrchestration.get("debitConcept")) ? aBagSPJavaOrchestration.get("debitConcept").toString(): "";
 
         metaData.addColumnMetaData(new ResultSetHeaderColumn("success", ICTSTypes.SYBVARCHAR, 255));
         metaData.addColumnMetaData(new ResultSetHeaderColumn("code", ICTSTypes.SYBINT4, 255));
@@ -477,7 +500,7 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
         aBagSPJavaOrchestration.put("@i_debitReason", anOriginalRequest.readValueParam("@i_debitReason").trim());
         aBagSPJavaOrchestration.put("causal", aBagSPJavaOrchestration.get("causa"));
 
-        if(aBagSPJavaOrchestration.get("debitConcept").toString().equals("FALSE_CHARGEBACK")) {
+        if(debitConcept.equals(Constants.FALSE_CHARGEBACK)) {
             aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
             aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
         }
@@ -574,6 +597,10 @@ public class AccountDebitOperationOrchestrationCore extends OfflineApiTemplate {
                 ? aBagSPJavaOrchestration.get("debitConcept").toString()
                 : "";
 
+        if (debitConcept.equals(Constants.FALSE_CHARGEBACK)) {
+        	debitConcept = aRequest.readValueParam("@i_description");
+        }
+        
         aBagSPJavaOrchestration.put("i_prod", null);
         aBagSPJavaOrchestration.put("i_prod_des", null );
         aBagSPJavaOrchestration.put("i_login", null );
