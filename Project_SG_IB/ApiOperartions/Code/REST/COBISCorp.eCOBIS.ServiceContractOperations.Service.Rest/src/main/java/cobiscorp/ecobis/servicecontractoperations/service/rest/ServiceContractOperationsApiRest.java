@@ -71,21 +71,44 @@ public class ServiceContractOperationsApiRest {
 			@NotNull(message = "x-end-user-request-date-time may not be null") @HeaderParam("x-end-user-request-date-time") String xEndUserRequestDateTime,
 			@NotNull(message = "x-end-user-ip may not be null") @HeaderParam("x-end-user-ip") String xEndUserIp,
 			@NotNull(message = "x-channel may not be null") @HeaderParam("x-channel") String xChannel,
-		CreditAccountRequest inCreditAccountRequest) {
-		LOGGER.logDebug("Start service execution REST: creditOperation");
-		CreditAccountResponse outSingleCreditAccountResponse = new CreditAccountResponse();
+			CreditAccountRequest inCreditAccountRequest) {
+		if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: creditOperation");
 
-		if (!validateMandatory(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()),
-				new Data("accountNumber", inCreditAccountRequest.getAccountNumber()),
-				new Data("amount", inCreditAccountRequest.getAmount()),
-				new Data("commission", inCreditAccountRequest.getCommission()),
-				new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()),
-				new Data("latitude", inCreditAccountRequest.getLatitude()),
-				new Data("longitude", inCreditAccountRequest.getLongitude()))) {
-			LOGGER.logDebug("400 is returned - Required fields are missing");
-			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado")
-					.build();
+		// Lista de parámetros obligatorios del encabezado de la solicitud
+		List<Data> mandatoryHeaders = new ArrayList<>();
+		mandatoryHeaders.add(new Data("x-request-id", xRequestId));
+		//mandatoryHeaders.add(new Data("x-end-user-request-date-time", xEndUserRequestDateTime));
+		//mandatoryHeaders.add(new Data("x-end-user-ip", xEndUserIp));
+		//mandatoryHeaders.add(new Data("x-channel", xChannel));
+
+		// Validar los parámetros del encabezado
+		if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+			if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El encabezado de la solicitud no se encuentra debidamente formateado.").build();
 		}
+
+		// Lista de parámetros obligatorios del cuerpo de la solicitud
+		List<Data> mandatoryFields = new ArrayList<>();
+		mandatoryFields.add(new Data("externalCustomerId", inCreditAccountRequest.getExternalCustomerId()));
+		mandatoryFields.add(new Data("accountNumber", inCreditAccountRequest.getAccountNumber()));
+		mandatoryFields.add(new Data("amount", inCreditAccountRequest.getAmount()));
+		mandatoryFields.add(new Data("commission", inCreditAccountRequest.getCommission()));
+		mandatoryFields.add(new Data("referenceNumber", inCreditAccountRequest.getReferenceNumber()));
+		mandatoryFields.add(new Data("latitude", inCreditAccountRequest.getLatitude()));
+		mandatoryFields.add(new Data("longitude", inCreditAccountRequest.getLongitude()));
+		String creditConcept = inCreditAccountRequest.getCreditConcept();
+		if ("REFUND".equals(creditConcept)) {
+			mandatoryFields.add(new Data("description", inCreditAccountRequest.getDescription()));
+		}
+
+		// Validar los parámetros del cuerpo
+		mandatoryHeaders.addAll(mandatoryFields);
+		if (!validateMandatory(mandatoryHeaders.toArray(new Data[0]))) {
+			if (LOGGER.isDebugEnabled()) LOGGER.logDebug("400 is returned - Required fields are missing");
+			return Response.status(400).entity("El mensaje de solicitud no se encuentra debidamente formateado.").build();
+		}
+
+		CreditAccountResponse outSingleCreditAccountResponse;
 
 		try {
 			outSingleCreditAccountResponse = iServiceContractOperationsApiService
@@ -2294,7 +2317,6 @@ public class ServiceContractOperationsApiRest {
 			DebitAccountRequest inDebitAccountRequest) {
 		if (LOGGER.isInfoEnabled()) LOGGER.logInfo("Start service execution REST: debitOperation");
 
-
 		// Lista de parámetros obligatorios del encabezado de la solicitud
 		List<Data> mandatoryHeaders = new ArrayList<>();
 		mandatoryHeaders.add(new Data("x-request-id", xRequestId));
@@ -2319,6 +2341,7 @@ public class ServiceContractOperationsApiRest {
 			mandatoryFields.add(new Data("originCode", inDebitAccountRequest.getOriginCode()));
 			mandatoryFields.add(new Data("originMovementId", inDebitAccountRequest.getOriginMovementId()));
 			mandatoryFields.add(new Data("originReferenceNumber", inDebitAccountRequest.getOriginReferenceNumber()));
+			mandatoryFields.add(new Data("description", inDebitAccountRequest.getDescription()));
 		} else {
 			mandatoryFields.add(new Data("debitReason", inDebitAccountRequest.getDebitReason()));
 		}
@@ -3004,7 +3027,13 @@ public class ServiceContractOperationsApiRest {
 			mandatoryFields.add(new Data("commission.amount", inReverseOperationRequest.getCommission().getAmount()));
 			mandatoryFields.add(new Data("commission.reason", inReverseOperationRequest.getCommission().getReason()));
 			mandatoryFields.add(new Data("commission.originalTransactionData.movementId", inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId()));
-			mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));	        	
+			mandatoryFields.add(new Data("commission.originalTransactionData.referenceNumber", inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber()));
+
+			String reversalConcept = inReverseOperationRequest.getReversalConcept();
+			if ("REFUND_REVERSAL".equals(reversalConcept)) {
+				mandatoryFields.add(new Data("description", inReverseOperationRequest.getDescription()));
+				mandatoryFields.add(new Data("commission.description", inReverseOperationRequest.getCommission().getDescription()));
+			}
 
 			// Validar los parámetros del cuerpo
 			mandatoryHeaders.addAll(mandatoryFields);
