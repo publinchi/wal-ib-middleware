@@ -106,6 +106,13 @@ Resources:
             "host": "your-mft-host",
             "port": "your-mft-port",
             "password": "your-mft-password"
+          },
+          "BONTAR": {
+            "type": "C",
+            "user": "your-mft-username",
+            "host": "your-mft-host",
+            "port": "your-mft-port",
+            "password": "your-mft-password"
           }
         }
 
@@ -289,9 +296,24 @@ Resources:
         - Arn: !GetAtt ProcessMFTLambda.Arn
           Id: processMFTTargetCONTA
           Input: |
-            { 269
+            {
               "flow_name": "CONTA",
               "user_execute": "eventbridge-CONTA"
+            }
+
+  ProcessMFTEventRuleBONTAR:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${LambdaFunctionName}-event-BONTAR
+      ScheduleExpression: cron(0 10 * * ? *)
+      State: !Ref StateEventRule
+      Targets:
+        - Arn: !GetAtt ProcessMFTLambda.Arn
+          Id: processMFTTargetBONTAR
+          Input: |
+            {
+              "flow_name": "BONTAR",
+              "user_execute": "eventbridge-BONTAR"
             }
 
   LambdaInvokePermissionMINDS:
@@ -339,6 +361,15 @@ Resources:
       SourceArn: !GetAtt ProcessMFTEventRuleCONTA.Arn
     DependsOn: ProcessMFTEventRuleCONTA
 
+  LambdaInvokePermissionBONTAR:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProcessMFTLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessMFTEventRuleBONTAR.Arn
+    DependsOn: ProcessMFTEventRuleBONTAR
+
 Outputs:
   LambdaFunctionARN:
     Description: The ARN of the Lambda function
@@ -358,3 +389,6 @@ Outputs:
   EventRuleARNCONTA:
     Description: The ARN of the EventBridge rule for CONTA
     Value: !GetAtt ProcessMFTEventRuleCONTA.Arn
+  EventRuleARNBONTAR:
+    Description: The ARN of the EventBridge rule for BONTAR
+    Value: !GetAtt ProcessMFTEventRuleBONTAR.Arn
