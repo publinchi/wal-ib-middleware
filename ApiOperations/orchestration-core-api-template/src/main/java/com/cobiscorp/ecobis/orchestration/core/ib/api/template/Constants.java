@@ -62,8 +62,6 @@ public class Constants {
     public static final String CENTRAL_ERROR_MSG_OP = "centralErrorMsgOp";
     public static final String LOCAL_ERROR_CODE = "localErrorCode";
     public static final String LOCAL_ERROR_MSG = "localErrorMsg";
-    public static final String LIMIT_ERROR_CODE = "limitErrorCode";
-    public static final String LIMIT_ERROR_MSG = "limitErrorMsg";
 
     public static final int DEFAULT_ERROR = 50061;
     public static final int REENTRY_ERROR = 40004;
@@ -73,6 +71,5 @@ public class Constants {
 
     public static final String PROCESS = "process";
     public static final String BEGIN = "Begin [";
-    public static final String END = "End [";
     public static final String CONCEPTO_TRN = "@i_concepto";
 }
