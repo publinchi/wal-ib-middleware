@@ -1430,6 +1430,7 @@ public class TransferThirdPartyAccountApiOrchestationCore extends OfflineApiTemp
 		request.addInputParam("@i_longitud", ICTSTypes.SQLMONEY, aRequest.readValueParam("@i_longitud"));
 		request.addInputParam("@i_unique_id_card", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("unique_id_card").toString());
 		request.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("tipo_cta_des").toString());
+		request.addInputParam("@i_is_p2p", ICTSTypes.SQLCHAR, "S");
 		request.addInputParam(IS_REENTRY, ICTSTypes.SQLVARCHAR, isReentry);
 		
 		if(aBagSPJavaOrchestration.get("IsReentry").equals("S"))

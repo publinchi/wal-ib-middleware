@@ -53,6 +53,19 @@ public abstract class SaveAdditionalData extends SPJavaOrchestrationBase {
         return handleResponse(response);
     }
 
+    protected Boolean saveAdditionalData(String movementType, boolean isOnline,
+                                         Map<String, String> aBagSPJavaOrchestration, String operation) {
+        validateInput(aBagSPJavaOrchestration);
+
+        String target = isOnline ? IMultiBackEndResolverService.TARGET_CENTRAL
+                : IMultiBackEndResolverService.TARGET_LOCAL;
+
+        IProcedureRequest request = createProcedureRequest(movementType, target, aBagSPJavaOrchestration, operation);
+        IProcedureResponse response = executeCoreBanking(request);
+
+        return handleResponse(response);
+    }
+
     private void validateInput(Map<String, String> aBagSPJavaOrchestration) {
         if (aBagSPJavaOrchestration == null || !aBagSPJavaOrchestration.containsKey("secuential")) {
             throw new IllegalArgumentException("El mapa de parámetros no contiene las claves necesarias.");
@@ -82,6 +95,32 @@ public abstract class SaveAdditionalData extends SPJavaOrchestrationBase {
 
         return request;
     }
+
+    private IProcedureRequest createProcedureRequest(String movementType, String target,
+                                                     Map<String, String> aBagSPJavaOrchestration, String operation) {
+        IProcedureRequest request = new ProcedureRequestAS();
+
+        request.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, target);
+        request.addFieldInHeader(ICOBISTS.HEADER_TRN, ICOBISTS.HEADER_NUMBER_TYPE, TRANSACTION_CODE);
+        request.setSpName("cob_ahorros..sp_tr04_cons_mov_ah_add_api");
+
+        request.addInputParam("@t_trn", ICTSTypes.SQLINT4, TRANSACTION_CODE);
+        request.addInputParam("@i_secuencial", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("secuential"));
+        request.addInputParam("@i_ssn_branch", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("secBranch"));
+        request.addInputParam("@i_cod_alterno", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("alternateCod"));
+        request.addInputParam("@i_transaccion", ICTSTypes.SQLINT4, aBagSPJavaOrchestration.get("transaction"));
+        request.addInputParam("@i_tipo_movimiento", ICTSTypes.SQLCHAR, movementType);
+        request.addInputParam("@i_estado_spei", ICTSTypes.SQLVARCHAR, aBagSPJavaOrchestration.get("@i_estado_spei"));
+        request.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR,  operation);
+        request.addInputParam("@i_clave_rastreo", ICTSTypes.SQLVARCHAR,  aBagSPJavaOrchestration.get("@i_clave_rastreo"));
+
+        if (logger.isDebugEnabled()) {
+            logger.logDebug(CLASS_NAME + "Data de entrada:" + request.getProcedureRequestAsString());
+        }
+
+        return request;
+    }
+
 
     private Boolean handleResponse(IProcedureResponse response) {
         if (logger.isDebugEnabled()) {
