@@ -622,7 +622,6 @@ public class AuthorizeReversalOrchestrationCore extends OfflineApiTemplate {
 		
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
-			aBagSPJavaOrchestration.put("s_error_cobis", code);
 			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
 			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}
