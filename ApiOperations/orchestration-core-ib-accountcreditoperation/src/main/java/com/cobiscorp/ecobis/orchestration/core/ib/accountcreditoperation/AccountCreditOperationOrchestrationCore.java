@@ -1015,7 +1015,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_accountNumber") );
 		aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_creditConcept"));
 		aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
-		aBagSPJavaOrchestration.put("i_movement_type", "P2P_CREDIT");
+		aBagSPJavaOrchestration.put("i_movement_type", "ACCOUNT_CREDIT");
 
 	}
 
