@@ -891,7 +891,6 @@
 			<version>4.6.1.0</version>
 		</dependency>
 
-
 		<!-- GENERADOR DE SERVICIOS BIB-->
 		<!--<dependency>
 			<groupId>com.cobiscorp.channels.ib</groupId>

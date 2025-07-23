@@ -827,8 +827,12 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 			else {
 				aBagSPJavaOrchestration.put("o_card_id", "null");}
 
-			if (connectorCardResponse.readValueParam("@o_success") != null) {
-				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_card_id"));}
+			if (connectorCardResponse.readValueParam("@o_success") != null && 
+					connectorCardResponse.readValueParam("@o_success") != "false" ) {
+				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_card_id"));
+			}else if (connectorCardResponse.readValueParam("@o_success") == "false") {
+				aBagSPJavaOrchestration.put("o_success", false);
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1483,7 +1487,7 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 		logger.logDebug("request mode: " + aBagSPJavaOrchestration.get("mode"));
 			}
 		
-			if(flag == true){
+			if(flag == true && !Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success"))){
 				if (logger.isDebugEnabled()) {logger.logDebug("Ending flow, processResponse success with code: ");}
 				
 				String cardStatus = aRequest.readValueParam("@i_card_status");
@@ -1523,6 +1527,25 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 					data3.addRow(row3);
 				}
 								
+			}
+			else if (Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success"))){
+				if (logger.isDebugEnabled()) {
+					logger.logDebug("Ending flow, processResponse failed from Dock: " +					 
+					anOriginalProcedureRes.readValueParam("@o_responseUpdateCard").toString());
+				}
+
+				String message = "Service execution error";
+				String success = "false";
+				String code = "400218";
+
+				IResultSetRow row1 = new ResultSetRow();
+				row1.addRowData(1, new ResultSetRowColumnData(false, success));
+				data.addRow(row1);
+
+				IResultSetRow row2 = new ResultSetRow();
+				row2.addRowData(1, new ResultSetRowColumnData(false, code));
+				row2.addRowData(2, new ResultSetRowColumnData(false, message));
+				data2.addRow(row2);
 			}
 			else{
 				if (logger.isDebugEnabled()) {logger.logDebug("Ending flow, processResponse error");}
@@ -1572,7 +1595,7 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 		return wProcedureResponse;		
 	}
 	
-	private void notifyCardStatusUpdate(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+private void notifyCardStatusUpdate(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
         IProcedureRequest request = new ProcedureRequestAS();
         String tittle = null;
         String cardId = anOriginalRequest.readValueParam("@i_card_id");
@@ -1583,14 +1606,20 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
         
         if (anOriginalRequest.readValueParam("@i_mode").equals("N")) {
         	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
-        		cardId = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
-        		tittle = "Activación de tarjeta digital realizada exitosamente";
-        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
-        		tittle = "Activación de tarjeta física realizada exitosamente";
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(CLASS_NAME + "Notificación de activación de tarjeta digital desactivada");
+				}
+				return;
+        	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {       		
         		if (aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
         			tittle = "Cancelación de tarjeta física realizada exitosamente";
         			cardId = aBagSPJavaOrchestration.get("o_assigned_card").toString();
-        		}
+        		} else {
+				if (logger.isInfoEnabled()) {
+					logger.logInfo(CLASS_NAME + "Notificación de activación de tarjeta física desactivada");
+				}
+				return;
+				}
         	}
         } else {
         	if (anOriginalRequest.readValueParam("@i_type_card").equals("VI")) {
@@ -1600,13 +1629,19 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
         			tittle = "Bloqueo de tarjeta digital realizado exitosamente";
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
         			tittle = "Cancelación de tarjeta digital realizada exitosamente";
-        		}       		
-        		        		
+        		}
+        		
         	} else if (anOriginalRequest.readValueParam("@i_type_card").equals("PH")) {
         		if (anOriginalRequest.readValueParam("@i_card_status").equals("N")) {
-        			tittle = "Desbloqueo de tarjeta física realizado exitosamente";
+					 if (logger.isInfoEnabled()) {
+           				 logger.logInfo(CLASS_NAME + "Notificación de besbloqueo de tarjeta física desactivada");
+       				 }
+        			return;
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("B")) {
-        			tittle = "Bloqueo de tarjeta física realizado exitosamente";
+					if (logger.isInfoEnabled()) {
+						logger.logInfo(CLASS_NAME + "Notificación de bloqueo de tarjeta física desactivada");
+       				 }
+        			return;
         		} else if (anOriginalRequest.readValueParam("@i_card_status").equals("C")) {
         			tittle = "Cancelación de tarjeta física realizada exitosamente";
         		}

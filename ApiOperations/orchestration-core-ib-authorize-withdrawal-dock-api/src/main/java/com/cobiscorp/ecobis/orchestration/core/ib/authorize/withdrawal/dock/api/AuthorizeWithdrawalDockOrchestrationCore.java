@@ -609,6 +609,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 	private void updateTrnStatus(IProcedureResponse aResponse, Map<String, Object> aBagSPJavaOrchestration, String executionStatus) {
 
 		IProcedureRequest request = new ProcedureRequestAS();
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en updateTransferStatus");
 		}
@@ -624,9 +625,7 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
 
-		String errorCobis = aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString():null;
-		request.addInputParam("@i_error", ICTSTypes.SQLINTN, errorCobis);
-
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString():null);
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
 		if(logger.isDebugEnabled()) {
@@ -640,7 +639,6 @@ public class AuthorizeWithdrawalDockOrchestrationCore extends OfflineApiTemplate
 
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
-			aBagSPJavaOrchestration.put("s_error_cobis", errorCobis);
 			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
 			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}

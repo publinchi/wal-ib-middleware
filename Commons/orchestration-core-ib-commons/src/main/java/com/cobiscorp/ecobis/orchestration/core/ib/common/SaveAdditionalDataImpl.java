@@ -12,10 +12,6 @@ public class SaveAdditionalDataImpl extends SaveAdditionalData {
         return saveAdditionalData(movementType, isOnline, data);
     }
 
-	public Boolean saveData(String movementType, boolean isOnline, Map<String, String> data, String operation) {
-		return saveAdditionalData(movementType, isOnline, data, operation);
-	}
-
 	@Override
 	public void loadConfiguration(IConfigurationReader arg0) {
 		

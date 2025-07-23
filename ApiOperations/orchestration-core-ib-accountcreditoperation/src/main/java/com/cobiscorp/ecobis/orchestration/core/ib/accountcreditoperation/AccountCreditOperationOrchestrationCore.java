@@ -375,6 +375,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		BigDecimal commission = new BigDecimal(wQueryRequest.readValueParam("@i_commission"));
 		String originMovementId =  (wQueryRequest.readValueParam("@i_originMovementId"));
 		String originReferenceNumber =  (wQueryRequest.readValueParam("@i_originReferenceNumber"));
+		String description = wQueryRequest.readValueParam("@i_description");
 
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("code","40107");
@@ -412,7 +413,19 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return;
 		}
 
-		if(creditConcept.equals("REFUND")) {
+		if(creditConcept.equals(Constants.REFUND)) {
+			if (description.length() > 100) {
+				aBagSPJavaOrchestration.put("code","40143");
+				aBagSPJavaOrchestration.put("msg","the description must have a maximum of 100 characters");
+				return;
+			}
+			
+			if( Objects.isNull(description) || description.isEmpty()) {
+				aBagSPJavaOrchestration.put("code","40145");
+				aBagSPJavaOrchestration.put("msg","the description must not be empty");
+				return;
+			}
+			
 			if( Objects.isNull(originMovementId)  || originMovementId.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40126");
 				aBagSPJavaOrchestration.put("msg","The originMovementId must not be empty");
@@ -456,8 +469,9 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
 		reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 		reqTMPCentral.addInputParam("@i_reference_number",ICTSTypes.SQLINT4, referenceNumber);
+		reqTMPCentral.addInputParam("@i_description",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_description"));
 
-		if(creditConcept.equals("REFUND")) {
+		if(creditConcept.equals(Constants.REFUND)) {
 			reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_originMovementId"));
 			reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_originReferenceNumber"));
 		}
@@ -569,6 +583,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		String creditConcept = anOriginalRequest.readValueParam("@i_creditConcept");
 		BigDecimal amount = new BigDecimal(anOriginalRequest.readValueParam("@i_amount"));
 		BigDecimal commission = new BigDecimal(anOriginalRequest.readValueParam("@i_commission"));
+        String description = anOriginalRequest.readValueParam("@i_description");
 
 		if (amount.compareTo(new BigDecimal("0")) != 1) {
 			aBagSPJavaOrchestration.put("code","40107");
@@ -606,6 +621,20 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 			return;
 		}
 
+		if (creditConcept.equals(Constants.REFUND)) {
+			if (description.length() > 100) {
+				aBagSPJavaOrchestration.put("code","40143");
+				aBagSPJavaOrchestration.put("msg","the description must have a maximum of 100 characters");
+				return;
+			}
+			
+			if( Objects.isNull(description)  || description.isEmpty()) {
+				aBagSPJavaOrchestration.put("code","40145");
+				aBagSPJavaOrchestration.put("msg","the description must not be empty");
+				return;
+			}
+		}
+		
 		if(logger.isDebugEnabled())
 			logger.logDebug("Begin flow, queryAccountCreditOperation Offline with id: " + idCustomer);
 
@@ -620,7 +649,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_creditConcept"));
 		reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, anOriginalRequest.readValueParam("@i_originCode"));
 
-		if(creditConcept.equals("REFUND")) {
+		if(creditConcept.equals(Constants.REFUND)) {
 			reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originMovementId"));
 			reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_originReferenceNumber"));
 		}
@@ -691,7 +720,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 				anOriginalRequest.addInputParam("@i_cta_des", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_accountNumber"));
 				anOriginalRequest.addInputParam("@i_val", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_amount"));
 				anOriginalRequest.addInputParam("@i_comision", ICTSTypes.SQLMONEY4, anOriginalRequest.readValueParam("@i_commission"));
-				anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_creditConcept"));
+				anOriginalRequest.addInputParam("@i_concepto", ICTSTypes.SQLVARCHAR, anOriginalRequest.readValueParam("@i_description"));
 
 				anOriginalRequest.addInputParam("@i_mon_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_mon").toString());
 				anOriginalRequest.addInputParam("@i_prod_des", ICTSTypes.SQLINT2, aBagSPJavaOrchestration.get("o_prod").toString());
@@ -817,7 +846,7 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		aBagSPJavaOrchestration.put("ssn", anOriginalRequest.readValueFieldInHeader("ssn"));
 		aBagSPJavaOrchestration.put("ssn_branch", anOriginalRequest.readValueFieldInHeader("ssn_branch"));
 
-		if (Objects.nonNull(creditConcept) && creditConcept.equals("REFUND")) {
+		if (Objects.nonNull(creditConcept) && creditConcept.equals(Constants.REFUND)) {
 			aBagSPJavaOrchestration.put("@i_originMovementId", anOriginalRequest.readValueParam("@i_originMovementId"));
 			aBagSPJavaOrchestration.put("@i_originReferenceNumber", anOriginalRequest.readValueParam("@i_originReferenceNumber"));
 			aBagSPJavaOrchestration.put("originCode", anOriginalRequest.readValueParam("@i_originCode"));
@@ -1011,11 +1040,16 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	}
 
 	public void dataTrn(IProcedureRequest aRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		String creditConcept = aRequest.readValueParam("@i_creditConcept");
+		
+		if(creditConcept.equals(Constants.REFUND)) {
+			creditConcept = aRequest.readValueParam("@i_description");
+		}
 
 		aBagSPJavaOrchestration.put("i_cta", aRequest.readValueParam("@i_accountNumber") );
-		aBagSPJavaOrchestration.put("i_concepto", aRequest.readValueParam("@i_creditConcept"));
+		aBagSPJavaOrchestration.put("i_concepto", creditConcept);
 		aBagSPJavaOrchestration.put("i_val", aRequest.readValueParam("@i_amount"));
-		aBagSPJavaOrchestration.put("i_movement_type", "ACCOUNT_CREDIT");
+		aBagSPJavaOrchestration.put("i_movement_type", "P2P_CREDIT");
 
 	}
 

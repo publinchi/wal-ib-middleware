@@ -213,11 +213,12 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                 inCreditAccountRequest.getCreditConcept());
         procedureRequestAS.addInputParam("@i_originCode", ICTSTypes.SQLINT4,
                 String.valueOf(inCreditAccountRequest.getOriginCode()));
-
         procedureRequestAS.addInputParam("@i_originMovementId", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inCreditAccountRequest.getOriginMovementId()));
         procedureRequestAS.addInputParam("@i_originReferenceNumber", ICTSTypes.SQLVARCHAR,
                 String.valueOf(inCreditAccountRequest.getOriginReferenceNumber()));
+        procedureRequestAS.addInputParam("@i_description", ICTSTypes.SQLVARCHAR,
+                String.valueOf(inCreditAccountRequest.getDescription()));
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inCreditAccountRequest);
@@ -3962,7 +3963,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                             dto.cardDetailsInstance().entryModeInstance().setMode(resultSetMapper.getString(53));
                             dto.errorDetailsInstance().setErrorCode(resultSetMapper.getString(54));
                             dto.errorDetailsInstance().setMessage(resultSetMapper.getString(55));
-                            dto.setTransactionStatus(resultSetMapper.getString(54));
+                            dto.setTransactionStatus(resultSetMapper.getString(56));
                             return dto;
                         }
                     }, false);
@@ -7447,6 +7448,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_debitReason",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getDebitReason());
         procedureRequestAS.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getOriginMovementId());
         procedureRequestAS.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR,inDebitAccountRequest.getOriginReferenceNumber());
+        procedureRequestAS.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, inDebitAccountRequest.getDescription());
 
 		Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inDebitAccountRequest);
@@ -9107,6 +9109,8 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
                                         inReverseOperationRequest.getCommission().getOriginalTransactionData().getMovementId());
         procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,
                                               inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
+        procedureRequestAS.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getDescription());
+        procedureRequestAS.addInputParam("@i_description_com", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getCommission().getDescription());
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inReverseOperationRequest);
