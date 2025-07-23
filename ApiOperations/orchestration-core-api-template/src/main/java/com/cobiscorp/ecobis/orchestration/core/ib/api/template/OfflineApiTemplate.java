@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.cobiscorp.cobis.cis.sp.java.orchestration.SPJavaOrchestrationBase;
 import com.cobiscorp.cobis.commons.components.ComponentLocator;
@@ -1044,7 +1043,6 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 			request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR,"O");
 		}else {
 			request.addInputParam("@i_proceso", ICTSTypes.SYBVARCHAR,"N");
-			request.addInputParam("@i_linea", ICTSTypes.SQLVARCHAR, "S");
 		}
 			
 		request.addOutputParam("@o_cliente_mis", ICTSTypes.SYBINT4, "0");
@@ -1160,9 +1158,8 @@ public abstract class OfflineApiTemplate extends SPJavaOrchestrationBase {
 				request.addInputParam("@i_login", anOriginalRequest.readParam("@i_login").getDataType(), anOriginalRequest.readValueParam("@i_login"));
 			else
 				request.addInputParam("@i_login", anOriginalRequest.readParam("@s_user").getDataType(), anOriginalRequest.readValueParam("@s_user"));
-
-			String error = String.valueOf(Objects.nonNull(bag.get("s_error_cobis")) ? bag.get("s_error_cobis") : bag.get("s_error"));
-			request.addInputParam("@s_error", ICTSTypes.SQLVARCHAR, error);
+			
+			request.addInputParam("@s_error", ICTSTypes.SQLVARCHAR, (String) bag.get("s_error"));
 			request.addInputParam("@s_msg", ICTSTypes.SQLVARCHAR, (String) bag.get("s_msg"));
 			request.addInputParam("@i_auth_code", ICTSTypes.SQLINT4, (String)bag.get("i_auth_code"));
 
