@@ -631,8 +631,10 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_reentry", ICTSTypes.SQLVARCHAR, (String) aBagSPJavaOrchestration.get("reentry"));
 		request.addInputParam("@i_exe_status", ICTSTypes.SQLVARCHAR, executionStatus);
 		request.addInputParam("@i_movementId", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("@o_ssn_host")?aBagSPJavaOrchestration.get("@o_ssn_host").toString():null);
-		
-		request.addInputParam("@i_error", ICTSTypes.SQLINTN, aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString():null);
+
+		String errorCobis = aBagSPJavaOrchestration.containsKey("s_error")?aBagSPJavaOrchestration.get("s_error").toString():null;
+		request.addInputParam("@i_error", ICTSTypes.SQLINTN, errorCobis);
+
 		request.addOutputParam("@o_codigo", ICTSTypes.SQLINT4, "0");
 		request.addOutputParam("@o_mensaje", ICTSTypes.SQLVARCHAR, "X");
 		
@@ -646,6 +648,7 @@ public class AuthorizePurchaseDockOrchestrationCore extends OfflineApiTemplate {
 
 		if(wProductsQueryResp.readValueParam("@o_mensaje")!=null && !wProductsQueryResp.readValueParam("@o_mensaje").equals("X"))
 		{
+			aBagSPJavaOrchestration.put("s_error_cobis", errorCobis);
 			aBagSPJavaOrchestration.put("s_error", wProductsQueryResp.readValueParam("@o_codigo"));
 			aBagSPJavaOrchestration.put("s_msg", wProductsQueryResp.readValueParam("@o_mensaje"));
 		}
