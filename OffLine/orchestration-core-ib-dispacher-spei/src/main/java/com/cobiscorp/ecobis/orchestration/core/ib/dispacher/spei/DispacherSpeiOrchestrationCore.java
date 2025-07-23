@@ -14,6 +14,9 @@ import java.util.concurrent.*;
 
 import javax.xml.bind.JAXB;
 
+import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
+import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -1349,10 +1352,19 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addInputParam("@i_fecha_liq", ICTSTypes.SQLDATETIME, fechaLiq);
 		procedureRequest.addInputParam("@i_lc_hora_bm", ICTSTypes.SQLVARCHAR, hour);
 		//poner fecha de operacion karpay
+		procedureRequest.addOutputParam("@o_id_transaccion_core", ICTSTypes.SQLINTN, "");
 
 		IProcedureResponse procedureResponseLocal = executeCoreBanking(procedureRequest);
-		if(logger.isDebugEnabled())
-			logger.logDebug("response updateStatus :"+procedureResponseLocal.getCTSMessageAsString() );
+		if(logger.isDebugEnabled()) {
+			logger.logDebug("response updateStatus :" + procedureResponseLocal.getCTSMessageAsString());
+			logger.logDebug("has Error: "+procedureResponseLocal.hasError());
+		}
+
+		if(!procedureResponseLocal.hasError()){
+			aBagSPJavaOrchestration.put("@o_id_transaccion_core", procedureResponseLocal.readValueParam("@o_id_transaccion_core"));
+			updateSpeiAdditionalData(state, clave, aBagSPJavaOrchestration);
+		}
+
 
 		return procedureResponseLocal;
 	}
@@ -1380,6 +1392,36 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		return procedureResponseLocal;
 	}
+
+	private void updateSpeiAdditionalData(String state, String clave, Map<String, Object> aBagSPJavaOrchestration) {
+		if(logger.isDebugEnabled())
+			logger.logDebug("Staring updateSpeiAdditionalData" );
+
+		String movementType = "SPEI_DEBIT";
+		Map<String, String> bag = new HashMap<>();
+		bag.put("secuential", (String) aBagSPJavaOrchestration.get("@o_id_transaccion_core") );
+		bag.put("@i_estado_spei", state);
+		bag.put("@i_clave_rastreo", clave);
+		ServerRequest serverRequest = new ServerRequest();
+		serverRequest.setChannelId("8");
+		try {
+			if(logger.isDebugEnabled()){
+				logger.logDebug("secuential: "+aBagSPJavaOrchestration.get("@o_id_transaccion_core"));
+				logger.logDebug("@i_estado_spei: "+state);
+				logger.logDebug("@i_clave_rastreo: "+clave);
+			}
+			ServerResponse serverResponse = getCoreServer().getServerStatus(serverRequest);
+			SaveAdditionalDataImpl saveAdditionalData = new SaveAdditionalDataImpl();
+			if(logger.isDebugEnabled())
+				logger.logDebug("Server is: "+serverResponse.getOnLine());
+			saveAdditionalData.saveData(movementType, serverResponse.getOnLine(), bag, "U");
+			if(logger.isDebugEnabled())
+				logger.logDebug("Finishing updateSpeiAdditionalData");
+		} catch (CTSInfrastructureException | CTSServiceException e) {
+			if(logger.isErrorEnabled())
+				logger.logError(e);
+        }
+    }
 	
 	private IProcedureResponse insertUpdateInstitutions(IProcedureRequest request,
 			String code, String bankName, String typeInstitution, String state, String stadoPgd)
