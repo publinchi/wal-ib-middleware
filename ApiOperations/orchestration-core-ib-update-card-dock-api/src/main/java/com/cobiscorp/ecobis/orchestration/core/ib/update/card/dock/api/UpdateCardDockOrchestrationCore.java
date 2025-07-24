@@ -96,7 +96,14 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 		String flag = "S";
         String valCard = ""; 
 		wAccountsResp = getDataCardDock(aRequest, aBagSPJavaOrchestration);
-
+		
+		if (wAccountsResp.hasError()) {
+			if (logger.isDebugEnabled()) {
+				 logger.logDebug("Error en getDataCardDock: " + wAccountsResp.getReturnCode());
+		 	}
+			return wAccountsResp;
+        }
+		
 		if(wAccountsResp.getResultSets().size()>1 && !wAccountsResp.getResultSetRowColumnData(2, 1, 1).getValue().equals("0")){
 			return wAccountsResp;
 		}
