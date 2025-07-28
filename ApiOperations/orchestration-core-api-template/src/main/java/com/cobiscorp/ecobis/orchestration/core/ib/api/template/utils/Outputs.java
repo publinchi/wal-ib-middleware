@@ -18,4 +18,5 @@ public class Outputs {
    public static final String O_CREDITCONCEPT = "@o_creditConcept";
    public static final String O_MONEYTRANSMITTER = "@o_moneyTransmitter";
    public static final String O_SENDERNAME = "@o_senderName";
+   public static final String O_ORIGINCODE = "@o_originCode";
 }
