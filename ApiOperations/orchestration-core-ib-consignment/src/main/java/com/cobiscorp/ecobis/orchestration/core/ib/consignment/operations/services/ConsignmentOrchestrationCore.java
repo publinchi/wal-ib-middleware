@@ -341,6 +341,7 @@ public class ConsignmentOrchestrationCore extends OfflineApiTemplate {
         centralTransactionRequest.addOutputParam(Outputs.O_CREDITCONCEPT, ICTSTypes.SQLVARCHAR, "");
         centralTransactionRequest.addOutputParam(Outputs.O_MONEYTRANSMITTER, ICTSTypes.SQLVARCHAR, "");
         centralTransactionRequest.addOutputParam(Outputs.O_SENDERNAME, ICTSTypes.SQLVARCHAR, "");
+        centralTransactionRequest.addOutputParam(Outputs.O_ORIGINCODE, ICTSTypes.SQLINT4, "0");
 
         IProcedureResponse centralProcedureResponse = executeCoreBanking(centralTransactionRequest);
 
