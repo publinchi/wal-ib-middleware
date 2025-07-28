@@ -3032,7 +3032,7 @@ public class ServiceContractOperationsApiRest {
 			String reversalConcept = inReverseOperationRequest.getReversalConcept();
 			if ("REFUND_REVERSAL".equals(reversalConcept)) {
 				mandatoryFields.add(new Data("description", inReverseOperationRequest.getDescription()));
-				mandatoryFields.add(new Data("commission.description", inReverseOperationRequest.getCommission().getDescription()));
+				mandatoryFields.add(new Data("commission.description", inReverseOperationRequest.getDescription()));
 			}
 
 			// Validar los parámetros del cuerpo

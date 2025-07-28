@@ -9110,7 +9110,7 @@ public class ServiceContractOperationsApiService implements IServiceContractOper
         procedureRequestAS.addInputParam("@i_referenceNumber_com_ori",ICTSTypes.SQLVARCHAR,
                                               inReverseOperationRequest.getCommission().getOriginalTransactionData().getReferenceNumber());
         procedureRequestAS.addInputParam("@i_description", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getDescription());
-        procedureRequestAS.addInputParam("@i_description_com", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getCommission().getDescription());
+        procedureRequestAS.addInputParam("@i_description_com", ICTSTypes.SQLVARCHAR, inReverseOperationRequest.getDescription());
 
         Gson gsonTrans = new Gson();
         String jsonReqTrans = gsonTrans.toJson(inReverseOperationRequest);
