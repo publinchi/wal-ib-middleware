@@ -188,13 +188,21 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 							registerLogBd(wAccountsRespDock, aBagSPJavaOrchestration);
 							flag = "N";
 							aBagSPJavaOrchestration.put("flag_log",flag);
+							String responseUpdateCard = aBagSPJavaOrchestration.get("o_responseUpdateCard").toString();
 							
-							if(wAccountsRespDock.getReturnCode()!=0)
+							if (logger.isDebugEnabled()){
+								logger.logDebug(
+									"Code response update card form Dock: " + responseUpdateCard);
+								}
+
+							if(Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success")) && 
+								responseUpdateCard.contains("CARDS-003")){
+									cancelCardAtm(aRequest, aBagSPJavaOrchestration);
+									return wAccountsRespDock;
+								}
+							} else {
 								return wAccountsRespDock;
-						}
-						else{
-							return wAccountsRespDock;
-						}
+							}
 				}
 			}
 		
@@ -210,11 +218,13 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 			{					
 					IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
 					wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
-					if(aRequest.readValueParam("@i_card_status").equals("C")){
-						cancelCardAtm(aRequest, aBagSPJavaOrchestration);
-					}
-					else{
-						updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
+					if(Boolean.TRUE.equals(aBagSPJavaOrchestration.get("o_success"))){
+						if(aRequest.readValueParam("@i_card_status").equals("C")){
+							cancelCardAtm(aRequest, aBagSPJavaOrchestration);
+						}
+						else{
+							updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
+						}
 					}
 					return wAccountsRespInsert;
 				}
@@ -963,9 +973,11 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 			else {
 				aBagSPJavaOrchestration.put("o_responseUpdateCard", "null");}
 			
-			if (connectorCardResponse.readValueParam("@o_success") != null) {
-				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_success"));}
-			else {
+			if (connectorCardResponse.readValueParam("@o_success") != "false" ) {
+				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_card_id"));
+			}else if (connectorCardResponse.readValueParam("@o_success") == "false") {
+				aBagSPJavaOrchestration.put("o_success", false);
+			}else {
 				aBagSPJavaOrchestration.put("o_success", "null");}			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1220,13 +1232,17 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 		Integer trn = 16507;
 		String reason = "SCL";
 		String card = null;
-		
+		String card_id = null;
+
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Entrando en cancelCardAtm");
 		}
 		
 		if(aBagSPJavaOrchestration.get("o_cancel").toString().equals("Y")) {
 			card = aBagSPJavaOrchestration.get("o_assigned_card_id").toString();
+		} else if(aBagSPJavaOrchestration.get("o_responseUpdateCard") != null &&
+			aBagSPJavaOrchestration.get("o_responseUpdateCard").toString().contains("CARDS-003")){
+			card_id = aBagSPJavaOrchestration.get("o_id_card_dock").toString();
 		} else {
 			card = aBagSPJavaOrchestration.get("o_id_card_atm").toString();
 		}
@@ -1240,6 +1256,7 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 		request.addInputParam("@i_tipo_sol_org", ICTSTypes.SQLVARCHAR, "");
 		request.addInputParam("@i_banco", ICTSTypes.SQLINT4, "1");
 		request.addInputParam("@i_tarjeta", ICTSTypes.SQLINT4, card);
+		request.addInputParam("@i_tarjeta_id", ICTSTypes.SQLVARCHAR, card_id);
 		request.addInputParam("@i_motivo", ICTSTypes.SQLVARCHAR, reason);
 		request.addInputParam("@i_observaciones", ICTSTypes.SQLVARCHAR, "Eliminacion Tarjeta API");
 		request.addInputParam("@i_proceso_val", ICTSTypes.SQLVARCHAR, "CAN");
@@ -1537,8 +1554,7 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 			}
 			else if (Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success"))){
 				if (logger.isDebugEnabled()) {
-					logger.logDebug("Ending flow, processResponse failed from Dock: " +					 
-					anOriginalProcedureRes.readValueParam("@o_responseUpdateCard").toString());
+					logger.logDebug("Ending flow, processResponse failed from Dock");				 
 				}
 
 				String message = "Service execution error";
