@@ -1933,7 +1933,11 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			movementDetails.setTransactionStatus( columns[11].getValue());
 
 			//Remesas
-			if(concept != null && concept.equals("CREDIT_REVERSAL")){
+			if(concept != null && concept.equals("REMITTANCE_CREDIT")){
+				movementDetails.setOwnerNameSA( null);
+				movementDetails.setAccountNumberSA( null);
+				movementDetails.setOwnerNameDA( columns[18].getValue());
+				movementDetails.setAccountNumberDA( columns[19].getValue());
 				movementDetails.setRemittanceTransactionReferenceNumber(columns[40].getValue());
 				movementDetails.setOriginCode(columns[46].getValue());
 				movementDetails.setSenderName(columns[38].getValue());
@@ -1943,6 +1947,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				movementDetails.setOriginCurrency(columns[43].getValue());
 				movementDetails.setExchangeRate(columns[45].getValue());
 			} else if(concept != null && concept.equals("REMITTANCE_REVERSAL")) {
+				movementDetails.setOwnerNameSA( columns[18].getValue());
+				movementDetails.setAccountNumberSA( columns[19].getValue());
+				movementDetails.setOwnerNameDA( null);
+				movementDetails.setAccountNumberDA( null);
 				movementDetails.setReversalConcept(columns[7].getValue());
 				movementDetails.setRemittanceTransactionReferenceNumber(columns[40].getValue());
 				movementDetails.setOriginMovementId(columns[47].getValue());
