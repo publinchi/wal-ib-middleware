@@ -1936,8 +1936,8 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			if(concept != null && concept.equals("REMITTANCE_CREDIT")){
 				movementDetails.setOwnerNameSA( null);
 				movementDetails.setAccountNumberSA( null);
-				movementDetails.setOwnerNameDA( columns[21].getValue());
-				movementDetails.setAccountNumberDA( columns[22].getValue());
+				movementDetails.setOwnerNameDA( columns[18].getValue());
+				movementDetails.setAccountNumberDA( columns[19].getValue());
 				movementDetails.setRemittanceTransactionReferenceNumber(columns[40].getValue());
 				movementDetails.setOriginCode(columns[46].getValue());
 				movementDetails.setSenderName(columns[38].getValue());
