@@ -1886,7 +1886,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 	}
 
 	public List<MovementDetails> getFailedMovementsDetails(IProcedureResponse anProcedureResponse) {
-		logger.logDebug("KCZ: getMovementsDetails" + anProcedureResponse.getProcedureResponseAsString());
+		logger.logDebug("APA: getMovementsFailedDetails" + anProcedureResponse.getProcedureResponseAsString());
 		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(1);
 		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
 		List<MovementDetails> movementDetailsList = new ArrayList<>();
@@ -1895,6 +1895,7 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
 			BigDecimal amount = getBigDecimalValue(columns[2].getValue());
 			BigDecimal iva = getBigDecimalValue(columns[6].getValue());
+			String concept = columns[7].getValue();
 			amount = amount.add(iva);
 			movementDetails.setOperationType( columns[4].getValue());
 			movementDetails.setMovementType( columns[12].getValue());
@@ -1930,7 +1931,33 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			movementDetails.setErrorCode( columns[36].getValue());
 			movementDetails.setErrorMessage( columns[37].getValue());
 			movementDetails.setTransactionStatus( columns[11].getValue());
-			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
+
+			//Remesas
+			if(concept != null && concept.equals("REMITTANCE_CREDIT")){
+				movementDetails.setOwnerNameSA( null);
+				movementDetails.setAccountNumberSA( null);
+				movementDetails.setOwnerNameDA( columns[18].getValue());
+				movementDetails.setAccountNumberDA( columns[19].getValue());
+				movementDetails.setRemittanceTransactionReferenceNumber(columns[40].getValue());
+				movementDetails.setOriginCode(columns[46].getValue());
+				movementDetails.setSenderName(columns[38].getValue());
+				movementDetails.setMoneyTransmitter(columns[39].getValue());
+				movementDetails.setOriginCountry(columns[41].getValue());
+				movementDetails.setCurrency(columns[42].getValue());
+				movementDetails.setOriginCurrency(columns[43].getValue());
+				movementDetails.setExchangeRate(columns[45].getValue());
+			} else if(concept != null && concept.equals("REMITTANCE_REVERSAL")) {
+				movementDetails.setOwnerNameSA( columns[18].getValue());
+				movementDetails.setAccountNumberSA( columns[19].getValue());
+				movementDetails.setOwnerNameDA( null);
+				movementDetails.setAccountNumberDA( null);
+				movementDetails.setReversalConcept(columns[7].getValue());
+				movementDetails.setRemittanceTransactionReferenceNumber(columns[40].getValue());
+				movementDetails.setOriginMovementId(columns[47].getValue());
+				movementDetails.setOriginTransactionReferenceNumber(columns[44].getValue());
+				movementDetails.setReversalOriginCode(columns[46].getValue());
+			}
+			logger.logDebug("APA: getMovementsFailedDetails" + movementDetails.toString());
 			movementDetailsList.add(movementDetails);
 		}
 		return movementDetailsList;
