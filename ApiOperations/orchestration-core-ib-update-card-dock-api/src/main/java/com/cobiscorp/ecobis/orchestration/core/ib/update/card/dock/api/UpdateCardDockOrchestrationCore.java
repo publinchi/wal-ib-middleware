@@ -197,8 +197,7 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 
 							if(Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success")) && 
 								responseUpdateCard.contains("CARDS-003")){
-									cancelCardAtm(aRequest, aBagSPJavaOrchestration);
-									return wAccountsRespDock;
+									return cancelCardAtm(aRequest, aBagSPJavaOrchestration);
 								}
 							} else {
 								return wAccountsRespDock;
@@ -218,6 +217,13 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 			{					
 					IProcedureResponse wAccountsRespInsert = new ProcedureResponseAS();
 					wAccountsRespInsert = executeUpdateCard(aRequest, aBagSPJavaOrchestration);
+					String responseUpdateCard = aBagSPJavaOrchestration.get("o_responseUpdateCard").toString();
+							
+					if (logger.isDebugEnabled()){
+						logger.logDebug(
+							"Code response update card form Dock: " + responseUpdateCard);
+						}
+
 					if(Boolean.TRUE.equals(aBagSPJavaOrchestration.get("o_success"))){
 						if(aRequest.readValueParam("@i_card_status").equals("C")){
 							cancelCardAtm(aRequest, aBagSPJavaOrchestration);
@@ -225,6 +231,9 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 						else{
 							updateStatusAtm(aRequest, aBagSPJavaOrchestration);	
 						}
+					} else if (responseUpdateCard.contains("CARDS-003")){
+						registerLogBd(wAccountsRespInsert, aBagSPJavaOrchestration);
+						return cancelCardAtm(aRequest, aBagSPJavaOrchestration);
 					}
 					return wAccountsRespInsert;
 				}
@@ -842,12 +851,18 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 			if (connectorCardResponse.readValueParam("@o_card_id") != null) {
 				aBagSPJavaOrchestration.put("o_card_id", connectorCardResponse.readValueParam("@o_card_id"));}
 			else {
-				aBagSPJavaOrchestration.put("o_card_id", "null");}
+				aBagSPJavaOrchestration.put("o_card_id", "null");
+			}
+			
+			if (connectorCardResponse.readValueParam("@o_responseUpdateCard") != null) {
+				aBagSPJavaOrchestration.put("o_responseUpdateCard", connectorCardResponse.readValueParam("@o_responseUpdateCard"));}
+			else {
+				aBagSPJavaOrchestration.put("o_responseUpdateCard", "null");
+			}	
 
-			if (connectorCardResponse.readValueParam("@o_success") != null && 
-					connectorCardResponse.readValueParam("@o_success") != "false" ) {
-				aBagSPJavaOrchestration.put("o_success", connectorCardResponse.readValueParam("@o_card_id"));
-			}else if (connectorCardResponse.readValueParam("@o_success") == "false") {
+			if (connectorCardResponse.readValueParam("@o_success") == "true") {
+				aBagSPJavaOrchestration.put("o_success", true);
+			}else {
 				aBagSPJavaOrchestration.put("o_success", false);
 			}
 			
@@ -1272,7 +1287,15 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 		
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Response Corebanking cancelCardAtm: " + wProductsQueryResp.getProcedureResponseAsString());
+			logger.logDebug("Code cancelCardAtm: " + wProductsQueryResp.getReturnCode());
 		}
+
+		if (wProductsQueryResp.getReturnCode() == 0){
+			aBagSPJavaOrchestration.put("cancelResponse", true);
+		} else {
+			aBagSPJavaOrchestration.put("cancelResponse", false);
+		}
+
 
 		if (logger.isInfoEnabled()) {
 			logger.logInfo(CLASS_NAME + " Saliendo de cancelCardAtm");
@@ -1550,9 +1573,8 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 					row3.addRowData(1, new ResultSetRowColumnData(false, aBagSPJavaOrchestration.get("o_id_card_dock").toString()));
 					data3.addRow(row3);
 				}
-								
-			}
-			else if (Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success"))){
+				
+			}else if (Boolean.FALSE.equals(aBagSPJavaOrchestration.get("o_success")) && Boolean.TRUE.equals(aBagSPJavaOrchestration.get("cancelResponse"))){
 				if (logger.isDebugEnabled()) {
 					logger.logDebug("Ending flow, processResponse failed from Dock");				 
 				}
@@ -1570,6 +1592,7 @@ public class UpdateCardDockOrchestrationCore extends OfflineApiTemplate {
 				row2.addRowData(2, new ResultSetRowColumnData(false, message));
 				data2.addRow(row2);
 			}
+
 			else{
 				if (logger.isDebugEnabled()) {logger.logDebug("Ending flow, processResponse error");}
 				
