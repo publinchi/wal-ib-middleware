@@ -24,13 +24,13 @@ namespace ConsolaNetReader
 
         private static readonly byte[] Key = Encoding.UTF8.GetBytes("Xi9dA9/agZLXZiVBh0nXSitTngwfw35Y"); // La clave debe tener 32 caracteres
         private static readonly byte[] IV = Encoding.UTF8.GetBytes("TpSrOzrHlPBMPR3m"); // El vector de inicialización (IV) debe tener 16 caracteres
-        static void Main(string[] args)
+        public static async System.Threading.Tasks.Task Main(string[] args)
 
         {
 
-            string templates = ConfigurationManager.AppSettings["mail"];
+          /*  string templates = ConfigurationManager.AppSettings["mail"];
 
-            string correo= File.ReadAllText(templates);
+            string correo= File.ReadAllText(templates);*/
 
 
             string cifred= Encrypt("dbad94ec5c744391077d7fac72ca4737a05ac06e0091bec8ccfb65e7309b1d539da851c2e38171cbb394db20543d67a5");
@@ -40,7 +40,7 @@ namespace ConsolaNetReader
             Console.WriteLine(horario);
 
                 ContractSend sender = new ContractSend();
-                sender.EnviaContrato();
+              await  sender.EnviaContratoAsync();
 
         }
 

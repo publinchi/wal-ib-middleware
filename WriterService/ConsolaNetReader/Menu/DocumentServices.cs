@@ -97,12 +97,7 @@ namespace DocumentServices
 
 
             ServicesDocuments doc = new ServicesDocuments();
-            doc.documentsGenerator();
-            
-            timer = new System.Timers.Timer();
-            timer.Interval = int.Parse(espera); 
-            timer.Elapsed += Timer_Elapsed;
-            timer.Start();
+            doc.Iniciar();
         }
 
         static void DeleteFiles(string directoryPath, string searchPattern)
@@ -120,8 +115,7 @@ namespace DocumentServices
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            ServicesDocuments doc = new ServicesDocuments();
-            doc.documentsGenerator();
+
 
         }
 

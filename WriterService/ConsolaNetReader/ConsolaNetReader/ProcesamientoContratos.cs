@@ -37,6 +37,7 @@ using System.Globalization;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Diagnostics.Contracts;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 
 
@@ -44,21 +45,15 @@ namespace ConsolaNetReader
 {
 
 
-    public class ProcesamientoContratos
+    public class ProcesamientoContratos: ServicesDocuments
     {
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProcesamientoContratos));
 
         private static byte[] documento;
-        // private const string directoryPath = "c:/cobis/contratos/";
-        // private const string fileName = "plantilla.docx";
-        private string deposito;
-        private string temporales;
-        private string plantillas;
-        private string generated;
+       
         private string token;
-        private string plantilla;
-        private string plantillaGeneral;
+  
         private string commonFileName;
         private string fileNameDoc;
         private string fileNamePdf;
@@ -70,11 +65,7 @@ namespace ConsolaNetReader
         public int customerId;
         private string client;
         private string secret;
-        private string getDataApi;
-        private string procesingApi;
-        private string confirmationApi;
-        private const string pdf = ".pdf";
-        private const string doc = ".docx";
+
 
 
 
@@ -89,10 +80,7 @@ namespace ConsolaNetReader
             {
                 this.client = ConfigurationManager.AppSettings["client"];
                 this.secret = ConfigurationManager.AppSettings["secret"];
-                this.getDataApi = ConfigurationManager.AppSettings["getDataApi"];
-                this.procesingApi = ConfigurationManager.AppSettings["processApi"];
-                this.confirmationApi = ConfigurationManager.AppSettings["confirmationApi"];
-                this.plantillaGeneral = ConfigurationManager.AppSettings["plantillaGeneral"];
+
 
                 this.token = token;
 
@@ -102,34 +90,11 @@ namespace ConsolaNetReader
                 var clientId = this.client;
                 var clientSecret = this.secret;
 
-                this.deposito = ConfigurationManager.AppSettings["deposit"];
-                this.plantillas = ConfigurationManager.AppSettings["templates"];
-                this.generated = ConfigurationManager.AppSettings["generated"];
-                this.plantilla = ConfigurationManager.AppSettings["plantilla"];
-                this.temporales = ConfigurationManager.AppSettings["temporales"];
-
                 log.Info("deposito " + deposito);
                 log.Info("plantillas " + plantillas);
                 log.Info("generated " + generated);
                 log.Info("plantilla " + plantilla);
 
-
-                /*   log.Info("Generando Token");
-
-
-                  var client = new RestClient(authUrl); 
-                    var request = new RestRequest(authUrl, Method.Post);
-
-                    request.AddParameter("grant_type", "client_credentials");
-                    request.AddParameter("client_id", clientId);
-                    request.AddParameter("client_secret", clientSecret);
-
-
-                     RestResponse response = client.Execute(request);
-                  var tokenData = JObject.Parse(response.Content);
-                  this.token = tokenData["access_token"].ToString();
-
-                  log.Info("Token generado.....");*/
             }
             catch (Exception xe)
             {
@@ -160,13 +125,14 @@ namespace ConsolaNetReader
 
 
 
-        public void defineDocumento(Contrato contratos)
+        public async Task<bool> defineDocumento(Contrato contratos)
         {
 
             string contractToMail = null;
 
             bool flagContrato = false;
             bool flagDatosGenerales = false;
+            bool success=true;
 
             try
             {
@@ -183,15 +149,34 @@ namespace ConsolaNetReader
 
                     try
                     {
-                        String rutaOriginal = System.IO.Path.Combine(plantillas, this.plantilla);
-                        File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
-                        plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));
 
+
+                        /*  String rutaOriginal = System.IO.Path.Combine(plantillas, base.plantilla);
+                          File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
+                          plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));*/
+
+                        string rutaTemporal = base.manager.CrearCopiaTemporal();
+                        plantilla = wordApp.Documents.Open(rutaTemporal);
                         aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
                         contractToMail = convertToPDF();
-                        uploadFile("CONTRATO");
-                        flagContrato = true;
-
+                        if (contractToMail != "ERROR")
+                        {
+                            flagContrato = true;
+                            ContractSend mail = new ContractSend(contratos, contractToMail);
+                            bool sender = await mail.EnviaContratoAsync();
+                            if (sender)
+                            {
+                                try
+                                {
+                                    uploadFile("CONTRATO");
+                                }
+                                catch (Exception ex)
+                                {
+                                    log.Info("Error al enviar el correo");
+                                    log.Error(ex);
+                                }
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -200,6 +185,7 @@ namespace ConsolaNetReader
                     finally
                     {
                         wordApp.Quit();
+                        Marshal.ReleaseComObject(wordApp);
 
                         File.Delete(System.IO.Path.Combine(temporales, this.temporalFile));
                     }
@@ -220,10 +206,9 @@ namespace ConsolaNetReader
                     try
                     {
 
-                        string rutaGeneral = System.IO.Path.Combine(plantillas, this.plantillaGeneral);
-                        File.Copy(rutaGeneral, System.IO.Path.Combine(temporales, this.temporalFileGeneral), overwrite: true);
-                        plantillaGeneral = wordApp2.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
+                        plantillaGeneral = wordApp2.Documents.Open(general.CrearCopiaTemporal());
                         aplicaCambiosContrato(contratos, plantillaGeneral, "DATOS CLIENTE");
+
                         convertToPDF();
                         uploadFile("DATOS CLIENTE");
                         flagDatosGenerales = true;
@@ -235,36 +220,20 @@ namespace ConsolaNetReader
                     finally
                     {
                         wordApp2.Quit();
-
+                        Marshal.ReleaseComObject(wordApp);
                         File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
                     }
                 } else
                     flagDatosGenerales = true;
 
-
-                try
-                {
-                    if (flagContrato && flagDatosGenerales && contractToMail != null)
-                    {
-                        ContractSend mail = new ContractSend(contratos, contractToMail);
-                        mail.EnviaContrato();
-                    }
-                    else if (contractToMail == null) {
-                        log.Info("Sin contrato generado, no envia mail");
-                    }
-
-
-                }
-                catch (Exception xe)
-                {
-                    log.Error(xe);
-                }
-
             }
             catch (Exception xe)
             {
+                success = false;
                 log.Error(xe);
             }
+
+            return success;
 
         }
 
@@ -306,6 +275,7 @@ namespace ConsolaNetReader
                 {
                     log.Info(typeFile + "::: Se cargo existosamente");
                     confirmaGeneraciónCarga(typeFile);
+                    File.Delete(generated + fileNamePdf);
 
                 }
                 else
@@ -333,7 +303,7 @@ namespace ConsolaNetReader
             try
             {
                 log.Info(type + " confirmaGeneraciónCarga ");
-                var apiUrl = this.confirmationApi;
+                var apiUrl = confirmationApi;
 
                 var json = new
                 {
@@ -362,6 +332,7 @@ namespace ConsolaNetReader
             }
             catch (Exception xe)
             {
+                
                 log.Error(xe);
             }
         }
@@ -373,6 +344,7 @@ namespace ConsolaNetReader
             Microsoft.Office.Interop.Word.Application appWord = null;
 
             string contract = null;
+            bool close = true;
 
             try
             {
@@ -393,6 +365,10 @@ namespace ConsolaNetReader
                 }
                 else {
                     log.Info("No existe ruta imposible geranerar PDF " + deposito + fileNameDoc);
+                    contract = "ERROR";
+                     close = false;
+
+
                 }
             }
             catch (Exception xe)
@@ -401,9 +377,12 @@ namespace ConsolaNetReader
             }
             finally
             {
-                wordDocument.Close();
-                appWord.Quit();
-                File.Delete(deposito + fileNameDoc);
+                if (close)
+                {
+                    wordDocument.Close();
+                    appWord.Quit();
+                    File.Delete(deposito + fileNameDoc);
+                }
             }
 
             return contract;
@@ -463,10 +442,6 @@ namespace ConsolaNetReader
 
 
         }
-
-
-
-
 
         private void aplicaCambiosContrato(Contrato contratos, Microsoft.Office.Interop.Word.Document plantilla, string type)
         {
@@ -536,10 +511,26 @@ namespace ConsolaNetReader
                     foreach (Range seleccion in plantilla.StoryRanges)
                     {
 
-                        seleccion.Find.Execute(FindText: valor.Llave, ReplaceWith: values, MatchWildcards: false, Forward: true, Format: false, Wrap: WdFindWrap.wdFindContinue, Replace: WdReplace.wdReplaceAll,
-                          MatchCase: true, MatchWholeWord: false, MatchSoundsLike: false, MatchAllWordForms: false, MatchKashida: false, MatchDiacritics: false, MatchAlefHamza: false,
-                           MatchControl: false);
+                        /* seleccion.Find.Execute(FindText: valor.Llave, ReplaceWith: values, MatchWildcards: false, Forward: true, Format: false, Wrap: WdFindWrap.wdFindContinue, Replace: WdReplace.wdReplaceAll,
+                           MatchCase: true, MatchWholeWord: false, MatchSoundsLike: false, MatchAllWordForms: false, MatchKashida: false, MatchDiacritics: false, MatchAlefHamza: false,
+                            MatchControl: false);*/
+
+                        seleccion.Find.ClearFormatting();
+                        seleccion.Find.Replacement.ClearFormatting();
+
+                        seleccion.Find.Execute(
+                            FindText: valor.Llave,
+                            ReplaceWith: values ?? string.Empty,
+                            Replace: WdReplace.wdReplaceAll,
+                            MatchCase: false,
+                            MatchWholeWord: false,
+                            MatchWildcards: false
+                        );
+
+
                     }
+
+    
                 }
 
                 if (type.Equals("CONTRATO"))
@@ -694,7 +685,7 @@ namespace ConsolaNetReader
             {
                 log.Info("Comienza recuperarDatosContratos");
 
-                string apiUrl = this.getDataApi;
+                string apiUrl = getDataApi;
                 WebClient client = new WebClient();
                 string bearerToken = this.token;
                 client.Headers.Add(HttpRequestHeader.Authorization, "Bearer " + bearerToken);
