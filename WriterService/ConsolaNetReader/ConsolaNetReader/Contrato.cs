@@ -10,6 +10,7 @@ namespace ConsolaNetReader
     {
        private List<Valores> valores;
        private List<Beneficiario> beneficiarios;
+        private bool generado;
         public Contrato() { }
 
         public List<Valores> Valores { get => valores; set => valores = value; }
@@ -20,5 +21,6 @@ namespace ConsolaNetReader
             set { beneficiarios = value;}
         }
 
+        public bool Generado { get => generado; set => generado = value; }
     }
 }

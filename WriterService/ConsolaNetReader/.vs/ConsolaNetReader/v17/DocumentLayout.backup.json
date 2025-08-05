@@ -1,18 +1,74 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\",
+  "WorkspaceRootPath": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\contractsend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\contractsend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\requestemail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\requestemail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\servicesdocuments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\servicesdocuments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\descargacontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\descargacontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\consolanetreader\\procesamientocontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\procesamientocontratos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\consolanetreader\\plantillageneralmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\plantillageneralmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\consolanetreader\\plantillamanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\plantillamanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\consolanetreader\\proceso.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\proceso.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\documentservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|c:\\waltmart\\wal-ib-middleware\\writerservice\\consolanetreader\\menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|c:\\dev\\auronix\\wal-ib-middleware\\writerservice\\consolanetreader\\consolanetreader\\valores.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\valores.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\contrato.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\contrato.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\menu\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E01A5304-328E-445E-A942-7468AC76302C}|Menu\\MenuDocumentServices.csproj|solutionrelative:menu\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\consolanetreader\\beneficiario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6F805EA-CA56-42C2-B86D-8C27E92A798C}|ConsolaNetReader\\ConsolaNetReader.csproj|solutionrelative:consolanetreader\\beneficiario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,41 +86,221 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
               "Title": "DocumentServices.cs",
-              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
               "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
-              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
               "RelativeToolTip": "Menu\\DocumentServices.cs",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAowGIAAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAowGMAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-13T23:14:18.481Z",
+              "WhenOpened": "2025-08-05T06:48:09.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ServicesDocuments.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\ServicesDocuments.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\ServicesDocuments.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\ServicesDocuments.cs",
+              "RelativeToolTip": "ConsolaNetReader\\ServicesDocuments.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAA9wDoAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-03T20:10:55.546Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DescargaContratos.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\DescargaContratos.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\DescargaContratos.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\DescargaContratos.cs",
+              "RelativeToolTip": "ConsolaNetReader\\DescargaContratos.cs",
+              "ViewState": "AgIAAP0AAAAAAAAAAAAcwA0BAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T14:22:30.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "DocumentServices.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
+              "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs [Dise\u00F1o]",
+              "RelativeToolTip": "Menu\\DocumentServices.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-05T06:31:57.236Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ProcesamientoContratos.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\ProcesamientoContratos.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\ProcesamientoContratos.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\ProcesamientoContratos.cs",
+              "RelativeToolTip": "ConsolaNetReader\\ProcesamientoContratos.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAADwv9AAAABdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T19:03:07.064Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ContractSend.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\ContractSend.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\ContractSend.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\ContractSend.cs",
+              "RelativeToolTip": "ConsolaNetReader\\ContractSend.cs",
+              "ViewState": "AgIAAK4AAAAAAAAAAAAAAMAAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T14:22:30.098Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PlantillaManager.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\PlantillaManager.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\PlantillaManager.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\PlantillaManager.cs",
+              "RelativeToolTip": "ConsolaNetReader\\PlantillaManager.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAkAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-05T06:31:04.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "App.config",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\App.config",
+              "RelativeDocumentMoniker": "Menu\\App.config",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\App.config",
+              "RelativeToolTip": "Menu\\App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-08-03T19:38:23.601Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "DocumentServices.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs",
-              "RelativeDocumentMoniker": "Menu\\DocumentServices.cs",
-              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\DocumentServices.cs [Dise\u00F1o]",
-              "RelativeToolTip": "Menu\\DocumentServices.cs [Dise\u00F1o]",
+              "Title": "RequestEmail.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\RequestEmail.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\RequestEmail.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\RequestEmail.cs",
+              "RelativeToolTip": "ConsolaNetReader\\RequestEmail.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAowDkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-13T23:14:01.861Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "WhenOpened": "2025-07-15T16:32:43.648Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "App.config",
-              "DocumentMoniker": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\App.config",
-              "RelativeDocumentMoniker": "Menu\\App.config",
-              "ToolTip": "C:\\waltmart\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\App.config",
-              "RelativeToolTip": "Menu\\App.config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-06-13T23:13:20.137Z",
+              "DocumentIndex": 5,
+              "Title": "PlantillaGeneralManager.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\PlantillaGeneralManager.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\PlantillaGeneralManager.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\PlantillaGeneralManager.cs",
+              "RelativeToolTip": "ConsolaNetReader\\PlantillaGeneralManager.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAYwBMAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-05T06:59:29.197Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Proceso.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Proceso.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\Proceso.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Proceso.cs",
+              "RelativeToolTip": "ConsolaNetReader\\Proceso.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-05T06:51:01.499Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Contrato.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Contrato.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\Contrato.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Contrato.cs",
+              "RelativeToolTip": "ConsolaNetReader\\Contrato.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAoAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-04T01:06:25.076Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\Program.cs",
+              "RelativeDocumentMoniker": "Menu\\Program.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\Menu\\Program.cs",
+              "RelativeToolTip": "Menu\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-03T20:21:49.512Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Valores.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Valores.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\Valores.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Valores.cs",
+              "RelativeToolTip": "ConsolaNetReader\\Valores.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-05T06:04:23.08Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Program.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\Program.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Program.cs",
+              "RelativeToolTip": "ConsolaNetReader\\Program.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAADwvyoAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T19:03:09.108Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "App.config",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\App.config",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\App.config",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\App.config",
+              "RelativeToolTip": "ConsolaNetReader\\App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-07-15T19:37:49.141Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Beneficiario.cs",
+              "DocumentMoniker": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Beneficiario.cs",
+              "RelativeDocumentMoniker": "ConsolaNetReader\\Beneficiario.cs",
+              "ToolTip": "C:\\dev\\Auronix\\wal-ib-middleware\\WriterService\\ConsolaNetReader\\ConsolaNetReader\\Beneficiario.cs",
+              "RelativeToolTip": "ConsolaNetReader\\Beneficiario.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-03T19:38:02.105Z"
             }
           ]
         }
