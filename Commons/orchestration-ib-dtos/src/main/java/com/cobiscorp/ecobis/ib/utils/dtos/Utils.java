@@ -44,7 +44,7 @@ import com.cobiscorp.ecobis.ib.orchestration.dtos.ProductConsolidate;
  */
 public class Utils {
 	private static ILogger logger = LogFactory.getLogger(Utils.class);
-	private static final String CLASS_NAME = " >-----> ";
+	//private static final String CLASS_NAME = " >-----> ";
 
 	/**
 	 * Set properties IProcedureResponse to BaseResponse
@@ -54,7 +54,7 @@ public class Utils {
 	 */
 	public static void transformIprocedureResponseToBaseResponse(BaseResponse base, IProcedureResponse response) {
 		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "Respuesta  a validar" + response);
+			logger.logDebug( "Respuesta  a validar" + response);
 		base.setSuccess(true);
 		Iterator itMessages = response.getMessages().iterator();
 		IMessageBlock messageBlock = null;
@@ -94,7 +94,7 @@ public class Utils {
 	 */
 	public static void transformBaseResponseToIprocedureResponse(BaseResponse base, IProcedureResponse response) {
 		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "Respuesta  a validar" + base);
+			logger.logDebug( "Respuesta  a validar" + base);
 		if (base.getSuccess() && base.getMessage() == null) {
 			response.setReturnCode(0);
 		} else {
@@ -115,8 +115,6 @@ public class Utils {
 			if (params[i] instanceof IProcedureRequestParam) {
 				IProcedureRequestParam param = (IProcedureRequestParam) params[i];
 				if (param.getIOType() == 1) {
-					if (logger.isDebugEnabled())
-						logger.logDebug(CLASS_NAME + "Removiendo parametro output " + param.getName());
 					request.removeParam(param.getName());
 				}
 			}
@@ -133,8 +131,6 @@ public class Utils {
 
 	public static boolean flowError(String stepName, IProcedureResponse response) {
 		if ((response == null) || (response.getReturnCode() != 0) || !validateErrorCode(response, 0)) {
-			if (logger.isWarningEnabled())
-				logger.logWarning(CLASS_NAME + "Error en el flujo, " + stepName + " retorno:" + (response != null ? response.getReturnCode() : "null"));
 			return true;
 		}
 		return false;
@@ -142,11 +138,11 @@ public class Utils {
 
 	public static boolean validateErrorCode(IProcedureResponse response, int code) {
 		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Validando existencia del codigo " + code + " en la respuesta :" + response.getProcedureResponseAsString());
+			logger.logInfo( " Validando existencia del codigo " + code + " en la respuesta :" + response.getProcedureResponseAsString());
 
 		if ((response.hasError() == false) && (code == 0)) {
 			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + " No existe mensajes de error");
+				logger.logInfo( " No existe mensajes de error");
 			return true;
 		}
 
@@ -163,15 +159,13 @@ public class Utils {
 					messageNumber = ((IMessageBlock) msgBlock).getMessageNumber();
 					if (messageNumber == code) {
 						if (logger.isInfoEnabled())
-							logger.logInfo(CLASS_NAME + " Existe el c�digo " + code + " en la respuesta");
+							logger.logInfo( " Existe el c�digo " + code + " en la respuesta");
 
 						return true;
 					}
 				}
 			}
 		}
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " No existe el c�digo " + code + " en la respuesta");
 		return false;
 	}
 
@@ -180,7 +174,7 @@ public class Utils {
 			newRequest.addInputParam(newParamName, request.readParam(orginalParamName).getDataType(), request.readValueParam(orginalParamName));
 		} else {
 			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + "::El par�metro " + orginalParamName + " no existe en el request");
+				logger.logInfo( "::El par�metro " + orginalParamName + " no existe en el request");
 		}
 	}
 
@@ -191,13 +185,13 @@ public class Utils {
 		boolean addParam = false;
 
 		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + " ProcedureResponse que se va a pasar como parametros sus resultSets: " + procedureResponse.getProcedureResponseAsString());
+			logger.logDebug( " ProcedureResponse que se va a pasar como parametros sus resultSets: " + procedureResponse.getProcedureResponseAsString());
 
 		IResultSetBlock resultSet = procedureResponse.getResultSet(resultsetNumber);
 
 		if (resultSet == null) {
 			if (logger.isDebugEnabled())
-				logger.logDebug(CLASS_NAME + "Resultset vacio, se retorna ProcedureResponse original");
+				logger.logDebug( "Resultset vacio, se retorna ProcedureResponse original");
 			return;
 		}
 
@@ -225,9 +219,6 @@ public class Utils {
 				}
 
 				if (addParam) {
-					if (logger.isDebugEnabled())
-						logger.logDebug(CLASS_NAME + " agregando resulset como parametro: nombre:" + nameParam + " tipo: " + typeParam + " valor:" + valueParam);
-
 					int length = 0;
 					if (valueParam != null)
 						length = valueParam.length();
@@ -251,7 +242,7 @@ public class Utils {
 			request.addInputParam(inParamName, response.readParam(outParamName).getDataType(), response.readValueParam(outParamName));
 		} else {
 			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + "::El par�metro " + outParamName + " no existe en el response");
+				logger.logInfo( "::El par�metro " + outParamName + " no existe en el response");
 		}
 
 	}
@@ -327,9 +318,6 @@ public class Utils {
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("currencyName", ICTSTypes.SQLVARCHAR, 50));
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("productAlias", ICTSTypes.SQLVARCHAR, 50));
 
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("ARMANDO RESPONSE");
-		}
 		for (ProductConsolidate product : consolidateResponse.getProductCollection()) {
 			IResultSetRow row = new ResultSetRow();
 			if (logger.isDebugEnabled()) {
@@ -400,9 +388,6 @@ public class Utils {
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("documentType", ICTSTypes.SQLVARCHAR, 50));// 11
 		metaData.addColumnMetaData(new ResultSetHeaderColumn("document", ICTSTypes.SQLVARCHAR, 50));// 12
 
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("ARMANDO RESPONSE");
-		}
 		for (ProductConsolidate product : consolidateResponse.getProductCollection()) {
 			IResultSetRow row = new ResultSetRow();
 			if (logger.isDebugEnabled()) {
