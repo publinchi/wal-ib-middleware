@@ -414,17 +414,18 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		}
 
 		if(creditConcept.equals(Constants.REFUND)) {
-			if (description.length() > 100) {
-				aBagSPJavaOrchestration.put("code","40143");
-				aBagSPJavaOrchestration.put("msg","the description must have a maximum of 100 characters");
-				return;
-			}
 			
 			if( Objects.isNull(description) || description.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40145");
 				aBagSPJavaOrchestration.put("msg","the description must not be empty");
 				return;
 			}
+			
+			if (description.length() > 100) {
+				aBagSPJavaOrchestration.put("code","40143");
+				aBagSPJavaOrchestration.put("msg","the description must have a maximum of 100 characters");
+				return;
+			}		
 			
 			if( Objects.isNull(originMovementId)  || originMovementId.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40126");
@@ -469,11 +470,11 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		reqTMPCentral.addInputParam("@i_creditConcept",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_creditConcept"));
 		reqTMPCentral.addInputParam("@i_originCode",ICTSTypes.SQLINT4, wQueryRequest.readValueParam("@i_originCode"));
 		reqTMPCentral.addInputParam("@i_reference_number",ICTSTypes.SQLINT4, referenceNumber);
-		reqTMPCentral.addInputParam("@i_description",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_description"));
 
 		if(creditConcept.equals(Constants.REFUND)) {
 			reqTMPCentral.addInputParam("@i_originMovementId",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_originMovementId"));
 			reqTMPCentral.addInputParam("@i_originReferenceNumber",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_originReferenceNumber"));
+			reqTMPCentral.addInputParam("@i_description",ICTSTypes.SQLVARCHAR, wQueryRequest.readValueParam("@i_description"));
 		}
 
 		aBagSPJavaOrchestration.put("ssn", wQueryRequest.readValueFieldInHeader("ssn"));
@@ -622,17 +623,19 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 		}
 
 		if (creditConcept.equals(Constants.REFUND)) {
-			if (description.length() > 100) {
-				aBagSPJavaOrchestration.put("code","40143");
-				aBagSPJavaOrchestration.put("msg","the description must have a maximum of 100 characters");
-				return;
-			}
 			
 			if( Objects.isNull(description)  || description.isEmpty()) {
 				aBagSPJavaOrchestration.put("code","40145");
 				aBagSPJavaOrchestration.put("msg","the description must not be empty");
 				return;
 			}
+			
+			if (description.length() > 100) {
+				aBagSPJavaOrchestration.put("code","40143");
+				aBagSPJavaOrchestration.put("msg","the description must have a maximum of 100 characters");
+				return;
+			}
+			
 		}
 		
 		if(logger.isDebugEnabled())
