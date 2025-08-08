@@ -114,6 +114,8 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 	}
 
 	public IProcedureResponse executeJavaOrchestrationCredit(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		String codeResponse = "0";
+		IProcedureRequest originRequest = null;
 		logger.logDebug("Begin flow, AccountCreditOperation start. RTY " + anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
 		aBagSPJavaOrchestration.put("anOriginalRequest", anOriginalRequest);
 		aBagSPJavaOrchestration.put("REENTRY_SSN", anOriginalRequest.readValueFieldInHeader("REENTRY_SSN_TRX"));
@@ -174,11 +176,21 @@ public class AccountCreditOperationOrchestrationCore extends OfflineApiTemplate 
 				aBagSPJavaOrchestration.put("msg",anProcedureResponse.getResultSetRowColumnData(2, 1, 2).getValue());
 				return processResponse(anOriginalRequest, aBagSPJavaOrchestration);
 			}
-			if(logger.isDebugEnabled())
+			
+			if(logger.isDebugEnabled()) {
 				logger.logDebug("evaluateExecuteReentry");
-
-			anProcedureResponse = saveReentry(anOriginalRequest, aBagSPJavaOrchestration);
-			executeOfflineTransacction(aBagSPJavaOrchestration);
+			}
+			
+			originRequest = anOriginalRequest.clone();
+		    executeOfflineTransacction(aBagSPJavaOrchestration);
+		
+		    if (aBagSPJavaOrchestration.get("code") != null) {
+		       codeResponse = aBagSPJavaOrchestration.get("code").toString();
+		    }
+		
+		    if (codeResponse.equals("0")){	       
+		        anProcedureResponse = saveReentry(originRequest, aBagSPJavaOrchestration);
+		    }
 
 			if(logger.isDebugEnabled())
 				logger.logDebug("Res IsReentry:: " + "S");
