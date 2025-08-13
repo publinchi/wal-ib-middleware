@@ -123,13 +123,17 @@ public class ThirdPartyQueryOrchestrationCore extends QueryBaseTemplate {// SPJa
 			mapInterfaces.put("coreService", coreService);
 
 			Utils.validateComponentInstance(mapInterfaces);
-			IProcedureResponse response = executeStepsQueryBase(anOrginalRequest, aBagSPJavaOrchestration);
+			executeStepsQueryBase(anOrginalRequest, aBagSPJavaOrchestration);
 			return processResponse(anOrginalRequest, aBagSPJavaOrchestration);
 		} catch (CTSServiceException e) {
-			return Utils.returnExceptionService(anOrginalRequest, e);
+			IProcedureResponse procedureResponse = Utils.returnExceptionService(anOrginalRequest, e);
+			logger.logError("ProcedureResponse: " + procedureResponse.getProcedureResponseAsString());
+			return procedureResponse;
 		} catch (CTSInfrastructureException e) {
 
-			return Utils.returnExceptionService(anOrginalRequest, e);
+			IProcedureResponse procedureResponse = Utils.returnExceptionService(anOrginalRequest, e);
+			logger.logError("ProcedureResponse: " + procedureResponse.getProcedureResponseAsString());
+			return procedureResponse;
 		}
 
 	}
