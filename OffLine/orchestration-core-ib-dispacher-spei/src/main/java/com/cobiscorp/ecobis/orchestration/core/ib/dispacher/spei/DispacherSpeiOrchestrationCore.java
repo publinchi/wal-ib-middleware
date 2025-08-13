@@ -3,7 +3,10 @@ package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.spei;
 import static com.cobiscorp.cobis.cts.domains.ICOBISTS.COBIS_HOME;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.StringWriter;
+import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +27,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 
+import com.cobiscorp.cobis.cache.ICacheManager;
 import com.cobiscorp.cobis.cis.sp.java.orchestration.ICISSPBaseOrchestration;
 import com.cobiscorp.cobis.commons.configuration.IConfigurationReader;
 import com.cobiscorp.cobis.commons.crypt.ReadAlgn;
@@ -72,10 +76,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	private java.util.Properties properties = null;
 	private Map<String, Object> mapDataSigns = null;
 	
-	
 	private static final String PROPERTY = "//property";
 	private static final String JKSAlGNCON = "jksAlgncon";
 	private static final String JKSURL = "jksurl";
+	private PrivateKey privateKeyKarpay;
 	
 	//executor service lineamiento PES
 	private ExecutorService executorService;
@@ -92,80 +96,99 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 	private static final String CAPACITY_PROPERTY = "capacity";
 	private int capacity = 35;//capacidada de la cantidad de tareas encoladas 5
 	
+	
 	@Override
 	public void loadConfiguration(IConfigurationReader reader) {
-		 this.properties = reader.getProperties(PROPERTY);
-		 this.mapDataSigns = new HashMap<String, Object>();
-		 //archivo credenciales llave jks
-        String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty(JKSAlGNCON);
-        //archivo path llave jks
-        String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty(JKSURL);
-        File jksAlgn = new File(pathAlgnJks);
-        if (jksAlgn.exists()) {
-            ReadAlgn rjksAlgncon = new ReadAlgn(pathAlgnJks);
-            mapDataSigns.put("alias", rjksAlgncon.leerParametros().getProperty("l"));
-            mapDataSigns.put("keyPass", rjksAlgncon.leerParametros().getProperty("p"));
-            mapDataSigns.put("jksurl", pathCertificado);
-        }else
-        {
-        	if (logger.isDebugEnabled())
-    		{
-    			logger.logDebug("No existe archivo jks:"+pathCertificado);
-    		}
-        }
-        if (logger.isDebugEnabled())
-		{
-			logger.logDebug("jksAlgncon:"+pathAlgnJks);
-			logger.logDebug("jksurl:"+pathCertificado);
-		}
-        //implementacion executor PES
-        isDirect = tryParseToBoolean(properties.getProperty(DIRECT_PROPERTY), isDirect);
-		policy = tryParseToInteger(properties.getProperty(POLICY_PROPERTY), policy);
-        corePoolSize = tryParseToInteger(properties.getProperty(CORE_POOL_SIZE_PROPERTY), corePoolSize);
-		maximumPoolSize = tryParseToInteger(properties.getProperty(MAXIMUM_POOL_SIZE_PROPERTY), maximumPoolSize);
-		keepAliveTime = tryParseToInteger(properties.getProperty(KEEP_ALIVE_TIME_PROPERTY), keepAliveTime);
-		capacity = tryParseToInteger(properties.getProperty(CAPACITY_PROPERTY), capacity);
-		if (logger.isDebugEnabled())
-		{
-			logger.logDebug("policy:"+policy);
-			logger.logDebug("corePoolSize:"+corePoolSize);
-			logger.logDebug("maximumPoolSize:"+maximumPoolSize);
-			logger.logDebug("keepAliveTime:"+keepAliveTime);
-			logger.logDebug("capacity:"+capacity);
-		}
-		// Verfico la conexion con el gestor de colas
-		RejectedExecutionHandler rejectionHandler=null;
-
-		switch (policy) {
-			case 1:
-				rejectionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-				break;
-			case 2:
-				rejectionHandler = new ThreadPoolExecutor.DiscardOldestPolicy();
-				break;
-			case 3:
-				rejectionHandler = new ThreadPoolExecutor.DiscardPolicy();
-				break;
-			case 4:
-				rejectionHandler = new ThreadPoolExecutor.AbortPolicy();
-				break;
-			default:
-				throw new IllegalArgumentException("Política de rechazo no válida: " + policy);
-		}
+		try {
+			this.properties = reader.getProperties(PROPERTY);
+			this.mapDataSigns = new HashMap<String, Object>();
+			//archivo credenciales llave jks
+			String pathAlgnJks = System.getProperty(COBIS_HOME) + properties.getProperty(JKSAlGNCON);
+			//archivo path llave jks
+			String pathCertificado = System.getProperty(COBIS_HOME) + properties.getProperty(JKSURL);
+			File jksAlgn = new File(pathAlgnJks);
+			if (jksAlgn.exists()) {
+	            ReadAlgn rjksAlgncon = new ReadAlgn(pathAlgnJks);
+	            String alias = rjksAlgncon.leerParametros().getProperty("l");
+	            String keyPass = rjksAlgncon.leerParametros().getProperty("p");
+	            // Cargar el keystore desde el archivo
+	  	        KeyStore keystore = KeyStore.getInstance("JKS");
+			    keystore.load(new FileInputStream(pathCertificado), keyPass.toCharArray());
+		        // Obtener la clave privada y el certificado asociado
+		        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(alias,
+		                new KeyStore.PasswordProtection(keyPass.toCharArray()));
+		        PrivateKey finalKey = privateKeyEntry.getPrivateKey();
+		        
+	            if (finalKey instanceof PrivateKey) {
+	            	privateKeyKarpay = (PrivateKey) finalKey;
+	            	if (logger.isDebugEnabled()) {
+	            		logger.logDebug("privated key:"+privateKeyKarpay);
+	        		}
+	            }
+	        }else {
+	        	if (logger.isDebugEnabled()) {
+	    			logger.logDebug("No existe archivo jks:"+pathCertificado);
+	    		}
+	        }
+	        if (logger.isDebugEnabled()) {
+				logger.logDebug("jksAlgncon:"+pathAlgnJks);
+				logger.logDebug("jksurl:"+pathCertificado);
+			}
+	        //implementacion executor PES
+	        isDirect = tryParseToBoolean(properties.getProperty(DIRECT_PROPERTY), isDirect);
+			policy = tryParseToInteger(properties.getProperty(POLICY_PROPERTY), policy);
+	        corePoolSize = tryParseToInteger(properties.getProperty(CORE_POOL_SIZE_PROPERTY), corePoolSize);
+			maximumPoolSize = tryParseToInteger(properties.getProperty(MAXIMUM_POOL_SIZE_PROPERTY), maximumPoolSize);
+			keepAliveTime = tryParseToInteger(properties.getProperty(KEEP_ALIVE_TIME_PROPERTY), keepAliveTime);
+			capacity = tryParseToInteger(properties.getProperty(CAPACITY_PROPERTY), capacity);
+			if (logger.isDebugEnabled())
+			{
+				logger.logDebug("policy:"+policy);
+				logger.logDebug("corePoolSize:"+corePoolSize);
+				logger.logDebug("maximumPoolSize:"+maximumPoolSize);
+				logger.logDebug("keepAliveTime:"+keepAliveTime);
+				logger.logDebug("capacity:"+capacity);
+			}
+			// Verfico la conexion con el gestor de colas
+			RejectedExecutionHandler rejectionHandler=null;
 	
-		if (executorService != null && !executorService.isShutdown()) {
-			executorService.shutdown();
-		}
+			switch (policy) {
+				case 1:
+					rejectionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+					break;
+				case 2:
+					rejectionHandler = new ThreadPoolExecutor.DiscardOldestPolicy();
+					break;
+				case 3:
+					rejectionHandler = new ThreadPoolExecutor.DiscardPolicy();
+					break;
+				case 4:
+					rejectionHandler = new ThreadPoolExecutor.AbortPolicy();
+					break;
+				default:
+					throw new IllegalArgumentException("Política de rechazo no válida: " + policy);
+			}
 		
-    	executorService = new ThreadPoolExecutor(
-				corePoolSize,
-				maximumPoolSize,
-				keepAliveTime,
-				TimeUnit.SECONDS,
-				new LinkedBlockingQueue<Runnable>(capacity),
-				new CustomThreadFactory(),
-				rejectionHandler
-		);
+			if (executorService != null && !executorService.isShutdown()) {
+				executorService.shutdown();
+			}
+			
+	    	executorService = new ThreadPoolExecutor(
+					corePoolSize,
+					maximumPoolSize,
+					keepAliveTime,
+					TimeUnit.SECONDS,
+					new LinkedBlockingQueue<Runnable>(capacity),
+					new CustomThreadFactory(),
+					rejectionHandler
+			);
+		} catch (Exception xe) {
+    		logger.logError("Error al cargar las configarciones y firmas: ",xe);
+        } finally {
+        	if (logger.isDebugEnabled()) {
+				logger.logDebug("Fin load configuration DispacherSpeiOrchestrationCore");
+			}
+        }
 	}
 
 	/**
@@ -334,7 +357,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			String codTarDeb = getParam(request, "CODTAR", "BVI");
 			String codTelDeb = getParam(request, "CODTEL", "BVI");
 			aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
-			aBagSPJavaOrchestration.put("codTelDeb", codTarDeb);
+			aBagSPJavaOrchestration.put("codTelDeb", codTelDeb);
 			aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
 			boolean isCoreError = false;
 			
@@ -350,7 +373,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				{
 					
 					DispatcherUtil util = new DispatcherUtil();
-					String sign = util.doSignature(request, aBagSPJavaOrchestration);
+					String sign = util.doSignature(request, aBagSPJavaOrchestration, privateKeyKarpay);
 					if(logger.isDebugEnabled())
 					{
 						logger.logDebug("firma armada:"+sign);
@@ -545,10 +568,6 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			aBagSPJavaOrchestration.put("result", response);
 			aBagSPJavaOrchestration.put("error", returnCodeMsjSpeiIn);
 			logHour("7");
-			long end = System.currentTimeMillis();
-			if(logger.isDebugEnabled()) {
-				logger.logDebug("tiempo proceso spei in: "+(end-start)+", "+msjIn.getOrdenpago().getOpCveRastreo());
-			}
 		} catch (Exception e) {
 			logger.logError("Error de spei in karpay:"+msjIn.getOrdenpago().getOpCveRastreo(), e);
 			
@@ -563,7 +582,12 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			if(logger.isDebugEnabled()) {
 				logger.logDebug("response error spei in: "+response);
 			}
-		} 
+		} finally {
+			long end = System.currentTimeMillis();
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Tiempo proceso spei in: "+(end-start)+", "+msjIn.getOrdenpago().getOpCveRastreo());
+			}
+		}
 		
 		return response;
 	}
@@ -1706,4 +1730,15 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		}
 		return response;
 	}	
+	
+	@Reference(bind = "setCacheManager", unbind = "unsetCacheManager", cardinality = ReferenceCardinality.MANDATORY_UNARY)
+	private ICacheManager cacheManager;
+	
+	public void setCacheManager(ICacheManager cacheManager){
+		this.cacheManager = cacheManager;
+	}
+	
+	public void unsetCacheManager(ICacheManager cacheManager) {
+		this.cacheManager = null;		
+	}
 }

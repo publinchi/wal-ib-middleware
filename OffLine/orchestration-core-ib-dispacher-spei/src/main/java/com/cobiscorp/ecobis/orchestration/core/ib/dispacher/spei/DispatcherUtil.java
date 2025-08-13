@@ -103,13 +103,13 @@ public class DispatcherUtil {
 	        return null;
 	    }
 	  
-		public String doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
+		public String doSignature(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration, PrivateKey privateKey) {
 			String signed="";
 			try 
 			{		
 				mensaje msj = (mensaje)aBagSPJavaOrchestration.get("speiTransaction");
 				byte [] byteArray= ManejoBytes.armaTramaBytes(msj, aBagSPJavaOrchestration);
-				signed = signDataPrivateKey(byteArray, aBagSPJavaOrchestration);
+				signed = signDataPrivateKey(byteArray, privateKey);
 
 			}catch (Exception xe) {
 				logger.logDebug("::::::::::Error al FIRMAR::::::::::");
@@ -121,47 +121,18 @@ public class DispatcherUtil {
 			
 		}  
 	   
-	   public static String signDataPrivateKey(byte[] firmaDigital, Map<String, Object> aBagSPJavaOrchestration) {
+	   public static String signDataPrivateKey(byte[] firmaDigital, PrivateKey privateKey) {
 	       	       
 	        String signed = "";
 	        try {
-	        	//signDataPrivateKey();
-	        	String keystorePath = aBagSPJavaOrchestration.get("jksurl").toString();
-	        	
-	  	        // Contraseña del keystore
-	  	        String keystorePassword = aBagSPJavaOrchestration.get("keyPass").toString();
-	  	        // Alias de la clave privada en el keystore
-	  	        String alias = aBagSPJavaOrchestration.get("alias").toString();
-
-	  	        // Cargar el keystore desde el archivo
-	  	        KeyStore keystore;
-	  			keystore = KeyStore.getInstance("JKS");
-			    keystore.load(new FileInputStream(keystorePath), keystorePassword.toCharArray());
-	
-		        // Obtener la clave privada y el certificado asociado
-		        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keystore.getEntry(alias,
-		                new KeyStore.PasswordProtection(keystorePassword.toCharArray()));
-	
-		        PrivateKey finalKey = privateKeyEntry.getPrivateKey();
-		        
-		        if(logger.isDebugEnabled())
-		        	logger.logDebug("Signature: " + finalKey.getAlgorithm());	
-		      
-		       if (finalKey instanceof PrivateKey) {
-                    PrivateKey pk = (PrivateKey) finalKey;
-	                signed = sign(firmaDigital, pk);
-	            } else {
-	            	 if(logger.isDebugEnabled())
-	 		        	logger.logDebug("Error Signature" );	
-	            }
-
+	                signed = sign(firmaDigital, privateKey);
 	        } catch (Exception xe) {
-	        	 if(logger.isDebugEnabled())
-		        	logger.logDebug("Signature error: " + xe.getMessage());	
-	        	
-	        } 
-	        if(logger.isDebugEnabled())
-	        	logger.logDebug("Signature: " +signed);	
+	        	 if(logger.isErrorEnabled())
+		        	logger.logError("Signature error: ", xe);
+	        }finally{
+	        	if(logger.isDebugEnabled())
+	        		logger.logDebug("Signature dispacher: " +signed);
+	        }
 	        
 	        return signed;
 	    }
