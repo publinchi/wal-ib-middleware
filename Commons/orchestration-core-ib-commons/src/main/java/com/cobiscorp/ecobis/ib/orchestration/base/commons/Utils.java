@@ -42,8 +42,8 @@ import com.cobiscorp.ecobis.ib.orchestration.dtos.ProductConsolidate;
 
 public class Utils {
 
-	protected static final String CLASS_NAME = " >-----> ";
-	private static ILogger logger = LogFactory.getLogger(Utils.class);
+
+	private static final ILogger logger = LogFactory.getLogger(Utils.class);
 	protected static final String RESPONSE_TRANSACTION = "RESPONSE_TRANSACTION";
 
 	public static void removeOutputparams(IProcedureRequest request) {
@@ -52,8 +52,6 @@ public class Utils {
 			if (params[i] instanceof IProcedureRequestParam) {
 				IProcedureRequestParam param = (IProcedureRequestParam) params[i];
 				if (param.getIOType() == 1) {
-					if (logger.isDebugEnabled())
-						logger.logDebug(CLASS_NAME + "Removiendo parametro output " + param.getName());
 					request.removeParam(param.getName());
 				}
 			}
@@ -66,8 +64,6 @@ public class Utils {
 			if (params[i] instanceof IProcedureRequestParam) {
 				IProcedureRequestParam param = (IProcedureRequestParam) params[i];
 				if (param.getName().indexOf("@s_") == -1) {
-					if (logger.isDebugEnabled())
-						logger.logDebug(CLASS_NAME + "Removiendo parametro " + param.getName());
 					request.removeParam(param.getName());
 				}
 			}
@@ -84,20 +80,14 @@ public class Utils {
 
 	public static boolean flowError(String stepName, IProcedureResponse response) {
 		if ((response == null) || (response.getReturnCode() != 0) || !validateErrorCode(response, 0)) {
-			if (logger.isWarningEnabled())
-				logger.logWarning(CLASS_NAME + "Error en el flujo, " + stepName + " retorno:" + (response != null ? response.getReturnCode() : "null"));
 			return true;
 		}
 		return false;
 	}
 
 	public static boolean validateErrorCode(IProcedureResponse response, int code) {
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " Validando existencia del codigo " + code + " en la respuesta :" + response.getProcedureResponseAsString());
 
 		if ((response.hasError() == false) && (code == 0)) {
-			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + " No existe mensajes de error");
 			return true;
 		}
 
@@ -113,16 +103,11 @@ public class Utils {
 				if (msgBlock instanceof IMessageBlock) {
 					messageNumber = ((IMessageBlock) msgBlock).getMessageNumber();
 					if (messageNumber == code) {
-						if (logger.isInfoEnabled())
-							logger.logInfo(CLASS_NAME + " Existe el c�digo " + code + " en la respuesta");
-
 						return true;
 					}
 				}
 			}
 		}
-		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + " No existe el c�digo " + code + " en la respuesta");
 		return false;
 	}
 
@@ -131,7 +116,7 @@ public class Utils {
 			newRequest.addInputParam(newParamName, request.readParam(orginalParamName).getDataType(), request.readValueParam(orginalParamName));
 		} else {
 			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + "::El par�metro " + orginalParamName + " no existe en el request");
+				logger.logInfo("::El par�metro " + orginalParamName + " no existe en el request");
 		}
 	}
 
@@ -141,14 +126,10 @@ public class Utils {
 		int typeParam = 0;
 		boolean addParam = false;
 
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + " ProcedureResponse que se va a pasar como parametros sus resultSets: " + procedureResponse.getProcedureResponseAsString());
 
 		IResultSetBlock resultSet = procedureResponse.getResultSet(resultsetNumber);
 
 		if (resultSet == null) {
-			if (logger.isDebugEnabled())
-				logger.logDebug(CLASS_NAME + "Resultset vacio, se retorna ProcedureResponse original");
 			return;
 		}
 
@@ -176,8 +157,6 @@ public class Utils {
 				}
 
 				if (addParam) {
-					if (logger.isDebugEnabled())
-						logger.logDebug(CLASS_NAME + " agregando resulset como parametro: nombre:" + nameParam + " tipo: " + typeParam + " valor:" + valueParam);
 
 					int length = 0;
 					if (valueParam != null)
@@ -202,7 +181,7 @@ public class Utils {
 			request.addInputParam(inParamName, response.readParam(outParamName).getDataType(), response.readValueParam(outParamName));
 		} else {
 			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + "::El par�metro " + outParamName + " no existe en el response");
+				logger.logInfo("::El par�metro " + outParamName + " no existe en el response");
 		}
 
 	}
@@ -237,7 +216,7 @@ public class Utils {
 
 	public static void validateComponentInstance(Map<String, Object> objects) {
 		if (logger.isInfoEnabled())
-			logger.logInfo(CLASS_NAME + "Realizando Validacion de Injeccion de Dependencias");
+			logger.logInfo("Realizando Validacion de Injeccion de Dependencias");
 
 		IProcedureResponse response = new ProcedureResponseAS();
 		response.setReturnCode(0);
@@ -245,8 +224,7 @@ public class Utils {
 		for (Map.Entry<String, Object> entry : objects.entrySet()) {
 			String key = entry.getKey();
 			Object obj = entry.getValue();
-			if (logger.isInfoEnabled())
-				logger.logInfo(CLASS_NAME + "Validando componente:" + key);
+
 			if (obj == null) {
 				throw new COBISInfrastructureRuntimeException("No se ha encontrado implementacion del componente:" + key);
 			}
@@ -255,9 +233,7 @@ public class Utils {
 	}
 
 	public static IProcedureResponse returnExceptionService(IProcedureRequest anOrginalRequest, Exception e) {
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "ERROR EXECUTING SERVICE request:" + anOrginalRequest);
-		e.getMessage();
+
 
 		IProcedureResponse wProcedureRespFinal = new ProcedureResponseAS();
 		ErrorBlock eb = new ErrorBlock(-1, "Service is not available");
@@ -268,8 +244,6 @@ public class Utils {
 	}
 
 	public static IProcedureResponse returnException(String messageError) {
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "ERROR EXECUTING SERVICE Ito " + messageError);
 
 		IProcedureResponse wProcedureRespFinal = new ProcedureResponseAS();
 		ErrorBlock eb = new ErrorBlock(0, "ERROR DE INFRAESTRUCTURA");
@@ -278,14 +252,11 @@ public class Utils {
 		wProcedureRespFinal.setReturnCode(-1);
 		wProcedureRespFinal.addMessage(-1, messageError);
 
-		new IllegalArgumentException(messageError).printStackTrace();
 		return wProcedureRespFinal;
 
 	}
 
 	public static IProcedureResponse returnException(int returnCode, String messageError) {
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "ERROR EXECUTING SERVICE MessageError: "+ messageError);
 
 		IProcedureResponse wProcedureRespFinal = new ProcedureResponseAS();
 		ErrorBlock eb = new ErrorBlock(-1, "ERROR DE INFRAESTRUCTURA");
@@ -294,14 +265,12 @@ public class Utils {
 		wProcedureRespFinal.setReturnCode(returnCode);
 		wProcedureRespFinal.addMessage(returnCode, messageError);
 
-		new IllegalArgumentException(messageError).printStackTrace();
 		return wProcedureRespFinal;
 
 	}
 
 	public static IProcedureResponse returnException(Message[] messagesError) {
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "ERROR EXECUTING SERVICE MessageError: "+ messagesError.toString());
+
 
 		IProcedureResponse wProcedureRespFinal = new ProcedureResponseAS();
 		ErrorBlock eb = new ErrorBlock(-1, "ERROR EN EJECUCIÓN");
@@ -312,15 +281,11 @@ public class Utils {
 
 		for (Message message : messagesError) {
 
-			logger.logError(CLASS_NAME + "ERROR EXECUTING SERVICE " + message.getDescription());
-			logger.logError(CLASS_NAME + "ERROR EXECUTING SERVICE " + message.getCode());
-
 			if (Integer.parseInt(message.getCode()) != 0) {
 				wProcedureRespFinal.addMessage(Integer.parseInt(message.getCode()), message.getDescription());
 				sb.append(message.getDescription()).append("\n");
 			}
 		}
-		new IllegalArgumentException(sb.toString()).printStackTrace();
 		return wProcedureRespFinal;
 	}
 
@@ -364,8 +329,7 @@ public class Utils {
 	 * @param response
 	 */
 	public static void transformIprocedureResponseToBaseResponse(BaseResponse base, IProcedureResponse response) {
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "Respuesta  a validar" + response);
+
 		Iterator itMessages = response.getMessages().iterator();
 		IMessageBlock messageBlock = null;
 		boolean outputParams = false;
@@ -392,8 +356,7 @@ public class Utils {
 	 * @param response
 	 */
 	public static void transformBaseResponseToIprocedureResponse(BaseResponse base, IProcedureResponse response) {
-		if (logger.isDebugEnabled())
-			logger.logDebug(CLASS_NAME + "Respuesta  a validar" + base);
+
 		if (base.getSuccess() && base.getMessage() == null) {
 			response.setReturnCode(0);
 		} else {
@@ -440,9 +403,7 @@ public class Utils {
 																															// RESPONSE DE LA
 																															// TRANSACCIÓN
 			wProcedureResponse = Utils.returnException(consolidateResponse.getMessages());
-			if (logger.isDebugEnabled()) {
-				logger.logDebug(CLASS_NAME + "*** Error al transformarServicio GetProductos-ErrorCode:" + consolidateResponse.getReturnCode());
-			}
+
 		} else {
 			// Agregar Header
 			IResultSetHeader metaData = new ResultSetHeader();
@@ -527,9 +488,7 @@ public class Utils {
 																															// RESPONSE DE LA
 																															// TRANSACCIÓN
 			wProcedureResponse = Utils.returnException(consolidateResponse.getMessages());
-			if (logger.isDebugEnabled()) {
-				logger.logDebug(CLASS_NAME + "*** Error al transformarServicio GetAccounts-ErrorCode:" + consolidateResponse.getReturnCode());
-			}
+
 		} else {
 
 			// Agregar Header
