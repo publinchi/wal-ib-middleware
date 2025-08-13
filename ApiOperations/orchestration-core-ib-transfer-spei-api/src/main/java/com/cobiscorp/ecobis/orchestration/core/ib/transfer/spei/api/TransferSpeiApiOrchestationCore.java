@@ -1963,6 +1963,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
     public IProcedureResponse executeTransferSPI(IProcedureRequest anOriginalRequest,
             Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
+        String idTransaccion = "";
         if (logger.isDebugEnabled()) {
             logger.logDebug("Inicia executeTransferSPI");
         }
@@ -1973,9 +1974,15 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         response.setReturnCode(responseBank.getReturnCode());
-        if (responseBank.getReturnCode() != 0) {
-            response = Utils.returnException(Utils.returnArrayMessage(responseBank));
+        if(!response.hasError()){
+            response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0, String.valueOf(anOriginalRequest.readValueParam(S_SSN_BRANCH)));
+            //response.addParam("@o_ref_branch", ICTSTypes.SYBINT4, 0, String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
+            response.setReturnCode(response.getReturnCode());
+            aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
+            idTransaccion=String.valueOf(anOriginalRequest.readValueParam(S_SSN_BRANCH));
+
+            logger.logDebug(CLASS_NAME + "Respuesta TRANSACCION ID --> "+idTransaccion);
         }
 
         if (responseBank.getReturnCode() == 0 && responseBank.getResultSetListSize() > 0) {
@@ -2197,17 +2204,18 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
         ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
-        response.setReturnCode(responseTransfer.getReturnCode());
-        if (serverResponse.getOnLine() && responseTransfer.getReturnCode() != 0) {
-            // ONLINE Y HUBO ERROR
-            response = Utils.returnException(Utils.returnArrayMessage(responseTransfer));
+        if(!responseTransfer.hasError()){
+            response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0, String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
 
+
+            aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
+
+            idTransaccion=String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH));
+
+            logger.logDebug(CLASS_NAME + "Respuesta TRANSACCION ID --> "+idTransaccion);
         } else {
             response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0,
                     String.valueOf(responseTransfer.readValueParam("@o_referencia")));
-
-            // response.addParam("@o_ref_branch", ICTSTypes.SYBINT4, 0,
-            // String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
 
             response.setReturnCode(responseTransfer.getReturnCode());
             aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
