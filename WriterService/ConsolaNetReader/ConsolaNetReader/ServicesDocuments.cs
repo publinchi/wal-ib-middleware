@@ -37,6 +37,7 @@ namespace ConsolaNetReader
         public const string doc = ".docx";
         public PlantillaManager manager;
         public PlantillaGeneralManager general;
+        public static string  rutaGeneral;
 
 
         private static byte[] _contenido;
@@ -69,7 +70,7 @@ namespace ConsolaNetReader
             rutaOriginal = System.IO.Path.Combine(plantillas, plantilla);
             manager=new PlantillaManager();
             manager.Inicializar(rutaOriginal);
-            string rutaGeneral = System.IO.Path.Combine(plantillas, plantillaGenerals);
+             rutaGeneral = System.IO.Path.Combine(plantillas, plantillaGenerals);
             general=new PlantillaGeneralManager();
             general.Inicializar(rutaGeneral);
             worker = new BackgroundWorker();
@@ -100,7 +101,7 @@ namespace ConsolaNetReader
                 {
                     // Aquí va la tarea que se repite
                     Console.WriteLine("Ejecutando tarea en segundo plano...");
-                    log.Info("JC::::::::::::Comienza documentsGenerator Performance :::::::::::::JC 1.0.20");
+                    log.Info("JC::::::::::::Comienza documentsGenerator Performance :::::::::::::JC 1.0.21");
                     DescargaContratos download = new DescargaContratos();
                     JObject serviceContract = download.recuperarDatosContratos();
                     List<Contrato> listaContratos = download.validarContratos(serviceContract);

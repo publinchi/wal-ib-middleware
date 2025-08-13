@@ -147,7 +147,6 @@ C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\BouncyCastle.Crypto.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\DocumentFormat.OpenXml.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\DocumentFormat.OpenXML.Extensions.dll
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\DocumentFormat.OpenXml.Framework.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\itextsharp.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\log4net.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
@@ -180,7 +179,6 @@ C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\Xceed.Words.NET.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\System.Text.Encodings.Web.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\DocumentFormat.OpenXml.xml
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\DocumentFormat.OpenXml.Framework.xml
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\itextsharp.xml
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\log4net.xml
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ConsolaNetReader\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
