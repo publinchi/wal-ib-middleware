@@ -1975,8 +1975,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
         response.setReturnCode(responseBank.getReturnCode());
         if(!response.hasError()){
-            response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0, String.valueOf(anOriginalRequest.readValueParam(S_SSN_BRANCH)));
-            //response.addParam("@o_ref_branch", ICTSTypes.SYBINT4, 0, String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
             response.setReturnCode(response.getReturnCode());
             aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
@@ -2204,10 +2202,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
         ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
-        if(!responseTransfer.hasError()){
-            response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0, String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH)));
-
-
+        if(responseTransfer.hasError()){
             aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
             idTransaccion=String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH));
