@@ -22,6 +22,9 @@ namespace ConsolaNetReader
 
         public Microsoft.Office.Interop.Word.Document plantillaOrigen = null;
 
+
+        public static byte[] platillaContrato;
+        public static byte[] platillaDatosGenerales;
         private BackgroundWorker worker;
         public static string deposito;
         public static string temporales;
@@ -37,6 +40,8 @@ namespace ConsolaNetReader
         public const string doc = ".docx";
         public PlantillaManager manager;
         public PlantillaGeneralManager general;
+        public static string  rutaGeneral;
+
 
 
         private static byte[] _contenido;
@@ -69,15 +74,16 @@ namespace ConsolaNetReader
             rutaOriginal = System.IO.Path.Combine(plantillas, plantilla);
             manager=new PlantillaManager();
             manager.Inicializar(rutaOriginal);
-            string rutaGeneral = System.IO.Path.Combine(plantillas, plantillaGenerals);
+             rutaGeneral = System.IO.Path.Combine(plantillas, plantillaGenerals);
             general=new PlantillaGeneralManager();
             general.Inicializar(rutaGeneral);
             worker = new BackgroundWorker();
             worker.WorkerSupportsCancellation = true;
             worker.DoWork += Worker_DoWork;
             worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            platillaContrato= File.ReadAllBytes(rutaOriginal);
+            platillaDatosGenerales = File.ReadAllBytes(rutaGeneral);
 
-            
         }
 
         private static int liberacione;
@@ -100,7 +106,7 @@ namespace ConsolaNetReader
                 {
                     // Aquí va la tarea que se repite
                     Console.WriteLine("Ejecutando tarea en segundo plano...");
-                    log.Info("JC::::::::::::Comienza documentsGenerator Performance :::::::::::::JC 1.0.20");
+                    log.Info("JC::::::::::::Comienza documentsGenerator Performance :::::::::::::JC 1.0.21");
                     DescargaContratos download = new DescargaContratos();
                     JObject serviceContract = download.recuperarDatosContratos();
                     List<Contrato> listaContratos = download.validarContratos(serviceContract);
@@ -164,7 +170,7 @@ namespace ConsolaNetReader
 
                             workers.Add(workerInternal);
                             workerInternal.RunWorkerAsync();
-                            Thread.Sleep(6000);
+                           
 
 
                         }
@@ -173,7 +179,7 @@ namespace ConsolaNetReader
                     else
                     {
                         log.Info(":::::::::No existen contratos que procesar!!!!::::::::");
-                        Thread.Sleep(30000);
+                       // Thread.Sleep(30000);
                     }
 
                     break;

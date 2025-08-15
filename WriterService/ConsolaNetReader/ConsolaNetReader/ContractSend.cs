@@ -91,7 +91,7 @@ namespace ConsolaNetReader
 
         }
 
-        public  async Task<bool> EnviaContratoAsync22() {
+        public  async Task<bool> EnviaContratoAsyncApi() {
 
             log.Info("Enviando contrato ---- API REST " + this.mail);
 
