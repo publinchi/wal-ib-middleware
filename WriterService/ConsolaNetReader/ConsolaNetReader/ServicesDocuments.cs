@@ -22,6 +22,9 @@ namespace ConsolaNetReader
 
         public Microsoft.Office.Interop.Word.Document plantillaOrigen = null;
 
+
+        public static byte[] platillaContrato;
+        public static byte[] platillaDatosGenerales;
         private BackgroundWorker worker;
         public static string deposito;
         public static string temporales;
@@ -38,6 +41,7 @@ namespace ConsolaNetReader
         public PlantillaManager manager;
         public PlantillaGeneralManager general;
         public static string  rutaGeneral;
+
 
 
         private static byte[] _contenido;
@@ -77,8 +81,9 @@ namespace ConsolaNetReader
             worker.WorkerSupportsCancellation = true;
             worker.DoWork += Worker_DoWork;
             worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+            platillaContrato= File.ReadAllBytes(rutaOriginal);
+            platillaDatosGenerales = File.ReadAllBytes(rutaGeneral);
 
-            
         }
 
         private static int liberacione;
@@ -165,7 +170,7 @@ namespace ConsolaNetReader
 
                             workers.Add(workerInternal);
                             workerInternal.RunWorkerAsync();
-                            Thread.Sleep(6000);
+                           
 
 
                         }
@@ -174,7 +179,7 @@ namespace ConsolaNetReader
                     else
                     {
                         log.Info(":::::::::No existen contratos que procesar!!!!::::::::");
-                        Thread.Sleep(30000);
+                       // Thread.Sleep(30000);
                     }
 
                     break;

@@ -161,14 +161,15 @@ namespace ConsolaNetReader
                        placeholders = valores.ToDictionary(v => v.Llave, v => v.Valor);
 
 
-                        byte[] plantillaBytes = File.ReadAllBytes(rutaOriginal);
+                        byte[] plantillaBytes = (byte[])platillaContrato.Clone();
 
                         byte[] docFinal = replacer.ReemplazarEnMemoria(plantillaBytes, placeholders);
 
-                        contractToMail=DocxBytesToPdfLibreOffice(docFinal, generated);
+                        docFinal=replacer.AppendBeneficiariosToLastTable(docFinal, contratos.Beneficiarios,true);
 
-                        //  contractToMail=aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
-                        // contractToMail = convertToPDF();
+                        contractToMail =DocxBytesToPdfLibreOffice(docFinal, generated);
+
+    
                         if (contractToMail != "ERROR")
                         {
                             flagContrato = true;
@@ -216,7 +217,7 @@ namespace ConsolaNetReader
 
                         replacer = new DocxReplacer();
 
-                        byte[] plantillaBytes = File.ReadAllBytes(rutaGeneral);
+                        byte[] plantillaBytes = (byte[])platillaDatosGenerales.Clone();
 
                         byte[] docFinal = replacer.ReemplazarEnMemoria(plantillaBytes, placeholders);
 

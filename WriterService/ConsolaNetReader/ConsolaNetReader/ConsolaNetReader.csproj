@@ -181,7 +181,7 @@
     <Compile Include="PlantillaGeneralManager.cs" />
     <Compile Include="PlantillaManager.cs" />
     <Compile Include="ProcesamientoContratos.cs" />
-    <Compile Include="Proceso.cs" />
+    <Compile Include="RefreshToken.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requeridos.cs" />

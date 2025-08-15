@@ -182,5 +182,212 @@ namespace ConsolaNetReader
             }
         }
 
+        public  byte[] AppendBeneficiariosToLastTable(byte[] docxBytes, List<Beneficiario> beneficiarios, bool agregarSignoPorciento = true)
+        {
+            if (docxBytes == null || docxBytes.Length == 0) throw new ArgumentException("docxBytes vacío");
+
+            using (var ms = new MemoryStream())
+            {
+                ms.Write(docxBytes, 0, docxBytes.Length);
+                ms.Position = 0;
+
+                using (var doc = WordprocessingDocument.Open(ms, true))
+                {
+                    var body = doc.MainDocumentPart.Document.Body;
+                    if (body == null) throw new InvalidOperationException("El documento no tiene Body.");
+
+                    var lastTable = body.Descendants<Table>().LastOrDefault();
+                    if (lastTable == null) throw new InvalidOperationException("No se encontró ninguna tabla.");
+
+                    var allRows = lastTable.Elements<TableRow>().ToList();
+                    if (allRows.Count == 0) throw new InvalidOperationException("La tabla no tiene filas.");
+
+                    // Última fila no-encabezado como plantilla
+                    TableRow templateRow = null;
+                    for (int i = allRows.Count - 1; i >= 0; i--)
+                    {
+                        var rp = allRows[i].GetFirstChild<TableRowProperties>();
+                        bool isHeader = rp != null && rp.Elements<TableHeader>().Any();
+                        if (!isHeader)
+                        {
+                            templateRow = allRows[i];
+                            break;
+                        }
+                    }
+                    if (templateRow == null) templateRow = allRows.Last();
+
+                    // Si lista nula o vacía → agregar fila "No Designados"
+                    if (beneficiarios == null || beneficiarios.Count == 0)
+                    {
+                        var ndRow = (TableRow)templateRow.CloneNode(true);
+                        var ndCells = ndRow.Elements<TableCell>().ToList();
+                        while (ndCells.Count < 3)
+                        {
+                            var extra = new TableCell(new Paragraph(new Run(new Text(""))));
+                            ndRow.AppendChild(extra);
+                            ndCells.Add(extra);
+                        }
+
+                        ClearCellKeepProps(ndCells[0]);
+                        ClearCellKeepProps(ndCells[1]);
+                        ClearCellKeepProps(ndCells[2]);
+
+                        SetCellSingleRunText(ndCells[0], "No Designados");
+                        SetCellSingleRunText(ndCells[1], "No Designados");
+                        SetCellSingleRunText(ndCells[2], "No Designados");
+
+                        lastTable.AppendChild(ndRow);
+
+                        doc.MainDocumentPart.Document.Save();
+                        return ms.ToArray();
+                    }
+
+                    // Insertar filas por beneficiario
+                    foreach (var b in beneficiarios)
+                    {
+                        var newRow = (TableRow)templateRow.CloneNode(true);
+
+                        var cells = newRow.Elements<TableCell>().ToList();
+                        while (cells.Count < 3)
+                        {
+                            var extraCell = new TableCell(new Paragraph(new Run(new Text(""))));
+                            newRow.AppendChild(extraCell);
+                            cells.Add(extraCell);
+                        }
+
+                        ClearCellKeepProps(cells[0]);
+                        ClearCellKeepProps(cells[1]);
+                        ClearCellKeepProps(cells[2]);
+
+                        // Columna 1: "paterno, materno y nombre(s)"
+                        var nombreComp = FormatearNombreCompleto(b);
+                        SetCellSingleRunText(cells[0], nombreComp);
+
+                        // Columna 2: fecha en formato "yyyy-MM-dd HH:mm:ss"
+                        var fechaFmt = FormatearFechaNacimiento(b != null ? b.fechaNacimiento : null);
+                        SetCellSingleRunText(cells[1], fechaFmt);
+
+                        // Columna 3: porcentaje (+% si falta)
+                        var pct = b != null ? (b.porcentaje ?? string.Empty) : string.Empty;
+                        if (agregarSignoPorciento && !string.IsNullOrWhiteSpace(pct) && !pct.TrimEnd().EndsWith("%"))
+                            pct = pct.Trim() + "%";
+                        SetCellSingleRunText(cells[2], pct);
+
+                        lastTable.AppendChild(newRow);
+                    }
+
+                    doc.MainDocumentPart.Document.Save();
+                }
+
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Pipeline: placeholders + beneficiarios (incluye "No Designados" si la lista viene vacía).
+        /// </summary>
+        public  byte[] ReemplazarYAgregarBeneficiarios(byte[] docxBytes, IDictionary<string, string> placeholders, List<Beneficiario> beneficiarios, bool agregarSignoPorciento = true)
+        {
+            var filled = ReemplazarEnMemoria(docxBytes, placeholders);
+            return AppendBeneficiariosToLastTable(filled, beneficiarios, agregarSignoPorciento);
+        }
+
+        // =======================
+        //  Helpers de tabla
+        // =======================
+        private  string FormatearNombreCompleto(Beneficiario b)
+        {
+            if (b == null) return string.Empty;
+            var paterno = (b.paterno ?? "").Trim();
+            var materno = (b.materno ?? "").Trim();
+            var nombre = (b.nombre ?? "").Trim();
+
+            if (paterno.Length == 0 && materno.Length == 0) return nombre;
+            if (paterno.Length > 0 && materno.Length == 0) return paterno + " y " + nombre;
+            if (paterno.Length == 0 && materno.Length > 0) return materno + " y " + nombre;
+            return paterno + ", " + materno + " y " + nombre;
+        }
+
+        private  string FormatearFechaNacimiento(string fechaTexto)
+        {
+            if (string.IsNullOrWhiteSpace(fechaTexto)) return string.Empty;
+
+            DateTime dt;
+            // Intenta exacto primero si ya viene en tu formato objetivo
+            if (DateTime.TryParseExact(fechaTexto, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))
+                return dt.ToString("yyyy-MM-dd HH:mm:ss");
+
+            // Intenta varios formatos comunes
+            string[] formatos =
+            {
+            "yyyy-MM-dd",
+            "dd/MM/yyyy",
+            "dd/MM/yyyy HH:mm:ss",
+            "MM/dd/yyyy",
+            "MM/dd/yyyy HH:mm:ss",
+            "yyyy-MM-ddTHH:mm:ss",
+            "yyyy-MM-ddTHH:mm:ss.fff"
+        };
+            if (DateTime.TryParseExact(fechaTexto, formatos, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt) ||
+                DateTime.TryParse(fechaTexto, out dt))
+            {
+                return dt.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+
+            // Si no parsea, deja el texto original (o retorna vacío si prefieres)
+            return fechaTexto;
+        }
+
+        private  void ClearCellKeepProps(TableCell cell)
+        {
+            if (cell == null) return;
+
+            var tcp = cell.GetFirstChild<TableCellProperties>();
+            var paragraphs = cell.Elements<Paragraph>().ToList();
+            foreach (var p in paragraphs) p.Remove();
+
+            cell.AppendChild(new Paragraph(new Run(new Text(string.Empty))));
+
+            if (tcp != null)
+            {
+                cell.RemoveChild(tcp);
+                cell.PrependChild(tcp);
+            }
+        }
+
+        private  void SetCellSingleRunText(TableCell cell, string value)
+        {
+            if (cell == null) return;
+
+            var p = cell.Elements<Paragraph>().FirstOrDefault();
+            if (p == null)
+            {
+                p = new Paragraph();
+                cell.AppendChild(p);
+            }
+
+            var runs = p.Elements<Run>().ToList();
+            foreach (var run in runs) run.Remove();
+
+            var runNew = new Run();
+
+            var lines = (value ?? string.Empty).Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var t = new Text(lines[i]);
+                if (lines[i].Length > 0 &&
+                    (char.IsWhiteSpace(lines[i][0]) || char.IsWhiteSpace(lines[i][lines[i].Length - 1])))
+                {
+                    t.Space = SpaceProcessingModeValues.Preserve;
+                }
+                runNew.AppendChild(t);
+
+                if (i < lines.Length - 1)
+                    runNew.AppendChild(new Break());
+            }
+
+            p.AppendChild(runNew);
+        }
+
     }
 }
