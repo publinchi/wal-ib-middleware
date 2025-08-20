@@ -1893,44 +1893,45 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		for (IResultSetRow iResultSetRow : rowsTemp) {
 			MovementDetails movementDetails = new MovementDetails();
 			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
-			BigDecimal amount = getBigDecimalValue(columns[2].getValue());
-			BigDecimal iva = getBigDecimalValue(columns[6].getValue());
+			BigDecimal amount = getBigDecimalValue(columns[2].getValue()); //mf_amount
+			BigDecimal iva = getBigDecimalValue(columns[6].getValue()); //mf_iva
 			String concept = columns[7].getValue();
+			String movementType = columns[12].getValue(); //mf_movement_type
 			amount = amount.add(iva);
-			movementDetails.setOperationType( columns[4].getValue());
-			movementDetails.setMovementType( columns[12].getValue());
-			movementDetails.setAccountingBalance( getBigDecimalValue(columns[0].getValue()));
-			movementDetails.setAvailableBalance( getBigDecimalValue(columns[1].getValue()));
+			movementDetails.setOperationType( columns[4].getValue()); //mf_operation_type
+			movementDetails.setMovementType( movementType); //mf_movement_type
+			movementDetails.setAccountingBalance( getBigDecimalValue(columns[0].getValue())); //mf_accounting_balance
+			movementDetails.setAvailableBalance( getBigDecimalValue(columns[1].getValue())); //mf_availableBalance
 			movementDetails.setAmount( amount);
-			movementDetails.setIva( getBigDecimalValue(columns[6].getValue()));
-			movementDetails.setTransactionDate( columns[3].getValue());
-			movementDetails.setCommission( getBigDecimalValue(columns[5].getValue()));
-			movementDetails.setDescription( columns[7].getValue());
-			movementDetails.setTransactionId(columns[8].getValue()); //falta movementId
-			movementDetails.setOwnerNameSA( columns[18].getValue());
-			movementDetails.setAccountNumberSA( columns[19].getValue());
-			movementDetails.setOwnerNameDA( columns[21].getValue());
-			movementDetails.setAccountNumberDA( columns[22].getValue());
-			movementDetails.setUuid( columns[10].getValue());
-			movementDetails.setReferenceCode( columns[24].getValue());
-			movementDetails.setTransactionReferenceNumber( columns[26].getValue() != null ? Integer.parseInt(columns[26].getValue()):null);
-			movementDetails.setBankNameDA( columns[23].getValue());
-			movementDetails.setBankNameSA( columns[20].getValue());
-			movementDetails.setTrackingId( columns[25].getValue());
-			movementDetails.setMaskedCardNumber( columns[13].getValue());
-			movementDetails.setCardId( columns[14].getValue());
-			movementDetails.setAuthorizationCode( columns[9].getValue());
-			movementDetails.setEstablishmentNameSD( columns[33].getValue());
-			movementDetails.setEstablishmentNameMD( columns[31].getValue());
-			movementDetails.setLocationId( columns[28].getValue());
-			movementDetails.setBankBranchCode( columns[30].getValue());
-			movementDetails.setReason( columns[35].getValue());
-			movementDetails.setCardEntryPin( columns[16].getValue());
-			movementDetails.setCardEntryCode( columns[15].getValue());
-			movementDetails.setCardEntryMode( columns[17].getValue());
-			movementDetails.setErrorCode( columns[36].getValue());
-			movementDetails.setErrorMessage( columns[37].getValue());
-			movementDetails.setTransactionStatus( columns[11].getValue());
+			movementDetails.setIva( getBigDecimalValue(columns[6].getValue())); //mf_iva
+			movementDetails.setTransactionDate( columns[3].getValue()); //mf_transaction_date
+			movementDetails.setCommission( getBigDecimalValue(columns[5].getValue())); //mf_commission
+			movementDetails.setDescription( columns[7].getValue()); //mf_description
+			movementDetails.setTransactionId(columns[8].getValue()); //mf_movement_id
+			movementDetails.setOwnerNameSA( columns[18].getValue()); //mf_owner_name_sa
+			movementDetails.setAccountNumberSA( columns[19].getValue()); //mf_account_number_sa
+			movementDetails.setOwnerNameDA( columns[21].getValue()); //mf_owner_name
+			movementDetails.setAccountNumberDA( columns[22].getValue()); //mf_account_number
+			movementDetails.setUuid( columns[10].getValue()); //mf_client_request_id
+			movementDetails.setReferenceCode( columns[24].getValue()); //mf_reference_code
+			movementDetails.setTransactionReferenceNumber( columns[26].getValue() != null ? Integer.parseInt(columns[26].getValue()):null); //mf_transaction_ref_number
+			movementDetails.setBankNameDA( columns[23].getValue()); //mf_bank_name
+			movementDetails.setBankNameSA( columns[20].getValue()); //mf_bank_name_sa
+			movementDetails.setTrackingId( columns[25].getValue()); //mf_tracking_id
+			movementDetails.setMaskedCardNumber( columns[13].getValue()); //mf_masked_card_number
+			movementDetails.setCardId( columns[14].getValue()); //mf_card_id
+			movementDetails.setAuthorizationCode( columns[9].getValue()); //mf_authorization_code
+			movementDetails.setEstablishmentNameSD( columns[33].getValue()); //mf_establishment_name_sd
+			movementDetails.setEstablishmentNameMD( columns[31].getValue()); //mf_establishment_name_md
+			movementDetails.setLocationId( columns[28].getValue()); //mf_location_id
+			movementDetails.setBankBranchCode( columns[30].getValue()); //mf_bank_branch_code
+			movementDetails.setReason( columns[35].getValue()); //mf_reason
+			movementDetails.setCardEntryPin( columns[16].getValue()); //mf_pin
+			movementDetails.setCardEntryCode( columns[15].getValue()); //mf_code
+			movementDetails.setCardEntryMode( columns[17].getValue()); //mf_mode
+			movementDetails.setErrorCode( columns[36].getValue()); //mf_error_code
+			movementDetails.setErrorMessage( columns[37].getValue()); //mf_message
+			movementDetails.setTransactionStatus( columns[11].getValue()); //mf_transaction_status
 
 			//Remesas
 			if(concept != null && concept.equals("REMITTANCE_CREDIT")){
@@ -1957,6 +1958,10 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 				movementDetails.setOriginTransactionReferenceNumber(columns[44].getValue());
 				movementDetails.setReversalOriginCode(columns[46].getValue());
 			}
+
+			//Datos adicionales
+			setAdditionalData(movementType, movementDetails, columns, true);
+
 			logger.logDebug("APA: getMovementsFailedDetails" + movementDetails.toString());
 			movementDetailsList.add(movementDetails);
 		}
@@ -1967,17 +1972,17 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		IResultSetBlock resulSetOrigin = anProcedureResponse.getResultSet(4);
 		IResultSetRow[] rowsTemp = resulSetOrigin.getData().getRowsAsArray();
 		List<MovementDetails> movementDetailsList = new ArrayList<>();
-		String isISO;
+		
 
 		for (IResultSetRow iResultSetRow : rowsTemp) {
 			MovementDetails movementDetails = new MovementDetails();
 			IResultSetRowColumnData[] columns = iResultSetRow.getColumnsAsArray();
-			String[] additionalDataArray = columns[32].getValue().split("\\|");
+			
 			String typeMovement = columns[33].getValue();
 			BigDecimal amount = getBigDecimalValue(columns[5].getValue());
 			BigDecimal iva = getBigDecimalValue(columns[28].getValue());
 			amount = amount.add(iva);
-			String establishmentName;
+			
 			movementDetails.setOperationType(columns[4].getValue());
 			movementDetails.setMovementType(typeMovement);
 			movementDetails.setAccountingBalance(getBigDecimalValue(columns[6].getValue()));
@@ -1988,245 +1993,9 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 			movementDetails.setCommission(getBigDecimalValue(columns[29].getValue()));
 			movementDetails.setDescription(columns[12].getValue());
 			movementDetails.setTransactionId(columns[8].getValue());
-			switch (typeMovement){
-				case Constants.P2P_DEBIT:
-					movementDetails.setAccountNumberSA(cuenta);
-					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,0));
-					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					break;
-				case Constants.P2P_CREDIT:
-					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,0));
-					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					break;
-				case Constants.SPEI_DEBIT :
-				case Constants.SPEI_PENDING:
-					movementDetails.setAccountNumberSA(cuenta);
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,2));
-					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,3)));
-					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
-					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
-					movementDetails.setTransactionStatus(getAdditionalValue(additionalDataArray,9));
-					break;
+			
+			setAdditionalData(typeMovement, movementDetails, columns, false);
 
-				case Constants.SPEI_CREDIT:
-					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,0));
-					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,2)));
-					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,3));
-					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setBankNameSA(getAdditionalValue(additionalDataArray,7));
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(columns[19].getValue());
-					break;
-				case Constants.SPEI_RETURN:
-					movementDetails.setAccountNumberSA(cuenta);
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
-					break;
-				case Constants.CREDIT_AT_STORE:
-					establishmentName = getAdditionalValue(additionalDataArray, 6);
-					establishmentName = establishmentName == null
-							? getAdditionalValue(additionalDataArray,7)
-							: establishmentName;
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
-					movementDetails.setEstablishmentNameSD(establishmentName);
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
-					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
-					break;
-				case Constants.DEBIT_AT_STORE:
-				case Constants.PURCHASE_AT_STORE:
-					establishmentName = getAdditionalValue(additionalDataArray, 6);
-					establishmentName = establishmentName == null
-							? getAdditionalValue(additionalDataArray,7)
-							: establishmentName;
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					movementDetails.setAccountNumberSA(cuenta);
-					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
-					movementDetails.setEstablishmentNameSD(establishmentName);
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
-					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
-					break;
-				case Constants.PURCHASE_ONLINE: //ISO y API
-					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
-					if(!isISO.equals("N")){
-						movementDetails.setOwnerNameSA(columns[18].getValue());
-						movementDetails.setAccountNumberSA(cuenta);
-						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
-						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
-						movementDetails.setEstablishmentNameMD(getAdditionalValue(additionalDataArray, 8));
-						movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,4));
-						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
-						movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
-						movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
-					}else{
-						establishmentName = getAdditionalValue(additionalDataArray, 6);
-						establishmentName = establishmentName == null
-								? getAdditionalValue(additionalDataArray,7)
-								: establishmentName;
-						movementDetails.setOwnerNameSA(columns[18].getValue());
-						movementDetails.setAccountNumberSA(cuenta);
-						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
-						movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,5));
-						movementDetails.setEstablishmentNameMD(establishmentName);
-						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
-						movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
-						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
-						movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
-						movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
-						movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
-					}
-					break;
-				case Constants.PURCHASE_WITH_CASHBACK: //ISO
-					movementDetails.setPurchaseAmount(getBigDecimalValue(columns[5].getValue()));
-					movementDetails.setWithdrawalAmount(getBigDecimalValue(columns[5].getValue()));
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					movementDetails.setAccountNumberSA(cuenta);
-					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
-					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
-					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
-					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
-					break;
-				case Constants.REVERSAL_PURCHASE_WITH_CASHBACK: //ISO
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
-					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
-					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
-					movementDetails.setTransactionIdATM(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
-					break;
-				case Constants.REVERSAL: //ISO
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
-					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
-					movementDetails.setEstablishmentNameMD(getAdditionalValue(additionalDataArray, 8));
-					movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
-					break;
-				case Constants.REVERSAL_ONLINE:
-				case Constants.REVERSAL_PHYSICAL:
-					establishmentName = getAdditionalValue(additionalDataArray, 6);
-					establishmentName = establishmentName == null
-							? getAdditionalValue(additionalDataArray,7)
-							: establishmentName;
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
-					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
-					movementDetails.setEstablishmentNameSD(establishmentName);
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
-					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
-					movementDetails.setMovementType(Constants.REVERSAL);
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
-					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
-					break;
-				case Constants.ATM_DEBIT: //ISO
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					movementDetails.setBankNameATM(getAdditionalValue(additionalDataArray, 8));
-					movementDetails.setTransactionIdATM(getAdditionalValue(additionalDataArray,4));
-					movementDetails.setLocationId(getAdditionalValue(additionalDataArray,3));
-					movementDetails.setBankBranchCode("");
-					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
-					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
-					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
-					break;
-				case Constants.COMMISSION:
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					movementDetails.setAccountNumberSA(cuenta);
-					String causa = columns[27].getValue();
-					if(causa.equals("8110")){
-						movementDetails.setReason("CARD_DELIVERY");
-					}else if(causa.equals("3101")) {
-						String reversalConcept = getAdditionalValue(additionalDataArray,2);
-						if("REFUND_REVERSAL".equals(reversalConcept)){
-							movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,3));
-							movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
-						}else{
-							movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
-							movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
-							movementDetails.setReason(reversalConcept);
-						}
-					}
-					break;
-				case Constants.ACCOUNT_CREDIT:
-					String creditConcept = getAdditionalValue(additionalDataArray,2);
-					movementDetails.setCreditConcept(creditConcept);
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					if("REMITTANCE_CREDIT".equals(creditConcept)){
-						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,4));
-						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
-						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,6));
-						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,7));
-						movementDetails.setOriginCountry(getAdditionalValue(additionalDataArray,8));
-						movementDetails.setCurrency(getAdditionalValue(additionalDataArray,9));
-						movementDetails.setOriginCurrency(getAdditionalValue(additionalDataArray,10));
-						movementDetails.setExchangeRate(getAdditionalValue(additionalDataArray,11));
-					}else {
-						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
-						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
-						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
-					}
-					break;
-				case Constants.CREDIT_REVERSAL:
-					String reversalConcept = getAdditionalValue(additionalDataArray,3);
-					movementDetails.setOwnerNameSA(columns[18].getValue());
-					movementDetails.setAccountNumberSA(cuenta);
-					if("REMITTANCE_REVERSAL".equals(reversalConcept)){
-						movementDetails.setReversalConcept(reversalConcept);
-						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,2));
-						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,4));
-						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,5));
-						movementDetails.setReversalOriginCode(getAdditionalValue(additionalDataArray,6));
-					}else {
-						movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
-						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
-						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
-					}
-					//movementDetails.setReason(getAdditionalValue(additionalDataArray,2));
-					//movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,5));
-					//movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,6));
-					break;
-				case Constants.BONUS:
-					movementDetails.setOwnerNameDA(columns[18].getValue());
-					movementDetails.setAccountNumberDA(cuenta);
-					break;
-				default:
-					logger.logDebug("Unexpected typeMovement: " + typeMovement);
-
-			}
 			logger.logDebug("KCZ: Movement detail Objects: " + movementDetails.toString());
 			movementDetailsList.add(movementDetails);
 		}
@@ -2294,5 +2063,290 @@ public class GetMovementsDetailQueryOrchestationCore extends SPJavaOrchestration
 		return "";
 	}
 
+	private void setAdditionalData(String typeMovement, MovementDetails movementDetails, IResultSetRowColumnData[] columns, Boolean isFailed) {
+		String establishmentName;
+		String[] additionalDataArray;
+
+		if(isFailed){
+			IResultSetRowColumnData col = columns[48];
+			additionalDataArray = Objects.nonNull(col) && Objects.nonNull(col.getValue()) ? col.getValue().split("\\|") : null;
+		}
+		else{
+			IResultSetRowColumnData col = columns[32];
+			additionalDataArray = Objects.nonNull(col) && Objects.nonNull(col.getValue()) ? col.getValue().split("\\|") : null;
+		}
+
+		String isISO;
+
+		if(Objects.isNull(additionalDataArray) || Objects.isNull(typeMovement)){
+			return;
+		}
+
+		switch (typeMovement){
+				case Constants.P2P_DEBIT:
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
+					if(!isFailed){
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+					}
+					break;
+				case Constants.P2P_CREDIT:
+					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,2));
+					if(!isFailed){
+						movementDetails.setOwnerNameDA(columns[18].getValue());
+					}
+					movementDetails.setAccountNumberDA(cuenta);
+					break;
+				case Constants.SPEI_DEBIT :
+				case Constants.SPEI_PENDING:
+					movementDetails.setAccountNumberSA(cuenta);
+					if(!isFailed){
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+					}
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,2));
+					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,3)));
+					movementDetails.setAccountNumberDA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setOwnerNameDA(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setBankNameDA(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setTransactionStatus(getAdditionalValue(additionalDataArray,9));
+					break;
+
+				case Constants.SPEI_CREDIT:
+					movementDetails.setReferenceCode(getAdditionalValue(additionalDataArray,0));
+					movementDetails.setTrackingId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionReferenceNumber(getIntegerValue(getAdditionalValue(additionalDataArray,2)));
+					movementDetails.setOwnerNameSA(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setAccountNumberSA(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setBankNameSA(getAdditionalValue(additionalDataArray,7));
+					if(!isFailed){
+						movementDetails.setOwnerNameDA(columns[18].getValue());
+						movementDetails.setAccountNumberDA(columns[19].getValue());
+					}
+					break;
+				case Constants.SPEI_RETURN:
+					movementDetails.setAccountNumberSA(cuenta);
+					if(!isFailed){
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+					}
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,8));
+					break;
+				case Constants.CREDIT_AT_STORE:
+					establishmentName = getAdditionalValue(additionalDataArray, 6);
+					establishmentName = establishmentName == null
+							? getAdditionalValue(additionalDataArray,7)
+							: establishmentName;
+					if(!isFailed){
+						movementDetails.setOwnerNameDA(columns[18].getValue());
+					}
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(establishmentName);
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					break;
+				case Constants.DEBIT_AT_STORE:
+				case Constants.PURCHASE_AT_STORE:
+					establishmentName = getAdditionalValue(additionalDataArray, 6);
+					establishmentName = establishmentName == null
+							? getAdditionalValue(additionalDataArray,7)
+							: establishmentName;
+					if(!isFailed){
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+					}
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(establishmentName);
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					break;
+				case Constants.PURCHASE_ONLINE: //ISO y API
+					isISO = getAdditionalValue(additionalDataArray,(additionalDataArray.length-1));
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					if(!isISO.equals("N")){ //ISO
+						movementDetails.setAccountNumberSA(cuenta);
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setEstablishmentNameMD(getAdditionalValue(additionalDataArray, 8));
+						movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+						movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					}else{
+						establishmentName = getAdditionalValue(additionalDataArray, 6);
+						establishmentName = establishmentName == null
+								? getAdditionalValue(additionalDataArray,7)
+								: establishmentName;
+						
+						movementDetails.setAccountNumberSA(cuenta);
+						movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+						movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setEstablishmentNameMD(establishmentName);
+						movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+						movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+						movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+						movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					}
+					break;
+				case Constants.PURCHASE_WITH_CASHBACK: //ISO
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					if(!isFailed){
+						movementDetails.setPurchaseAmount(getBigDecimalValue(columns[5].getValue()));
+						movementDetails.setWithdrawalAmount(getBigDecimalValue(columns[5].getValue()));
+					}
+					else{
+						movementDetails.setPurchaseAmount(getBigDecimalValue(columns[2].getValue()));
+						movementDetails.setWithdrawalAmount(getBigDecimalValue(columns[2].getValue()));
+					}
+					movementDetails.setAccountNumberSA(cuenta);
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.REVERSAL_PURCHASE_WITH_CASHBACK: //ISO
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setEstablishmentNameSD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdATM(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.REVERSAL: //ISO
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,6));
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,7));
+					movementDetails.setEstablishmentNameMD(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdMD(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.REVERSAL_ONLINE:
+				case Constants.REVERSAL_PHYSICAL:
+					establishmentName = getAdditionalValue(additionalDataArray, 6);
+					establishmentName = establishmentName == null
+							? getAdditionalValue(additionalDataArray,7)
+							: establishmentName;
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setCardId(getAdditionalValue(additionalDataArray,1));
+					movementDetails.setTransactionIdSD(getAdditionalValue(additionalDataArray,5));
+					movementDetails.setEstablishmentNameSD(establishmentName);
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,8));
+					movementDetails.setUuid(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setMaskedCardNumber(getAdditionalValue(additionalDataArray,11));
+					movementDetails.setMovementType(Constants.REVERSAL);
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,12));
+					movementDetails.setCardEntryPin(getAdditionalValue(additionalDataArray,13));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,14));
+					break;
+				case Constants.ATM_DEBIT: //ISO
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					movementDetails.setBankNameATM(getAdditionalValue(additionalDataArray, 8));
+					movementDetails.setTransactionIdATM(getAdditionalValue(additionalDataArray,4));
+					movementDetails.setLocationId(getAdditionalValue(additionalDataArray,3));
+					movementDetails.setBankBranchCode("");
+					movementDetails.setAuthorizationCode(getAdditionalValue(additionalDataArray,9));
+					movementDetails.setCardEntryCode(getAdditionalValue(additionalDataArray,10));
+					movementDetails.setCardEntryMode(getAdditionalValue(additionalDataArray,11));
+					break;
+				case Constants.COMMISSION:
+					if(!isFailed){
+						movementDetails.setOwnerNameSA(columns[18].getValue());
+					}
+					movementDetails.setAccountNumberSA(cuenta);
+					String causa = "";
+					if(!isFailed){
+						causa = columns[27].getValue();
+					}
+					if(causa.equals("8110")){
+						movementDetails.setReason("CARD_DELIVERY");
+					}else if(causa.equals("3101")) {
+						String reversalConcept = getAdditionalValue(additionalDataArray,2);
+						if("REFUND_REVERSAL".equals(reversalConcept)){
+							movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,3));
+							movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						}else{
+							movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+							movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+							movementDetails.setReason(reversalConcept);
+						}
+					}
+					break;
+				case Constants.ACCOUNT_CREDIT:
+					String creditConcept = getAdditionalValue(additionalDataArray,2);
+					movementDetails.setCreditConcept(creditConcept);
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					if("REMITTANCE_CREDIT".equals(creditConcept)){
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setSenderName(getAdditionalValue(additionalDataArray,6));
+						movementDetails.setMoneyTransmitter(getAdditionalValue(additionalDataArray,7));
+						movementDetails.setOriginCountry(getAdditionalValue(additionalDataArray,8));
+						movementDetails.setCurrency(getAdditionalValue(additionalDataArray,9));
+						movementDetails.setOriginCurrency(getAdditionalValue(additionalDataArray,10));
+						movementDetails.setExchangeRate(getAdditionalValue(additionalDataArray,11));
+					}else {
+						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setOriginCode(getAdditionalValue(additionalDataArray,5));
+					}
+					break;
+				case Constants.CREDIT_REVERSAL:
+					String reversalConcept = getAdditionalValue(additionalDataArray,3);
+					
+					movementDetails.setOwnerNameSA(columns[18].getValue());
+					movementDetails.setAccountNumberSA(cuenta);
+					if("REMITTANCE_REVERSAL".equals(reversalConcept)){
+						movementDetails.setReversalConcept(reversalConcept);
+						movementDetails.setRemittanceTransactionReferenceNumber(getAdditionalValue(additionalDataArray,2));
+						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,4));
+						movementDetails.setOriginTransactionReferenceNumber(getAdditionalValue(additionalDataArray,5));
+						movementDetails.setReversalOriginCode(getAdditionalValue(additionalDataArray,6));
+					}else {
+						movementDetails.setReversalConcept(getAdditionalValue(additionalDataArray,2));
+						movementDetails.setOriginMovementId(getAdditionalValue(additionalDataArray,3));
+						movementDetails.setOriginReferenceNumber(getAdditionalValue(additionalDataArray,4));
+					}
+					//movementDetails.setReason(getAdditionalValue(additionalDataArray,2));
+					//movementDetails.setCommissionOriginMovementId(getAdditionalValue(additionalDataArray,5));
+					//movementDetails.setCommissionOriginReferenceNumber(getAdditionalValue(additionalDataArray,6));
+					break;
+				case Constants.BONUS:
+					movementDetails.setOwnerNameDA(columns[18].getValue());
+					movementDetails.setAccountNumberDA(cuenta);
+					break;
+				default:
+					logger.logDebug("Unexpected typeMovement: " + typeMovement);
+
+			}
+	}
 
 }
