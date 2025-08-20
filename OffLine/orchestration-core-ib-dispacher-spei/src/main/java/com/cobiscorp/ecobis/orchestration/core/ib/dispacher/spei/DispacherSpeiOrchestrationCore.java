@@ -19,6 +19,7 @@ import javax.xml.bind.JAXB;
 
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.ParametrizationSPEI;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -45,6 +46,8 @@ import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
 import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.CacheUtils;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Constants;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Institucion;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
@@ -57,6 +60,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Constans;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Mensaje;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Respuesta;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.DispatcherSpeiOfflineTemplate;
+
 
 /**
  * Plugin of Dispacher Spei
@@ -353,25 +357,16 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		try
 		{
-			String paramInsBen = getParam(request, "CBCCDK", "AHO");
-			String codTarDeb = getParam(request, "CODTAR", "BVI");
-			String codTelDeb = getParam(request, "CODTEL", "BVI");
-			aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
-			aBagSPJavaOrchestration.put("codTelDeb", codTelDeb);
-			aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
 			boolean isCoreError = false;
-			
 			if(logger.isDebugEnabled())
 				logger.logDebug("BER Id:"+msjIn.getOrdenpago().getId());
+			loadParameters(request, aBagSPJavaOrchestration);
 			IProcedureResponse responSingTyp = singType(request, aBagSPJavaOrchestration, "bv_tipo_firma_pago", String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			
 			if(responSingTyp.getReturnCode()==0)
 			{
-				
 				logHour("2");
-				if( validateFields(request, aBagSPJavaOrchestration))
+				if ( validateFields(request, aBagSPJavaOrchestration))
 				{
-					
 					DispatcherUtil util = new DispatcherUtil();
 					String sign = util.doSignature(request, aBagSPJavaOrchestration, privateKeyKarpay);
 					if(logger.isDebugEnabled())
@@ -547,7 +542,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				}
 				try {
 					// Crear una instancia de MyCallableTask con parámetros
-					ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
+					ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, (String)aBagSPJavaOrchestration.get("paramInsBen"));
 					// Enviar la tarea para su ejecución
 					executorService.submit(task);
 				}catch(Exception e)
@@ -1232,7 +1227,10 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		return 0;
 	}
-	
+	private void loadParameters( IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		ParametrizationSPEI params = new ParametrizationSPEI(); 
+		params.getSpeiParameters( anOriginalRequest, aBagSPJavaOrchestration, cacheManager);
+	}
 	private IProcedureResponse singType(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String tabla, String codigo) {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Begin flow, singType");
@@ -1258,6 +1256,60 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			
 			aBagSPJavaOrchestration.put("tipoFirma", wProcedureResponseLocal.readValueParam("@o_valor"));
 		} 
+		return wProcedureResponseLocal;
+		
+	}
+	private IProcedureResponse parameterizationLoad(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String paymentType) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, singType");
+		}
+		IProcedureResponse wProcedureResponseLocal = new ProcedureResponseAS();
+		
+		if ( CacheUtils.getCacheValue(cacheManager, Constants.SPEI_CONF, Constants.SPEI_PARAMS) == null )
+		{
+			IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
+			requestProcedureLocal.setSpName("cob_bvirtual..sp_firma_pago");
+			requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
+					IMultiBackEndResolverService.TARGET_LOCAL);
+			requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500169");
+			requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
+			requestProcedureLocal.addInputParam("@i_tipo_pago",ICTSTypes.SQLVARCHAR, paymentType);	
+			requestProcedureLocal.addOutputParam("@o_tipo_firma", ICTSTypes.SYBVARCHAR, "-1");
+			requestProcedureLocal.addOutputParam("@o_param_ins_ben", ICTSTypes.SYBVARCHAR, "0");
+			requestProcedureLocal.addOutputParam("@o_cod_tar_deb", ICTSTypes.SYBVARCHAR, "0");
+			requestProcedureLocal.addOutputParam("@o_cod_tel_deb", ICTSTypes.SYBVARCHAR, "0");
+			requestProcedureLocal.addOutputParam("@o_tipo_spei_in", ICTSTypes.SYBVARCHAR, "-1");
+			requestProcedureLocal.addOutputParam("@o_tipo_pago_extemporeano", ICTSTypes.SYBVARCHAR, "-1");
+			
+			
+		    wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
+			
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
+			}
+			
+			if (wProcedureResponseLocal.getReturnCode()==0) {
+				
+				Map<String, Object> parametrization = new HashMap<String, Object>();
+				
+				parametrization.put("tipoFirma", wProcedureResponseLocal.readValueParam("@o_tipo_firma"));
+				parametrization.put("paramInsBen", wProcedureResponseLocal.readValueParam("@o_param_ins_ben"));
+				parametrization.put("codTarDeb", wProcedureResponseLocal.readValueParam("@o_cod_tar_deb"));
+				parametrization.put("codTelDeb", wProcedureResponseLocal.readValueParam("@o_cod_tel_deb"));
+				parametrization.put("tipoSpeiIn", wProcedureResponseLocal.readValueParam("@o_tipo_spei_in"));
+				parametrization.put("tipoPagoExtemporeano", wProcedureResponseLocal.readValueParam("@o_tipo_pago_extemporeano"));
+				
+				aBagSPJavaOrchestration.putAll(parametrization);
+				CacheUtils.putCacheValue(cacheManager, Constants.SPEI_CONF,Constants.SPEI_PARAMS, parametrization);
+			} 
+		}else {
+			
+			Map<String, Object> parametrization = (Map<String, Object>) CacheUtils.getCacheValue(cacheManager, Constants.SPEI_CONF, Constants.SPEI_PARAMS);
+			aBagSPJavaOrchestration.putAll(parametrization);
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("Cache already exists for SPEI_IN_PARAMS: "+parametrization.toString());
+			}
+		}
 		return wProcedureResponseLocal;
 		
 	}
