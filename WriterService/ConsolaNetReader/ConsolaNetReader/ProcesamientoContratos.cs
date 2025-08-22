@@ -38,6 +38,11 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Diagnostics.Contracts;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using Word = Microsoft.Office.Interop.Word;
+using Path = System.IO.Path;
+using System.Web.UI.WebControls;
+
 
 
 
@@ -65,6 +70,7 @@ namespace ConsolaNetReader
         public int customerId;
         private string client;
         private string secret;
+        private string pdfFinal;
 
 
 
@@ -133,14 +139,15 @@ namespace ConsolaNetReader
             bool flagContrato = false;
             bool flagDatosGenerales = false;
             bool success=true;
-
+            DocxReplacer replacer;
             try
             {
                 log.Info("Comienza defineDocumento");
 
-                Application wordApp = new Application();
-                Microsoft.Office.Interop.Word.Document plantilla = null;
 
+
+                 replacer = new DocxReplacer();
+                Dictionary<string, string> placeholders = null;
 
                 string contract = contratos.Valores.Where(x => x.Llave == "$$contract$$").Select(y => y.Valor).FirstOrDefault().ToString();
 
@@ -150,15 +157,19 @@ namespace ConsolaNetReader
                     try
                     {
 
+                        List<Valores>  valores=contratos.Valores;
+                       placeholders = valores.ToDictionary(v => v.Llave, v => v.Valor);
 
-                        /*  String rutaOriginal = System.IO.Path.Combine(plantillas, base.plantilla);
-                          File.Copy(rutaOriginal, System.IO.Path.Combine(temporales, this.temporalFile), overwrite: true);
-                          plantilla = wordApp.Documents.Open(System.IO.Path.Combine(temporales, this.temporalFile));*/
 
-                        string rutaTemporal = base.manager.CrearCopiaTemporal();
-                        plantilla = wordApp.Documents.Open(rutaTemporal);
-                        aplicaCambiosContrato(contratos, plantilla, "CONTRATO");
-                        contractToMail = convertToPDF();
+                        byte[] plantillaBytes = (byte[])platillaContrato.Clone();
+
+                        byte[] docFinal = replacer.ReemplazarEnMemoria(plantillaBytes, placeholders);
+
+                        docFinal=replacer.AppendBeneficiariosToLastTable(docFinal, contratos.Beneficiarios,true);
+
+                        contractToMail =DocxBytesToPdfLibreOffice(docFinal, generated);
+
+    
                         if (contractToMail != "ERROR")
                         {
                             flagContrato = true;
@@ -184,10 +195,8 @@ namespace ConsolaNetReader
                     }
                     finally
                     {
-                        wordApp.Quit();
-                        Marshal.ReleaseComObject(wordApp);
+                        replacer = null;
 
-                        File.Delete(System.IO.Path.Combine(temporales, this.temporalFile));
                     }
 
 
@@ -197,20 +206,25 @@ namespace ConsolaNetReader
 
                 string generalData = contratos.Valores.Where(x => x.Llave == "$$generaldata$$").Select(y => y.Valor).FirstOrDefault().ToString();
 
-                if (!generalData.Equals("1"))
+                if (generalData.Equals("0"))
                 {
-                    Application wordApp2 = new Application();
-                    Microsoft.Office.Interop.Word.Document plantillaGeneral = null;
+                /*    Application wordApp2 = new Application();
+                    Microsoft.Office.Interop.Word.Document plantillaGeneral = null;*/
                     this.setFileName();
 
                     try
                     {
 
-                        plantillaGeneral = wordApp2.Documents.Open(general.CrearCopiaTemporal());
-                        aplicaCambiosContrato(contratos, plantillaGeneral, "DATOS CLIENTE");
+                        replacer = new DocxReplacer();
 
-                        convertToPDF();
+                        byte[] plantillaBytes = (byte[])platillaDatosGenerales.Clone();
+
+                        byte[] docFinal = replacer.ReemplazarEnMemoria(plantillaBytes, placeholders);
+
+                        DocxBytesToPdfLibreOffice(docFinal, generated);
+
                         uploadFile("DATOS CLIENTE");
+
                         flagDatosGenerales = true;
                     }
                     catch (Exception xe)
@@ -219,9 +233,7 @@ namespace ConsolaNetReader
                     }
                     finally
                     {
-                        wordApp2.Quit();
-                        Marshal.ReleaseComObject(wordApp);
-                        File.Delete(System.IO.Path.Combine(temporales, this.temporalFileGeneral));
+                        replacer = null;
                     }
                 } else
                     flagDatosGenerales = true;
@@ -237,7 +249,49 @@ namespace ConsolaNetReader
 
         }
 
+        public string DocxBytesToPdfLibreOffice(byte[] docxBytes, string rutaPdfSalida)
+        {
+            string idUnico = Guid.NewGuid().ToString();
+            string tempDocx = Path.Combine(Path.GetTempPath(), idUnico + ".docx");
 
+            // Guardar DOCX temporal
+            File.WriteAllBytes(tempDocx, docxBytes);
+
+            // Comando para LibreOffice en headless
+            string args = $"--headless --convert-to pdf --outdir \"{Path.GetDirectoryName(rutaPdfSalida)}\" \"{tempDocx}\"";
+
+            var proc = new System.Diagnostics.Process();
+            proc.StartInfo.FileName = @"C:\Program Files\LibreOffice\program\soffice.exe"; // Ruta completa
+            proc.StartInfo.Arguments = args;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.UseShellExecute = false;
+            proc.Start();
+            proc.WaitForExit(); // Espera a que LibreOffice termine
+
+            // LibreOffice genera el PDF con el mismo nombre que el DOCX temporal
+            string generado = Path.Combine(Path.GetDirectoryName(rutaPdfSalida), idUnico + ".pdf");
+            pdfFinal = generado;
+
+            // Esperar a que el archivo exista y tenga tamaño > 0
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            while ((!File.Exists(generado) || new FileInfo(generado).Length == 0) && sw.Elapsed < TimeSpan.FromSeconds(30))
+            {
+                System.Threading.Thread.Sleep(200); // 200 ms
+            }
+
+            if (!File.Exists(generado))
+                throw new Exception("El PDF no se generó correctamente.");
+
+            // Si el archivo de salida es distinto del generado, mover/sobrescribir
+            if (!string.Equals(generado, rutaPdfSalida, StringComparison.OrdinalIgnoreCase))
+            {
+                
+
+
+            }
+
+            return generado;
+        }
 
 
         private void uploadFile(string typeFile)
@@ -250,7 +304,7 @@ namespace ConsolaNetReader
 
                 var apiUrl = procesingApi;
 
-                byte[] file = File.ReadAllBytes(generated + fileNamePdf);
+                byte[] file = File.ReadAllBytes(pdfFinal);
 
                 string fileContent = Convert.ToBase64String(file);
 
@@ -355,9 +409,12 @@ namespace ConsolaNetReader
 
                 if (File.Exists(deposito + fileNameDoc)) {
 
-                    wordDocument = appWord.Documents.Open(deposito + fileNameDoc);
+                    wordDocument = appWord.Documents.Open(deposito + fileNameDoc, AddToRecentFiles: false,
+                                                            ConfirmConversions: false,
+                                                            OpenAndRepair: false,
+                                                            Visible: false);
 
-                    wordDocument.ExportAsFixedFormat(generated + fileNamePdf, WdExportFormat.wdExportFormatPDF);
+                    wordDocument.ExportAsFixedFormat(generated + fileNamePdf, WdExportFormat.wdExportFormatPDF,  OpenAfterExport: false);
 
                     contract = generated + fileNamePdf;
 
@@ -380,8 +437,14 @@ namespace ConsolaNetReader
                 if (close)
                 {
                     wordDocument.Close();
+                    Marshal.FinalReleaseComObject(wordDocument);
+                    wordDocument = null;
                     appWord.Quit();
-                    File.Delete(deposito + fileNameDoc);
+                    
+                    File.Delete(deposito + fileNameDoc);                    
+
+                    GC.Collect(); GC.WaitForPendingFinalizers();
+                    GC.Collect(); GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -443,10 +506,12 @@ namespace ConsolaNetReader
 
         }
 
-        private void aplicaCambiosContrato(Contrato contratos, Microsoft.Office.Interop.Word.Document plantilla, string type)
+        private string aplicaCambiosContrato(Contrato contratos, Microsoft.Office.Interop.Word.Document plantilla, string type)
         {
 
             string values = "";
+
+            string pdfs = "";
 
             Application wordApp = null;
 
@@ -542,7 +607,9 @@ namespace ConsolaNetReader
 
                 log.Info(" Finaliza cambios en plantilla ");
 
-                plantilla.SaveAs(deposito + fileNameDoc);
+               plantilla.ExportAsFixedFormat(generated + fileNamePdf, WdExportFormat.wdExportFormatPDF, OpenAfterExport: false);
+
+                pdfs = generated + fileNamePdf;
 
                 log.Info(" generación d earchivo exitoso ");
 
@@ -564,10 +631,14 @@ namespace ConsolaNetReader
             {
 
                 plantilla.Close();
+                Marshal.FinalReleaseComObject(plantilla);
                 wordApp.Quit();
+                GC.Collect(); GC.WaitForPendingFinalizers();
+                GC.Collect(); GC.WaitForPendingFinalizers();
 
             }
 
+            return pdfs;
         }
 
         public string CapitalizeWords(string input)

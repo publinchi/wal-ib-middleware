@@ -87,7 +87,6 @@ C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\ConsolaNetReader.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\DocumentFormat.OpenXml.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\DocumentFormat.OpenXML.Extensions.dll
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\DocumentFormat.OpenXml.Framework.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\itextsharp.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\log4net.dll
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\Microsoft.Bcl.AsyncInterfaces.dll
@@ -123,7 +122,6 @@ C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\ConsolaNetReader.pdb
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\ConsolaNetReader.dll.config
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\DocumentFormat.OpenXml.xml
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\DocumentFormat.OpenXml.Framework.xml
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\itextsharp.xml
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\log4net.xml
 C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\Menu\bin\Release\Microsoft.Bcl.AsyncInterfaces.xml

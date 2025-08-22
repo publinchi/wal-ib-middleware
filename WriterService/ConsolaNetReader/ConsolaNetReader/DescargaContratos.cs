@@ -6,6 +6,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -21,8 +22,13 @@ namespace ConsolaNetReader
         private string secret;
         private string getDataApi;
         private string token;
+        private int expire;
+
+        
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ServicesDocuments));
+
+        public int Expire { get => expire; set => expire = value; }
 
         public DescargaContratos() {
 
@@ -33,32 +39,46 @@ namespace ConsolaNetReader
 
             try
             {
-                this.client = ConfigurationManager.AppSettings["client"];
-                this.secret = ConfigurationManager.AppSettings["secret"];
                 this.getDataApi = ConfigurationManager.AppSettings["getDataApi"];
 
-                 token = string.Empty;
-
-                var authUrl = ConfigurationManager.AppSettings["tokeneiser"];
-                var clientId = this.client;
-                var clientSecret = this.secret;
+                if (RefreshToken.MustBeeRefresh())
+                {
 
 
-                log.Info("Generando Token");
 
-                var client = new RestClient(authUrl);
-                var request = new RestRequest(authUrl, Method.Post);
+                    token = string.Empty;
 
-                request.AddParameter("grant_type", "client_credentials");
-                request.AddParameter("client_id", clientId);
-                request.AddParameter("client_secret", clientSecret);
+                    var authUrl = ConfigurationManager.AppSettings["tokeneiser"];
+                    this.client = ConfigurationManager.AppSettings["client"];
+                    this.secret = ConfigurationManager.AppSettings["secret"];
+                    var clientId = this.client;
+                    var clientSecret = this.secret;
 
 
-                RestResponse response = client.Execute(request);
-                var tokenData = JObject.Parse(response.Content);
-                this.token = tokenData["access_token"].ToString();
+                    log.Info("Generando Token");
 
-                log.Info("Token generado.....");
+                    var client = new RestClient(authUrl);
+                    var request = new RestRequest(authUrl, Method.Post);
+
+                    request.AddParameter("grant_type", "client_credentials");
+                    request.AddParameter("client_id", clientId);
+                    request.AddParameter("client_secret", clientSecret);
+
+
+                    RestResponse response = client.Execute(request);
+                    var tokenData = JObject.Parse(response.Content);                 
+                    
+
+                    RefreshToken.token = tokenData["access_token"].ToString();
+                    RefreshToken.expire = Convert.ToInt32(tokenData["expires_in"]);
+
+
+                    log.Info("Token generado.....");
+
+                }
+
+                this.token = RefreshToken.token;
+                this.expire = RefreshToken.expire;
             }
             catch (Exception xe)
             {
@@ -68,6 +88,8 @@ namespace ConsolaNetReader
 
 
         }
+
+
 
         public string GetToken() {
 
