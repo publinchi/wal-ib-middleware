@@ -1974,7 +1974,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         response.setReturnCode(responseBank.getReturnCode());
-        if(!response.hasError()){
+        if(response.hasError()){
             response.setReturnCode(response.getReturnCode());
             aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
@@ -2202,7 +2202,7 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
         ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
-        if(responseTransfer.hasError()){
+        if(serverResponse.getOnLine() && responseTransfer.hasError()){
             aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
 
             idTransaccion=String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH));
