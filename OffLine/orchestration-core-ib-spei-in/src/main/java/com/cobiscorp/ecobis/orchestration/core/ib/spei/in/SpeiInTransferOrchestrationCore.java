@@ -46,6 +46,10 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceReexecutionC
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSelfAccountTransfers;
 import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotification;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
+import com.cobiscorp.cobis.cache.ICacheManager;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.ParametrizationSPEI;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.CacheUtils;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Constants;
 
 /**
  * Plugin of between accounts transfers
@@ -82,7 +86,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 	private static ILogger logger = LogFactory.getLogger(SpeiInTransferOrchestrationCore.class);
 	private static final String CORESERVICEMONETARYTRANSACTION = "coreServiceMonetaryTransaction";
 	private static final String SPEI_CREDIT = "SPEI_CREDIT";
-	private String validaRiesgo = "";
 	private static final String I_CONCEPTOPAGO = "@i_conceptoPago";
 	private static final String ORIGINAL_REQUEST = "ORIGINAL_REQUEST";
 	private static final String I_IDTIPOPAGO = "@i_idTipoPago";
@@ -268,6 +271,12 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		try {
 			IProcedureRequest anOriginalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
 			serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
+
+			loadParameters(anOriginalRequest, aBagSPJavaOrchestration);
+
+			if (logger.isDebugEnabled()) {
+				logger.logDebug("aBagSPJavaOrchestration SPEI: " + aBagSPJavaOrchestration.toString());
+			}
 			response = mappingResponse(executeTransferSpeiIn(anOriginalRequest, aBagSPJavaOrchestration), aBagSPJavaOrchestration);
 						
 			//Validamos la respuesta para ingresar la transacción fallida en Webhook
@@ -361,15 +370,15 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String estadoRiesgo = "";
 		Integer code = 0;
         String message = "success";
-		validaRiesgo = getParam(anOriginalRequest, "AERISY", "BVI");
+		String validaRiesgo = aBagSPJavaOrchestration.get("AERISY") != null ? aBagSPJavaOrchestration.get("AERISY").toString() : "false";
         
 		if (logger.isDebugEnabled())
 			logger.logDebug("@i_tipoCuentaBeneficiario: " + anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));		
 		
 		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
-		String codTarDeb = getParam(anOriginalRequest, "CODTAR", "BVI");
-		String codTelDeb = getParam(anOriginalRequest, "CODTEL", "BVI");
+		String codTarDeb = aBagSPJavaOrchestration.get("CODTAR") != null ? aBagSPJavaOrchestration.get("CODTAR").toString() : "03";
+		String codTelDeb = aBagSPJavaOrchestration.get("CODTEL") != null ? aBagSPJavaOrchestration.get("CODTEL").toString() : "10";
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		
 		if (logger.isInfoEnabled())
@@ -617,7 +626,9 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		procedureRequest.addInputParam("@i_debitorAccount_identification", ICTSTypes.SQLVARCHAR,  aRequest.readValueParam("@i_cuentaOrdenante"));
 		procedureRequest.addInputParam("@i_debitorAccount_identificationType", ICTSTypes.SQLVARCHAR,  "ACCOUNT_NUMBER");
 
-		procedureRequest.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR, validaRiesgo ); 
+		String validaRiesgo = aBagSPJavaOrchestration.get("AERISY") != null ? aBagSPJavaOrchestration.get("AERISY").toString() : "false";
+
+		procedureRequest.addInputParam("@i_autoActionExecution", ICTSTypes.SQLVARCHAR, validaRiesgo); 
 
 		IProcedureResponse connectorRiskEvaluationResponse = executeCoreBanking(procedureRequest);
 		
@@ -661,10 +672,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		//S1166247 Obtener causal remesas
 		String tipoPago = anOriginalRequest.readValueParam(I_IDTIPOPAGO);
 		if(tipoPago != null && tipoPago.equals("36")) {
-			String causalRemesas = getParam(anOriginalRequest, "CARESI", "AHO");
-			if(causalRemesas == null || causalRemesas.isEmpty()) {
-				causalRemesas = "2100";
-			}
+			String causalRemesas = aBagSPJavaOrchestration.get("CARESI") != null ? aBagSPJavaOrchestration.get("CARESI").toString() : "2100";
 			procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, causalRemesas);
 		} else {
 			procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");
@@ -972,6 +980,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		// TODO Auto-generated method stub
 
 	}
+
 	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
     	logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
 		
@@ -1001,7 +1010,6 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		
 		return "";
 	}
-	
 	
 	private IProcedureResponse findCardByPanConector(Map<String, Object> aBagSPJavaOrchestration) {
 		
@@ -1319,6 +1327,11 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
         
         return newDate;
     }
+
+	private void loadParameters( IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		ParametrizationSPEI params = new ParametrizationSPEI(cacheManager); 
+		params.getSpeiParameters(anOriginalRequest, aBagSPJavaOrchestration);
+	}
 	
 	public void bindCoreServiceMonetaryTransaction(ICoreServiceMonetaryTransaction service) {
 		coreServiceMonetaryTransaction = service;
@@ -1437,6 +1450,17 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 
 		return respSaveAdditionalDataImplSpeiIn;
 
+	}
+
+	@Reference(bind = "setCacheManager", unbind = "unsetCacheManager", cardinality = ReferenceCardinality.MANDATORY_UNARY)
+	private ICacheManager cacheManager;
+	
+	public void setCacheManager(ICacheManager cacheManager){
+		this.cacheManager = cacheManager;
+	}
+	
+	public void unsetCacheManager(ICacheManager cacheManager) {
+		this.cacheManager = null;		
 	}
 
 }
