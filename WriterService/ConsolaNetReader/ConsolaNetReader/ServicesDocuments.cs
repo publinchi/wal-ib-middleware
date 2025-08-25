@@ -102,11 +102,11 @@ namespace ConsolaNetReader
             try
             {
 
-                while (!worker.CancellationPending)
+                while (!workers.Any(w => w.IsBusy))
                 {
                     // Aquí va la tarea que se repite
                     Console.WriteLine("Ejecutando tarea en segundo plano...");
-                    log.Info("JC::::::::::::Comienza documentsGenerator Performance :::::::::::::JC 1.0.21");
+                    log.Info("JC::::::::::::Comienza documentsGenerator Performance :::::::::::::JC 2.0.03");
                     DescargaContratos download = new DescargaContratos();
                     JObject serviceContract = download.recuperarDatosContratos();
                     List<Contrato> listaContratos = download.validarContratos(serviceContract);
@@ -179,10 +179,11 @@ namespace ConsolaNetReader
                     else
                     {
                         log.Info(":::::::::No existen contratos que procesar!!!!::::::::");
-                       // Thread.Sleep(30000);
+                        Thread.Sleep(30000);
                     }
 
-                    break;
+
+                 //   break;
                 }
             }
             catch (Exception xx) {

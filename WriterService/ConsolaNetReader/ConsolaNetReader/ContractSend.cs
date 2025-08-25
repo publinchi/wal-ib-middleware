@@ -35,11 +35,17 @@ namespace ConsolaNetReader
             this.fileContract = "C:\\Pruebas\\prueba.png";
             this.cuenta = "prueba";
             DateTime fecha = DateTime.Parse("01/01/1990");
-            this.mail = "jolmossolis@gmail.com";
+            this.mail = "jolmossolis@yahoo.com";
             this.plantillaResulta = Requeridos.getPlantillaMail();
 
             try
             {
+
+                if (apiKey.IsValueNullOrEmpty())
+                {
+                    this.apiKey = "c4b3624c-f458-9476-10cc-ce6879d8e66a";
+
+                }
 
                 this.horario = String.Format("{0:dd/MM/yy} - Hora: {0:hh:mm tt}", fecha).ToLower();
 
@@ -63,7 +69,7 @@ namespace ConsolaNetReader
             {
                 if (apiKey.IsValueNullOrEmpty())
                 {
-                    this.apiKey = "c4b3624c-f458-9476-10cc-ce6879d8e66a";
+                    this.apiKey = ConfigurationManager.AppSettings["apiKey"];
 
                 }
 
@@ -113,27 +119,23 @@ namespace ConsolaNetReader
                     {
                         { new StringContent("CONTRATO"), "campaignName" },
                         { new StringContent(this.mail), "to" },
-                        { new StringContent(ConfigurationManager.AppSettings["from"]), "from" },
+                        { new StringContent("clientes@cuentacashi.com.mx"), "from" },
                         { new StringContent(ConfigurationManager.AppSettings["fromName"]), "fromName" },
                         { new StringContent(ConfigurationManager.AppSettings["replyTo"]), "replyTo" },
                         { new StringContent(ConfigurationManager.AppSettings["subject"]), "subject" },
-                        { new StringContent(plantillaResulta), "htmlEmail" }, 
+                        { new StringContent(plantillaResulta), "htmlEmail" },
                         { new StringContent(ConfigurationManager.AppSettings["fileName"]), "fileName" },
                         { new StringContent("true"), "removePreloadedFile" },
                         { new StringContent("true"), "selectAttachments" },
                         { new StringContent("false"), "includeEmbedImage" },
                         { new StringContent("false"), "sendWithoutAttachedFiles" }
 
-                    };          
-
-
+                    };
+                
                     var fileStream = File.OpenRead(fileContract);
                     var streamContent = new StreamContent(fileStream);
-
           
-                    form.Add(streamContent, "file", Path.GetFileName(fileContract));
-
-     
+                    form.Add(streamContent, "file", "Contrato.pdf");     
 
                     var response = await client.PostAsync(url, form);
 

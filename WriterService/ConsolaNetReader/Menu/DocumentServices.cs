@@ -94,10 +94,28 @@ namespace DocumentServices
             DeleteFiles(temporales, "*.*");
             DeleteFiles(generated, "*.*");
             DeleteFiles(deposito, "*.*");
+            DeleteAllContents(generated);
 
 
             ServicesDocuments doc = new ServicesDocuments();
             doc.Iniciar();
+        }
+
+        static void DeleteAllContents(string directoryPath)
+        {
+
+            foreach (string file in Directory.GetFiles(directoryPath))
+            {
+                File.Delete(file);
+                Console.WriteLine($"Archivo eliminado: {file}");
+            }
+
+
+            foreach (string dir in Directory.GetDirectories(directoryPath))
+            {
+                Directory.Delete(dir, true); 
+                Console.WriteLine($"Directorio eliminado: {dir}");
+            }
         }
 
         static void DeleteFiles(string directoryPath, string searchPattern)

@@ -40,7 +40,7 @@ namespace ConsolaNetReader
             Console.WriteLine(horario);
 
                 ContractSend sender = new ContractSend();
-              await  sender.EnviaContratoAsync();
+              await  sender.EnviaContratoAsyncApi();
 
         }
 

@@ -42,6 +42,7 @@ using System.Security.Cryptography;
 using Word = Microsoft.Office.Interop.Word;
 using Path = System.IO.Path;
 using System.Web.UI.WebControls;
+using System.Threading;
 
 
 
@@ -206,37 +207,42 @@ namespace ConsolaNetReader
 
                 string generalData = contratos.Valores.Where(x => x.Llave == "$$generaldata$$").Select(y => y.Valor).FirstOrDefault().ToString();
 
-                if (generalData.Equals("0"))
-                {
-                /*    Application wordApp2 = new Application();
-                    Microsoft.Office.Interop.Word.Document plantillaGeneral = null;*/
-                    this.setFileName();
 
-                    try
+
+                    if (generalData.Equals("0"))
                     {
+                        /*    Application wordApp2 = new Application();
+                            Microsoft.Office.Interop.Word.Document plantillaGeneral = null;*/
+                        this.setFileName();
 
-                        replacer = new DocxReplacer();
+                        try
+                        {
 
-                        byte[] plantillaBytes = (byte[])platillaDatosGenerales.Clone();
+                            replacer = new DocxReplacer();
 
-                        byte[] docFinal = replacer.ReemplazarEnMemoria(plantillaBytes, placeholders);
+                            byte[] plantillaBytes = (byte[])platillaDatosGenerales.Clone();
 
-                        DocxBytesToPdfLibreOffice(docFinal, generated);
+                            byte[] docFinal = replacer.ReemplazarEnMemoria(plantillaBytes, placeholders);
 
-                        uploadFile("DATOS CLIENTE");
+                            DocxBytesToPdfLibreOffice(docFinal, generated);
 
+                            uploadFile("DATOS CLIENTE");
+
+                            flagDatosGenerales = true;
+                        }
+                        catch (Exception xe)
+                        {
+                            log.Error(xe);
+                        }
+                        finally
+                        {
+                            replacer = null;
+                        }
+                    }
+                    else
                         flagDatosGenerales = true;
-                    }
-                    catch (Exception xe)
-                    {
-                        log.Error(xe);
-                    }
-                    finally
-                    {
-                        replacer = null;
-                    }
-                } else
-                    flagDatosGenerales = true;
+
+
 
             }
             catch (Exception xe)
