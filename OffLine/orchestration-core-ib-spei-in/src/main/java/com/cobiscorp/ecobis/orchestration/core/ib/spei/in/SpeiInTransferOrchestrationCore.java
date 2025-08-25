@@ -48,6 +48,8 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotifica
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import com.cobiscorp.cobis.cache.ICacheManager;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.ParametrizationSPEI;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.CacheUtils;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Constants;
 
 /**
  * Plugin of between accounts transfers
