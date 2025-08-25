@@ -48,7 +48,6 @@ import com.cobiscorp.ecobis.ib.orchestration.interfaces.ICoreServiceSendNotifica
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import com.cobiscorp.cobis.cache.ICacheManager;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.ParametrizationSPEI;
-import com.cobiscorp.ecobis.ib.orchestration.base.commons.CacheUtils;
 import com.cobiscorp.ecobis.ib.orchestration.base.commons.Constants;
 
 /**
@@ -370,15 +369,15 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		String estadoRiesgo = "";
 		Integer code = 0;
         String message = "success";
-		String validaRiesgo = aBagSPJavaOrchestration.get("AERISY") != null ? aBagSPJavaOrchestration.get("AERISY").toString() : "false";
+		String validaRiesgo = aBagSPJavaOrchestration.get(Constants.PARAM_PAR_RIESGO) != null ? aBagSPJavaOrchestration.get(Constants.PARAM_PAR_RIESGO).toString() : "false";
         
 		if (logger.isDebugEnabled())
 			logger.logDebug("@i_tipoCuentaBeneficiario: " + anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));		
 		
 		Integer opTcclaveBenAux  = Integer.parseInt(anOriginalRequest.readValueParam("@i_tipoCuentaBeneficiario"));
 		String opTcClaveBen = String.format("%02d", opTcclaveBenAux);
-		String codTarDeb = aBagSPJavaOrchestration.get("CODTAR") != null ? aBagSPJavaOrchestration.get("CODTAR").toString() : "03";
-		String codTelDeb = aBagSPJavaOrchestration.get("CODTEL") != null ? aBagSPJavaOrchestration.get("CODTEL").toString() : "10";
+		String codTarDeb = aBagSPJavaOrchestration.get(Constants.PARAM_COD_TAR_DEB) != null ? aBagSPJavaOrchestration.get(Constants.PARAM_COD_TAR_DEB).toString() : "03";
+		String codTelDeb = aBagSPJavaOrchestration.get(Constants.PARAM_COD_TEL) != null ? aBagSPJavaOrchestration.get(Constants.PARAM_COD_TEL).toString() : "10";
 		aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
 		
 		if (logger.isInfoEnabled())
@@ -672,7 +671,7 @@ public class SpeiInTransferOrchestrationCore extends TransferInOfflineTemplate {
 		//S1166247 Obtener causal remesas
 		String tipoPago = anOriginalRequest.readValueParam(I_IDTIPOPAGO);
 		if(tipoPago != null && tipoPago.equals("36")) {
-			String causalRemesas = aBagSPJavaOrchestration.get("CARESI") != null ? aBagSPJavaOrchestration.get("CARESI").toString() : "2100";
+			String causalRemesas = aBagSPJavaOrchestration.get(Constants.PARAM_CAUSAL_REMESAS) != null ? aBagSPJavaOrchestration.get(Constants.PARAM_CAUSAL_REMESAS).toString() : "2100";
 			procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, causalRemesas);
 		} else {
 			procedureRequest.addInputParam("@i_causal", ICTSTypes.SQLINT4, "2040");

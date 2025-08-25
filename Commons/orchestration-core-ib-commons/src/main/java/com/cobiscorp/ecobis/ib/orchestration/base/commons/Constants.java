@@ -9,6 +9,7 @@ public class Constants {
 	public static final String PARAM_COD_TAR_DEB = "CODTAR";
 	public static final String PARAM_COD_TEL = "CODTEL";
 	public static final String PARAM_PAR_RIESGO = "AERISY";
+	public static final String PARAM_CAUSAL_REMESAS = "CARESI";
 	//catalogos
 	public static final String CATALOG_TIPO_FIRMA = "bv_tipo_firma_pago";
 	public static final String CATALOG_TIPO_PAGO_EXTEMPOREANO = "bv_tipo_pago_extemporeano";
