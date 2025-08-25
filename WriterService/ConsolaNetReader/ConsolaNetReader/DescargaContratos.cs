@@ -278,7 +278,8 @@ namespace ConsolaNetReader
             try
             {
 
-                if (jsons != null)
+                if (jsons != null && jsons["sp_bv_event_contract"] != null &&
+                    jsons["dato_plantilla_contract"] != null)
                 {
 
                     JArray datosPlantilla = (JArray)jsons["sp_bv_event_contract"];
@@ -308,7 +309,8 @@ namespace ConsolaNetReader
                             if (val.Llave.Equals("$$nombre$$"))
                             {
                                 val.Valor = CapitalizeWords(validadarValor(dato[maq["dp_relacion"].ToString()]));
-                            }else if (val.Llave.Equals("$$nombrecompleto$$"))
+                            }
+                            else if (val.Llave.Equals("$$nombrecompleto$$"))
                             {
                                 val.Valor = CapitalizeWords(validadarValor(dato[maq["dp_relacion"].ToString()]));
 
@@ -355,6 +357,9 @@ namespace ConsolaNetReader
                     }
 
 
+                }
+                else {
+                    contra = null;
                 }
             }
             catch (Exception xe)
