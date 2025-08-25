@@ -2,6 +2,7 @@ package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.spei;
 
 import com.cobiscorp.cobis.commons.domains.log.ILogger;
 import com.cobiscorp.cobis.commons.log.LogFactory;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Constants;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class ManejoBytes {
         	logger.logDebug("tipoFirma:"+tipoFirma);
         	logger.logDebug("OpFechaOper:"+getDate(msj.getOrdenpago().getOpFechaOper()));
         	logger.logDebug("opinsclave:"+msj.getOrdenpago().getOpInsClave());
-        	logger.logDebug("opinsclaveben:"+Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString()));
+        	logger.logDebug("opinsclaveben:"+Integer.parseInt(aBagSPJavaOrchestration.get(Constants.PARAM_INST_BEN).toString()));
         	logger.logDebug("OpCveRastreo:"+msj.getOrdenpago().getOpCveRastreo());
         	logger.logDebug("OpMonto:"+msj.getOrdenpago().getOpMonto());
         	logger.logDebug("OpCuentaOrd:"+msj.getOrdenpago().getOpCuentaOrd());
@@ -41,7 +42,7 @@ public class ManejoBytes {
         //todos los tipos de pagos tienen estos datos incluida la firma 1
         wFirma = concatByte(wFirma, formateoFirma(getDate(msj.getOrdenpago().getOpFechaOper()))); //OpFechaOper
         wFirma = concatByte(wFirma, formateoFirma(msj.getOrdenpago().getOpInsClave()));//opinsclave
-        wFirma = concatByte(wFirma, formateoFirma(Integer.parseInt(aBagSPJavaOrchestration.get("paramInsBen").toString())));//opinsclaveben
+        wFirma = concatByte(wFirma, formateoFirma(Integer.parseInt(aBagSPJavaOrchestration.get(Constants.PARAM_INST_BEN).toString())));//opinsclaveben
         wFirma = concatByte(wFirma, formateoFirma(msj.getOrdenpago().getOpCveRastreo()));//clave rastreo
         wFirma = concatByte(wFirma, formateoFirma(msj.getOrdenpago().getOpMonto().doubleValue()));//opmonto
         

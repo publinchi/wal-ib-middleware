@@ -1,4 +1,4 @@
-package com.cobiscorp.ecobis.orchestration.core.ib.dispacher.utils;
+package com.cobiscorp.ecobis.ib.orchestration.base.commons;
 
 import java.io.Serializable;
 

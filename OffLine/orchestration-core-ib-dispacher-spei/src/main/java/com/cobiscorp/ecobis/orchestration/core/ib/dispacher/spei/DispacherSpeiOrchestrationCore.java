@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.concurrent.*;
 
@@ -19,6 +20,7 @@ import javax.xml.bind.JAXB;
 
 import com.cobiscorp.ecobis.ib.application.dtos.ServerRequest;
 import com.cobiscorp.ecobis.ib.application.dtos.ServerResponse;
+import com.cobiscorp.ecobis.orchestration.core.ib.common.ParametrizationSPEI;
 import com.cobiscorp.ecobis.orchestration.core.ib.common.SaveAdditionalDataImpl;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -41,10 +43,9 @@ import com.cobiscorp.cobis.cts.domains.ICOBISTS;
 import com.cobiscorp.cobis.cts.domains.ICTSTypes;
 import com.cobiscorp.cobis.cts.domains.IProcedureRequest;
 import com.cobiscorp.cobis.cts.domains.IProcedureResponse;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRow;
-import com.cobiscorp.cobis.cts.domains.sp.IResultSetRowColumnData;
 import com.cobiscorp.cobis.cts.dtos.ProcedureRequestAS;
 import com.cobiscorp.cobis.cts.dtos.ProcedureResponseAS;
+import com.cobiscorp.ecobis.ib.orchestration.base.commons.Constants;
 import com.cobiscorp.ecobis.ib.orchestration.base.utils.commons.CardPAN;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.Institucion;
 import com.cobiscorp.ecobis.ib.orchestration.dtos.mensaje;
@@ -57,6 +58,7 @@ import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Constans;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Mensaje;
 import com.cobiscorp.ecobis.orchestration.core.ib.dispacher.dto.Respuesta;
 import com.cobiscorp.ecobis.orchestration.core.ib.transfer.template.DispatcherSpeiOfflineTemplate;
+
 
 /**
  * Plugin of Dispacher Spei
@@ -353,57 +355,39 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
 		try
 		{
-			String paramInsBen = getParam(request, "CBCCDK", "AHO");
-			String codTarDeb = getParam(request, "CODTAR", "BVI");
-			String codTelDeb = getParam(request, "CODTEL", "BVI");
-			aBagSPJavaOrchestration.put("codTarDeb", codTarDeb);
-			aBagSPJavaOrchestration.put("codTelDeb", codTelDeb);
-			aBagSPJavaOrchestration.put("paramInsBen", paramInsBen);
 			boolean isCoreError = false;
-			
 			if(logger.isDebugEnabled())
 				logger.logDebug("BER Id:"+msjIn.getOrdenpago().getId());
-			IProcedureResponse responSingTyp = singType(request, aBagSPJavaOrchestration, "bv_tipo_firma_pago", String.valueOf( msjIn.getOrdenpago().getOpTpClave()));
-			
-			if(responSingTyp.getReturnCode()==0)
-			{
-				
+			logHour("time params ini");
+			loadParameters(request, aBagSPJavaOrchestration);
+			logHour("time params fin");
+			String opTpClave = String.valueOf( msjIn.getOrdenpago().getOpTpClave());
+			if ( singType(aBagSPJavaOrchestration, opTpClave) ) {
 				logHour("2");
-				if( validateFields(request, aBagSPJavaOrchestration))
-				{
-					
+				if ( validateFields(request, aBagSPJavaOrchestration) ) {
 					DispatcherUtil util = new DispatcherUtil();
 					String sign = util.doSignature(request, aBagSPJavaOrchestration, privateKeyKarpay);
-					if(logger.isDebugEnabled())
-					{
+					if (logger.isDebugEnabled()) {
 						logger.logDebug("firma armada:"+sign);
 						logger.logDebug("firma request:"+msjIn.getOrdenpago().getOpFirmaDig());
 					}
-					if(!sign.equals(msjIn.getOrdenpago().getOpFirmaDig()))
-					{
+					if (!sign.equals(msjIn.getOrdenpago().getOpFirmaDig())) {
 						responseXml.setErrCodigo(Integer.valueOf(8));
 						responseXml.setErrDescripcion("La firma del mensaje no es correcta");
-					}else
-					{	
+					} else {	
 						logHour("3");
-						
-						//validacion de tipos de pago en el catalogo cobis bv_tipo_pago_spei_in
-						int typePaymentResult = catalog(request, "bv_tipo_pago_spei_in", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E","");
-						//spein in tipo de pago 0 devolucion
-						if(typePaymentResult == 0)
-						{
-							if(msjIn.getOrdenpago().getOpTpClave()==0 || msjIn.getOrdenpago().getOpTpClave()==17)
-							{
+						if ( validateCatalog(aBagSPJavaOrchestration, Constants.CATALOG_TIPO_SPEI_IN, opTpClave) ) {
+							
+							if ( msjIn.getOrdenpago().getOpTpClave() == 0 || msjIn.getOrdenpago().getOpTpClave() == 17 ) {
 								String clave = "";
-								if( msjIn.getOrdenpago().getOpTpClave()==17)
+								if ( msjIn.getOrdenpago().getOpTpClave() == 17 )
 									clave = msjIn.getOrdenpago().getOpRastreoOri();
 								else
 									clave =  msjIn.getOrdenpago().getOpCveRastreo();
 								//consulta de datos para hacer un reverso de una devolucion
 								IProcedureResponse procedureGetDataSpei = getDataSPEI(request, aBagSPJavaOrchestration, clave);
 		
-								if(procedureGetDataSpei.getReturnCode() != 0)
-								{
+								if (procedureGetDataSpei.getReturnCode() != 0) {
 									responseXml.setErrCodigo(procedureGetDataSpei.getReturnCode());
 									responseXml.setErrDescripcion("Error en la devolución de la operacion");
 								}else
@@ -420,36 +404,28 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 								}
 							}
 						
-							//busqueda tipo de pago extemporaneo
-							int typePayExtResult = catalog(request, "bv_tipo_pago_extemporeano", String.valueOf(msjIn.getOrdenpago().getOpTpClave()), "","E","");
-							
-							if(typePayExtResult == 0)
-							{
+							if (validateCatalog(aBagSPJavaOrchestration, Constants.CATALOG_TIPO_PAGO_EXTEMPOREANO, opTpClave)) {
 								msjIn.getOrdenpago().setOpCuentaBen(msjIn.getOrdenpago().getOpCuentaOrd());
 								msjIn.getOrdenpago().setOpTcClaveBen(msjIn.getOrdenpago().getOpTcClaveOrd());
 							}
 							//consulta datos para hacer un retorno parcial de una devolucion
-							if(msjIn.getOrdenpago().getOpTpClave()==23)
-							{
+							if(msjIn.getOrdenpago().getOpTpClave()==23) {
 								searchOriginAccountDestination(request,aBagSPJavaOrchestration,msjIn.getOrdenpago().getOpRastreoOri(),msjIn);
 							}
 							long startSpeiin = System.currentTimeMillis();
-							
-							
+														
 							IProcedureResponse procedureResponseLocal = speiIn(request, msjIn, aBagSPJavaOrchestration);
 							long endSpeiin = System.currentTimeMillis();
-							if(logger.isDebugEnabled())
-							{
+							if (logger.isDebugEnabled())	{
 								logger.logDebug("CVE:"+msjIn.getOrdenpago().getOpCveRastreo());
 								logger.logDebug("Spei in time: "+(endSpeiin-startSpeiin));
 							}
 							logHour("4");
-							if(logger.isDebugEnabled())
+							if (logger.isDebugEnabled())
 								logger.logDebug("Response tranfer spei in: "+procedureResponseLocal.getProcedureResponseAsString());
 							//implementar catalogo para los que si aplican esice
 							if(procedureResponseLocal.getReturnCode()==0 && procedureResponseLocal.readValueParam("@o_id_causa_devolucion")!=null && Integer.parseInt(procedureResponseLocal.readValueParam("@o_id_causa_devolucion"))==0)
 							{
-								
 								try {
 									if(msjIn.getOrdenpago().getOpTpClave() == 1 || msjIn.getOrdenpago().getOpTpClave() == 12 || msjIn.getOrdenpago().getOpTpClave() == 30|| msjIn.getOrdenpago().getOpTpClave() == 36)
 									{
@@ -547,7 +523,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 				}
 				try {
 					// Crear una instancia de MyCallableTask con parámetros
-					ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, paramInsBen);
+					ReturnPaymentCallableTask task = new ReturnPaymentCallableTask( request, aBagSPJavaOrchestration, msjIn, (String)aBagSPJavaOrchestration.get(Constants.PARAM_INST_BEN));
 					// Enviar la tarea para su ejecución
 					executorService.submit(task);
 				}catch(Exception e)
@@ -683,8 +659,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			
 				//actualizar catalogo
 				responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"U", "V");
-				if(responseCatalog!=0)
-				{
+				if ( responseCatalog!=0 ) {
 					//inserta catalogo
 					responseCatalog = catalog(request, "bv_ifis_pago_directo", inst.getClaveCesif(), inst.getInsNombre(),"I", "V");
 				}
@@ -737,7 +712,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		procedureRequest.addInputParam("@i_cuentaOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCuentaOrd());
 		procedureRequest.addInputParam("@i_conceptoPago", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpConceptoPag2());
 		procedureRequest.addInputParam("@i_institucionOrdenante", ICTSTypes.SYBINT4, String.valueOf(msjIn.getOrdenpago().getOpInsClave()));
-		procedureRequest.addInputParam("@i_institucionBeneficiaria", ICTSTypes.SYBINT4, (String)aBagSPJavaOrchestration.get("paramInsBen"));
+		procedureRequest.addInputParam("@i_institucionBeneficiaria", ICTSTypes.SYBINT4, (String)aBagSPJavaOrchestration.get(Constants.PARAM_INST_BEN));
 		procedureRequest.addInputParam("@i_idSpei", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getId());
 		procedureRequest.addInputParam("@i_claveRastreo", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpCveRastreo());
 		procedureRequest.addInputParam("@i_nombreOrdenante", ICTSTypes.SQLVARCHAR, msjIn.getOrdenpago().getOpNomOrd());
@@ -763,80 +738,7 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 			logger.logDebug("speiIn FIN procedureResponseLocal:"+procedureResponseLocal.getCTSMessageAsString() );
 		return procedureResponseLocal;
 	}
-	
-	private String getParam(IProcedureRequest anOriginalRequest, String nemonico, String producto) {
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Begin flow, getOperatingInstitutionFromParameters");
-		}
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
-		reqTMPCentral.setSpName("cobis..sp_parametro");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, 'S', "central");
-		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "Q");
-		reqTMPCentral.addInputParam("@i_nemonico",ICTSTypes.SQLVARCHAR, nemonico);
-		reqTMPCentral.addInputParam("@i_producto",ICTSTypes.SQLVARCHAR, producto);	 
-	    reqTMPCentral.addInputParam("@i_modo",ICTSTypes.SQLINT4, "4");
 
-	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Ending flow, getOperatingInstitutionFromParameters with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
-		}
-		
-		if (!wProcedureResponseCentral.hasError()) {
-			
-			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
-				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
-				
-				if (resultSetRows.length > 0) {
-					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-					return columns[2].getValue();
-				} 
-			} 
-		} 
-		
-		return "";
-	}
-	
-	private boolean validateAccountType(IProcedureRequest anOriginalRequest, String accountType, Map<String, Object> aBagSPJavaOrchestration) 
-	{
-		if (logger.isDebugEnabled()) 
-		{
-			logger.logDebug("Begin validateAccountType");
-		}
-		boolean validate = true ;
-		IProcedureRequest reqTMPCentral = (initProcedureRequest(anOriginalRequest));		
-		reqTMPCentral.setSpName("cob_bvirtual..sp_valida_tipo_destino");
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID,  ICOBISTS.HEADER_STRING_TYPE,
-				IMultiBackEndResolverService.TARGET_CENTRAL);
-		reqTMPCentral.addFieldInHeader(ICOBISTS.HEADER_TRN, 'N', "18500163");
-		reqTMPCentral.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500163");
-		reqTMPCentral.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "V");
-		reqTMPCentral.addInputParam("@i_tipo_destino", ICTSTypes.SQLVARCHAR, accountType);
-
-	    IProcedureResponse wProcedureResponseCentral = executeCoreBanking(reqTMPCentral);
-		
-		if (logger.isDebugEnabled()) 
-		{
-			logger.logDebug("Ending flow, validateAccountType with wProcedureResponseCentral: " + wProcedureResponseCentral.getProcedureResponseAsString());
-		}
-		
-		if (wProcedureResponseCentral.hasError()) {
-			validate = false;
-		}else
-		{
-			if (wProcedureResponseCentral.getResultSetListSize() > 0) {
-			
-				IResultSetRow[] resultSetRows = wProcedureResponseCentral.getResultSet(1).getData().getRowsAsArray();
-				
-				if (resultSetRows.length > 0) {
-					IResultSetRowColumnData[] columns = resultSetRows[0].getColumnsAsArray();
-					aBagSPJavaOrchestration.put("tipoDestino", columns[0].getValue());
-				} 
-			} 
-		}
-		
-		return validate;
-	}
 	private String toStringXmlObject(Object obj)
 	{
 		StringWriter wOrdenPago = new StringWriter();
@@ -846,275 +748,184 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		return xmlOrdenPago;
 	}
 	
-	private Boolean validateFields(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration)
-	{
-		
-		mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
-		Boolean validate = true; 
-		String opTcClaveBen = String.format("%02d", msjIn.getOrdenpago().getOpTcClaveBen());
-		
-		if(Constans.ODPS_LIQUIDADAS_CARGOS.equals(msjIn.getCategoria()))
-		{
-			if(msjIn.getOrdenpago().getOpFechaOper()==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
-				validate = false;
-			}else
-			if(Integer.valueOf(msjIn.getOrdenpago().getOpFolio())==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 445);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Folio CoDi es obligatorio");
-				validate = false;
-			}else
-			if(Integer.valueOf(msjIn.getOrdenpago().getOpInsClave())==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 5);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de institución  ordenante es obligatoria para este Tipo de Pago");
-				validate = false; 
-			}else
-			if(Integer.valueOf(msjIn.getOrdenpago().getOpTpClave())==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 81);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El tipo de operación  es obligatorio para este Tipo de Pago");
-				validate = false;
-			}else
-			if(msjIn.getOrdenpago().getOpCveRastreo()==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 92);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de rastreo es obligatoria");
-				validate = false;
-			}else
-			if(msjIn.getOrdenpago().getOpEstado()==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 98);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Estado del envío  es obligatorio");
-				validate = false;
-			}else
-			if(msjIn.getOrdenpago().getOpTipoOrden()==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 106);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Tipo de orden es requerido.");
-				validate = false; 
-			}else
-			if(Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad())==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 85);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La prioridad de la orden es un dato obligatorio");
-				validate = false;	 
-			}else
-			if(Integer.valueOf(msjIn.getOrdenpago().getOpMeClave())==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
-				validate = false;	 
-			}if(msjIn.getOrdenpago().getOpTopologia()==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 87);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La Topología  de la orden es obligatorio");
-				validate = false;	 
-			}else
-			if(msjIn.getOrdenpago().getOpUsuClave()==null)
-			{
-				aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 158);
-				aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
-				validate = false;	 
-			}
-		}else
-			if(Constans.ODPS_LIQUIDADAS_ABONOS.equals(msjIn.getCategoria()))
-			{
-
-				if(msjIn.getOrdenpago().getOpFechaOper()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
-					validate = false;
-				}else
-				if(Integer.valueOf(msjIn.getOrdenpago().getOpFolio())==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 445);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Folio CoDi es obligatorio");
-					validate = false;
-				}else
-				if(Integer.valueOf(msjIn.getOrdenpago().getOpInsClave())==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 5);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de institución  ordenante es obligatoria para este Tipo de Pago");
-					validate = false; 
-				}else
-				if(msjIn.getOrdenpago().getOpMonto()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 9);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Monto es obligatorio");
-					validate = false;
-				}else
-				if(Integer.valueOf(msjIn.getOrdenpago().getOpTpClave())==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 57);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del pago es obligatorio para este Tipo de Pago");
-					validate = false;
-				}else
-				if(msjIn.getOrdenpago().getOpCveRastreo()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 92);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de rastreo es obligatoria");
-					validate = false;
-				}else
-				if(msjIn.getOrdenpago().getOpEstado()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 98);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Estado del envío  es obligatorio");
-					validate = false;
-				}else
-				if(msjIn.getOrdenpago().getOpTipoOrden()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 106);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Tipo de orden es requerido.");
-					validate = false; 
-				}else
-				if(Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad())==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 85);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La prioridad de la orden es un dato obligatorio");
-					validate = false;	 
-				}else
-				if(Integer.valueOf(msjIn.getOrdenpago().getOpMeClave())==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
-					validate = false;	 
-				}if(msjIn.getOrdenpago().getOpTopologia()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 87);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La Topología  de la orden es obligatorio");
-					validate = false;	 
-				}else
-				if(msjIn.getOrdenpago().getOpUsuClave()==null)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 158);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
-					validate = false;	 
-				}else
-				//valida tipo de cuentas entrantes
-				if(!validateAccountType(request, opTcClaveBen, aBagSPJavaOrchestration ) && msjIn.getOrdenpago().getOpTpClave()==1)
-				{
-					aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 400602);
-					aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El tipo de destino no existe en el catalogo [bv_tipo_cuenta_spei].");
-					validate = false;	
-				}else
-				{ 
-					if (logger.isDebugEnabled()) 
-					{
-						logger.logDebug("JC Tipo de cuenta "+opTcClaveBen);
-					}
-					
-					if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTarDeb")))
-					{
-						if( !digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
-						{
-							aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 34);
-							aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La cuenta del beneficiario solo puede ser numérica");
-							validate = false;	
-						}else
-							if(!(msjIn.getOrdenpago().getOpCuentaBen().length()==16))
-							{
-								aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
-								aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Tarjeta de Debito la cuenta del beneficiario debe ser de 16 dígitos.");
-								validate = false;	
-							}
-					}else if(opTcClaveBen.equals(aBagSPJavaOrchestration.get("codTelDeb"))) {
-						
-						
-						if( !digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen()))
-						{
-							aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 34);
-							aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La cuenta del beneficiario solo puede ser numérica");
-							validate = false;	
-						}else
-							if(!(msjIn.getOrdenpago().getOpCuentaBen().length()==10))
-							{
-								aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 38);
-								aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Para tipo de cuenta Telefono, la cuenta del beneficiario debe ser de 10 dígitos.");
-								validate = false;	
-							}						
-					}
-						
-				}
-
-			}else
-				if(Constans.ODPS_CANCELADAS_LOCAL.equals(msjIn.getCategoria()))
-				{
-					if(msjIn.getOrdenpago().getOpFechaOper()==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
-						validate = false;
-					}else
-					if(Integer.valueOf(msjIn.getOrdenpago().getOpFolio())==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 445);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Folio CoDi es obligatorio");
-						validate = false;
-					}else
-					if(Integer.valueOf(msjIn.getOrdenpago().getOpInsClave())==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 5);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de institución  ordenante es obligatoria para este Tipo de Pago");
-						validate = false; 
-					}else
-					if(Integer.valueOf(msjIn.getOrdenpago().getOpTpClave())==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 81);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El tipo de operación  es obligatorio para este Tipo de Pago");
-						validate = false;
-					}else
-					if(msjIn.getOrdenpago().getOpCveRastreo()==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 92);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave de rastreo es obligatoria");
-						validate = false;
-					}else
-					if(msjIn.getOrdenpago().getOpEstado()==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 98);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "El Estado del envío  es obligatorio");
-						validate = false;
-					}else
-					if(msjIn.getOrdenpago().getOpTipoOrden()==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 106);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "Tipo de orden es requerido.");
-						validate = false; 
-					}else
-					if(Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad())==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 85);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La prioridad de la orden es un dato obligatorio");
-						validate = false;	 
-					}else
-					if(Integer.valueOf(msjIn.getOrdenpago().getOpMeClave())==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 93);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La fecha de operación  es obligatoria");
-						validate = false;	 
-					}if(msjIn.getOrdenpago().getOpTopologia()==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 87);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La Topología  de la orden es obligatorio");
-						validate = false;	 
-					}else
-					if(msjIn.getOrdenpago().getOpUsuClave()==null)
-					{
-						aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 158);
-						aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, "La clave del banco usuario es obligatoria para este Tipo de Pago");
-						validate = false;	 
-					}
-				}
-		
-		return validate;
+	private Boolean validateFields(IProcedureRequest request, Map<String, Object> aBagSPJavaOrchestration) {
+	    mensaje msjIn = (mensaje) aBagSPJavaOrchestration.get("speiTransaction");
+	    Boolean validate = true; 
+	    String opTcClaveBen = String.format("%02d", msjIn.getOrdenpago().getOpTcClaveBen());
+	    
+	    if (Constans.ODPS_LIQUIDADAS_CARGOS.equals(msjIn.getCategoria())) {
+	        if (msjIn.getOrdenpago().getOpFechaOper() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FECHA_OPERACION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FECHA_OPERACION_OBLIGATORIA);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpFolio()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FOLIO_CODI_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FOLIO_CODI_OBLIGATORIO);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpInsClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_INSTITUCION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_INSTITUCION_OBLIGATORIA);
+	            validate = false; 
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpTpClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TIPO_OPERACION_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TIPO_OPERACION_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpCveRastreo() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_RASTREO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_RASTREO_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpEstado() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_ESTADO_ENVIO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_ESTADO_ENVIO_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpTipoOrden() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TIPO_ORDEN_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TIPO_ORDEN_OBLIGATORIO);
+	            validate = false; 
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_PRIORIDAD_ORDEN_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_PRIORIDAD_ORDEN_OBLIGATORIA);
+	            validate = false;     
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpMeClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FECHA_OPERACION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FECHA_OPERACION_OBLIGATORIA);
+	            validate = false;     
+	        } else if (msjIn.getOrdenpago().getOpTopologia() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TOPOLOGIA_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TOPOLOGIA_OBLIGATORIA);
+	            validate = false;     
+	        } else if (msjIn.getOrdenpago().getOpUsuClave() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_BANCO_USUARIO_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_BANCO_USUARIO_OBLIGATORIA);
+	            validate = false;     
+	        }
+	    } else if (Constans.ODPS_LIQUIDADAS_ABONOS.equals(msjIn.getCategoria())) {
+	        if (msjIn.getOrdenpago().getOpFechaOper() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FECHA_OPERACION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FECHA_OPERACION_OBLIGATORIA);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpFolio()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FOLIO_CODI_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FOLIO_CODI_OBLIGATORIO);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpInsClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_INSTITUCION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_INSTITUCION_OBLIGATORIA);
+	            validate = false; 
+	        } else if (msjIn.getOrdenpago().getOpMonto() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_MONTO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_MONTO_OBLIGATORIO);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpTpClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_PAGO_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_PAGO_OBLIGATORIA);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpCveRastreo() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_RASTREO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_RASTREO_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpEstado() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_ESTADO_ENVIO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_ESTADO_ENVIO_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpTipoOrden() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TIPO_ORDEN_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TIPO_ORDEN_OBLIGATORIO);
+	            validate = false; 
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_PRIORIDAD_ORDEN_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_PRIORIDAD_ORDEN_OBLIGATORIA);
+	            validate = false;     
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpMeClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FECHA_OPERACION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FECHA_OPERACION_OBLIGATORIA);
+	            validate = false;     
+	        } else if (msjIn.getOrdenpago().getOpTopologia() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TOPOLOGIA_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TOPOLOGIA_OBLIGATORIA);
+	            validate = false;     
+	        } else if (msjIn.getOrdenpago().getOpUsuClave() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_BANCO_USUARIO_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_BANCO_USUARIO_OBLIGATORIA);
+	            validate = false;     
+	        } else if (! validateCatalog(aBagSPJavaOrchestration, Constants.CATALOG_TIPO_CUENTA_SPEI, opTcClaveBen) && msjIn.getOrdenpago().getOpTpClave() == 1) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, 15);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TIPO_DESTINO_NO_EXISTE);
+	            validate = false;    
+	        } else { 
+	            if (opTcClaveBen.equals(aBagSPJavaOrchestration.get(Constants.PARAM_COD_TAR_DEB))) {
+	                if (!digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen())) {
+	                    aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CUENTA_BENEFICIARIO_NUMERICA);
+	                    aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CUENTA_BENEFICIARIO_NUMERICA);
+	                    validate = false;    
+	                } else if (!(msjIn.getOrdenpago().getOpCuentaBen().length() == 16)) {
+	                    aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CUENTA_TARJETA_DEBITO);
+	                    aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CUENTA_TARJETA_DEBITO);
+	                    validate = false;    
+	                }
+	            } else if (opTcClaveBen.equals(aBagSPJavaOrchestration.get(Constants.PARAM_COD_TEL))) {
+	                if (!digitValidateNum(msjIn.getOrdenpago().getOpCuentaBen())) {
+	                    aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CUENTA_BENEFICIARIO_NUMERICA);
+	                    aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CUENTA_BENEFICIARIO_NUMERICA);
+	                    validate = false;    
+	                } else if (!(msjIn.getOrdenpago().getOpCuentaBen().length() == 10)) {
+	                    aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CUENTA_TARJETA_DEBITO);
+	                    aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CUENTA_TELEFONO);
+	                    validate = false;    
+	                }                        
+	            }
+	        }
+	    } else if (Constans.ODPS_CANCELADAS_LOCAL.equals(msjIn.getCategoria())) {
+	        if (msjIn.getOrdenpago().getOpFechaOper() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FECHA_OPERACION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FECHA_OPERACION_OBLIGATORIA);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpFolio()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FOLIO_CODI_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FOLIO_CODI_OBLIGATORIO);
+	            validate = false;
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpInsClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_INSTITUCION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_INSTITUCION_OBLIGATORIA);
+	            validate = false; 
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpTpClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TIPO_OPERACION_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TIPO_OPERACION_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpCveRastreo() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_RASTREO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_RASTREO_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpEstado() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_ESTADO_ENVIO_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_ESTADO_ENVIO_OBLIGATORIO);
+	            validate = false;
+	        } else if (msjIn.getOrdenpago().getOpTipoOrden() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TIPO_ORDEN_OBLIGATORIO);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TIPO_ORDEN_OBLIGATORIO);
+	            validate = false; 
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpPrioridad()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_PRIORIDAD_ORDEN_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_PRIORIDAD_ORDEN_OBLIGATORIA);
+	            validate = false;     
+	        } else if (Integer.valueOf(msjIn.getOrdenpago().getOpMeClave()) == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_FECHA_OPERACION_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_FECHA_OPERACION_OBLIGATORIA);
+	            validate = false;     
+	        } else if (msjIn.getOrdenpago().getOpTopologia() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_TOPOLOGIA_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_TOPOLOGIA_OBLIGATORIA);
+	            validate = false;     
+	        } else if (msjIn.getOrdenpago().getOpUsuClave() == null) {
+	            aBagSPJavaOrchestration.put(Constans.VALIDATE_CODE, Constans.CODIGO_CLAVE_BANCO_USUARIO_OBLIGATORIA);
+	            aBagSPJavaOrchestration.put(Constans.MESSAJE_CODE, Constans.MESSAJE_CLAVE_BANCO_USUARIO_OBLIGATORIA);
+	            validate = false;     
+	        }
+	    }
+	    return validate;
 	}
-	public boolean digitValidateNum(String cadena) 
-	{
+	
+	public boolean digitValidateNum(String cadena) {
 	    Pattern patron = Pattern.compile("^\\d+$");
 	    return patron.matcher(cadena).matches();
     }
@@ -1232,35 +1043,49 @@ public class DispacherSpeiOrchestrationCore extends DispatcherSpeiOfflineTemplat
 		
 		return 0;
 	}
+	private void loadParameters( IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration) {
+		ParametrizationSPEI params = new ParametrizationSPEI(cacheManager); 
+		params.getSpeiParameters( anOriginalRequest, aBagSPJavaOrchestration);
+		params.getSpeiCatalog(anOriginalRequest, aBagSPJavaOrchestration, Constants.CATALOG_TIPO_SPEI_IN );
+		params.getSpeiCatalog(anOriginalRequest, aBagSPJavaOrchestration, Constants.CATALOG_TIPO_PAGO_EXTEMPOREANO );
+		params.getSpeiCatalog(anOriginalRequest, aBagSPJavaOrchestration, Constants.CATALOG_TIPO_FIRMA );
+		params.getSpeiCatalog(anOriginalRequest, aBagSPJavaOrchestration, Constants.CATALOG_TIPO_CUENTA_SPEI );
+	}
 	
-	private IProcedureResponse singType(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, String tabla, String codigo) {
+	private Boolean singType(Map<String, Object> aBagSPJavaOrchestration, String typePayment) {
 		if (logger.isDebugEnabled()) {
 			logger.logDebug("Begin flow, singType");
 		}
 		
-		IProcedureRequest requestProcedureLocal = (initProcedureRequest(anOriginalRequest));		
-		requestProcedureLocal.setSpName("cob_bvirtual..sp_firma_pago");
-		requestProcedureLocal.addFieldInHeader(ICOBISTS.HEADER_TARGET_ID, ICOBISTS.HEADER_STRING_TYPE, 
-				IMultiBackEndResolverService.TARGET_LOCAL);
-		requestProcedureLocal.addInputParam("@t_trn", ICTSTypes.SYBINT4, "18500169");
-		requestProcedureLocal.addInputParam("@i_operacion", ICTSTypes.SQLVARCHAR, "S");
-		requestProcedureLocal.addInputParam("@i_tabla",ICTSTypes.SQLVARCHAR, tabla);
-		requestProcedureLocal.addInputParam("@i_codigo",ICTSTypes.SQLVARCHAR, codigo);	
-		requestProcedureLocal.addOutputParam("@o_valor", ICTSTypes.SYBVARCHAR, "X");
-		
-	    IProcedureResponse wProcedureResponseLocal = executeCoreBanking(requestProcedureLocal);
-		
-		if (logger.isDebugEnabled()) {
-			logger.logDebug("Ending flow, singType: " + wProcedureResponseLocal.getProcedureResponseAsString());
+		if (Objects.nonNull( aBagSPJavaOrchestration.get(Constants.CATALOG_TIPO_FIRMA))) {
+			Map<String, Object> singsType = (Map<String, Object>) aBagSPJavaOrchestration.get(Constants.CATALOG_TIPO_FIRMA);
+			if ( Objects.nonNull(singsType.get(typePayment)) ) {
+				aBagSPJavaOrchestration.put("tipoFirma", singsType.get(typePayment));
+				return true;
+			}else
+				return false;
 		}
-		
-		if (wProcedureResponseLocal.getReturnCode()==0) {
-			
-			aBagSPJavaOrchestration.put("tipoFirma", wProcedureResponseLocal.readValueParam("@o_valor"));
-		} 
-		return wProcedureResponseLocal;
-		
+		return false;
 	}
+	
+	private Boolean validateCatalog(Map<String, Object> aBagSPJavaOrchestration, String catalog, String code) {
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("Begin flow, validateCatalog");
+		}
+		boolean validate = false;
+		if ( Objects.nonNull( aBagSPJavaOrchestration.get(catalog)) ) {
+			Map<String, Object> singsType = (Map<String, Object>) aBagSPJavaOrchestration.get(catalog);
+			if(Objects.nonNull(singsType.get(code)))
+				validate = true;
+			else
+				validate = false;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.logDebug("End flow, validateCatalog "+catalog+": "+code+", validate="+validate);
+		}
+		return validate;
+	}
+
 	private int logEntryApi(IProcedureRequest anOriginalRequest, Map<String, Object> aBagSPJavaOrchestration, 
 			String operacion, String tipoEntrada, String firma, String error, String response, Integer id, String request ) {
 		if (logger.isDebugEnabled()) {
