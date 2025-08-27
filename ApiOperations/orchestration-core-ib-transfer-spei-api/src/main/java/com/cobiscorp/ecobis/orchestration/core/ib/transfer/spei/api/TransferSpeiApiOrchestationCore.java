@@ -1963,7 +1963,6 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
 
     public IProcedureResponse executeTransferSPI(IProcedureRequest anOriginalRequest,
             Map<String, Object> aBagSPJavaOrchestration) throws CTSServiceException, CTSInfrastructureException {
-        String idTransaccion = "";
         if (logger.isDebugEnabled()) {
             logger.logDebug("Inicia executeTransferSPI");
         }
@@ -1974,13 +1973,8 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         }
 
         response.setReturnCode(responseBank.getReturnCode());
-        if(response.hasError()){
-            response.setReturnCode(response.getReturnCode());
-            aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
-
-            idTransaccion=String.valueOf(anOriginalRequest.readValueParam(S_SSN_BRANCH));
-
-            logger.logDebug(CLASS_NAME + "Respuesta TRANSACCION ID --> "+idTransaccion);
+        if (responseBank.getReturnCode() != 0) {
+            response = Utils.returnException(Utils.returnArrayMessage(responseBank));
         }
 
         if (responseBank.getReturnCode() == 0 && responseBank.getResultSetListSize() > 0) {
@@ -2202,12 +2196,10 @@ public class TransferSpeiApiOrchestationCore extends TransferOfflineTemplate {
         IProcedureRequest originalRequest = (IProcedureRequest) aBagSPJavaOrchestration.get(ORIGINAL_REQUEST);
         ServerResponse serverResponse = (ServerResponse) aBagSPJavaOrchestration.get(RESPONSE_SERVER);
 
-        if(serverResponse.getOnLine() && responseTransfer.hasError()){
-            aBagSPJavaOrchestration.put(RESPONSE_TRANSACTION, response);
-
-            idTransaccion=String.valueOf(originalRequest.readValueParam(S_SSN_BRANCH));
-
-            logger.logDebug(CLASS_NAME + "Respuesta TRANSACCION ID --> "+idTransaccion);
+        response.setReturnCode(responseTransfer.getReturnCode());
+        if (serverResponse.getOnLine() && responseTransfer.getReturnCode() != 0) {
+            // ONLINE Y HUBO ERROR
+            response = Utils.returnException(Utils.returnArrayMessage(responseTransfer));
         } else {
             response.addParam("@o_referencia", ICTSTypes.SYBINT4, 0,
                     String.valueOf(responseTransfer.readValueParam("@o_referencia")));
