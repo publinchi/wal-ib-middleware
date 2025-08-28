@@ -1,6 +1,0 @@
-Verificar que los buffersize sean mayores o iguales a 200000 en los siguientes archivos
-spexecutor-service-object-config.xml
-spexecutor-service-light-config.xml
-spexecutor-service-config.xml
-
-

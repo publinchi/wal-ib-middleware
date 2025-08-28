@@ -1,7 +1,0 @@
-package com.cobiscorp.ecobis.orchestration.core.ib.define.security.qa.api;
-
-public class Utils {
-
-	public static final String PUBLIC_KEY = 
-			"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3DixnYWTYZACD8VfzXXIt2L6cucy+N3S6yUzQa92Vi3iMTsyDk0dRY+C8SF47t3tFYsJ8z7VwvACPLdaFPOZNUgQV5sCqTndel0+LHGNCbfrXTcd40xUIjCAomDA9P/2aeCsEJHQwTuEKm0GEXE+ZdzoeTntfOq48fMlXEckPmI/AfSWqy7R76Glt5a/MvUZa+EVHTvt5eICg2EA0rxB7/yNCYCpyjlSdmBGBAJ2QlHsQHNPI8AbtL/VP0KUwbb1+d1l/85QGkHw2rSAJcAdj3rw6O/qA7pLh52YwK3hPrbHXAvwPz42sqqXk+7cCzP1UbwPS57j6X5c3CT5RcxrkwIDAQAB";
-}

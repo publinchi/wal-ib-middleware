@@ -1,3 +1,0 @@
-
-
-Generation rest services installer

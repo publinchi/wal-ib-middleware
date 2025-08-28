@@ -1,9 +1,0 @@
-<userInput>
-	<panel order="0" layout="center">
-		<field type="title" id="user.title" />
-		<field type="staticText" align="left" id="user.instructions" />		
-		<field type="text" variable="core">
-			 <spec txt="Type Core:" id="user.core" size="20" set="${typecore}" value="${typecore}" align="center"/>	         
-		</field>
-	</panel>
-</userInput>
