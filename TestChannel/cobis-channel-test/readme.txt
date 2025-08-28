@@ -1,5 +1,0 @@
-Servicio Eliminado
-InternetBanking.WebApp.Enquiries.Service.FactoringOperations.ValidateFactoring
-InternetBanking.WebApp.Utils.Service.Publicity.PublicityRequest
-InternetBanking.WebApp.Utils.Service.Publicity.GetLoginPublicity
-InternetBanking.WebApp.Utils.Service.Publicity.DelPublicity

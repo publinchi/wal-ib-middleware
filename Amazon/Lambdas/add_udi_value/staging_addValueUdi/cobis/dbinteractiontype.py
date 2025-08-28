@@ -1,8 +1,0 @@
-from enum import Enum
-
-
-class DBInteractionType(Enum):
-    SINGLE_QUERY_WITH_NOTRANSACTION = 0
-    SINGLE_QUERY_WITH_TRANSACTION = 1
-    MANY_QUERIES_WITH_TRANSACTION = 2
-    STORED_PROCEDURE = 3
