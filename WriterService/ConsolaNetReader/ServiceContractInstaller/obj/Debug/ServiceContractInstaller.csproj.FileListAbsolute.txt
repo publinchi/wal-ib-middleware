@@ -1,9 +1,0 @@
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.csproj.AssemblyReference.cache
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.csproj.SuggestedBindingRedirects.cache
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.exe.config
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.ProjectInstaller.resources
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.Service1.resources
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.csproj.GenerateResource.cache
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.csproj.CoreCompileInputs.cache
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.exe
-C:\dev\Auronix\wal-ib-middleware\WriterService\ConsolaNetReader\ServiceContractInstaller\obj\Debug\ServiceContractInstaller.pdb
